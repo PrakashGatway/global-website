@@ -16,7 +16,7 @@ const navItems = [
   },
   { 
     name: "Services", 
-    href: "#", 
+    href: "service", 
     hasDropdown: false,
     icon: MessageSquare,
  

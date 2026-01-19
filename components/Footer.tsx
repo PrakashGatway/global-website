@@ -16,16 +16,35 @@ export function Footer() {
           <div className="rounded-[50px] px-6 md:px-12 pt-8 pb-12 relative bg-white">
 
             {/* ================= TOP IMAGE STRIP with Orange Border - Positioned Upward ================= */}
-            <div className="w-full mb-12 -mt-16 md:-mt-30">
-              <div className="relative h-[180px] md:h-[200px] rounded-[50px] border-[20px] border-[#f46c44] overflow-hidden bg-white shadow-xl">
-                <img
-                  src="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1200&h=300&fit=crop"
-                  alt="European Landmarks"
-                  className="w-full h-full object-cover grayscale"
-                  style={{ objectPosition: "center center" }}
-                />
-              </div>
-            </div>
+           <div className="w-full mb-16 -mt-20">
+
+  {/* OUTER ORANGE FRAME */}
+  <div className="relative h-[180px] md:h-[220px] rounded-[70px] bg-[#f46c44] shadow-xl">
+
+    {/* INNER IMAGE HOLDER */}
+    <div
+      className="
+        absolute
+        top-[14px]
+        bottom-[14px]
+        left-[40px]
+        right-[40px]
+        rounded-[45px]
+        overflow-hidden
+        bg-white
+      "
+    >
+      <img
+        src="/images/footer-image.png"
+        alt="European landmarks"
+        className="w-full h-full object-cover grayscale"
+      />
+    </div>
+
+  </div>
+
+</div>
+
 
             <div className="flex flex-col lg:flex-row">
 
@@ -84,7 +103,7 @@ export function Footer() {
                     </ul>
                   </div>
                   {/* Right divider - only on lg screens */}
-                  <div className="hidden lg:block absolute right-0 top-0 w-[3px] h-full bg-[#e87a4d] rounded-full"></div>
+                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full"></div>
                 </div>
 
                 {/* SERVICES */}
@@ -122,7 +141,7 @@ export function Footer() {
                     </ul>
                   </div>
                   {/* Right divider - only on lg screens */}
-                  <div className="hidden lg:block absolute right-0 top-0 w-[3px] h-full bg-[#e87a4d] rounded-full"></div>
+                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full"></div>
                 </div>
 
                 {/* RESOURCES */}
@@ -160,7 +179,7 @@ export function Footer() {
                     </ul>
                   </div>
                   {/* Right divider - only on lg screens */}
-                  <div className="hidden lg:block absolute right-0 top-0 w-[3px] h-full bg-[#e87a4d] rounded-full"></div>
+                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full"></div>
                 </div>
 
                 {/* CONNECT */}
