@@ -146,7 +146,7 @@ export function Navbar() {
                         >
                           <Link
                           key={dropdownItem.slug}
-                            href={`/preparation/${dropdownItem.slug}`}
+                            href={`/${dropdownItem.slug}`}
                             className="block px-5 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 group/item transition-all duration-200 border-l-2 border-transparent hover:border-orange-400"
                           >
                             <div className="font-semibold text-gray-800 group-hover/item:text-orange-600 transition-colors">

@@ -50,7 +50,6 @@ export default function IvyLeaguePage() {
             <p className="text-lg md:text-xl text-white mb-10 leading-relaxed" style={{ textAlign: 'left' }}>
               GAway is a league of its own. We help you get into the Ivy League and other top universities in the USA, UK, and Canada. We&apos;ll help you get into the Ivy League and top graduate schools.
             </p>
-
           </div>
         </div>
       </section>
@@ -66,25 +65,24 @@ export default function IvyLeaguePage() {
       </section>
 
       {/* Ivy Coach's College Admissions Track Record */}
+
       <section className="py-5 bg-gray-50" style={{ overflow: 'visible' }}>
+        <div className="mb-8 mx-auto" style={{ borderTop: '3px solid rgb(94, 77, 77)', width: '70%' }}></div>
+
+        <div className="text-center py-6 mb-12 bg-[#f5f1f0]">
+          <h2 className="text-[2.6rem] font-bold mb-4 uppercase tracking-wide" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", textAlign: 'center' }}>
+            <span className="block">IVY COACH&apos;S COLLEGE</span>
+            <span className="block">ADMISSIONS TRACK RECORD</span>
+          </h2>
+          <p className="text-lg text-gray-800 max-w-4xl mx-auto mb-2 font-semibold" style={{ textAlign: 'center' }}>
+            <span className="">The percentage of Ivy Coach&apos;s packaged clients over the last 10 years</span>
+            <span className="">who earned admission to the following schools in the Early round.</span>
+          </p>
+          <p className="text-lg text-gray-800 font-semibold mx-auto" style={{ textAlign: 'center' }}>
+            At most of these schools, we typically have 3-4 applicants annually.
+          </p>
+        </div>
         <div className="max-w-7xl mx-auto px-4" style={{ overflow: 'visible' }}>
-          {/* Border line above */}
-          <div className="mb-8 mx-auto" style={{ borderTop: '3px solid rgb(94, 77, 77)', width: '70%' }}></div>
-
-          <div className="text-center mb-16">
-            <h2 className="text-[2.6rem] font-bold mb-4 uppercase tracking-wide" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", textAlign: 'center' }}>
-              <span className="block">IVY COACH&apos;S COLLEGE</span>
-              <span className="block">ADMISSIONS TRACK RECORD</span>
-            </h2>
-            <p className="text-lg text-gray-800 max-w-4xl mx-auto mb-2 font-semibold" style={{ textAlign: 'center' }}>
-              <span className="">The percentage of Ivy Coach&apos;s packaged clients over the last 10 years</span>
-              <span className="">who earned admission to the following schools in the Early round.</span>
-            </p>
-            <p className="text-lg text-gray-800 font-semibold mx-auto" style={{ textAlign: 'center' }}>
-              At most of these schools, we typically have 3-4 applicants annually.
-            </p>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 items-start" style={{ overflow: 'visible' }}>
             {/* Left Panel - Proven Success */}
             <div className="col-span-2">
@@ -233,7 +231,7 @@ export default function IvyLeaguePage() {
       </section>
 
       {/* The Ivy Coach Daily */}
-      <section className="py-12 bg-white overflow-visible">
+      <section className="py-12 bg-[#f5f1f0] overflow-visible">
         <div className="max-w-7xl mx-auto px-4 overflow-visible">
           <div className="text-center mb-8">
             <h2 className="text-[2.6rem] font-bold  uppercase" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }}>
@@ -302,13 +300,13 @@ export default function IvyLeaguePage() {
           {/* <p className="text-lg text-center font-semibold text-gray-700 ">"Way To Tell It Like It Is, Ivy Coach"</p> */}
 
           <div className="max-w-5xl mx-auto flex justify-center">
-            <Image src="/images/00123.png" alt="ivy-admission-process" width={1000} height={800} className="w-full h-full"/>
+            <Image src="/images/00123.png" alt="ivy-admission-process" width={1000} height={800} className="w-full h-full" />
           </div>
         </div>
       </section>
-      <ScholarshipRequirements/>
+      <ScholarshipRequirements />
       <ImageTestimonial font={true} />
-      <CaseStudy font={true}/>
+      <CaseStudy font={true} />
 
       <section className="py-24" style={{ backgroundColor: '#f46c44' }}>
         <div className="max-w-5xl mx-auto text-center px-4">

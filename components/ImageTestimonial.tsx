@@ -108,6 +108,10 @@ export default function ImageTestimonial({font}) {
           <span style={{ color: '#f46c44' }}>Image</span>{" "}
           <span className="text-gray-600">Testimonials</span>
         </h2>
+          <p className="text-gray-600 text-base font-medium max-w-3xl text-center  mx-auto leading-relaxed">
+              Explore globally recognized university groups across major study destinations,
+              carefully curated for ambitious international students.
+            </p>
 
         <div ref={sliderRef} className="keen-slider">
           {testimonials.map((t) => (

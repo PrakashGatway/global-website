@@ -240,7 +240,7 @@ import {
 
 export function AdmissionRequirementsUK() {
   return (
-    <section className="bg-[#fff9f4] py-20">
+    <section className="bg-[#f5f1f0] py-20">
       <div className="max-w-7xl mx-auto px-6">
 
 
@@ -380,7 +380,7 @@ export function HowGawayHelps() {
 
 export function ScholarshipRequirements() {
   return (
-    <section className="bg-[#fff9f4] py-12">
+    <section className="bg-[#f5f1f0] py-12">
       <div className="max-w-7xl mx-auto px-6">
 
 
