@@ -1,7 +1,7 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono, Noto_Sans } from "next/font/google"
-import { Navbar } from "@/components/navbar"
+import Navbar from "@/components/navbar"
 import "./globals.css"
 import 'keen-slider/keen-slider.min.css';
 import { Footer } from "@/components/Footer"

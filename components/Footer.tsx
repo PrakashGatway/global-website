@@ -231,8 +231,8 @@ export function Footer() {
             <p>© 2023 GAway Global. All rights reserved.</p>
 
             <div className="flex gap-4 md:gap-6 flex-wrap justify-center">
-              <a href="#" className="hover:text-orange-500">Privacy Policy</a>
-              <a href="#" className="hover:text-orange-500">Terms of Service</a>
+              <a href="privacy-policy" className="hover:text-orange-500">Privacy Policy</a>
+              <a href="terms-condition" className="hover:text-orange-500">Terms of Service</a>
               <a href="#" className="hover:text-orange-500">Cookie Policy</a>
             </div>
           </div>
