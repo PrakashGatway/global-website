@@ -1,55 +1,88 @@
 "use client"
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Clock, MessageSquare } from 'lucide-react';
+import Image from "next/image";
 
 export default function ContactUsPage() {
   return (
     <div className='bg-[#fffaf7]'>
       {/* Hero Section */}
-      <section className="relative h-[550px] flex items-center overflow-hidden" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
-        <div className="absolute left-[1px] top-[-288px] h-full w-8 bg-[#FF6B35] hidden lg:block z-10"></div>
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 items-center relative">
-          <div className="text-white space-y-6">
-            <h1 className="text-5xl lg:text-7xl font-bold text-white tracking-tight">
-              Contact Us
-            </h1>
-            <p className="text-lg leading-relaxed max-w-xl text-white">
-              Get in touch with Gateway Abroad today. Our team is ready to help you 
-              start your journey to global education excellence.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-4">
-              <div className="bg-[#FF6B35] inline-block" style={{ borderTopRightRadius: '25px', overflow: 'hidden' }}>
-                <button className="bg-[#f9f5f2] hover:bg-orange-600 text-[#FF6B35] px-8 py-3 font-bold transition-all" style={{ borderTopRightRadius: '25px' }}>
-                  Book Consultation
-                </button>
-              </div>
-              <button className="bg-white hover:bg-gray-100 text-[#FF6B35] px-10 py-3 font-bold transition-all" style={{ borderTopRightRadius: '25px' }}>
-                Call Now
-              </button>
-            </div>
-          </div>
-          <div className="relative w-[760px] h-full">
-            <div
-              className="w-full h-[550px] bg-cover bg-center"
-              style={{
-                backgroundImage:
-                  "url('https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1200&h=800&fit=crop')",
-                WebkitMaskImage: "url('images/about-hero-shape.png')",
-                WebkitMaskRepeat: "no-repeat",
-                WebkitMaskSize: "cover",
-                WebkitMaskPosition: "center",
-                maskImage: "url('images/about-hero-shape.png')",
-                maskRepeat: "no-repeat",
-                maskSize: "cover",
-                maskPosition: "center",
-              }}
-            />
-          </div>
-        </div>
-      </section>
+     <section className="relative flex items-center overflow-hidden" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
+             <div className="lg:absolute lg:-left-40 lg:top-[0%] opacity-10 pointer-events-none hidden lg:block">
+               <div style={{
+                 transform: 'rotate(-30deg) scaleY(1)',
+                 mixBlendMode: 'multiply'
+               }}>
+                 <Image
+                   src="images/g logo.png"
+                   alt="Decorative Arrow"
+                   width={600}
+                   height={40}
+                   className="w-64 h-66 lg:w-116 lg:h-116 object-contain"
+                 />
+               </div>
+             </div>
+             {/* <div className="absolute left-[1px] top-[-288px] h-full w-8 bg-[#FF6B35] hidden lg:block z-10"></div> */}
+             <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 items-center relative">
+               <div className="text-white space-y-6 px-5">
+                 <h1 className="text-4xl lg:text-6xl font-bold text-white tracking-tight">
+                   Contact Us
+                 </h1>
+                 <p className="text-lg max-w-2xl font-medium text-white">
+                   Get in touch with Gateway Abroad today. Our team is ready to help you
+        start your journey to global education excellence.
+                 </p>
+                 <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                   <button
+                     className="
+                   text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
+                   rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base font-semibold
+                   hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)] 
+                   flex items-center justify-center gap-2
+                   transition-all hover:opacity-90
+                 "
+                   >
+                     Book Consultation
+                   </button>
+     
+                   <button
+                     className="
+                   text-black/80 px-6 sm:px-8 py-2.5 sm:py-3 bg-white
+                   rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base  font-semibold
+                   transition-all hover:bg-black hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)] 
+                 "
+                   >
+                     Call Now
+                   </button>
+                 </div>
+               </div>
+               <div className="relative lg:w-[760px] h-full">
+                 <div
+                   className="w-full lg:h-[600px] bg-cover bg-center"
+                   style={{
+                     backgroundImage:
+                       "url('https://storage.googleapis.com/cdn-website-bolddesk/2024/10/d287592c-contact-us-page.webp')",
+                     WebkitMaskImage: "url('images/about-hero-shape.png')",
+                     WebkitMaskRepeat: "no-repeat",
+                     WebkitMaskSize: "cover",
+                     WebkitMaskPosition: "bottom",
+                     maskImage: "url('images/about-hero-shape.png')",
+                     maskRepeat: "no-repeat",
+                     maskSize: "cover",
+                     maskPosition: "center",
+                   }}
+                 />
+     
+               </div>
+             </div>
+     
+     
+           </section>
+        
 
-      <div className="relative w-full mt-12 h-[260px] sm:h-[320px] lg:absolute lg:right-0 lg:top-[37px] lg:mt-0 lg:w-auto lg:max-w-[50vw]">
-        <img className="w-full h-auto max-w-full object-contain" src="images/about-hero-shape.png" alt="" style={{ maxWidth: '100%', height: 'auto', display: 'block' }} />
+
+      <div className="relative w-full mt-12 h-[260px] sm:h-[320px] lg:absolute lg:right-0 lg:top-[58px] lg:mt-0 lg:w-auto lg:max-w-[50vw]">
+        <img className="w-full h-auto max-w-full object-contain " src="images/about-hero-shape.png" alt="" style={{ maxWidth: '100%', height: 'auto', display: 'block' }} />
       </div>
 
       {/* Contact Information Section */}
