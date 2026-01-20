@@ -131,18 +131,18 @@ export default function BlogPage() {
 
             {/* Search Bar */}
             <div className="max-w-4xl mx-auto mt-8">
-              <div className="flex flex-col sm:flex-row gap-4 p-1 px-4 rounded-full shadow-lg border border-gray-400">
-                <div className="flex-1 flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row gap-4 p-2 px-4 rounded-full shadow-lg border border-gray-400">
+                <div className="flex-1 ml-3  flex items-center gap-3">
                   <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <input
                     type="text"
                     placeholder="What are you looking for?"
-                    className="flex-1 outline-none text-gray-700"
+                    className="flex-1 outline-none text-gray-700 ml-2"
                   />
                 </div>
-                <button className="bg-[#4A4A4A] rounded-full hover:bg-gray-700 text-white px-8 py-3 font-bold transition-all">
+                <button className="bg-[#4A4A4A] rounded-full hover:bg-gray-700 text-white px-8 py-3 font-bold transition-all mb-0">
                   Search
                 </button>
               </div>
@@ -151,48 +151,111 @@ export default function BlogPage() {
         </div>
       </section>
       <section className="py-10">
-        <div className="mx-auto px-0">
-          <div className="relative bg-[#FF6B35] p-8 md:p-12 overflow-hidden min-h-[390px]" style={{ backgroundImage: 'url(images/map.png)', backgroundSize: '50% auto', backgroundPosition: 'left center', backgroundRepeat: 'no-repeat' }}>
-            {/* Filter Tags - Right Side */}
-            <div className="relative z-15 flex flex-col items-end gap-2 mr-40 mt-8">
-              {/* First Row */}
-              <div className="flex flex-wrap justify-end gap-2">
-                {filterTagsRow1.map((tag, index) => (
-                  <button
-                    key={index}
-                    className={`px-8 py-5 font-semibold text-base transition-all bg-white text-gray-800 border border-white hover:bg-gray-600 hover:text-white ${index === 0 && tag === "UK" ? "rounded-tl-3xl" : "rounded-none"
-                      }`}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-              {/* Second Row */}
-              <div className="flex flex-wrap justify-end gap-2">
-                {filterTagsRow2.map((tag, index) => (
-                  <button
-                    key={index}
-                    className={`${tag === "CANADA" ? "px-10" : "px-11"} py-5 rounded-none font-semibold text-base transition-all bg-white text-gray-800 border border-white hover:bg-gray-600 hover:text-white`}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-              {/* Third Row */}
-              <div className="flex flex-wrap justify-end gap-2">
-                {filterTagsRow3.map((tag, index) => (
-                  <button
-                    key={index}
-                    className="px-8 py-5 rounded-none font-semibold text-base transition-all bg-white text-gray-800 border border-white hover:bg-gray-600 hover:text-white"
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+  <div className="mx-auto px-0">
+    <div
+  className="
+    relative
+    bg-[#FF6B35]
+    p-6 sm:p-8 md:p-12
+    overflow-hidden
+    min-h-[320px]
+    sm:min-h-[360px]
+    lg:min-h-[390px]
+    bg-[url('/images/map.png')]
+    bg-no-repeat
+    bg-center
+    lg:bg-left
+    bg-contain
+    lg:bg-[length:50%_auto]
+  "
+>
+
+    
+
+      {/* FILTER TAGS */}
+      <div
+        className="
+          relative
+          z-15
+          flex
+          flex-col
+          gap-3
+          mt-6
+          items-center
+
+          lg:items-end
+          lg:mr-40
+          lg:mt-8
+        "
+      >
+        {/* ROW 1 */}
+        <div className="flex flex-wrap justify-center lg:justify-end gap-2">
+          {filterTagsRow1.map((tag, index) => (
+            <button
+              key={index}
+              className={`
+                px-6 sm:px-8 py-3 sm:py-5
+                font-semibold text-sm sm:text-base
+                transition-all
+                bg-white text-gray-800
+                border border-white
+                hover:bg-gray-600 hover:text-white
+                ${index === 0 && tag === "UK" ? "rounded-tl-3xl" : "rounded-none"}
+              `}
+            >
+              {tag}
+            </button>
+          ))}
         </div>
-      </section>
+
+        {/* ROW 2 */}
+        <div className="flex flex-wrap justify-center lg:justify-end gap-2">
+          {filterTagsRow2.map((tag, index) => (
+            <button
+              key={index}
+              className={`
+                ${tag === "CANADA" ? "px-8 sm:px-10" : "px-8 sm:px-11"}
+                py-3 sm:py-5
+                rounded-none
+                font-semibold
+                text-sm sm:text-base
+                transition-all
+                bg-white text-gray-800
+                border border-white
+                hover:bg-gray-600 hover:text-white
+              `}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+
+        {/* ROW 3 */}
+        <div className="flex flex-wrap justify-center lg:justify-end gap-2">
+          {filterTagsRow3.map((tag, index) => (
+            <button
+              key={index}
+              className="
+                px-6 sm:px-8
+                py-3 sm:py-5
+                rounded-none
+                font-semibold
+                text-sm sm:text-base
+                transition-all
+                bg-white text-gray-800
+                border border-white
+                hover:bg-gray-600 hover:text-white
+              "
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {/* Blog Posts Grid */}
       <section className="bg-white py-12 sm:py-14 lg:py-16 px-2 relative overflow-hidden">
@@ -393,83 +456,96 @@ export default function BlogPage() {
 
       {/* Book Your Online Counselling Session */}
       <section className="py-12 bg-gray-600 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-80" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop)', backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(1px)' }}></div>
-        <div className="max-w-7xl mx-auto px-2 py-12 relative z-1">
-          <div className="flex justify-between items- gap-6">
-            <div className='w-35/80'>
-              <h2 className="text-3xl lg:text-6xl font-bold text-white leading-tight">
-                Book Your Online
-                Counselling
-                Session
-              </h2>
-              <p className="text-white text-lg leading-relaxed opacity-80">
+  {/* BACKGROUND IMAGE */}
+  <div
+    className="absolute inset-0 opacity-80"
+    style={{
+      backgroundImage:
+        "url(https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop)",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      filter: "blur(1px)",
+    }}
+  ></div>
 
-              </p>
-            </div>
+  <div className="max-w-7xl mx-auto px-4 py-12 relative z-10">
+    <div
+      className="
+        flex flex-col gap-10
+        lg:flex-row lg:justify-between lg:items-start
+      "
+    >
+      {/* LEFT CONTENT */}
+      <div className="w-full lg:w-35/80 text-center lg:text-left">
+        <h2 className="text-2xl sm:text-3xl lg:text-6xl font-bold text-white leading-tight">
+          Book Your Online
+          <br />
+          Counselling
+          <br />
+          Session
+        </h2>
 
-            <div className="bg-white w-40/80 p-6 py-12 rounded-lg">
-              <form className="space-y-8">
-                <div>
-                  <input
-                    type="text"
-                    placeholder='Name *'
-                    className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-                    required
-                  />
-                </div>
-                <div>
-                  <input
-                    type="tel"
-                    placeholder='Mobile Number *'
-                    className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-                    required
-                  />
-                </div>
-                <div>
-                  <input
-                    type="email"
-                    placeholder='Email Address *'
-                    className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-                    required
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder='Preferred Study Destination *'
-                    className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder='Message *'
-                    className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-                  />
-                </div>
-                <div className="flex items-start">
-                  <input
-                    type="checkbox"
-                    id="terms"
-                    className="mt-1 mr-2"
-                    required
-                  />
-                  <label htmlFor="terms" className="text-sm text-gray-700">
-                    I agree to the terms and conditions
-                  </label>
-                </div>
-                <button
-                  type="submit"
-                  className="w-full text-white px-6 py-2 rounded-lg font-semibold text-base hover:opacity-90 transition"
-                  style={{ backgroundColor: '#FF6B35' }}
-                >
-                  Submit
-                </button>
-              </form>
-            </div>
+        <p className="text-white text-base sm:text-lg leading-relaxed opacity-80 mt-4">
+          {/* optional text */}
+        </p>
+      </div>
+
+      {/* FORM */}
+      <div className="bg-white w-full lg:w-40/80 p-6 py-10 sm:py-12 rounded-lg">
+        <form className="space-y-8">
+          <input
+            type="text"
+            placeholder="Name *"
+            className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
+            required
+          />
+
+          <input
+            type="tel"
+            placeholder="Mobile Number *"
+            className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
+            required
+          />
+
+          <input
+            type="email"
+            placeholder="Email Address *"
+            className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="Preferred Study Destination *"
+            className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
+          />
+
+          <input
+            type="text"
+            placeholder="Message *"
+            className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
+          />
+
+          <div className="flex items-start">
+            <input type="checkbox" id="terms" className="mt-1 mr-2" required />
+            <label htmlFor="terms" className="text-sm text-gray-700">
+              I agree to the terms and conditions
+            </label>
           </div>
-        </div>
-      </section>
+
+          <button
+            type="submit"
+            className="w-full text-white px-6 py-2 rounded-lg font-semibold text-base hover:opacity-90 transition"
+            style={{ backgroundColor: "#FF6B35" }}
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 
     </>

@@ -115,7 +115,7 @@ function TimelineItem({
 
 export default function Home() {
   return (
-    <main className="">
+    <main className="bg-[#fffaf7]">
       <section
         className="
     relative overflow-hidden
@@ -312,10 +312,8 @@ export default function Home() {
         </div>
       </section>
 
-
-
       <section
-        className="
+        className=" bg-[#f2eeed]
     relative overflow-hidden w-full
     py-12 sm:py-16 lg:py-18
   "
@@ -464,10 +462,8 @@ export default function Home() {
       </section>
       <VideoTestimonialsSlider />
       <ImageTestimonial />
-      <section className="py-18 overflow-hidden" style={{ backgroundColor: '#ffece5' }}>
+      <section className="py-18 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden">
-
-          {/* Heading */}
           <div className="text-center mb-12">
             <h2 className="text-[2.6rem] font-bold mb-2">
               <span style={{ color: '#f46c44' }}>Top Universities</span>{" "}

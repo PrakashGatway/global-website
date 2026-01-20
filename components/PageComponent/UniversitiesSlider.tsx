@@ -67,27 +67,56 @@ export default function UniversitiesSlider() {
     useEffect(() => {
         if (!sliderRef1.current || !sliderRef2.current) return;
 
-        const slider1 = new KeenSlider(
-            sliderRef1.current,
-            {
-                loop: true,
-                drag: true,
-                renderMode: "performance",
-                slides: { perView: "7", spacing: 8 },
-            },
-            [marquee(0.4)] // left → right
-        );
+      const slider1 = new KeenSlider(
+  sliderRef1.current,
+  {
+    loop: true,
+    drag: true,
+    renderMode: "performance",
+    slides: {
+      perView: 2,
+      spacing: 8,
+    },
+    breakpoints: {
+      "(min-width: 640px)": {
+        slides: { perView: 3, spacing: 8 },
+      },
+      "(min-width: 768px)": {
+        slides: { perView: 4, spacing: 8 },
+      },
+      "(min-width: 1024px)": {
+        slides: { perView: 7, spacing: 8 }, // ✅ desktop unchanged
+      },
+    },
+  },
+  [marquee(0.4)]
+);
 
-        const slider2 = new KeenSlider(
-            sliderRef2.current,
-            {
-                loop: true,
-                drag: true,
-                rtl: true,
-                slides: { perView: "7", spacing: 8 },
-            },
-            [marquee(0.4)] // right → left
-        );
+const slider2 = new KeenSlider(
+  sliderRef2.current,
+  {
+    loop: true,
+    drag: true,
+    rtl: true,
+    slides: {
+      perView: 2,
+      spacing: 8,
+    },
+    breakpoints: {
+      "(min-width: 640px)": {
+        slides: { perView: 3, spacing: 8 },
+      },
+      "(min-width: 768px)": {
+        slides: { perView: 4, spacing: 8 },
+      },
+      "(min-width: 1024px)": {
+        slides: { perView: 7, spacing: 8 }, // ✅ desktop unchanged
+      },
+    },
+  },
+  [marquee(0.4)]
+);
+
 
         return () => {
             slider1.destroy();

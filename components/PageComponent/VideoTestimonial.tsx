@@ -28,10 +28,6 @@ export default function VideoTestimonialsSlider() {
   return (
     <section
       className="bg-cover bg-center relative overflow-hidden"
-      style={{
-        backgroundImage: "url('/shapes/bg01.jpg')",
-        backgroundColor: '#ffeae5',
-      }}
     >
       <div className="absolute -right-20 top-[0%] opacity-10 pointer-events-none hidden lg:block">
         <div style={{
