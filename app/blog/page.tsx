@@ -463,7 +463,7 @@ export default function BlogPage() {
       backgroundImage:
         "url(https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop)",
       backgroundSize: "cover",
-      backgroundPosition: "center",
+      backgroundPosition: "top",
       filter: "blur(1px)",
     }}
   ></div>
