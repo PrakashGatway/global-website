@@ -1,56 +1,73 @@
 "use client"
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Clock, MessageSquare } from 'lucide-react';
+import Image from "next/image";
 
 export default function ContactUsPage() {
   return (
     <div className='bg-[#fffaf7]'>
-      {/* Hero Section */}
-      <section className="relative h-[550px] flex items-center overflow-hidden" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
-        <div className="absolute left-[1px] top-[-288px] h-full w-8 bg-[#FF6B35] hidden lg:block z-10"></div>
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 items-center relative">
-          <div className="text-white space-y-6">
-            <h1 className="text-5xl lg:text-7xl font-bold text-white tracking-tight">
-              Contact Us
-            </h1>
-            <p className="text-lg leading-relaxed max-w-xl text-white">
-              Get in touch with Gateway Abroad today. Our team is ready to help you 
-              start your journey to global education excellence.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-4">
-              <div className="bg-[#FF6B35] inline-block" style={{ borderTopRightRadius: '25px', overflow: 'hidden' }}>
-                <button className="bg-[#f9f5f2] hover:bg-orange-600 text-[#FF6B35] px-8 py-3 font-bold transition-all" style={{ borderTopRightRadius: '25px' }}>
-                  Book Consultation
-                </button>
-              </div>
-              <button className="bg-white hover:bg-gray-100 text-[#FF6B35] px-10 py-3 font-bold transition-all" style={{ borderTopRightRadius: '25px' }}>
-                Call Now
-              </button>
-            </div>
-          </div>
-          <div className="relative w-[760px] h-full">
-            <div
-              className="w-full h-[550px] bg-cover bg-center"
-              style={{
-                backgroundImage:
-                  "url('https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1200&h=800&fit=crop')",
-                WebkitMaskImage: "url('/images/about-hero-shape.png')",
-                WebkitMaskRepeat: "no-repeat",
-                WebkitMaskSize: "cover",
-                WebkitMaskPosition: "center",
-                maskImage: "url('/images/about-hero-shape.png')",
-                maskRepeat: "no-repeat",
-                maskSize: "cover",
-                maskPosition: "center",
-              }}
-            />
-          </div>
-        </div>
-      </section>
+<section
+  className="relative flex items-center min-h-[80vh] overflow-hidden"
+  style={{ backgroundColor: '#f46c44', isolation: 'isolate' }}
+>
+  {/* Decorative logo */}
+  <div className="lg:absolute z-[-1] lg:-left-40 lg:top-0 opacity-10 pointer-events-none hidden lg:block">
+    <div
+      style={{
+        transform: 'rotate(-30deg)',
+        mixBlendMode: 'multiply',
+      }}
+    >
+      <Image
+        src="/images/g logo.png"
+        alt="Decorative Arrow"
+        width={600}
+        height={600}
+        className="w-64 lg:w-116 object-contain"
+      />
+    </div>
+  </div>
 
-      <div className="relative w-full mt-12 h-[260px] sm:h-[320px] lg:absolute lg:right-0 lg:top-[37px] lg:mt-0 lg:w-auto lg:max-w-[50vw]">
-        <img className="w-full h-auto max-w-full object-contain" src="/images/about-hero-shape.png" alt="" style={{ maxWidth: '100%', height: 'auto', display: 'block' }} />
+  {/* GRID */}
+  <div className="w-full mx-auto grid lg:grid-cols-2 gap-12 items-stretch sm:pl-30">
+
+    {/* LEFT CONTENT */}
+    <div className="text-white space-y-6 p-6 flex flex-col justify-center">
+      <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
+        Contact us
+      </h1>
+
+      <p className="text-lg max-w-2xl font-medium">
+        Gateway Abroad: Your Launchpad to Global Education. We empower students
+        to achieve their dreams of studying abroad with expert coaching for:
+        IELTS, TOEFL, PTE, GRE, GMAT, SAT.
+      </p>
+
+      <div className="mt-8 flex flex-col sm:flex-row gap-4">
+        <button className="text-white px-6 py-3 bg-[#1f2937] rounded-tr-4xl shadow-[-4px_0px_4px_rgba(0,0,0,0.55)] hover:bg-black transition">
+          Contact Now
+        </button>
+
+        <button className="text-black/80 px-6 py-3 bg-white rounded-tr-4xl shadow-[-4px_0px_4px_rgba(0,0,0,0.55)] hover:bg-black hover:text-white transition">
+          Check Your Eligibility
+        </button>
       </div>
+    </div>
+
+    {/* RIGHT IMAGE */}
+    <div className="relative min-h-[300px] lg:min-h-[80vh] w-full">
+      <Image
+        src="https://www.shutterstock.com/image-photo/human-holding-call-center-on-600nw-2422082399.jpg"
+        alt="Contact"
+        fill
+        priority
+        className="object-cover"
+      />
+    </div>
+
+  </div>
+</section>
+
 
       {/* Contact Information Section */}
       <section className="py-20 mt-35 relative" style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
@@ -63,14 +80,14 @@ export default function ContactUsPage() {
               Gateway Abroad
             </h2>
             <p className="text-gray-600 text-lg mt-4 max-w-3xl mx-auto">
-              Our dedicated team is here to answer your questions and guide you through 
+              Our dedicated team is here to answer your questions and guide you through
               every step of your study abroad journey.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {/* Contact Card 1 */}
-            <motion.div 
+            <motion.div
               className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -90,7 +107,7 @@ export default function ContactUsPage() {
             </motion.div>
 
             {/* Contact Card 2 */}
-            <motion.div 
+            <motion.div
               className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -110,7 +127,7 @@ export default function ContactUsPage() {
             </motion.div>
 
             {/* Contact Card 3 */}
-            <motion.div 
+            <motion.div
               className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -131,7 +148,7 @@ export default function ContactUsPage() {
             </motion.div>
 
             {/* Contact Card 4 */}
-            <motion.div 
+            <motion.div
               className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -163,17 +180,17 @@ export default function ContactUsPage() {
                 Send Us a Message
               </h2>
               <p className="text-gray-600 text-lg leading-relaxed mb-8">
-                Have questions about studying abroad? Fill out the form below and our 
+                Have questions about studying abroad? Fill out the form below and our
                 education experts will get back to you within 24 hours.
               </p>
-              
+
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <MessageSquare className="h-6 w-6" style={{ color: '#FF6B35' }} />
                   <div>
                     <h4 className="font-bold text-gray-800 mb-2">Why Choose Us?</h4>
                     <p className="text-gray-600">
-                      Personalized guidance from experienced counselors who understand 
+                      Personalized guidance from experienced counselors who understand
                       your unique goals and aspirations.
                     </p>
                   </div>
@@ -183,7 +200,7 @@ export default function ContactUsPage() {
                   <div>
                     <h4 className="font-bold text-gray-800 mb-2">Quick Response</h4>
                     <p className="text-gray-600">
-                      We guarantee a response within 24 hours. For urgent matters, 
+                      We guarantee a response within 24 hours. For urgent matters,
                       please call our support line.
                     </p>
                   </div>
@@ -372,7 +389,7 @@ export default function ContactUsPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="space-y-6">
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">Office Locations</h3>
@@ -391,7 +408,7 @@ export default function ContactUsPage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">Emergency Contact</h3>
                 <p className="text-gray-600 mb-4">For urgent matters outside business hours:</p>
@@ -412,7 +429,7 @@ export default function ContactUsPage() {
             Ready to Start Your Journey?
           </h2>
           <p className="text-white text-xl mb-10 max-w-3xl mx-auto">
-            Join thousands of successful students who have achieved their study abroad 
+            Join thousands of successful students who have achieved their study abroad
             dreams with Gateway Abroad.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">

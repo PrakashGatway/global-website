@@ -7,9 +7,9 @@ import UniversitiesSlider from '@/components/PageComponent/UniversitiesSlider';
 
 export default function AboutUsPage() {
   return (
-    <div className='bg-[#fffaf7] relative'>
-      <section className="relative flex items-center overflow-hidden" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
-        <div className="absolute -left-40 top-[0%] opacity-10 pointer-events-none hidden lg:block">
+    <div className='bg-[#fbfbfb] relative'>
+      <section className="relative flex items-center" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
+        <div className="lg:absolute z-[-1] lg:-left-40 lg:top-[0%] opacity-10 pointer-events-none hidden lg:block">
           <div style={{
             transform: 'rotate(-30deg) scaleY(1)',
             mixBlendMode: 'multiply'
@@ -23,9 +23,8 @@ export default function AboutUsPage() {
             />
           </div>
         </div>
-        {/* <div className="absolute left-[1px] top-[-288px] h-full w-8 bg-[#FF6B35] hidden lg:block z-10"></div> */}
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 items-center relative">
-          <div className="text-white space-y-6">
+        <div className="w-full mx-auto grid lg:grid-cols-2 gap-12 items-center sm:pl-30">
+          <div className="text-white space-y-6 p-6 sm:pt-0 pt-12">
             <h1 className="text-4xl lg:text-6xl font-bold text-white tracking-tight">
               About Us
             </h1>
@@ -58,53 +57,34 @@ export default function AboutUsPage() {
               </button>
             </div>
           </div>
-          <div className="relative w-[760px] h-full">
-            <div
-              className="w-full h-[600px] bg-cover bg-center"
-              style={{
-                backgroundImage:
-                  "url('https://buffer.com/resources/content/images/2025/03/social-media-image-sizes.png')",
-                WebkitMaskImage: "url('/images/about-hero-shape.png')",
-                WebkitMaskRepeat: "no-repeat",
-                WebkitMaskSize: "cover",
-                WebkitMaskPosition: "bottom",
-                maskImage: "url('/images/about-hero-shape.png')",
-                maskRepeat: "no-repeat",
-                maskSize: "cover",
-                maskPosition: "center",
-              }}
-            />
-
+          <div className="h-full w-full">
+            <div className='relative flex items-center justify-center h-[106%] w-full rounded-bl-[55%] overflow-hidden mr-10'>
+              <img className='h-full w-full object-cover' src="https://buffer.com/resources/content/images/2025/03/social-media-image-sizes.png" alt="" />
+              <div className='absolute bottom-0 right-0 h-[5.7%] w-full bg-[#f46c44] z-11'>
+              </div>
+            </div>
           </div>
         </div>
-
-
       </section>
-      <div className="relative w-full -mt-12 h-[260px] sm:h-[220px] lg:absolute lg:right-0 lg:top-[-15px] lg:mt-0 lg:w-auto lg:max-w-[48vw]">
-        <img className="w-full h-auto max-w-full object-contain" src="/images/about-hero-shape.png" alt="" style={{ maxWidth: '100%', height: 'auto', display: 'block' }} />
-      </div>
 
-
-      <section className="py-5 mt-35 " style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
+      <section className="py-5 mt-28 " style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
         <div className="max-w-7xl mx-auto px-2">
           <div className="text-center mb-8">
-            <h2 className="text-4xl lg:text-[3rem] font-bold mb-2" style={{ color: '#FF6B35' }}>
+            <h2 className="text-3xl lg:text-[2.6rem] font-bold mb-2" style={{ color: '#FF6B35' }}>
               Succeed with the world&apos;s most trusted
             </h2>
-            <h2 className="text-4xl lg:text-[3rem] font-bold" style={{ color: '#FF6B35' }}>
+            <h2 className="text-3xl lg:text-[2.6rem] font-bold" style={{ color: '#FF6B35' }}>
               higher education specialist
             </h2>
           </div>
         </div>
       </section>
-
-      {/* About Company Section */}
-      <section className="py-12 px-2">
-        <div className="max-w-7xl mx-auto bg-[#f9f5f2]">
+      <section className="my-12 px-2 bg-[#f4f3f1]">
+        <div className="max-w-7xl mx-auto ">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-15 items-center">
             <div className='py-10'>
-              <h2 className="text-5xl font-bold text-gray-800 mb-6">About Company</h2>
-              <p className="text-gray-700 text-base font-semibold leading-relaxed mb-10">
+              <h2 className="text-5xl font-bold text-gray-700 mb-6">About Company</h2>
+              <p className="text-gray-700 text-base font-medium leading-relaxed mb-10">
                 We specialize in helping students achieve their dreams of studying abroad. Our comprehensive support includes university selection, application assistance, visa guidance, and pre-departure preparation. With years of experience and a proven track record, we are committed to making your study abroad journey smooth and successful.
               </p>
               <p className="text-gray-700 text-base font-semibold leading-relaxed mb-6">
@@ -138,11 +118,11 @@ export default function AboutUsPage() {
       </section>
 
       {/* Mission & Vision Section */}
-      <section className="pt-12 pb-20">
+      <section className="py-12 my-6 bg-[#f4f3f1]">
         <div className="max-w-7xl mx-auto px-2">
           <div className="flex flex-col md:flex-row justify-center items-center gap-12 pb-4">
             <div className="md:w-1/4">
-              <h2 className="text-3xl font-bold uppercase text-gray-800">Our Mission</h2>
+              <h2 className="text-3xl font-bold uppercase text-gray-700">Our Mission</h2>
             </div>
             <div className="md:w-3/4">
               <p className="text-gray-600 text-base font-semibold leading-relaxed">
@@ -155,7 +135,7 @@ export default function AboutUsPage() {
         <div className="max-w-7xl mx-auto px-2">
           <div className="flex flex-col md:flex-row gap-12 justify-center items-center">
             <div className="md:w-1/4">
-              <h2 className="text-3xl font-bold uppercase text-gray-800">Our Vision</h2>
+              <h2 className="text-3xl font-bold uppercase text-gray-700">Our Vision</h2>
             </div>
             <div className="md:w-3/4">
               <p className="text-gray-600 text-base font-semibold leading-relaxed">
@@ -197,7 +177,7 @@ export default function AboutUsPage() {
       </section>
 
       {/* The Story Behind Section */}
-      <section className="py-20 overflow-hidden">
+      <section className="my-12 overflow-x-hidden bg-[#f4f3f1]">
         <div className="max-w-7xl mx-auto px-2">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -214,26 +194,54 @@ export default function AboutUsPage() {
                 Our journey began with a simple belief: every student deserves access to quality education, regardless of their background. Over the years, we have helped thousands of students realize their dreams of studying abroad, building a reputation for excellence, integrity, and personalized service.
               </p>
             </div>
-            <div className="lg:relative lg:-right-32 w-full lg:h-[600px]">
-              <div className="absolute inset-0"
+            <div
+              className="
+    relative w-full
+    h-[320px] sm:h-[420px] md:h-[500px]
+    lg:h-[600px]
+    lg:-right-32
+  "
+            >
+              {/* BACK IMAGE */}
+              <div
+                className="
+      absolute inset-0
+      lg:static
+      w-full h-full
+    "
                 style={{
                   backgroundImage:
                     "url('https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1600')",
                   backgroundSize: "cover",
                   backgroundPosition: "center right",
-                  WebkitMaskImage: "url('/images/about-hero-shape-3.png')",
+
+                  WebkitMaskImage: "url('images/about-hero-shape-3.png')",
                   WebkitMaskRepeat: "no-repeat",
                   WebkitMaskSize: "100% 100%",
                   WebkitMaskPosition: "right center",
-                  maskImage: "url('/images/about-hero-shape-3.png')",
+
+                  maskImage: "url('images/about-hero-shape-3.png')",
                   maskRepeat: "no-repeat",
                   maskSize: "100% 100%",
                   maskPosition: "right center",
                 }}
               />
-              <div className='w-full h-full  inset-0 bg-black-100'></div>
+
+              {/* FRONT FLOAT IMAGE */}
               <motion.div
-                className="lg:absolute lg:top-50 lg:-left-20 inset-0 lg:w-100 lg:h-110 border-1 border-white"
+                className="
+      absolute
+      hidden
+      lg:block
+      bottom-4 left-1/2 -translate-x-1/2
+      w-[220px] h-[280px]
+      sm:w-[260px] sm:h-[340px]
+      md:w-[300px] md:h-[380px]
+
+      lg:top-50 lg:-left-20
+      lg:w-100 lg:h-110
+      lg:translate-x-0 lg:bottom-auto
+    "
                 initial={{ y: 200, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8 }}
@@ -243,11 +251,13 @@ export default function AboutUsPage() {
                     "url('https://img.freepik.com/premium-photo/cute-smiling-girl-student-holding-notebooks-looking-cheerful-camera-studying-college-university-standing-blue-background_1258-70144.jpg')",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
-                  WebkitMaskImage: "url('/images/about-hero-shape-front-3.png')",
+
+                  WebkitMaskImage: "url('images/about-hero-shape-front-3.png')",
                   WebkitMaskRepeat: "no-repeat",
                   WebkitMaskSize: "100% 100%",
                   WebkitMaskPosition: "right center",
-                  maskImage: "url('/images/about-hero-shape-front-3.png')",
+
+                  maskImage: "url('images/about-hero-shape-front-3.png')",
                   maskRepeat: "no-repeat",
                   maskSize: "100% 100%",
                   maskPosition: "right center",
@@ -367,10 +377,10 @@ export default function AboutUsPage() {
                   description: "We provide a free consultation to students who wish to study abroad. Our expert counsellors will help you pick the right direction and be with you every step of the way."
                 }
               ].map((service, index) => (
-                <div key={index} className={`p-8 min-h-[200px] bg-white border-[#626362] ${index % 3 !== 2 ? 'border-r' : ''} ${index < 3 ? 'border-b' : ''}`}>
+                <div key={index} className={`p-8 min-h-[200px] bg-[#f1f1f1] border-[#626362] ${index % 3 !== 2 ? 'border-r' : ''} ${index < 3 ? 'border-b' : ''}`}>
                   <div className="text-orange-500 mb-2  flex justify-center">{service.icon}</div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-3 text-center">{service.title}</h3>
-                  <p className="text-gray-700 font-semibold text-center">{service.description}</p>
+                  <h3 className="text-xl font-bold text-gray-700 mb-3 text-center">{service.title}</h3>
+                  <p className="text-gray-700 text-base font-medium text-center">{service.description}</p>
                 </div>
               ))}
             </div>
@@ -382,75 +392,87 @@ export default function AboutUsPage() {
 
       {/* Book Your Online Counselling Session */}
       <section className="py-12 bg-gray-600 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-80" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop)', backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(1px)' }}></div>
-        <div className="max-w-7xl mx-auto px-2 py-12 relative z-1">
-          <div className="flex justify-between items- gap-6">
-            <div className='w-35/80'>
+        {/* background */}
+        <div
+          className="absolute inset-0 opacity-80"
+          style={{
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(1px)",
+          }}
+        ></div>
+
+        <div className="max-w-7xl mx-auto px-4 py-12 relative z-10">
+          <div
+            className="
+        flex flex-col gap-10
+        lg:flex-row lg:justify-between lg:items-start
+      "
+          >
+            {/* LEFT CONTENT */}
+            <div className="w-full lg:w-35/80 text-center lg:text-left">
               <h2 className="text-3xl lg:text-6xl font-bold text-white leading-tight">
                 Book Your Online
+                <br />
                 Counselling
+                <br />
                 Session
               </h2>
-              <p className="text-white text-lg leading-relaxed opacity-80">
 
+              <p className="text-white text-lg leading-relaxed opacity-80 mt-4">
+                {/* optional text */}
               </p>
             </div>
 
-            <div className="bg-white w-40/80 p-6 py-12 rounded-lg">
+            {/* FORM */}
+            <div className="bg-white w-full lg:w-40/80 p-6 py-12 rounded-lg">
               <form className="space-y-8">
-                <div>
-                  <input
-                    type="text"
-                    placeholder='Name *'
-                    className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-                    required
-                  />
-                </div>
-                <div>
-                  <input
-                    type="tel"
-                    placeholder='Mobile Number *'
-                    className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-                    required
-                  />
-                </div>
-                <div>
-                  <input
-                    type="email"
-                    placeholder='Email Address *'
-                    className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-                    required
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder='Preferred Study Destination *'
-                    className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder='Message *'
-                    className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="Name *"
+                  className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
+                  required
+                />
+
+                <input
+                  type="tel"
+                  placeholder="Mobile Number *"
+                  className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
+                  required
+                />
+
+                <input
+                  type="email"
+                  placeholder="Email Address *"
+                  className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
+                  required
+                />
+
+                <input
+                  type="text"
+                  placeholder="Preferred Study Destination *"
+                  className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Message *"
+                  className="w-full px-2 py-1.5 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
+                />
+
                 <div className="flex items-start">
-                  <input
-                    type="checkbox"
-                    id="terms"
-                    className="mt-1 mr-2"
-                    required
-                  />
+                  <input type="checkbox" id="terms" className="mt-1 mr-2" required />
                   <label htmlFor="terms" className="text-sm text-gray-700">
                     I agree to the terms and conditions
                   </label>
                 </div>
+
                 <button
                   type="submit"
                   className="w-full text-white px-6 py-2 rounded-lg font-semibold text-base hover:opacity-90 transition"
-                  style={{ backgroundColor: '#FF6B35' }}
+                  style={{ backgroundColor: "#FF6B35" }}
                 >
                   Submit
                 </button>

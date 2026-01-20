@@ -329,15 +329,16 @@ export default function BlogPage() {
                     {post.excerpt}
                   </p>
 
-                  <button
-                    className="
-                      bg-[#FF6B35] hover:bg-[#e85f2f]
-                      text-white text-sm font-semibold
-                      px-5 py-2 rounded transition-colors
-                    "
-                  >
-                    Read More »
-                  </button>
+                 <button
+                          className="
+                   text-white px-6 py-2 mx-auto sm:py-3 bg-[#1f2937]
+              rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-sm font-semibold
+              hover:bg-[#FF6B35] hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
+              flex items-center justify-center gap-2
+              transition-all hover:opacity-90"
+                        >
+                          Read More »
+                        </button>
                 </div>
               </div>
             ))}

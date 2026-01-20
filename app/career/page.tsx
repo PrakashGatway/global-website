@@ -6,16 +6,10 @@ import { Facebook, Instagram, Twitter, Youtube, Send, Linkedin } from "lucide-re
 export default function CareerPage() {
   return (
     <main className="bg-[#fffaf6] overflow-hidden">
-
-      {/* ================= HERO ================= */}
-      <section className="bg-[#f46c44] py-45 text-center text-white relative overflow-hidden">
-
-      
-
-
-         {/* Decorative Arrow on Left Side */}
+      <section className="bg-[#f46c44] py-32 text-center text-white relative overflow-hidden">
+        {/* Decorative Arrow on Left Side */}
         <div className="absolute -left-30 top-52 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-          <div style={{ 
+          <div style={{
             transform: 'rotate(-20deg)',
             filter: 'brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)',
             mixBlendMode: 'multiply'
@@ -29,34 +23,32 @@ export default function CareerPage() {
             />
           </div>
         </div>
-        <h1 className="text-3xl md:text-7xl font-bold">Join Our Team</h1>
-        <p className="mt-4 max-w-7xl lg:leading-11 mx-auto text-sm md:text-2xl opacity-90">
+        <h1 className="text-3xl md:text-6xl font-bold">Join Our Team</h1>
+        <p className="mt-4 max-w-5xl mx-auto text-sm md:text-lg font-medium">
           Be part of a dynamic team that helps students achieve their study
           abroad dreams. Explore exciting career opportunities with Gateway
           Abroad Education.
         </p>
       </section>
 
-      {/* ================= SECTION 1 ================= */}
-      <section className="max-w-7xl mx-auto  py-40 grid md:grid-cols-2 gap-14 items-center relative">
-           {/* Decorative Arrow on Left Side */}
-       <div className="absolute -right-100 -top-22 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block w-[600px] h-[700px]">
-  <div
-    className="w-full h-full rotate-[20deg]"
-    style={{
-      filter:
-        "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)",
-      mixBlendMode: "multiply",
-    }}
-  >
-    <Image
-      src="/images/g logo.png"
-      alt="Decorative Arrow"
-      fill
-      className="object-contain scale-x-[-1]"
-    />
-  </div>
-</div>
+      <section className="max-w-7xl mx-auto  py-20 grid md:grid-cols-2 gap-14 items-center relative">
+        <div className="absolute -right-100 -top-22 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block w-[600px] h-[700px]">
+          <div
+            className="w-full h-full rotate-[20deg]"
+            style={{
+              filter:
+                "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)",
+              mixBlendMode: "multiply",
+            }}
+          >
+            <Image
+              src="/images/g logo.png"
+              alt="Decorative Arrow"
+              fill
+              className="object-contain scale-x-[-1]"
+            />
+          </div>
+        </div>
         <Image
           src="https://t4.ftcdn.net/jpg/00/35/30/85/360_F_35308534_WGRVXlymcjQqoRXzeWEfVCOfBHBq9YdW.jpg"
           width={750}
@@ -105,9 +97,9 @@ export default function CareerPage() {
 
       {/* ================= VACANCIES ================= */}
       <section className="py-20 text-center relative overflow-hidden">
-         {/* Decorative Arrow on Left Side */}
+        {/* Decorative Arrow on Left Side */}
         <div className="absolute -left-30 top-40  -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-          <div style={{ 
+          <div style={{
             transform: 'rotate(-20deg)',
             filter: 'brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)',
             mixBlendMode: 'multiply'
@@ -156,32 +148,32 @@ export default function CareerPage() {
       {/* ================= FORM ================= */}
       <section className="py-20 relative overflow-hidden">
 
-  {/* Decorative Arrow */}
-  <div className="absolute -right-30 -bottom-40 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-    <div
-      style={{
-        transform: "rotate(20deg)",
-        filter:
-          "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)",
-        mixBlendMode: "multiply",
-      }}
-    >
-      <Image
-        src="/images/g logo.png"
-        alt="Decorative Arrow"
-        width={400}
-        height={40}
-        className="w-64 h-66 lg:w-96 lg:h-96 object-contain scale-x-[-1]"
-      />
-    </div>
-  </div>
+        {/* Decorative Arrow */}
+        <div className="absolute -right-30 -bottom-40 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
+          <div
+            style={{
+              transform: "rotate(20deg)",
+              filter:
+                "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)",
+              mixBlendMode: "multiply",
+            }}
+          >
+            <Image
+              src="/images/g logo.png"
+              alt="Decorative Arrow"
+              width={400}
+              height={40}
+              className="w-64 h-66 lg:w-96 lg:h-96 object-contain scale-x-[-1]"
+            />
+          </div>
+        </div>
 
-  {/* BACKGROUND */}
-  <div className="max-w-7xl mx-auto bg-[#fff3ec] py-12 sm:py-16 md:py-20 px-4">
-    <div className="max-w-4xl mx-auto text-center">
+        {/* BACKGROUND */}
+        <div className="max-w-7xl mx-auto bg-[#fff3ec] py-12 sm:py-16 md:py-20 px-4">
+          <div className="max-w-4xl mx-auto text-center">
 
-      {/* HEADING */}
-      <h2 className="
+            {/* HEADING */}
+            <h2 className="
         text-2xl
         sm:text-3xl
         md:text-4xl
@@ -190,14 +182,14 @@ export default function CareerPage() {
         text-orange-500
         leading-tight
       ">
-        Boost Your Career!
-        <span className="text-gray-700 block lg:inline">
-          {" "}Find the Perfect Role with Gateway Abroad
-        </span>
-      </h2>
+              Boost Your Career!
+              <span className="text-gray-700 block lg:inline">
+                {" "}Find the Perfect Role with Gateway Abroad
+              </span>
+            </h2>
 
-      {/* FORM */}
-      <form className="
+            {/* FORM */}
+            <form className="
         bg-white
         mt-8
         sm:mt-10
@@ -211,42 +203,42 @@ export default function CareerPage() {
         text-left
       ">
 
-        <input
-          className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
-          placeholder="Name*"
-        />
+              <input
+                className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
+                placeholder="Name*"
+              />
 
-        <input
-          className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
-          placeholder="Mobile Number*"
-        />
+              <input
+                className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
+                placeholder="Mobile Number*"
+              />
 
-        <input
-          className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
-          placeholder="Email Address*"
-        />
+              <input
+                className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
+                placeholder="Email Address*"
+              />
 
-        <input
-          className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
-          placeholder="State, City"
-        />
+              <input
+                className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
+                placeholder="State, City"
+              />
 
-        <select className="border-0 border-b-2 border-gray-300 p-2 bg-transparent focus:outline-none focus:border-orange-500 text-sm sm:text-base">
-          <option>Select Time</option>
-        </select>
+              <select className="border-0 border-b-2 border-gray-300 p-2 bg-transparent focus:outline-none focus:border-orange-500 text-sm sm:text-base">
+                <option>Select Time</option>
+              </select>
 
-        <select className="border-0 border-b-2 border-gray-300 p-2 bg-transparent focus:outline-none focus:border-orange-500 text-sm sm:text-base">
-          <option>Preferred Study Destination</option>
-        </select>
+              <select className="border-0 border-b-2 border-gray-300 p-2 bg-transparent focus:outline-none focus:border-orange-500 text-sm sm:text-base">
+                <option>Preferred Study Destination</option>
+              </select>
 
-        <div className="text-xs sm:text-sm text-gray-500">
-          <input type="checkbox" className="mr-2" />
-          I agree to receive updates and offers.
-        </div>
+              <div className="text-xs sm:text-sm text-gray-500">
+                <input type="checkbox" className="mr-2" />
+                I agree to receive updates and offers.
+              </div>
 
-        {/* BUTTON */}
-        <button
-          className="
+              {/* BUTTON */}
+              <button
+                className="
             bg-orange-500
             text-white
             py-3
@@ -255,26 +247,26 @@ export default function CareerPage() {
             sm:w-40
             mx-auto
           "
-        >
-          Submit
-        </button>
+              >
+                Submit
+              </button>
 
-      </form>
+            </form>
 
-    </div>
-  </div>
-</section>
-
-
-    
+          </div>
+        </div>
+      </section>
 
 
 
-       {/* Join Our Exclusive Study Abroad Network */}
+
+
+
+      {/* Join Our Exclusive Study Abroad Network */}
       <section className="py-10 bg-[#FF6B35] relative overflow-visible">
         {/* Decorative Arrow on Left Side */}
         <div className="absolute -left-30 top-52 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-          <div style={{ 
+          <div style={{
             transform: 'rotate(-20deg)',
             filter: 'brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)',
             mixBlendMode: 'multiply'
