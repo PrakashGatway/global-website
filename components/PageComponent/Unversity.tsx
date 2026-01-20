@@ -93,7 +93,7 @@ export default function UniversitySliderClient() {
   ];
 
   return (
-    <section className="py-12 bg-[#ffece5] overflow-hidden">
+    <section className="py-12 overflow-hidden">
       <h2 className="text-[2.6rem] font-bold text-center mb-6">
         <span className="text-[#ea6c46]">International</span>{' '}
         <span className="text-[#646162]">University Partners</span>

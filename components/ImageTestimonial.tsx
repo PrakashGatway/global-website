@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-export default function ImageTestimonial({font}) {
+export default function ImageTestimonial({font,bg}) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const AUTO_SLIDE_INTERVAL = 3000;
 
@@ -102,7 +102,7 @@ export default function ImageTestimonial({font}) {
   ];
 
   return (
-    <section className="py-16" style={{ backgroundColor: '#fff9f4', overflow: 'visible' }}>
+    <section className="py-16" style={{ backgroundColor: !bg &&'#f5f1f0', overflow: 'visible' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ overflow: 'visible' }}>
         <h2 style={{ fontFamily: font && "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", transformStyle: 'flat', transformOrigin: 'initial' }} className="text-[2.6rem] font-semibold text-center mb-0">
           <span style={{ color: '#f46c44' }}>Image</span>{" "}

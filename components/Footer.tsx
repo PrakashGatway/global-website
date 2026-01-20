@@ -1,29 +1,23 @@
 "use client"
-
-import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react"
-import Link from "next/link"
 import Image from "next/image"
-// import ThreeDButton from "./3dbutton"
-
 export function Footer() {
   return (
     <>
-      {/* Footer */}
-      <footer className="bg-gray-100 pt-32 pb-10 overflow-visible">
+      <footer className="pt-32 pb-10 overflow-visible bg-[#fffaf7]">
         <div className=" mx-auto px-4 sm:px-6 lg:px-16 overflow-visible">
 
           {/* ================= MAIN FOOTER CARD with Orange Border ================= */}
           <div className="rounded-[50px] px-6 md:px-12 pt-8 pb-12 relative bg-white">
 
             {/* ================= TOP IMAGE STRIP with Orange Border - Positioned Upward ================= */}
-           <div className="w-full mb-16 -mt-20">
+            <div className="w-full mb-16 -mt-20">
 
-  {/* OUTER ORANGE FRAME */}
-  <div className="relative h-[180px] md:h-[220px] rounded-[70px] bg-[#f46c44] shadow-xl">
+              {/* OUTER ORANGE FRAME */}
+              <div className="relative h-[180px] md:h-[220px] rounded-[70px] bg-[#f46c44] shadow-xl">
 
-    {/* INNER IMAGE HOLDER */}
-    <div
-      className="
+                {/* INNER IMAGE HOLDER */}
+                <div
+                  className="
         absolute
         top-[14px]
         bottom-[14px]
@@ -33,17 +27,17 @@ export function Footer() {
         overflow-hidden
         bg-white
       "
-    >
-      <img
-        src="/images/footer-image.png"
-        alt="European landmarks"
-        className="w-full h-full object-cover grayscale"
-      />
-    </div>
+                >
+                  <img
+                    src="/images/footer-image.png"
+                    alt="European landmarks"
+                    className="w-full h-full object-cover grayscale"
+                  />
+                </div>
 
-  </div>
+              </div>
 
-</div>
+            </div>
 
 
             <div className="flex flex-col lg:flex-row">
@@ -67,7 +61,7 @@ export function Footer() {
 
               {/* CONTENT AREA WITH DIVIDERS */}
               <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:flex lg:flex-row">
-                
+
                 {/* STUDY DESTINATIONS */}
                 <div className="flex-1 px-0 sm:px-4 lg:px-6 relative mb-8 sm:mb-0">
                   <div className="h-full flex flex-col">
@@ -75,27 +69,27 @@ export function Footer() {
                       Study Destinations
                     </h4>
                     <ul className="space-y-2 text-gray-700 text-base flex-1">
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">USA Universities</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">UK Universities</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">Germany Public Universities</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">Italy & France</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
@@ -113,27 +107,27 @@ export function Footer() {
                       Our Services
                     </h4>
                     <ul className="space-y-2 text-gray-700 text-base flex-1">
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">Profile Evaluation</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">University Shortlisting</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">SOP & LOR Guidance</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">Visa Assistance</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
@@ -151,27 +145,27 @@ export function Footer() {
                       Resources
                     </h4>
                     <ul className="space-y-2 text-gray-700 text-base flex-1">
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">Blogs</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">Case Studies</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">Student Testimonials</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">FAQs</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
@@ -189,27 +183,27 @@ export function Footer() {
                       Connect
                     </h4>
                     <ul className="space-y-2 text-gray-700 text-base flex-1">
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">Instagram</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">Facebook</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">LinkedIn</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">YouTube</li>
-                       <li className="cursor-pointer
+                      <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
@@ -222,7 +216,7 @@ export function Footer() {
 
             </div>
 
-            
+
 
           </div>
 

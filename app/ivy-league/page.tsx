@@ -35,11 +35,11 @@ export default function IvyLeaguePage() {
         <div className="absolute inset-0">
           <VideoBackground
             videos={[
-              "/0_Queens_University_Belfast_Belfast_1920x1080.mp4",
-              "/4730892_Cheyenne_Wyoming_1920x1080.mp4"
+              "/images/0_Queens_University_Belfast_Belfast_1920x1080.mp4",
+              "/images/4730892_Cheyenne_Wyoming_1920x1080.mp4"
             ]}
           />
-          <div className="absolute inset-0 bg-black opacity-50"></div>
+          <div className="absolute inset-0 bg-black opacity-30"></div>
         </div>
         <div className="relative z-10 h-full flex flex-col justify-center items-start text-left max-w-7xl mx-auto">
           <div className="max-w-4xl" style={{ transform: 'none', perspective: 'none' }}>
@@ -305,7 +305,7 @@ export default function IvyLeaguePage() {
         </div>
       </section>
       <ScholarshipRequirements />
-      <ImageTestimonial font={true} />
+      <ImageTestimonial font={true} bg={true} />
       <CaseStudy font={true} />
 
       <section className="py-24" style={{ backgroundColor: '#f46c44' }}>
