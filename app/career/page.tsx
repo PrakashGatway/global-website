@@ -21,7 +21,7 @@ export default function CareerPage() {
             mixBlendMode: 'multiply'
           }}>
             <Image
-              src="images/g logo.png"
+              src="/images/g logo.png"
               alt="Decorative Arrow"
               width={400}
               height={40}
@@ -113,7 +113,7 @@ export default function CareerPage() {
             mixBlendMode: 'multiply'
           }}>
             <Image
-              src="images/g logo.png"
+              src="/images/g logo.png"
               alt="Decorative Arrow"
               width={400}
               height={40}
@@ -280,7 +280,7 @@ export default function CareerPage() {
             mixBlendMode: 'multiply'
           }}>
             <Image
-              src="images/g logo.png"
+              src="/images/g logo.png"
               alt="Decorative Arrow"
               width={400}
               height={40}

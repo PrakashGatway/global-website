@@ -34,11 +34,11 @@ export default function ContactUsPage() {
               style={{
                 backgroundImage:
                   "url('https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1200&h=800&fit=crop')",
-                WebkitMaskImage: "url('images/about-hero-shape.png')",
+                WebkitMaskImage: "url('/images/about-hero-shape.png')",
                 WebkitMaskRepeat: "no-repeat",
                 WebkitMaskSize: "cover",
                 WebkitMaskPosition: "center",
-                maskImage: "url('images/about-hero-shape.png')",
+                maskImage: "url('/images/about-hero-shape.png')",
                 maskRepeat: "no-repeat",
                 maskSize: "cover",
                 maskPosition: "center",
@@ -49,7 +49,7 @@ export default function ContactUsPage() {
       </section>
 
       <div className="relative w-full mt-12 h-[260px] sm:h-[320px] lg:absolute lg:right-0 lg:top-[37px] lg:mt-0 lg:w-auto lg:max-w-[50vw]">
-        <img className="w-full h-auto max-w-full object-contain" src="images/about-hero-shape.png" alt="" style={{ maxWidth: '100%', height: 'auto', display: 'block' }} />
+        <img className="w-full h-auto max-w-full object-contain" src="/images/about-hero-shape.png" alt="" style={{ maxWidth: '100%', height: 'auto', display: 'block' }} />
       </div>
 
       {/* Contact Information Section */}

@@ -54,7 +54,7 @@ const variants = {
             
           }}>
             <Image
-              src="images/g logo.png"
+              src="/images/g logo.png"
               alt="Decorative Arrow"
               width={600}
               height={40}
@@ -71,7 +71,7 @@ const variants = {
             
           }}>
             <Image
-              src="images/g logo.png"
+              src="/images/g logo.png"
               alt="Decorative Arrow"
               width={600}
               height={40}
@@ -535,7 +535,7 @@ const variants = {
             
           }}>
             <Image
-              src="images/g logo.png"
+              src="/images/g logo.png"
               alt="Decorative Arrow"
               width={600}
               height={40}
@@ -836,7 +836,7 @@ const variants = {
             
           }}>
             <Image
-              src="images/g logo.png"
+              src="/images/g logo.png"
               alt="Decorative Arrow"
               width={600}
               height={40}
@@ -1279,7 +1279,7 @@ const variants = {
             
           }}>
             <Image
-              src="images/g logo.png"
+              src="/images/g logo.png"
               alt="Decorative Arrow"
               width={600}
               height={40}
@@ -1391,7 +1391,7 @@ const variants = {
             mixBlendMode: 'multiply'
           }}>
             <Image
-              src="images/g logo.png"
+              src="/images/g logo.png"
               alt="Decorative Arrow"
               width={600}
               height={40}

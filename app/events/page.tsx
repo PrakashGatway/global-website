@@ -163,7 +163,7 @@ export default function EventsPage() {
             mixBlendMode: 'multiply'
           }}>
             <Image
-              src="/g logo.png"
+              src="/images/g logo.png"
               alt="Decorative Arrow"
               width={400}
               height={40}
@@ -174,7 +174,7 @@ export default function EventsPage() {
         {/* Decorative Arrow on Right Side */}
         <div className="absolute -right-30 top-[55%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
           <Image
-            src="/g logo.png"
+            src="/images/g logo.png"
             alt="Decorative Arrow"
             width={400}
             height={40}
@@ -355,7 +355,7 @@ export default function EventsPage() {
         {/* G Logo on Right Side */}
         <div className="absolute right-[-120px] top-[13%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0 bg-gray-200 rounded-lg p-4">
           <Image
-            src="/g logo.png"
+            src="/images/g logo.png"
             alt="Decorative G Logo"
             width={400}
             height={80}
@@ -401,7 +401,7 @@ export default function EventsPage() {
                   {/* G Logo for third row last column - behind the card */}
                   <div className="absolute right-[-70px] top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0">
                     <Image
-                      src="/g logo.png"
+                      src="/images/g logo.png"
                       alt="Decorative Arrow"
                       width={400}
                       height={80}
@@ -499,7 +499,7 @@ export default function EventsPage() {
                     {/* G Logo for third row last column - behind the card */}
                     <div className="absolute right-[-70px] top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0">
                       <Image
-                        src="/g logo.png"
+                        src="/images/g logo.png"
                         alt="Decorative Arrow"
                         width={400}
                         height={80}
@@ -629,7 +629,7 @@ export default function EventsPage() {
             mixBlendMode: 'multiply'
           }}>
             <Image
-              src="/g logo.png"
+              src="/images/g logo.png"
               alt="Decorative Arrow"
               width={400}
               height={40}
