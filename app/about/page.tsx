@@ -177,7 +177,7 @@ export default function AboutUsPage() {
       </section>
 
       {/* The Story Behind Section */}
-      <section className="my-12 overflow-x-hidden bg-[#f4f3f1]">
+      <section className="py-20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-2">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>

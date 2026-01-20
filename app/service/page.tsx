@@ -134,22 +134,13 @@ const variants = {
 
         <Image
           src="/images/service-hero-1.png"
-          alt="map"
+          alt=""
           width={600}
           height={400}
           className="w-full object-contain absolute inset-0"
         />
 
-        {/* BUILDINGS */}
-        <div className="absolute bottom-0 left-0 w-full">
-          <Image
-            src="/images/buildings.png"
-            alt="buildings"
-            width={600}
-            height={300}
-            className="w-full"
-          />
-        </div>
+      
       </div>
 
       {/* FLOATING FORM CARD */}
@@ -159,7 +150,7 @@ const variants = {
           lg:absolute lg:-left-5 lg:top-10
           bg-gradient-to-br from-[#3f3f3f] to-[#5b5b5b]
           text-white
-          p-5 sm:p-6 sm:py-15
+          p-8 sm:p-6 sm:py-15
           rounded-br-[50px]
           w-full max-w-xs
           lg:h-[350px]
@@ -313,7 +304,7 @@ const variants = {
     </div>
 
     {/* ================= RIGHT SIDE ================= */}
-    <div className="grid sm:grid-cols-2 gap-6 relative">
+    <div className="grid sm:grid-cols-2 gap-6 relative mt-20">
 
       {[
         { step: "Step 1", title: "Expert Counselling", img: "https://cdn3d.iconscout.com/3d/premium/thumb/headset-3d-icon-png-download-5272614.png" },
@@ -337,6 +328,7 @@ const variants = {
             hover:scale-[1.02]
             transition
             overflow-hidden
+            
           "
         >
           {/* STEP BADGE */}
@@ -345,7 +337,7 @@ const variants = {
           </span>
 
           {/* TEXT */}
-          <div className="flex-1 pr-20 pt-2 sm:pr-24 lg:pr-28">
+          <div className="flex-1 pr-20 pt-2  sm:pr-24 lg:pr-28">
             <h4 className="text-[#f26b3a] font-bold text-lg sm:text-xl leading-tight">
               {item.title}
             </h4>
