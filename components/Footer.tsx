@@ -2,9 +2,21 @@
 
 import Link from "next/link"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 // import ThreeDButton from "./3dbutton"
 
 export function Footer() {
+
+   const pathname = usePathname()
+
+  // hide footer on auth pages
+  if (
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname === "/dashboard"
+  ) {
+    return null
+  }
   return (
     <>
       {/* Footer */}
@@ -18,21 +30,31 @@ export function Footer() {
            <div className="w-full mb-16 -mt-20">
 
   {/* OUTER ORANGE FRAME */}
-  <div className="relative h-[180px] md:h-[220px] rounded-[70px] bg-[#f46c44] shadow-xl">
+  <div
+  className="
+    relative
+    h-[160px] sm:h-[180px] md:h-[220px]
+    rounded-[50px] sm:rounded-[60px] lg:rounded-[70px]
+    bg-[#f46c44]
+    shadow-xl
+    p-[6px] sm:p-[10px] lg:p-0
+  "
+>
+
 
     {/* INNER IMAGE HOLDER */}
-    <div
-      className="
-        absolute
-        top-[14px]
-        bottom-[14px]
-        left-[40px]
-        right-[40px]
-        rounded-[45px]
-        overflow-hidden
-        bg-white
-      "
-    >
+   <div
+  className="
+    absolute
+    top-[6px] bottom-[6px] left-[16px] right-[16px]
+    sm:top-[10px] sm:bottom-[10px] sm:left-[28px] sm:right-[28px]
+    lg:top-[14px] lg:bottom-[14px] lg:left-[40px] lg:right-[40px]
+    rounded-[35px] sm:rounded-[40px] lg:rounded-[45px]
+    overflow-hidden
+    bg-white
+  "
+>
+
       <img
         src="/images/footer-image.png"
         alt="European landmarks"

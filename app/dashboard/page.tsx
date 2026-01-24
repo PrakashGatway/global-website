@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import {
   BarChart,
@@ -20,6 +20,10 @@ import { TrendingUp, Users, DollarSign, Activity } from "lucide-react"
 import { Sidebar } from "@/components/sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
+import axiosInstance from "../axiosInstance"
+import { useGlobal } from "../context/statecontext"
+
+
 
 const chartData = [
   { name: "October", value: 2400 },
@@ -63,7 +67,11 @@ const itemVariants = {
 }
 
 export default function DashboardPage() {
-  const [sidebarOpen, setSidebarOpen] = useState(useIsMobile()? false : true)
+const {profile, loading} = useGlobal()
+
+  // const [sidebarOpen, setSidebarOpen] = useState(useIsMobile()? false : true)
+
+  
   
 
   return (
@@ -71,7 +79,7 @@ export default function DashboardPage() {
           <div className="p-4 md:p-8 space-y-6">
             {/* Welcome Section */}
             <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-bold">Welcome back!</h1>
+              <h1 className="text-2xl md:text-3xl font-bold">Welcome back : {profile?.name}</h1>
               <p className="text-muted-foreground">Here's what's happening with your data today.</p>
             </motion.div>
 

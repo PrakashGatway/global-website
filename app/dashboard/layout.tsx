@@ -7,6 +7,7 @@ import { useRef, useState } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { GlobalProvider } from "../context/statecontext"
 
 export default function DashboardLayout({
   children,
@@ -18,6 +19,7 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(useIsMobile()? false : true)
 
   return (
+    <GlobalProvider>
     <div className="pb-20 lg:pb-0">
       <div className="flex h-screen bg-background overflow-hidden">
         {/* Sidebar */}
@@ -28,10 +30,15 @@ export default function DashboardLayout({
           {/* Header */}
           <DashboardHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
-          {children}
+          
+    {children}
+           
+
+          
         </div>
       </div>
       <MobileBottomNav />
     </div>
+    </GlobalProvider>
   )
 }

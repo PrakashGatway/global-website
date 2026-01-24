@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -15,6 +14,7 @@ export default function SignupPage() {
     password: "",
     confirmPassword: "",
   })
+
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,143 +24,182 @@ export default function SignupPage() {
     })
   }
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    // Simulate signup
+
     setTimeout(() => {
       window.location.href = "/dashboard"
     }, 1000)
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-background via-background to-primary/5">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        <div className="bg-card border border-border rounded-lg shadow-lg p-8 md:p-10">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">Create Account</h1>
-            <p className="text-muted-foreground">Join Global Way and start your journey</p>
+    <main className="min-h-screen flex flex-col lg:flex-row bg-[#f8f9fb] overflow-hidden">
+
+      {/* ================= LEFT IMAGE ================= */}
+      <div className="relative w-full lg:w-1/2 h-[320px] lg:h-screen">
+        <img
+          src="/images/login-bg.jpg"
+          alt="education"
+          className="w-full h-full object-cover"
+        />
+
+        <div className="absolute inset-0 bg-black/40" />
+
+        <div className="absolute top-1/2 -translate-y-1/2 left-6 lg:left-16 text-white max-w-md z-10">
+          <p className="text-lg mb-2">Start Your Journey</p>
+          <h1 className="text-3xl lg:text-5xl font-bold leading-tight">
+            Global Education
+          </h1>
+        </div>
+
+        {/* curve */}
+        <div className="hidden lg:block absolute right-0 top-0 h-full w-32 bg-[#f8f9fb] rounded-l-[120px]" />
+      </div>
+
+      {/* ================= RIGHT FORM ================= */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12">
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8"
+        >
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <img src="/images/logo.png" alt="logo" className="h-10" />
           </div>
 
-          {/* Form */}
+          <h2 className="text-center text-xl font-semibold text-orange-500">
+            Create Your Account
+          </h2>
+
+          <p className="text-center text-gray-500 text-sm mt-1 mb-6">
+            Join Gaway Global today
+          </p>
+
+          {/* ================= FORM ================= */}
           <form onSubmit={handleSignup} className="space-y-5">
-            {/* Name Input */}
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-              <label className="block text-sm font-medium mb-2">Full Name</label>
+
+            {/* NAME */}
+            <div>
+              <label className="text-sm text-gray-600 block mb-1">
+                Full Name
+              </label>
               <div className="relative">
-                <User className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
+                <User className="absolute left-3 top-3.5 w-5 h-5 text-white" />
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background transition-all"
                   required
+                  className="w-full bg-orange-500 text-white placeholder-white pl-10 pr-4 py-3 rounded-md outline-none"
                 />
               </div>
-            </motion.div>
+            </div>
 
-            {/* Email Input */}
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-              <label className="block text-sm font-medium mb-2">Email Address</label>
+            {/* EMAIL */}
+            <div>
+              <label className="text-sm text-gray-600 block mb-1">
+                Email Address
+              </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
+                <Mail className="absolute left-3 top-3.5 w-5 h-5 text-white" />
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background transition-all"
                   required
+                  className="w-full bg-orange-500 text-white placeholder-white pl-10 pr-4 py-3 rounded-md outline-none"
                 />
               </div>
-            </motion.div>
+            </div>
 
-            {/* Password Input */}
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-              <label className="block text-sm font-medium mb-2">Password</label>
+            {/* PASSWORD */}
+            <div>
+              <label className="text-sm text-gray-600 block mb-1">
+                Password
+              </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
+                <Lock className="absolute left-3 top-3.5 w-5 h-5 text-white" />
                 <input
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background transition-all"
                   required
+                  className="w-full bg-orange-500 text-white placeholder-white pl-10 pr-4 py-3 rounded-md outline-none"
                 />
               </div>
-            </motion.div>
+            </div>
 
-            {/* Confirm Password Input */}
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-              <label className="block text-sm font-medium mb-2">Confirm Password</label>
+            {/* CONFIRM PASSWORD */}
+            <div>
+              <label className="text-sm text-gray-600 block mb-1">
+                Confirm Password
+              </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
+                <Lock className="absolute left-3 top-3.5 w-5 h-5 text-white" />
                 <input
                   type="password"
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background transition-all"
                   required
+                  className="w-full bg-orange-500 text-white placeholder-white pl-10 pr-4 py-3 rounded-md outline-none"
                 />
               </div>
-            </motion.div>
+            </div>
 
-            {/* Terms */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex gap-2 text-sm"
-            >
-              <input type="checkbox" className="w-4 h-4 rounded border-border mt-0.5 flex-shrink-0" required />
-              <span>
+            {/* TERMS */}
+            <div className="flex gap-2 text-sm text-gray-600">
+              <input
+                type="checkbox"
+                className="accent-orange-500 mt-1"
+                required
+              />
+              <p>
                 I agree to the{" "}
-                <Link href="#" className="text-primary hover:underline">
-                  Terms of Service
+                <Link href="#" className="font-medium hover:underline">
+                  Terms & Conditions
                 </Link>{" "}
                 and{" "}
-                <Link href="#" className="text-primary hover:underline">
+                <Link href="#" className="font-medium hover:underline">
                   Privacy Policy
                 </Link>
-              </span>
-            </motion.div>
+              </p>
+            </div>
 
-            {/* Submit Button */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
-              <Button type="submit" disabled={loading} className="w-full gap-2">
-                {loading ? "Creating account..." : "Create Account"}
-                {!loading && <ArrowRight className="w-4 h-4" />}
-              </Button>
-            </motion.div>
+            {/* BUTTON */}
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gray-600 hover:bg-gray-700 gap-2"
+            >
+              {loading ? "Creating account..." : "Create Account"}
+              {!loading && <ArrowRight className="w-4 h-4" />}
+            </Button>
           </form>
 
-          {/* Sign In Link */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="mt-6 text-center text-sm"
-          >
+          {/* LOGIN LINK */}
+          <p className="text-center text-sm mt-6">
             Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline font-medium">
+            <Link
+              href="/login"
+              className="text-orange-500 font-medium hover:underline"
+            >
               Sign in
             </Link>
-          </motion.div>
-        </div>
-      </motion.div>
+          </p>
+        </motion.div>
+      </div>
     </main>
   )
 }

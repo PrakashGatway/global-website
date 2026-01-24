@@ -6,67 +6,65 @@ import Image from "next/image";
 export default function ContactUsPage() {
   return (
     <div className='bg-[#fffaf7]'>
-<section
-  className="relative flex items-center min-h-[80vh] overflow-hidden"
-  style={{ backgroundColor: '#f46c44', isolation: 'isolate' }}
->
-  {/* Decorative logo */}
-  <div className="lg:absolute z-[-1] lg:-left-40 lg:top-0 opacity-10 pointer-events-none hidden lg:block">
-    <div
-      style={{
-        transform: 'rotate(-30deg)',
-        mixBlendMode: 'multiply',
-      }}
-    >
-      <Image
-        src="/images/g logo.png"
-        alt="Decorative Arrow"
-        width={600}
-        height={600}
-        className="w-64 lg:w-116 object-contain"
-      />
-    </div>
-  </div>
-
-  {/* GRID */}
-  <div className="w-full mx-auto grid lg:grid-cols-2 gap-12 items-stretch sm:pl-30">
-
-    {/* LEFT CONTENT */}
-    <div className="text-white space-y-6 p-6 flex flex-col justify-center">
-      <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
-        Contact us
-      </h1>
-
-      <p className="text-lg max-w-2xl font-medium">
-        Gateway Abroad: Your Launchpad to Global Education. We empower students
+      <section className="relative flex items-center" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
+              <div className="lg:absolute z-[-1] lg:-left-40 lg:top-[0%] opacity-10 pointer-events-none hidden lg:block">
+                <div style={{
+                  transform: 'rotate(-30deg) scaleY(1)',
+                  mixBlendMode: 'multiply'
+                }}>
+                  <Image
+                    src="/images/g logo.png"
+                    alt="Decorative Arrow"
+                    width={600}
+                    height={40}
+                    className="w-64 h-66 lg:w-116 lg:h-116 object-contain"
+                  />
+                </div>
+              </div>
+              <div className="w-full mx-auto grid lg:grid-cols-2 gap-12 items-center sm:pl-30">
+                <div className="text-white space-y-6 p-6 sm:pt-0 pt-12">
+                  <h1 className="text-4xl lg:text-6xl font-bold text-white tracking-tight">
+                    Contact Us
+                  </h1>
+                  <p className="text-lg max-w-2xl font-medium text-white">
+                    Gateway Abroad: Your Launchpad to Global Education. We empower students
         to achieve their dreams of studying abroad with expert coaching for:
         IELTS, TOEFL, PTE, GRE, GMAT, SAT.
-      </p>
+                  </p>
+                  <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <button
+                      className="
+                    text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
+                    rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base font-semibold
+                    hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)] 
+                    flex items-center justify-center gap-2
+                    transition-all hover:opacity-90
+                  "
+                    >
+                      Contact Now
+                    </button>
+      
+                    <button
+                      className="
+                    text-black/80 px-6 sm:px-8 py-2.5 sm:py-3 bg-white
+                    rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base  font-semibold
+                    transition-all hover:bg-black hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)] 
+                  "
+                    >
+                      Check Your Eligibility
+                    </button>
+                  </div>
+                </div>
+                <div className="h-full w-full">
+                  <div className='relative flex items-center justify-center h-[106%] w-full rounded-bl-[55%] overflow-hidden mr-10'>
+                    <img className='h-full w-full object-cover' src="https://buffer.com/resources/content/images/2025/03/social-media-image-sizes.png" alt="" />
+                    <div className='absolute bottom-0 right-0 h-[5.7%] w-full bg-[#f46c44] z-11'>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
 
-      <div className="mt-8 flex flex-col sm:flex-row gap-4">
-        <button className="text-white px-6 py-3 bg-[#1f2937] rounded-tr-4xl shadow-[-4px_0px_4px_rgba(0,0,0,0.55)] hover:bg-black transition">
-          Contact Now
-        </button>
-
-        <button className="text-black/80 px-6 py-3 bg-white rounded-tr-4xl shadow-[-4px_0px_4px_rgba(0,0,0,0.55)] hover:bg-black hover:text-white transition">
-          Check Your Eligibility
-        </button>
-      </div>
-    </div>
-
-    {/* RIGHT IMAGE */}
-    <div className="relative min-h-[300px] lg:min-h-[80vh] w-full">
-      <Image
-        src="https://www.shutterstock.com/image-photo/human-holding-call-center-on-600nw-2422082399.jpg"
-        alt="Contact"
-        fill
-        priority
-        className="object-cover"
-      />
-    </div>
-
-  </div>
-</section>
 
 
       {/* Contact Information Section */}

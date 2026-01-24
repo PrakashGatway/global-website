@@ -3,6 +3,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { LayoutDashboard, MessageSquare, BarChart3, Settings, Shield, LogOut, ChevronLeft, Crown } from "lucide-react"
+import { useGlobal } from "@/app/context/statecontext"
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -14,6 +15,8 @@ const menuItems = [
 
 export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const pathname = usePathname()
+
+const {Logout} = useGlobal()
 
   return (
     <>
@@ -104,9 +107,9 @@ export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-destructive/20 hover:text-destructive transition-all group"
-          >
+         onClick={Logout} >
             <LogOut className="w-5 h-5" />
-            <span className="text-sm font-medium">Logout</span>
+            <span  className="text-sm font-medium">Logout</span>
           </motion.button>
         </div>
 

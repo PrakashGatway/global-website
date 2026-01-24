@@ -16,6 +16,7 @@ import {
   Calendar,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { usePathname } from "next/navigation"
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -90,7 +91,35 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false)
   const [mobileDropdown, setMobileDropdown] = React.useState(null)
 
+   const pathname = usePathname()
+
+  // hide footer on auth pages
+  if (
+    pathname === "/login" ||
+    pathname === "/signup"||
+    pathname ==="/dashboard"
+  ) {
+    return null
+  }
+
   return (
+    <>
+     <div className="relative z-999" style={{ backgroundColor: '#626262' }}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center py-2 text-xs sm:text-sm gap-2 sm:gap-0">
+            <div className="flex items-center space-x-2">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              <span className="text-white text-xs sm:text-sm">Contact Your Nearest Centre</span>
+            </div>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <a href="/about" className="text-white hover:opacity-80 text-xs sm:text-sm">Our Centres</a>
+              <button className="text-gray-900 px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium hover:opacity-90" style={{ backgroundColor: '#ffff29' }}>Free Demo</button>
+              <a href="/login" className="text-white hover:opacity-80 text-xs sm:text-sm">Student Login</a>
+            </div>
+          </div>
+        </div>
+        
     <nav className="sticky top-0 z-[999] bg-white border-b border-gray-200">
 
       {/* ================= TOP BAR ================= */}
@@ -285,5 +314,6 @@ export default function Navbar() {
 </AnimatePresence>
 
     </nav>
+    </>
   )
 }
