@@ -9,8 +9,8 @@ import StatisticsSlider from "@/components/StatisticsSlider";
 import { useEffect, useState } from "react";
 import OffersSlider, { AdmissionRequirementsUK, HowGawayHelps, IvyLeagueSection, ScholarshipRequirements } from "@/components/PageComponent/DistinationSliders";
 import CaseStudy from "@/components/PageComponent/CaseStudy";
-import axiosInstance from "../axiosInstance";
-import { useParams } from "next/navigation";
+
+
 
 const images = [
   "https://t3.ftcdn.net/jpg/06/23/84/22/360_F_623842281_ECGgEpMEkQdH83gbmexIn5l3ACl7V3M0.jpg",
@@ -18,31 +18,15 @@ const images = [
   "https://as2.ftcdn.net/jpg/05/29/12/57/1000_F_529125762_omW1yTehDLLFJKwLJjRET0G3sXiQnK5g.jpg",
 ]
 
-export default function IvyLeaguePage() {
+export default function UniversityPage({data}) {
 
-  const {id} = useParams()
+
 
   const [index, setIndex] = useState(0)
 
-  const [university, setUniversity] = useState(null)
-const [loading, setLoading] = useState(true)
 
-useEffect(() => {
-  if (!id) return
 
-  const fetchUniversity = async () => {
-    try {
-      const res = await axiosInstance.get(`/universities/${id}`)
-      setUniversity(res.data.data)
-    } catch (err) {
-      console.log(err)
-    } finally {
-      setLoading(false)
-    }
-  }
 
-  fetchUniversity()
-}, [id])
 
 
   // AUTO SLIDE
@@ -72,10 +56,10 @@ useEffect(() => {
           <div className="max-w-4xl" style={{ transform: 'none', perspective: 'none' }}>
             <h1 className="text-5xl md:text-6xl lg:text-7xl text-white mb-0 leading-tight" style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'left', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }}>
               <span className="block" style={{ transform: 'none', display: 'block' }}>Your path to the</span>
-              <span className="block" style={{ transform: 'none', display: 'block' }}>{university?.name}</span>
+              <span className="block" style={{ transform: 'none', display: 'block' }}>{data?.title}</span>
             </h1>
             <p className="text-lg md:text-xl text-white mb-10 leading-relaxed" style={{ textAlign: 'left' }}>
-              {university?.country}
+              {data?.country}
             </p>
           </div>
         </div>

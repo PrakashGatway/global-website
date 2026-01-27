@@ -598,7 +598,7 @@ export default function Home() {
       <section className="
   py-12 sm:py-14 lg:py-16
   bg-gradient-to-b from-[#f3f3f3] to-white
-  bg-[url('/bg-01.jpg')]
+  bg-[url('/images/bg-01.jpg')]
   bg-cover bg-center bg-no-repeat
   relative
 ">

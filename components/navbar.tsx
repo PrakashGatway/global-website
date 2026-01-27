@@ -1,6 +1,5 @@
 "use client"
-
-import * as React from "react"
+import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import {
@@ -17,6 +16,8 @@ import {
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { usePathname } from "next/navigation"
+import axiosInstance from "@/app/axiosInstance"
+import { id } from "date-fns/locale"
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -35,7 +36,7 @@ const navItems = [
 
   {
     name: "Destination",
-    href: "/destination",
+    href: "/universities",
     hasDropdown: true,
     icon: Target,
     dropdownItems: [
@@ -90,128 +91,162 @@ const navItems = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false)
   const [mobileDropdown, setMobileDropdown] = React.useState(null)
+  const [universities , setUniversities] = useState([])
+  const [navTitle , setnavTitle] = useState([])
 
-   const pathname = usePathname()
+
+  useEffect(() => {
+    const fetchnavTitle = async () => {
+      try {
+        const res = await axiosInstance.get(`/page-information/?featured=true`)
+        setnavTitle(res.data.data)
+         console.log(res.data.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    fetchnavTitle()
+   
+  }, [])
+   useEffect(() => {
+    const fetchUniversities = async () => {
+      try {
+        const res = await axiosInstance.get(`/page-information/?type=destination`)
+        setUniversities(res.data.data)
+         console.log(res.data.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    fetchUniversities()
+   
+  }, [])
+
+
+  const pathname = usePathname()
 
   // hide footer on auth pages
   if (
     pathname === "/login" ||
-    pathname === "/signup"||
-    pathname ==="/dashboard"
+    pathname === "/signup" ||
+    pathname === "/dashboard"
   ) {
     return null
   }
 
   return (
     <>
-     <div className="relative z-999" style={{ backgroundColor: '#626262' }}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center py-2 text-xs sm:text-sm gap-2 sm:gap-0">
-            <div className="flex items-center space-x-2">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-              <span className="text-white text-xs sm:text-sm">Contact Your Nearest Centre</span>
-            </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <a href="/about" className="text-white hover:opacity-80 text-xs sm:text-sm">Our Centres</a>
-              <button className="text-gray-900 px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium hover:opacity-90" style={{ backgroundColor: '#ffff29' }}>Free Demo</button>
-              <a href="/login" className="text-white hover:opacity-80 text-xs sm:text-sm">Student Login</a>
-            </div>
+      <div className="relative z-999" style={{ backgroundColor: '#626262' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center py-2 text-xs sm:text-sm gap-2 sm:gap-0">
+          <div className="flex items-center space-x-2">
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            <span className="text-white text-xs sm:text-sm">Contact Your Nearest Centre</span>
+          </div>
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <a href="/about" className="text-white hover:opacity-80 text-xs sm:text-sm">Our Centres</a>
+            <button className="text-gray-900 px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium hover:opacity-90" style={{ backgroundColor: '#ffff29' }}>Free Demo</button>
+            <a href="/login" className="text-white hover:opacity-80 text-xs sm:text-sm">Student Login</a>
           </div>
         </div>
-        
-    <nav className="sticky top-0 z-[999] bg-white border-b border-gray-200">
-
-      {/* ================= TOP BAR ================= */}
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-
-        {/* LOGO */}
-        <Link href="/">
-          <Image
-            src="/images/logo.png"
-            alt="Logo"
-            width={140}
-            height={50}
-            className="object-contain"
-            priority
-          />
-        </Link>
-
-        {/* ================= DESKTOP MENU ================= */}
-        <div className="hidden lg:flex items-center gap-2">
-
-          {navItems.map((item) => (
-            <div key={item.name} className="relative group">
-
-              <Link
-                href={item.href}
-                className="flex items-center gap-1 px-3 py-2 rounded-lg text-gray-800 hover:text-orange-500 hover:bg-orange-50 transition"
-              >
-                <span>{item.name}</span>
-
-                {item.hasDropdown && (
-                  <ChevronDown size={14} className="mt-[2px]" />
-                )}
-              </Link>
-
-              {/* DESKTOP DROPDOWN */}
-              {item.hasDropdown && (
-                <div className="absolute left-0 top-full pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                  <div className="w-64 bg-white border rounded-xl shadow-xl py-3">
-
-                    {item.dropdownItems.map((drop) => (
-                      <Link
-                        key={drop.slug}
-                        href={`/${drop.slug}`}
-                        className="block px-5 py-3 hover:bg-orange-50"
-                      >
-                        <div className="font-semibold text-gray-800">
-                          {drop.name}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {drop.description}
-                        </div>
-                      </Link>
-                    ))}
-
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-
-        </div>
-
-        {/* MOBILE TOGGLE */}
-        <button
-          onClick={() => setIsOpen(true)}
-          className="lg:hidden text-gray-700"
-        >
-          <Menu size={28} />
-        </button>
       </div>
 
-      {/* ================= MOBILE SIDEBAR ================= */}
-      <AnimatePresence>
-  {isOpen && (
-    <div className="fixed inset-0 z-[70] flex">
+      <nav className="sticky top-0 z-[999] bg-white border-b border-gray-200">
 
-      {/* BACKDROP */}
-      <motion.div
-        className="absolute inset-0 bg-black/40"
-        onClick={() => setIsOpen(false)}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      />
+        {/* ================= TOP BAR ================= */}
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 
-      {/* SIDEBAR */}
-      <motion.aside
-        initial={{ x: "-100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "-100%" }}
-        transition={{ type: "spring", stiffness: 260, damping: 30 }}
-        className="
+          {/* LOGO */}
+          <Link href="/">
+            <Image
+              src="/images/logo.png"
+              alt="Logo"
+              width={140}
+              height={50}
+              className="object-contain"
+              priority
+            />
+          </Link>
+
+          {/* ================= DESKTOP MENU ================= */}
+          <div className="hidden lg:flex items-center gap-2">
+
+            {navTitle.map((item) => (
+              <div key={item._id} className="relative group">
+
+                <Link
+                  href={item.route}
+                  className="flex items-center gap-1 px-3 py-2 rounded-lg text-gray-800 hover:text-orange-500 hover:bg-orange-50 transition"
+                >
+                  <span>{item.navbarTitle}</span>
+
+                  {item.hasDropdown && (
+                    <ChevronDown size={14} className="mt-[2px]" />
+                  )}
+                </Link>
+
+                {/* DESKTOP DROPDOWN */}
+                {item.hasDropdown && (
+                  <div className="absolute left-0 top-full pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+                    <div className="w-64 bg-white border rounded-xl shadow-xl py-3">
+
+                      {universities.map((uni) => (
+                        <Link
+                          key={uni._id}
+                          href={`/universities/${uni.slug}`}
+                          className="block px-5 py-3 hover:bg-orange-50"
+                        >
+                          <div className="font-semibold text-gray-800">
+                            {uni?.title}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {uni.country}
+                          </div>
+                        </Link>
+                      ))
+                      }
+
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+
+          </div>
+
+          {/* MOBILE TOGGLE */}
+          <button
+            onClick={() => setIsOpen(true)}
+            className="lg:hidden text-gray-700"
+          >
+            <Menu size={28} />
+          </button>
+        </div>
+
+        {/* ================= MOBILE SIDEBAR ================= */}
+        <AnimatePresence>
+          {isOpen && (
+            <div className="fixed inset-0 z-[70] flex">
+
+              {/* BACKDROP */}
+              <motion.div
+                className="absolute inset-0 bg-black/40"
+                onClick={() => setIsOpen(false)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
+
+              {/* SIDEBAR */}
+              <motion.aside
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ type: "spring", stiffness: 260, damping: 30 }}
+                className="
           relative
           w-[85%]
           max-w-sm
@@ -223,97 +258,97 @@ export default function Navbar() {
           overflow-y-auto
           overscroll-contain
         "
-      >
-        {/* HEADER */}
-        <div className="flex items-center justify-between px-6 py-5 border-b">
-          <Image
-            src="/images/logo.png"
-            alt="Logo"
-            width={120}
-            height={40}
-          />
-          <button onClick={() => setIsOpen(false)}>
-            <X size={26} />
-          </button>
-        </div>
-
-        {/* MENU */}
-        <div className="flex-1 px-6 py-4 space-y-1">
-
-          {navItems.map((item) => (
-            <div key={item.name} className="border-b last:border-0">
-
-              {/* MAIN ROW */}
-              <div className="flex items-center justify-between py-4">
-
-                {/* NAV LINK */}
-                <Link
-                  href={item.href}
-                  onClick={() => {
-                    if (!item.hasDropdown) setIsOpen(false)
-                  }}
-                  className="text-lg font-semibold text-gray-800 hover:text-orange-500"
-                >
-                  {item.name}
-                </Link>
-
-                {/* DROPDOWN TOGGLE */}
-                {item.hasDropdown && (
-                  <button
-                    onClick={() =>
-                      setMobileDropdown(
-                        mobileDropdown === item.name ? null : item.name
-                      )
-                    }
-                    className="p-2"
-                  >
-                    <motion.div
-                      animate={{
-                        rotate:
-                          mobileDropdown === item.name ? 180 : 0,
-                      }}
-                    >
-                      <ChevronDown size={20} />
-                    </motion.div>
+              >
+                {/* HEADER */}
+                <div className="flex items-center justify-between px-6 py-5 border-b">
+                  <Image
+                    src="/images/logo.png"
+                    alt="Logo"
+                    width={120}
+                    height={40}
+                  />
+                  <button onClick={() => setIsOpen(false)}>
+                    <X size={26} />
                   </button>
-                )}
-              </div>
+                </div>
 
-              {/* DROPDOWN */}
-              <AnimatePresence>
-                {item.hasDropdown &&
-                  mobileDropdown === item.name &&
-                  item.dropdownItems && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden pl-5 pb-3"
-                    >
-                      {item.dropdownItems.map((drop) => (
+                {/* MENU */}
+                <div className="flex-1 px-6 py-4 space-y-1">
+
+                  {navItems.map((item) => (
+                    <div key={item.name} className="border-b last:border-0">
+
+                      {/* MAIN ROW */}
+                      <div className="flex items-center justify-between py-4">
+
+                        {/* NAV LINK */}
                         <Link
-                          key={drop.slug}
-                          href={`/${drop.slug}`}
-                          onClick={() => setIsOpen(false)}
-                          className="block py-3 text-gray-600 hover:text-orange-500"
+                          href={item.href}
+                          onClick={() => {
+                            if (!item.hasDropdown) setIsOpen(false)
+                          }}
+                          className="text-lg font-semibold text-gray-800 hover:text-orange-500"
                         >
-                          {drop.name}
+                          {item.name}
                         </Link>
-                      ))}
-                    </motion.div>
-                  )}
-              </AnimatePresence>
 
+                        {/* DROPDOWN TOGGLE */}
+                        {item.hasDropdown && (
+                          <button
+                            onClick={() =>
+                              setMobileDropdown(
+                                mobileDropdown === item.name ? null : item.name
+                              )
+                            }
+                            className="p-2"
+                          >
+                            <motion.div
+                              animate={{
+                                rotate:
+                                  mobileDropdown === item.name ? 180 : 0,
+                              }}
+                            >
+                              <ChevronDown size={20} />
+                            </motion.div>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* DROPDOWN */}
+                      <AnimatePresence>
+                        {item.hasDropdown &&
+                          mobileDropdown === item.name &&
+                          item.dropdownItems && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden pl-5 pb-3"
+                            >
+                              {item.dropdownItems.map((drop) => (
+                                <Link
+                                  key={drop.slug}
+                                  href={`/${drop.slug}`}
+                                  onClick={() => setIsOpen(false)}
+                                  className="block py-3 text-gray-600 hover:text-orange-500"
+                                >
+                                  {drop.name}
+                                </Link>
+                              ))}
+                            </motion.div>
+                          )}
+                      </AnimatePresence>
+
+                    </div>
+                  ))}
+
+                </div>
+              </motion.aside>
             </div>
-          ))}
+          )}
+        </AnimatePresence>
 
-        </div>
-      </motion.aside>
-    </div>
-  )}
-</AnimatePresence>
-
-    </nav>
+      </nav>
     </>
   )
 }
