@@ -39,28 +39,7 @@ const navItems = [
     href: "/universities",
     hasDropdown: true,
     icon: Target,
-    dropdownItems: [
-      {
-        name: "Ivy League",
-        slug: "ivy-league",
-        description: "Top universities abroad",
-      },
-      {
-        name: "GMAT Preparation",
-        slug: "gmat",
-        description: "Score high in GMAT",
-      },
-      {
-        name: "PTE Academic",
-        slug: "pte",
-        description: "Pearson Test of English",
-      },
-      {
-        name: "GRE Preparation",
-        slug: "gre",
-        description: "Mock tests & practice",
-      },
-    ],
+    dropdownItems: [],
   },
 
   {
@@ -135,6 +114,7 @@ export default function Navbar() {
   ) {
     return null
   }
+
 
   return (
     <>
