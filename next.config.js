@@ -4,6 +4,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    domains: ["res.cloudinary.com"],
     remotePatterns: [
       {
         protocol: 'https',
@@ -105,6 +106,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.pexels.com',
       },
+    
     ],
   },
 }

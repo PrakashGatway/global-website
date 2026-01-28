@@ -37,7 +37,7 @@ export default function LoginPage() {
       setLoading(true)
 
       const res = await axiosInstance.get(
-        `/login?email=${email}`
+        `/auth/login?email=${email}`
       )
 
       if (res.data.isExist) {
@@ -57,7 +57,7 @@ export default function LoginPage() {
     try {
       setLoading(true)
 
-      await axiosInstance.post("/send-otp", {
+      await axiosInstance.post("/auth/send-otp", {
         email,
         ...formData,
       })
@@ -76,7 +76,7 @@ export default function LoginPage() {
     try {
       setLoading(true)
 
-      const res = await axiosInstance.post("/verify-otp", {
+      const res = await axiosInstance.post("/auth/verify-otp", {
         email,
         otp,
       })

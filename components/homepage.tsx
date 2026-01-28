@@ -11,7 +11,8 @@ import VideoTestimonialsSlider from "@/components/PageComponent/VideoTestimonial
 import ImageTestimonial from "@/components/ImageTestimonial"
 import VideoInSvgShape from "@/components/PageComponent/VideoShape"
 import { useEffect, useState } from "react"
-import { getPageByType, PageInformation } from "@/lib/api/pageInformation"
+import axiosInstance from "@/app/axiosInstance"
+
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -116,19 +117,32 @@ function TimelineItem({
 
 
 export default function Homepage() {
-  const [pageData, setPageData] = useState<PageInformation | null>(null)
+  const [pageData, setPageData] = useState(null)
   
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getPageByType('home_page')
-        if (data) setPageData(data)
+        const res = await axiosInstance.get('/page-information/')
+        
+        const homePage = res.data.data.find(
+        (item) => item.pageType === "home_page"
+      )
+
+      setPageData(homePage)
+
       } catch (error) {
         console.error("Failed to fetch home page data", error)
       }
     }
     fetchData()
   }, [])
+
+
+  console.log("CAP BG:", pageData?.universityCapBg)
+  console.log("image" , pageData?.immigrationServices1Bg )
+
+
+  
 
   return (
     <main className="bg-[#fffaf7]">
@@ -139,10 +153,17 @@ export default function Homepage() {
     bg-no-repeat bg-cover bg-bottom
     py-12 sm:py-16 lg:py-0
   "
-        style={{
-          backgroundImage: `url('${pageData?.heroImage }')`
-        }}
+       style={{
+  backgroundImage: pageData?.heroImage
+    ? `url(${pageData.heroImage})`
+    : "none",
+}}
+
       >
+        <div>
+    
+
+        </div>
         {/* mobile overlay only */}
         <div className="absolute inset-0 bg-white/50 md:bg-transparent pointer-events-none" />
 
@@ -212,13 +233,15 @@ export default function Homepage() {
 
             {/* RIGHT IMAGE */}
             <div className="flex justify-center lg:justify-end">
-              <Image
-                src={pageData?.universityCapBg }
-                alt="Graduation Cap Illustration"
-                width={550}
-                height={450}
-                className="object-contain max-w-[85%] sm:max-w-[70%] lg:max-w-full"
-              />
+             {pageData?.universityCapBg && (
+  <Image
+    src={pageData?.universityCapBg}
+    width={1200}
+    height={800}
+    alt="cap"
+  />
+)}
+
             </div>
           </div>
 
@@ -390,14 +413,20 @@ export default function Homepage() {
                       transform: "rotateY(2deg) rotateX(5deg) rotateZ(2deg) skewX(3deg)",
                     }}
                   >
-                    <img
-                      src={pageData?.immigrationServicesBg}
-                      alt=""
-                      className="w-full h-full object-cover scale-110"
-                      style={{
-                        transform: "rotateY(-12deg) rotateX(5deg) rotateZ(-5deg) skewX(-5deg)",
-                      }}
-                    />
+                    {pageData?.immigrationServices2Bg && (
+  <Image
+    src={pageData.immigrationServices2Bg}
+    alt="Immigration services"
+    width={600}
+    height={800}
+    className="w-full h-full object-cover scale-110"
+    style={{
+      transform:
+        "rotateY(-12deg) rotateX(5deg) rotateZ(-5deg) skewX(-5deg)",
+    }}
+  />
+)}
+                    
                   </div>
                 </div>
 
@@ -427,7 +456,7 @@ export default function Homepage() {
                     }}
                   >
                     <img
-                      src="https://img.freepik.com/fotos-premium/uma-garota-universitaria-sorrindo-com-passaporte-e-carta-de-aceitacao-para-estudar-no-exterior-visto-de-estudante_1317017-1759.jpg"
+                      src={pageData?.immigrationServices1Bg}
                       alt=""
                       className="w-full h-full object-cover scale-115"
                       style={{
