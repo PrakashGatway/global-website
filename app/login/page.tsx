@@ -149,7 +149,7 @@ export default function LoginPage() {
 
 
       {/* RIGHT CARD */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 relative">
+      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 relative ">
       
       <div className="absolute top-5 w-[180px] sm:w-[260px] lg:w-[600px] hidden lg:block">
 
@@ -159,12 +159,13 @@ export default function LoginPage() {
         <div
   className="
     relative
+    top-12
     w-full
     max-w-md
     bg-white
     rounded-tl-[80px] sm:rounded-tl-[100px] lg:rounded-tl-[120px]
     p-5 sm:p-6 lg:p-8
-    h-auto lg:h-[520px]
+    h-auto lg:h-[550px]
     sm:w-[500px]
     shadow-[0_8px_1px_-6px_rgba(0,0,0,0.16)]
   "
@@ -172,16 +173,44 @@ export default function LoginPage() {
 
   
   <div className="absolute -top-5 left-18 w-[80px] sm:w-[100px] lg:w-[70px] hidden lg:block">
-  <img src="/images/login-girl-3.png" alt="" />
+   <motion.img
+  src="/images/login-girl-3.png"
+  alt=""
+  initial={{ y: 120, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{
+    duration: 1,
+    
+  }}
+/>
 </div>
 
-  <div className="absolute -left-40 -top-18  lg:w-[280px] hidden lg:block -z-10 ">
+  <div className="absolute -left-40 -top-11  lg:w-[280px] hidden lg:block -z-10 ">
 
-    <img src="/images/login-girl-1.png" alt="" />
+     <motion.img
+  src="/images/login-girl-1.png"
+  alt=""
+  initial={{ y: 150, opacity: 1 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{
+    duration: 1,
+    
+  }}
+/>
     
   </div>
-  <div className="absolute -left-40 top-20 lg:w-[260px] hidden lg:block z-10">
-  <img src="/images/login-girl-2.png" alt="" />
+  <div className="absolute -left-40 top-28 lg:w-[260px] hidden lg:block z-10">
+  <motion.img
+  src="/images/login-girl-2.png"
+  alt=""
+  initial={{ y: 150, opacity: 1 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{
+    duration: 1,
+   
+  }}
+/>
+
 </div>
 
 
@@ -194,7 +223,7 @@ export default function LoginPage() {
     relative
     lg:absolute
     inset-0
-    lg:top-28
+    lg:top-38
     bg-white
     rounded-tl-[60px] sm:rounded-tl-[70px] lg:rounded-tl-[90px]
     px-4 sm:px-6

@@ -5,6 +5,8 @@ import Navbar from "@/components/navbar"
 import "./globals.css"
 import 'keen-slider/keen-slider.min.css';
 import { Footer } from "@/components/Footer"
+import { serverInstance } from "./axiosInstance"
+
 
 
 const notoSans = Noto_Sans({
@@ -49,17 +51,23 @@ export const viewport: Viewport = {
   ],
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+   const [featureRes, typeRes] = await Promise.all([
+    serverInstance.get("/page-information?featured=true"),
+    serverInstance.get("/page-information?type=destination"),
+  ])
+
 
   return (
     <html lang="en">
       <body className={`${notoSans.className} antialiased`}>
        
-       <Navbar />
+       <Navbar Featureitem={featureRes.data.data || []}
+  typeData={typeRes.data.data || []} />
         {children}
         <Footer />
       </body>

@@ -378,13 +378,16 @@ export default function ContactUsPage() {
             <div className="lg:col-span-2">
               <div className="bg-white p-1 rounded-lg shadow-lg overflow-hidden">
                 {/* Placeholder for map - Replace with actual map component */}
-                <div className="w-full h-[500px] bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-                    <p className="text-gray-600 font-semibold">Interactive Map Location</p>
-                    <p className="text-gray-500 text-sm">123 Education Street, New York</p>
-                  </div>
-                </div>
+                <div className="w-full h-[500px] rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+  <iframe
+    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3557.8454158773734!2d75.77696207543933!3d26.908400676649833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db40cd42722ff%3A0xcfc3ab392fa9adf7!2sGateway%20Abroad%20Education%20%7C%20Study%20Abroad%20Consultants%20%7C%20IELTS%20GRE%20GMAT%20SAT%20TOEFL%20PTE%20Coaching%20%7C%20Spoken%20English%20Class!5e0!3m2!1sen!2sin!4v1769668716534!5m2!1sen!2sin"
+    className="w-full h-full"
+    loading="lazy"
+    referrerPolicy="no-referrer-when-downgrade"
+    allowFullScreen
+  />
+</div>
+
               </div>
             </div>
 

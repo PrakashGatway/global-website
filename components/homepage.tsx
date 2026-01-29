@@ -1,4 +1,4 @@
-"use client"
+
 
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -10,137 +10,26 @@ import AboutTabsSection from "@/components/PageComponent/TrustTabs"
 import VideoTestimonialsSlider from "@/components/PageComponent/VideoTestimonial"
 import ImageTestimonial from "@/components/ImageTestimonial"
 import VideoInSvgShape from "@/components/PageComponent/VideoShape"
-import { useEffect, useState } from "react"
-import axiosInstance from "@/app/axiosInstance"
 
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.3,
-    },
-  },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, ease: "easeOut" },
-  },
-}
-
-function TimelineItem({
-  top = false,
-  title,
-  subtitle,
-  titleColor,
-  subtitleColor,
-  icon,
-}: {
-  top?: boolean;
-  title: string;
-  subtitle: string;
-  titleColor: string;
-  subtitleColor: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <div className="relative text-center px-4">
-
-      {/* CONNECTOR LINE */}
-      <div
-        className="
-          absolute
-          left-1/2 -translate-x-1/2
-          top-0
-          w-[3px]
-          h-[60%]
-          bg-[#6b7280]
-          lg:-top-21 lg:h-[70%]
-        "
-      />
-
-      {/* CONTENT */}
-      <div
-        className={`
-          relative
-          ${top ? "mt-8 lg:mt-10" : "mt-6 lg:mt-0"}
-        `}
-      >
-        {/* ICON */}
-        <div
-          className="
-            relative z-10
-            mx-auto mb-3
-            w-16 h-16
-            lg:w-20 lg:h-20
-            rounded-full
-            border-[2px] border-[#f46c44]
-            bg-white
-            flex items-center justify-center
-          "
-        >
-          {icon}
-        </div>
-
-        {/* TITLE */}
-        <h3
-          className="
-            font-bold leading-tight
-            text-lg sm:text-xl lg:text-2xl
-          "
-          style={{ color: titleColor }}
-        >
-          {title}
-        </h3>
-
-        {/* SUBTITLE */}
-        <p
-          className="
-            leading-tight
-            text-base sm:text-lg lg:text-xl
-          "
-          style={{ color: subtitleColor }}
-        >
-          {subtitle}
-        </p>
-      </div>
-    </div>
-  );
-}
+import  { serverInstance } from "@/app/axiosInstance"
 
 
 
-export default function Homepage() {
-  const [pageData, setPageData] = useState(null)
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axiosInstance.get('/page-information/')
-        
-        const homePage = res.data.data.find(
+
+
+
+export default async function Homepage() {
+
+
+
+ const res = await serverInstance.get('/page-information/')
+
+ 
+
+ 
+  const homePage = res.data.data.find(
         (item) => item.pageType === "home_page"
       )
-
-      setPageData(homePage)
-
-      } catch (error) {
-        console.error("Failed to fetch home page data", error)
-      }
-    }
-    fetchData()
-  }, [])
-
-
-  console.log("CAP BG:", pageData?.universityCapBg)
-  console.log("image" , pageData?.immigrationServices1Bg )
-
 
   
 
@@ -154,8 +43,8 @@ export default function Homepage() {
     py-12 sm:py-16 lg:py-0
   "
        style={{
-  backgroundImage: pageData?.heroImage
-    ? `url(${pageData.heroImage})`
+  backgroundImage: homePage?.heroImage
+    ? `url(${homePage.heroImage})`
     : "none",
 }}
 
@@ -174,8 +63,8 @@ export default function Homepage() {
             {/* LEFT CONTENT */}
             <div className="text-center lg:text-left">
               <h1 className="text-3xl sm:text-4xl lg:text-[2.7rem] font-extrabold leading-tight">
-                {pageData?.title ? (
-                   <span className="block text-[#646162]">{pageData.title}</span>
+                {homePage?.title ? (
+                   <span className="block text-[#646162]">{homePage.title}</span>
                 ) : (
                   <>
                     <span className="block text-[#646162]">
@@ -193,8 +82,8 @@ export default function Homepage() {
               </h1>
 
               <p className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-gray-700 max-w-xl mx-auto lg:mx-0">
-                {pageData?.subTitle ? (
-                  pageData.subTitle
+                {homePage?.subTitle ? (
+                  homePage.subTitle
                 ) : (
                   <>
                     Specialized admissions guidance for{" "}
@@ -233,9 +122,9 @@ export default function Homepage() {
 
             {/* RIGHT IMAGE */}
             <div className="flex justify-center lg:justify-end">
-             {pageData?.universityCapBg && (
+             {homePage?.universityCapBg && (
   <Image
-    src={pageData?.universityCapBg}
+    src={homePage?.universityCapBg}
     width={1200}
     height={800}
     alt="cap"
@@ -413,9 +302,9 @@ export default function Homepage() {
                       transform: "rotateY(2deg) rotateX(5deg) rotateZ(2deg) skewX(3deg)",
                     }}
                   >
-                    {pageData?.immigrationServices2Bg && (
+                    {homePage?.immigrationServices2Bg && (
   <Image
-    src={pageData.immigrationServices2Bg}
+    src={homePage.immigrationServices2Bg}
     alt="Immigration services"
     width={600}
     height={800}
@@ -456,7 +345,7 @@ export default function Homepage() {
                     }}
                   >
                     <img
-                      src={pageData?.immigrationServices1Bg}
+                      src={homePage?.immigrationServices1Bg}
                       alt=""
                       className="w-full h-full object-cover scale-115"
                       style={{
@@ -729,10 +618,7 @@ export default function Homepage() {
                     src={card.img || 'https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg'}
                     alt={card.title}
                     className="w-full h-[220px] object-cover"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = 'https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg';
-                    }}
+                  
                   />
                   <div
                     className="

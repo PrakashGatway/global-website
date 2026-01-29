@@ -19,89 +19,18 @@ import { usePathname } from "next/navigation"
 import axiosInstance from "@/app/axiosInstance"
 import { id } from "date-fns/locale"
 
-const navItems = [
-  { name: "Home", href: "/" },
 
-  {
-    name: "About Us",
-    href: "/about",
-    icon: GraduationCap,
-  },
 
-  {
-    name: "Services",
-    href: "/service",
-    icon: MessageSquare,
-  },
-
-  {
-    name: "Destination",
-    href: "/universities",
-    hasDropdown: true,
-    icon: Target,
-    dropdownItems: [],
-  },
-
-  {
-    name: "Blogs",
-    href: "/blog",
-    icon: FileText,
-  },
-
-  {
-    name: "Events",
-    href: "/events",
-    icon: Calendar,
-  },
-
-  {
-    name: "Career",
-    href: "/career",
-    icon: Briefcase,
-  },
-
-  {
-    name: "Contact Us",
-    href: "/contact",
-    icon: Phone,
-  },
-]
-
-export default function Navbar() {
+export default function Navbar({
+  Featureitem = [],
+  typeData = [],
+}: {
+  Featureitem?: any[]
+  typeData?: any[]
+}) {
   const [isOpen, setIsOpen] = React.useState(false)
   const [mobileDropdown, setMobileDropdown] = React.useState(null)
-  const [universities , setUniversities] = useState([])
-  const [navTitle , setnavTitle] = useState([])
 
-
-  useEffect(() => {
-    const fetchnavTitle = async () => {
-      try {
-        const res = await axiosInstance.get(`/page-information/?featured=true`)
-        setnavTitle(res.data.data)
-         console.log(res.data.data)
-      } catch (err) {
-        console.log(err)
-      }
-    }
-
-    fetchnavTitle()
-   
-  }, [])
-   useEffect(() => {
-    const fetchUniversities = async () => {
-      try {
-        const res = await axiosInstance.get(`/page-information/?type=destination`)
-        setUniversities(res.data.data)
-         console.log(res.data.data)
-      } catch (err) {
-        console.log(err)
-      }
-    }
-
-    fetchUniversities()
-   
-  }, [])
 
 
   const pathname = usePathname()
@@ -114,6 +43,8 @@ export default function Navbar() {
   ) {
     return null
   }
+
+  
 
 
   return (
@@ -154,7 +85,7 @@ export default function Navbar() {
           {/* ================= DESKTOP MENU ================= */}
           <div className="hidden lg:flex items-center gap-2">
 
-            {navTitle.map((item) => (
+            {Featureitem.map((item) => (
               <div key={item._id} className="relative group">
 
                 <Link
@@ -173,7 +104,7 @@ export default function Navbar() {
                   <div className="absolute left-0 top-full pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
                     <div className="w-64 bg-white border rounded-xl shadow-xl py-3">
 
-                      {universities.map((uni) => (
+                      {typeData.map((uni) => (
                         <Link
                           key={uni._id}
                           href={`/universities/${uni.slug}`}
@@ -255,7 +186,7 @@ export default function Navbar() {
                 {/* MENU */}
                 <div className="flex-1 px-6 py-4 space-y-1">
 
-                  {navItems.map((item) => (
+                  {Featureitem.map((item) => (
                     <div key={item.name} className="border-b last:border-0">
 
                       {/* MAIN ROW */}
