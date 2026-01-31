@@ -21,31 +21,99 @@ import { id } from "date-fns/locale"
 
 
 
+
 export default function Navbar({
-  Featureitem = [],
-  typeData = [],
+  Featureitem,
+  Serviceitem
+
 }: {
-  Featureitem?: any[]
-  typeData?: any[]
+  Featureitem?: any[],
+  ServiceItem?: any[]
+
 }) {
   const [isOpen, setIsOpen] = React.useState(false)
   const [mobileDropdown, setMobileDropdown] = React.useState(null)
 
-
+  
 
   const pathname = usePathname()
 
+ 
+
+  const navbar = [
+    {
+      title: "Home",
+      route: "/"
+      , id: 1
+
+    },
+    {
+      title: "About Us",
+      route: "/about"
+      , id: 2
+
+
+    },
+    {
+      title: "Service",
+      route: "/service",
+      hasDropdown: true,
+      type: "service"
+      , id: 3
+
+
+    },
+    {
+      title: "Destination",
+      route: "/destination",
+      hasDropdown: true,
+      type: "destination",
+      id: 4
+
+
+    },
+    {
+      title: "Blogs",
+      route: "/blog"
+      , id: 5
+
+
+    },
+    {
+      title: "Events",
+      route: "/events"
+      , id: 6
+
+
+    },
+    {
+      title: "Career",
+      route: "/career"
+      , id: 7
+
+
+    },
+    {
+      title: "Contact Us",
+      route: "/contact"
+      , id: 8
+
+
+    },
+
+  ]
+
   // hide footer on auth pages
- if (
-  pathname === "/login" ||
-  pathname === "/signup" ||
-  pathname.startsWith("/dashboard")
-) {
-  return null
-}
+  if (
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname.startsWith("/dashboard")
+  ) {
+    return null
+  }
 
 
-  
+
 
 
   return (
@@ -86,14 +154,14 @@ export default function Navbar({
           {/* ================= DESKTOP MENU ================= */}
           <div className="hidden lg:flex items-center gap-2">
 
-            {Featureitem.map((item) => (
-              <div key={item._id} className="relative group">
+            {navbar?.map((item) => (
+              <div key={item?.id} className="relative group">
 
                 <Link
                   href={item.route}
                   className="flex items-center gap-1 px-3 py-2 rounded-lg text-gray-800 hover:text-orange-500 hover:bg-orange-50 transition"
                 >
-                  <span>{item.navbarTitle}</span>
+                  <span>{item.title}</span>
 
                   {item.hasDropdown && (
                     <ChevronDown size={14} className="mt-[2px]" />
@@ -101,29 +169,49 @@ export default function Navbar({
                 </Link>
 
                 {/* DESKTOP DROPDOWN */}
-                {item.hasDropdown && (
-                  <div className="absolute left-0 top-full pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
-                    <div className="w-64 bg-white border rounded-xl shadow-xl py-3">
+             {item.hasDropdown && (
+  <div className="absolute left-1/2 top-full mt-5 -translate-x-1/2
+                  opacity-0 invisible group-hover:opacity-100 group-hover:visible
+                  transition-all duration-300">
 
-                      {typeData.map((uni) => (
-                        <Link
-                          key={uni._id}
-                          href={`/destination/${uni.slug}`}
-                          className="block px-5 py-3 hover:bg-orange-50"
-                        >
-                          <div className="font-semibold text-gray-800">
-                            {uni?.title}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {uni.country}
-                          </div>
-                        </Link>
-                      ))
-                      }
+    <div className="bg-white rounded-2xl shadow-2xl w-[600px] p-5">
 
-                    </div>
-                  </div>
-                )}
+      <div className="grid grid-cols-2 gap-2">
+
+        {(item.type === "destination"
+          ? Featureitem
+          : Serviceitem
+        )?.map((uni) => (
+          <Link
+            key={uni._id}
+            href={`/${item.type}/${uni.slug}`}
+            className="flex items-center gap-4 p-2 rounded-xl hover:bg-blue-50 transition"
+          >
+            <Image
+              src={uni.icon || "https://www.countryflags.com/wp-content/uploads/canada-flag-png-xl.png"}
+              alt={uni.title}
+              width={40}
+              height={40}
+            />
+
+            <div>
+              <p className="font-semibold text-gray-900">
+                {uni.title}
+              </p>
+              <p className="text-sm text-gray-500">
+                {uni.subTitle || "Study Abroad"}
+              </p>
+            </div>
+          </Link>
+        ))}
+
+      </div>
+
+    </div>
+  </div>
+)}
+
+
               </div>
             ))}
 

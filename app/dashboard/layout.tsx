@@ -7,7 +7,7 @@ import { useRef, useState } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { GlobalProvider } from "../context/statecontext"
+import { GlobalProvider } from "../../src/statecontext"
 
 export default function DashboardLayout({
   children,

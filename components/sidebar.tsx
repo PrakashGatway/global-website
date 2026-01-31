@@ -3,7 +3,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { LayoutDashboard, MessageSquare, BarChart3, Settings, Shield, LogOut, ChevronLeft, Crown } from "lucide-react"
-import { useGlobal } from "@/app/context/statecontext"
+import { useGlobal } from "@/src/statecontext"
+
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },

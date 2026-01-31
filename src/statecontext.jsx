@@ -1,6 +1,6 @@
 "use client"
 import { createContext, useContext, useEffect, useState } from "react";
-import axiosInstance from "../axiosInstance";
+import axiosInstance from "../app/axiosInstance";
 
 const Globalcontext = createContext()
 

@@ -5,9 +5,14 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 // import ThreeDButton from "./3dbutton"
 
-export function Footer({typeData}) {
+export function Footer({ Featureitem = [],Serviceitem =[]
+  
+}: {
+  Featureitem?: any[]}) {
 
    const pathname = usePathname()
+
+   
 
   // hide footer on auth pages
   if (
@@ -95,14 +100,15 @@ export function Footer({typeData}) {
                     <h4 className="text-orange-500 font-bold text-lg mb-4">
                       Study Destinations
                     </h4>
-                    {typeData.map((item)=>(
+                    {Featureitem.map((item)=>(
                       <ul key={item._id} className="space-y-2 text-gray-700 text-base flex-1">
                        <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
+              my-2
             ">
-                         <Link href="/usa-universities">{item?.title}</Link>
+                         <Link href={`/destination/${item.slug}`}>{item?.title}</Link>
                        </li>
                      
                     </ul>
@@ -120,33 +126,19 @@ export function Footer({typeData}) {
                     <h4 className="text-orange-500 font-bold text-lg mb-4">
                       Our Services
                     </h4>
-                    <ul className="space-y-2 text-gray-700 text-base flex-1">
+                      {Serviceitem.map((item)=>(
+                      <ul key={item._id} className="space-y-2 text-gray-700 text-base flex-1">
                        <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
-            ">Profile Evaluation</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">University Shortlisting</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">SOP & LOR Guidance</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">Visa Assistance</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">Scholarship Support</li>
+            ">
+                         <Link href={`/service/${item.slug}`}>{item?.title}</Link>
+                       </li>
+                     
                     </ul>
+
+                    ))}
                   </div>
                   {/* Right divider - only on lg screens */}
                   <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full"></div>
@@ -159,31 +151,20 @@ export function Footer({typeData}) {
                       Resources
                     </h4>
                     <ul className="space-y-2 text-gray-700 text-base flex-1">
+                      
+                      <li className="cursor-pointer
+              transition-all duration-300
+              hover:text-[#f46c44]
+              hover:translate-x-2
+              my-2
+            "><Link href={`/blog`} className="space-y-2">Blogs</Link> </li>
+                      
+                    
                        <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
-            ">Blogs</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">Case Studies</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">Student Testimonials</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">FAQs</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">Events & Webinars</li>
+            "><Link href={`/events`} >Events & Webinars</Link></li>
                     </ul>
                   </div>
                   {/* Right divider - only on lg screens */}
@@ -221,7 +202,7 @@ export function Footer({typeData}) {
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
-            ">Contact Us</li>
+            "> <Link href={`/contact`} >Contact Us</Link> </li>
                     </ul>
                   </div>
                 </div>
@@ -247,6 +228,7 @@ export function Footer({typeData}) {
 
         </div>
       </footer>
+    
     </>
   )
 }

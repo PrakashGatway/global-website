@@ -56,20 +56,36 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-   const [featureRes, typeRes] = await Promise.all([
-    serverInstance.get("/page-information?featured=true"),
-    serverInstance.get("/page-information?type=destination"),
+  const [feature] = await Promise.all([
+    serverInstance.get("/page-information?limit=300"),
+   
+
   ])
+
+  const featureRes = feature.data.data.filter((item) => 
+    item.pageType === "destination_page" && item.isFeatured === "Yes" 
+  )
+
+  const servicedata = feature.data.data.filter((item) => 
+    item.pageType === "services_page" && item.isFeatured === "Yes" 
+  ) 
+
+ 
+  const serviceres = servicedata.reverse()
+
+  
+  
+  
 
 
   return (
     <html lang="en">
       <body className={`${notoSans.className} antialiased`}>
-       
-       <Navbar Featureitem={featureRes.data.data || []}
-  typeData={typeRes.data.data || []} />
+
+        <Navbar Featureitem={featureRes || []} Serviceitem={serviceres || []}
+        />
         {children}
-        <Footer typeData={typeRes.data.data || []} />
+        <Footer Featureitem={featureRes || []} Serviceitem={serviceres || []} />
       </body>
     </html>
   )

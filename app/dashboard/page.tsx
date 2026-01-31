@@ -21,7 +21,7 @@ import { Sidebar } from "@/components/sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
 import axiosInstance from "../axiosInstance"
-import { useGlobal } from "../context/statecontext"
+import { useGlobal } from "../../src/statecontext"
 
 
 
