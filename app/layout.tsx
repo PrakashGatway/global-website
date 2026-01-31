@@ -69,7 +69,7 @@ export default async function RootLayout({
        <Navbar Featureitem={featureRes.data.data || []}
   typeData={typeRes.data.data || []} />
         {children}
-        <Footer />
+        <Footer typeData={typeRes.data.data || []} />
       </body>
     </html>
   )

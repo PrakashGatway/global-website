@@ -19,10 +19,10 @@ export default function SettingsPage() {
 
   return (
     <div className="flex h-screen bg-background overflow-hidden">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+  
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <DashboardHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+      
 
         <main className="flex-1 overflow-y-auto">
           <div className="p-4 md:p-8 max-w-3xl">

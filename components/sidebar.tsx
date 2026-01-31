@@ -7,10 +7,16 @@ import { useGlobal } from "@/app/context/statecontext"
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },
-  { icon: BarChart3, label: "Reports", href: "/dashboard/reports" },
+  { icon: BarChart3, label: "Universities", href: "/dashboard/reports" },
+  { icon: Shield, label: "Resources", href: "#" },
+  { icon: Shield, label: "Application", href: "#" },
+  { icon: Shield, label: "Wallet", href: "#" },
+  { icon: Shield, label: "Support", href: "/dashboard/privacy" },
+  { icon: MessageSquare, label: "Notification", href: "/dashboard/messages" },
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },
-  { icon: Shield, label: "Privacy", href: "/dashboard/privacy" },
+
+
+
 ]
 
 export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {

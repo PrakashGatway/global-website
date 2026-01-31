@@ -11,10 +11,12 @@ import Link from 'next/link';
 
 
 
-export default function Events({ eventData, page, limit, total , webinarData }) {
+export default function Events({ data, page, limit, total, type }) {
+
+    const activeTab = type;
 
     const [currentEventIndex, setCurrentEventIndex] = useState(0);
-    const [activeTab, setActiveTab] = useState<'events' | 'webinars'>('events');
+    // const [activeTab, setActiveTab] = useState<'events' | 'webinars'>('events');
 
 
     const totalpage = Math.ceil(total / limit)
@@ -233,29 +235,33 @@ export default function Events({ eventData, page, limit, total , webinarData }) 
                         {/* Tabs Container */}
                         <div className="bg-gray-200 rounded-3xl p-3 mb-8 max-w-sm mx-auto">
                             <div className="flex justify-center gap-1">
-                                <button
-                                    onClick={() => setActiveTab('events')}
-                                    className={`px-8 py-3 font-semibold transition-all rounded ${activeTab === 'events'
-                                        ? 'bg-white text-gray-800'
-                                        : 'bg-transparent text-gray-600 hover:bg-gray-100'
-                                        }`}
-                                >
-                                    Events
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('webinars')}
-                                    className={`px-8 py-3 font-semibold transition-all rounded ${activeTab === 'webinars'
-                                        ? 'bg-white text-gray-800'
-                                        : 'bg-transparent text-gray-600 hover:bg-gray-100'
-                                        }`}
-                                >
-                                    Webinars
-                                </button>
+                                <Link href="/events?type=event&page=1&limit=1">
+                                    <button
+                                        className={`px-8 py-3 font-semibold rounded ${activeTab === "event"
+                                                ? "bg-white text-gray-800"
+                                                : "text-gray-600"
+                                            }`}
+                                    >
+                                        Events
+                                    </button>
+                                </Link>
+
+                                <Link href="/events?type=webnair&page=1&limit=1">
+                                    <button
+                                        className={`px-8 py-3 font-semibold rounded ${activeTab === "webnair"
+                                                ? "bg-white text-gray-800"
+                                                : "text-gray-600"
+                                            }`}
+                                    >
+                                        Webinars
+                                    </button>
+                                </Link>
+
                             </div>
                         </div>
 
                         {/* Events Content */}
-                        {activeTab === 'events' && (
+                        {type === 'event' && (
                             <div className="p-6 lg:p-8 max-w-7xl mx-auto">
                                 <div className="max-w-7xl mx-auto">
                                     <div className="absolute right-[-70px] top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0">
@@ -269,7 +275,7 @@ export default function Events({ eventData, page, limit, total , webinarData }) 
                                         />
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-[111]">
-                                        {eventData.map((event) => (
+                                        {data.map((event) => (
                                             <div
                                                 key={event._id}
                                                 className="relative border border-[#FF6B35] bg-white rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px] transition-all duration-300 hover:shadow-xl"
@@ -278,8 +284,8 @@ export default function Events({ eventData, page, limit, total , webinarData }) 
 
                                                 <div className="relative overflow-hidden bg-gray-300 h-[200px] sm:h-[220px] lg:h-[260px] rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]">
                                                     <img
-                                                        src={event.coverImage}
-                                                        alt={event.title}
+                                                        src={event?.coverImage ? event.coverImage : "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg" }
+                                                        alt={event?.title}
                                                         className="w-full h-full object-cover"
                                                         onError={(e) => {
                                                             e.currentTarget.onerror = null;
@@ -348,7 +354,7 @@ export default function Events({ eventData, page, limit, total , webinarData }) 
                         )}
 
                         {/* Webinars Content */}
-                        {activeTab === 'webinars' && (
+                        {type === 'webnair' && (
                             <div className="p-6 lg:p-8 max-w-7xl mx-auto">
                                 <div className="max-w-7xl mx-auto">
                                     <div className="absolute right-[-70px] top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0">
@@ -362,16 +368,16 @@ export default function Events({ eventData, page, limit, total , webinarData }) 
                                         />
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-[111]">
-                                        {webinarData.map((event) => (
+                                        {data.map((event) => (
                                             <div
                                                 key={event._id}
-                                                className="relative bg-white border border-[#FF6B35] rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px] transition-all duration-300 hover:shadow-xl"
+                                                className="relative border border-[#FF6B35] bg-white rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px] transition-all duration-300 hover:shadow-xl"
                                             >
                                                 <div className="absolute -top-2 -left-2 w-28 h-28 sm:w-36 sm:h-36 lg:w-45 lg:h-45 rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px] bg-[#FF6B35] -z-10"></div>
 
                                                 <div className="relative overflow-hidden bg-gray-300 h-[200px] sm:h-[220px] lg:h-[260px] rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]">
                                                     <img
-                                                        src={cleanImageUrl(event.image || 'https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg')}
+                                                        src={event?.coverImage ? event.coverImage :"https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"}
                                                         alt={event.title}
                                                         className="w-full h-full object-cover"
                                                         onError={(e) => {
@@ -383,24 +389,55 @@ export default function Events({ eventData, page, limit, total , webinarData }) 
                                                         <h3 className="text-white text-lg sm:text-xl lg:text-3xl font-semibold mb-2 sm:mb-4 lg:mb-6">
                                                             {event.title}
                                                         </h3>
-                                                        {event.date && (
-                                                            <p className="text-white text-sm sm:text-base lg:text-lg">
-                                                                {event.date}
-                                                            </p>
-                                                        )}
+                                                        <p className="text-white text-sm sm:text-base lg:text-lg">
+                                                            {event.extraMetadata.eventType} • {new Date(event.createdAt).toLocaleDateString("en-IN", {
+                                                                day: "2-digit",
+                                                                month: "short",
+                                                                year: "numeric",
+                                                            })}
+                                                        </p>
                                                     </div>
                                                 </div>
 
                                                 <div className="p-4 sm:p-5 lg:p-6 text-center">
-                                                    {event.description && (
-                                                        <p className="text-gray-600 text-sm sm:text-[15px] leading-relaxed mb-4 lg:mb-6 line-clamp-2">
-                                                            {event.description}
+                                                    <div className="mb-3 flex  text-gray-700 text-sm">
+                                                        <p className="font-semibold mr-1">
+                                                            {new Date(event.extraMetadata.eventDate).toLocaleDateString("en-IN", {
+                                                                day: "numeric",
+                                                                month: "long",
+                                                                year: "numeric",
+                                                            })},
                                                         </p>
 
-                                                    )}
-                                                    <button className="bg-[#FF6B35] hover:bg-[#e85f2f] text-white text-sm font-semibold px-5 py-2 rounded transition-colors">
-                                                        {event.buttonText || "Register Now »"}
-                                                    </button>
+                                                        <p>{new Date(`1970-01-01T${event.extraMetadata.startTime}`).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true })}</p>
+
+                                                        <p>-{new Date(`1970-01-01T${event.extraMetadata.endTime}`).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true })}</p>
+
+
+                                                    </div>
+                                                    <div className="flex items-center mb-2">
+                                                        <MapPin className="w-4 h-4 text-orange-500" />
+                                                        <p className="text-xs ml-2 text-gray-600">
+                                                            {event.extraMetadata.location}
+                                                        </p>
+                                                    </div>
+
+                                                    <p className="text-gray-600 text-sm sm:text-[15px] leading-relaxed mb-4 lg:mb-6 line-clamp-3">
+                                                        {event.shortDescription}
+                                                    </p>
+                                                    <Link
+                                                        href={`/events/${event.slug}`}
+                                                        className="text-white lg:w-55 px-6 py-2 mx-auto sm:py-3 bg-[#1f2937]
+             rounded-tr-4xl shadow-[-4px_0px_4px_0_rgba(0,0,0,0.55)]
+             text-sm font-semibold hover:bg-[#FF6B35]
+             hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
+             flex items-center justify-center gap-2
+             transition-all hover:opacity-90"
+                                                    >
+                                                        View & Register Now »
+                                                    </Link>
+
+
                                                 </div>
                                             </div>
                                         ))}
@@ -412,65 +449,64 @@ export default function Events({ eventData, page, limit, total , webinarData }) 
                 </section>
 
                 {/* Pagination */}
-                <section className="py-10 bg-white">
-                    <div className="container mx-auto px-6">
-                        <div className="flex justify-center items-center gap-2 flex-wrap">
-                            {/* previous */}
-                            {page > 1 ? (
-                                <Link
-                                    href={`/blog/type=event?page=${page - 1}&limit=${limit}`}
-                                    className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-700"
-                                >
-                                    &lt;&lt;
-                                </Link>
+              <section className="py-10 bg-white">
+  <div className="container mx-auto px-6">
+    <div className="flex justify-center items-center gap-2 flex-wrap">
 
-                            ) : (
-                                <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400">
-                                    &lt;&lt;
-                                </span>
-                            )}
+      {/* PREVIOUS */}
+      {page > 1 ? (
+        <Link
+          href={`/events?type=${type}&page=${page - 1}&limit=${limit}`}
+          className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-700"
+        >
+          &lt;&lt;
+        </Link>
+      ) : (
+        <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400">
+          &lt;&lt;
+        </span>
+      )}
 
-                            {/* page numbers */}
+      {/* PAGE NUMBERS */}
+      {Array.from({ length: totalpage }).map((_, index) => {
+        const pageNumber = index + 1
 
-                            {Array.from({ length: totalpage }).map((_, index) => {
-                                const pageNumber = index + 1
-
-                                return (
-                                    <Link
-                                        key={pageNumber}
-                                        href={`/blog?page=${pageNumber}&limit=${limit}`}
-                                        className={`
+        return (
+          <Link
+            key={pageNumber}
+            href={`/events?type=${type}&page=${pageNumber}&limit=${limit}`}
+            className={`
               px-4 py-2 rounded-full w-10 h-10 font-semibold
-              ${page === pageNumber
-                                                ? "bg-[#FF6B35] text-white"
-                                                : "border border-gray-300 text-gray-700 hover:bg-gray-100"
-                                            }
+              ${
+                page === pageNumber
+                  ? "bg-[#FF6B35] text-white"
+                  : "border border-gray-300 text-gray-700 hover:bg-gray-100"
+              }
             `}
-                                    >
-                                        {pageNumber}
-                                    </Link>
-                                )
-                            })}
+          >
+            {pageNumber}
+          </Link>
+        )
+      })}
 
-                            {/* next */}
-                            {page < totalpage ? (
-                                <Link
-                                    href={`/blog?page=${page + 1}&limit=${limit}`}
-                                    className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-700"
-                                >
-                                    &gt;
-                                </Link>
-                            ) : (
-                                <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400">
-                                    &gt;
-                                </span>
-                            )}
+      {/* NEXT */}
+      {page < totalpage ? (
+        <Link
+          href={`/events?type=${type}&page=${page + 1}&limit=${limit}`}
+          className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-700"
+        >
+          &gt;
+        </Link>
+      ) : (
+        <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400">
+          &gt;
+        </span>
+      )}
 
+    </div>
+  </div>
+</section>
 
-
-                        </div>
-                    </div>
-                </section>
 
                 {/* Join Our Exclusive Study Abroad Network */}
                 <section className="py-10 bg-[#FF6B35] relative overflow-hidden">

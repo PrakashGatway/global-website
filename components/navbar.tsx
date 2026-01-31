@@ -36,13 +36,14 @@ export default function Navbar({
   const pathname = usePathname()
 
   // hide footer on auth pages
-  if (
-    pathname === "/login" ||
-    pathname === "/signup" ||
-    pathname === "/dashboard"
-  ) {
-    return null
-  }
+ if (
+  pathname === "/login" ||
+  pathname === "/signup" ||
+  pathname.startsWith("/dashboard")
+) {
+  return null
+}
+
 
   
 
@@ -107,7 +108,7 @@ export default function Navbar({
                       {typeData.map((uni) => (
                         <Link
                           key={uni._id}
-                          href={`/universities/${uni.slug}`}
+                          href={`/destination/${uni.slug}`}
                           className="block px-5 py-3 hover:bg-orange-50"
                         >
                           <div className="font-semibold text-gray-800">

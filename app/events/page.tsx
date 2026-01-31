@@ -4,41 +4,58 @@ import Events from "@/components/events";
 import { serverInstance } from "../axiosInstance";
 import { number, string } from "zod";
 
+export const dynamic = "force-dynamic"
+
+
 
 
 export default async function EventsPage({ searchParams }: {
   searchParams: {
-    page?: string, limit?: string
+    page?: string, limit?: string , type?: string
   }
 }) {
+
   let searchquery = await searchParams
 
-  const page =
-    typeof searchquery.page === "string"
-      ? Number(searchquery.page)
-      : 1
+   const page = Number(searchquery.page) || 1
+  const limit = Number(searchquery.limit) || 1
+  const type = searchquery.type || "event"
 
-  const limit =
-    typeof searchquery.page === "string"
-      ? 2
-      : 2
+ let res
+
+if (type === "webnair") {
+  res = await serverInstance.get("/blogs", {
+    params: {
+      type: "webnair",
+      page,
+      limit
+    }
+  })
+} else {
+  res = await serverInstance.get("/blogs", {
+    params: {
+      type: "event",
+      page,
+      limit
+    }
+  })
+}
 
 
-  const res = await serverInstance.get("/blogs/?type=event", {
-        params: {
-          page,
-          limit
-        }
-      })
 
-      const reswebinar = await serverInstance.get("/blogs?type=webnair")
+     
 
-      console.log(res)
-
-  console.log(reswebinar)
+  // console.log(res)
   return (
     <>
-      <Events eventData={res.data.data} page={res.data.page} limit={res.data.limit} total = {res.data.total} webinarData = {reswebinar.data.data} />
+      <Events
+  data={res.data.data}
+  page={res.data.page}
+  limit={res.data.limit}
+  total={res.data.total}
+  type={type}
+/>
+
 
     </>);
 }

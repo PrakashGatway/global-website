@@ -5,7 +5,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 // import ThreeDButton from "./3dbutton"
 
-export function Footer() {
+export function Footer({typeData}) {
 
    const pathname = usePathname()
 
@@ -13,7 +13,7 @@ export function Footer() {
   if (
     pathname === "/login" ||
     pathname === "/signup" ||
-    pathname === "/dashboard"
+    pathname.startsWith("/dashboard")
   ) {
     return null
   }
@@ -95,43 +95,20 @@ export function Footer() {
                     <h4 className="text-orange-500 font-bold text-lg mb-4">
                       Study Destinations
                     </h4>
-                    <ul className="space-y-2 text-gray-700 text-base flex-1">
+                    {typeData.map((item)=>(
+                      <ul key={item._id} className="space-y-2 text-gray-700 text-base flex-1">
                        <li className="cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
             ">
-                         <Link href="/usa-universities">USA Universities</Link>
+                         <Link href="/usa-universities">{item?.title}</Link>
                        </li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">
-                         <Link href="/uk-universities">UK Universities</Link>
-                       </li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">
-                         <Link href="/germany-public-universities">Germany Public Universities</Link>
-                       </li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">
-                         <Link href="/italy-france">Italy & France</Link>
-                       </li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">
-                         <Link href="/canada-australia">Canada & Australia</Link>
-                       </li>
+                     
                     </ul>
+
+                    ))}
+                    
                   </div>
                   {/* Right divider - only on lg screens */}
                   <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full"></div>

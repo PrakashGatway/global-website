@@ -2,6 +2,7 @@ import Image from "next/image"
 import { serverInstance } from "@/app/axiosInstance"
 import { notFound } from "next/navigation"
 import Link from "next/link"
+import FAQAccordion from "@/components/faqSection"
 
 // Define types
 interface BlogSEO {
@@ -56,29 +57,6 @@ const studyDestinations = [
     { name: "Canada", flag: "🇨🇦", featured: true }
 ]
 
-// Accordion FAQ items
-const faqItems = [
-    {
-        question: "Why attend IDP events?",
-        answer: "IDP events provide you with direct access to university representatives, expert counsellors, and valuable information about study abroad opportunities."
-    },
-    {
-        question: "Will I be able to afford it?",
-        answer: "Our counsellors can guide you about scholarships, financial aid, and education loans to make studying abroad affordable."
-    },
-    {
-        question: "What can I expect when I attend an IDP event?",
-        answer: "One-on-one counselling sessions, university presentations, visa guidance, and scholarship information."
-    },
-    {
-        question: "What other services are available at IDP events?",
-        answer: "IELTS registration assistance, application processing, visa documentation help, and pre-departure briefings."
-    },
-    {
-        question: "What should I bring if I am ready to apply?",
-        answer: "Bring your academic transcripts, passport, English test scores, statement of purpose, and letters of recommendation."
-    }
-]
 
 export default async function EventDetailPage({
     params,
@@ -90,7 +68,7 @@ export default async function EventDetailPage({
     let event: Event
 
     try {
-        const res = await serverInstance.get(`/blogs/${slug}?type=event/`)
+        const res = await serverInstance.get(`/blogs/${slug}`)
         console.log("Event Data:", res.data)
         event = res.data.data
     } catch (error) {
@@ -132,7 +110,7 @@ export default async function EventDetailPage({
                             Events
                         </Link>
                         <span className="text-gray-400">/</span>
-                        <span className="text-gray-900 font-medium truncate max-w-xs">
+                        <span className="text-orange-500 font-medium truncate max-w-xs ">
                             {event.title}
                         </span>
                     </nav>
@@ -307,22 +285,7 @@ export default async function EventDetailPage({
                         </div>
 
                         {/* More Information Accordion */}
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-6">More information</h2>
-                            <div className="space-y-4">
-                                {faqItems.map((item, index) => (
-                                    <div key={index} className="border-b border-gray-100 last:border-b-0">
-                                        <button className="flex items-center justify-between w-full py-4 text-left">
-                                            <span className="font-medium text-gray-800">{item.question}</span>
-                                            <span className="text-gray-500 text-xl">+</span>
-                                        </button>
-                                        <div className="hidden pb-4 text-gray-600">
-                                            {item.answer}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        <FAQAccordion/>
                     </div>
 
                     {/* ================= RIGHT COLUMN (1/3) ================= */}
@@ -433,7 +396,7 @@ export default async function EventDetailPage({
                                                 className="mt-1 mr-3 h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
                                             />
                                             <label htmlFor="terms" className="text-sm text-gray-700">
-                                                I agree to IDP <Link href="#" className="text-orange-600 hover:underline">Terms and privacy policy</Link>
+                                                I agree to IDP <Link href="/terms-condition" className="text-orange-600 hover:underline">Terms and privacy policy</Link>
                                             </label>
                                         </div>
                                         <div className="flex items-start">
