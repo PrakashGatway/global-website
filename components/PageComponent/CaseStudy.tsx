@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-export default function CaseStudy({ font }) {
+export default function CaseStudy({ font , caseStudydata }) {
     const sliderRef = useRef<HTMLDivElement>(null);
 
     const AUTO_SLIDE_INTERVAL = 3000;
@@ -136,10 +136,10 @@ export default function CaseStudy({ font }) {
         <section className="py-16" style={{ backgroundColor: '#fff9f4' }}>
             <div className="max-w-7xl mx-auto" >
                 <h2 style={{ fontFamily: font && "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", transformStyle: 'flat', transformOrigin: 'initial' }} className="text-[2.6rem] font-semibold text-center mb-0">
-                    <span style={{ color: '#f46c44' }}>Case</span>{" "}
-                    <span className="text-gray-600">Studies</span>
+                    <span style={{ color: '#f46c44' }}>{caseStudydata?.title.split('||')[0].trim()}</span>{" "}
+                    <span className="text-gray-600">{caseStudydata?.title.split('||')[1].trim()}</span>
                 </h2>
-                <p className="max-w-4xl font-semibold mx-auto mt-2 text-lg text-[#656565] text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum architecto dolor, in vel laboriosam voluptates alias maiores voluptas neque?</p>
+                <p className="max-w-4xl font-semibold mx-auto mt-2 text-lg text-[#656565] text-center">{caseStudydata?.subtitle}</p>
 
                 <div ref={sliderRef} className="keen-slider">
                     {testimonials.map((testimonial) => (

@@ -36,7 +36,7 @@ export const metadata: Metadata = {
         type: "image/svg+xml",
       },
     ],
-    apple: "/apple-icon.png",
+    apple: "/images/fevi-icon.png",
   },
 }
 
@@ -57,17 +57,20 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const [feature] = await Promise.all([
-    serverInstance.get("/page-information?limit=300"),
+    serverInstance.get("/page-information/navbar?isFeatured=true&isNavbar=true"),
+    
    
 
   ])
 
+  console.log(feature)
+
   const featureRes = feature.data.data.filter((item) => 
-    item.pageType === "destination_page" && item.isFeatured === "Yes" 
+    item.pageType === "destinations" 
   )
 
   const servicedata = feature.data.data.filter((item) => 
-    item.pageType === "services_page" && item.isFeatured === "Yes" 
+    item.pageType === "services_page"
   ) 
 
  
@@ -80,6 +83,12 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+     
+        <head>
+  <link rel="icon" href="/images/fevi-icon.png" className="w-20 " />
+</head>
+
+      
       <body className={`${notoSans.className} antialiased`}>
 
         <Navbar Featureitem={featureRes || []} Serviceitem={serviceres || []}

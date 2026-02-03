@@ -4,17 +4,16 @@ let mode = "dev"
 
 const BASE_URL =
   mode === "dev"
-    ? "http://localhost:5000/api/auth"
-    : "http://localhost:5000/api/auth"
+    ? "https://api.ooshasglobal.com/api"
+    : "http://192.168.1.13:5000/api"
 
 
 export const serverInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: "https://api.ooshasglobal.com/api",
   timeout: 60000,
   headers: {
     "Content-Type": "application/json",
   },
-//   withCredentials: true,
 })
 
 
@@ -58,7 +57,7 @@ axiosInstance.interceptors.response.use(
         localStorage.removeItem("token")
 
     
-        window.location.href = "/"
+        // window.location.href = "/"
       }
     }
 

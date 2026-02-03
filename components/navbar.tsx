@@ -134,19 +134,19 @@ export default function Navbar({
         </div>
       </div>
 
-      <nav className="sticky top-0 z-[999] bg-white border-b border-gray-200">
+      <nav className="sticky top-0 z-[999] bg-white py-2 border-b border-gray-200">
 
         {/* ================= TOP BAR ================= */}
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4  h-16 flex items-center justify-between">
 
           {/* LOGO */}
           <Link href="/">
             <Image
-              src="/images/logo.png"
+              src="/images/newlogo3.png"
               alt="Logo"
-              width={140}
-              height={50}
-              className="object-contain"
+              width={250}
+              height={100}
+              className="object-contain p-2"
               priority
             />
           </Link>
@@ -189,14 +189,14 @@ export default function Navbar({
           >
             <Image
               src={uni.icon || "https://www.countryflags.com/wp-content/uploads/canada-flag-png-xl.png"}
-              alt={uni.title}
+              alt={uni?.navbarTitle}
               width={40}
               height={40}
             />
 
             <div>
               <p className="font-semibold text-gray-900">
-                {uni.title}
+                {uni?.navbarTitle}
               </p>
               <p className="text-sm text-gray-500">
                 {uni.subTitle || "Study Abroad"}

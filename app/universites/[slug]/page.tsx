@@ -3,6 +3,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { serverInstance } from '@/app/axiosInstance';
+import HeroSlider from '@/components/heroSlider';
+import SocialLinksCard from '@/components/socialLinkCard';
+
 
 interface UniversityData {
   _id: string;
@@ -64,6 +67,10 @@ interface UniversityData {
   };
   createdAt: string;
   updatedAt: string;
+  uni_gallery?: {
+    images: string[];
+    videos: string[];
+  };
 }
 
 interface ApiResponse {
@@ -99,6 +106,8 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
   let universityData: UniversityData | null = null;
   let error: string | null = null;
 
+  
+
   try {
     const res = await serverInstance.get<ApiResponse>(`/universities/${slug}`);
     if (res.data.success) {
@@ -122,6 +131,10 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
       </main>
     );
   }
+
+  const latitude = universityData.google_location?.lat;
+const longitude = universityData.google_location?.lng;
+
 
   // Prepare data from API response
   const location = `${universityData.city}, ${universityData.country}`.replace(/, $/, '');
@@ -166,10 +179,25 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
   // Determine default tab based on available sections
   const defaultTab = activeSections.length > 0 ? activeSections[0].section_key : 'college-info';
 
+  // Get gallery data from API
+  const galleryImages = universityData.uni_gallery?.images || [];
+  const galleryVideos = universityData.uni_gallery?.videos || [];
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      {/* Header */}
-      <div className="sticky top-0 z-40 border-b bg-white shadow-sm">
+      {/* Hero Section with Slider */}
+      <div className="relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <HeroSlider 
+            images={galleryImages}
+            videos={galleryVideos}
+            universityName={universityData.name}
+          />
+        </div>
+      </div>
+
+      {/* Header Info */}
+      <div className="sticky top-16 z-40 border-b bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -179,78 +207,89 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
                 {location}
               </p>
             </div>
-            <div className="text-right">
-              <div className="flex items-center gap-2">
-                <div className="text-yellow-500 flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-current" />
-                  ))}
-                </div>
-                <span className="text-lg font-semibold text-slate-900">4.5 /5</span>
-              </div>
-              <p className="text-sm text-slate-600">(Reviews coming soon)</p>
-            </div>
+          
           </div>
 
-          {/* Highlights */}
-          <div className="grid grid-cols-3 gap-4 mt-6">
-            {highlights.map((item, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-slate-700">
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                <span>{item.label}</span>
-              </div>
-            ))}
-          </div>
+         
         </div>
       </div>
 
       {/* Rankings Section */}
-      <div className="bg-blue-50 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <p className="text-sm text-slate-600 mb-2">University Ranking</p>
-              <div className="flex items-center gap-4">
-                <div className="text-4xl font-bold text-blue-600">
-                  #{universityData.uni_rank?.rank || 'N/A'}
-                </div>
-                <span className="text-slate-700">in {universityData.uni_rank?.type || 'Global'}</span>
-              </div>
-            </div>
-            <div>
-              <p className="text-sm text-slate-600 mb-2">Status</p>
-              <div className="flex items-center gap-4">
-                <div className="text-4xl font-bold text-blue-600">
-                  {universityData.status || 'Active'}
-                </div>
-                <span className="text-slate-700">University Status</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-center md:justify-start">
-              <Button variant="outline">View ranking details</Button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="bg-blue-50 border-b">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="grid md:grid-cols-3 gap-8">
+      
+      {/* Rankings */}
+      <div className="md:col-span-2">
+        <p className="text-sm text-slate-600 mb-3">University Rankings</p>
 
-      {/* Action Buttons */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap gap-3">
-          <Button variant="default">Compare</Button>
-          <Button variant="outline">Brochure</Button>
-          <Button variant="outline">Rate my chance</Button>
-          {universityData.uni_web && (
-            <Button variant="outline" asChild>
-              <a href={universityData.uni_web} target="_blank" rel="noopener noreferrer">
-                Visit Website
-              </a>
-            </Button>
+        <div className="grid sm:grid-cols-2 gap-6">
+          {Array.isArray(universityData.uni_rank) && universityData.uni_rank.length > 0 ? (
+            universityData.uni_rank.map((rank, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-4 bg-white rounded-lg p-4 shadow-sm"
+              >
+                <div className="text-4xl font-bold text-orange-500">
+                  #{rank.rank}
+                </div>
+
+                <div>
+                  <p className="font-semibold text-slate-900">
+                    {rank.type}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    Year {rank.year}
+                  </p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-slate-600">Ranking data not available</p>
           )}
         </div>
       </div>
 
+      {/* Intakes (replacing Status) */}
+      <div>
+        <p className="text-sm text-slate-600 mb-3">Available Intakes</p>
+
+        <div className="bg-white rounded-lg p-4 shadow-sm space-y-3">
+          {Array.isArray(universityData.intakes) && universityData.intakes.length > 0 ? (
+            universityData.intakes.map((intake, index) => (
+              <div key={index} className="flex items-center gap-3">
+                <Calendar className="w-5 h-5 text-orange-600" />
+                <span className="text-slate-800 font-medium">
+                  {intake}
+                </span>
+              </div>
+            ))
+          ) : (
+            <p className="text-slate-600">No intake information available</p>
+          )}
+        </div>
+
+        <Button variant="outline" className="mt-4 w-full hover:bg-orange-500 cursor-pointer ">
+          View admission timeline
+        </Button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{/* LEFT SOCIAL LINKS */}
+<SocialLinksCard
+    facebook={universityData.social_links?.facebook}
+    twitter={universityData.social_links?.twitter}
+    instagram={universityData.social_links?.instagram}
+    linkedin={universityData.social_links?.linkedin}
+  />
+
+
+
       {/* Navigation Tabs */}
-      <div className="bg-white border-b sticky top-16 z-30">
+      <div className="bg-white border-b sticky top-16 z-30 mt-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Tabs defaultValue={defaultTab} className="w-full">
             <TabsList className="w-full justify-start rounded-none border-0 bg-transparent h-auto p-0 gap-8">
@@ -259,28 +298,11 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
                 <TabsTrigger 
                   key={section._id} 
                   value={section.section_key}
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 px-0 py-4 text-slate-700 data-[state=active]:text-slate-900"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-gray-600 px-0 py-4 text-slate-700 data-[state=active]:text-slate-900"
                 >
                   {section.heading}
                 </TabsTrigger>
               ))}
-              
-              {/* Additional tabs */}
-              <TabsTrigger value="courses" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 px-0 py-4 text-slate-700 data-[state=active]:text-slate-900">
-                Courses
-              </TabsTrigger>
-              <TabsTrigger value="fees" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 px-0 py-4 text-slate-700 data-[state=active]:text-slate-900">
-                Fees
-              </TabsTrigger>
-              <TabsTrigger value="rankings" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 px-0 py-4 text-slate-700 data-[state=active]:text-slate-900">
-                Rankings
-              </TabsTrigger>
-              <TabsTrigger value="admissions" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 px-0 py-4 text-slate-700 data-[state=active]:text-slate-900">
-                Admissions
-              </TabsTrigger>
-              <TabsTrigger value="scholarships" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 px-0 py-4 text-slate-700 data-[state=active]:text-slate-900">
-                Scholarships
-              </TabsTrigger>
             </TabsList>
 
             {/* Content Section */}
@@ -300,227 +322,147 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
                     </TabsContent>
                   ))}
 
-                  {/* Courses Tab */}
-                  <TabsContent value="courses" className="space-y-8">
-                    <div>
-                      <h2 className="text-2xl font-bold text-slate-900 mb-4">Courses at {universityData.name}</h2>
-                      <p className="text-slate-700 leading-relaxed mb-6">
-                        {universityData.name} offers diverse programs across various disciplines. Below are the main course categories.
-                      </p>
-                    </div>
 
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {courses.map((course, idx) => (
-                        <Card key={idx} className="border-slate-200">
-                          <CardContent className="pt-6">
-                            <div className="flex items-start justify-between mb-4">
-                              <div>
-                                <h4 className="text-lg font-bold text-slate-900">{course.name}</h4>
-                                <p className="text-sm text-slate-600">{course.duration}</p>
-                              </div>
-                              <div className="text-right">
-                                <p className="text-sm font-semibold text-slate-900">#{course.ranking}</p>
-                              </div>
-                            </div>
-                            <div className="space-y-2">
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-600">Tuition Fees</span>
-                                <span className="font-semibold text-slate-900">{course.fee}</span>
-                              </div>
-                              <div className="flex justify-between text-sm">
-                                <span className="text-slate-600">Ranking</span>
-                                <span className="font-semibold text-slate-900">#{course.ranking}</span>
-                              </div>
-                            </div>
-                            <Button className="w-full mt-4 bg-transparent" variant="outline">Rate my chance</Button>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </TabsContent>
+                  {/* Location Section */}
+<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+  <div className="grid lg:grid-cols-3 gap-8">
+    
+    {/* LEFT: Google Map */}
+    <div className="lg:col-span-2">
+      <Card className="border-gray-300">
+        <CardContent className="p-0">
+          <div className="h-[350px] w-full rounded-lg overflow-hidden">
+            {latitude && longitude ? (
+              <iframe
+                title="University Location"
+                width="100%"
+                height="100%"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://www.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`}
+                className="border-0"
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center text-gray-500">
+                Location not available
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
 
-                  {/* Fees Tab */}
-                  <TabsContent value="fees" className="space-y-8">
-                    <div>
-                      <h2 className="text-2xl font-bold text-slate-900 mb-4">{universityData.name} Fees Structure</h2>
-                      <p className="text-slate-700 leading-relaxed mb-6">
-                        Detailed fee structure for various programs at {universityData.name}.
-                      </p>
-                    </div>
+    {/* RIGHT: Address Details */}
+    <div className="lg:col-span-1">
+      <Card className="border-gray-300">
+        <CardContent className="pt-6">
+          <h3 className="font-bold text-gray-800 mb-4">
+            Campus Location
+          </h3>
 
-                    <div className="bg-blue-50 rounded-lg p-6 mb-6">
-                      <h3 className="text-lg font-bold text-slate-900 mb-4">Financial Breakdown</h3>
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="bg-white rounded p-4">
-                          <p className="text-sm text-slate-600 mb-2">Undergraduate Fees</p>
-                          <p className="text-2xl font-bold text-blue-600">{universityData.financials?.ug_fees || 'N/A'}</p>
-                        </div>
-                        <div className="bg-white rounded p-4">
-                          <p className="text-sm text-slate-600 mb-2">Postgraduate Fees</p>
-                          <p className="text-2xl font-bold text-blue-600">{universityData.financials?.pg_fees || 'N/A'}</p>
-                        </div>
-                        <div className="bg-white rounded p-4">
-                          <p className="text-sm text-slate-600 mb-2">Cost of Living</p>
-                          <p className="text-2xl font-bold text-blue-600">{universityData.financials?.cost_of_living || 'N/A'}</p>
-                        </div>
-                        <div className="bg-white rounded p-4">
-                          <p className="text-sm text-slate-600 mb-2">Other Fees</p>
-                          <p className="text-2xl font-bold text-blue-600">{universityData.financials?.other_fees || 'N/A'}</p>
-                        </div>
-                      </div>
-                    </div>
+          <div className="space-y-4 text-sm text-gray-600">
+            <div className="flex items-start gap-2">
+              <MapPin className="w-4 h-4 text-orange-600 mt-1" />
+              <span>{universityData.address || 'N/A'}</span>
+            </div>
 
-                    <div>
-                      <h3 className="text-lg font-bold text-slate-900 mb-4">Financial Information</h3>
-                      <p className="text-slate-700 leading-relaxed">
-                        {universityData.short_description || 'Contact the university for detailed financial aid information.'}
-                      </p>
-                    </div>
-                  </TabsContent>
+            <div className="border-t border-gray-300 pt-4">
+              <p>
+                <span className="font-medium text-gray-800">City:</span>{' '}
+                {universityData.city}
+              </p>
+              <p>
+                <span className="font-medium text-gray-800">Country:</span>{' '}
+                {universityData.country}
+              </p>
+            </div>
 
-                  {/* Rankings Tab */}
-                  <TabsContent value="rankings" className="space-y-8">
-                    <div>
-                      <h2 className="text-2xl font-bold text-slate-900 mb-4">{universityData.name} Rankings</h2>
-                      <p className="text-slate-700 leading-relaxed mb-6">
-                        {universityData.name} is recognized globally for its academic excellence and research contributions.
-                      </p>
-                    </div>
+            <Button
+              asChild
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+            >
+              <a
+                href={`https://www.google.com/maps?q=${latitude},${longitude}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open in Google Maps
+              </a>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</div>
 
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <Card className="border-slate-200">
-                        <CardContent className="pt-6">
-                          <h4 className="font-bold text-slate-900 mb-4">University Rankings</h4>
-                          <div className="space-y-3">
-                            <div className="flex justify-between items-center">
-                              <span className="text-slate-700">{universityData.uni_rank?.type || 'Global'} Ranking</span>
-                              <span className="font-bold text-blue-600">#{universityData.uni_rank?.rank || 'N/A'}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-slate-700">Status</span>
-                              <span className="font-bold text-blue-600">{universityData.status}</span>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
 
-                      <Card className="border-slate-200">
-                        <CardContent className="pt-6">
-                          <h4 className="font-bold text-slate-900 mb-4">Accreditation</h4>
-                          <div className="space-y-3">
-                            <div className="flex justify-between items-center">
-                              <span className="text-slate-700">University Type</span>
-                              <span className="font-bold text-blue-600">{universityData.uni_type}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-slate-700">Established</span>
-                              <span className="font-bold text-blue-600">{universityData.established_year}</span>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </TabsContent>
 
-                  {/* Admissions Tab */}
-                  <TabsContent value="admissions" className="space-y-8">
-                    <div>
-                      <h2 className="text-2xl font-bold text-slate-900 mb-4">Admissions Information</h2>
-                      <p className="text-slate-700 leading-relaxed mb-6">
-                        {universityData.short_description || 'Please visit the official website or contact the admissions office for detailed admission requirements.'}
-                      </p>
-                    </div>
-
-                    {/* University Information Table */}
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-4">University Details</h3>
-                      <div className="overflow-x-auto">
-                        <table className="w-full border-collapse">
-                          <tbody>
-                            {universityInfo.map((info, idx) => (
-                              <tr key={idx} className={idx % 2 === 0 ? 'bg-slate-50' : 'bg-white'}>
-                                <td className="px-4 py-3 font-medium text-slate-900 border border-slate-200 w-1/2">
-                                  {info.label}
-                                </td>
-                                <td className="px-4 py-3 text-slate-700 border border-slate-200">
-                                  {info.value}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </TabsContent>
-
-                  {/* Scholarships Tab */}
-                  <TabsContent value="scholarships" className="space-y-8">
-                    <div>
-                      <h2 className="text-2xl font-bold text-slate-900 mb-4">Scholarships & Financial Aid</h2>
-                      <p className="text-slate-700 leading-relaxed mb-6">
-                        {universityData.name} offers various scholarships and financial aid options. Contact the financial aid office for detailed information.
-                      </p>
-                    </div>
-
-                    <div className="space-y-4">
-                      <Card className="border-slate-200">
-                        <CardContent className="pt-6">
-                          <h4 className="font-bold text-slate-900 mb-3">Financial Assistance</h4>
-                          <p className="text-slate-700 text-sm">
-                            For information about scholarships, grants, and financial aid, please contact the university's financial aid office.
-                          </p>
-                        </CardContent>
-                      </Card>
-
-                      <Card className="border-slate-200">
-                        <CardContent className="pt-6">
-                          <h4 className="font-bold text-slate-900 mb-3">Contact Information</h4>
-                          <p className="text-slate-700 text-sm">
-                            Phone: {universityData.uni_contact || 'N/A'}<br />
-                            Website: {universityData.uni_web || 'N/A'}
-                          </p>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </TabsContent>
                 </div>
 
                 {/* Sidebar */}
                 <div className="lg:col-span-1">
                   {/* Quick Stats */}
-                  <Card className="mb-6 border-slate-200 sticky top-32">
-                    <CardContent className="pt-6">
-                      <h3 className="font-bold text-slate-900 mb-4">Quick Stats</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-sm text-slate-600 mb-1">University Type</p>
-                          <p className="text-xl font-bold text-blue-600">{universityData.uni_type}</p>
-                        </div>
-                        <div className="border-t border-slate-200 pt-4">
-                          <p className="text-sm text-slate-600 mb-1">Established</p>
-                          <p className="text-xl font-bold text-blue-600">{universityData.established_year}</p>
-                        </div>
-                        <div className="border-t border-slate-200 pt-4">
-                          <p className="text-sm text-slate-600 mb-1">Ranking</p>
-                          <p className="text-xl font-bold text-blue-600">#{universityData.uni_rank?.rank || 'N/A'}</p>
-                        </div>
-                        <div className="border-t border-slate-200 pt-4">
-                          <p className="text-sm text-slate-600 mb-1">Status</p>
-                          <p className="text-xl font-bold text-blue-600">{universityData.status}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                 <Card className="mb-6 border-gray-300">
+  <CardContent className="pt-6">
+    <h3 className="font-bold text-gray-800 mb-4">
+      Financial Overview
+    </h3>
+
+    <div className="space-y-4">
+      {/* Cost of Living */}
+      <div>
+        <p className="text-sm text-gray-600 mb-1">
+          Cost of Living (Annual)
+        </p>
+        <p className="text-xl font-bold text-orange-600">
+          {universityData.financials?.cost_of_living || 'N/A'}
+        </p>
+      </div>
+
+      {/* UG Fees */}
+      <div className="border-t border-gray-300 pt-4">
+        <p className="text-sm text-gray-600 mb-1">
+          Undergraduate Fees
+        </p>
+        <p className="text-xl font-bold text-orange-600">
+          {universityData.financials?.ug_fees || 'N/A'}
+        </p>
+      </div>
+
+      {/* PG Fees */}
+      <div className="border-t border-gray-300 pt-4">
+        <p className="text-sm text-gray-600 mb-1">
+          Postgraduate Fees
+        </p>
+        <p className="text-xl font-bold text-orange-600">
+          {universityData.financials?.pg_fees || 'N/A'}
+        </p>
+      </div>
+
+      {/* Other Fees */}
+      <div className="border-t border-gray-300 pt-4">
+        <p className="text-sm text-gray-600 mb-1">
+          Other Fees
+        </p>
+        <p className="text-xl font-bold text-orange-600">
+          {universityData.financials?.other_fees || 'N/A'}
+        </p>
+      </div>
+    </div>
+  </CardContent>
+</Card>
+
 
                   {/* CTA Section */}
-                  <Card className="border-slate-200 bg-blue-50">
+                  <Card className="border-slate-200 bg-gray-50">
                     <CardContent className="pt-6">
                       <h3 className="font-bold text-slate-900 mb-4">Ready to Apply?</h3>
                       <div className="space-y-3">
-                        <Button className="w-full bg-blue-600 hover:bg-blue-700">Get Brochure</Button>
-                        <Button className="w-full bg-transparent" variant="outline">Talk to Expert</Button>
+                        <Button className="w-full bg-gray-600 hover:bg-orange-500 cursor-pointer">Get Brochure</Button>
+                        <Button className="w-full bg-transparent hover:bg-orange-500" variant="outline">Talk to Expert</Button>
                         {universityData.uni_web && (
-                          <Button className="w-full bg-transparent" variant="outline" asChild>
+                          <Button className="w-full bg-transparent hover:bg-orange-500" variant="outline" asChild>
                             <a href={universityData.uni_web} target="_blank" rel="noopener noreferrer">
                               Visit Official Website
                             </a>
@@ -581,6 +523,8 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
           </p>
         </div>
       </div>
+
+      
     </main>
   );
 }

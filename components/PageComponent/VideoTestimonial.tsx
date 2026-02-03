@@ -4,26 +4,54 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
-const testimonials = [
-  {
-    title: 'Ivy League',
-    text: `My Ivy League admit was made possible by gaway global's extensive admissions counselling support with my applications. Moreover, their online portal combined with expert faculty helped me ace the SAT.`,
-    videoId: 'aJTjHXbOlFI',
-  },
-  {
-    title: 'Top US University',
-    text: `With personalized mentoring and constant guidance, I secured admission into my dream university abroad.`,
-    videoId: 'aJTjHXbOlFI',
-  },
-];
+interface VideoTestimonialItem {
+  title: string;
+  text: string;
+  videoUrl: string; // full URL like "https://youtu.be/wPc6mANhIj4"
+}
 
-export default function VideoTestimonialsSlider() {
+interface VideoTestimonialsSliderProps {
+  items: VideoTestimonialItem[];
+  title?: string; // e.g., "Video || Testimonials"
+}
+
+// Helper: Extract YouTube video ID from URL
+const getYouTubeId = (url: string): string | null => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
+export default function VideoTestimonialsSlider({
+  items,
+  title = "Video || Testimonials"
+}: VideoTestimonialsSliderProps) {
+  // Filter valid items with video ID
+  const validItems = items
+    .map(item => ({
+      ...item,
+      videoId: getYouTubeId(item.videoUrl)
+    }))
+    .filter(item => item.videoId);
+
   const [index, setIndex] = useState(0);
 
-  const next = () => setIndex((i) => (i + 1) % testimonials.length);
-  const prev = () => setIndex((i) => (i - 1 + testimonials.length) % testimonials.length);
+  if (validItems.length === 0) return null;
 
-  const item = testimonials[index];
+  const next = () => setIndex((i) => (i + 1) % validItems.length);
+  const prev = () => setIndex((i) => (i - 1 + validItems.length) % validItems.length);
+
+  const item = validItems[index];
+
+  // Parse title with ||
+  const displayTitle = title.includes('||')
+    ? (
+        <>
+          <span className="text-[#f46c44]">{title.split('||')[0].trim()}</span>{' '}
+          <span className="text-gray-600">{title.split('||')[1].trim()}</span>
+        </>
+      )
+    : title;
 
   return (
     <section
@@ -59,8 +87,7 @@ export default function VideoTestimonialsSlider() {
       </div>
       <div className="max-w-7xl mx-auto px-4 py-12">
         <h2 className="text-2xl sm:text-3xl lg:text-[2.6rem] font-bold text-center mb-6">
-          <span className="text-[#f46c44]">Video</span>{' '}
-          <span className="text-gray-600">Testimonials</span>
+          {displayTitle}
         </h2>
 
         {/* WRAPPER */}
@@ -189,20 +216,22 @@ export default function VideoTestimonialsSlider() {
           </AnimatePresence>
 
           {/* NAVIGATION (ALL SCREENS) */}
-          <div className="absolute bottom-4 right-1/2 translate-x-1/2 lg:right-[12%] lg:translate-x-0 flex gap-3 z-50">
-            <button
-              onClick={prev}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#f46c44]/70 flex items-center justify-center text-white"
-            >
-              ←
-            </button>
-            <button
-              onClick={next}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#f46c44]/70 flex items-center justify-center text-white"
-            >
-              →
-            </button>
-          </div>
+          {validItems.length > 1 && (
+            <div className="absolute bottom-4 right-1/2 translate-x-1/2 lg:right-[12%] lg:translate-x-0 flex gap-3 z-50">
+              <button
+                onClick={prev}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#f46c44]/70 flex items-center justify-center text-white"
+              >
+                ←
+              </button>
+              <button
+                onClick={next}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#f46c44]/70 flex items-center justify-center text-white"
+              >
+                →
+              </button>
+            </div>
+          )}
 
         </div>
       </div>

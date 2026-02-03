@@ -108,7 +108,7 @@ export function Footer({ Featureitem = [],Serviceitem =[]
               hover:translate-x-2
               my-2
             ">
-                         <Link href={`/destination/${item.slug}`}>{item?.title}</Link>
+                         <Link href={`/destination/${item.slug}`}>{item?.navbarTitle}</Link>
                        </li>
                      
                     </ul>
@@ -133,7 +133,7 @@ export function Footer({ Featureitem = [],Serviceitem =[]
               hover:text-[#f46c44]
               hover:translate-x-2
             ">
-                         <Link href={`/service/${item.slug}`}>{item?.title}</Link>
+                         <Link href={`/service/${item.slug}`}>{item?.navbarTitle}</Link>
                        </li>
                      
                     </ul>

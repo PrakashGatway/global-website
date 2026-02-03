@@ -1,5 +1,3 @@
-
-
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { ArrowRight, BadgeIcon, Globe, NutOffIcon, PanelsTopLeftIcon, TargetIcon, Users, VideoIcon, Zap } from "lucide-react"
@@ -11,7 +9,7 @@ import VideoTestimonialsSlider from "@/components/PageComponent/VideoTestimonial
 import ImageTestimonial from "@/components/ImageTestimonial"
 import VideoInSvgShape from "@/components/PageComponent/VideoShape"
 
-import  { serverInstance } from "@/app/axiosInstance"
+import { serverInstance } from "@/app/axiosInstance"
 
 
 
@@ -22,16 +20,18 @@ export default async function Homepage() {
 
 
 
- const res = await serverInstance.get('/page-information/')
+  const res = await serverInstance.get('/page-information/slug/home')
 
- 
+  const homePage = res.data.data.sections
 
- 
-  const homePage = res.data.data.find(
-        (item) => item.pageType === "home_page"
-      )
 
-  
+
+
+
+
+
+
+
 
   return (
     <main className="bg-[#fffaf7]">
@@ -42,15 +42,14 @@ export default async function Homepage() {
     bg-no-repeat bg-cover bg-bottom
     py-12 sm:py-16 lg:py-0
   "
-       style={{
-  backgroundImage: homePage?.heroImage
-    ? `url(${homePage.heroImage})`
-    : "none",
-}}
+        style={{
+          backgroundImage: `url()`
+
+        }}
 
       >
         <div>
-    
+
 
         </div>
         {/* mobile overlay only */}
@@ -63,73 +62,78 @@ export default async function Homepage() {
             {/* LEFT CONTENT */}
             <div className="text-center lg:text-left">
               <h1 className="text-3xl sm:text-4xl lg:text-[2.7rem] font-extrabold leading-tight">
-                {homePage?.title ? (
-                   <span className="block text-[#646162]">{homePage.title}</span>
-                ) : (
-                  <>
-                    <span className="block text-[#646162]">
-                      Your Gateway to the World&apos;s
-                    </span>
-
+                {homePage?.hero?.title ? (
+                  <span className="block text-[#646162]">
+                    {homePage.hero.title.split('||')[0]?.trim()}
+                    <br />
                     <span className="relative inline-block mt-3 text-[#ea6c46]">
-                      Top Universities
+                      {homePage.hero.title.split('||')[1]?.trim()}
                       <span className="absolute left-0 -bottom-2 w-full h-[2px] bg-[#f46c44]">
                         <span className="absolute right-0 -top-[3px] w-2 h-2 rounded-full bg-[#f46c44]" />
                       </span>
                     </span>
-                  </>
-                )}
+                  </span>
+                ) : null}
               </h1>
 
               <p className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-gray-700 max-w-xl mx-auto lg:mx-0">
-                {homePage?.subTitle ? (
-                  homePage.subTitle
-                ) : (
+                {homePage?.hero?.subtitle ? (
                   <>
-                    Specialized admissions guidance for{" "}
+                    {homePage.hero.subtitle.split('||')[0]?.trim()}{" "}
                     <span className="font-semibold text-[#f46c44]">
-                      Ivy League, Russell Group, German & Italian Public Universities
+                      {homePage.hero.subtitle.split('||')[1]?.trim()}
                     </span>
                   </>
-                )}
+                ) : null}
               </p>
 
               {/* CTA BUTTONS */}
               <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <button
+                <a
+                  href={homePage?.hero?.ctaLink1}
                   className="
-              text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
-              rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base font-semibold
-              hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
-              flex items-center justify-center gap-2
-              transition-all hover:opacity-90
-            "
+    text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
+    rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
+    text-base font-semibold
+    hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
+    flex items-center justify-center gap-2
+    transition-all hover:opacity-90
+  "
+                 
+                  rel="noopener noreferrer"
                 >
-                  Get Free Counselling
-                </button>
+                  {homePage?.hero?.ctaText1 || "Get Free Counselling"}
+                </a>
 
-                <button
+
+                <a
+                  href={homePage?.hero?.ctaLink2}
                   className="
-              text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#f46c44]
-              rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base  font-semibold
-              transition-all hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
-            "
+    text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#f46c44]
+    rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
+    text-base font-semibold
+    transition-all hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
+    inline-flex items-center justify-center
+  "
+               
+                  rel="noopener noreferrer"
                 >
-                  Check Your Eligibility
-                </button>
+                  {homePage?.hero?.ctaText2 || "Check Your Eligibility"}
+                </a>
+
               </div>
             </div>
 
             {/* RIGHT IMAGE */}
             <div className="flex justify-center lg:justify-end">
-             {homePage?.universityCapBg && (
-  <Image
-    src={homePage?.universityCapBg}
-    width={1200}
-    height={800}
-    alt="cap"
-  />
-)}
+              {homePage?.hero?.heroImage && (
+                <Image
+                  src={homePage.hero.heroImage.trim()}
+                  width={1200}
+                  height={800}
+                  alt="cap"
+                />
+              )}
 
             </div>
           </div>
@@ -137,30 +141,34 @@ export default async function Homepage() {
           {/* STATS SECTION */}
           <div className="pb-12 lg:pb-16">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
-              {[
-                { value: "97%", title: "Application Acceptance", sub: "in Public Universities" },
-                { value: "#1", title: "Consultancy for", sub: "Top-Tier Programs" },
-                { value: "5000+", title: "Successful", sub: "Student Applications" },
-                { value: "15+", title: "Years of", sub: "Expert Experience" },
-              ].map((item, index) => (
+              {(homePage?.stats?.stats || []).map((item: any, index: number) => (
                 <div
                   key={index}
                   className="flex items-center sm:items-start gap-4 text-center sm:text-left"
                 >
-                  <Image
-                    src="https://toppng.com/uploads/preview/graduation-cap-svg-icon-free-graduation-cap-icon-11553393846gq7rcr1qsx.png"
-                    alt="Graduation Cap"
-                    width={70}
-                    height={70}
-                    className="object-contain mx-auto sm:mx-0"
-                  />
+                  {item.icon ? (
+                    <Image
+                      src={item.icon.trim()}
+                      alt="Stat Icon"
+                      width={70}
+                      height={70}
+                      className="object-contain mx-auto sm:mx-0"
+                    />
+                  ) : (
+                    <Image
+                      src="https://toppng.com/uploads/preview/graduation-cap-svg-icon-free-graduation-cap-icon-11553393846gq7rcr1qsx.png"
+                      alt="Graduation Cap"
+                      width={70}
+                      height={70}
+                      className="object-contain mx-auto sm:mx-0"
+                    />
+                  )}
                   <div>
                     <div className="text-3xl sm:text-4xl font-bold text-gray-800">
-                      {item.value}
+                      {item.number}
                     </div>
                     <div className="text-gray-700 leading-snug">
-                      <div>{item.title}</div>
-                      <div>{item.sub}</div>
+                      {item.title}
                     </div>
                   </div>
                 </div>
@@ -198,8 +206,12 @@ export default async function Homepage() {
             {/* LEFT CONTENT */}
             <div>
               <h2 className="text-3xl sm:text-4xl lg:text-[3rem] font-bold leading-tight">
-                <span className="text-[#ea6c46]">Why</span>{" "}
-                <span className="text-[#646162]">GAway Global ?</span>
+                <span className="text-[#ea6c46]">
+                  {homePage?.whyUs?.title?.split('||')[0]?.trim()}
+                </span>{" "}
+                <span className="text-[#646162]">
+                  {homePage?.whyUs?.title?.split('||')[1]?.trim()}
+                </span>
               </h2>
             </div>
 
@@ -211,9 +223,9 @@ export default async function Homepage() {
                 <div className="flex flex-col items-center text-center gap-4 p-10 border-r-1 border-b-1">
                   <NutOffIcon className="w-16 h-16" />
                   <p className="font-semibold text-base sm:text-xl leading-snug">
-                    Transparent process
+                    {homePage?.whyUs?.items?.[0]?.title}
                     <br />
-                    <span className="text-lg">(No hidden fees)</span>
+                    <span className="text-lg">{homePage?.whyUs?.items?.[0]?.description}</span>
                   </p>
                 </div>
 
@@ -221,9 +233,9 @@ export default async function Homepage() {
                 <div className="flex flex-col items-center text-center gap-4 p-10 border-b-1 border-l-1">
                   <BadgeIcon className="w-16 h-16" />
                   <p className="font-semibold text-base sm:text-xl leading-snug">
-                    10+ yrs
+                    {homePage?.whyUs?.items?.[1]?.title}
                     <br />
-                    <span className="text-lg">experience</span>
+                    <span className="text-lg">{homePage?.whyUs?.items?.[1]?.description}</span>
                   </p>
                 </div>
 
@@ -231,9 +243,9 @@ export default async function Homepage() {
                 <div className="flex flex-col items-center text-center gap-4 p-10 border-t-1 border-r-1">
                   <TargetIcon className="w-16 h-16" />
                   <p className="font-semibold text-base sm:text-xl leading-snug">
-                    Specialized ONLY
+                    {homePage?.whyUs?.items?.[2]?.title}
                     <br />
-                    <span className="text-lg">in elite admissions</span>
+                    <span className="text-lg">{homePage?.whyUs?.items?.[2]?.description}</span>
                   </p>
                 </div>
 
@@ -241,9 +253,9 @@ export default async function Homepage() {
                 <div className="flex flex-col items-center text-center gap-4 p-10 border-t-1 border-l-1">
                   <PanelsTopLeftIcon className="w-16 h-16" />
                   <p className="font-semibold text-base sm:text-xl leading-snug">
-                    Country-specific
+                    {homePage?.whyUs?.items?.[3]?.title}
                     <br />
-                    <span className="text-lg">experts</span>
+                    <span className="text-lg">{homePage?.whyUs?.items?.[3]?.description}</span>
                   </p>
                 </div>
 
@@ -302,20 +314,20 @@ export default async function Homepage() {
                       transform: "rotateY(2deg) rotateX(5deg) rotateZ(2deg) skewX(3deg)",
                     }}
                   >
-                    {homePage?.immigrationServices2Bg && (
-  <Image
-    src={homePage.immigrationServices2Bg}
-    alt="Immigration services"
-    width={600}
-    height={800}
-    className="w-full h-full object-cover scale-110"
-    style={{
-      transform:
-        "rotateY(-12deg) rotateX(5deg) rotateZ(-5deg) skewX(-5deg)",
-    }}
-  />
-)}
-                    
+                    {homePage?.trustedPartners?.bgImage2 && (
+                      <Image
+                        src={homePage.trustedPartners.bgImage2.trim()}
+                        alt="Immigration services"
+                        width={600}
+                        height={800}
+                        className="w-full h-full object-cover scale-110"
+                        style={{
+                          transform:
+                            "rotateY(-12deg) rotateX(5deg) rotateZ(-5deg) skewX(-5deg)",
+                        }}
+                      />
+                    )}
+
                   </div>
                 </div>
 
@@ -345,7 +357,7 @@ export default async function Homepage() {
                     }}
                   >
                     <img
-                      src={homePage?.immigrationServices1Bg}
+                      src={homePage?.trustedPartners?.bgImage1?.trim()}
                       alt=""
                       className="w-full h-full object-cover scale-115"
                       style={{
@@ -376,18 +388,20 @@ export default async function Homepage() {
               {/* RIGHT CONTENT */}
               <div className="text-center lg:text-left">
                 <h2 className="text-2xl sm:text-3xl lg:text-[2.6rem] font-bold leading-tight mb-3">
-                  <span className="text-[#ea6c46]">Your Trusted Partner in</span>
+                  <span className="text-[#ea6c46]">
+                    {homePage?.trustedPartners?.title?.split('||')[0]?.trim()}
+                  </span>
                   <br />
-                  <span className="text-[#646162]">Immigration Services</span>
+                  <span className="text-[#646162]">
+                    {homePage?.trustedPartners?.title?.split('||')[1]?.trim()}
+                  </span>
                 </h2>
 
                 <p className="text-sm font-medium sm:text-base text-gray-600 mb-6 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                  We provide reliable guidance for study, work, and permanent residency
-                  applications. Our experienced team supports you at every step of your
-                  immigration journey.
+                  {homePage?.trustedPartners?.subtitle}
                 </p>
 
-                <AboutTabsSection />
+                <AboutTabsSection tabs={homePage?.trustedPartners?.items || []} />
 
                 {/* CTA */}
                 <div className="mt-4 flex justify-center lg:justify-start">
@@ -408,18 +422,61 @@ export default async function Homepage() {
           </div>
         </div>
       </section>
-      <VideoTestimonialsSlider />
-      <ImageTestimonial />
+      <VideoTestimonialsSlider
+        title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
+        items={[
+          {
+            title: "Trusted Success",
+            text: homePage?.videoTestimonials?.subtitle || "Hear from our successful students.",
+            videoUrl: homePage?.trustedPartners?.items?.[0]?.videoLink || "https://youtu.be/wPc6mANhIj4"
+          },
+          ...(homePage?.trustedPartners?.items?.length > 1
+            ? [{
+              title: "Transparent Journey",
+              text: "Real stories from students who trusted us.",
+              videoUrl: homePage.trustedPartners.items[1].videoLink
+            }]
+            : []
+          )
+        ].filter(item => item.videoUrl)}
+      />
+      <ImageTestimonial
+        title={homePage?.imageTestimonials?.title || "Image || Testimonials"}
+        subtitle={homePage?.imageTestimonials?.subtitle}
+        items={[
+          {
+            id: 1,
+            name: "Saumya Sharma",
+            text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
+            image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
+          },
+          {
+            id: 2,
+            name: "Aditya Sharma",
+            text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
+            image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
+          },
+          {
+            id: 3,
+            name: "Rohan Gupta",
+            text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
+            image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
+          },
+        ]}
+      />
       <section className="py-18 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden">
           <div className="text-center mb-12">
             <h2 className="text-[2.6rem] font-bold mb-2">
-              <span style={{ color: '#f46c44' }}>Top Universities</span>{" "}
-              <span className="text-gray-600">Hub</span>
+              <span style={{ color: '#f46c44' }}>
+                {homePage?.topUniversities?.title?.split('||')[0]?.trim()}
+              </span>{" "}
+              <span className="text-gray-600">
+                {homePage?.topUniversities?.title?.split('||')[1]?.trim()}
+              </span>
             </h2>
             <p className="text-gray-600 text-base font-medium max-w-3xl  mx-auto leading-relaxed">
-              Explore globally recognized university groups across major study destinations,
-              carefully curated for ambitious international students.
+              {homePage?.topUniversities?.subtitle}
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
@@ -556,12 +613,15 @@ export default async function Homepage() {
           {/* Heading */}
           <div className="text-center mb-10 lg:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-[2.6rem] font-bold">
-              <span className="text-[#f46c44]">GA way</span>{" "}
-              <span className="text-gray-600">global Blogs</span>
+              <span className="text-[#f46c44]">
+                {homePage?.blogs?.title?.split('||')[0]?.trim()}
+              </span>{" "}
+              <span className="text-gray-600">
+                {homePage?.blogs?.title?.split('||')[1]?.trim()}
+              </span>
             </h2>
             <p className="mt-2 text-sm sm:text-base text-gray-600 font-medium max-w-3xl mx-auto">
-              Smart insights, expert guidance, and real updates to help you plan your
-              study abroad journey with confidence.
+              {homePage?.blogs?.subtitle}
             </p>
           </div>
 
@@ -618,7 +678,7 @@ export default async function Homepage() {
                     src={card.img || 'https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg'}
                     alt={card.title}
                     className="w-full h-[220px] object-cover"
-                  
+
                   />
                   <div
                     className="

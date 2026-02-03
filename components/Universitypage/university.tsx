@@ -7,41 +7,48 @@ import { Footer } from "@/components/Footer";
 import VideoBackground from "@/components/VideoBackground";
 import StatisticsSlider from "@/components/StatisticsSlider";
 import { useEffect, useState } from "react";
-import OffersSlider, { AdmissionRequirementsUK, HowGawayHelps, IvyLeagueSection, ScholarshipRequirements } from "@/components/PageComponent/DistinationSliders";
+import OffersSlider, {
+  AdmissionRequirementsUK,
+  HowGawayHelps,
+  IvyLeagueSection,
+  ScholarshipRequirements,
+} from "@/components/PageComponent/DistinationSliders";
 import CaseStudy from "@/components/PageComponent/CaseStudy";
-
-
 
 const images = [
   "https://t3.ftcdn.net/jpg/06/23/84/22/360_F_623842281_ECGgEpMEkQdH83gbmexIn5l3ACl7V3M0.jpg",
   "https://img.freepik.com/premium-photo/young-handsome-man-pointing-camera-choosing-you-university-student-concept_1194-262936.jpg",
   "https://as2.ftcdn.net/jpg/05/29/12/57/1000_F_529125762_omW1yTehDLLFJKwLJjRET0G3sXiQnK5g.jpg",
-]
+];
 
-export default function UniversityPage({data}) {
-
-
-
-  const [index, setIndex] = useState(0)
-
-
-
-
-
+export default function UniversityPage({ data }) {
+  const [index, setIndex] = useState(0);
 
   // AUTO SLIDE
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length)
-    }, 3000)
+      setIndex((prev) => (prev + 1) % images.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
-    return () => clearInterval(interval)
-  }, [])
+  // Extract sections for cleaner access
+  const sections = data?.sections || {};
 
+  // Parse bottomText like "98% || of our students..."
+  const parseBottomText = (text) => {
+    if (!text) return { percent: "", description: "" };
+    const parts = text.split("||").map((p) => p.trim());
+    return { percent: parts[0] || "", description: parts[1] || "" };
+  };
 
+  const { percent, description } = parseBottomText(
+    sections.imageTestimonials?.bottomText
+  );
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
+      {/* Hero Section */}
       <section className="relative h-[600px] overflow-hidden">
         <div className="absolute inset-0">
           <VideoBackground
@@ -55,11 +62,11 @@ export default function UniversityPage({data}) {
         <div className="relative z-10 h-full flex flex-col justify-center items-start text-left max-w-7xl mx-auto">
           <div className="max-w-4xl" style={{ transform: 'none', perspective: 'none' }}>
             <h1 className="text-5xl md:text-6xl lg:text-7xl text-white mb-0 leading-tight" style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'left', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }}>
-              <span className="block" style={{ transform: 'none', display: 'block' }}>Your path to the</span>
-              <span className="block" style={{ transform: 'none', display: 'block' }}>{data?.title}</span>
+              <span className="block">{sections.hero?.title || "Your path to the"}</span>
+              <span className="block">{data?.title || "Ivy League"}</span>
             </h1>
             <p className="text-lg md:text-xl text-white mb-10 leading-relaxed" style={{ textAlign: 'left' }}>
-              {data?.country}
+              {data?.subTitle || "Top universities of USA"}
             </p>
           </div>
         </div>
@@ -69,30 +76,29 @@ export default function UniversityPage({data}) {
       <section className="py-12 bg-white">
         <div className="mx-auto px-5">
           <h2 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }} className="text-[2.6rem] font-bold text-center mb-6 text-gray-600">
-            Our Global University Network
+            {sections.universities?.title || "Our Global University Network"}
           </h2>
           <IvyLeagueUniversitySlider />
         </div>
       </section>
 
       {/* Ivy Coach's College Admissions Track Record */}
-
       <section className="py-5 bg-gray-50" style={{ overflow: 'visible' }}>
         <div className="mb-8 mx-auto" style={{ borderTop: '3px solid rgb(94, 77, 77)', width: '70%' }}></div>
 
         <div className="text-center py-6 mb-12 bg-[#f5f1f0]">
           <h2 className="text-[2.6rem] font-bold mb-4 uppercase tracking-wide" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", textAlign: 'center' }}>
-            <span className="block">IVY COACH&apos;S COLLEGE</span>
-            <span className="block">ADMISSIONS TRACK RECORD</span>
+            <span className="block">{sections.content?.title?.split(' ').slice(0, 3).join(' ') || "IVY COACH'S COLLEGE"}</span>
+            <span className="block">{sections.content?.title?.split(' ').slice(3).join(' ') || "ADMISSIONS TRACK RECORD"}</span>
           </h2>
           <p className="text-lg text-gray-800 max-w-4xl mx-auto mb-2 font-semibold" style={{ textAlign: 'center' }}>
-            <span className="">The percentage of Ivy Coach&apos;s packaged clients over the last 10 years</span>
-            <span className="">who earned admission to the following schools in the Early round.</span>
+            The percentage of Ivy Coach's packaged clients over the last 10 years who earned admission to the following schools in the Early round.
           </p>
           <p className="text-lg text-gray-800 font-semibold mx-auto" style={{ textAlign: 'center' }}>
             At most of these schools, we typically have 3-4 applicants annually.
           </p>
         </div>
+
         <div className="max-w-7xl mx-auto px-4" style={{ overflow: 'visible' }}>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 items-start" style={{ overflow: 'visible' }}>
             {/* Left Panel - Proven Success */}
@@ -105,18 +111,16 @@ export default function UniversityPage({data}) {
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
                   filter: 'drop-shadow(0 1px 2px rgba(244, 108, 68, 0.3))'
-                }}>Numbers Don&apos;t Lie.</span>
-                <span className="block text-gray-600">Proven Success.</span>
-                <span className="block text-gray-600">Unmatched Results.</span>
+                }}>
+                  {sections.imageTestimonials?.title || "Numbers Don't Lie."}
+                </span>
+                <span className="block text-gray-600">{sections.imageTestimonials?.subTitle?.split('\n')[0] || "Proven Success."}</span>
+                <span className="block text-gray-600">{sections.imageTestimonials?.subTitle?.split('\n')[1] || "Unmatched Results."}</span>
               </h3>
 
               <div className="w-full">
                 <div className="relative w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] lg:w-[450px] lg:h-[450px]">
-
-                  {/* Slider */}
                   <div className="lg:relative lg:w-[92%] lg:h-[91%]">
-
-                    {/* MASKED IMAGE */}
                     <div
                       className="lg:absolute inset-0 z-10 lg:top-[41px] lg:left-[38px]"
                       style={{
@@ -130,33 +134,32 @@ export default function UniversityPage({data}) {
                         width: "335px",
                         height: "335px",
                         borderRadius: "100px",
-
-
                       }}
                     />
-
-                    {/* FRAME BORDER IMAGE */}
                     <img
                       src="/images/student-rank-img.png"
                       alt="frame"
                       className="absolute inset-0 w-full h-full z-20 pointer-events-none"
                     />
-
                   </div>
                 </div>
               </div>
 
-              {/* 98% Stat */}
               <div className="text-left border-l-2 border-b-2 p-4 mt-0">
-                <div className="text-5xl" style={{ color: '#f46c44' }}>98%</div>
-                <p className="text-sm text-gray-700">of our students are admitted to atleast 1 of their top 5 college choices</p>
+                <div className="text-5xl" style={{ color: '#f46c44' }}>{percent}</div>
+                <p className="text-sm text-gray-700">{description}</p>
               </div>
             </div>
 
+            {/* Right Panel - Stats */}
             <div className="col-span-3" style={{ overflow: 'visible' }}>
               <div className="mb-1 text-left p-4 w-100" style={{ borderWidth: '3px', borderStyle: 'solid', borderColor: '#f46c44', borderRadius: '20px', overflow: 'visible' }}>
-                <i className="text-7xl mb-0" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>1,485</i>
-                <p style={{ color: '#2f2c29', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500 }} className="text-gray-600 text-lg">Total Offers in Last 10 Years</p>
+                <i className="text-7xl mb-0" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}>
+                  {sections.imageTestimonials?.totalOffers || "1,485"}
+                </i>
+                <p style={{ color: '#2f2c29', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500 }} className="text-gray-600 text-lg">
+                  Total Offers in Last 10 Years
+                </p>
               </div>
 
               <div className="">
@@ -164,13 +167,9 @@ export default function UniversityPage({data}) {
                   <span className="border-b-2 border-gray-300 pb-2 inline-block">College Specific Acceptance Rates</span>
                 </h4>
                 <div className="flex items-center gap-6 pb-2">
-                  <div className="">
-                    <span className="text-sm font-semibold text-gray-600">General Admit Rate</span>
-                  </div>
+                  <div><span className="text-sm font-semibold text-gray-600">General Admit Rate</span></div>
                   <div className="w-[px] h-full min-h-[4px] bg-gray-300 self-stretch"></div>
-                  <div className="">
-                    <span className="text-sm font-semibold" style={{ color: '#f46c44' }}>GAway Student Admit Rate</span>
-                  </div>
+                  <div><span className="text-sm font-semibold" style={{ color: '#f46c44' }}>GAway Student Admit Rate</span></div>
                 </div>
                 <div className="space-y-0">
                   {[
@@ -185,7 +184,6 @@ export default function UniversityPage({data}) {
                     { name: 'MIT', generalRate: 6.5, gawayRate: 85.0, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'MIT' }
                   ].map((uni, i) => (
                     <div key={i} className="flex items-center">
-                      {/* University Icon/Logo */}
                       <div className="w-16 h-10 rounded-full flex items-center justify-center flex-shrink-0">
                         <Image
                           src={uni.logo}
@@ -196,18 +194,14 @@ export default function UniversityPage({data}) {
                           unoptimized
                         />
                       </div>
-
                       <div className="w-19 flex-shrink-0">
                         <span className="text-base font-semibold text-gray-800">{uni.name}</span>
                       </div>
-                      <div className="flex-1">
-                      </div>
+                      <div className="flex-1"></div>
                       <div className="h-10 mr-3 w-0.5 bg-gray-300"></div>
-
-                      {/* GAway Student Admit Rate Column - Orange */}
                       <div className="flex-10">
                         <div style={{ marginLeft: '2px', position: 'relative' }}>
-                          <div className=" rounded-full h-4 relative" style={{ overflow: 'visible' }}>
+                          <div className="rounded-full h-4 relative" style={{ overflow: 'visible' }}>
                             <div
                               className="h-full rounded-full transition-all duration-500"
                               style={{
@@ -245,10 +239,12 @@ export default function UniversityPage({data}) {
       <section className="py-12 bg-[#f5f1f0] overflow-visible">
         <div className="max-w-7xl mx-auto px-4 overflow-visible">
           <div className="text-center mb-8">
-            <h2 className="text-[2.6rem] font-bold  uppercase" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }}>
-              THE IVY COACH DAILY
+            <h2 className="text-[2.6rem] font-bold uppercase" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }}>
+              {sections.blogs?.title || "THE IVY COACH DAILY"}
             </h2>
-            <p className="text-lg font-semibold text-gray-700 ">"Way To Tell It Like It Is, Ivy Coach"</p>
+            <p className="text-lg font-semibold text-gray-700">
+              {sections.blogs?.subtitle || `"Way To Tell It Like It Is, Ivy Coach"`}
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10" style={{ width: '100%' }}>
@@ -272,7 +268,7 @@ export default function UniversityPage({data}) {
                 img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&h=600&fit=crop'
               }
             ].map((item, i) => (
-              <div key={`ivy-coach-${i}`} className=" overflow-hidden transition w-full">
+              <div key={`ivy-coach-${i}`} className="overflow-hidden transition w-full">
                 <Image
                   src={item.img}
                   alt={item.uni}
@@ -298,34 +294,67 @@ export default function UniversityPage({data}) {
           </div>
         </div>
       </section>
+
+      {/* Reusable Sections — These likely already use `data` internally */}
       <OffersSlider />
       <IvyLeagueSection />
       <AdmissionRequirementsUK />
-      <HowGawayHelps />
+      <HowGawayHelps howWeHelpData={data.sections.howWeHelp} />
+
+      {/* Admission Process Roadmap */}
       <section className="mx-auto bg-[#fff9f4] py-20">
-        <div className="max-w-7xl mx-auto mb-8">
+        <div className="max-w-7xl mx-auto mb-8 mx-auto">
           <h2 className="text-[2.6rem] font-bold text-center" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
-            Admission Process
-            <span className="text-[#656565]"> Roadmap</span>
+             <span className="text-[#f46c44]">{sections.roadMap.title.split('||')[0].trim()}</span> {""}
+          <span className="text-gray-600">{sections.roadMap.title.split('||')[1].trim()}</span>
           </h2>
-          {/* <p className="text-lg text-center font-semibold text-gray-700 ">"Way To Tell It Like It Is, Ivy Coach"</p> */}
+          <p className="text-lg font-semibold text-gray-700">{sections.roadMap.subtitle}</p>
 
           <div className="max-w-5xl mx-auto flex justify-center">
             <Image src="/images/00123.png" alt="ivy-admission-process" width={1000} height={800} className="w-full h-full" />
           </div>
         </div>
       </section>
-      <ScholarshipRequirements />
-      <ImageTestimonial font={true} bg={true} />
-      <CaseStudy font={true} />
 
+     
+<ScholarshipRequirements scholarshipData={data.sections.scholarships} />
+
+
+      <ImageTestimonial
+              title={sections?.bottomTestimonial?.title || "Image || Testimonials"}
+              subtitle={sections?.bottomTestimonial?.subtitle}
+              font = {true}
+              items={[
+                {
+                  id: 1,
+                  name: "Saumya Sharma",
+                  text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
+                  image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
+                },
+                {
+                  id: 2,
+                  name: "Aditya Sharma",
+                  text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
+                  image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
+                },
+                {
+                  id: 3,
+                  name: "Rohan Gupta",
+                  text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
+                  image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
+                },
+              ]}
+            />
+      <CaseStudy font={true} caseStudydata ={sections.caseStudies} />
+
+      {/* Final CTA */}
       <section className="py-24" style={{ backgroundColor: '#f46c44' }}>
         <div className="max-w-5xl mx-auto text-center px-4">
           <h2 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 600 }} className="text-5xl md:text-6xl font-bold text-white mb-8 uppercase tracking-wide">
             TOWARD THE <span className="line-through">CONQUEST OF</span> ADMISSION
           </h2>
           <p style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500 }} className="text-xl text-white mb-10 max-w-3xl mx-auto leading-relaxed">
-            If you&apos;re interested in Ivy Coach&apos;s college counseling, fill out our contact form or schedule a free consultation to learn more and get in touch.
+            If you're interested in Ivy Coach's college counseling, fill out our contact form or schedule a free consultation to learn more and get in touch.
           </p>
           <button className="bg-white text-orange-500 px-6 py-2 rounded-lg text-xl font-semibold hover:bg-gray-100 transition shadow-lg">
             GET STARTED

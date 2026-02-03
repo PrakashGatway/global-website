@@ -9,7 +9,7 @@ export default async function Page({ params }) {
   console.log(slug)
 
   const res = await serverInstance.get(
-    `/page-information/public/${slug}`
+    `/page-information/slug/${slug}`
   )
 
   return <UniversityPage data={res.data.data} />

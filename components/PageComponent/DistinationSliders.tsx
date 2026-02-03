@@ -302,74 +302,92 @@ function Item({
 }
 
 
-export function HowGawayHelps() {
+export function HowGawayHelps({ howWeHelpData }: { howWeHelpData: any }) {
+  // Parse title with "||" separator support
+  const fullTitle = howWeHelpData?.title || "";
+  const [prefix, suffix] = fullTitle.includes('||')
+    ? fullTitle.split('||').map((s: string) => s.trim())
+    : fullTitle.split(' ').length > 1
+    ? [fullTitle.split(' ')[0], fullTitle.split(' ').slice(1).join(' ')]
+    : ["", fullTitle];
+
+  // Get the first item from API
+  const item = howWeHelpData?.items?.[0];
+
   return (
     <section className="bg-[#fff9f4] py-20">
-      <h3 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }} className="text-center text-[2.6rem] font-semibold mb-12">
-        <span className="text-[#f46c44]">How</span>{" "}
-        <span className="text-[#6b6b6b]">GAway helps</span>
+      <h3 
+        style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }} 
+        className="text-center text-[2.6rem] font-semibold mb-12"
+      >
+        <span className="text-[#f46c44]">{prefix}</span>{" "}
+        <span className="text-[#6b6b6b]">{suffix}</span>
       </h3>
+
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+        {/* LEFT TEXT CONTENT */}
         <div>
-          <h2 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }} className="text-[3.6rem] font-semibold text-[#f46c44] leading-tight mb-2">
-            Write Essays <br />
-            That Seal the Deal
+          <h2 
+            style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }} 
+            className="text-[3.6rem] font-semibold text-[#f46c44] leading-tight mb-2"
+          >
+            {item?.title?.split(' ').slice(0, 2).join(' ')} <br />
+            {item?.title?.split(' ').slice(2).join(' ')}
           </h2>
 
-          <p className="text-[#656565] font-semibold mb-4 ">
-            From the perfect topic to final polish, our essay experts guide
-            your child on how to write a personal statement and supplemental
-            essays that prove why they belong on campus.
+          <p className="text-[#656565] font-semibold mb-4">
+            {item?.subtitle || item?.content}
           </p>
         </div>
 
-        {/* RIGHT CARDS */}
-        <div className="relative h-[440px] duration-300 ease-in-out transation-all w-full flex justify-center ">
+        {/* RIGHT CARDS - Using ONLY API images */}
+        <div className="relative h-[440px] duration-300 ease-in-out transition-all w-full flex justify-center">
 
-          {/* BACK CARD */}
-          <div className="
-            absolute top-2 hover:z-1 right-25
-             w-[380px] h-[440px] duration-300 ease-in-out transation-all
-            border-2 border-[#f46c44]
-            bg-white
-            rotate-[5deg]
-          " >
-            <img
-              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1"
-              alt="Student"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          {/* BACK CARD - Use API image or empty */}
+          {item?.image && (
+            <div className="
+              absolute top-2 right-25
+              w-[380px] h-[440px] duration-300 ease-in-out transition-all
+              border-2 border-[#f46c44]
+              bg-orange-500
+              rotate-[5deg]
+            ">
+              
+            </div>
+          )}
 
-          <div className="
-            absolute top-6 hover:z-1 right-12 duration-300 ease-in-out transation-all
-            w-[380px] h-[440px]
-            border-2 border-[#f46c44]
-            bg-white
-          " >
-            <img
-              src="https://i.pinimg.com/736x/d3/fa/0a/d3fa0ad7f642b0e09895b6e96c7d5a91.jpg"
-              alt="Student"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          {/* MIDDLE CARD - Use second item image if available */}
+          {item?.image && (
+            <div className="
+              absolute top-6  right-12 duration-300 ease-in-out transition-all
+              w-[380px] h-[440px]
+              border-2 border-[#f46c44]
+              bg-white
+            ">
+             <img
+                src={item.image}
+                alt="Student"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
 
-          {/* FRONT IMAGE CARD */}
-          <div className="
-            absolute bottom-10 hover:z-1 right-[50%]
-            w-[230px] h-[230px]
-            bg-white
-            border-2 border-[#f46c44]
-            shadow-lg
-            rotate-[6deg]
-            overflow-hidden
-          ">
-            <img
-              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1"
-              alt="Student"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          {/* FRONT IMAGE CARD - Use third item image if available */}
+          {item?.image && (
+            <div className="
+              absolute bottom-10 hover:z-1 right-[70%] translate-x-1/2
+              w-[230px] h-[230px]
+              bg-white
+              border-2 border-[#f46c44]
+              shadow-lg
+              rotate-[6deg]
+              overflow-hidden
+            ">
+             <div className="p-6 text-sm font-medium" >
+              {item.content}
+             </div>
+            </div>
+          )}
 
         </div>
       </div>
@@ -378,41 +396,85 @@ export function HowGawayHelps() {
 }
 
 
-export function ScholarshipRequirements() {
+import { 
+ 
+  IdCard // fallback
+} from 'lucide-react';
+
+// Helper: map requirement title to icon
+const getIconComponent = (title: string) => {
+  const lower = title.toLowerCase();
+  
+  if (lower.includes('passport')) return IdCard;
+  if (lower.includes('gmat') || lower.includes('gre')) return GraduationCap;
+  if (lower.includes('recommendation') || lower.includes('lor')) return FileText;
+  if (lower.includes('cv') || lower.includes('resume')) return FileText;
+  if (lower.includes('toefl') || lower.includes('ielts') || lower.includes('c1')) return ClipboardList;
+  if (lower.includes('transcript')) return ScrollText;
+  if (lower.includes('portfolio')) return FolderOpen;
+  if (lower.includes('statement of purpose') || lower.includes('sop')) return FileSignature;
+  
+  // Default fallback
+  return Award;
+};
+
+// Reusable Item component
+const RequirementItem = ({ title, underline = true }: { title: string; underline?: boolean }) => {
+  const Icon = getIconComponent(title);
+  return (
+    <div className={`${underline ? 'border-b border-gray-300 pb-2' : ''} flex items-start space-x-3`}>
+      <Icon className="text-[#f46c44] mt-0.5 flex-shrink-0" size={20} />
+      <span className="text-[#656565] font-medium">{title}</span>
+    </div>
+  );
+};
+
+// Main ScholarshipRequirements component
+export function ScholarshipRequirements({ scholarshipData }: { scholarshipData: any }) {
+  // Extract items and remove duplicates by title (optional)
+  const uniqueItems = Array.from(
+    new Map(scholarshipData.items.map((item: any) => [item.title.trim(), item])).values()
+  );
+
+  // Split into two columns
+  const midIndex = Math.ceil(uniqueItems.length / 2);
+  const leftColumn = uniqueItems.slice(0, midIndex);
+  const rightColumn = uniqueItems.slice(midIndex);
+
+  // Parse title with "||" separator
+  const fullTitle = scholarshipData.title || "Scholarships to Study in United Kingdom";
+  const [prefix, suffix] = fullTitle.includes('||')
+    ? fullTitle.split('||').map(s => s.trim())
+    : ["Scholarships to Study in", "United Kingdom"];
+
   return (
     <section className="bg-[#f5f1f0] py-12">
       <div className="max-w-7xl mx-auto px-6">
-
-
-        <h2 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 600 }} className="text-[2.6rem] font-bold text-[#f46c44] mb-3 leading-tight">
-          <span className=" text-[#656565]">
-            Scholarships to Study in 
-          </span>
-          United Kingdom
+        <h2 
+          style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }} 
+          className="text-[2.6rem] font-bold text-[#f46c44] mb-3 leading-tight"
+        >
+          <span className="text-[#656565]">{prefix} </span>
+          {suffix}
         </h2>
 
         <p className="text-[#656565] max-w-3xl mb-6 text-base font-semibold">
-          Here are the major requirements to study in UK which you need
-          to ensure while applying to a UK university Here are the major requirements to study in UK which you need
-          to ensure while applying to a UK university:
+          {scholarshipData.subtitle || "Here are the major requirements to study in UK which you need to ensure while applying to a UK university:"}
         </p>
 
-        {/* Requirements Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-10">
           {/* LEFT COLUMN */}
           <div className="space-y-6">
-            <Item underline={true} icon={Award} text="Copy of a valid passport" />
-            <Item underline={true}  icon={GraduationCap} text="GMAT/GRE scores for PG programs" />
-            <Item underline={true}  icon={FileText} text="Letter of Recommendations (LORS)" />
-            <Item underline={true}  icon={Award} text="A CV (if applicable)" />
+            {leftColumn.map((item: any, index: number) => (
+              <RequirementItem key={index} title={item.title.trim()} />
+            ))}
           </div>
 
           {/* RIGHT COLUMN */}
           <div className="space-y-6">
-            <Item underline={true}  icon={ClipboardList} text="TOEFL/IELTS/C1 Advanced scores" />
-            <Item underline={true}  icon={ScrollText} text="Academic Transcripts" />
-            <Item underline={true}  icon={FolderOpen} text="Portfolio (for specific courses)" />
-            <Item underline={true}  icon={FileSignature} text="Statement of Purpose (SOP)" />
+            {rightColumn.map((item: any, index: number) => (
+              <RequirementItem key={index + leftColumn.length} title={item.title.trim()} />
+            ))}
           </div>
         </div>
       </div>
