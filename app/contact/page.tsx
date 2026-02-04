@@ -2,8 +2,40 @@
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Clock, MessageSquare } from 'lucide-react';
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import axiosInstance from "../axiosInstance";
 
 export default function ContactUsPage() {
+
+
+  const {
+    register , handleSubmit ,reset ,
+    formState: {errors , isSubmitting}
+  } = useForm()
+
+  const OnSubmit = async (data)=>{
+try{
+    const res = await axiosInstance.post("/contactus" , {
+       subject: "Contact Form",
+      type: "Website",
+      fullName: `${data.firstName} ${data.lastName}`,
+      email: data.email,
+      phone: data.phone,
+      destination: data.destination,
+      description: data.message,
+    })
+
+    alert("Message sent successfully ✅")
+    reset()
+
+
+}
+catch(error){
+  
+    alert("Failed to send message ❌")
+}  }
+
+
   return (
     <div className='bg-[#fffaf7]'>
       <section className="relative flex items-center" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
@@ -27,7 +59,7 @@ export default function ContactUsPage() {
                     Contact Us
                   </h1>
                   <p className="text-lg max-w-2xl font-medium text-white">
-                    Gateway Abroad: Your Launchpad to Global Education. We empower students
+                    Ooshas Global: Your Launchpad to Global Education. We empower students
         to achieve their dreams of studying abroad with expert coaching for:
         IELTS, TOEFL, PTE, GRE, GMAT, SAT.
                   </p>
@@ -75,7 +107,7 @@ export default function ContactUsPage() {
               Get in Touch with
             </h2>
             <h2 className="text-4xl lg:text-[3.6rem] font-bold" style={{ color: '#FF6B35' }}>
-              Gateway Abroad
+              Ooshas Global
             </h2>
             <p className="text-gray-600 text-lg mt-4 max-w-3xl mx-auto">
               Our dedicated team is here to answer your questions and guide you through
@@ -118,8 +150,8 @@ export default function ContactUsPage() {
               <h3 className="text-xl font-bold text-gray-800 mb-3 text-center">Email Support</h3>
               <p className="text-gray-600 text-center mb-4">Send us your queries</p>
               <div className="space-y-2">
-                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>info@gawayglobal.com</p>
-                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>support@gawayglobal.com</p>
+                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>info@ooshasglobal.com</p>
+                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>support@ooshasglobal.com</p>
               </div>
               <p className="text-sm text-gray-500 text-center mt-4">Response within 24 hours</p>
             </motion.div>
@@ -207,13 +239,14 @@ export default function ContactUsPage() {
             </div>
 
             <div className="bg-white p-8 rounded-lg shadow-lg">
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit(OnSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-gray-700 text-sm font-semibold mb-2">
                       First Name *
                     </label>
                     <input
+                    {...register("firstName" , {required: true})}
                       type="text"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
@@ -224,6 +257,7 @@ export default function ContactUsPage() {
                       Last Name *
                     </label>
                     <input
+                    {...register("lastName" , {required: true})}
                       type="text"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
@@ -236,6 +270,7 @@ export default function ContactUsPage() {
                     Email Address *
                   </label>
                   <input
+                  {...register("email" , {required: true})}
                     type="email"
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
@@ -247,6 +282,7 @@ export default function ContactUsPage() {
                     Phone Number *
                   </label>
                   <input
+                  {...register("phone" , {required: true})}
                     type="tel"
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
@@ -257,7 +293,7 @@ export default function ContactUsPage() {
                   <label className="block text-gray-700 text-sm font-semibold mb-2">
                     Preferred Study Destination
                   </label>
-                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent">
+                  <select {...register("destination" , {required: true})} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent">
                     <option value="">Select Destination</option>
                     <option value="usa">United States</option>
                     <option value="uk">United Kingdom</option>
@@ -273,6 +309,7 @@ export default function ContactUsPage() {
                     How can we help you? *
                   </label>
                   <textarea
+                  {...register("message" , {required: true})}
                     rows={4}
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
@@ -294,6 +331,7 @@ export default function ContactUsPage() {
 
                 <button
                   type="submit"
+                  disabled = {isSubmitting}
                   className="w-full text-white px-6 py-4 rounded-lg font-bold text-lg hover:opacity-90 transition"
                   style={{ backgroundColor: '#FF6B35', borderTopRightRadius: '25px' }}
                 >

@@ -117,35 +117,42 @@ export default function OffersSlider() {
 import React from 'react';
 import Image from 'next/image';
 
-export const IvyLeagueSection = () => {
-  const cards = [
-    {
-      id: 1,
-      title: "Ivy League Counseling",
-      description: "One on One counseling with our country specialist. Shortlist your ideal destination, institution and program with their expert guidance.",
-      ctaText: "Free Expert Consultation",
-      ctaLink: "#"
-    },
-    {
-      id: 2,
-      title: "Profile Building",
-      description: "Apply to your dream university. Our team will guide you through the application process.",
-      ctaText: "Free Expert Consultation",
-      ctaLink: "#"
-    }
-  ];
+import { useState } from 'react';
+
+export const IvyLeagueSection = ({ whySpecialData }: { whySpecialData: any }) => {
+  // Use API title or fallback structure
+  const fullTitle = whySpecialData?.title || "What Makes Ivy league Special";
+  
+  // Map API items to card format
+  const cards = (whySpecialData?.items || []).map((item: any) => ({
+    id: item.title,
+    title: item.title,
+    description: item.subtitle || "",
+    ctaText: "Free Expert Consultation", // Not in API → keep static per your design
+    ctaLink: "#" // Not in API → keep static
+  }));
+
+  // Fallback image for the right-side visual (since API provides no global image)
+  const fallbackImage = "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=1200";
 
   return (
     <section
       className="min-h-screen py-16 px-4 md:px-8 flex items-center justify-center"
       style={{
-        background: 'linear-gradient(135deg, #fffaf7 0%,  100%)'
+        background: 'linear-gradient(135deg, #fffaf7 0%, 100%)'
       }}
     >
       <div className="max-w-7xl w-full flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
-
+        
+        {/* LEFT: Cards */}
         <div className="w-full lg:w-1/2 relative">
-          <h4 className="text-[2.6rem] mb-6 text-[#f46c44] font-semibold" style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>What Makes Ivy league Special</h4>
+          <h4 
+            className="text-[2.6rem] mb-6 text-[#f46c44] font-semibold" 
+            style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
+          >
+            {fullTitle}
+          </h4>
+          
           <div className="relative perspective-1000">
             {cards.map((card, index) => (
               <div
@@ -156,9 +163,12 @@ export const IvyLeagueSection = () => {
                 }}
                 className="bg-gradient-to-r from-[#f46c44] max-w-lg rounded-3xl mb-12 via-[#f46c44]/90 to-[#f46c44]/40 p-6 transition-all duration-300"
               >
-                {/* Card Content */}
                 <div className="relative z-20">
-                  <h3 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500 }}
+                  <h3 
+                    style={{ 
+                      fontFamily: "'Mileast', 'Playplay Display', 'Cormorant Garamond', Georgia, serif", 
+                      fontWeight: 500 
+                    }}
                     className="text-[2rem] font-bold mb-1 text-white"
                   >
                     {card.title}
@@ -167,11 +177,9 @@ export const IvyLeagueSection = () => {
                     {card.description}
                   </p>
                   <div className="flex items-center justify-center">
-
                     <a
                       href={card.ctaLink}
                       className="inline-block bg-[#ffffff]/80 text-gray-600 font-semibold py-2 px-4 rounded-full transition-all duration-300"
-
                     >
                       {card.ctaText}
                     </a>
@@ -182,7 +190,7 @@ export const IvyLeagueSection = () => {
           </div>
         </div>
 
-        {/* Right Side - Image */}
+        {/* RIGHT: Image with fallback */}
         <div className="w-full lg:w-1/2">
           <div className="relative w-full h-full">
             <svg
@@ -195,14 +203,13 @@ export const IvyLeagueSection = () => {
             >
               <defs>
                 <clipPath id="til" clipPathUnits="userSpaceOnUse">
-                  <path
-                    d="M45.235 17.808Q21.782 19.632 22.621 47.924L22.412 220.324Q21.782 245.981 51.393 252.749L204.127 281.166Q233.417 288.339 235.357 260.421L235.97 53.425Q236.438 16.291 204.181 17.969L49.519 17.358Z
-          "
-                  />
+                  <path d="M45.235 17.808Q21.782 19.632 22.621 47.924L22.412 220.324Q21.782 245.981 51.393 252.749L204.127 281.166Q233.417 288.339 235.357 260.421L235.97 53.425Q236.438 16.291 204.181 17.969L49.519 17.358Z" />
                 </clipPath>
               </defs>
+              
+              {/* Use fallback image since API doesn't provide one for this section */}
               <image
-                href="https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=1200"
+                href={fallbackImage}
                 x="0"
                 y="0"
                 width="100%"
@@ -212,66 +219,100 @@ export const IvyLeagueSection = () => {
               />
 
               <path
-                d="M45.235 17.808Q21.782 19.632 22.621 47.924L22.412 220.324Q21.782 245.981 51.393 252.749L204.127 281.166Q233.417 288.339 235.357 260.421L235.97 53.425Q236.438 16.291 204.181 17.969L49.519 17.358Z
-      "
+                d="M45.235 17.808Q21.782 19.632 22.621 47.924L22.412 220.324Q21.782 245.981 51.393 252.749L204.127 281.166Q233.417 288.339 235.357 260.421L235.97 53.425Q236.438 16.291 204.181 17.969L49.519 17.358Z"
                 fill="none"
                 stroke="#f46c44"
                 strokeWidth="1"
               />
             </svg>
           </div>
-
         </div>
       </div>
     </section>
   );
 };
 
+import { 
+  Award, 
+  GraduationCap, 
+  FileText, 
+  ClipboardList, 
+  ScrollText, 
+  FolderOpen, 
+  FileSignature 
+} from 'lucide-react';
 
-import {
-  GraduationCap,
-  FileText,
-  FileSignature,
-  Award,
-  ClipboardList,
-  FolderOpen,
-  ScrollText,
-} from "lucide-react";
+// Helper to map requirement text to icon
+const getIconComponentt = (title: string) => {
+  const lower = title.toLowerCase();
+  
+  if (lower.includes('passport')) return GraduationCap; // as in your original
+  if (lower.includes('gmat') || lower.includes('gre')) return GraduationCap;
+  if (lower.includes('recommendation') || lower.includes('lor')) return FileText;
+  if (lower.includes('cv') || lower.includes('resume')) return Award;
+  if (lower.includes('toefl') || lower.includes('ielts') || lower.includes('c1')) return ClipboardList;
+  if (lower.includes('transcript')) return ScrollText;
+  if (lower.includes('portfolio')) return FolderOpen;
+  if (lower.includes('statement of purpose') || lower.includes('sop')) return FileSignature;
+  
+  return Award; // default if no match (still from API-driven logic)
+};
 
-export function AdmissionRequirementsUK() {
+const RequirementItemm = ({ title }: { title: string }) => {
+  const Icon = getIconComponentt(title);
+  return (
+    <div className="flex items-start space-x-6">
+      <Icon className="text-[#f46c44] -mt-0.5 flex-shrink-0" size={40} />
+      <span className="text-[#656565] font-medium">{title}</span>
+    </div>
+  );
+};
+
+export function AdmissionRequirementsUK({ admissionData }: { admissionData: any }) {
+  // Parse title with "||" support
+  const fullTitle = admissionData?.title || "";
+  const parts = fullTitle.includes('||')
+    ? fullTitle.split('||').map((s: string) => s.trim())
+    : [fullTitle.split(' ').slice(0, 3).join(' '), fullTitle.split(' ').slice(3).join(' ')];
+
+  const prefix = parts[0] || "Admission Requirements for";
+  const suffix = parts[1] || "United Kingdom Study Abroad";
+
+  const items = admissionData?.items || [];
+
+  // Split into two columns
+  const midIndex = Math.ceil(items.length / 2);
+  const leftColumn = items.slice(0, midIndex);
+  const rightColumn = items.slice(midIndex);
+
   return (
     <section className="bg-[#f5f1f0] py-20">
       <div className="max-w-7xl mx-auto px-6">
-
-
-        <h2 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 600 }} className="text-[2.6rem] font-bold text-[#f46c44] mb-3 leading-tight">
-          <span className="block text-[#656565]">
-            Admission Requirements for
-          </span>
-          United Kingdom Study Abroad
+        <h2 
+          style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 600 }} 
+          className="text-[2.6rem] font-bold text-[#f46c44] mb-3 leading-tight"
+        >
+          <span className="block text-[#656565]">{prefix}</span>
+          {suffix}
         </h2>
 
         <p className="text-[#656565] max-w-3xl mb-6 text-base font-semibold">
-          Here are the major requirements to study in UK which you need
-          to ensure while applying to a UK university:
+          {admissionData?.subtitle || ""}
         </p>
 
-        {/* Requirements Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-10">
           {/* LEFT COLUMN */}
           <div className="space-y-6">
-            <Item icon={GraduationCap} text="Copy of a valid passport" />
-            <Item icon={GraduationCap} text="GMAT/GRE scores for PG programs" />
-            <Item icon={FileText} text="Letter of Recommendations (LORS)" />
-            <Item icon={Award} text="A CV (if applicable)" />
+            {leftColumn.map((item: any, index: number) => (
+              <RequirementItemm key={index} title={item.title} />
+            ))}
           </div>
 
           {/* RIGHT COLUMN */}
           <div className="space-y-6">
-            <Item icon={ClipboardList} text="TOEFL/IELTS/C1 Advanced scores" />
-            <Item icon={ScrollText} text="Academic Transcripts" />
-            <Item icon={FolderOpen} text="Portfolio (for specific courses)" />
-            <Item icon={FileSignature} text="Statement of Purpose (SOP)" />
+            {rightColumn.map((item: any, index: number) => (
+              <RequirementItemm key={index + leftColumn.length} title={item.title} />
+            ))}
           </div>
         </div>
       </div>
@@ -423,7 +464,7 @@ const RequirementItem = ({ title, underline = true }: { title: string; underline
   const Icon = getIconComponent(title);
   return (
     <div className={`${underline ? 'border-b border-gray-300 pb-2' : ''} flex items-start space-x-3`}>
-      <Icon className="text-[#f46c44] mt-0.5 flex-shrink-0" size={20} />
+      <Icon className="text-[#f46c44] -mt-0.5 flex-shrink-0" size={40} />
       <span className="text-[#656565] font-medium">{title}</span>
     </div>
   );

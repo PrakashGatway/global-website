@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef } from "react";
 
 interface ImageTestimonialItem {
@@ -52,7 +51,7 @@ export default function ImageTestimonial({
               slides: { perView: 1.5, spacing: 24 },
             },
             "(min-width: 1024px)": {
-              slides: { perView: 3, spacing: 32 },
+              slides: { perView: 3.2, spacing: 32 },
             },
           },
         },
@@ -102,36 +101,19 @@ export default function ImageTestimonial({
 
   if (items.length === 0) return null;
 
-  // Parse title with ||
-  const displayTitle = title.includes('||')
-    ? (
-        <>
-          <span className="text-[#f46c44]">{title.split('||')[0].trim()}</span>{" "}
-          <span className="text-gray-600">{title.split('||')[1].trim()}</span>
-        </>
-      )
-    : title;
+
 
   return (
     <section className="py-16" style={{ backgroundColor: !bg && '#f5f1f0', overflow: 'visible' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ overflow: 'visible' }}>
-        <h2
-          style={{
-            fontFamily: font && "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif",
-            transformStyle: 'flat',
-            transformOrigin: 'initial'
-          }}
-          className="text-[2.6rem] font-semibold text-center mb-0"
-        >
-          {displayTitle}
-        </h2>
+       {title}
         <p className="text-gray-600 text-base font-medium max-w-3xl text-center mx-auto leading-relaxed">
           {subtitle}
         </p>
 
         <div ref={sliderRef} className="keen-slider">
           {items.map((t) => (
-            <div key={t.id} className="keen-slider__slide">
+            <div key={t?._id} className="keen-slider__slide">
               <div className="flex justify-center py-6">
                 {/* CARD */}
                 <div
@@ -165,7 +147,7 @@ export default function ImageTestimonial({
                           {t.name}
                         </h3>
                         <p className="text-xs sm:text-sm lg:text-sm text-gray-700 leading-relaxed">
-                          {t.text}
+                          {t.message}
                         </p>
                       </div>
 
@@ -201,7 +183,7 @@ export default function ImageTestimonial({
 
                     {/* SIGNATURE */}
                     <img
-                      src="https://www.gatewayabroadeducations.com/anime/p17.svg"
+                      src={t?.universityLogo || "https://www.gatewayabroadeducations.com/anime/p17.svg" }
                       className="w-32 sm:w-40 lg:w-50 object-contain"
                       alt="Signature"
                     />

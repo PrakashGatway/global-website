@@ -65,7 +65,7 @@ export default function Navbar({
     },
     {
       title: "Destination",
-      route: "/destination",
+      route: "/",
       hasDropdown: true,
       type: "destination",
       id: 4
@@ -144,7 +144,7 @@ export default function Navbar({
             <Image
               src="/images/newlogo3.png"
               alt="Logo"
-              width={250}
+              width={230}
               height={100}
               className="object-contain p-2"
               priority
@@ -188,7 +188,7 @@ export default function Navbar({
             className="flex items-center gap-4 p-2 rounded-xl hover:bg-blue-50 transition"
           >
             <Image
-              src={uni.icon || "https://www.countryflags.com/wp-content/uploads/canada-flag-png-xl.png"}
+              src={uni.navbarImage || "https://www.countryflags.com/wp-content/uploads/canada-flag-png-xl.png"}
               alt={uni?.navbarTitle}
               width={40}
               height={40}
@@ -275,69 +275,83 @@ export default function Navbar({
                 {/* MENU */}
                 <div className="flex-1 px-6 py-4 space-y-1">
 
-                  {Featureitem.map((item) => (
-                    <div key={item.name} className="border-b last:border-0">
+                  {navbar.map((item) => (
+                    <div key={item.title} className="border-b last:border-0">
 
                       {/* MAIN ROW */}
                       <div className="flex items-center justify-between py-4">
 
                         {/* NAV LINK */}
                         <Link
-                          href={item.href}
+                          href={item.route}
                           onClick={() => {
                             if (!item.hasDropdown) setIsOpen(false)
                           }}
                           className="text-lg font-semibold text-gray-800 hover:text-orange-500"
                         >
-                          {item.name}
+                          {item.title}
                         </Link>
 
                         {/* DROPDOWN TOGGLE */}
-                        {item.hasDropdown && (
-                          <button
-                            onClick={() =>
-                              setMobileDropdown(
-                                mobileDropdown === item.name ? null : item.name
-                              )
-                            }
-                            className="p-2"
-                          >
-                            <motion.div
-                              animate={{
-                                rotate:
-                                  mobileDropdown === item.name ? 180 : 0,
-                              }}
-                            >
-                              <ChevronDown size={20} />
-                            </motion.div>
-                          </button>
-                        )}
+                      {item.hasDropdown && (
+  <button
+    onClick={() =>
+      setMobileDropdown(
+        mobileDropdown === item.id ? null : item.id
+      )
+    }
+    className="p-2"
+  >
+    <motion.div
+      animate={{ rotate: mobileDropdown === item.id ? 180 : 0 }}
+    >
+      <ChevronDown size={20} />
+    </motion.div>
+  </button>
+)}
+
                       </div>
 
                       {/* DROPDOWN */}
-                      <AnimatePresence>
-                        {item.hasDropdown &&
-                          mobileDropdown === item.name &&
-                          item.dropdownItems && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              className="overflow-hidden pl-5 pb-3"
-                            >
-                              {item.dropdownItems.map((drop) => (
-                                <Link
-                                  key={drop.slug}
-                                  href={`/${drop.slug}`}
-                                  onClick={() => setIsOpen(false)}
-                                  className="block py-3 text-gray-600 hover:text-orange-500"
-                                >
-                                  {drop.name}
-                                </Link>
-                              ))}
-                            </motion.div>
-                          )}
-                      </AnimatePresence>
+                    <AnimatePresence>
+  {item.hasDropdown && mobileDropdown === item.id && (
+    <motion.div
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: "auto", opacity: 1 }}
+      exit={{ height: 0, opacity: 0 }}
+      className="overflow-hidden pl-5 pb-3"
+    >
+      {(item.type === "destination"
+        ? Featureitem
+        : Serviceitem
+      )?.map((uni) => (
+        <Link
+          key={uni._id}
+          href={`/${item.type}/${uni.slug}`}
+          onClick={() => {
+            setIsOpen(false);
+            setMobileDropdown(null);
+          }}
+          className="flex items-center gap-3 py-3 text-gray-600 hover:text-orange-500"
+        >
+          <Image
+            src={
+              uni.navbarImage ||
+              "https://www.countryflags.com/wp-content/uploads/canada-flag-png-xl.png"
+            }
+            alt={uni.navbarTitle}
+            width={28}
+            height={28}
+          />
+          <span className="font-medium">
+            {uni.navbarTitle}
+          </span>
+        </Link>
+      ))}
+    </motion.div>
+  )}
+</AnimatePresence>
+
 
                     </div>
                   ))}

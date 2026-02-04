@@ -62,11 +62,11 @@ export default function UniversityPage({ data }) {
         <div className="relative z-10 h-full flex flex-col justify-center items-start text-left max-w-7xl mx-auto">
           <div className="max-w-4xl" style={{ transform: 'none', perspective: 'none' }}>
             <h1 className="text-5xl md:text-6xl lg:text-7xl text-white mb-0 leading-tight" style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'left', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }}>
-              <span className="block">{sections.hero?.title || "Your path to the"}</span>
-              <span className="block">{data?.title || "Ivy League"}</span>
+              <span className="block">{sections.hero?.title }</span>
+              <span className="block">{data?.title }</span>
             </h1>
             <p className="text-lg md:text-xl text-white mb-10 leading-relaxed" style={{ textAlign: 'left' }}>
-              {data?.subTitle || "Top universities of USA"}
+              {data?.subTitle }
             </p>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function UniversityPage({ data }) {
       <section className="py-12 bg-white">
         <div className="mx-auto px-5">
           <h2 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }} className="text-[2.6rem] font-bold text-center mb-6 text-gray-600">
-            {sections.universities?.title || "Our Global University Network"}
+            {sections.universities?.title }
           </h2>
           <IvyLeagueUniversitySlider />
         </div>
@@ -240,10 +240,10 @@ export default function UniversityPage({ data }) {
         <div className="max-w-7xl mx-auto px-4 overflow-visible">
           <div className="text-center mb-8">
             <h2 className="text-[2.6rem] font-bold uppercase" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }}>
-              {sections.blogs?.title || "THE IVY COACH DAILY"}
+              {sections.blogs?.title }
             </h2>
             <p className="text-lg font-semibold text-gray-700">
-              {sections.blogs?.subtitle || `"Way To Tell It Like It Is, Ivy Coach"`}
+              {sections.blogs?.subtitle}
             </p>
           </div>
 
@@ -297,8 +297,9 @@ export default function UniversityPage({ data }) {
 
       {/* Reusable Sections — These likely already use `data` internally */}
       <OffersSlider />
-      <IvyLeagueSection />
-      <AdmissionRequirementsUK />
+      <IvyLeagueSection whySpecialData={data.sections.whySpecial} />
+      
+<AdmissionRequirementsUK admissionData={data.sections.admissionRequirements} />
       <HowGawayHelps howWeHelpData={data.sections.howWeHelp} />
 
       {/* Admission Process Roadmap */}

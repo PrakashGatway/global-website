@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { ArrowRight, BadgeIcon, Globe, NutOffIcon, PanelsTopLeftIcon, TargetIcon, Users, VideoIcon, Zap } from "lucide-react"
@@ -9,25 +11,98 @@ import VideoTestimonialsSlider from "@/components/PageComponent/VideoTestimonial
 import ImageTestimonial from "@/components/ImageTestimonial"
 import VideoInSvgShape from "@/components/PageComponent/VideoShape"
 
-import { serverInstance } from "@/app/axiosInstance"
+import { baseUrl, serverInstance } from "@/app/axiosInstance"
+import Blogs from "./blog"
+import BlogGrid from "./blogGrid"
+import { useKeenSlider } from "keen-slider/react"
 
 
 
 
 
 
-export default async function Homepage() {
 
 
-
-  const res = await serverInstance.get('/page-information/slug/home')
-
-  const homePage = res.data.data.sections
+export default function Homepage({ homePage, Blogdata, destinationData, imageData }) {
 
 
+  let destination = [
+    (slider) => {
+      let timeout
+      let mouseOver = false
+
+      function clearNextTimeout() {
+        clearTimeout(timeout)
+      }
+
+      function nextTimeout() {
+        clearTimeout(timeout)
+        if (mouseOver) return
+        timeout = setTimeout(() => {
+          slider.next()
+        }, 3000) // ⏱️ auto slide every 3s
+      }
+
+      slider.on("created", () => {
+        slider.container.addEventListener("mouseover", () => {
+          mouseOver = true
+          clearNextTimeout()
+        })
+        slider.container.addEventListener("mouseout", () => {
+          mouseOver = false
+          nextTimeout()
+        })
+        nextTimeout()
+      })
+
+      slider.on("dragStarted", clearNextTimeout)
+      slider.on("animationEnded", nextTimeout)
+      slider.on("updated", nextTimeout)
+    },
+  ]
 
 
+  const [sliderRef] = useKeenSlider(
+    {
+      loop: true,
+      mode: "snap",
+      slides: {
+        perView: 1,
+        spacing: 16,
+      },
+      breakpoints: {
+        "(min-width: 640px)": {
+          slides: { perView: 2, spacing: 20 },
+        },
+        "(min-width: 1024px)": {
+          slides: { perView: 3.2, spacing: 24 },
+        },
+      },
+    }, destination
 
+  )
+  const [sliderRefD] = useKeenSlider(
+    {
+      loop: true,
+      mode: "snap",
+      slides: {
+        perView: 1,
+        spacing: 16,
+      },
+      breakpoints: {
+        "(min-width: 640px)": {
+          slides: { perView: 2, spacing: 20 },
+        },
+        "(min-width: 1024px)": {
+          slides: { perView: 4, spacing: 24 },
+        },
+      },
+    }, destination
+
+  )
+
+
+  console.log(imageData)
 
 
 
@@ -43,7 +118,7 @@ export default async function Homepage() {
     py-12 sm:py-16 lg:py-0
   "
         style={{
-          backgroundImage: `url()`
+          backgroundImage: `url("/images/hero.jpg")`
 
         }}
 
@@ -99,7 +174,7 @@ export default async function Homepage() {
     flex items-center justify-center gap-2
     transition-all hover:opacity-90
   "
-                 
+
                   rel="noopener noreferrer"
                 >
                   {homePage?.hero?.ctaText1 || "Get Free Counselling"}
@@ -115,7 +190,7 @@ export default async function Homepage() {
     transition-all hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
     inline-flex items-center justify-center
   "
-               
+
                   rel="noopener noreferrer"
                 >
                   {homePage?.hero?.ctaText2 || "Check Your Eligibility"}
@@ -205,7 +280,7 @@ export default async function Homepage() {
 
             {/* LEFT CONTENT */}
             <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-[3rem] font-bold leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-[3rem] pb-6 font-bold leading-tight">
                 <span className="text-[#ea6c46]">
                   {homePage?.whyUs?.title?.split('||')[0]?.trim()}
                 </span>{" "}
@@ -213,6 +288,10 @@ export default async function Homepage() {
                   {homePage?.whyUs?.title?.split('||')[1]?.trim()}
                 </span>
               </h2>
+
+              <p className="text-sm font-medium sm:text-base text-gray-600 mb-6 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                {homePage?.whyUs?.subTitle}
+              </p>
             </div>
 
             {/* RIGHT ORANGE BOX */}
@@ -422,47 +501,31 @@ export default async function Homepage() {
           </div>
         </div>
       </section>
-      <VideoTestimonialsSlider
-        title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
-        items={[
-          {
-            title: "Trusted Success",
-            text: homePage?.videoTestimonials?.subtitle || "Hear from our successful students.",
-            videoUrl: homePage?.trustedPartners?.items?.[0]?.videoLink || "https://youtu.be/wPc6mANhIj4"
-          },
-          ...(homePage?.trustedPartners?.items?.length > 1
-            ? [{
-              title: "Transparent Journey",
-              text: "Real stories from students who trusted us.",
-              videoUrl: homePage.trustedPartners.items[1].videoLink
-            }]
-            : []
-          )
-        ].filter(item => item.videoUrl)}
-      />
+
+       
+     <VideoTestimonialsSlider
+  title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
+  items={imageData?.map((item: any) => ({
+    title: item.title || "Trusted Success",
+    text: item.description || homePage?.videoTestimonials?.subtitle || "",
+    videoUrl: item.videoUrl || "",
+  }))}
+  // Auto-play is enabled by default
+/>
+
+       
       <ImageTestimonial
-        title={homePage?.imageTestimonials?.title || "Image || Testimonials"}
+      title={<h2 className="text-[2.6rem] text-center font-bold mb-2">
+              <span style={{ color: '#f46c44' }}>
+                {homePage?.imageTestimonials?.title?.split('||')[0]?.trim()}
+              </span>{" "}
+              <span className="text-gray-600">
+                {homePage?.imageTestimonials?.title?.split('||')[1]?.trim()}
+              </span>
+            </h2>}
+        
         subtitle={homePage?.imageTestimonials?.subtitle}
-        items={[
-          {
-            id: 1,
-            name: "Saumya Sharma",
-            text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-            image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
-          },
-          {
-            id: 2,
-            name: "Aditya Sharma",
-            text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-            image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
-          },
-          {
-            id: 3,
-            name: "Rohan Gupta",
-            text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-            image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
-          },
-        ]}
+        items={imageData}
       />
       <section className="py-18 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden">
@@ -479,125 +542,66 @@ export default async function Homepage() {
               {homePage?.topUniversities?.subtitle}
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
-            {/* ... Existing University Groups ... */}
-            {/* Assuming these are static for now, as they are complex components with SVGs */}
-            <div className="text-center group">
-              <div className="relative mx-auto w-full max-w-[280px] mb-6">
-                <svg viewBox="0 0 300 200" className="w-full h-auto" style={{ filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.1))' }}>
-                  <defs>
-                    <clipPath id="tiltedClip1">
-                      <path d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z" />
-                    </clipPath>
-                  </defs>
-                  <image
-                    href="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop"
-                    x="0" y="0" width="300" height="200"
-                    clipPath="url(#tiltedClip1)"
-                    preserveAspectRatio="xMidYMid slice"
-                  />
-                  <path d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z"
-                    fill="none"
-                    stroke="#f46c44"
-                    strokeWidth="1" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-700 mb-2">
-                Ivy League Universities
-              </h3>
-              <p className="text-sm font-medium" style={{ color: '#f46c44' }}>
-                America&apos;s most prestigious institutions
-              </p>
-            </div>
 
-            {/* Russell Group */}
-            <div className="text-center group">
-              <div className="relative mx-auto w-full max-w-[280px] mb-6">
-                <svg viewBox="0 0 300 200" className="w-full h-auto" style={{ filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.1))' }}>
-                  <defs>
-                    <clipPath id="tiltedClip2">
-                      <path d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z" />
-                    </clipPath>
-                  </defs>
-                  <image
-                    href="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=300&fit=crop"
-                    x="0" y="0" width="300" height="200"
-                    clipPath="url(#tiltedClip2)"
-                    preserveAspectRatio="xMidYMid slice"
-                  />
-                  <path d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z"
-                    fill="none"
-                    stroke="#f46c44"
-                    strokeWidth="1" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-700 mb-2">
-                Russell Group Universities
-              </h3>
-              <p className="text-sm font-medium" style={{ color: '#f46c44' }}>
-                Leading UK research universities
-              </p>
-            </div>
+          <div
+            ref={sliderRefD}
+            className="keen-slider lg:grid lg:grid-cols-4 lg:gap-1 items-start"
+          >
+            {destinationData.map((item) => (
+              <div
+                key={item._id}
+                className="keen-slider__slide "
+              >
+                {/* 👇 YOUR EXISTING UI (UNCHANGED) */}
+                <Link href={`/destination/${item.slug}`}>
+                  <div className="text-center group">
+                    <div className="relative mx-auto w-full max-w-[280px] mb-6">
+                      <svg
+                        viewBox="0 0 300 200"
+                        className="w-full h-auto"
+                        style={{
+                          filter: "drop-shadow(0 10px 15px rgba(0,0,0,0.1))",
+                        }}
+                      >
+                        <defs>
+                          <clipPath id={`tiltedClip-${item._id}`}>
+                            <path d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z" />
+                          </clipPath>
+                        </defs>
 
-            {/* TU9 */}
-            <div className="text-center group">
-              <div className="relative mx-auto w-full max-w-[280px] mb-6">
-                <svg viewBox="0 0 300 200" className="w-full h-auto" style={{ filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.1))' }}>
-                  <defs>
-                    <clipPath id="tiltedClip3">
-                      <path d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z" />
-                    </clipPath>
-                  </defs>
-                  <image
-                    href="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400&h=300&fit=crop"
-                    x="0" y="0" width="300" height="200"
-                    clipPath="url(#tiltedClip3)"
-                    preserveAspectRatio="xMidYMid slice"
-                  />
-                  <path d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z"
-                    fill="none"
-                    stroke="#f46c44"
-                    strokeWidth="1" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-700 mb-2">
-                TU9 & Public Universities
-              </h3>
-              <p className="text-sm font-medium" style={{ color: '#f46c44' }}>
-                Germany&apos;s top technical institutions
-              </p>
-            </div>
+                        <image
+                          href={item.cardImage || "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop"}
+                          x="0"
+                          y="0"
+                          width="300"
+                          height="200"
+                          clipPath={`url(#tiltedClip-${item._id})`}
+                          preserveAspectRatio="xMidYMid slice"
+                        />
 
-            {/* Italian Public */}
-            <div className="text-center group">
-              <div className="relative mx-auto w-full max-w-[280px] mb-6">
-                <svg viewBox="0 0 300 200" className="w-full h-auto" style={{ filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.1))' }}>
-                  <defs>
-                    <clipPath id="tiltedClip4">
-                      <path d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z" />
-                    </clipPath>
-                  </defs>
-                  <image
-                    href="https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=400&h=300&fit=crop"
-                    x="0" y="0" width="300" height="200"
-                    clipPath="url(#tiltedClip4)"
-                    preserveAspectRatio="xMidYMid slice"
-                  />
-                  <path d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z"
-                    fill="none"
-                    stroke="#f46c44"
-                    strokeWidth="1" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-700 mb-2">
-                Italian Public Universities
-              </h3>
-              <p className="text-sm font-medium" style={{ color: '#f46c44' }}>
-                Affordable education with global value
-              </p>
-            </div>
+                        <path
+                          d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z"
+                          fill="none"
+                          stroke="#f46c44"
+                          strokeWidth="1"
+                        />
+                      </svg>
+                    </div>
 
+                    <h3 className="text-xl font-bold text-gray-700 mb-2">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-sm font-medium text-[#f46c44]">
+                      {item.subTitle}
+                    </p>
+                  </div>
+                </Link>
+
+              </div>
+            ))}
           </div>
+
         </div>
       </section>
 
@@ -626,96 +630,105 @@ export default async function Homepage() {
           </div>
 
           {/* Grid */}
-          <div className="
-      grid grid-cols-1
-      md:grid-cols-3
-      gap-y-14 sm:gap-y-16
-      gap-x-8 lg:gap-x-12
-    ">
-            {[
-              {
-                title: "Preparing for TOEFL Speaking Scoring section: Key Skills and Practice",
-                desc: "Particularly for non-native English speakers, the TOEFL",
-                img: "https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/396e9/MainBefore.jpg",
-              },
-              {
-                title: "Scholarships for Indian Students",
-                desc: "Top funding opportunities for Indian applicants",
-                img: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=500&fit=crop",
-              },
-              {
-                title: "Admissions Success Guide",
-                desc: "Complete roadmap for global university admissions",
-                img: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&h=500&fit=crop",
-              },
-            ].map((card, i) => (
-              <div
-                key={i}
-                className="
+          <div ref={sliderRef} className="keen-slider">
+
+            {Blogdata.map((post) => (
+              <div key={post._id} className="keen-slider__slide px-5">
+                <Link href={`/blog/${post.slug}`} >
+                  <div
+                    key={post._id}
+                    className="
                   relative bg-white border border-[#FF6B35]
                   rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]
-                  transition-all duration-300 hover:shadow-xl
+                  transition-all duration-300 hover:shadow-xl mt-10
                 "
-              >
-                <div
-                  className="
-                    absolute -top-2 -left-2
-                    w-28 h-28 sm:w-36 sm:h-36 lg:w-45 lg:h-45
-                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[105px]
-                    bg-[#FF6B35] -z-0 rounded-lg
+                  >
+                    {/* ORANGE BACK SHAPE */}
+                    <div
+                      className="
+                    absolute -top-2 -left-[6.5px]
+                    w-28 h-28 sm:w-36 sm:h-36 lg:w-35 lg:h-35
+                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-[20px] lg:rounded-tl-[70px]
+                    bg-[#FF6B35] -z-10
                   "
-                ></div>
+                    />
 
-                {/* IMAGE */}
-                <div
-                  className="
+                    {/* IMAGE */}
+                    <div
+                      className="
                     relative overflow-hidden bg-gray-300
                     h-[200px] sm:h-[220px] lg:h-[220px]
-                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]
+                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[65px]
                   "
-                >
-                  <img
-                    src={card.img || 'https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg'}
-                    alt={card.title}
-                    className="w-full h-[220px] object-cover"
+                    >
+                      <img
+                        src={
+                          post.coverImage ||
+                          "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
+                        }
+                        alt={post.title}
+                        className="w-full h-[220px] object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
+                        }}
+                      />
 
-                  />
-                  <div
-                    className="
+                      {/* OVERLAY */}
+                      <div
+                        className="
                       absolute inset-0 bg-black/50
                       flex flex-col items-center justify-center text-center px-4
-                      rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]
-                      pointer-events-none
+                      rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[65px]
                     "
-                  >
-                    <h3 className="text-white text-lg sm:text-xl lg:text-2xl font-semibold mb-2">
-                      {card.title}
-                    </h3>
-                    {/* <p className="text-white text-sm sm:text-base">
-                      {post.category} {post.date}
-                    </p> */}
+                      >
+                        <h3 className="text-white text-lg sm:text-xl lg:text-3xl font-semibold mb-2">
+                          {post.title}
+                        </h3>
+
+                        <p className="text-white text-sm sm:text-base">
+                          {post.category?.name}{" "}
+                          {new Date(post.createdAt).toLocaleDateString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* CONTENT */}
+                    <div className="p-3 text-center">
+                      <p className="text-gray-800 text-base font-medium mb-3 line-clamp-2">
+                        {post.shortDescription}
+                      </p>
+
+                      <div
+
+                        className="
+    text-white px-6 lg:w-50 py-2 mx-auto
+    bg-[#1f2937]
+    rounded-tr-4xl
+    shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
+    text-sm font-semibold
+    hover:bg-[#FF6B35]
+    hover:shadow-[-6px_6px_5px_0px_rgba(0,0,0,0.60)]
+    flex items-center justify-center gap-2
+    transition-all
+  "
+                      >
+                        Read More »
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </Link>
 
-                {/* CONTENT */}
-                <div className="p-2 text-center">
-                  <p className="text-gray-800 text-base font-medium mb-3">
-                    {card.desc} {card.desc}
-                  </p>
-
-                  <button
-                    className="
-                      bg-[#FF6B35] hover:bg-[#e85f2f]
-                      text-white text-sm font-semibold
-                      px-5 py-2 rounded transition-colors
-                    "
-                  >
-                    Read More »
-                  </button>
-                </div>
               </div>
-            ))}
+            )
+            )}
           </div>
+
+
         </div>
       </section>
     </main>

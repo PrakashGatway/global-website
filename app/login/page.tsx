@@ -215,7 +215,7 @@ export default function LoginPage() {
 
 
           <div className="flex justify-center mb-4">
-            <img src="/images/logo.png" className="h-20" />
+            <img src="/images/newlogo3.png" className="h-25" />
           </div>
 
          <div

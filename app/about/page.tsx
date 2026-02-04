@@ -185,7 +185,7 @@ export default function AboutUsPage() {
                 The Story Behind
               </h3>
               <h3 className="text-4xl md:text-[2.6rem] font-bold mb-6 underline" style={{ color: '#FF6B35' }}>
-                GAway Global
+                Ooshas Global
               </h3>
               <p className="text-gray-600 text-base leading-relaxed font-semibold mb-3">
                 Founded with a vision to bridge the gap between ambitious students and world-class education opportunities, GAway Global has been at the forefront of international education consultancy.

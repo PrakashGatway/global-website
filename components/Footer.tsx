@@ -77,13 +77,13 @@ export function Footer({ Featureitem = [],Serviceitem =[]
               {/* BRAND */}
               <div className="w-full lg:w-1/4 pr-0 lg:pr-8 mb-10 lg:mb-0">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/newlogo3.png"
                   alt="GAway Global"
-                  width={150}
+                  width={200}
                   height={50}
                   className="mb-4"
                 />
-                <h3 className="text-xl font-bold text-gray-800 mb-3">GA Way Global</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-3">Ooshas Global</h3>
                 <p className="text-gray-600 text-base leading-relaxed mb-6">
                   Your trusted partner for global education, university admissions, and international study planning.
                 </p>

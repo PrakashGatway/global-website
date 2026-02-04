@@ -59,7 +59,7 @@ export default function CareerPage() {
 
         <div>
           <h2 className="text-[50px] font-semibold text-orange-500 px-6">
-            Culture of Success at <span className="text-gray-700">Gateway Abroad</span>
+            Culture of Success at <span className="text-gray-700">Ooshas Global</span>
           </h2>
 
           <p className="mt-4 text-lg text-gray-600 leading-relaxed px-6">
@@ -76,7 +76,7 @@ export default function CareerPage() {
       <section className="max-w-7xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-14 items-center">
         <div>
           <h2 className="text-[50px] font-semibold text-orange-500">
-            Working with <span className="text-gray-700">Gateway Abroad</span>
+            Working with <span className="text-gray-700">Ooshas Global</span>
           </h2>
 
           <p className="mt-4 text-lg text-gray-600 leading-relaxed">
@@ -184,7 +184,7 @@ export default function CareerPage() {
       ">
               Boost Your Career!
               <span className="text-gray-700 block lg:inline">
-                {" "}Find the Perfect Role with Gateway Abroad
+                {" "}Find the Perfect Role with Ooshas Global
               </span>
             </h2>
 

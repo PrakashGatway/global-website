@@ -26,7 +26,7 @@ export default async function BlogPage({
       ? searchquery.category
       : undefined
 
-  const blogres = await serverInstance.get("/blogs", {
+  const blogres = await serverInstance.get("/blogs?type=blog", {
     params: {
       page,
       limit,
@@ -34,11 +34,11 @@ export default async function BlogPage({
     },
   })
 
-  console.log(searchquery.page)
+  console.log(blogres)
 
   const blogcategory = await serverInstance.get("/blogs/categories")
 
-  console.log(blogcategory)
+  
 
   return (
     <>

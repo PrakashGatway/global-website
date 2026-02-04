@@ -9,6 +9,8 @@ import { serverInstance } from "./axiosInstance"
 
 
 
+
+
 const notoSans = Noto_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -57,7 +59,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const [feature] = await Promise.all([
-    serverInstance.get("/page-information/navbar?isFeatured=true&isNavbar=true"),
+    serverInstance.get("/page-information/navbar?isNavbar=true"),
     
    
 
@@ -77,8 +79,16 @@ export default async function RootLayout({
   const serviceres = servicedata.reverse()
 
   
+
+
+  
+
+
+
   
   
+  
+
 
 
   return (
@@ -93,8 +103,12 @@ export default async function RootLayout({
 
         <Navbar Featureitem={featureRes || []} Serviceitem={serviceres || []}
         />
-        {children}
+        
+          {children}
+        
+        
         <Footer Featureitem={featureRes || []} Serviceitem={serviceres || []} />
+       
       </body>
     </html>
   )
