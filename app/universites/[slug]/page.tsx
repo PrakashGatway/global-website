@@ -5,6 +5,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { serverInstance } from '@/app/axiosInstance';
 import HeroSlider from '@/components/heroSlider';
 import SocialLinksCard from '@/components/socialLinkCard';
+import DOMPurify from "isomorphic-dompurify";
+
 
 
 interface UniversityData {
@@ -102,11 +104,11 @@ const defaultCourses = [
 
 export default async function UniDetails({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  
+
   let universityData: UniversityData | null = null;
   let error: string | null = null;
 
-  
+
 
   try {
     const res = await serverInstance.get<ApiResponse>(`/universities/${slug}`);
@@ -133,7 +135,7 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
   }
 
   const latitude = universityData.google_location?.lat;
-const longitude = universityData.google_location?.lng;
+  const longitude = universityData.google_location?.lng;
 
 
   // Prepare data from API response
@@ -175,7 +177,7 @@ const longitude = universityData.google_location?.lng;
 
   // Get active sections from API
   const activeSections = universityData.extra_content?.sections || [];
-  
+
   // Determine default tab based on available sections
   const defaultTab = activeSections.length > 0 ? activeSections[0].section_key : 'college-info';
 
@@ -188,7 +190,7 @@ const longitude = universityData.google_location?.lng;
       {/* Hero Section with Slider */}
       <div className="relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <HeroSlider 
+          <HeroSlider
             images={galleryImages}
             videos={galleryVideos}
             universityName={universityData.name}
@@ -207,84 +209,84 @@ const longitude = universityData.google_location?.lng;
                 {location}
               </p>
             </div>
-          
+
           </div>
 
-         
+
         </div>
       </div>
 
       {/* Rankings Section */}
-    <div className="bg-blue-50 border-b">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <div className="grid md:grid-cols-3 gap-8">
-      
-      {/* Rankings */}
-      <div className="md:col-span-2">
-        <p className="text-sm text-slate-600 mb-3">University Rankings</p>
+      <div className="bg-blue-50 border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="grid md:grid-cols-3 gap-8">
 
-        <div className="grid sm:grid-cols-2 gap-6">
-          {Array.isArray(universityData.uni_rank) && universityData.uni_rank.length > 0 ? (
-            universityData.uni_rank.map((rank, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-4 bg-white rounded-lg p-4 shadow-sm"
-              >
-                <div className="text-4xl font-bold text-orange-500">
-                  #{rank.rank}
-                </div>
+            {/* Rankings */}
+            <div className="md:col-span-2">
+              <p className="text-sm text-slate-600 mb-3">University Rankings</p>
 
-                <div>
-                  <p className="font-semibold text-slate-900">
-                    {rank.type}
-                  </p>
-                  <p className="text-sm text-slate-600">
-                    Year {rank.year}
-                  </p>
-                </div>
+              <div className="grid sm:grid-cols-2 gap-6">
+                {Array.isArray(universityData.uni_rank) && universityData.uni_rank.length > 0 ? (
+                  universityData.uni_rank.map((rank, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-4 bg-white rounded-lg p-4 shadow-sm"
+                    >
+                      <div className="text-4xl font-bold text-orange-500">
+                        #{rank.rank}
+                      </div>
+
+                      <div>
+                        <p className="font-semibold text-slate-900">
+                          {rank.type}
+                        </p>
+                        <p className="text-sm text-slate-600">
+                          Year {rank.year}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-slate-600">Ranking data not available</p>
+                )}
               </div>
-            ))
-          ) : (
-            <p className="text-slate-600">Ranking data not available</p>
-          )}
+            </div>
+
+            {/* Intakes (replacing Status) */}
+            <div>
+              <p className="text-sm text-slate-600 mb-3">Available Intakes</p>
+
+              <div className="bg-white rounded-lg p-4 shadow-sm space-y-3">
+                {Array.isArray(universityData.intakes) && universityData.intakes.length > 0 ? (
+                  universityData.intakes.map((intake, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <Calendar className="w-5 h-5 text-orange-600" />
+                      <span className="text-slate-800 font-medium">
+                        {intake}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-slate-600">No intake information available</p>
+                )}
+              </div>
+
+              <Button variant="outline" className="mt-4 w-full hover:bg-orange-500 cursor-pointer ">
+                View admission timeline
+              </Button>
+            </div>
+
+          </div>
         </div>
       </div>
 
-      {/* Intakes (replacing Status) */}
-      <div>
-        <p className="text-sm text-slate-600 mb-3">Available Intakes</p>
-
-        <div className="bg-white rounded-lg p-4 shadow-sm space-y-3">
-          {Array.isArray(universityData.intakes) && universityData.intakes.length > 0 ? (
-            universityData.intakes.map((intake, index) => (
-              <div key={index} className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-orange-600" />
-                <span className="text-slate-800 font-medium">
-                  {intake}
-                </span>
-              </div>
-            ))
-          ) : (
-            <p className="text-slate-600">No intake information available</p>
-          )}
-        </div>
-
-        <Button variant="outline" className="mt-4 w-full hover:bg-orange-500 cursor-pointer ">
-          View admission timeline
-        </Button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-{/* LEFT SOCIAL LINKS */}
-<SocialLinksCard
-    facebook={universityData.social_links?.facebook}
-    twitter={universityData.social_links?.twitter}
-    instagram={universityData.social_links?.instagram}
-    linkedin={universityData.social_links?.linkedin}
-  />
+      {/* LEFT SOCIAL LINKS */}
+      <SocialLinksCard
+        facebook={universityData.social_links?.facebook}
+        twitter={universityData.social_links?.twitter}
+        instagram={universityData.social_links?.instagram}
+        linkedin={universityData.social_links?.linkedin}
+      />
 
 
 
@@ -295,8 +297,8 @@ const longitude = universityData.google_location?.lng;
             <TabsList className="w-full justify-start rounded-none border-0 bg-transparent h-auto p-0 gap-8">
               {/* Generate tabs dynamically from sections */}
               {activeSections.map((section) => (
-                <TabsTrigger 
-                  key={section._id} 
+                <TabsTrigger
+                  key={section._id}
                   value={section.section_key}
                   className="rounded-none border-b-2 border-transparent data-[state=active]:border-gray-600 px-0 py-4 text-slate-700 data-[state=active]:text-slate-900"
                 >
@@ -315,86 +317,91 @@ const longitude = universityData.google_location?.lng;
                     <TabsContent key={section._id} value={section.section_key} className="space-y-8">
                       <div>
                         <h2 className="text-2xl font-bold text-slate-900 mb-4">{section.heading}</h2>
-                        <div className="text-slate-700 leading-relaxed whitespace-pre-line">
-                          {section.content}
-                        </div>
+
+                        <div
+                          className="text-slate-700 leading-relaxed"
+                          dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(section.content),
+                          }}
+                        />
+
                       </div>
                     </TabsContent>
                   ))}
 
 
                   {/* Location Section */}
-<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-  <div className="grid lg:grid-cols-3 gap-8">
-    
-    {/* LEFT: Google Map */}
-    <div className="lg:col-span-2">
-      <Card className="border-gray-300">
-        <CardContent className="p-0">
-          <div className="h-[350px] w-full rounded-lg overflow-hidden">
-            {latitude && longitude ? (
-              <iframe
-                title="University Location"
-                width="100%"
-                height="100%"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                src={`https://www.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`}
-                className="border-0"
-              />
-            ) : (
-              <div className="h-full flex items-center justify-center text-gray-500">
-                Location not available
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
+                    <div className="grid lg:grid-cols-3 gap-8">
 
-    {/* RIGHT: Address Details */}
-    <div className="lg:col-span-1">
-      <Card className="border-gray-300">
-        <CardContent className="pt-6">
-          <h3 className="font-bold text-gray-800 mb-4">
-            Campus Location
-          </h3>
+                      {/* LEFT: Google Map */}
+                      <div className="lg:col-span-2">
+                        <Card className="border-gray-300">
+                          <CardContent className="p-0">
+                            <div className="h-[350px] w-full rounded-lg overflow-hidden">
+                              {latitude && longitude ? (
+                                <iframe
+                                  title="University Location"
+                                  width="100%"
+                                  height="100%"
+                                  loading="lazy"
+                                  referrerPolicy="no-referrer-when-downgrade"
+                                  src={`https://www.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`}
+                                  className="border-0"
+                                />
+                              ) : (
+                                <div className="h-full flex items-center justify-center text-gray-500">
+                                  Location not available
+                                </div>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
 
-          <div className="space-y-4 text-sm text-gray-600">
-            <div className="flex items-start gap-2">
-              <MapPin className="w-4 h-4 text-orange-600 mt-1" />
-              <span>{universityData.address || 'N/A'}</span>
-            </div>
+                      {/* RIGHT: Address Details */}
+                      <div className="lg:col-span-1">
+                        <Card className="border-gray-300">
+                          <CardContent className="pt-6">
+                            <h3 className="font-bold text-gray-800 mb-4">
+                              Campus Location
+                            </h3>
 
-            <div className="border-t border-gray-300 pt-4">
-              <p>
-                <span className="font-medium text-gray-800">City:</span>{' '}
-                {universityData.city}
-              </p>
-              <p>
-                <span className="font-medium text-gray-800">Country:</span>{' '}
-                {universityData.country}
-              </p>
-            </div>
+                            <div className="space-y-4 text-sm text-gray-600">
+                              <div className="flex items-start gap-2">
+                                <MapPin className="w-4 h-4 text-orange-600 mt-1" />
+                                <span>{universityData.address || 'N/A'}</span>
+                              </div>
 
-            <Button
-              asChild
-              className="w-full bg-orange-600 hover:bg-orange-700 text-white"
-            >
-              <a
-                href={`https://www.google.com/maps?q=${latitude},${longitude}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Open in Google Maps
-              </a>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  </div>
-</div>
+                              <div className="border-t border-gray-300 pt-4">
+                                <p>
+                                  <span className="font-medium text-gray-800">City:</span>{' '}
+                                  {universityData.city}
+                                </p>
+                                <p>
+                                  <span className="font-medium text-gray-800">Country:</span>{' '}
+                                  {universityData.country}
+                                </p>
+                              </div>
+
+                              <Button
+                                asChild
+                                className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                              >
+                                <a
+                                  href={`https://www.google.com/maps?q=${latitude},${longitude}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  Open in Google Maps
+                                </a>
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+                  </div>
 
 
 
@@ -403,55 +410,55 @@ const longitude = universityData.google_location?.lng;
                 {/* Sidebar */}
                 <div className="lg:col-span-1">
                   {/* Quick Stats */}
-                 <Card className="mb-6 border-gray-300">
-  <CardContent className="pt-6">
-    <h3 className="font-bold text-gray-800 mb-4">
-      Financial Overview
-    </h3>
+                  <Card className="mb-6 border-gray-300">
+                    <CardContent className="pt-6">
+                      <h3 className="font-bold text-gray-800 mb-4">
+                        Financial Overview
+                      </h3>
 
-    <div className="space-y-4">
-      {/* Cost of Living */}
-      <div>
-        <p className="text-sm text-gray-600 mb-1">
-          Cost of Living (Annual)
-        </p>
-        <p className="text-xl font-bold text-orange-600">
-          {universityData.financials?.cost_of_living || 'N/A'}
-        </p>
-      </div>
+                      <div className="space-y-4">
+                        {/* Cost of Living */}
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">
+                            Cost of Living (Annual)
+                          </p>
+                          <p className="text-xl font-bold text-orange-600">
+                            {universityData.financials?.cost_of_living || 'N/A'}
+                          </p>
+                        </div>
 
-      {/* UG Fees */}
-      <div className="border-t border-gray-300 pt-4">
-        <p className="text-sm text-gray-600 mb-1">
-          Undergraduate Fees
-        </p>
-        <p className="text-xl font-bold text-orange-600">
-          {universityData.financials?.ug_fees || 'N/A'}
-        </p>
-      </div>
+                        {/* UG Fees */}
+                        <div className="border-t border-gray-300 pt-4">
+                          <p className="text-sm text-gray-600 mb-1">
+                            Undergraduate Fees
+                          </p>
+                          <p className="text-xl font-bold text-orange-600">
+                            {universityData.financials?.ug_fees || 'N/A'}
+                          </p>
+                        </div>
 
-      {/* PG Fees */}
-      <div className="border-t border-gray-300 pt-4">
-        <p className="text-sm text-gray-600 mb-1">
-          Postgraduate Fees
-        </p>
-        <p className="text-xl font-bold text-orange-600">
-          {universityData.financials?.pg_fees || 'N/A'}
-        </p>
-      </div>
+                        {/* PG Fees */}
+                        <div className="border-t border-gray-300 pt-4">
+                          <p className="text-sm text-gray-600 mb-1">
+                            Postgraduate Fees
+                          </p>
+                          <p className="text-xl font-bold text-orange-600">
+                            {universityData.financials?.pg_fees || 'N/A'}
+                          </p>
+                        </div>
 
-      {/* Other Fees */}
-      <div className="border-t border-gray-300 pt-4">
-        <p className="text-sm text-gray-600 mb-1">
-          Other Fees
-        </p>
-        <p className="text-xl font-bold text-orange-600">
-          {universityData.financials?.other_fees || 'N/A'}
-        </p>
-      </div>
-    </div>
-  </CardContent>
-</Card>
+                        {/* Other Fees */}
+                        <div className="border-t border-gray-300 pt-4">
+                          <p className="text-sm text-gray-600 mb-1">
+                            Other Fees
+                          </p>
+                          <p className="text-xl font-bold text-orange-600">
+                            {universityData.financials?.other_fees || 'N/A'}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
 
                   {/* CTA Section */}
@@ -491,9 +498,9 @@ const longitude = universityData.google_location?.lng;
                         {universityData.uni_web && (
                           <div className="border-t border-slate-200 pt-4">
                             <p className="text-sm font-medium text-slate-900 mb-1">Website</p>
-                            <a 
-                              href={universityData.uni_web} 
-                              target="_blank" 
+                            <a
+                              href={universityData.uni_web}
+                              target="_blank"
                               rel="noopener noreferrer"
                               className="text-sm text-blue-600 hover:underline"
                             >
@@ -524,7 +531,7 @@ const longitude = universityData.google_location?.lng;
         </div>
       </div>
 
-      
+
     </main>
   );
 }

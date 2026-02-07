@@ -217,7 +217,7 @@ export function Footer({ Featureitem = [],Serviceitem =[]
 
           {/* ================= BOTTOM BAR ================= */}
           <div className="mt-10 flex flex-col md:flex-row justify-between items-center text-base text-gray-500 gap-4">
-            <p>© 2023 GAway Global. All rights reserved.</p>
+            <p>© 2023 Ooshas Global. All rights reserved.</p>
 
             <div className="flex gap-4 md:gap-6 flex-wrap justify-center">
               <a href="privacy-policy" className="hover:text-orange-500">Privacy Policy</a>

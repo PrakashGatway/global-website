@@ -32,7 +32,7 @@ export default function TermsConditions() {
                   Acceptance of Terms
                 </h2>
                 <p className="mt-3 text-gray-600 leading-relaxed">
-                  By accessing and using Gateway Abroad Education services,
+                  By accessing and using Ooshas Global Education services,
                   you agree to comply with these terms. If you do not agree,
                   please discontinue use immediately.
                 </p>
@@ -75,7 +75,7 @@ export default function TermsConditions() {
                   Limitation of Liability
                 </h2>
                 <p className="mt-3 text-gray-600 leading-relaxed">
-                  Gateway Abroad Education shall not be responsible for
+                  Ooshas Global Education shall not be responsible for
                   indirect or consequential damages arising from service use.
                 </p>
               </section>
@@ -94,7 +94,7 @@ export default function TermsConditions() {
                   Contact Information
                 </h2>
                 <p className="mt-3 text-gray-600">
-                  📧 info@gatewayabroad.com
+                  📧 info@ooshasglobal.com
                 </p>
               </section>
 

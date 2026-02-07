@@ -1,9 +1,12 @@
 "use client";
 
+import axiosInstance from "@/app/axiosInstance";
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 
-export default function CaseStudy({ font , caseStudydata }) {
+export default  function CaseStudy({ font , caseStudydata , caseStudy  }) {
     const sliderRef = useRef<HTMLDivElement>(null);
+
 
     const AUTO_SLIDE_INTERVAL = 3000;
 
@@ -100,37 +103,16 @@ export default function CaseStudy({ font , caseStudydata }) {
         keenSlider();
     }, []);
 
+    const testimonials = caseStudy
 
-    const testimonials = [
-        {
-            id: 1,
-            name: "Aditya Sharma",
-            text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-            university: "Harvard",
-            image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600"
-        },
-        {
-            id: 2,
-            name: "Rohan Gupta",
-            text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-            university: "Harvard",
-            image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600"
-        },
-        {
-            id: 3,
-            name: "Saumya Sharma",
-            text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-            university: "Harvard",
-            image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600"
-        },
-                {
-            id: 4,
-            name: "Saumya Sharma",
-            text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-            university: "Harvard",
-            image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600"
-        }
-    ];
+
+
+    
+
+
+
+
+    
 
     return (
         <section className="py-16" style={{ backgroundColor: '#fff9f4' }}>
@@ -143,7 +125,8 @@ export default function CaseStudy({ font , caseStudydata }) {
 
                 <div ref={sliderRef} className="keen-slider">
                     {testimonials.map((testimonial) => (
-                        <div key={testimonial.id} className="keen-slider__slide flex justify-center">
+                        <Link href={`/post/${testimonial?.target}`} >
+                         <div key={testimonial?._id} className="keen-slider__slide flex justify-center">
 
                             <svg width="0" height="0" aria-hidden>
                                 <defs>
@@ -187,20 +170,21 @@ export default function CaseStudy({ font , caseStudydata }) {
                                     <div className="h-full">
                                         <div>
                                             <p className="text-base font-semibold text-gray-50 leading-relaxed">
-                                                {testimonial.text}
+                                                {testimonial.name}
                                             </p>
                                         </div>
                                         <div className="flex items-center gap-2 mt-2">
-                                            <img className="rounded-xl h-24 w-32 object-cover" src="https://thumbs.dreamstime.com/b/young-conceptual-image-large-stone-shape-human-brain-conceptual-image-large-stone-shape-110748113.jpg" alt="" />
+                                            <img className="rounded-xl h-24 w-32 object-cover" src= {testimonial.image || "https://thumbs.dreamstime.com/b/young-conceptual-image-large-stone-shape-human-brain-conceptual-image-large-stone-shape-110748113.jpg"} alt="" />
                                             <p className="text-sm font-medium text-gray-50">
-                                                {testimonial.text}
+                                                {testimonial.message}
                                             </p>
                                         </div>
 
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div></Link>
+                       
                     ))}
 
                 </div>

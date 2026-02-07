@@ -12,6 +12,8 @@ import OffersSlider, {
   HowGawayHelps,
   IvyLeagueSection,
   ScholarshipRequirements,
+  StickyIvelgueSection,
+  StickyPaymentSection,
 } from "@/components/PageComponent/DistinationSliders";
 import CaseStudy from "@/components/PageComponent/CaseStudy";
 
@@ -21,7 +23,7 @@ const images = [
   "https://as2.ftcdn.net/jpg/05/29/12/57/1000_F_529125762_omW1yTehDLLFJKwLJjRET0G3sXiQnK5g.jpg",
 ];
 
-export default function UniversityPage({ data }) {
+export default function UniversityPage({ data ,caseStudy }) {
   const [index, setIndex] = useState(0);
 
   // AUTO SLIDE
@@ -45,6 +47,10 @@ export default function UniversityPage({ data }) {
   const { percent, description } = parseBottomText(
     sections.imageTestimonials?.bottomText
   );
+
+  
+
+  
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
@@ -169,7 +175,7 @@ export default function UniversityPage({ data }) {
                 <div className="flex items-center gap-6 pb-2">
                   <div><span className="text-sm font-semibold text-gray-600">General Admit Rate</span></div>
                   <div className="w-[px] h-full min-h-[4px] bg-gray-300 self-stretch"></div>
-                  <div><span className="text-sm font-semibold" style={{ color: '#f46c44' }}>GAway Student Admit Rate</span></div>
+                  <div><span className="text-sm font-semibold" style={{ color: '#f46c44' }}>Ooshas Student Admit Rate</span></div>
                 </div>
                 <div className="space-y-0">
                   {[
@@ -297,7 +303,7 @@ export default function UniversityPage({ data }) {
 
       {/* Reusable Sections — These likely already use `data` internally */}
       <OffersSlider />
-      <IvyLeagueSection whySpecialData={data.sections.whySpecial} />
+      <StickyPaymentSection sections={data.sections.whySpecial.items} />
       
 <AdmissionRequirementsUK admissionData={data.sections.admissionRequirements} />
       <HowGawayHelps howWeHelpData={data.sections.howWeHelp} />
@@ -322,7 +328,7 @@ export default function UniversityPage({ data }) {
 
 
       <ImageTestimonial
-              title={sections?.bottomTestimonial?.title || "Image || Testimonials"}
+              title={sections?.bottomTestimonial?.title}
               subtitle={sections?.bottomTestimonial?.subtitle}
               font = {true}
               items={[
@@ -346,7 +352,7 @@ export default function UniversityPage({ data }) {
                 },
               ]}
             />
-      <CaseStudy font={true} caseStudydata ={sections.caseStudies} />
+      <CaseStudy font={true} caseStudydata ={sections.caseStudies} caseStudy = {caseStudy} />
 
       {/* Final CTA */}
       <section className="py-24" style={{ backgroundColor: '#f46c44' }}>

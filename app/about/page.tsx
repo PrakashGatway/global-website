@@ -4,8 +4,15 @@ import { motion } from "framer-motion";
 import { GraduationCap } from 'lucide-react';
 import UniversitySliderClient from '@/components/PageComponent/Unversity';
 import UniversitiesSlider from '@/components/PageComponent/UniversitiesSlider';
+import { useState } from 'react';
+import MultiStepForm from '@/components/PopupForm';
+import Link from 'next/link';
 
 export default function AboutUsPage() {
+
+  const [openForm, setOpenForm] = useState(false)
+
+
   return (
     <div className='bg-[#fbfbfb] relative'>
       <section className="relative flex items-center" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
@@ -29,34 +36,40 @@ export default function AboutUsPage() {
               About Us
             </h1>
             <p className="text-lg max-w-2xl font-medium text-white">
-              Gateway Abroad: Your Launchpad to Global Education. We empower students
+               Ooshas Global: Your Launchpad to Global Education. We empower students
               to achieve their dreams of studying abroad with expert coaching for:
               IELTS, TOEFL, PTE, GRE, GMAT, SAT.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <button
+              onClick={()=> setOpenForm(true)}
+              
                 className="
               text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
               rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base font-semibold
               hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)] 
               flex items-center justify-center gap-2
-              transition-all hover:opacity-90
+              transition-all hover:opacity-90 cursor-pointer
             "
+            
               >
                 Get Free Counselling
               </button>
-
-              <button
+          <Link href={"/login"} >
+          <button
+              
                 className="
               text-black/80 px-6 sm:px-8 py-2.5 sm:py-3 bg-white
               rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base  font-semibold
-              transition-all hover:bg-black hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)] 
+              transition-all hover:bg-black hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]  cursor-pointer
             "
               >
                 Check Your Eligibility
-              </button>
+              </button></Link>
+              
             </div>
           </div>
+          {openForm && <MultiStepForm onClose = {()=> setOpenForm(false)}  />}
           <div className="h-full w-full">
             <div className='relative flex items-center justify-center h-[106%] w-full rounded-bl-[55%] overflow-hidden mr-10'>
               <img className='h-full w-full object-cover' src="https://buffer.com/resources/content/images/2025/03/social-media-image-sizes.png" alt="" />
@@ -188,7 +201,7 @@ export default function AboutUsPage() {
                 Ooshas Global
               </h3>
               <p className="text-gray-600 text-base leading-relaxed font-semibold mb-3">
-                Founded with a vision to bridge the gap between ambitious students and world-class education opportunities, GAway Global has been at the forefront of international education consultancy.
+                Founded with a vision to bridge the gap between ambitious students and world-class education opportunities, Ooshas Global has been at the forefront of international education consultancy.
               </p>
               <p className="text-gray-600 text-base leading-relaxed font-semibold">
                 Our journey began with a simple belief: every student deserves access to quality education, regardless of their background. Over the years, we have helped thousands of students realize their dreams of studying abroad, building a reputation for excellence, integrity, and personalized service.
@@ -309,7 +322,7 @@ export default function AboutUsPage() {
             We take pride in our ability to transform lives through education. Our numbers reflect the trust students place in us.
           </p>
           <p className="text-gray-700 font-semibold text-base leading-relaxed">
-            With a presence spanning over 10 countries and partnerships with more than 900 universities worldwide, GAway Global has made a significant impact on the international education landscape.
+            With a presence spanning over 10 countries and partnerships with more than 900 universities worldwide, Ooshas Global has made a significant impact on the international education landscape.
           </p>
         </div>
       </section>

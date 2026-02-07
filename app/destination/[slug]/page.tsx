@@ -11,6 +11,12 @@ export default async function Page({ params }) {
   const res = await serverInstance.get(
     `/page-information/slug/${slug}`
   )
+  
+    
+        const Caseres = await serverInstance.get("/testimonials?type=caseStudy")
+        console.log(Caseres)
 
-  return <UniversityPage data={res.data.data} />
+   
+
+  return <UniversityPage data={res.data.data} caseStudy = {Caseres.data.data} />
 }

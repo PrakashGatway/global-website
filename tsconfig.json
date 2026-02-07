@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-, "src/statecontext.jsx"  ],
+, "src/statecontext.jsx", "src/blogContext.jsx"  ],
   "exclude": [
     "node_modules"
   ]

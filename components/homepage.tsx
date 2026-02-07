@@ -15,6 +15,8 @@ import { baseUrl, serverInstance } from "@/app/axiosInstance"
 import Blogs from "./blog"
 import BlogGrid from "./blogGrid"
 import { useKeenSlider } from "keen-slider/react"
+import MultiStepForm from "./PopupForm"
+import { useState } from "react"
 
 
 
@@ -24,6 +26,9 @@ import { useKeenSlider } from "keen-slider/react"
 
 
 export default function Homepage({ homePage, Blogdata, destinationData, imageData }) {
+
+  const [openForm, setOpenForm] = useState(false);
+
 
 
   let destination = [
@@ -108,6 +113,8 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
 
 
+
+
   return (
     <main className="bg-[#fffaf7]">
       <section
@@ -165,14 +172,14 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
               {/* CTA BUTTONS */}
               <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <a
-                  href={homePage?.hero?.ctaLink1}
+                  onClick={() => setOpenForm(true)}
                   className="
     text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
     rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
     text-base font-semibold
     hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
     flex items-center justify-center gap-2
-    transition-all hover:opacity-90
+    transition-all hover:opacity-90 cursor-pointer
   "
 
                   rel="noopener noreferrer"
@@ -197,6 +204,9 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
                 </a>
 
               </div>
+
+              {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
+
             </div>
 
             {/* RIGHT IMAGE */}

@@ -6,6 +6,7 @@ import "./globals.css"
 import 'keen-slider/keen-slider.min.css';
 import { Footer } from "@/components/Footer"
 import { serverInstance } from "./axiosInstance"
+import { GlobalProvider } from "@/src/statecontext"
 
 
 
@@ -19,7 +20,7 @@ const notoSans = Noto_Sans({
 
 
 export const metadata: Metadata = {
-  title: "Global Way - Your Education Gateway",
+  title: "Global Way - Your Education Ooshas Global",
   description: "Connect with top universities worldwide and find the perfect program for your educational journey",
   keywords: "education, universities, countries, study abroad, global education",
   generator: "v0.app",
@@ -100,7 +101,8 @@ export default async function RootLayout({
 
       
       <body className={`${notoSans.className} antialiased`}>
-
+        <GlobalProvider>
+          
         <Navbar Featureitem={featureRes || []} Serviceitem={serviceres || []}
         />
         
@@ -108,6 +110,9 @@ export default async function RootLayout({
         
         
         <Footer Featureitem={featureRes || []} Serviceitem={serviceres || []} />
+
+        </GlobalProvider>
+
        
       </body>
     </html>

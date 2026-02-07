@@ -262,7 +262,7 @@ export default function Navbar({
                 {/* HEADER */}
                 <div className="flex items-center justify-between px-6 py-5 border-b">
                   <Image
-                    src="/images/logo.png"
+                    src="/images/newlogo3.png"
                     alt="Logo"
                     width={120}
                     height={40}

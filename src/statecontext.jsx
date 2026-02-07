@@ -1,6 +1,8 @@
 "use client"
 import { createContext, useContext, useEffect, useState } from "react";
 import axiosInstance from "../app/axiosInstance";
+import Lenis from '@studio-freight/lenis';
+
 
 const Globalcontext = createContext()
 
@@ -28,6 +30,24 @@ export function GlobalProvider({children}){
         setProfile(null)
         window.location.replace("/")
       }
+
+        useEffect(() => {
+        const lenis = new Lenis({
+          smooth: true,
+          lerp: 0.08, // THIS is the magic
+        });
+      
+        function raf(time) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+      
+        requestAnimationFrame(raf);
+      
+        return () => {
+          lenis.destroy();
+        };
+      }, []);
       
     
     

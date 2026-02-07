@@ -246,7 +246,7 @@ export default function LoginPage() {
                   className="space-y-6 py-10"
                 >
                   <h2 className="text-xl text-orange-500 font-bold text-center">
-                    Welcome to Gateway Abroad
+                    Welcome to Ooshas Global
                   </h2>
 
                   <p className="text-center text-gray-500">enter your email to get started</p>

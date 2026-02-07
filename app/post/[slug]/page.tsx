@@ -3,6 +3,8 @@ import { serverInstance } from "@/app/axiosInstance"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import TableOfContents from "@/components/tableofcontent"
+import DOMPurify from "isomorphic-dompurify";
+
 
 
 // Define types
@@ -29,7 +31,7 @@ interface Blog {
     __v: number
 }
 
-export default async function BlogDetailsPage({
+export default async function CaseDetailsPage({
 
     params,
 }: {
@@ -43,25 +45,25 @@ export default async function BlogDetailsPage({
 
 
 
+
+
     const { slug } = await params
 
     let blog: Blog
 
     try {
-        const res = await serverInstance.get(`/blogs/${slug}`)
+        const res = await serverInstance.get(`/testimonials/${slug}`)
         blog = res.data.data
         console.log("Blog Data:", blog)
-        console.log(blog.seo?.keywords)
-
     } catch (error) {
         console.error("Error fetching blog:", error)
         return notFound()
     }
 
 
-    const res = await serverInstance.get("/blogs/categories")
-    const blogCategory = res.data.data
-    console.log(blogCategory)
+
+
+
 
 
     // Function to extract headings from HTML for Table of Contents
@@ -138,7 +140,7 @@ export default async function BlogDetailsPage({
 
     const toc = extractTOC(blog.description)
 
-    const htmlWithIds = addHeadingIds(blog.description)
+
 
     const headings = extractHeadings(blog.description)
 
@@ -154,32 +156,32 @@ export default async function BlogDetailsPage({
                     <Link href={"/blog"} ><span className="hover:text-orange-600 cursor-pointer" >Blogs</span></Link>
 
                     <span>›</span>
-                    <span className="text-orange-600 font-medium">{blog.title}</span>
+                    <span className="text-orange-600 font-medium">{blog.name}</span>
                 </nav>
             </div>
 
             {/* ================= HERO SECTION ================= */}
-            <div className="relative w-full h-[420px]">
-                <Image
-                    src={
-                        blog?.coverImage && blog.coverImage.trim() !== ""
-                            ? blog.coverImage
-                            : "https://static-cse.canva.com/blob/1134734/Thepowerofheroimagedesignfeaturedimage.jpg"
-                    }
-                    alt={blog.title}
-                    fill
-                    className="object-cover"
-                    priority
-                    sizes="100vw"
+            <div className="relative  h-[320px]">
+                <img
+                    src="https://t3.ftcdn.net/jpg/09/64/25/22/360_F_964252251_9THo9HrnzdigzeIWsMqJa6A8DXWsC0gb.jpg"
+                    alt="hero"
+                    className="absolute inset-0 w-full h-full object-cover"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent flex items-end">
+              
+
+
+
+                <div className="absolute inset-0  flex items-end">
                     <div className="max-w-7xl mx-auto px-4 pb-12 w-full">
                         <div className="text-white">
-                            {/* Blog title and meta */}
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
-                                {blog.title}
-                            </h1>
+                              <div className="max-w-7xl mx-auto py-10 px-3 " >
+                    <h1 className="text-4xl font-medium text-start mb-5" >{blog.name}</h1>
+
+                    <p className="text-2xl text-gray-700" >{blog.message}</p>
+
+                </div>
+
 
                             {/* Last updated date */}
                             <div className="flex items-center gap-4 text-sm opacity-90">
@@ -191,16 +193,7 @@ export default async function BlogDetailsPage({
                                         year: "numeric",
                                     })}
                                 </span>
-                                <span className="px-1">|</span>
-                                <span>{blog.views} views</span>
-                                {blog.isFeatured && (
-                                    <>
 
-                                        <span className="px-3 py-1 bg-orange-500 text-white text-xs rounded-full">Featured</span>
-                                    </>
-                                )}
-
-                                <span className="px-3 py-1 bg-orange-500 text-white text-xs rounded-full">{blog.blogType}</span>
                             </div>
 
                             {/* Tags */}
@@ -228,128 +221,13 @@ export default async function BlogDetailsPage({
                 <div className="space-y-8">
 
                     {/* SHORT DESCRIPTION SECTION */}
-                    {blog.shortDescription && (
+                    {blog?.content && (
                         <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-                            <p className="text-gray-700 leading-relaxed text-lg">
-                                {blog.shortDescription}
-                            </p>
-                        </div>
-                    )}
+                            <p className="text-gray-700 leading-relaxed text-lg"
+                                dangerouslySetInnerHTML={{
+                                    __html: DOMPurify.sanitize(blog?.content),
+                                }} />
 
-                    {/* TABLE OF CONTENTS - Dynamically generated from headings */}
-                    <TableOfContents toc={toc} />
-
-
-                    {/* MAIN BLOG CONTENT */}
-                    <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-                        {/* SEO Meta Info (hidden but for structure) */}
-                        <div className="sr-only">
-                            <h1>{blog.seo?.metaTitle || blog.title}</h1>
-                            <p>{blog.seo?.metaDescription}</p>
-                            <p>
-  Keywords: {blog.seo?.keywords?.split(",").join(", ")}
-</p>
-
-                        </div>
-
-                        {/* Blog Content */}
-                        <div>
-                            <style>{`
-    .blog-html table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-      font-size: 15px;
-    }
-
-    .blog-html th,
-    .blog-html td {
-      border: 1px solid #e5e7eb;
-      padding: 12px 14px;
-      text-align: left;
-      vertical-align: top;
-    }
-
-    .blog-html th {
-      background: #f3f4f6;
-      font-weight: 600;
-    }
-
-    .blog-html tr:nth-child(even) {
-      background-color: #fafafa;
-    }
-
-    .blog-html h2 {
-      font-size: 26px;
-      margin: 28px 0 12px;
-      font-weight: 700;
-    }
-
-    .blog-html h3 {
-      font-size: 20px;
-      margin: 22px 0 10px;
-      font-weight: 600;
-    }
-
-    .blog-html h4 {
-      font-size: 18px;
-      margin: 18px 0 8px;
-      font-weight: 600;
-    }
-
-    .blog-html p {
-      margin: 12px 0;
-      line-height: 1.8;
-    }
-
-    .blog-html ul {
-      margin-left: 22px;
-      list-style: disc;
-    }
-
-    .blog-html ol {
-      margin-left: 22px;
-      list-style: decimal;
-    }
-
-    .blog-html li {
-      margin: 6px 0;
-    }
-
-    .blog-html figure.table {
-      overflow-x: auto;
-      margin: 20px 0;
-    }
-
-    .blog-html strong {
-      font-weight: 600;
-    }
-      html {
-      scroll-behavior: smooth;
-    }
-  `}</style>
-
-                            <div
-                                className="blog-html"
-                                dangerouslySetInnerHTML={{ __html: htmlWithIds }}
-                            />
-                        </div>
-
-
-
-
-                        {/* Blog Meta Info at bottom */}
-                        <div className="mt-8 pt-6 border-t border-gray-200">
-                            <div className="flex flex-wrap gap-2">
-                                {blog.tags.map((tag, index) => (
-                                    <span
-                                        key={index}
-                                        className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
-                                    >
-                                        #{tag}
-                                    </span>
-                                ))}
-                            </div>
                             <p className="text-sm text-gray-500 mt-4">
                                 Published on: {new Date(blog.createdAt).toLocaleDateString("en-IN")}
                                 {blog.updatedAt !== blog.createdAt && (
@@ -358,39 +236,18 @@ export default async function BlogDetailsPage({
                                     </span>
                                 )}
                             </p>
+
                         </div>
-                    </div>
+                    )}
+
+
+
+
+
                 </div>
 
                 {/* ================= RIGHT SIDEBAR ================= */}
                 <aside className="space-y-6 sticky top-18 h-fit">
-
-                    {/* ================= BLOG CATEGORIES ================= */}
-                    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                        <h4 className="font-bold text-lg mb-4 text-gray-800">
-                            Blog Categories
-                        </h4>
-
-                        <ul className="space-y-3">
-                            {blogCategory.map((cat: any) => (
-                                <li key={cat._id}>
-                                    <Link
-                                        href={`/blog?category=${cat._id || cat.name}`}
-                                        className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-orange-50 text-gray-700 hover:text-[#FF6B35] transition-all"
-                                    >
-                                        <span>{cat.name}</span>
-
-                                        <span className="ml-auto mr-2 bg-orange-500 text-gray-800 text-xs font-semibold px-2.5 py-1 rounded-full">
-                                            {cat.totalBlogs}
-                                        </span>
-
-                                        <span className="text-sm">→</span>
-                                    </Link>
-
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
 
 
                     {/* ACTION CARD 2 */}

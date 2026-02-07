@@ -101,19 +101,25 @@ export default function ImageTestimonial({
 
   if (items.length === 0) return null;
 
+ 
+
 
 
   return (
     <section className="py-16" style={{ backgroundColor: !bg && '#f5f1f0', overflow: 'visible' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ overflow: 'visible' }}>
-       {title}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center" style={{ overflow: 'visible' }}>
+        <h2 className="text-[2.6rem] font-bold " >
+    <span style={{ color: '#f46c44' }}>{typeof title === "string" ?title?.split("||")[0]: ""}</span>{" "}
+          <span className="text-gray-600">{typeof title === "string" ?title?.split("||")[1] : ""}</span>
+        </h2>
+       
         <p className="text-gray-600 text-base font-medium max-w-3xl text-center mx-auto leading-relaxed">
           {subtitle}
         </p>
 
         <div ref={sliderRef} className="keen-slider">
           {items.map((t) => (
-            <div key={t?._id} className="keen-slider__slide">
+            <div key={t?.id} className="keen-slider__slide">
               <div className="flex justify-center py-6">
                 {/* CARD */}
                 <div
