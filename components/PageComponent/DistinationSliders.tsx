@@ -17,22 +17,42 @@ const DATA = [
 
 function OfferCard({ count, text }: { count: number; text: string }) {
   return (
-    <div className="keen-slider__slide !w-full">
-      <div className="
-        flex items-center gap-2
-        border-2 border-[#ff6a3d]
-        text-[#ff6a3d]
-        px-6 py-4
-        text-base font-medium
-        whitespace-nowrap
-        bg-white
-      ">
-        <span className="font-bold text-xl">{count}</span>
-        <span>{text}</span>
+    <div
+      className="
+        keen-slider__slide
+        !w-auto
+        !min-w-max
+        lg:!w-[280px]
+        lg:!min-w-[280px]
+        flex justify-center
+      "
+    >
+      <div
+        className="
+          flex items-center justify-center gap-2
+          border-2 border-[#ff6a3d]
+          text-[#ff6a3d]
+          px-6 py-4
+          text-sm sm:text-base
+          font-medium
+          bg-white
+          text-center
+          whitespace-nowrap
+          w-full
+        "
+      >
+        <span className="font-bold text-lg sm:text-xl shrink-0">
+          {count}
+        </span>
+        <span className="shrink-0">
+          {text}
+        </span>
       </div>
     </div>
   );
 }
+
+
 
 function marquee(speed = 0.1) {
   return (slider: any) => {
@@ -66,35 +86,46 @@ export default function OffersSlider() {
   const sliderRef2 = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!sliderRef1.current || !sliderRef2.current) return;
+  if (!sliderRef1.current || !sliderRef2.current) return;
 
-    const slider1 = new KeenSlider(
-      sliderRef1.current,
-      {
-        loop: true,
-        drag: true,
-        renderMode: "performance",
-        slides: { perView: "6", spacing: 6 },
-      },
-      [marquee(0.4)] // left → right
-    );
+  const slider1 = new KeenSlider(
+  sliderRef1.current,
+  {
+    loop: true,
+    drag: true,
+    renderMode: "performance",
+    slides: {
+      perView: "auto",
+      spacing: 16,
+    },
+  },
+  [marquee(0.4)]
+);
 
-    const slider2 = new KeenSlider(
-      sliderRef2.current,
-      {
-        loop: true,
-        drag: true,
-        rtl: true,
-        slides: { perView: "6", spacing: 6 },
-      },
-      [marquee(0.4)] // right → left
-    );
+const slider2 = new KeenSlider(
+  sliderRef2.current,
+  {
+    loop: true,
+    drag: true,
+    renderMode: "performance",
+    slides: {
+      perView: "auto",
+      spacing: 16,
+    },
+  },
+  [marquee(-0.4)]
+);
 
-    return () => {
-      slider1.destroy();
-      slider2.destroy();
-    };
-  }, []);
+
+  return () => {
+    slider1.destroy();
+    slider2.destroy();
+  };
+}, []);
+
+
+
+
 
   return (
     <div className="space-y-6 pt-8 overflow-hidden bg-white">
@@ -160,106 +191,110 @@ const StickyPaymentSection = ({ sections }) => {
   useLayoutEffect(() => {
   if (!sectionRef.current || !cards.length) return;
 
+  const mm = gsap.matchMedia();
   let lastIndex = 0;
 
-  const ctx = gsap.context(() => {
-    // INITIAL IMAGE STATE
-    gsap.set(".right-image-0", { opacity: 1, scale: 1 });
+  mm.add("(min-width: 1024px)", () => {
+    const ctx = gsap.context(() => {
+      // INITIAL IMAGE STATE
+      gsap.set(".right-image-0", { opacity: 1, scale: 1 });
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top top",
-        end: `+=${cards.length * 70}%`,
-        scrub: 0.6,
-        pin: true,
-        anticipatePin: 1,
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: `+=${cards.length * 70}%`,
+          scrub: 0.6,
+          pin: true,
+          anticipatePin: 1,
 
-        onUpdate: (self) => {
-          const index = Math.min(
-            cards.length - 1,
-            Math.floor(self.progress * cards.length)
-          );
+          onUpdate: (self) => {
+            const index = Math.min(
+              cards.length - 1,
+              Math.floor(self.progress * cards.length)
+            );
 
-          // ✅ update React state ONLY when index changes
-          if (index !== lastIndex) {
-            lastIndex = index;
-            setActiveIndex(index);
-          }
+            if (index !== lastIndex) {
+              lastIndex = index;
+              setActiveIndex(index);
+            }
+          },
+
+          onLeave: () => {
+            gsap.to(".pin-wrapper", {
+              autoAlpha: 0,
+              y: -40,
+              duration: 0.5,
+              ease: "power2.out",
+            });
+          },
+
+          onEnterBack: () => {
+            gsap.to(".pin-wrapper", {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.4,
+              ease: "power2.out",
+            });
+          },
         },
+      });
 
-        onLeave: () => {
-          gsap.to(".pin-wrapper", {
-            autoAlpha: 0,
-            y: -40,
-            duration: 0.5,
-            ease: "power2.out",
-          });
-        },
+      // IMAGE SEQUENCE
+      cards.forEach((_, i) => {
+        if (i === 0) return;
 
-        onEnterBack: () => {
-          gsap.to(".pin-wrapper", {
-            autoAlpha: 1,
-            y: 0,
+        tl.to(
+          `.right-image-${i - 1}`,
+          {
+            opacity: 0,
+            yPercent: -30,
+            scale: 0.95,
             duration: 0.4,
             ease: "power2.out",
-          });
-        },
-      },
-    });
+          },
+          "+=0.5"
+        );
 
-    // IMAGE SEQUENCE
-    cards.forEach((_, i) => {
-      if (i === 0) return;
+        tl.fromTo(
+          `.right-image-${i}`,
+          { opacity: 0, yPercent: 30, scale: 0.95 },
+          {
+            opacity: 1,
+            yPercent: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: "power2.out",
+          }
+        );
+      });
 
-      // EXIT previous image (AFTER text change delay)
       tl.to(
-        `.right-image-${i - 1}`,
+        cards.map((_, i) => `.right-image-${i}`),
         {
           opacity: 0,
-          yPercent: -30,
-          scale: 0.95,
-          duration: 0.4,
-          ease: "power2.out",
-        },
-        "+=0.5" // 👈 delay after text animation
-      );
-
-      // ENTER next image
-      tl.fromTo(
-        `.right-image-${i}`,
-        { opacity: 0, yPercent: 30, scale: 0.95 },
-        {
-          opacity: 1,
-          yPercent: 0,
-          scale: 1,
+          scale: 0.92,
+          y: -40,
           duration: 0.6,
           ease: "power2.out",
-        }
+        },
+        "+=0.3"
       );
-    });
+    }, sectionRef);
 
-    // SMOOTH END
-    tl.to(
-      cards.map((_, i) => `.right-image-${i}`),
-      {
-        opacity: 0,
-        scale: 0.92,
-        y: -40,
-        duration: 0.6,
-        ease: "power2.out",
-      },
-      "+=0.3"
-    );
-  }, sectionRef);
+    return () => ctx.revert();
+  });
 
-  return () => ctx.revert();
+  return () => mm.revert();
 }, [cards]);
+
 
 const rightContentRef = useRef(null);
 
 useEffect(() => {
   if (!rightContentRef.current) return;
+
+  if (window.innerWidth < 1024) return; // ❌ no animation on mobile
 
   gsap.fromTo(
     rightContentRef.current,
@@ -270,9 +305,16 @@ useEffect(() => {
       duration: 0.5,
       ease: "power3.out",
     }
-    
   );
 }, [activeIndex]);
+
+
+useEffect(() => {
+  if (window.innerWidth < 1024) {
+    setActiveIndex(0);
+  }
+}, []);
+
 
 
 
@@ -283,106 +325,100 @@ useEffect(() => {
 
 
   return (
-    <section ref={sectionRef} className="max-w-7xl mx-auto px-6 h-full">
-      <div className="pin-wrapper h-screen flex items-center">
-        <div className="w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
-          
+    <section ref={sectionRef} className="max-w-7xl mx-auto px-6">
+  {/* pin-wrapper only pins on desktop */}
+  <div className="pin-wrapper lg:h-screen flex items-center">
+    <div className="w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
 
+      {/* RIGHT: IMAGE AREA (DESKTOP ONLY GSAP) */}
+      <div className="relative w-full lg:h-[600px] flex items-center justify-center">
 
-
-          {/* RIGHT: Scrolling Content Area */}
-          <div className="relative w-4xl h-[600px] flex items-center justify-center">
-
-            {/* Placeholder for spacing - cards will scroll behind */}
-
-
-            {/* Image container that stays visible */}
-
-            <div className="relative w-full ">
-              {rightImages.map((img, i) => (
-  <div key={img} className={`right-image-${i} absolute -top-40`}>
-
-                   <Image
-                   src={img} 
-                   width={500}
-                   height={700}
-                   alt="img"
-                   />
-
-                
-                </div>
-              ))}
+        <div className="relative w-full">
+          {rightImages.map((img, i) => (
+            <div
+              key={img}
+              className={`
+                right-image-${i}
+                hidden lg:block
+                absolute -top-40
+              `}
+            >
+              <Image
+                src={img}
+                width={500}
+                height={700}
+                alt="img"
+              />
             </div>
-
-
-
-
-          </div>
-
-          {/* right */}
-          <div
-  ref={rightContentRef}
-  className="relative h-[580px]"
->
-  {cards.map((card, i) => (
-    <div
-      key={card.id}
-      className={`
-        absolute inset-0 py-20
-        ${i === activeIndex ? "opacity-100 z-10" : "opacity-0 pointer-events-none"}
-      `}
-    >
-
-
-
-                <div className=" p-8  max-w-lg lg:w-2xl  h-[580px]">
-                  <h3 className="text-orange-500 text-[3rem] font-bold mb-4" style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 600 }}>
-                    {card.title}
-                  </h3>
-
-                  <ul className="text-gray-600 text-lg space-y-2 flex-1 ">
-
-                    {card.description.split('||').map((p, idx) => (
-                      <li key={idx}>• {p.trim()}</li>
-                    ))}
-                  </ul>
-
-                 <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <a
-                  
-                  className="
-    text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
-    rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
-    text-base font-semibold
-    hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
-    flex items-center justify-center gap-2
-    transition-all hover:opacity-90 cursor-pointer
-  "
-
-                 
-                >
-                  {card.ctaText || "Get Free Counselling"}
-                </a>
-
-
-               
-
-              </div>
-
-                </div>
-
-
-
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
 
       </div>
 
+      {/* TEXT CONTENT */}
+      <div
+        ref={rightContentRef}
+        className="relative lg:h-[580px]"
+      >
+        {cards.map((card, i) => (
+          <div
+            key={card.id}
+            className={`
+              py-10 lg:py-20
+              lg:absolute lg:inset-0
+              ${
+                i === activeIndex
+                  ? "opacity-100 lg:z-10"
+                  : "opacity-100 lg:opacity-0 lg:pointer-events-none"
+              }
+            `}
+          >
+            <div className=" max-w-lg lg:w-2xl lg:h-[580px]">
 
+              <h3
+                className="text-orange-500 text-[2.2rem] lg:text-[3rem] font-bold mb-4"
+                style={{
+                  fontFamily:
+                    "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif",
+                  fontWeight: 600,
+                }}
+              >
+                {card.title}
+              </h3>
 
-    </section>
+              <ul className="list-disc list-inside text-gray-600 text-base lg:text-lg space-y-3">
+                {card.description
+                  .split("•")
+                  .filter(Boolean)
+                  .map((p, idx) => (
+                    <li key={idx}>{p.trim()}</li>
+                  ))}
+              </ul>
+
+              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <a
+                  className="
+                    text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
+                    rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
+                    text-base font-semibold
+                    hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
+                    flex items-center justify-center gap-2
+                    transition-all hover:opacity-90 cursor-pointer
+                  "
+                >
+                  {card.ctaText || "Get Free Counselling"}
+                </a>
+              </div>
+
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </div>
+</section>
+
   );
 };
 
@@ -446,8 +482,8 @@ export function AdmissionRequirementsUK({ admissionData }: { admissionData: any 
   const rightColumn = items.slice(midIndex);
 
   return (
-    <section className="bg-[#f5f1f0] py-20">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="bg-[#f5f1f0] py-20 px-5">
+      <div className="max-w-7xl mx-auto sm:px-6">
         <h2
           style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 600 }}
           className="text-[2.6rem] font-bold text-[#f46c44] mb-3 leading-tight"
@@ -460,7 +496,7 @@ export function AdmissionRequirementsUK({ admissionData }: { admissionData: any 
           {admissionData?.subtitle || ""}
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-10 ">
           {/* LEFT COLUMN */}
           <div className="space-y-6">
             {leftColumn.map((item: any, index: number) => (
@@ -525,11 +561,13 @@ gsap.registerPlugin(ScrollTrigger);
     : ["", fullTitle];
 
   /* 🔥 GSAP LOGIC — SAME AS YOUR WORKING COMPONENT */
-  useLayoutEffect(() => {
-    if (!sectionRef.current || !items.length) return;
+ useLayoutEffect(() => {
+  if (!sectionRef.current || !items.length) return;
 
+  const mm = gsap.matchMedia();
+
+  mm.add("(min-width: 1024px)", () => {
     const ctx = gsap.context(() => {
-      /* INITIAL STATE */
       gsap.set(".help-left", { opacity: 0, y: 30 });
       gsap.set(".help-right", { opacity: 0, y: 40, scale: 0.95 });
 
@@ -548,10 +586,9 @@ gsap.registerPlugin(ScrollTrigger);
         },
       });
 
-      items.forEach((_, i: number) => {
+      items.forEach((_, i) => {
         if (i === 0) return;
 
-        /* RIGHT CARD EXIT */
         tl.to(`.help-right-${i - 1}`, {
           opacity: 0,
           y: -120,
@@ -560,7 +597,6 @@ gsap.registerPlugin(ScrollTrigger);
           ease: "power2.out",
         });
 
-        /* RIGHT CARD ENTER */
         tl.fromTo(
           `.help-right-${i}`,
           { opacity: 0, y: 40, scale: 0.95 },
@@ -573,59 +609,36 @@ gsap.registerPlugin(ScrollTrigger);
           }
         );
 
-        /* LEFT EXIT (delayed) */
-       /* LEFT EXIT — STARTS DURING RIGHT ENTER */
-tl.to(
-  `.help-left-${i - 1}`,
-  {
-    opacity: 0,
-    y: -20,
-    duration: 0.2,
-    ease: "power2.out",
-  },
-  "<-0.25" // ✅ starts shortly AFTER right ENTER begins
-);
+        tl.to(
+          `.help-left-${i - 1}`,
+          { opacity: 0, y: -20, duration: 0.2 },
+          "<-0.25"
+        );
 
-/* LEFT ENTER */
-tl.fromTo(
-  `.help-left-${i}`,
-  { opacity: 0, y: 30 },
-  {
-    opacity: 1,
-    y: 0,
-    duration: 0.2,
-    ease: "power2.out",
-  },
-  "<" // immediately after left exit starts
-);
-
+        tl.fromTo(
+          `.help-left-${i}`,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.2 },
+          "<"
+        );
       });
-
-      /* SMOOTH END */
-      tl.to(
-        [
-          ...items.map((_, i) => `.help-left-${i}`),
-          ...items.map((_, i) => `.help-right-${i}`),
-        ],
-        {
-          opacity: 0,
-          y: -40,
-          scale: 0.92,
-          duration: 0.6,
-          ease: "power2.out",
-        },
-        "+=0.3"
-      );
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [items]);
+  });
+
+  return () => mm.revert();
+}, [items]);
+
 
 
 
   return (
-    <section ref={sectionRef} className="bg-[#fff9f4] h-screen flex items-center">
-      <div className="max-w-7xl mx-auto w-full">
+     <section
+      ref={sectionRef}
+      className="bg-[#fff9f4] flex items-center min-h-screen lg:h-screen"
+    >
+      <div className="max-w-7xl mx-auto w-full px-4 lg:px-0">
         {/* TITLE */}
         <h3 className="text-center text-[2.6rem] font-semibold mb-12">
           <span className="text-[#f46c44]">{prefix}</span>{" "}
@@ -633,38 +646,48 @@ tl.fromTo(
         </h3>
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* LEFT TEXT STACK */}
-          <div className="relative h-[260px]">
-            {items.map((item: any, i: number) => (
-              <div
-                key={item.title}
-                className={`help-left help-left-${i} absolute inset-0`}
-              >
-                <h2 className="text-[3.6rem] font-semibold text-[#f46c44] leading-tight mb-2" style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 600 }}>
-                  {item.title}
-                </h2>
+          {/* LEFT TEXT */}
+         {/* LEFT TEXT STACK */}
+<div className="relative lg:h-[260px] space-y-10 lg:space-y-0">
+  {items.map((item: any, i: number) => (
+    <div
+      key={item.title}
+      className={`
+        help-left help-left-${i}
+        lg:absolute lg:inset-0
+        opacity-100
+      `}
+    >
+      <h2
+        className="text-[2.2rem] lg:text-[3.6rem] font-semibold text-[#f46c44] leading-tight mb-2"
+        style={{
+          fontFamily:
+            "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif",
+          fontWeight: 600,
+        }}
+      >
+        {item.title}
+      </h2>
 
-                <ul className="text-gray-700 text-lg space-y-2 flex-1 overflow-hidden">
+      <ul className="text-gray-700 text-base lg:text-lg space-y-2">
+        {item.subtitle.split("||").map((p: string, idx: number) => (
+          <li key={idx}>• {p.trim()}</li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</div>
 
-                    {item.subtitle.split('||').map((p, idx) => (
-                      <li key={idx}>• {p.trim()}</li>
-                    ))}
-                  </ul>
-              </div>
-            ))}
-          </div>
 
-          {/* RIGHT CARD STACK — DESIGN UNCHANGED */}
-          <div className="relative h-[440px] flex justify-center">
+          {/* RIGHT IMAGE STACK (DESKTOP ONLY) */}
+          <div className="relative h-[440px] hidden lg:flex justify-center">
             {items.map((item: any, i: number) => (
               <div
                 key={item.title}
                 className={`help-right help-right-${i} absolute inset-0`}
               >
-                {/* BACK */}
-                <div className="absolute top-2 right-25 w-[380px] h-[440px] shadow-2xl border border-orange-500  rotate-[5deg]" />
+                <div className="absolute top-2 right-25 w-[380px] h-[440px] shadow-2xl border border-orange-500 rotate-[5deg]" />
 
-                {/* MIDDLE */}
                 <div className="absolute top-6 right-12 w-[380px] h-[440px] shadow-lg bg-white">
                   <img
                     src={item.image}
@@ -673,19 +696,22 @@ tl.fromTo(
                   />
                 </div>
 
-                {/* FRONT */}
-                <div className="absolute bottom-1 right-[70%] translate-x-1/2 w-[180px] h-[180px] bg-white border-2  shadow-lg overflow-hidden" style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 600 }} >
-                  <div className="p-6  font-medium text-lg" >
-                    {item.content
-                      ?.split("||")
-                      .map((part: string, idx: number) => (
-                        <span
-                          key={idx}
-                          className={idx % 2 ? "text-[#f46c44] font-semibold " : ""}
-                        >
-                          {part}
-                        </span>
-                      ))}
+                <div
+                  className="absolute bottom-1 right-[70%] translate-x-1/2 w-[180px] h-[180px] bg-white border-2 shadow-lg overflow-hidden"
+                  style={{
+                    fontFamily:
+                      "'Mileast','Playfair Display','Cormorant Garamond',Georgia,serif",
+                  }}
+                >
+                  <div className="p-6 text-lg font-medium">
+                    {item.content?.split("||").map((part: string, idx: number) => (
+                      <span
+                        key={idx}
+                        className={idx % 2 ? "text-[#f46c44] font-semibold" : ""}
+                      >
+                        {part}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -694,6 +720,7 @@ tl.fromTo(
         </div>
       </div>
     </section>
+
   );
 }
 

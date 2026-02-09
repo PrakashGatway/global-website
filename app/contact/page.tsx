@@ -4,114 +4,130 @@ import { Mail, Phone, MapPin, Clock, MessageSquare } from 'lucide-react';
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import axiosInstance from "../axiosInstance";
+import {toast} from "react-hot-toast"
+import Link from "next/link";
 
-export default function ContactUsPage() {
+export default function ContactUsPage({ contactData }) {
+  // Extract data from the response
+  const heroTitle = contactData?.sections?.hero?.title || "Ooshas Global Study Abroad Consultants in India";
+  const heroSubtitle = contactData?.sections?.hero?.subtitle || "Trusted study abroad consultants guiding students in India and worldwide to global success.";
+  const getInTouchTitle = contactData?.sections?.getInTouch?.title || "Get in Touch || Ooshas Global";
+  const getInTouchSubtitle = contactData?.sections?.getInTouch?.subtitle || "Our expert team is always ready to answer your questions and walk with you through every stage of your study abroad journey.";
+  const sendMessageTitle = contactData?.sections?.sendMessage?.title || "Send Us a Message";
+  const sendMessageSubtitle = contactData?.sections?.sendMessage?.subtitle || "Have questions about studying abroad? Fill out the form below and our education experts will get back to you within 24 hours.";
+  const sendMessagePoints = contactData?.sections?.sendMessage?.points || [];
 
+  // Icon mapping for sendMessage points
+  const pointIcons = {
+    message: <MessageSquare className="h-6 w-6" style={{ color: '#FF6B35' }} />
+  };
 
   const {
-    register , handleSubmit ,reset ,
-    formState: {errors , isSubmitting}
-  } = useForm()
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting }
+  } = useForm();
 
-  const OnSubmit = async (data)=>{
-try{
-    const res = await axiosInstance.post("/contactus" , {
-       subject: "Contact Form",
-      type: "Website",
-      fullName: `${data.firstName} ${data.lastName}`,
-      email: data.email,
-      phone: data.phone,
-      destination: data.destination,
-      description: data.message,
-    })
+  const onSubmit = async (data) => {
+    try {
+      const res = await axiosInstance.post("/contactus", {
+        subject: "Contact Form",
+        type: "Website",
+        fullName: `${data.firstName} ${data.lastName}`,
+        email: data.email,
+        phone: data.phone,
+        destination: data.destination,
+        description: data.message,
+      });
 
-    alert("Message sent successfully ✅")
-    reset()
-
-
-}
-catch(error){
-  
-    alert("Failed to send message ❌")
-}  }
-
+      if (res.status === 200 || res.status === 201) {
+        toast.success("Message sent successfully ✅");
+        reset();
+      } else {
+        toast.error("Failed to send message ❌");
+      }
+    } catch (error) {
+      toast.error("Failed to send message ❌");
+    }
+  };
 
   return (
     <div className='bg-[#fffaf7]'>
+     
       <section className="relative flex items-center" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
-              <div className="lg:absolute z-[-1] lg:-left-40 lg:top-[0%] opacity-10 pointer-events-none hidden lg:block">
-                <div style={{
-                  transform: 'rotate(-30deg) scaleY(1)',
-                  mixBlendMode: 'multiply'
-                }}>
-                  <Image
-                    src="/images/g logo.png"
-                    alt="Decorative Arrow"
-                    width={600}
-                    height={40}
-                    className="w-64 h-66 lg:w-116 lg:h-116 object-contain"
-                  />
-                </div>
-              </div>
-              <div className="w-full mx-auto grid lg:grid-cols-2 gap-12 items-center sm:pl-30">
-                <div className="text-white space-y-6 p-6 sm:pt-0 pt-12">
-                  <h1 className="text-4xl lg:text-6xl font-bold text-white tracking-tight">
-                    Contact Us
-                  </h1>
-                  <p className="text-lg max-w-2xl font-medium text-white">
-                    Ooshas Global: Your Launchpad to Global Education. We empower students
-        to achieve their dreams of studying abroad with expert coaching for:
-        IELTS, TOEFL, PTE, GRE, GMAT, SAT.
-                  </p>
-                  <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <button
-                      className="
+        <div className="lg:absolute z-[-1] lg:-left-40 lg:top-[0%] opacity-10 pointer-events-none hidden lg:block">
+          <div style={{
+            transform: 'rotate(-30deg) scaleY(1)',
+            mixBlendMode: 'multiply'
+          }}>
+            <Image
+              src="/images/g logo.png"
+              alt="Decorative Arrow"
+              width={600}
+              height={40}
+              className="w-64 h-66 lg:w-116 lg:h-116 object-contain"
+            />
+          </div>
+        </div>
+        <div className="w-full mx-auto grid lg:grid-cols-2 gap-12 items-center sm:pl-30">
+          <div className="text-white space-y-6 p-6 sm:pt-0 pt-12">
+            <h1 className="text-4xl lg:text-6xl font-bold text-white tracking-tight">
+              {contactData?.title || "Contact Us"}
+            </h1>
+            <p className="text-lg max-w-2xl font-medium text-white">
+              {heroSubtitle}
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Link href="#contact-form">
+                <button
+                  className="
                     text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
                     rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base font-semibold
                     hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)] 
                     flex items-center justify-center gap-2
                     transition-all hover:opacity-90
                   "
-                    >
-                      Contact Now
-                    </button>
-      
-                    <button
-                      className="
+                >
+                  Contact Now
+                </button>
+              </Link>
+
+              <Link href="/login">
+                <button
+                  className="
                     text-black/80 px-6 sm:px-8 py-2.5 sm:py-3 bg-white
                     rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base  font-semibold
                     transition-all hover:bg-black hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)] 
                   "
-                    >
-                      Check Your Eligibility
-                    </button>
-                  </div>
-                </div>
-                <div className="h-full w-full">
-                  <div className='relative flex items-center justify-center h-[106%] w-full rounded-bl-[55%] overflow-hidden mr-10'>
-                    <img className='h-full w-full object-cover' src="https://buffer.com/resources/content/images/2025/03/social-media-image-sizes.png" alt="" />
-                    <div className='absolute bottom-0 right-0 h-[5.7%] w-full bg-[#f46c44] z-11'>
-                    </div>
-                  </div>
-                </div>
+                >
+                  Check Your Eligibility
+                </button>
+              </Link>
+            </div>
+          </div>
+          <div className="h-full w-full">
+            <div className='relative flex items-center justify-center h-[106%] w-full rounded-bl-[55%] overflow-hidden mr-10'>
+              <img className='h-full w-full object-cover' src="https://buffer.com/resources/content/images/2025/03/social-media-image-sizes.png" alt="" />
+              <div className='absolute bottom-0 right-0 h-[5.7%] w-full bg-[#f46c44] z-11'>
               </div>
-            </section>
-
-
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Contact Information Section */}
       <section className="py-20 mt-35 relative" style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-4xl lg:text-[3.6rem] font-bold mb-2" style={{ color: '#FF6B35' }}>
-              Get in Touch with
+              {getInTouchTitle.split("||")[0]}
             </h2>
             <h2 className="text-4xl lg:text-[3.6rem] font-bold" style={{ color: '#FF6B35' }}>
-              Ooshas Global
+              {getInTouchTitle.split("||")[1]}
             </h2>
             <p className="text-gray-600 text-lg mt-4 max-w-3xl mx-auto">
-              Our dedicated team is here to answer your questions and guide you through
-              every step of your study abroad journey.
+              {getInTouchSubtitle}
             </p>
           </div>
 
@@ -202,66 +218,58 @@ catch(error){
       </section>
 
       {/* Contact Form Section */}
-      <section className="py-20 bg-[#f9f5f2]">
+      <section id="contact-form" className="py-20 bg-[#f9f5f2]">
         <div className="max-w-7xl mx-auto px-2">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
-                Send Us a Message
+                {sendMessageTitle}
               </h2>
               <p className="text-gray-600 text-lg leading-relaxed mb-8">
-                Have questions about studying abroad? Fill out the form below and our
-                education experts will get back to you within 24 hours.
+                {sendMessageSubtitle}
               </p>
 
               <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <MessageSquare className="h-6 w-6" style={{ color: '#FF6B35' }} />
-                  <div>
-                    <h4 className="font-bold text-gray-800 mb-2">Why Choose Us?</h4>
-                    <p className="text-gray-600">
-                      Personalized guidance from experienced counselors who understand
-                      your unique goals and aspirations.
-                    </p>
+                {sendMessagePoints.map((point, index) => (
+                  <div key={index} className="flex items-start gap-4">
+                    {pointIcons[point.icon] || <MessageSquare className="h-6 w-6" style={{ color: '#FF6B35' }} />}
+                    <div>
+                      <h4 className="font-bold text-gray-800 mb-2">{point.title}</h4>
+                      <p className="text-gray-600">{point.subtitle}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <MessageSquare className="h-6 w-6" style={{ color: '#FF6B35' }} />
-                  <div>
-                    <h4 className="font-bold text-gray-800 mb-2">Quick Response</h4>
-                    <p className="text-gray-600">
-                      We guarantee a response within 24 hours. For urgent matters,
-                      please call our support line.
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
             <div className="bg-white p-8 rounded-lg shadow-lg">
-              <form onSubmit={handleSubmit(OnSubmit)} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-gray-700 text-sm font-semibold mb-2">
                       First Name *
                     </label>
                     <input
-                    {...register("firstName" , {required: true})}
+                      {...register("firstName", { required: "First name is required" })}
                       type="text"
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
                     />
+                    {errors.firstName && (
+                      <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-gray-700 text-sm font-semibold mb-2">
                       Last Name *
                     </label>
                     <input
-                    {...register("lastName" , {required: true})}
+                      {...register("lastName", { required: "Last name is required" })}
                       type="text"
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.lastName ? 'border-red-500' : 'border-gray-300'}`}
                     />
+                    {errors.lastName && (
+                      <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>
+                    )}
                   </div>
                 </div>
 
@@ -270,11 +278,19 @@ catch(error){
                     Email Address *
                   </label>
                   <input
-                  {...register("email" , {required: true})}
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address"
+                      }
+                    })}
                     type="email"
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
                   />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                  )}
                 </div>
 
                 <div>
@@ -282,18 +298,29 @@ catch(error){
                     Phone Number *
                   </label>
                   <input
-                  {...register("phone" , {required: true})}
+                    {...register("phone", {
+                      required: "Phone number is required",
+                      pattern: {
+                        value: /^[0-9]{10}$/,
+                        message: "Please enter a valid 10-digit phone number"
+                      }
+                    })}
                     type="tel"
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
                   />
+                  {errors.phone && (
+                    <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                  )}
                 </div>
 
                 <div>
                   <label className="block text-gray-700 text-sm font-semibold mb-2">
                     Preferred Study Destination
                   </label>
-                  <select {...register("destination" , {required: true})} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent">
+                  <select
+                    {...register("destination")}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+                  >
                     <option value="">Select Destination</option>
                     <option value="usa">United States</option>
                     <option value="uk">United Kingdom</option>
@@ -309,33 +336,38 @@ catch(error){
                     How can we help you? *
                   </label>
                   <textarea
-                  {...register("message" , {required: true})}
+                    {...register("message", { required: "Message is required" })}
                     rows={4}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.message ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="Tell us about your study abroad goals and questions..."
                   ></textarea>
+                  {errors.message && (
+                    <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
+                  )}
                 </div>
 
                 <div className="flex items-start">
                   <input
                     type="checkbox"
                     id="terms-contact"
+                    {...register("terms", { required: "You must agree to the terms" })}
                     className="mt-1 mr-3"
-                    required
                   />
                   <label htmlFor="terms-contact" className="text-sm text-gray-700">
-                    I agree to receive updates and promotional materials from Gateway Abroad
+                    I agree to receive updates and promotional materials from Ooshas Global
                   </label>
+                  {errors.terms && (
+                    <p className="text-red-500 text-sm mt-1">{errors.terms.message}</p>
+                  )}
                 </div>
 
                 <button
                   type="submit"
-                  disabled = {isSubmitting}
-                  className="w-full text-white px-6 py-4 rounded-lg font-bold text-lg hover:opacity-90 transition"
+                  disabled={isSubmitting}
+                  className={`w-full text-white px-6 py-4 rounded-lg font-bold text-lg transition ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90'}`}
                   style={{ backgroundColor: '#FF6B35', borderTopRightRadius: '25px' }}
                 >
-                  Send Message
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
               </form>
             </div>
@@ -399,13 +431,15 @@ catch(error){
           <p className="text-gray-600 mb-6">
             Didn't find your question? Contact us directly
           </p>
-          <button
-            className="text-white px-8 py-3 font-bold transition-all inline-flex items-center gap-2"
-            style={{ backgroundColor: '#FF6B35', borderTopRightRadius: '25px' }}
-          >
-            <MessageSquare className="h-5 w-5" />
-            Ask a Question
-          </button>
+          <Link href="#contact-form">
+            <button
+              className="text-white px-8 py-3 font-bold transition-all inline-flex items-center gap-2 hover:opacity-90"
+              style={{ backgroundColor: '#FF6B35', borderTopRightRadius: '25px' }}
+            >
+              <MessageSquare className="h-5 w-5" />
+              Ask a Question
+            </button>
+          </Link>
         </div>
       </section>
 
@@ -415,17 +449,15 @@ catch(error){
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <div className="bg-white p-1 rounded-lg shadow-lg overflow-hidden">
-                {/* Placeholder for map - Replace with actual map component */}
                 <div className="w-full h-[500px] rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
-  <iframe
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3557.8454158773734!2d75.77696207543933!3d26.908400676649833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db40cd42722ff%3A0xcfc3ab392fa9adf7!2sGateway%20Abroad%20Education%20%7C%20Study%20Abroad%20Consultants%20%7C%20IELTS%20GRE%20GMAT%20SAT%20TOEFL%20PTE%20Coaching%20%7C%20Spoken%20English%20Class!5e0!3m2!1sen!2sin!4v1769668716534!5m2!1sen!2sin"
-    className="w-full h-full"
-    loading="lazy"
-    referrerPolicy="no-referrer-when-downgrade"
-    allowFullScreen
-  />
-</div>
-
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3557.8454158773734!2d75.77696207543933!3d26.908400676649833!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db40cd42722ff%3A0xcfc3ab392fa9adf7!2sGateway%20Abroad%20Education%20%7C%20Study%20Abroad%20Consultants%20%7C%20IELTS%20GRE%20GMAT%20SAT%20TOEFL%20PTE%20Coaching%20%7C%20Spoken%20English%20Class!5e0!3m2!1sen!2sin!4v1769668716534!5m2!1sen!2sin"
+                    className="w-full h-full"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    allowFullScreen
+                  />
+                </div>
               </div>
             </div>
 
@@ -469,12 +501,14 @@ catch(error){
           </h2>
           <p className="text-white text-xl mb-10 max-w-3xl mx-auto">
             Join thousands of successful students who have achieved their study abroad
-            dreams with Gateway Abroad.
+            dreams with Ooshas Global.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <button className="bg-white text-[#FF6B35] px-10 py-4 font-bold text-lg hover:bg-gray-100 transition-all" style={{ borderTopRightRadius: '25px' }}>
-              Schedule Free Consultation
-            </button>
+            <Link href="#contact-form">
+              <button className="bg-white text-[#FF6B35] px-10 py-4 font-bold text-lg hover:bg-gray-100 transition-all" style={{ borderTopRightRadius: '25px' }}>
+                Schedule Free Consultation
+              </button>
+            </Link>
             <button className="bg-transparent border-2 border-white text-white px-10 py-4 font-bold text-lg hover:bg-white hover:text-[#FF6B35] transition-all" style={{ borderTopRightRadius: '25px' }}>
               Download Brochure
             </button>

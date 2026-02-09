@@ -118,7 +118,7 @@ export default function Navbar({
 
   return (
     <>
-      <div className="relative z-999" style={{ backgroundColor: '#626262' }}>
+      <div className="relative z-999 lg-block hidden" style={{ backgroundColor: '#626262' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center py-2 text-xs sm:text-sm gap-2 sm:gap-0">
           <div className="flex items-center space-x-2">
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,9 +144,9 @@ export default function Navbar({
             <Image
               src="/images/newlogo3.png"
               alt="Logo"
-              width={230}
+              width={200}
               height={100}
-              className="object-contain p-2"
+              className="object-contain  w-32 lg:w-48"
               priority
             />
           </Link>

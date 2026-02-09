@@ -18,7 +18,7 @@ export default function IvyLeagueUniversitySlider() {
             mode: 'free',
             slides: {
               origin: 'center',
-              perView: 4,
+              perView: 3,
               spacing: 20,
             },
             breakpoints: {
@@ -92,24 +92,43 @@ export default function IvyLeagueUniversitySlider() {
 
   return (
     <div className="overflow-hidden py-0">
-      <div ref={sliderRef} className="keen-slider" style={{ minHeight: '50px' }}>
-        {universities.map((university) => (
-          <div key={university.id} className="keen-slider__slide">
-            <div className="flex flex-col items-center justify-center px-4 h-full">
-              <div className="flex items-center justify-center w-full" style={{ height: '150px', minHeight: '150px' }}>
-                <Image 
-                  src={university.src}
-                  alt={university.alt}
-                  width={200}
-                  height={150}
-                  className="object-contain max-h-full max-w-full"
-                  style={{ maxHeight: '150px', width: 'auto', height: 'auto' }}
-                />
-              </div>
-            </div>
+  <div
+    ref={sliderRef}
+    className="keen-slider"
+    style={{ minHeight: "50px" }}
+  >
+    {universities.map((university) => (
+      <div key={university.id} className="keen-slider__slide">
+        <div className="flex flex-col items-center justify-center lg:px-3  h-full w-[120px] sm:w-[160px] md:w-[180px]">
+          
+          {/* IMAGE WRAPPER */}
+          <div
+            className="
+              flex items-center justify-center w-full
+              h-[120px]
+              sm:h-[140px]
+              md:h-[150px]
+            "
+          >
+            <Image
+              src={university.src}
+              alt={university.alt}
+              width={200}
+              height={150}
+              className="object-contain max-h-full max-w-full"
+              sizes="(max-width: 640px) 120px, (max-width: 768px) 150px, 200px"
+              style={{
+                width: "auto",
+                height: "auto",
+                maxHeight: "100%",
+              }}
+            />
           </div>
-        ))}
+        </div>
       </div>
-    </div>
+    ))}
+  </div>
+</div>
+
   );
 }

@@ -31,6 +31,8 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
 
 
+
+
   let destination = [
     (slider) => {
       let timeout
@@ -107,7 +109,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
   )
 
 
-  console.log(imageData)
+
 
 
 
@@ -525,14 +527,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
        
       <ImageTestimonial
-      title={<h2 className="text-[2.6rem] text-center font-bold mb-2">
-              <span style={{ color: '#f46c44' }}>
-                {homePage?.imageTestimonials?.title?.split('||')[0]?.trim()}
-              </span>{" "}
-              <span className="text-gray-600">
-                {homePage?.imageTestimonials?.title?.split('||')[1]?.trim()}
-              </span>
-            </h2>}
+      title={homePage?.imageTestimonials?.title}
         
         subtitle={homePage?.imageTestimonials?.subtitle}
         items={imageData}

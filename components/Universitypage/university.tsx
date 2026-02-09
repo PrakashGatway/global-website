@@ -55,7 +55,7 @@ export default function UniversityPage({ data ,caseStudy }) {
   return (
     <div className="min-h-screen bg-white overflow-x-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
       {/* Hero Section */}
-      <section className="relative h-[600px] overflow-hidden">
+      <section className="relative h-[600px] overflow-hidden px-5 ">
         <div className="absolute inset-0">
           <VideoBackground
             videos={[
@@ -124,11 +124,12 @@ export default function UniversityPage({ data ,caseStudy }) {
                 <span className="block text-gray-600">{sections.imageTestimonials?.subTitle?.split('\n')[1] || "Unmatched Results."}</span>
               </h3>
 
-              <div className="w-full">
+              <div className="w-full hidden
+      lg:block">
                 <div className="relative w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] lg:w-[450px] lg:h-[450px]">
                   <div className="lg:relative lg:w-[92%] lg:h-[91%]">
                     <div
-                      className="lg:absolute inset-0 z-10 lg:top-[41px] lg:left-[38px]"
+                      className="lg:absolute inset-0 z-10 lg:top-[41px] lg:left-[38px] "
                       style={{
                         backgroundImage: `url(${images[index]})`,
                         backgroundSize: "cover",
@@ -177,7 +178,7 @@ export default function UniversityPage({ data ,caseStudy }) {
                   <div className="w-[px] h-full min-h-[4px] bg-gray-300 self-stretch"></div>
                   <div><span className="text-sm font-semibold" style={{ color: '#f46c44' }}>Ooshas Student Admit Rate</span></div>
                 </div>
-                <div className="space-y-0">
+                <div className="space-y-0 pr-12">
                   {[
                     { name: 'Harvard', generalRate: 3.2, gawayRate: 20.0, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'Harvard' },
                     { name: 'Stanford', generalRate: 4.3, gawayRate: 80.0, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'Stanford' },
@@ -309,7 +310,7 @@ export default function UniversityPage({ data ,caseStudy }) {
       <HowGawayHelps howWeHelpData={data.sections.howWeHelp} />
 
       {/* Admission Process Roadmap */}
-      <section className="mx-auto bg-[#fff9f4] py-20">
+      <section className="mx-auto bg-[#fff9f4] py-20 px-5">
         <div className="max-w-7xl mx-auto mb-8 mx-auto">
           <h2 className="text-[2.6rem] font-bold text-center" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
              <span className="text-[#f46c44]">{sections.roadMap.title.split('||')[0].trim()}</span> {""}

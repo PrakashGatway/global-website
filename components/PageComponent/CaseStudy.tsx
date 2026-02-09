@@ -115,13 +115,13 @@ export default  function CaseStudy({ font , caseStudydata , caseStudy  }) {
     
 
     return (
-        <section className="py-16" style={{ backgroundColor: '#fff9f4' }}>
+        <section className="py-16 " style={{ backgroundColor: '#fff9f4' }}>
             <div className="max-w-7xl mx-auto" >
                 <h2 style={{ fontFamily: font && "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", transformStyle: 'flat', transformOrigin: 'initial' }} className="text-[2.6rem] font-semibold text-center mb-0">
                     <span style={{ color: '#f46c44' }}>{caseStudydata?.title.split('||')[0].trim()}</span>{" "}
                     <span className="text-gray-600">{caseStudydata?.title.split('||')[1].trim()}</span>
                 </h2>
-                <p className="max-w-4xl font-semibold mx-auto mt-2 text-lg text-[#656565] text-center">{caseStudydata?.subtitle}</p>
+                <p className="max-w-4xl font-semibold mx-auto mt-2 text-lg text-[#656565] lg:text-center px-5">{caseStudydata?.subtitle}</p>
 
                 <div ref={sliderRef} className="keen-slider">
                     {testimonials.map((testimonial) => (
@@ -160,28 +160,54 @@ export default  function CaseStudy({ font , caseStudydata , caseStudy  }) {
                                     WebkitClipPath: "url(#testimonial-outer-shape)",
                                     filter: "drop-shadow(0 12px 18px rgba(0, 0, 0, 0.33))",
                                 }}
-                                className="relative w-full h-95"
+                                className="relative w-full h-95 mr-10"
                             >
                                 {/* 🔥 BACKGROUND COLOR */}
                                 <div className="absolute inset-0 left bg-[#f67b59]" />
 
                                 {/* CONTENT */}
-                                <div className="relative z-10 w-full h-full translate-x-12 translate-y-12 py-16 px-12 flex flex-col">
-                                    <div className="h-full">
-                                        <div>
-                                            <p className="text-base font-semibold text-gray-50 leading-relaxed">
-                                                {testimonial.name}
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center gap-2 mt-2">
-                                            <img className="rounded-xl h-24 w-32 object-cover" src= {testimonial.image || "https://thumbs.dreamstime.com/b/young-conceptual-image-large-stone-shape-human-brain-conceptual-image-large-stone-shape-110748113.jpg"} alt="" />
-                                            <p className="text-sm font-medium text-gray-50">
-                                                {testimonial.message}
-                                            </p>
-                                        </div>
+                               <div
+  className="
+    relative z-10 w-full h-full
+    translate-x-6 translate-y-6
+    sm:translate-x-8 sm:translate-y-8
+    lg:translate-x-12 lg:translate-y-12
+    py-8 px-6
+    sm:py-12 sm:px-8
+    lg:py-16 lg:px-12
+    flex flex-col
+  "
+>
+  <div className="h-full">
+    <div>
+      <p className="text-sm sm:text-base font-semibold text-gray-50 leading-relaxed">
+        {testimonial.name}
+      </p>
+    </div>
 
-                                    </div>
-                                </div>
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mt-3 lg:mt-0 px-5 md:px-5 lg:px-0">
+      <img
+        className="
+          rounded-xl
+          h-20 w-24
+          sm:h-24 sm:w-32
+          object-cover
+          flex-shrink-0
+        "
+        src={
+          testimonial.image ||
+          "https://thumbs.dreamstime.com/b/young-conceptual-image-large-stone-shape-human-brain-conceptual-image-large-stone-shape-110748113.jpg"
+        }
+        alt=""
+      />
+
+      <p className="text-xs sm:text-sm font-medium text-gray-50 leading-snug">
+        {testimonial.message}
+      </p>
+    </div>
+  </div>
+</div>
+
                             </div>
                         </div></Link>
                        

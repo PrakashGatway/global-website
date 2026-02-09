@@ -88,126 +88,141 @@ export function Footer({ Featureitem = [],Serviceitem =[]
                   Your trusted partner for global education, university admissions, and international study planning.
                 </p>
 
-                {/* <ThreeDButton children="Get In Touch" textColor="text-white" /> */}
+               
               </div>
 
               {/* CONTENT AREA WITH DIVIDERS */}
-              <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:flex lg:flex-row">
-                
-                {/* STUDY DESTINATIONS */}
-                <div className="flex-1 px-0 sm:px-4 lg:px-6 relative mb-8 sm:mb-0">
-                  <div className="h-full flex flex-col">
-                    <h4 className="text-orange-500 font-bold text-lg mb-4">
-                      Study Destinations
-                    </h4>
-                    {Featureitem.map((item)=>(
-                      <ul key={item._id} className="space-y-2 text-gray-700 text-base flex-1">
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-              my-2
-            ">
-                         <Link href={`/destination/${item.slug}`}>{item?.navbarTitle}</Link>
-                       </li>
-                     
-                    </ul>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
-                    ))}
-                    
-                  </div>
-                  {/* Right divider - only on lg screens */}
-                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full"></div>
-                </div>
+  {/* STUDY DESTINATIONS */}
+  <div className="px-0 sm:px-4 lg:px-6 relative">
+    <div className="h-full flex flex-col">
+      <h4 className="text-orange-500 font-bold text-lg mb-4">
+        Study Destinations
+      </h4>
 
-                {/* SERVICES */}
-                <div className="flex-1 px-0 sm:px-4 lg:px-6 relative mb-8 sm:mb-0">
-                  <div className="h-full flex flex-col">
-                    <h4 className="text-orange-500 font-bold text-lg mb-4">
-                      Our Services
-                    </h4>
-                      {Serviceitem.map((item)=>(
-                      <ul key={item._id} className="space-y-2 text-gray-700 text-base flex-1">
-                       <li className="cursor-pointer
+      {Featureitem.map((item) => (
+        <ul
+          key={item._id}
+          className="space-y-2 text-gray-700 text-base"
+        >
+          <li
+            className="
+              cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
-            ">
-                         <Link href={`/service/${item.slug}`}>{item?.navbarTitle}</Link>
-                       </li>
-                     
-                    </ul>
+            "
+          >
+            <Link href={`/destination/${item.slug}`}>
+              {item?.navbarTitle}
+            </Link>
+          </li>
+        </ul>
+      ))}
+    </div>
 
-                    ))}
-                  </div>
-                  {/* Right divider - only on lg screens */}
-                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full"></div>
-                </div>
+    {/* Divider only on lg */}
+    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full" />
+  </div>
 
-                {/* RESOURCES */}
-                <div className="flex-1 px-0 sm:px-4 lg:px-6 relative mb-8 sm:mb-0">
-                  <div className="h-full flex flex-col">
-                    <h4 className="text-orange-500 font-bold text-lg mb-4">
-                      Resources
-                    </h4>
-                    <ul className="space-y-2 text-gray-700 text-base flex-1">
-                      
-                      <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-              my-2
-            "><Link href={`/blog`} className="space-y-2">Blogs</Link> </li>
-                      
-                    
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            "><Link href={`/events`} >Events & Webinars</Link></li>
-                    </ul>
-                  </div>
-                  {/* Right divider - only on lg screens */}
-                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full"></div>
-                </div>
+  {/* SERVICES */}
+  <div className="px-0 sm:px-4 lg:px-6 relative">
+    <div className="h-full flex flex-col">
+      <h4 className="text-orange-500 font-bold text-lg mb-4">
+        Our Services
+      </h4>
 
-                {/* CONNECT */}
-                <div className="flex-1 px-0 sm:px-4 lg:px-6">
-                  <div className="h-full flex flex-col">
-                    <h4 className="text-orange-500 font-bold text-lg mb-4">
-                      Connect
-                    </h4>
-                    <ul className="space-y-2 text-gray-700 text-base flex-1">
-                       <li className="cursor-pointer
+      {Serviceitem.map((item) => (
+        <ul
+          key={item._id}
+          className="space-y-2 text-gray-700 text-base"
+        >
+          <li
+            className="
+              cursor-pointer
               transition-all duration-300
               hover:text-[#f46c44]
               hover:translate-x-2
-            ">Instagram</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">Facebook</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">LinkedIn</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            ">YouTube</li>
-                       <li className="cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            "> <Link href={`/contact`} >Contact Us</Link> </li>
-                    </ul>
-                  </div>
-                </div>
+            "
+          >
+            <Link href={`/service/${item.slug}`}>
+              {item?.navbarTitle}
+            </Link>
+          </li>
+        </ul>
+      ))}
+    </div>
 
-              </div>
+    {/* Divider only on lg */}
+    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full" />
+  </div>
+
+  {/* RESOURCES */}
+  <div className="px-0 sm:px-4 lg:px-6 relative">
+    <div className="h-full flex flex-col">
+      <h4 className="text-orange-500 font-bold text-lg mb-4">
+        Resources
+      </h4>
+
+      <ul className="space-y-2 text-gray-700 text-base">
+        <li
+          className="
+            cursor-pointer
+            transition-all duration-300
+            hover:text-[#f46c44]
+            hover:translate-x-2
+          "
+        >
+          <Link href="/blog">Blogs</Link>
+        </li>
+
+        <li
+          className="
+            cursor-pointer
+            transition-all duration-300
+            hover:text-[#f46c44]
+            hover:translate-x-2
+          "
+        >
+          <Link href="/events">Events & Webinars</Link>
+        </li>
+      </ul>
+    </div>
+
+    {/* Divider only on lg */}
+    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full" />
+  </div>
+
+  {/* CONNECT */}
+  <div className="px-0 sm:px-4 lg:px-6">
+    <div className="h-full flex flex-col">
+      <h4 className="text-orange-500 font-bold text-lg mb-4">
+        Connect
+      </h4>
+
+      <ul className="space-y-2 text-gray-700 text-base">
+        <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
+          Instagram
+        </li>
+        <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
+          Facebook
+        </li>
+        <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
+          LinkedIn
+        </li>
+        <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
+          YouTube
+        </li>
+        <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
+          <Link href="/contact">Contact Us</Link>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
 
             </div>
 

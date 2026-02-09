@@ -7,6 +7,7 @@ import 'keen-slider/keen-slider.min.css';
 import { Footer } from "@/components/Footer"
 import { serverInstance } from "./axiosInstance"
 import { GlobalProvider } from "@/src/statecontext"
+import { Toaster } from "react-hot-toast";
 
 
 
@@ -107,6 +108,10 @@ export default async function RootLayout({
         />
         
           {children}
+          <Toaster
+          position="bottom-right"
+          reverseOrder={false}
+        />
         
         
         <Footer Featureitem={featureRes || []} Serviceitem={serviceres || []} />
