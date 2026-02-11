@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-export default function UniversitySliderClient() {
+export default function UniversitySliderClient({universities}) {
   const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function UniversitySliderClient() {
             },
             '(min-width: 1024px)': {
               slides: {
-                perView: 8,
+                perView: 6,
                 spacing: 12,
               },
             },
@@ -85,7 +85,7 @@ export default function UniversitySliderClient() {
     initSlider();
   }, []);
 
-  const universities = [
+  const universitie = [
     { id: 1, src: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'University 1' },
     { id: 2, src: 'https://www.gatewayabroadeducations.com/anime/p2.svg', alt: 'University 2' },
     { id: 3, src: 'https://www.gatewayabroadeducations.com/anime/p3.svg', alt: 'University 3' },
@@ -99,34 +99,45 @@ export default function UniversitySliderClient() {
   ];
 
   return (
-    <section className="py-12 overflow-hidden">
-      <h2 className="text-xl lg:text-3xl font-bold text-center mb-6">
-        <span className="text-[#ea6c46]">International</span>{' '}
-        <span className="text-[#646162]">University Partners</span>
-      </h2>
+    <section className="pt-12 overflow-hidden">
+      <div className="  relative max-w-7xl mx-auto">
+            <h2 className="text-5xl  mb-2 ">
+              <span  className="text-red-700" >
+                {universities.title?.split('||')[0]}
+              </span>{" "} <br />
+              <span className="text-primary font-bold relative">
+                {universities.title?.split('||')[1]}
+        <span className="absolute left-0 bottom-0  w-25 h-1 bg-red-700"></span>
+
+
+                
+              </span>
+
+
+
+            </h2>
+          
+          </div>
 
       {/* FULL WIDTH SLIDER */}
-      <div ref={sliderRef} className="keen-slider w-full   lg:px-12">
-        {universities.map((university) => (
+      <div ref={sliderRef} className="keen-slider w-full   ">
+        {universitie.map((university) => (
           <div key={university.id} className="keen-slider__slide ">
-            <div className="relative h-15 rounded-xl overflow-hidden ">
+            <div className=" rounded-xl ">
               
-              {/* Background Image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center scale-115 "
-                style={{ backgroundImage: "url('/shapes/unibg.png')" }}
-              />
+              
 
               {/* Logo */}
-              <div className="relative z-10 flex items-center justify-center h-full w-full p-5 sm:p-8">
-                <Image
-                  src={university.src}
-                  alt={university.alt}
-                  width={150}
-                  height={150}
-                  className="object-contain "
-                />
-              </div>
+            <div className="flex items-center justify-center h-[220px] sm:h-[260px] lg:h-[300px] w-full px-2">
+  <Image
+    src={university.src}
+    alt={university.alt}
+    width={800}
+    height={450}
+    className="object-contain w-[240px] sm:w-[280px] lg:w-[640px]"
+  />
+</div>
+
             </div>
           </div>
         ))}

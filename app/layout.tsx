@@ -67,7 +67,7 @@ export default async function RootLayout({
 
   ])
 
-  console.log(feature)
+  
 
   const featureRes = feature.data.data.filter((item) => 
     item.pageType === "destinations" 

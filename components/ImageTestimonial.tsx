@@ -67,7 +67,7 @@ useEffect(() => {
             slides: { perView: 1.5, spacing: 24 },
           },
           "(min-width: 1024px)": {
-            slides: { perView: 3.2, spacing: 32 },
+            slides: { perView: 3, spacing: 32 },
           },
         },
       },
@@ -110,22 +110,36 @@ useEffect(() => {
 
   return (
    <section
-  className="py-12 sm:py-14 lg:py-16"
-  style={{ backgroundColor: !bg && "#f5f1f0", overflow: "visible" , fontFamily: font ? "'Poppins', sans-serif" : "inherit" }}
+  className="py-12 sm:py-14 lg:py-16 bg-[#f46c44]"
+  style={{ overflow: "visible" , fontFamily: font ? "'Poppins', sans-serif" : "inherit" }}
 >
-  <div
-    className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center overflow-visible"
-  >
-    <h2 className="text-[2rem] sm:text-[2.2rem] lg:text-[2.6rem] font-bold">
+  
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center overflow-visible">
 
-     <span className="text-[#656565]" >{title?.split("||")[0] }</span> 
-     <span className="text-orange-500">{title?.split("||")[1] }</span> 
+  {/* ================= TITLE ================= */}
+  <div className="mb-5 flex items-center relative">
 
-    </h2>
+    <h3 className="text-5xl lg:text-6xl text-white relative inline-block">
+      <span>{title?.split("||")[0]} {"  "}</span>
+      <span className="text-5xl lg:text-6xl font-bold text-white mt-4 relative">
+      {title?.split("||")[1]}
+      <span className="absolute right-0 -bottom-2 w-32 h-1 bg-yellow-400"></span>
 
-    <p className="text-gray-600 text-sm sm:text-base font-medium max-w-3xl mx-auto leading-relaxed">
+    </span>
+    </h3>
+    <br />
+
+    
+
+    
+
+  </div>
+   <p className="text-primary text-sm sm:text-base font-medium max-w-3xl text-justify leading-relaxed">
       {subtitle}
     </p>
+     
+
+   
 
     {/* SLIDER */}
     <div ref={sliderRef} className="keen-slider">
@@ -137,10 +151,10 @@ useEffect(() => {
                   <div className="absolute top-3 left-0 w-full flex flex-col gap-2 h-full py-12 pl-8 pr-2 ">
                     <div className="grid grid-cols-20 gap-4">
                       <div className="col-span-11 ">
-                        <h3 className="text-[15px] text-left font-bold text-gray-600 mb-3">
+                        <h3 className="text-[15px] text-left font-bold text-red-700 mb-3">
                           {testimonial.name}
                         </h3>
-                        <p className="lg:text-xs text-justify text-sm text-gray-700 line-clamp-7">
+                        <p className="lg:text-xs font-semibold text-justify text-sm text-blue-700 line-clamp-7">
                           {testimonial.message}
                         </p>
                       </div>

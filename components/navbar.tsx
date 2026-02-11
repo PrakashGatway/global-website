@@ -113,6 +113,23 @@ export default function Navbar({
   }
 
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
+useEffect(() => {
+  const handleScroll = () => {
+    if (window.scrollY > 80) {
+      setIsScrolled(true);
+    } else {
+      setIsScrolled(false);
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+
+
+
 
 
 
@@ -121,14 +138,20 @@ export default function Navbar({
  
 
 {/* ================= MAIN NAVBAR ================= */}
-<nav className="sticky top-0 z-[999] bg-orange-500 shadow-sm border-b border-gray-100 py-5">
+<nav className="sticky top-0 z-[999] bg-[#f46c44] shadow-sm  pb-2  ">
 
-  <div className="mx-auto px-6 h-20 flex  justify-between relative ">
+  <div
+  className={`mx-auto  flex justify-between relative transition-all duration-500  ease-in-out ${
+    isScrolled ? "h-full" : ""
+  }`}
+>
+
 
       {/* Left */}
-    <div className=" items-center text-end px-5 gap-2 bg-white absolute w-100 h-25 left-0 -bottom-[2px] ">
      
-      <span className="font-medium">
+         <div className={`items-center text-end px-8   gap-2 bg-white    ` }>
+     
+      <span className={`font-medium ${isScrolled ? "hidden" : "block"}`} >
         Contact Your Nearest Centre
       </span>
        {/* LOGO */}
@@ -143,28 +166,37 @@ export default function Navbar({
       />
     </Link>
     </div>
+        
+      
+   
 
-   <div className="grid grid-col-1 ">
+   <div className={`flex flex-col    ${isScrolled ? "justify-center" : "item-center gap-6 px-15"}  `}>
 
-      {/* Right */}
-    <div className="flex items-center gap-6">
+     {!isScrolled && (
+      <>
+       {/* Right */}
+    <div className="flex w-full justify-end items-center gap-6  z-10 px-20  text-white">
+      <div className="bg-[#6d1901] flex items-center gap-2 px-4 py-2  text-sm font-medium">
+
 
       <a href="/about" className="hover:opacity-80 transition">
         Our Centres
       </a>
 
-      <button className="bg-[var(--secondary)] text-[var(--secondary-foreground)] px-4 py-1.5 rounded-full text-sm font-semibold shadow hover:opacity-90 transition">
+      <button className=" text-[var(--secondary-foreground)]  text-sm font-semibold shadow hover:opacity-90 transition">
         Free Demo
       </button>
 
       <a href="/login" className="flex items-center gap-2 hover:opacity-80 transition">
-        <span className="w-2 h-2 bg-[var(--secondary)] rounded-full"></span>
+        <span className="w-3 h-3 bg-yellow-300 rounded-full"></span>
         Student Login
       </a>
+      </div>
 
-    </div>
+    </div></>
+     )}
     {/* ================= DESKTOP MENU ================= */}
-    <div className="hidden lg:flex items-end gap-2 absolute right-0 top-10 ">
+    <div className={`hidden lg:flex items-end gap-2 ${isScrolled ? "flex justify-end" : "justify-center"} `} >
       
 
       {navbar?.map((item) => (
@@ -172,14 +204,18 @@ export default function Navbar({
 
           <Link
             href={item.route}
-            className="flex items-center gap-1 px-4 py-2 text-[15px] font-medium text-gray-800 hover:text-[var(--primary)] transition"
+            className="flex items-center gap-1 px-4 py-2 text-[15px] font-medium text-white hover:text-[var(--primary)] transition"
           >
             <span>{item.title}</span>
 
             {item.hasDropdown && (
               <ChevronDown size={14} className="mt-[2px]" />
             )}
+
+            
           </Link>
+
+          
 
           {/* ================= DESKTOP DROPDOWN ================= */}
           {item.hasDropdown && (
@@ -237,8 +273,21 @@ export default function Navbar({
 
         </div>
       ))}
+      {isScrolled && (
+  <div className="flex justify-end  bg-secondary rounded-full p-3  mr-2">
+    <a
+      href="/login"
+      className="text-white text-sm font-semibold transition-all duration-500 animate-slideDown"
+    >
+      Login/Signup
+    </a>
+  </div>
+)}
+
 
     </div>
+
+    
    </div>
     
     

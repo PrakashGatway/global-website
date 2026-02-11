@@ -15,7 +15,11 @@ const FAQSection = ({ Faqres }) => {
           <h2 className="text-3xl   text-gray-900 mb-4 ">
             <span className=' text-5xl text-secondary '>Frequently</span>{" "}
             
-            <br /><span className='pl-10 text-6xl text-primary font-bold'>Asked Questions</span> 
+            <br /><span className='pl-10 text-6xl text-primary font-bold relative'>Asked Questions
+              
+        <span className="absolute right-0 -bottom-1 w-25 h-1 bg-red-600"></span>
+              </span> 
+
           </h2>
          
         </div>

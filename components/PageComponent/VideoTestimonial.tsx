@@ -168,202 +168,88 @@ export default function VideoTestimonialsSlider({
   ) : title;
 
   return (
-    <section className="bg-cover bg-center relative overflow-hidden">
-      {/* Decorative background images */}
-      <div className="absolute -right-20 top-[0%] opacity-10 pointer-events-none hidden lg:block">
-        <div style={{ transform: 'rotate(-120deg) scaleY(-1)', mixBlendMode: 'multiply' }}>
-          <Image
-            src="/images/g logo.png"
-            alt="Decorative Arrow"
-            width={600}
-            height={40}
-            className="w-64 h-66 lg:w-116 lg:h-116 object-contain"
-            priority={false}
-          />
-        </div>
-      </div>
-      <div className="absolute -left-20 bottom-[0%] opacity-10 pointer-events-none hidden lg:block">
-        <div style={{ transform: 'rotate(-120deg) scaleY(-1)', mixBlendMode: 'multiply' }}>
-          <Image
-            src="/images/g logo.png"
-            alt="Decorative Arrow"
-            width={600}
-            height={40}
-            className="w-64 h-66 lg:w-116 lg:h-116 object-contain"
-            priority={false}
-          />
-        </div>
-      </div>
+ <section className="bg-[#efefef] py-10 pb-20 relative">
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <h2 className="text-2xl sm:text-3xl lg:text-[2.6rem] font-bold text-center mb-6">
-          {displayTitle}
-        </h2>
+  <div className="max-w-7xl mx-auto px-6">
 
-        {/* Main slider container with hover detection */}
-        <div 
-          className="relative mx-auto overflow-hidden h-[520px] sm:h-[600px] lg:h-[85vh]"
-          onMouseEnter={() => pauseOnHover && setIsHovering(true)}
-          onMouseLeave={() => pauseOnHover && setIsHovering(false)}
-          onFocus={() => pauseOnHover && setIsHovering(true)}
-          onBlur={() => pauseOnHover && setIsHovering(false)}
-        >
-          {/* Desktop background shape */}
-          <div
-            style={{ backgroundImage: "url('/shapes/vbg.png')" }}
-            className="hidden lg:block absolute inset-0 bg-contain bg-center bg-no-repeat"
-          />
+    {/* ================= TITLE ================= */}
+    <div className="mb-20">
+      <h2 className="text-4xl lg:text-5xl font-light text-red-700">
+        {title.includes("||")
+          ? title.split("||")[0].trim()
+          : ""}
+      </h2>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="absolute inset-0"
-            >
-              {/* Mobile/Tablet Layout */}
-              <div className="lg:hidden flex flex-col items-center gap-6 pt-6">
-                <div className="w-full max-w-[340px] aspect-video rounded-xl overflow-hidden shadow-xl">
-                 {item.isMp4 ? (
-  <video
-    src={item.videoUrl}
-    controls
-    className="w-full h-full object-cover rounded-xl"
-  />
-) : item.videoId ? (
-  <iframe
-    className="w-full h-full"
-    src={`https://www.youtube.com/embed/${item.videoId}`}
-    allowFullScreen
-  />
-) : (
-  <p className="text-center text-gray-500">Video unavailable</p>
-)}
+      <h3 className="text-5xl lg:text-6xl font-bold text-primary relative inline-block mt-2">
+        {title.includes("||")
+          ? title.split("||")[1].trim()
+          : "Testimonials"}
 
-                </div>
-                
-                <div className="text-center max-w-md px-4">
-                  <p className="text-xl font-semibold text-[#f46c44] mb-2">
-                    {item.title}
-                  </p>
-                  <p className="text-gray-700 text-sm sm:text-base">
-                    {item.text}
-                  </p>
-                </div>
-              </div>
+        <span className="absolute right-0 -bottom-2 w-32 h-1 bg-red-600"></span>
+      </h3>
+    </div>
 
-              {/* Desktop Layout */}
-              <div className="hidden lg:block">
-                <div className="h-[72%] w-[48%] absolute top-[16%] left-[13%] z-10">
-                  <div className="relative w-full h-full">
-                    <svg width="0" height="0" aria-hidden>
-                      <defs>
-                        <clipPath id="video-shape" clipPathUnits="objectBoundingBox">
-                          <path d="M0.06 0.09 Q0.03 0.10 0.03 0.16 L0.03 0.84 Q0.03 0.94 0.07 0.95 L0.93 0.95 Q0.97 0.94 0.97 0.85 L0.94 0.17 Q0.93 0.11 0.86 0.11 L0.13 0.09 Z" />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                    
-                    <div
-                      className="w-full h-full p-4 overflow-hidden"
-                      style={{
-                        clipPath: "url(#video-shape)",
-                        WebkitClipPath: "url(#video-shape)",
-                      }}
-                    >
-                      {item.isMp4 ? (
-  <video
-    src={item.videoUrl}
-    controls
-    className="w-full h-full object-cover rounded-xl"
-  />
-) : item.videoId ? (
-  <iframe
-    className="w-full h-full"
-    src={`https://www.youtube.com/embed/${item.videoId}`}
-    allowFullScreen
-  />
-) : (
-  <p className="text-center text-gray-500">Video unavailable</p>
-)}
+    {/* ================= SLIDER ================= */}
+    <div
+  className="relative mx-auto"
+  onMouseEnter={() => pauseOnHover && setIsHovering(true)}
+  onMouseLeave={() => pauseOnHover && setIsHovering(false)}
+>
 
-                    </div>
-                    
-                    <svg
-                      viewBox="0 0 1 1"
-                      preserveAspectRatio="none"
-                      className="absolute inset-0 w-full h-full pointer-events-none -z-1"
-                    >
-                      <path
-                        d="M0.06 0.09 Q0.03 0.10 0.03 0.16 L0.03 0.84 Q0.03 0.94 0.07 0.95 L0.93 0.95 Q0.97 0.94 0.97 0.85 L0.94 0.17 Q0.93 0.11 0.86 0.11 L0.13 0.09 Z"
-                        fill="none"
-                        stroke="#FFA88F"
-                        strokeWidth="40"
-                        vectorEffect="non-scaling-stroke"
-                      />
-                    </svg>
-                  </div>
-                </div>
+  {/* ===== STATIC BEIGE BACKGROUND (NOT INSIDE MOTION) ===== */}
+  <div className="hidden lg:block absolute -left-40 -top-10 w-[45%] h-[75%] bg-[#e5cfc5] rounded-tr-[40px] rounded-br-[30px] z-0"></div>
 
-                <div
-                  style={{ backgroundImage: "url('/shapes/vcard.png')" }}
-                  className="absolute top-[15%] right-[19%] z-10 w-[24%] h-full bg-contain bg-center bg-no-repeat"
-                />
+  <AnimatePresence mode="wait">
+    <motion.div
+  key={index}
+  initial={{ x: 100 }}
+  animate={{ x: 0 }}
+  exit={{ x: -100 }}
+  transition={{ duration: 0.4, ease: "easeInOut" }}
+  className="relative z-10"
+>
 
-                <div className="absolute top-[45%] right-[21%] z-10 w-[19%] text-center">
-                  <p className="text-3xl font-medium mb-2 text-yellow-500">
-                    {item.title}
-                  </p>
-                  <p className="text-white text-sm leading-relaxed">
-                    {item.text}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+      {/* ================= VIDEO ================= */}
+      <div className="relative w-full lg:w-[95%] mx-auto py-1 lg:h-[500px] rounded-[40px] shadow-2xl  bg-white">
 
-     
-
-         
-      
-
-          {/* Navigation Controls */}
-          {validItems.length > 1 && showControls && (
-            <>
-           
-
-              {/* Prev/Next buttons */}
-              <div className="absolute bottom-4 right-1/2 translate-x-1/2 lg:right-[12%] lg:translate-x-0 flex gap-3 z-50">
-               
-                
-                <button
-                  onClick={prev}
-                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#f46c44]/80 flex items-center justify-center text-white hover:bg-[#f46c44] transition-colors hover:scale-105 active:scale-95"
-                  aria-label="Previous testimonial"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                
-                <button
-                  onClick={next}
-                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#f46c44]/80 flex items-center justify-center text-white hover:bg-[#f46c44] transition-colors hover:scale-105 active:scale-95"
-                  aria-label="Next testimonial"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-            </>
+        <div className="aspect-video">
+          {item.isMp4 ? (
+            <video
+              src={item.videoUrl}
+              controls
+              className="w-full h-full object-cover"
+            />
+          ) : item.videoId ? (
+            <iframe
+              className="w-full h-full"
+              src={`https://www.youtube.com/embed/${item.videoId}`}
+              allowFullScreen
+            />
+          ) : (
+            <p className="text-center text-gray-500">
+              Video unavailable
+            </p>
           )}
-
-         
         </div>
+
+        {/* ================= BADGE ================= */}
+        <div className="absolute -bottom-10 -right-16 bg-[#6d1901] w-[320px] text-white px-6 py-6 rounded-3xl shadow-xl z-20">
+          <p className="text-lg font-semibold leading-relaxed">
+            {item.title}
+            <br />
+            {item.text}
+          </p>
+        </div>
+
       </div>
-    </section>
-  );
+    </motion.div>
+  </AnimatePresence>
+
+</div>
+
+  </div>
+</section>
+
+);
+
 }

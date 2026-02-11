@@ -112,7 +112,8 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
 
 
-
+console.log(homePage?.blogs?.title)
+console.log(homePage?.topUniversities?.title)
 
 
 
@@ -125,7 +126,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
     relative overflow-hidden
     bg-white
     bg-no-repeat bg-cover bg-bottom
-    py-12 sm:py-16 lg:py-0
+    py-12 sm:py-16 
   "
         style={{
           backgroundImage: `url("/images/hero.jpg")`
@@ -140,18 +141,18 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
         {/* mobile overlay only */}
         <div className="absolute inset-0 bg-white/50 md:bg-transparent pointer-events-none" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 pt-10 sm:px-6">
           {/* HERO GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-2">
 
             {/* LEFT CONTENT */}
             <div className="text-justify lg:text-left">
-              <h1 className="text-xl sm:text-4xl lg:text-[2.7rem] font-extrabold leading-tight">
+              <h1 className="text-xl sm:text-4xl lg:text-5xl  leading-tight">
                 {homePage?.hero?.title ? (
-                  <span className="block text-[#646162]">
+                  <span className="block text-primary">
                     {homePage.hero.title.split('||')[0]?.trim()}
                     <br />
-                    <span className="relative inline-block mt-3 text-[#ea6c46]">
+                    <span className="relative inline-block mt-3 font-bold text-[#ea6c46]">
                       {homePage.hero.title.split('||')[1]?.trim()}
                       <span className="absolute left-0 -bottom-2 w-full h-[2px] bg-[#f46c44]">
                         <span className="absolute right-0 -top-[3px] w-2 h-2 rounded-full bg-[#f46c44]" />
@@ -161,7 +162,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
                 ) : null}
               </h1>
 
-              <p className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-gray-700 max-w-xl mx-auto lg:mx-0">
+              <p className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-xl mx-auto lg:mx-0">
                 {homePage?.hero?.subtitle ? (
                   <>
                     {homePage.hero.subtitle.split('||')[0]?.trim()}{" "}
@@ -177,10 +178,9 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
                 <a
                   onClick={() => setOpenForm(true)}
                   className="
-    text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
-    rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
+    text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-orange-500 rounded-full shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
     text-base font-semibold
-    hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
+    hover:bg-primary hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
     flex items-center justify-center gap-2
     transition-all hover:opacity-90 cursor-pointer
   "
@@ -194,10 +194,9 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
                 <a
                   href={homePage?.hero?.ctaLink2}
                   className="
-    text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#f46c44]
-    rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
+    text-primary px-6 sm:px-8 py-2.5 sm:py-3 border-2 border-primary rounded-full 
     text-base font-semibold
-    transition-all hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
+    transition-all hover:bg-orange-500 hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
     inline-flex items-center justify-center
   "
 
@@ -227,7 +226,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
           </div>
 
           {/* STATS SECTION */}
-          <div className="pb-12 lg:pb-16">
+          <div className="pb-12 lg:pb-16 lg:pt-20">
   <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-10">
 
     {(homePage?.stats?.stats || []).map((item: any, index: number) => (
@@ -274,97 +273,110 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
         </div>
       </section>
 
-      <UniversitySliderClient />
 
-      <section
-        className="
-    relative lg:py-16 lg:py-24
-  "
-      >
-        <div className="absolute -left-20 top-[35%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-          <div style={{
-            transform: 'rotate(0deg)',
-            filter: 'brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)',
-            mixBlendMode: 'multiply'
-          }}>
-            <Image
-              src="/images/g logo.png"
-              alt="Decorative Arrow"
-              width={400}
-              height={40}
-              className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-            />
+      <section className="bg-[#f46c44] py-20 relative overflow-hidden">
+
+  <div className="max-w-7xl mx-auto px-6">
+
+    {/* ================= HEADING ================= */}
+    <div className="mb-16">
+     
+
+      <h3 className="text-white text-5xl lg:text-7xl  relative inline-block mt-4">
+        <span className="">{homePage?.whyUs?.title.split("||")[0]}</span>
+        <span className="font-bold">{homePage?.whyUs?.title.split("||")[1]}</span>
+
+        {/* Yellow Brush Underline */}
+        <span className="absolute left-0 -bottom-6 w-full h-2 bg-yellow-400 rounded-full"></span>
+      </h3>
+    </div>
+
+    {/* ================= CARDS ================= */}
+    <div className="space-y-10">
+
+      {/* TOP 3 CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+        {/* ITEM 1 */}
+        <div className="bg-[#e6e6e6] rounded-3xl p-10 flex items-center gap-6">
+          <NutOffIcon className="w-16 h-16 text-[#6d1901]" />
+          <div>
+            <h4 className="text-2xl font-semibold text-black">
+              {homePage?.whyUs?.items?.[0]?.title}
+            </h4>
+            <p className="text-[#1f3a5f] mt-2 text-base">
+              {homePage?.whyUs?.items?.[0]?.description}
+            </p>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
 
-            {/* LEFT CONTENT */}
+        {/* ITEM 2 */}
+        <div className="bg-[#e6e6e6] rounded-3xl p-10 flex items-center gap-6">
+          <BadgeIcon className="w-16 h-16 text-[#6d1901]" />
+          <div>
+            <h4 className="text-2xl font-semibold text-black">
+              {homePage?.whyUs?.items?.[1]?.title}
+            </h4>
+            <p className="text-[#1f3a5f] mt-2 text-base">
+              {homePage?.whyUs?.items?.[1]?.description}
+            </p>
+          </div>
+        </div>
+
+        {/* ITEM 3 */}
+        <div className="bg-[#e6e6e6] rounded-3xl p-10 flex items-center gap-6">
+          <TargetIcon className="w-16 h-16 text-[#6d1901]" />
+          <div>
+            <h4 className="text-2xl font-semibold text-black">
+              {homePage?.whyUs?.items?.[2]?.title}
+            </h4>
+            <p className="text-[#1f3a5f] mt-2 text-base">
+              {homePage?.whyUs?.items?.[2]?.description}
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      {/* BOTTOM 2 CENTERED CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:w-2/3 mx-auto">
+
+        {/* ITEM 4 */}
+        <div className="bg-[#e6e6e6] rounded-3xl p-10 flex items-center gap-6">
+          <PanelsTopLeftIcon className="w-16 h-16 text-[#6d1901]" />
+          <div>
+            <h4 className="text-2xl font-semibold text-black">
+              {homePage?.whyUs?.items?.[3]?.title}
+            </h4>
+            <p className="text-[#1f3a5f] mt-2 text-base">
+              {homePage?.whyUs?.items?.[3]?.description}
+            </p>
+          </div>
+        </div>
+
+        {/* ITEM 5 (If exists) */}
+        {homePage?.whyUs?.items?.[4] && (
+          <div className="bg-[#e6e6e6] rounded-3xl p-10 flex items-center gap-6">
+            <PanelsTopLeftIcon className="w-16 h-16 text-[#6d1901]" />
             <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-[3rem] pb-6 font-bold leading-tight">
-                <span className="text-[#ea6c46]">
-                  {homePage?.whyUs?.title?.split('||')[0]?.trim()}
-                </span>{" "}
-                <span className="text-[#646162]">
-                  {homePage?.whyUs?.title?.split('||')[1]?.trim()}
-                </span>
-              </h2>
-
-              <p className="text-sm font-medium sm:text-base text-gray-600 mb-6 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                {homePage?.whyUs?.subTitle}
+              <h4 className="text-2xl font-semibold text-black">
+                {homePage?.whyUs?.items?.[4]?.title}
+              </h4>
+              <p className="text-[#1f3a5f] mt-2 text-base">
+                {homePage?.whyUs?.items?.[4]?.description}
               </p>
             </div>
-
-            {/* RIGHT ORANGE BOX */}
-            <div className="bg-[#f46c44] text-white">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-0">
-
-                {/* ITEM 1 */}
-                <div className="flex flex-col items-center text-center gap-4 p-10 border-r-1 border-b-1">
-                  <NutOffIcon className="w-16 h-16" />
-                  <p className="font-semibold text-base sm:text-xl leading-snug">
-                    {homePage?.whyUs?.items?.[0]?.title}
-                    <br />
-                    <span className="text-lg">{homePage?.whyUs?.items?.[0]?.description}</span>
-                  </p>
-                </div>
-
-                {/* ITEM 2 */}
-                <div className="flex flex-col items-center text-center gap-4 p-10 border-b-1 border-l-1">
-                  <BadgeIcon className="w-16 h-16" />
-                  <p className="font-semibold text-base sm:text-xl leading-snug">
-                    {homePage?.whyUs?.items?.[1]?.title}
-                    <br />
-                    <span className="text-lg">{homePage?.whyUs?.items?.[1]?.description}</span>
-                  </p>
-                </div>
-
-                {/* ITEM 3 */}
-                <div className="flex flex-col items-center text-center gap-4 p-10 border-t-1 border-r-1">
-                  <TargetIcon className="w-16 h-16" />
-                  <p className="font-semibold text-base sm:text-xl leading-snug">
-                    {homePage?.whyUs?.items?.[2]?.title}
-                    <br />
-                    <span className="text-lg">{homePage?.whyUs?.items?.[2]?.description}</span>
-                  </p>
-                </div>
-
-                {/* ITEM 4 */}
-                <div className="flex flex-col items-center text-center gap-4 p-10 border-t-1 border-l-1">
-                  <PanelsTopLeftIcon className="w-16 h-16" />
-                  <p className="font-semibold text-base sm:text-xl leading-snug">
-                    {homePage?.whyUs?.items?.[3]?.title}
-                    <br />
-                    <span className="text-lg">{homePage?.whyUs?.items?.[3]?.description}</span>
-                  </p>
-                </div>
-
-              </div>
-            </div>
-
           </div>
-        </div>
-      </section>
+        )}
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
 
       <section
         className=" bg-[#f2eeed]
@@ -411,7 +423,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
                 hover:scale-[1.01] hover:shadow-2xl
               "
                     style={{
-                      transform: "rotateY(2deg) rotateX(5deg) rotateZ(2deg) skewX(3deg)",
+                      transform: "rotateX(5deg) rotateZ(4deg) rotatey(7deg) skewX(4deg)",
                     }}
                   >
                     {homePage?.trustedPartners?.bgImage2 && (
@@ -444,7 +456,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
                     className="
                 w-[220px] h-[280px]
                 sm:w-[300px] sm:h-[380px]
-                lg:w-80 lg:h-95
+                lg:w-68 lg:h-95
                 rounded-4xl overflow-hidden
                 border-[2px] border-orange-500
                 bg-white z-20
@@ -469,16 +481,16 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
                   {/* EXPERIENCE BADGE */}
                   <div
                     className="
-                absolute -left-8 sm:-left-12 bottom-16
-                w-24 h-24 sm:w-28 sm:h-28 lg:w-30 lg:h-30
+                absolute -left-8 sm:-left-12 bottom-30
+                w-24 h-24 sm:w-28 sm:h-28 lg:w-28 lg:h-28
                 rounded-full bg-white
                 border-[3px] border-orange-600
                 shadow-2xl z-40
                 flex flex-col items-center justify-center
               "
                   >
-                    <span className="text-3xl sm:text-4xl font-bold text-orange-500">15</span>
-                    <span className="text-[10px] sm:text-xs text-orange-500 text-center font-semibold leading-tight">
+                    <span className="text-3xl sm:text-4xl font-bold text-red-700">15</span>
+                    <span className="text-[10px] sm:text-xs text-gray-500 text-center font-semibold leading-tight">
                       Years of<br />Experience
                     </span>
                   </div>
@@ -487,12 +499,12 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
               {/* RIGHT CONTENT */}
               <div className="text-center lg:text-left">
-                <h2 className="text-2xl sm:text-3xl lg:text-[2.6rem] font-bold leading-tight mb-3">
-                  <span className="text-[#ea6c46]">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold leading-tight mb-3">
+                  <span className="text-primary">
                     {homePage?.trustedPartners?.title?.split('||')[0]?.trim()}
                   </span>
                   <br />
-                  <span className="text-[#646162]">
+                  <span className="text-primary">
                     {homePage?.trustedPartners?.title?.split('||')[1]?.trim()}
                   </span>
                 </h2>
@@ -503,19 +515,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
                 <AboutTabsSection tabs={homePage?.trustedPartners?.items || []} />
 
-                {/* CTA */}
-                <div className="mt-4 flex justify-center lg:justify-start">
-                  <button
-                    className="
-                text-white px-6 sm:px-8 py-2.5 sm:py-3
-                rounded-tr-4xl font-semibold text-base sm:text-lg
-                shadow-lg transition-all hover:opacity-90
-              "
-                    style={{ backgroundColor: "#f46c44" }}
-                  >
-                    About Us
-                  </button>
-                </div>
+               
               </div>
 
             </div>
@@ -543,16 +543,21 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
       />
       <section className="py-18 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden">
-          <div className="text-center mb-12">
-            <h2 className="text-[2.6rem] font-bold mb-2">
-              <span style={{ color: '#f46c44' }}>
+          <div className=" mb-12 ">
+            <h2 className="text-5xl  mb-2 ">
+              <span  className="text-red-700" >
                 {homePage?.topUniversities?.title?.split('||')[0]?.trim()}
-              </span>{" "}
-              <span className="text-gray-600">
+              </span>{" "} <br />
+              <span className="text-primary font-bold relative">
                 {homePage?.topUniversities?.title?.split('||')[1]?.trim()}
+        <span className="absolute right-0 bottom-0  w-25 h-1 bg-red-700"></span>
+
+                
               </span>
+
+
             </h2>
-            <p className="text-gray-600 text-base font-medium max-w-3xl  mx-auto leading-relaxed">
+            <p className="text-gray-800 text-base font-medium max-w-3xl  leading-relaxed">
               {homePage?.topUniversities?.subtitle}
             </p>
           </div>
@@ -570,21 +575,8 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
                 <Link href={`/destination/${item.slug}`}>
                   <div className="text-center group">
                     <div className="relative mx-auto w-full max-w-[280px] mb-6">
-                      <svg
-                        viewBox="0 0 300 200"
-                        className="w-full h-auto"
-                        style={{
-                          filter: "drop-shadow(0 10px 15px rgba(0,0,0,0.1))",
-                        }}
-                      >
-                        <defs>
-                          <clipPath id={`tiltedClip-${item._id}`}>
-                            <path d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z" />
-                          </clipPath>
-                        </defs>
-
-                        <image
-                          href={item.cardImage || "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop"}
+                      <img
+                          src={item.cardImage || "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop"}
                           x="0"
                           y="0"
                           width="300"
@@ -592,21 +584,13 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
                           clipPath={`url(#tiltedClip-${item._id})`}
                           preserveAspectRatio="xMidYMid slice"
                         />
-
-                        <path
-                          d="M 71 10 Q 20 8 15 55 L 16 137 Q 16 190 81 195 L 251 196 Q 289 187 287 153 L 277 74 Q 271 40 233 32 L 72 10 Z"
-                          fill="none"
-                          stroke="#f46c44"
-                          strokeWidth="1"
-                        />
-                      </svg>
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-700 mb-2">
+                    <h3 className="text-xl font-bold text-primary mb-2">
                       {item.title}
                     </h3>
 
-                    <p className="text-sm font-medium text-[#f46c44]">
+                    <p className="text-sm  text-primary">
                       {item.subTitle}
                     </p>
                   </div>
@@ -619,8 +603,11 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
         </div>
       </section>
 
+      <UniversitySliderClient universities = {homePage.universities} />
+
+
       <section className="
-  py-12 sm:py-14 lg:py-16
+  py-12 sm:py-14 lg:py-6
   bg-gradient-to-b from-[#f3f3f3] to-white
   bg-[url('/bg-01.jpg')]
   bg-cover bg-center bg-no-repeat
@@ -629,18 +616,22 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4">
 
           {/* Heading */}
-          <div className="text-center mb-10 lg:mb-12">
-            <h2 className="text-2xl sm:text-3xl lg:text-[2.6rem] font-bold">
-              <span className="text-[#f46c44]">
-                {homePage?.blogs?.title?.split('||')[0]?.trim()}
-              </span>{" "}
-              <span className="text-gray-600">
-                {homePage?.blogs?.title?.split('||')[1]?.trim()}
+          <div className=" mb-10  relative">
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl mb-5 font-bold">
+              <span className="text-red-700">
+                {homePage?.blogs?.title?.split('||')[0]}
+              </span>{" "} <br />
+              <span className="text-primary relative">
+                {homePage?.blogs?.title?.split('||')[1]}
+        <span className="absolute right-0 -bottom-1 w-25 h-1 bg-red-600"></span>
+
               </span>
+
             </h2>
-            <p className="mt-2 text-sm sm:text-base text-gray-600 font-medium max-w-3xl mx-auto">
+            <p className="mt-2 text-sm sm:text-base text-gray-600 font-medium max-w-3xl ">
               {homePage?.blogs?.subtitle}
             </p>
+
           </div>
 
           {/* Grid */}
