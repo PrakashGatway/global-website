@@ -47,12 +47,17 @@ export default async function Home() {
   const resBlog = await serverInstance.get("/blogs?type=blog&limit=6");
   const Blogdata = resBlog.data.data || [];
 
-  const [destinationRes, imageRes] = await Promise.all([
+  const [destinationRes, imageRes , Faqres] = await Promise.all([
     serverInstance.get(
       "/page-information/navbar?isFeatured=true&type=destinations&limit=6"
     ),
     serverInstance.get("/testimonials?type=image"),
+    serverInstance.get("/faqs/public/list?type=General"),
+
   ]);
+
+    
+
 
   return (
     <Homepage
@@ -60,6 +65,7 @@ export default async function Home() {
       Blogdata={Blogdata}
       destinationData={destinationRes.data.data}
       imageData={imageRes.data.data}
+      Faqres = {Faqres.data.data}
     />
   );
 }

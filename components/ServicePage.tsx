@@ -1,19 +1,108 @@
 "use client"
 
 import Image from "next/image"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Facebook, Instagram, Twitter, Youtube, Send, Linkedin } from "lucide-react";
 import Link from "next/link";
 import { useKeenSlider } from "keen-slider/react";
+import axiosInstance from "@/app/axiosInstance";
+import { get } from "http";
+import { useForm } from "react-hook-form";
 
-export default function ServicePage({serviceData , testimonialimg}){
+export default function ServicePage({ serviceData, testimonialimg, galleryData }) {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
-  const [course, setCourse] = useState("");
-  const [country, setCountry] = useState("");
 
- 
+
+  const [activeTab, setActiveTab] = useState("counseling")
+  const [galleryType, setgalleryType] = useState(galleryData)
+  const [loading, setLoading] = useState(false);
+
+
+
+  const {
+  register,
+  handleSubmit,
+  setValue,
+  watch,
+  formState: { errors, isSubmitting },
+  reset,
+} = useForm({
+  defaultValues: {
+    course: "",
+    country: "",
+    fullName: "",
+    city: "",
+    mobile: "",
+    
+  },
+});
+
+  const course = watch("course");
+const country = watch("country");
+
+
+const onSubmit = async (data) => {
+  try {
+    await axiosInstance.post("/contactus", {
+      fullName: data.fullName,
+      
+      country : data.country,
+      city : data.city,
+      description : "message from service page",
+      extraDetails: {
+        course : data.course,
+      }
+    });
+    alert("Form submitted successfully ✅");
+    reset();
+    setStep(1);
+  } catch (error) {
+    alert("Failed to submit form ❌");
+  }
+};
+
+
+
+
+  const getGallery = async (type) => {
+    try {
+      setLoading(true)
+      const res = await axiosInstance.get(`/galleries/public/list?type=${type}`)
+      setgalleryType(res.data.data || []);
+    }
+    catch (e) {
+      alert("failed to load gallery")
+      setgalleryType([]);
+    }
+    finally {
+      setLoading(false)
+    }
+  }
+
+ useEffect(() => {
+  getGallery(activeTab);
+}, []);
+
+const handleTabClick = (tab) => {
+  if (tab === activeTab) return; 
+  setActiveTab(tab);
+  getGallery(tab);
+};
+
+  
+
+  const tabs = [
+    { label: "Counseling", value: "counseling" },
+    { label: "Test Prep", value: "classroom" },
+    { label: "Success Stories", value: "success" },
+    { label: "Events", value: "events" },
+    { label: "Visa & Loan Assistance", value: "visa" },
+    { label: "Our Centres", value: "centres" },
+  ];
+
+
 
   const variants = {
     initial: (direction) => ({
@@ -38,63 +127,63 @@ export default function ServicePage({serviceData , testimonialimg}){
   };
 
   const autoplay = (slider) => {
-  let timeout;
-  let mouseOver = false;
+    let timeout;
+    let mouseOver = false;
 
-  function clearNextTimeout() {
-    clearTimeout(timeout);
-  }
+    function clearNextTimeout() {
+      clearTimeout(timeout);
+    }
 
-  function nextTimeout() {
-    clearTimeout(timeout);
-    if (mouseOver) return;
-    timeout = setTimeout(() => {
-      slider.next();
-    }, 3000);
-  }
+    function nextTimeout() {
+      clearTimeout(timeout);
+      if (mouseOver) return;
+      timeout = setTimeout(() => {
+        slider.next();
+      }, 3000);
+    }
 
-  slider.on("created", () => {
-    slider.container.addEventListener("mouseover", () => {
-      mouseOver = true;
-      clearNextTimeout();
-    });
-    slider.container.addEventListener("mouseout", () => {
-      mouseOver = false;
+    slider.on("created", () => {
+      slider.container.addEventListener("mouseover", () => {
+        mouseOver = true;
+        clearNextTimeout();
+      });
+      slider.container.addEventListener("mouseout", () => {
+        mouseOver = false;
+        nextTimeout();
+      });
       nextTimeout();
     });
-    nextTimeout();
-  });
 
-  slider.on("dragStarted", clearNextTimeout);
-  slider.on("animationEnded", nextTimeout);
-  slider.on("updated", nextTimeout);
-};
+    slider.on("dragStarted", clearNextTimeout);
+    slider.on("animationEnded", nextTimeout);
+    slider.on("updated", nextTimeout);
+  };
 
 
-const [sliderRef] = useKeenSlider(
-  {
-    loop: true,
-    slides: {
-      perView: 2,
-      spacing: 16, // Reduced spacing
-    },
-    breakpoints: {
-      "(max-width: 1024px)": {
-        slides: { 
-          perView: 1,
-          spacing: 16,
+  const [sliderRef] = useKeenSlider(
+    {
+      loop: true,
+      slides: {
+        perView: 2,
+        spacing: 16, // Reduced spacing
+      },
+      breakpoints: {
+        "(max-width: 1024px)": {
+          slides: {
+            perView: 1,
+            spacing: 16,
+          },
+        },
+        "(min-width: 1024px)": {
+          slides: {
+            perView: 2,
+            spacing: 16,
+          },
         },
       },
-      "(min-width: 1024px)": {
-        slides: { 
-          perView: 2,
-          spacing: 16,
-        },
-      },
     },
-  },
-  [autoplay]
-);
+    [autoplay]
+  );
 
   const section = serviceData.sections;
   const hero = section.hero;
@@ -109,24 +198,24 @@ const [sliderRef] = useKeenSlider(
   const exams = section.exams;
 
 
-  const videoId = requestCallback.videoUrl.split("v=")[1]?.split("&")[0] 
-  || requestCallback.videoUrl.split("/").pop();
+  const videoId = requestCallback.videoUrl.split("v=")[1]?.split("&")[0]
+    || requestCallback.videoUrl.split("/").pop();
 
-const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
-
-
-const examStyles = {
-  IELTS: "bg-[#e21735]",
-  PTE: "bg-[#1f6f94]",
-  TOEFL: "bg-[#047d92]",
-  DUOLINGO: "bg-[#56cb01]",
-  GERMAN: "bg-[#56cb01]",
-  FRENCH: "bg-[#56cb01]",
-};
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
 
 
+  const examStyles = {
+    IELTS: "bg-[#e21735]",
+    PTE: "bg-[#1f6f94]",
+    TOEFL: "bg-[#047d92]",
+    DUOLINGO: "bg-[#56cb01]",
+    GERMAN: "bg-[#56cb01]",
+    FRENCH: "bg-[#56cb01]",
+  };
 
-  return(
+
+
+  return (
     <>
       <section className="bg-[#fffaf6] py-12 md:py-20 overflow-hidden relative">
         {/* DECORATIVE ARROWS — DESKTOP ONLY */}
@@ -253,36 +342,36 @@ const examStyles = {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           {/* ================= LEFT SIDE ================= */}
           <div className="text-center lg:text-left">
-            <div className="lg:absolute lg:top-10 lg:left-40 lg:max-w-2xl" >
-                    <h2 className="text-2xl sm:text-3xl lg:text-[35px] font-bold leading-tight">
-              <span className="text-gray-500">{steps.title}</span>
-              <br />
-              <span className="text-gray-500">{steps.subtitle.split("\n")[0]}</span>{" "}
-              <span className="text-[#f26b3a]">{steps.subtitle.split("\n")[1].trim()}</span>
-            </h2>
+            <div className="lg:absolute lg:top-10 lg:left-40 lg:max-w-xl" >
+              <h2 className="text-2xl sm:text-3xl lg:text-[33px] font-bold leading-tight">
+                <span className="text-gray-500">{steps.title}</span>
+                <br />
+                <span className="text-gray-500">{steps.subtitle.split("\n")[0]}</span>{" "}
+                <span className="text-[#f26b3a]">{steps.subtitle.split("\n")[1].trim()}</span>
+              </h2>
 
-            {/* CHECK LIST */}
-           <ul className="mt-6 space-y-3 text-gray-600 text-base sm:text-lg max-w-md mx-auto lg:mx-0">
-  {steps.features
-    .split(/\r?\n/) // handles \n and \r\n
-    .map(f => f.replace("✔", "").trim())
-    .filter(f => f.length > 0)
-    .map((feature, i) => (
-      <li key={i} className="flex gap-3 items-center">
-        <span className="text-[#4caf50] text-xl">✔</span>
-        {feature}
-      </li>
-    ))}
-</ul>
+              {/* CHECK LIST */}
+              <ul className="mt-6 space-y-3 text-gray-600 text-base sm:text-lg max-w-md mx-auto lg:mx-0">
+                {steps.features
+                  .split(/\r?\n/) // handles \n and \r\n
+                  .map(f => f.replace("✔", "").trim())
+                  .filter(f => f.length > 0)
+                  .map((feature, i) => (
+                    <li key={i} className="flex gap-3 items-center">
+                      <span className="text-[#4caf50] text-xl">✔</span>
+                      {feature}
+                    </li>
+                  ))}
+              </ul>
             </div>
-           
 
-        
+
+
 
 
             {/* IMAGE STACK */}
             <div className="relative hidden
-      lg:block w-full max-w-[520px] h-[220px] sm:h-[260px] lg:h-[280px] mx-auto lg:mx-0">
+      lg:block w-full max-w-[520px] h-[220px] sm:h-[260px] lg:h-[280px] mx-auto lg:mx-0 top-22">
               {/* BACK IMAGE */}
               <div className="relative w-full aspect-[3/2] overflow-hidden rounded-tr-[70px] left-0 lg:-left-60">
                 <Image
@@ -347,7 +436,7 @@ const examStyles = {
       <section className="bg-[#fffaf6] py-12 lg:py-16 overflow-hidden">
         <div className="relative mx-auto min-h-[380px] sm:min-h-[420px] lg:min-h-[460px] bg-[url('https://media.istockphoto.com/id/1094302626/photo/hand-raised-for-vote-and-asking-at-conference-seminar-meeting-room.jpg?s=612x612&w=0&k=20&c=r60nXw6xfHRoNPrTiyImBGsXNS5XjtoOQfKYPrIdKe8=')] bg-cover bg-right bg-no-repeat flex items-center px-4 sm:px-6">
           <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/40 to-[#636363] z-0" />
-          
+
           <div className="relative z-10 w-full flex justify-center lg:justify-end">
             <div className="p-[2px] bg-gradient-to-r from-white/100 via-white/20 to-white/100 w-full max-w-full sm:max-w-[600px] lg:max-w-[720px]">
               <div className="bg-[#f26b3a] p-6 sm:p-8 md:p-10 text-white">
@@ -361,72 +450,101 @@ const examStyles = {
                     exit="exit"
                   >
                     {step === 1 && (
-                      <>
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
-                          What Is Your Desired Academic Course?
-                        </h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                          {["UG", "PG", "PHD", "MBBS"].map((item) => (
-                            <button
-                              key={item}
-                              onClick={() => setCourse(item)}
-                              className={`border border-white rounded-xl rounded-tl-[0px] py-3 sm:py-4 text-base sm:text-lg transition ${
-                                course === item
-                                  ? "bg-white text-[#f26b3a]"
-                                  : "bg-[#b04f32] text-white hover:bg-white hover:text-[#f26b3a]"
-                              }`}
-                            >
-                              {item}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
+  <>
+    <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
+      What Is Your Desired Academic Course?
+    </h2>
+
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+      {["UG", "PG", "PHD", "MBBS"].map((item) => (
+        <button
+          key={item}
+          type="button"
+          onClick={() => setValue("course", item, { shouldValidate: true })}
+          className={`border border-white rounded-xl rounded-tl-[0px] py-3 sm:py-4 text-base sm:text-lg transition ${
+            course === item
+              ? "bg-white text-[#f26b3a]"
+              : "bg-[#b04f32] text-white hover:bg-white hover:text-[#f26b3a]"
+          }`}
+        >
+          {item}
+        </button>
+      ))}
+    </div>
+
+    {errors.course && (
+      <p className="text-red-300 mt-2">Please select a course</p>
+    )}
+  </>
+)}
+
 
                     {step === 2 && (
-                      <>
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
-                          Which country do you want to go to?
-                        </h2>
-                        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                          {["UK", "USA", "Canada", "Australia"].map((item) => (
-                            <button
-                              key={item}
-                              onClick={() => setCountry(item)}
-                              className={`border border-white rounded-xl py-3 sm:py-4 transition ${
-                                country === item
-                                  ? "bg-white text-[#f26b3a]"
-                                  : "bg-[#b04f32] hover:bg-white hover:text-[#f26b3a]"
-                              }`}
-                            >
-                              {item}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
+  <>
+    <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
+      Which country do you want to go to?
+    </h2>
 
-                    {step === 3 && (
-                      <>
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
-                          Basic Details
-                        </h2>
-                        <div className="space-y-4">
-                          <input
-                            placeholder="Full Name"
-                            className="w-full px-4 py-3 bg-[#b04f32] rounded-lg text-white border border-white"
-                          />
-                          <input
-                            placeholder="City"
-                            className="w-full bg-[#b04f32] border border-white px-4 py-3 rounded-lg text-white"
-                          />
-                          <input
-                            placeholder="Mobile"
-                            className="w-full bg-[#b04f32] border border-white px-4 py-3 rounded-lg text-white"
-                          />
-                        </div>
-                      </>
-                    )}
+    <div className="grid grid-cols-2 gap-3 sm:gap-4">
+      {["UK", "USA", "Canada", "Australia"].map((item) => (
+        <button
+          key={item}
+          type="button"
+          onClick={() => setValue("country", item, { shouldValidate: true })}
+          className={`border border-white rounded-xl py-3 sm:py-4 transition ${
+            country === item
+              ? "bg-white text-[#f26b3a]"
+              : "bg-[#b04f32] text-white hover:bg-white hover:text-[#f26b3a]"
+          }`}
+        >
+          {item}
+        </button>
+      ))}
+    </div>
+
+    {errors.country && (
+      <p className="text-red-300 mt-2">Please select a country</p>
+    )}
+  </>
+)}
+
+
+                   {step === 3 && (
+  <>
+    <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
+      Basic Details
+    </h2>
+
+    <div className="space-y-4">
+      <input
+        placeholder="Full Name"
+        {...register("fullName", { required: "Name is required" })}
+        className="w-full px-4 py-3 bg-[#b04f32] rounded-lg text-white border border-white"
+      />
+      {errors.name && <p className="text-red-300">{errors.name.message}</p>}
+
+      <input
+        placeholder="City"
+        {...register("city", { required: "City is required" })}
+        className="w-full bg-[#b04f32] border border-white px-4 py-3 rounded-lg text-white"
+      />
+
+      <input
+        placeholder="Mobile"
+        {...register("mobile", {
+          required: "Mobile is required",
+          pattern: {
+            value: /^[0-9]{10}$/,
+            message: "Enter valid 10-digit mobile number",
+          },
+        })}
+        className="w-full bg-[#b04f32] border border-white px-4 py-3 rounded-lg text-white"
+      />
+      {errors.mobile && <p className="text-red-300">{errors.mobile.message}</p>}
+    </div>
+  </>
+)}
+
                   </motion.div>
                 </AnimatePresence>
 
@@ -451,18 +569,22 @@ const examStyles = {
                         setStep(step + 1);
                       }}
                       disabled={(step === 1 && !course) || (step === 2 && !country)}
-                      className={`px-6 sm:px-8 py-3 rounded-lg font-semibold mx-auto transition ${
-                        (step === 1 && !course) || (step === 2 && !country)
+                      className={`px-6 sm:px-8 py-3 rounded-lg font-semibold mx-auto transition ${(step === 1 && !course) || (step === 2 && !country)
                           ? "bg-[#b04f32] cursor-not-allowed"
                           : "bg-[#b04f32] text-white hover:bg-[#9a3f28]"
-                      }`}
+                        }`}
                     >
                       Save & Go Next →
                     </button>
                   ) : (
-                    <button className="bg-white text-[#f26b3a] px-6 sm:px-8 py-3 rounded-lg font-semibold">
-                      Submit ✓
-                    </button>
+                    <button
+  onClick={handleSubmit(onSubmit)}
+  disabled={isSubmitting}
+  className="mt-6 px-6 py-3 bg-white text-[#f26b3a] rounded-xl"
+>
+  {isSubmitting ? "Submitting..." : "Submit"}
+</button>
+
                   )}
                 </div>
               </div>
@@ -511,31 +633,109 @@ const examStyles = {
             <span className="text-gray-700">{images.title.split("||")[0]}</span>{" "}
             <span className="text-[#f26b3a]">{images.title.split("||")[1]}</span>
           </h2>
-          <p className="text-center text-gray-500 mb-6 max-w-3xl mx-auto">{images.subTitle}</p>
+          <p className="text-center text-gray-500 mb-6 max-w-4xl mx-auto">{images.subTitle}</p>
 
-          <div className="bg-[#f26b3a] overflow-hidden mb-10 lg:mb-16">
-            <ul className="flex flex-wrap justify-center text-white text-base sm:text-lg font-medium">
-              {["Counseling", "Test Prep", "Success Stories", "Events", "Visa & Loan Assistance", "Our Centres"].map((item) => (
-                <li key={item} className="px-4 sm:px-6 py-3 sm:py-4 hover:bg-white/20 cursor-pointer transition whitespace-nowrap">
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div className="flex justify-center mt-8 py-10">
+  <div className="flex items-center gap-1 rounded-full border border-orange-200 bg-white p-1">
+    {tabs.map((tab) => {
+      const isActive = activeTab === tab.value;
+      
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-stretch px-4 sm:px-8 lg:px-20 mx-auto max-w-7xl">
-            <div className="overflow-hidden rounded-br-[120px]">
-              <img src="https://thumbs.dreamstime.com/b/teacher-high-school-students-23710642.jpg" alt="classroom" className="w-full h-[260px] sm:h-[360px] lg:h-[500px] object-cover" />
-            </div>
-            <div className="grid grid-rows-2 gap-4">
-              <div className="overflow-hidden rounded-bl-[60px]">
-                <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655" alt="seminar" className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover" />
-              </div>
-              <div className="overflow-hidden rounded-tl-[60px]">
-                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f" alt="students" className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover" />
-              </div>
-            </div>
+      return (
+        <button
+          key={tab.value}
+          onClick={() => handleTabClick(tab.value)}
+          className="relative px-5 py-2 text-sm font-medium rounded-full"
+        >
+          {/* SLIDING ACTIVE PILL */}
+          {isActive && (
+            <motion.span
+              layoutId="activeTabPill"
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                damping: 35,
+              }}
+              className="absolute inset-0 rounded-full bg-orange-600"
+            />
+          )}
+
+          {/* LABEL */}
+          <span
+            className={`relative z-10 transition-colors ${
+              isActive ? "text-white" : "text-orange-600"
+            }`}
+          >
+            {tab.label}
+          </span>
+        </button>
+      )
+    })}
+  </div>
+</div>
+
+
+
+         <AnimatePresence mode="wait">
+  <motion.div
+    key={activeTab} // 🔥 THIS IS THE MAGIC
+    initial={{ x: 60, opacity: 0 }}
+    animate={{ x: 0, opacity: 1 }}
+    exit={{ x: -60, opacity: 0 }}
+    transition={{ duration: 0.45, ease: "easeInOut" }}
+    className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 px-4 sm:px-8 lg:px-10 mx-auto max-w-7xl"
+  >
+
+  {loading ? (
+    <p className="col-span-full text-center text-gray-500">
+      Loading images...
+    </p>
+  ) : Array.isArray(galleryType) && galleryType.length > 0 ? (
+    <>
+      {/* LEFT: 2 SMALL IMAGES */}
+      <div className="grid grid-rows-2 gap-4">
+        {galleryType[1] && (
+          <div className="overflow-hidden rounded-bl-[60px]">
+            <img
+              src={galleryType[1].mediaUrl}
+              alt={galleryType[1].title}
+              loading="lazy"
+              className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover"
+            />
           </div>
+        )}
+
+        {galleryType[2] && (
+          <div className="overflow-hidden rounded-tl-[60px]">
+            <img
+              src={galleryType[2].mediaUrl}
+              alt={galleryType[2].title}
+              className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* RIGHT: BIG IMAGE */}
+      {galleryType[0] && (
+        <div className="overflow-hidden rounded-br-[120px]">
+          <img
+            src={galleryType[0].mediaUrl}
+            alt={galleryType[0].title}
+            className="w-full h-[260px] sm:h-[360px] lg:h-[500px] object-cover"
+          />
+        </div>
+      )}
+    </>
+  ) : (
+    <p className="col-span-full text-center text-gray-500">
+      No images found
+    </p>
+  )}
+</motion.div>
+</AnimatePresence>
+
+
         </div>
       </section>
 
@@ -603,7 +803,7 @@ const examStyles = {
           <div className="absolute left-0 top-0 w-full h-[280px] sm:h-[360px] md:h-[450px] bg-[#f2f2f2] rounded-tr-[120px] overflow-hidden z-0 lg:-left-31 lg:w-[55%] lg:h-[620px] lg:rounded-tr-[160px]">
             <img src="https://www.hdwallpapers.in/download/black_and_white_image_of_colosseum_piazza_del_colosseo_rome_italy_hd_travel-HD.jpg" alt="Italy" className="absolute inset-0 w-full h-full object-cover grayscale" />
             <div className="hidden lg:grid absolute top-8 right-40 grid-cols-2 gap-3 p-3">
-              {[1,2,3,4].map((i) => (
+              {[1, 2, 3, 4].map((i) => (
                 <img key={i} src="https://www.shutterstock.com/shutterstock/photos/2098674772/display_1500/stock-vector-university-logo-college-school-logo-crests-and-emblems-2098674772.jpg" className="w-46 h-20 border border-gray-500" />
               ))}
             </div>
@@ -632,73 +832,73 @@ const examStyles = {
       </section>
 
       <section className="bg-[#fffaf6] py-12 lg:py-20 px-4 overflow-hidden relative">
-  <div className="hidden lg:block absolute top-60 left-0 w-[400px] h-[400px] -translate-y-1/2 z-10 pointer-events-none -rotate-150" style={{ transform: "rotate(30deg)", filter: "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)", mixBlendMode: "multiply" }}>
-    <Image src="/images/g logo.png" alt="arrow" fill className="object-contain rotate-[-15deg] scale-x-[-1] opacity-10" />
-  </div>
+        <div className="hidden lg:block absolute top-60 left-0 w-[400px] h-[400px] -translate-y-1/2 z-10 pointer-events-none -rotate-150" style={{ transform: "rotate(30deg)", filter: "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)", mixBlendMode: "multiply" }}>
+          <Image src="/images/g logo.png" alt="arrow" fill className="object-contain rotate-[-15deg] scale-x-[-1] opacity-10" />
+        </div>
 
-  <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-    <div className="text-center lg:text-left">
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-gray-700 leading-snug">
-        {stories.title.split("||")[0]}
-        <br />
-        <span className="text-[#f26b3a] font-semibold">{stories.title.split("||")[1]}</span>
-      </h2>
-      <p className="text-gray-500 mt-4 max-w-xl mx-auto lg:mx-0">{stories.subtitle}</p>
-      <ul className="mt-6 space-y-3 text-gray-600 max-w-xl mx-auto lg:mx-0">
-        {stories.features.split(",").map((feature, i) => (
-          <li key={i} className="flex items-start gap-3">
-            
-            {feature.trim()}
-          </li>
-        ))}
-      </ul>
-      <button className="mt-8 px-8 py-3 border border-[#f26b3a] rounded-full text-[#f26b3a] font-medium hover:bg-[#f26b3a] hover:text-white transition">Start Your Journey →</button>
-    </div>
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div className="text-center lg:text-left">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-gray-700 leading-snug">
+              {stories.title.split("||")[0]}
+              <br />
+              <span className="text-[#f26b3a] font-semibold">{stories.title.split("||")[1]}</span>
+            </h2>
+            <p className="text-gray-500 mt-4 max-w-xl mx-auto lg:mx-0">{stories.subtitle}</p>
+            <ul className="mt-6 space-y-3 text-gray-600 max-w-xl mx-auto lg:mx-0">
+              {stories.features.split(",").map((feature, i) => (
+                <li key={i} className="flex items-start gap-3">
 
-    {/* SLIDER SECTION - UPDATED */}
-    <div className="relative w-full py-4 ">
-      <div
-        ref={sliderRef}
-        className="keen-slider"
-      >
-        {testimonialimg.map((item) => (
-          <div
-            key={item._id}
-            className="keen-slider__slide py-3"
-          >
-            <div className="bg-orange-500 inset-0 w-[150px] h-[30%] absolute -left-0  rounded-tl-[80px] top-1" />
-            <div className="relative w-full h-[440px] sm:h-[480px] rounded-tl-[80px]  overflow-hidden bg-[#8f8f8f] mx-2">
-                
-              {/* Name with light black gradient background */}
-              <div className="absolute top-0 left-0 right-0 h-24 z-30 bg-gradient-to-b from-black/70 to-transparent rounded-tl-[80px]">
-                <p className="absolute top-14 left-0 w-full text-center text-white font-semibold text-lg z-30">
-                  {item.name}
-                </p>
-              </div>
+                  {feature.trim()}
+                </li>
+              ))}
+            </ul>
+            <button className="mt-8 px-8 py-3 border border-[#f26b3a] rounded-full text-[#f26b3a] font-medium hover:bg-[#f26b3a] hover:text-white transition">Start Your Journey →</button>
+          </div>
 
-              {/* Image */}
-              <img
-                src={item.image}
-                alt={item.name}
-                className="absolute left-1/2 -translate-x-1/2 h-full w-auto object-cover z-10 scale-[1.15] inset-0"
-              />
-              
-              {/* Dark overlay for better text visibility */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent z-20" />
+          {/* SLIDER SECTION - UPDATED */}
+          <div className="relative w-full py-4 ">
+            <div
+              ref={sliderRef}
+              className="keen-slider"
+            >
+              {testimonialimg.map((item) => (
+                <div
+                  key={item._id}
+                  className="keen-slider__slide py-3"
+                >
+                  <div className="bg-orange-500 inset-0 w-[150px] h-[30%] absolute -left-0  rounded-tl-[80px] top-1" />
+                  <div className="relative w-full h-[440px] sm:h-[480px] rounded-tl-[80px]  overflow-hidden bg-[#8f8f8f] mx-2">
 
-              {/* Play button */}
-              <div className="absolute inset-0 flex items-center justify-center z-40">
-                <div className="bg-red-600 w-12 h-12 rounded-lg flex items-center justify-center shadow-lg">
-                  <span className="text-white text-xl">▶</span>
+                    {/* Name with light black gradient background */}
+                    <div className="absolute top-0 left-0 right-0 h-24 z-30 bg-gradient-to-b from-black/70 to-transparent rounded-tl-[80px]">
+                      <p className="absolute top-14 left-0 w-full text-center text-white font-semibold text-lg z-30">
+                        {item.name}
+                      </p>
+                    </div>
+
+                    {/* Image */}
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="absolute left-1/2 -translate-x-1/2 h-full w-auto object-cover z-10 scale-[1.15] inset-0"
+                    />
+
+                    {/* Dark overlay for better text visibility */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent z-20" />
+
+                    {/* Play button */}
+                    <div className="absolute inset-0 flex items-center justify-center z-40">
+                      <div className="bg-red-600 w-12 h-12 rounded-lg flex items-center justify-center shadow-lg">
+                        <span className="text-white text-xl">▶</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
-</section>
+        </div>
+      </section>
 
       <section className="py-16 px-4 bg-[#fffaf6]">
         <div className="max-w-7xl mx-auto text-center">
@@ -756,60 +956,59 @@ const examStyles = {
           </div>
 
           <div>
-  {exams.items
-    .reduce((rows, item, index) => {
-      if (index % 2 === 0) rows.push([]);
-      rows[rows.length - 1].push(item);
-      return rows;
-    }, [])
-    .map((row, rowIndex) => (
-      <div
-        key={rowIndex}
-        className={`grid grid-cols-1 md:grid-cols-2 items-center gap-6 lg:gap-10 py-8 lg:py-10 ${
-          rowIndex !== exams.items.length - 1 ? "border-b-2 border-gray-400" : ""
-        }`}
-      >
-        {row.map((item, i) => {
-          const title = item.title.toUpperCase();
-          const bgColor = examStyles[title] || "bg-gray-500";
+            {exams.items
+              .reduce((rows, item, index) => {
+                if (index % 2 === 0) rows.push([]);
+                rows[rows.length - 1].push(item);
+                return rows;
+              }, [])
+              .map((row, rowIndex) => (
+                <div
+                  key={rowIndex}
+                  className={`grid grid-cols-1 md:grid-cols-2 items-center gap-6 lg:gap-10 py-8 lg:py-10 ${rowIndex !== exams.items.length - 1 ? "border-b-2 border-gray-400" : ""
+                    }`}
+                >
+                  {row.map((item, i) => {
+                    const title = item.title.toUpperCase();
+                    const bgColor = examStyles[title] || "bg-gray-500";
 
-          return (
+                    return (
 
-            <Link href={item.route} >
-            <div key={i} className="flex items-center gap-4 lg:gap-6">
-              {/* LEFT BOX */}
-              <div
-                className={`h-16 w-24 sm:h-18 sm:w-28 lg:h-20 lg:w-30 flex items-center justify-center pt-4 lg:pt-1 rounded-tr-4xl text-3xl lg:text-4xl text-white ${bgColor}`}
-              >
-                {item.image ? (
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-20 h-12 object-contain"
-                  />
-                ) : (
-                  title
-                )}
-              </div>
+                      <Link href={item.route} >
+                        <div key={i} className="flex items-center gap-4 lg:gap-6">
+                          {/* LEFT BOX */}
+                          <div
+                            className={`h-16 w-24 sm:h-18 sm:w-28 lg:h-20 lg:w-30 flex items-center justify-center pt-4 lg:pt-1 rounded-tr-4xl text-3xl lg:text-4xl text-white ${bgColor}`}
+                          >
+                            {item.image ? (
+                              <img
+                                src={item.image}
+                                alt={item.title}
+                                className="w-20 h-12 object-contain"
+                              />
+                            ) : (
+                              title
+                            )}
+                          </div>
 
-              {/* TEXT */}
+                          {/* TEXT */}
 
-              <div className="flex-block" >
-                <p className="text-lg lg:text-xl font-medium text-gray-700 ml-0 lg:ml-10">
-                {title}
-              </p>
-              <p className="pl-10 text-gray-500" >{item.subtitle}</p>
+                          <div className="flex-block" >
+                            <p className="text-lg lg:text-xl font-medium text-gray-700 ml-0 lg:ml-10">
+                              {title}
+                            </p>
+                            <p className="pl-10 text-gray-500" >{item.subtitle}</p>
 
-              </div>
-              
-            </div>
-            </Link>
-            
-          );
-        })}
-      </div>
-    ))}
-</div>
+                          </div>
+
+                        </div>
+                      </Link>
+
+                    );
+                  })}
+                </div>
+              ))}
+          </div>
 
         </div>
       </section>

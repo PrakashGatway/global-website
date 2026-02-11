@@ -23,7 +23,7 @@ const images = [
   "https://as2.ftcdn.net/jpg/05/29/12/57/1000_F_529125762_omW1yTehDLLFJKwLJjRET0G3sXiQnK5g.jpg",
 ];
 
-export default function UniversityPage({ data ,caseStudy }) {
+export default function UniversityPage({ data ,caseStudy,imageRes }) {
   const [index, setIndex] = useState(0);
 
   // AUTO SLIDE
@@ -93,9 +93,9 @@ export default function UniversityPage({ data ,caseStudy }) {
         <div className="mb-8 mx-auto" style={{ borderTop: '3px solid rgb(94, 77, 77)', width: '70%' }}></div>
 
         <div className="text-center py-6 mb-12 bg-[#f5f1f0]">
-          <h2 className="text-[2.6rem] font-bold mb-4 uppercase tracking-wide" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", textAlign: 'center' }}>
-            <span className="block">{sections.content?.title?.split(' ').slice(0, 3).join(' ') || "IVY COACH'S COLLEGE"}</span>
-            <span className="block">{sections.content?.title?.split(' ').slice(3).join(' ') || "ADMISSIONS TRACK RECORD"}</span>
+          <h2 className="text-[2.6rem] font-bold mb-4 uppercase tracking-wide" style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", textAlign: 'center' }}>
+            <span className="block text-[#f46c44]">{sections.content?.title?.split('||').slice(0)}</span>
+            <span className="block text-gray-600">{sections.content?.title?.split('||').slice(1)}</span>
           </h2>
           <p className="text-lg text-gray-800 max-w-4xl mx-auto mb-2 font-semibold" style={{ textAlign: 'center' }}>
             The percentage of Ivy Coach's packaged clients over the last 10 years who earned admission to the following schools in the Early round.
@@ -304,7 +304,21 @@ export default function UniversityPage({ data ,caseStudy }) {
 
       {/* Reusable Sections — These likely already use `data` internally */}
       <OffersSlider />
+
+       <section className="mx-auto bg-[#fff9f4] py-20 px-5">
+        <div className="max-w-7xl mx-auto mb-8 mx-auto">
+          <h2 className="text-[2.6rem] font-bold text-center" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
+             <span className="text-[#f46c44]">{sections.whySpecial.title.split('||')[0]}</span> {""}
+          <span className="text-gray-600">{sections.whySpecial.title.split('||')[1]}</span>
+          </h2>
+          <p className="text-lg font-semibold text-gray-700">{sections.roadMap.subtitle}</p>
+
       <StickyPaymentSection sections={data.sections.whySpecial.items} />
+
+
+         
+        </div>
+      </section>
       
 <AdmissionRequirementsUK admissionData={data.sections.admissionRequirements} />
       <HowGawayHelps howWeHelpData={data.sections.howWeHelp} />
@@ -332,26 +346,7 @@ export default function UniversityPage({ data ,caseStudy }) {
               title={sections?.bottomTestimonial?.title}
               subtitle={sections?.bottomTestimonial?.subtitle}
               font = {true}
-              items={[
-                {
-                  id: 1,
-                  name: "Saumya Sharma",
-                  text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-                  image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
-                },
-                {
-                  id: 2,
-                  name: "Aditya Sharma",
-                  text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-                  image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
-                },
-                {
-                  id: 3,
-                  name: "Rohan Gupta",
-                  text: "One of our proud alumni, has successfully completed his Bachelor's degree in Germany",
-                  image: "https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg",
-                },
-              ]}
+              items={imageRes}
             />
       <CaseStudy font={true} caseStudydata ={sections.caseStudies} caseStudy = {caseStudy} />
 

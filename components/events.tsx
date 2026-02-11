@@ -217,7 +217,7 @@ export default function Events({ data, page, limit, total, type }) {
                 {/* All our events & webinars Section */}
                 <section className="bg-white py-8 relative">
                     {/* G Logo on Right Side */}
-                    <div className="absolute right-[-120px] top-[13%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0 rounded-lg p-4">
+                    <div className="absolute right-[-120px] top-[200pxs] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0 rounded-lg p-4">
                         <Image
                             src="/images/g logo.png"
                             alt="Decorative G Logo"
@@ -264,7 +264,7 @@ export default function Events({ data, page, limit, total, type }) {
                         {type === 'event' && (
                             <div className="p-6 lg:p-8 max-w-7xl mx-auto">
                                 <div className="max-w-7xl mx-auto">
-                                    <div className="absolute right-[-70px] top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0">
+                                    {/* <div className="absolute right-[-70px] top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0">
                                         <Image
                                             src="/images/g logo.png"
                                             alt="Decorative Arrow"
@@ -273,7 +273,7 @@ export default function Events({ data, page, limit, total, type }) {
                                             className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
                                             style={{ transform: 'scaleX(-1) rotate(-40deg)' }}
                                         />
-                                    </div>
+                                    </div> */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-[111]">
                                         {data.map((event) => (
                                             <div
@@ -357,7 +357,7 @@ export default function Events({ data, page, limit, total, type }) {
                         {type === 'webnair' && (
                             <div className="p-6 lg:p-8 max-w-7xl mx-auto">
                                 <div className="max-w-7xl mx-auto">
-                                    <div className="absolute right-[-70px] top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0">
+                                    {/* <div className="absolute right-[-70px] top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0">
                                         <Image
                                             src="/images/g logo.png"
                                             alt="Decorative Arrow"
@@ -366,7 +366,7 @@ export default function Events({ data, page, limit, total, type }) {
                                             className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
                                             style={{ transform: 'scaleX(-1) rotate(-40deg)' }}
                                         />
-                                    </div>
+                                    </div> */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-[111]">
                                         {data.map((event) => (
                                             <div

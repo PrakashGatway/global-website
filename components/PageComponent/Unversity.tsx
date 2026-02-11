@@ -19,14 +19,20 @@ export default function UniversitySliderClient() {
           mode: 'loop',
           slides: {
             origin: 'center',
-            perView: 2.2,
-            spacing: 12,
+            perView: 3,
+            spacing: 0,
           },
           breakpoints: {
+            '(min-width: 300px)': {
+              slides: {
+                perView: 3,
+                spacing: 0,
+              },
+            },
             '(min-width: 640px)': {
               slides: {
-                perView: 3.5,
-                spacing: 16,
+                perView: 4.2,
+                spacing: 0,
               },
             },
             '(min-width: 1024px)': {
@@ -94,31 +100,31 @@ export default function UniversitySliderClient() {
 
   return (
     <section className="py-12 overflow-hidden">
-      <h2 className="text-[2.6rem] font-bold text-center mb-6">
+      <h2 className="text-xl lg:text-3xl font-bold text-center mb-6">
         <span className="text-[#ea6c46]">International</span>{' '}
         <span className="text-[#646162]">University Partners</span>
       </h2>
 
       {/* FULL WIDTH SLIDER */}
-      <div ref={sliderRef} className="keen-slider w-full px-4 lg:px-12">
+      <div ref={sliderRef} className="keen-slider w-full   lg:px-12">
         {universities.map((university) => (
-          <div key={university.id} className="keen-slider__slide">
-            <div className="relative h-30 rounded-xl overflow-hidden">
+          <div key={university.id} className="keen-slider__slide ">
+            <div className="relative h-15 rounded-xl overflow-hidden ">
               
               {/* Background Image */}
               <div
-                className="absolute inset-0 bg-cover bg-center "
+                className="absolute inset-0 bg-cover bg-center scale-115 "
                 style={{ backgroundImage: "url('/shapes/unibg.png')" }}
               />
 
               {/* Logo */}
-              <div className="relative z-10 flex items-center justify-center h-full p-8">
+              <div className="relative z-10 flex items-center justify-center h-full w-full p-5 sm:p-8">
                 <Image
                   src={university.src}
                   alt={university.alt}
-                  width={140}
-                  height={70}
-                  className="object-contain"
+                  width={150}
+                  height={150}
+                  className="object-contain "
                 />
               </div>
             </div>

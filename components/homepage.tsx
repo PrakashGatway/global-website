@@ -17,6 +17,7 @@ import BlogGrid from "./blogGrid"
 import { useKeenSlider } from "keen-slider/react"
 import MultiStepForm from "./PopupForm"
 import { useState } from "react"
+import FAQSection from "./faqPage"
 
 
 
@@ -25,7 +26,7 @@ import { useState } from "react"
 
 
 
-export default function Homepage({ homePage, Blogdata, destinationData, imageData }) {
+export default function Homepage({ homePage, Blogdata, destinationData, imageData , Faqres }) {
 
   const [openForm, setOpenForm] = useState(false);
 
@@ -144,8 +145,8 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-2">
 
             {/* LEFT CONTENT */}
-            <div className="text-center lg:text-left">
-              <h1 className="text-3xl sm:text-4xl lg:text-[2.7rem] font-extrabold leading-tight">
+            <div className="text-justify lg:text-left">
+              <h1 className="text-xl sm:text-4xl lg:text-[2.7rem] font-extrabold leading-tight">
                 {homePage?.hero?.title ? (
                   <span className="block text-[#646162]">
                     {homePage.hero.title.split('||')[0]?.trim()}
@@ -227,41 +228,49 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
           {/* STATS SECTION */}
           <div className="pb-12 lg:pb-16">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
-              {(homePage?.stats?.stats || []).map((item: any, index: number) => (
-                <div
-                  key={index}
-                  className="flex items-center sm:items-start gap-4 text-center sm:text-left"
-                >
-                  {item.icon ? (
-                    <Image
-                      src={item.icon.trim()}
-                      alt="Stat Icon"
-                      width={70}
-                      height={70}
-                      className="object-contain mx-auto sm:mx-0"
-                    />
-                  ) : (
-                    <Image
-                      src="https://toppng.com/uploads/preview/graduation-cap-svg-icon-free-graduation-cap-icon-11553393846gq7rcr1qsx.png"
-                      alt="Graduation Cap"
-                      width={70}
-                      height={70}
-                      className="object-contain mx-auto sm:mx-0"
-                    />
-                  )}
-                  <div>
-                    <div className="text-3xl sm:text-4xl font-bold text-gray-800">
-                      {item.number}
-                    </div>
-                    <div className="text-gray-700 leading-snug">
-                      {item.title}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-10">
+
+    {(homePage?.stats?.stats || []).map((item: any, index: number) => (
+      <div
+        key={index}
+        className="
+          /* MOBILE CARD */
+          flex flex-col items-center text-center
+          bg-white p-4 rounded-2xl shadow-md
+
+          /* DESKTOP RESET (UNCHANGED VIEW) */
+          sm:bg-transparent sm:p-0 sm:rounded-none sm:shadow-none
+          sm:flex-row sm:items-start sm:text-left
+          gap-3 sm:gap-4
+        "
+      >
+        {/* Icon */}
+        <Image
+          src={
+            item.icon?.trim() ||
+            'https://toppng.com/uploads/preview/graduation-cap-svg-icon-free-graduation-cap-icon-11553393846gq7rcr1qsx.png'
+          }
+          alt="Stat Icon"
+          width={55}
+          height={55}
+          className="object-contain"
+        />
+
+        {/* Text */}
+        <div>
+          <div className="text-xl sm:text-4xl font-bold text-gray-800">
+            {item.number}
           </div>
+          <div className="text-sm sm:text-base text-gray-700 leading-snug">
+            {item.title}
+          </div>
+        </div>
+      </div>
+    ))}
+
+  </div>
+</div>
+
         </div>
       </section>
 
@@ -269,7 +278,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
       <section
         className="
-    relative py-16 lg:py-24
+    relative lg:py-16 lg:py-24
   "
       >
         <div className="absolute -left-20 top-[35%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
@@ -736,6 +745,8 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
         </div>
       </section>
+
+      <FAQSection Faqres = {Faqres} />
     </main>
   )
 }

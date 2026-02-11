@@ -74,7 +74,7 @@ export default async function RootLayout({
   )
 
   const servicedata = feature.data.data.filter((item) => 
-    item.pageType === "services_page"
+    item.pageType === "service"
   ) 
 
  

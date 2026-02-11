@@ -35,11 +35,11 @@
   --popover-foreground: oklch(0.15 0.01 0);
 
   /* Primary teal/green color (#1A7D5F or similar) */
-  --primary: oklch(0.45 0.12 165);
-  --primary-foreground: oklch(0.98 0.001 0);
+   --primary: #00306a;
+  --primary-foreground: #ffffff;
 
-  --secondary: oklch(0.95 0.01 0);
-  --secondary-foreground: oklch(0.45 0.12 165);
+  --secondary: #d01a1a;
+  --secondary-foreground: #ffffff;
 
   --muted: oklch(0.92 0.01 0);
   --muted-foreground: oklch(0.5 0.02 0);

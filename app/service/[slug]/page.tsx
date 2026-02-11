@@ -1,5 +1,5 @@
+import { serverInstance } from "@/app/axiosInstance";
 import ServicePage from "@/components/ServicePage";
-import { serverInstance } from "../axiosInstance";
 
 
 /* ---------------- SEO ---------------- */
@@ -24,20 +24,17 @@ export async function generateMetadata() {
 }
 
 /* ---------------- Page ---------------- */
-export default async function Page() {
-  const [serviceRes, testimonialImgRes , galleryRes] = await Promise.all([
-    serverInstance.get("/page-information/slug/service"),
+export default async function Page({params}) {
+    const { slug } = await params;
+  const [serviceRes, testimonialImgRes] = await Promise.all([
+    serverInstance.get(`/page-information/slug/${slug}`),
     serverInstance.get("/testimonials?type=image"),
-    serverInstance.get(`/galleries/public/list?type=visa`),
-
   ]);
-  
 
   return (
     <ServicePage
       serviceData={serviceRes.data.data}
       testimonialimg={testimonialImgRes.data.data}
-      galleryData = {galleryRes.data.data}
     />
   );
 }

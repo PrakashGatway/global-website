@@ -111,7 +111,7 @@ useEffect(() => {
   return (
    <section
   className="py-12 sm:py-14 lg:py-16"
-  style={{ backgroundColor: !bg && "#f5f1f0", overflow: "visible" }}
+  style={{ backgroundColor: !bg && "#f5f1f0", overflow: "visible" , fontFamily: font ? "'Poppins', sans-serif" : "inherit" }}
 >
   <div
     className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center overflow-visible"
@@ -131,21 +131,21 @@ useEffect(() => {
     <div ref={sliderRef} className="keen-slider">
           {items.map((testimonial) => (
             <div key={testimonial.id} className="keen-slider__slide">
-              <div className="flex items-center justify-center h-full mt-6 py-1">
+              <div className="flex items-start justify-start h-full mt-6 py-1">
                 <div className="relative lg:w-[340px] w-[380px] h-[350px] ">
                   <div style={{ backgroundImage: "url('/shapes/testi.png')" }} className="absolute left-1 top-1 right-1 w-full h-[97%] bg-contain bg-center bg-no-repeat" />
                   <div className="absolute top-3 left-0 w-full flex flex-col gap-2 h-full py-12 pl-8 pr-2 ">
-                    <div className="grid grid-cols-20">
-                      <div className="col-span-11">
-                        <h3 className="text-lg font-bold text-gray-600 mb-3">
+                    <div className="grid grid-cols-20 gap-4">
+                      <div className="col-span-11 ">
+                        <h3 className="text-[15px] text-left font-bold text-gray-600 mb-3">
                           {testimonial.name}
                         </h3>
-                        <p className="lg:text-base text-[11px] text-gray-700 ">
-                          {testimonial.text}
+                        <p className="lg:text-xs text-justify text-sm text-gray-700 line-clamp-7">
+                          {testimonial.message}
                         </p>
                       </div>
 
-                      <div style={{ perspective: '500px' }} className="col-span-9" >
+                      <div style={{ perspective: '500px' }} className="col-span-8" >
                         <div className="border border-gray-400 rounded-2xl overflow-hidden" style={{
                           transform: `
           rotateY(-20deg)
@@ -162,12 +162,12 @@ useEffect(() => {
           rotateZ(-2deg)
           skewX(0deg)
         `,
-                          }} src="https://t3.ftcdn.net/jpg/06/50/56/80/360_F_650568058_q6KruAvlT4w7RahAGwIwgIY8ZjIkGAYg.jpg" alt="" />
+                          }} src={testimonial.image} alt="" />
                         </div>
                       </div>
                     </div>
                     <div className="p-4">
-                      <img src="https://www.gatewayabroadeducations.com/anime/p17.svg" className="h-full w-30 object-contain" alt="" />
+                      <img src={testimonial.universityLogo} className="h-full w-25 object-contain" alt="" />
                     </div>
                   </div>
 

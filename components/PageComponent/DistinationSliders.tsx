@@ -554,11 +554,7 @@ gsap.registerPlugin(ScrollTrigger);
   /* 🔹 NORMALIZE DATA (same as StickyPaymentSection) */
   const items = useMemo(() => howWeHelpData?.items || [], [howWeHelpData]);
 
-  /* 🔹 TITLE PARSE */
-  const fullTitle = howWeHelpData?.title || "";
-  const [prefix, suffix] = fullTitle.includes("||")
-    ? fullTitle.split("||").map((s: string) => s.trim())
-    : ["", fullTitle];
+
 
   /* 🔥 GSAP LOGIC — SAME AS YOUR WORKING COMPONENT */
  useLayoutEffect(() => {
@@ -640,9 +636,9 @@ gsap.registerPlugin(ScrollTrigger);
     >
       <div className="max-w-7xl mx-auto w-full px-4 lg:px-0">
         {/* TITLE */}
-        <h3 className="text-center text-[2.6rem] font-semibold mb-12">
-          <span className="text-[#f46c44]">{prefix}</span>{" "}
-          <span className="text-[#6b6b6b]">{suffix}</span>
+        <h3 className="text-center text-[2.6rem] font-semibold mb-12" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
+          <span className="text-[#f46c44]">{howWeHelpData?.title.split("||")[0]}</span>{" "}
+          <span className="text-gray-600">{howWeHelpData?.title.split("||")[1]}</span>
         </h3>
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
