@@ -26,15 +26,18 @@ export async function generateMetadata() {
 /* ---------------- Page ---------------- */
 export default async function Page({params}) {
     const { slug } = await params;
-  const [serviceRes, testimonialImgRes] = await Promise.all([
+  const [serviceRes, testimonialImgRes , Faqres] = await Promise.all([
     serverInstance.get(`/page-information/slug/${slug}`),
     serverInstance.get("/testimonials?type=image"),
+        serverInstance.get("/faqs/public/list?type=General"),
+
   ]);
 
   return (
     <ServicePage
       serviceData={serviceRes.data.data}
       testimonialimg={testimonialImgRes.data.data}
+      Faqres = {Faqres.data.data}
     />
   );
 }

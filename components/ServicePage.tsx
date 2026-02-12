@@ -9,8 +9,9 @@ import { useKeenSlider } from "keen-slider/react";
 import axiosInstance from "@/app/axiosInstance";
 import { get } from "http";
 import { useForm } from "react-hook-form";
+import FAQSection from "./faqPage";
 
-export default function ServicePage({ serviceData, testimonialimg, galleryData }) {
+export default function ServicePage({ serviceData, testimonialimg, galleryData,Faqres }) {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
 
@@ -1037,6 +1038,8 @@ const handleTabClick = (tab) => {
           </div>
         </div>
       </section>
+
+      <FAQSection Faqres= {Faqres} />
     </>
   )
 }

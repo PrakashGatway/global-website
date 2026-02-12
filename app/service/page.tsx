@@ -25,10 +25,12 @@ export async function generateMetadata() {
 
 /* ---------------- Page ---------------- */
 export default async function Page() {
-  const [serviceRes, testimonialImgRes , galleryRes] = await Promise.all([
+  const [serviceRes, testimonialImgRes , galleryRes , Faqres] = await Promise.all([
     serverInstance.get("/page-information/slug/service"),
     serverInstance.get("/testimonials?type=image"),
     serverInstance.get(`/galleries/public/list?type=visa`),
+    serverInstance.get("/faqs/public/list?type=General"),
+
 
   ]);
   
@@ -38,6 +40,7 @@ export default async function Page() {
       serviceData={serviceRes.data.data}
       testimonialimg={testimonialImgRes.data.data}
       galleryData = {galleryRes.data.data}
+      Faqres = {Faqres.data.data}
     />
   );
 }

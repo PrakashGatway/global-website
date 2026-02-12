@@ -129,6 +129,23 @@ useEffect(() => {
 }, []);
 
 
+useEffect(() => {
+  if (isOpen) {
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+  } else {
+    document.body.style.position = "";
+    document.body.style.width = "";
+  }
+
+  return () => {
+    document.body.style.position = "";
+    document.body.style.width = "";
+  };
+}, [isOpen]);
+
+
+
 
 
 
@@ -138,7 +155,7 @@ useEffect(() => {
  
 
 {/* ================= MAIN NAVBAR ================= */}
-<nav className="sticky top-0 z-[999] bg-[#f46c44] shadow-sm  pb-2  ">
+<nav className={`sticky top-0 z-[999] bg-[#f46c44] shadow-sm  pb-2   `}>
 
   <div
   className={`mx-auto  flex justify-between relative transition-all duration-500  ease-in-out ${
@@ -151,7 +168,7 @@ useEffect(() => {
      
          <div className={`items-center text-end px-8   gap-2 bg-white    ` }>
      
-      <span className={`font-medium ${isScrolled ? "hidden" : "block"}`} >
+      <span className={`font-medium hidden lg:block ${isScrolled ? "hidden" : "block"}`} >
         Contact Your Nearest Centre
       </span>
        {/* LOGO */}
@@ -175,8 +192,8 @@ useEffect(() => {
      {!isScrolled && (
       <>
        {/* Right */}
-    <div className="flex w-full justify-end items-center gap-6  z-10 px-20  text-white">
-      <div className="bg-[#6d1901] flex items-center gap-2 px-4 py-2  text-sm font-medium">
+    <div className=" w-full justify-end  items-center gap-6 lg:flex hidden z-10 px-20  text-white">
+      <div className="bg-[#6d1901]    flex justify-center items-center gap-2 px-4 py-2  text-sm font-medium">
 
 
       <a href="/about" className="hover:opacity-80 transition">
@@ -193,7 +210,8 @@ useEffect(() => {
       </a>
       </div>
 
-    </div></>
+    </div>
+    </>
      )}
     {/* ================= DESKTOP MENU ================= */}
     <div className={`hidden lg:flex items-end gap-2 ${isScrolled ? "flex justify-end" : "justify-center"} `} >
@@ -295,32 +313,30 @@ useEffect(() => {
     {/* MOBILE TOGGLE */}
     <button
       onClick={() => setIsOpen(true)}
-      className="lg:hidden text-gray-800"
+      className="lg:hidden text-gray-800 px-4"
     >
-      <Menu size={28} />
+      <Menu size={33} />
     </button>
   </div>
 
   {/* ================= MOBILE SIDEBAR ================= */}
   <AnimatePresence>
-    {isOpen && (
-      <div className="fixed inset-0 z-[70] flex">
+  {isOpen && (
+    <div className="fixed inset-0 z-[9999] flex ">
 
-        <motion.div
-          className="absolute inset-0 bg-black/40"
-          onClick={() => setIsOpen(false)}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        />
+      <div
+        className="absolute inset-0 bg-transparent"
+        onClick={() => setIsOpen(false)}
+      />
 
-        <motion.aside
-          initial={{ x: "-100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "-100%" }}
-          transition={{ type: "spring", stiffness: 260, damping: 30 }}
-          className="w-[85%] max-w-sm h-full bg-white shadow-2xl flex flex-col overflow-y-auto"
-        >
+      <motion.aside
+        initial={{ x: "-100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "-100%" }}
+        transition={{ type: "spring", stiffness: 260, damping: 30 }}
+        className="relative w-full  h-full bg-white shadow-2xl flex flex-col overflow-y-auto overscroll-contain"
+      >
+
 
           <div className="flex items-center justify-between px-6 py-5 border-b">
             <Image

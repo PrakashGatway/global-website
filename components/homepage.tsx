@@ -112,8 +112,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
 
 
-console.log(homePage?.blogs?.title)
-console.log(homePage?.topUniversities?.title)
+
 
 
 
@@ -126,7 +125,7 @@ console.log(homePage?.topUniversities?.title)
     relative overflow-hidden
     bg-white
     bg-no-repeat bg-cover bg-bottom
-    py-12 sm:py-16 
+    pt-12 lg:pt-16 
   "
         style={{
           backgroundImage: `url("/images/hero.jpg")`
@@ -162,7 +161,7 @@ console.log(homePage?.topUniversities?.title)
                 ) : null}
               </h1>
 
-              <p className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-xl mx-auto lg:mx-0">
+              <p className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0">
                 {homePage?.hero?.subtitle ? (
                   <>
                     {homePage.hero.subtitle.split('||')[0]?.trim()}{" "}
@@ -179,7 +178,7 @@ console.log(homePage?.topUniversities?.title)
                   onClick={() => setOpenForm(true)}
                   className="
     text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-orange-500 rounded-full shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
-    text-base font-semibold
+    text-sm lg:text-base font-semibold
     hover:bg-primary hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
     flex items-center justify-center gap-2
     transition-all hover:opacity-90 cursor-pointer
@@ -195,7 +194,7 @@ console.log(homePage?.topUniversities?.title)
                   href={homePage?.hero?.ctaLink2}
                   className="
     text-primary px-6 sm:px-8 py-2.5 sm:py-3 border-2 border-primary rounded-full 
-    text-base font-semibold
+    lg:text-base text-sm font-semibold
     transition-all hover:bg-orange-500 hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
     inline-flex items-center justify-center
   "
@@ -212,125 +211,96 @@ console.log(homePage?.topUniversities?.title)
             </div>
 
             {/* RIGHT IMAGE */}
-            <div className="flex justify-center lg:justify-end">
-              {homePage?.hero?.heroImage && (
+            <div className="flex justify-center lg:justify-end relative">
+              
+                 {homePage?.hero?.heroImage && (
                 <Image
                   src={homePage.hero.heroImage.trim()}
-                  width={1200}
-                  height={800}
+                  width={450}
+                  height={900}
                   alt="cap"
+                  className="lg:w-[420px] w-[200px]"
                 />
               )}
+
+              <div className="absolute origin-center
+ w-[500px] h-full -right-4 -top-23 animate-spin [animation-duration:60s] -z-10 hidden lg:block">
+  <img
+    src="/images/hero-bg-2.png"
+    alt=""
+    className="w-full h-full object-contain"
+  />
+</div>
+
+          
+             
 
             </div>
           </div>
 
-          {/* STATS SECTION */}
-          <div className="pb-12 lg:pb-16 lg:pt-20">
-  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-10">
-
-    {(homePage?.stats?.stats || []).map((item: any, index: number) => (
-      <div
-        key={index}
-        className="
-          /* MOBILE CARD */
-          flex flex-col items-center text-center
-          bg-white p-4 rounded-2xl shadow-md
-
-          /* DESKTOP RESET (UNCHANGED VIEW) */
-          sm:bg-transparent sm:p-0 sm:rounded-none sm:shadow-none
-          sm:flex-row sm:items-start sm:text-left
-          gap-3 sm:gap-4
-        "
-      >
-        {/* Icon */}
-        <Image
-          src={
-            item.icon?.trim() ||
-            'https://toppng.com/uploads/preview/graduation-cap-svg-icon-free-graduation-cap-icon-11553393846gq7rcr1qsx.png'
-          }
-          alt="Stat Icon"
-          width={55}
-          height={55}
-          className="object-contain"
-        />
-
-        {/* Text */}
-        <div>
-          <div className="text-xl sm:text-4xl font-bold text-gray-800">
-            {item.number}
-          </div>
-          <div className="text-sm sm:text-base text-gray-700 leading-snug">
-            {item.title}
-          </div>
-        </div>
-      </div>
-    ))}
-
-  </div>
-</div>
+         
 
         </div>
       </section>
 
 
-      <section className="bg-[#f46c44] py-20 relative overflow-hidden">
+      <section className="bg-[#f46c44] pb-20 relative overflow-hidden">
 
   <div className="max-w-7xl mx-auto px-6">
 
     {/* ================= HEADING ================= */}
-    <div className="mb-16">
+    <div className=" mb-8 lg:mb-16">
      
 
-      <h3 className="text-white text-5xl lg:text-7xl  relative inline-block mt-4">
+      <h3 className="text-white text-xl lg:text-7xl  relative inline-block mt-4">
         <span className="">{homePage?.whyUs?.title.split("||")[0]}</span>
         <span className="font-bold">{homePage?.whyUs?.title.split("||")[1]}</span>
 
         {/* Yellow Brush Underline */}
-        <span className="absolute left-0 -bottom-6 w-full h-2 bg-yellow-400 rounded-full"></span>
+        <span className="absolute left-0 -bottom-2 lg:-bottom-6 w-full h-[2px] lg:h-2 bg-yellow-400 rounded-full"></span>
       </h3>
     </div>
 
     {/* ================= CARDS ================= */}
-    <div className="space-y-10">
+    <div className=" space-y-4 lg:space-y-10">
 
       {/* TOP 3 CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-10">
 
         {/* ITEM 1 */}
-        <div className="bg-[#e6e6e6] rounded-3xl p-10 flex items-center gap-6">
-          <NutOffIcon className="w-16 h-16 text-[#6d1901]" />
+        <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
+          <NutOffIcon className=" w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
           <div>
-            <h4 className="text-2xl font-semibold text-black">
+            <h4 className=" text-sm lg:text-2xl font-semibold text-black">
               {homePage?.whyUs?.items?.[0]?.title}
             </h4>
-            <p className="text-[#1f3a5f] mt-2 text-base">
+            <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
               {homePage?.whyUs?.items?.[0]?.description}
             </p>
           </div>
         </div>
 
         {/* ITEM 2 */}
-        <div className="bg-[#e6e6e6] rounded-3xl p-10 flex items-center gap-6">
-          <BadgeIcon className="w-16 h-16 text-[#6d1901]" />
+        <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
+          <BadgeIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
           <div>
-            <h4 className="text-2xl font-semibold text-black">
+            <h4 className="text-sm lg:text-2xl font-semibold text-black">
               {homePage?.whyUs?.items?.[1]?.title}
             </h4>
-            <p className="text-[#1f3a5f] mt-2 text-base">
+            <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
               {homePage?.whyUs?.items?.[1]?.description}
             </p>
           </div>
         </div>
 
         {/* ITEM 3 */}
-        <div className="bg-[#e6e6e6] rounded-3xl p-10 flex items-center gap-6">
-          <TargetIcon className="w-16 h-16 text-[#6d1901]" />
+        <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
+          <TargetIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
           <div>
-            <h4 className="text-2xl font-semibold text-black">
+            <h4 className="text-sm lg:text-2xl font-semibold text-black">
               {homePage?.whyUs?.items?.[2]?.title}
             </h4>
-            <p className="text-[#1f3a5f] mt-2 text-base">
+            <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
               {homePage?.whyUs?.items?.[2]?.description}
             </p>
           </div>
@@ -339,16 +309,16 @@ console.log(homePage?.topUniversities?.title)
       </div>
 
       {/* BOTTOM 2 CENTERED CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:w-2/3 mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-10 md:w-2/3 mx-auto">
 
         {/* ITEM 4 */}
-        <div className="bg-[#e6e6e6] rounded-3xl p-10 flex items-center gap-6">
-          <PanelsTopLeftIcon className="w-16 h-16 text-[#6d1901]" />
+        <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
+          <PanelsTopLeftIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
           <div>
-            <h4 className="text-2xl font-semibold text-black">
+            <h4 className="text-sm lg:text-2xl font-semibold text-black">
               {homePage?.whyUs?.items?.[3]?.title}
             </h4>
-            <p className="text-[#1f3a5f] mt-2 text-base">
+            <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
               {homePage?.whyUs?.items?.[3]?.description}
             </p>
           </div>
@@ -356,13 +326,13 @@ console.log(homePage?.topUniversities?.title)
 
         {/* ITEM 5 (If exists) */}
         {homePage?.whyUs?.items?.[4] && (
-          <div className="bg-[#e6e6e6] rounded-3xl p-10 flex items-center gap-6">
-            <PanelsTopLeftIcon className="w-16 h-16 text-[#6d1901]" />
+          <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
+            <PanelsTopLeftIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
             <div>
-              <h4 className="text-2xl font-semibold text-black">
+              <h4 className="text-sm lg:text-2xl font-semibold text-black">
                 {homePage?.whyUs?.items?.[4]?.title}
               </h4>
-              <p className="text-[#1f3a5f] mt-2 text-base">
+              <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
                 {homePage?.whyUs?.items?.[4]?.description}
               </p>
             </div>
@@ -376,6 +346,8 @@ console.log(homePage?.topUniversities?.title)
   </div>
 
 </section>
+
+ 
 
 
       <section
@@ -404,7 +376,7 @@ console.log(homePage?.topUniversities?.title)
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-2 items-center w-full min-h-[500px]">
 
               {/* LEFT – IMAGE STACK */}
-              <div className="relative w-full h-full min-h-[420px] sm:min-h-[500px] lg:min-h-[550px] flex justify-center lg:justify-start">
+              <div className="relative w-full h-full min-h-[420px] sm:min-h-[500px] lg:min-h-[550px] flex justify-center lg:justify-start hidden lg:block">
                 <div
                   className="relative hover:z-999"
                   style={{ perspective: "500px" }}
@@ -499,7 +471,7 @@ console.log(homePage?.topUniversities?.title)
 
               {/* RIGHT CONTENT */}
               <div className="text-center lg:text-left">
-                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold leading-tight mb-3">
+                <h2 className="text-lg sm:text-3xl lg:text-5xl font-bold leading-tight mb-3">
                   <span className="text-primary">
                     {homePage?.trustedPartners?.title?.split('||')[0]?.trim()}
                   </span>
@@ -544,20 +516,20 @@ console.log(homePage?.topUniversities?.title)
       <section className="py-18 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden">
           <div className=" mb-12 ">
-            <h2 className="text-5xl  mb-2 ">
+            <h2 className=" text-xl lg:text-5xl  mb-2 ">
               <span  className="text-red-700" >
                 {homePage?.topUniversities?.title?.split('||')[0]?.trim()}
               </span>{" "} <br />
               <span className="text-primary font-bold relative">
                 {homePage?.topUniversities?.title?.split('||')[1]?.trim()}
-        <span className="absolute right-0 bottom-0  w-25 h-1 bg-red-700"></span>
+        <span className="absolute right-0 bottom-0  w-25 h-[2px] lg:h-1 bg-red-700"></span>
 
                 
               </span>
 
 
             </h2>
-            <p className="text-gray-800 text-base font-medium max-w-3xl  leading-relaxed">
+            <p className="text-gray-800 text-sm lg:text-base font-medium max-w-3xl  leading-relaxed">
               {homePage?.topUniversities?.subtitle}
             </p>
           </div>
@@ -586,7 +558,7 @@ console.log(homePage?.topUniversities?.title)
                         />
                     </div>
 
-                    <h3 className="text-xl font-bold text-primary mb-2">
+                    <h3 className=" text-xl font-bold text-primary mb-2">
                       {item.title}
                     </h3>
 
@@ -607,23 +579,23 @@ console.log(homePage?.topUniversities?.title)
 
 
       <section className="
-  py-12 sm:py-14 lg:py-6
+   sm:py-14 lg:py-6
   bg-gradient-to-b from-[#f3f3f3] to-white
   bg-[url('/bg-01.jpg')]
   bg-cover bg-center bg-no-repeat
   relative
 ">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4">
+        <div className="max-w-7xl px-4 mx-auto  ">
 
           {/* Heading */}
           <div className=" mb-10  relative">
-            <h2 className="text-2xl sm:text-3xl lg:text-5xl mb-5 font-bold">
+            <h2 className="text-xl sm:text-3xl lg:text-5xl mb-5 ">
               <span className="text-red-700">
                 {homePage?.blogs?.title?.split('||')[0]}
               </span>{" "} <br />
-              <span className="text-primary relative">
+              <span className="text-primary relative font-bold">
                 {homePage?.blogs?.title?.split('||')[1]}
-        <span className="absolute right-0 -bottom-1 w-25 h-1 bg-red-600"></span>
+        <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-red-600"></span>
 
               </span>
 
@@ -645,7 +617,7 @@ console.log(homePage?.topUniversities?.title)
                     className="
                   relative bg-white border border-[#FF6B35]
                   rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]
-                  transition-all duration-300 hover:shadow-xl mt-10
+                  transition-all duration-300 hover:shadow-xl mt-4 lg:mt-10
                 "
                   >
                     {/* ORANGE BACK SHAPE */}
@@ -662,7 +634,7 @@ console.log(homePage?.topUniversities?.title)
                     <div
                       className="
                     relative overflow-hidden bg-gray-300
-                    h-[200px] sm:h-[220px] lg:h-[220px]
+                    h-[160px] sm:h-[220px] lg:h-[220px]
                     rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[65px]
                   "
                     >
@@ -672,7 +644,7 @@ console.log(homePage?.topUniversities?.title)
                           "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
                         }
                         alt={post.title}
-                        className="w-full h-[220px] object-cover"
+                        className="w-full h-[160px] lg:h-[220px] object-cover"
                         onError={(e) => {
                           e.currentTarget.src =
                             "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
@@ -682,29 +654,20 @@ console.log(homePage?.topUniversities?.title)
                       {/* OVERLAY */}
                       <div
                         className="
-                      absolute inset-0 bg-black/50
+                      absolute inset-0 bg-black/20
                       flex flex-col items-center justify-center text-center px-4
                       rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[65px]
                     "
                       >
-                        <h3 className="text-white text-lg sm:text-xl lg:text-3xl font-semibold mb-2">
-                          {post.title}
-                        </h3>
+                        
 
-                        <p className="text-white text-sm sm:text-base">
-                          {post.category?.name}{" "}
-                          {new Date(post.createdAt).toLocaleDateString("en-IN", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          })}
-                        </p>
+                       
                       </div>
                     </div>
 
                     {/* CONTENT */}
                     <div className="p-3 text-center">
-                      <p className="text-gray-800 text-base font-medium mb-3 line-clamp-2">
+                      <p className="text-gray-800 text-sm lg:text-base font-medium mb-3 line-clamp-2">
                         {post.shortDescription}
                       </p>
 

@@ -119,11 +119,11 @@ useEffect(() => {
   {/* ================= TITLE ================= */}
   <div className="mb-5 flex items-center relative">
 
-    <h3 className="text-5xl lg:text-6xl text-white relative inline-block">
+    <h3 className="text-xl lg:text-6xl text-white relative inline-block">
       <span>{title?.split("||")[0]} {"  "}</span>
-      <span className="text-5xl lg:text-6xl font-bold text-white mt-4 relative">
+      <span className="text-xl lg:text-6xl font-bold text-white mt-4 relative">
       {title?.split("||")[1]}
-      <span className="absolute right-0 -bottom-2 w-32 h-1 bg-yellow-400"></span>
+      <span className="absolute right-0 bottom-0 w-32 h-[2px] lg:h-2 bg-yellow-400"></span>
 
     </span>
     </h3>
@@ -134,7 +134,7 @@ useEffect(() => {
     
 
   </div>
-   <p className="text-primary text-sm sm:text-base font-medium max-w-3xl text-justify leading-relaxed">
+   <p className="text-primary text-sm sm:text-base font-medium max-w-3xl text-justify ">
       {subtitle}
     </p>
      
@@ -151,15 +151,15 @@ useEffect(() => {
                   <div className="absolute top-3 left-0 w-full flex flex-col gap-2 h-full py-12 pl-8 pr-2 ">
                     <div className="grid grid-cols-20 gap-4">
                       <div className="col-span-11 ">
-                        <h3 className="text-[15px] text-left font-bold text-red-700 mb-3">
+                        <h3 className=" text-base lg:text-[15px] text-left font-bold text-red-700 mb-3">
                           {testimonial.name}
                         </h3>
-                        <p className="lg:text-xs font-semibold text-justify text-sm text-blue-700 line-clamp-7">
+                        <p className="lg:text-xs font-semibold lg:text-justify text-sm text-blue-700 line-clamp-7">
                           {testimonial.message}
                         </p>
                       </div>
 
-                      <div style={{ perspective: '500px' }} className="col-span-8" >
+                      <div style={{ perspective: '500px' }} className=" col-span-6 md:col-span-8 lg:col-span-8" >
                         <div className="border border-gray-400 rounded-2xl overflow-hidden" style={{
                           transform: `
           rotateY(-20deg)

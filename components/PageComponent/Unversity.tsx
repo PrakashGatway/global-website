@@ -25,7 +25,7 @@ export default function UniversitySliderClient({universities}) {
           breakpoints: {
             '(min-width: 300px)': {
               slides: {
-                perView: 3,
+                perView: 1,
                 spacing: 0,
               },
             },
@@ -99,15 +99,15 @@ export default function UniversitySliderClient({universities}) {
   ];
 
   return (
-    <section className="pt-12 overflow-hidden">
-      <div className="  relative max-w-7xl mx-auto">
-            <h2 className="text-5xl  mb-2 ">
+    <section className="  lg:pt-12 overflow-hidden">
+      <div className="  relative max-w-7xl px-4 mx-auto">
+            <h2 className="text-xl lg:text-5xl  mb-2 ">
               <span  className="text-red-700" >
                 {universities.title?.split('||')[0]}
               </span>{" "} <br />
               <span className="text-primary font-bold relative">
                 {universities.title?.split('||')[1]}
-        <span className="absolute left-0 bottom-0  w-25 h-1 bg-red-700"></span>
+        <span className="absolute right-0 -bottom-1 lg:bottom-0  w-25 h-[2px] lg:h-1 bg-red-700"></span>
 
 
                 

@@ -16,6 +16,7 @@ import OffersSlider, {
   StickyPaymentSection,
 } from "@/components/PageComponent/DistinationSliders";
 import CaseStudy from "@/components/PageComponent/CaseStudy";
+import FAQSection from "../faqPage";
 
 const images = [
   "https://t3.ftcdn.net/jpg/06/23/84/22/360_F_623842281_ECGgEpMEkQdH83gbmexIn5l3ACl7V3M0.jpg",
@@ -23,7 +24,7 @@ const images = [
   "https://as2.ftcdn.net/jpg/05/29/12/57/1000_F_529125762_omW1yTehDLLFJKwLJjRET0G3sXiQnK5g.jpg",
 ];
 
-export default function UniversityPage({ data ,caseStudy,imageRes }) {
+export default function UniversityPage({ data ,caseStudy,imageRes,Faqres }) {
   const [index, setIndex] = useState(0);
 
   // AUTO SLIDE
@@ -364,6 +365,8 @@ export default function UniversityPage({ data ,caseStudy,imageRes }) {
           </button>
         </div>
       </section>
+
+      <FAQSection Faqres = {Faqres}/>
     </div>
   );
 }

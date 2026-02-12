@@ -67,7 +67,7 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
               onClick={() => setActiveTab(tab.key)}
               className={`
                 px-5 sm:px-6 py-2 rounded-full shadow-2xl
-                text-base font-semibold transition-all hover:bg-primary hover:text-white
+                text-sm lg:text-base font-semibold transition-all hover:bg-primary hover:text-white
                 ${
                   activeTab === tab.key
                     ? "bg-secondary text-white shadow-2xl"
@@ -85,7 +85,7 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
       <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-center sm:items-start">
         {/* LEFT VIDEO PLAYER */}
         <div className="relative flex-shrink-0">
-          <div className="rounded-2xl overflow-hidden shadow-xl w-[200px] sm:w-[230px]">
+          <div className="rounded-2xl overflow-hidden shadow-xl w-[300px] sm:w-[230px]">
             {activeData?.videoId ? (
               <iframe
                 src={`https://www.youtube.com/embed/${activeData.videoId}?autoplay=0&modestbranding=1&rel=0`}

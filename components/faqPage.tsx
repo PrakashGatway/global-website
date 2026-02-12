@@ -8,16 +8,16 @@ const FAQSection = ({ Faqres }) => {
   };
 
   return (
-    <section className="py-12 lg:py-20 bg-gradient-to-b from-gray-50 to-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-20 ">
+    <section className="py-12 lg:py-20 px-4 lg:px-0  max-w-7xl mx-auto ">
+      <div className="container   ">
         {/* Header */}
-        <div className="text-justify mb-12 lg:mb-16 max-w-7xl lg:ml-30   ">
+        <div className="text-justify mb-12 lg:mb-16    ">
           <h2 className="text-3xl   text-gray-900 mb-4 ">
-            <span className=' text-5xl text-secondary '>Frequently</span>{" "}
+            <span className=' text-xl lg:text-5xl text-secondary '>Frequently</span>{" "}
             
-            <br /><span className='pl-10 text-6xl text-primary font-bold relative'>Asked Questions
+            <br /><span className=' text-xl lg:text-6xl text-primary font-bold relative'>Asked Questions
               
-        <span className="absolute right-0 -bottom-1 w-25 h-1 bg-red-600"></span>
+        <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-red-600"></span>
               </span> 
 
           </h2>
@@ -34,9 +34,9 @@ const FAQSection = ({ Faqres }) => {
               >
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none  focus:ring-opacity-50 rounded-xl"
+                  className="w-full px-4 lg:px-6 py-3 lg:py-5 text-left flex justify-between items-center focus:outline-none  focus:ring-opacity-50 rounded-xl"
                 >
-                  <span className="text-lg font-semibold text-gray-900 pr-4">
+                  <span className=" text-base lg:text-lg font-semibold text-gray-900 pr-4">
                     {faq.question}
                   </span>
                   <svg

@@ -31,10 +31,12 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const { slug } = await params;
 
-  const [pageRes, caseRes,imageRes] = await Promise.all([
+  const [pageRes, caseRes,imageRes,Faqres] = await Promise.all([
     serverInstance.get(`/page-information/slug/${slug}`),
     serverInstance.get("/testimonials?type=caseStudy"),
      serverInstance.get("/testimonials?type=image"),
+         serverInstance.get("/faqs/public/list?type=General"),
+
   ]);
 
   return (
@@ -42,6 +44,7 @@ export default async function Page({ params }) {
       data={pageRes.data.data}
       caseStudy={caseRes.data.data}
       imageRes = {imageRes.data.data}
+      Faqres = {Faqres.data.data}
     />
   );
 }

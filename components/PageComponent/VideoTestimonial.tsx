@@ -144,8 +144,8 @@ export default function VideoTestimonialsSlider({
   // Empty state
   if (validItems.length === 0) {
     return (
-      <section className="py-12 text-center">
-        <h2 className="text-2xl font-bold mb-4">
+      <section className=" py-4 lg:py-12 text-center">
+        <h2 className="text-lg lg:text-2xl font-bold mb-4">
           {title.includes('||') ? (
             <>
               <span className="text-[#f46c44]">{title.split('||')[0].trim()}</span>{' '}
@@ -173,19 +173,19 @@ export default function VideoTestimonialsSlider({
   <div className="max-w-7xl mx-auto px-6">
 
     {/* ================= TITLE ================= */}
-    <div className="mb-20">
-      <h2 className="text-4xl lg:text-5xl font-light text-red-700">
+    <div className=" mb-10 lg:mb-20">
+      <h2 className="text-lg lg:text-5xl font-light text-red-700">
         {title.includes("||")
           ? title.split("||")[0].trim()
           : ""}
       </h2>
 
-      <h3 className="text-5xl lg:text-6xl font-bold text-primary relative inline-block mt-2">
+      <h3 className="text-xl lg:text-6xl font-bold text-primary relative inline-block lg:mt-2">
         {title.includes("||")
           ? title.split("||")[1].trim()
           : "Testimonials"}
 
-        <span className="absolute right-0 -bottom-2 w-32 h-1 bg-red-600"></span>
+        <span className="absolute right-0 -bottom-1 w-32 h-[2px] lg:h-1 bg-red-600"></span>
       </h3>
     </div>
 
@@ -210,38 +210,70 @@ export default function VideoTestimonialsSlider({
 >
 
       {/* ================= VIDEO ================= */}
-      <div className="relative w-full lg:w-[95%] mx-auto py-1 lg:h-[500px] rounded-[40px] shadow-2xl  bg-white">
+     <div className="relative 
+                w-full 
+                sm:w-[90%] 
+                md:w-[80%] 
+                lg:w-[95%] 
+                mx-auto 
+                py-1 
+                lg:h-[500px] 
+                rounded-[30px] lg:rounded-[40px] 
+                shadow-2xl 
+                bg-white">
 
-        <div className="aspect-video">
-          {item.isMp4 ? (
-            <video
-              src={item.videoUrl}
-              controls
-              className="w-full h-full object-cover"
-            />
-          ) : item.videoId ? (
-            <iframe
-              className="w-full h-full"
-              src={`https://www.youtube.com/embed/${item.videoId}`}
-              allowFullScreen
-            />
-          ) : (
-            <p className="text-center text-gray-500">
-              Video unavailable
-            </p>
-          )}
-        </div>
+  <div className="aspect-video lg:h-full">
+    {item.isMp4 ? (
+      <video
+        src={item.videoUrl}
+        controls
+        className="w-full h-full object-cover rounded-[30px] lg:rounded-[40px]"
+      />
+    ) : item.videoId ? (
+      <iframe
+        className="w-full h-full rounded-[30px] lg:rounded-[40px]"
+        src={`https://www.youtube.com/embed/${item.videoId}`}
+        allowFullScreen
+      />
+    ) : (
+      <p className="text-center text-gray-500 py-20">
+        Video unavailable
+      </p>
+    )}
+  </div>
 
-        {/* ================= BADGE ================= */}
-        <div className="absolute -bottom-10 -right-16 bg-[#6d1901] w-[320px] text-white px-6 py-6 rounded-3xl shadow-xl z-20">
-          <p className="text-lg font-semibold leading-relaxed">
-            {item.title}
-            <br />
-            {item.text}
-          </p>
-        </div>
+  {/* ================= BADGE ================= */}
+  <div className="
+      absolute 
+      bottom-[-40px] 
+      right-[-10px] 
+      sm:right-0 
+      sm:bottom-[-30px]
+      lg:-bottom-10 
+      lg:-right-16 
+      bg-[#6d1901] 
+      w-[90%] 
+      sm:w-[320px] 
+      text-white 
+      px-5 
+      sm:px-6 
+      py-5 
+      sm:py-6 
+      rounded-2xl 
+      lg:rounded-3xl 
+      shadow-xl 
+      z-20
+      lg:block hidden
+    ">
+    <p className="text-base sm:text-lg font-semibold leading-relaxed">
+      {item.title}
+      <br />
+      {item.text}
+    </p>
+  </div>
 
-      </div>
+</div>
+
     </motion.div>
   </AnimatePresence>
 
