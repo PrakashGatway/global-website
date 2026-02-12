@@ -2,22 +2,20 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { LayoutDashboard, MessageSquare, BarChart3, Settings, Shield, LogOut, ChevronLeft, Crown } from "lucide-react"
+import { LayoutDashboard, MessageSquare, BarChart3, Settings, Shield, LogOut, ChevronLeft, Crown, BookOpen, FileText, Wallet, Headphones } from "lucide-react"
 import { useGlobal } from "@/src/statecontext"
+import Image from "next/image"
 
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: BarChart3, label: "Universities", href: "/dashboard/reports" },
-  { icon: Shield, label: "Resources", href: "#" },
-  { icon: Shield, label: "Application", href: "#" },
-  { icon: Shield, label: "Wallet", href: "#" },
-  { icon: Shield, label: "Support", href: "/dashboard/privacy" },
-  { icon: MessageSquare, label: "Notification", href: "/dashboard/messages" },
+  { icon: BookOpen, label: "Universities", href: "/dashboard/universities" },
+  { icon: BarChart3, label: "Find Programs", href: "/dashboard/programs" },
+  { icon: FileText, label: "Application", href: "/dashboard/application" },
+  { icon: Wallet, label: "Wallet", href: "/dashboard/wallet" },
+  { icon: Headphones, label: "Support", href: "/dashboard/support" },
+  { icon: MessageSquare, label: "Notifications", href: "/dashboard/notifications" },
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },
-
-
-
 ]
 
 export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -27,7 +25,6 @@ const {Logout} = useGlobal()
 
   return (
     <>
-      {/* Mobile Overlay with swipe support */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -55,17 +52,20 @@ const {Logout} = useGlobal()
             onClose()
           }
         }}
-        className="fixed left-0 top-0 h-screen w-64 bg-sidebar text-sidebar-foreground pt-20 lg:pt-0 z-50 lg:static lg:translate-x-0 overflow-y-auto flex flex-col touch-pan-y"
+        className="fixed left-0 top-0 h-screen w-64 shadow-lg bg-sidebar text-sidebar-foreground pt-20 lg:pt-0 z-50 lg:static lg:translate-x-0 overflow-y-auto flex flex-col touch-pan-y"
       >
         {/* Logo Section */}
-        <div className="p-6 border-b border-sidebar-border lg:block hidden">
+        <div className="p-6 bg-gray-100 border-b border-sidebar-border lg:block hidden">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-lg bg-sidebar-accent flex items-center justify-center">
-              <Crown className="w-6 h-6 text-sidebar-accent-foreground" />
-            </div>
             <div>
-              <p className="font-bold text-sidebar-foreground">Global Way</p>
-              <p className="text-xs text-sidebar-accent-foreground/70">Dashboard</p>
+               <Image
+                      src="/images/newlogo3.png"
+                      alt="Logo"
+                      width={50}
+                      height={10}
+                      className="object-contain w-25 scale-150"
+                      priority
+                    />
             </div>
           </div>
         </div>

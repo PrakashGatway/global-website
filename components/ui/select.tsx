@@ -1,185 +1,423 @@
-'use client'
+import { useState, useRef, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Search, ChevronDown,ChevronUp, X, Check } from "lucide-react"
+import * as Select from '@radix-ui/react-select';
+const AmazingSelect = ({
+  options = [],
+  value,
+  onChange,
+  placeholder = "Select option...",
+  label,
+  icon: Icon,
+  searchPlaceholder = "Search...",
+  emptyMessage = "No options found",
+  className = ""
+}:any) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [highlightedIndex, setHighlightedIndex] = useState(0)
+  const selectRef = useRef(null)
+  const searchInputRef = useRef(null)
+  const optionsRef = useRef([])
 
-import * as React from 'react'
-import * as SelectPrimitive from '@radix-ui/react-select'
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
-
-import { cn } from '@/lib/utils'
-
-function Select({
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Root>) {
-  return <SelectPrimitive.Root data-slot="select" {...props} />
-}
-
-function SelectGroup({
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Group>) {
-  return <SelectPrimitive.Group data-slot="select-group" {...props} />
-}
-
-function SelectValue({
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Value>) {
-  return <SelectPrimitive.Value data-slot="select-value" {...props} />
-}
-
-function SelectTrigger({
-  className,
-  size = 'default',
-  children,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
-  size?: 'sm' | 'default'
-}) {
-  return (
-    <SelectPrimitive.Trigger
-      data-slot="select-trigger"
-      data-size={size}
-      className={cn(
-        "border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
-      {...props}
-    >
-      {children}
-      <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="size-4 opacity-50" />
-      </SelectPrimitive.Icon>
-    </SelectPrimitive.Trigger>
+  // Filter options based on search
+  const filteredOptions = options.filter(option =>
+    option.label.toLowerCase().includes(searchQuery.toLowerCase())
   )
-}
 
-function SelectContent({
-  className,
-  children,
-  position = 'popper',
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Content>) {
+  // Get display value
+  const selectedOption = options.find(opt => opt.value === value)
+
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (selectRef.current && !selectRef.current.contains(event.target)) {
+        setIsOpen(false)
+        setSearchQuery("")
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  // Focus search input when opening
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }, [isOpen])
+
+  // Reset highlighted index when filtered options change
+  useEffect(() => {
+    setHighlightedIndex(0)
+  }, [filteredOptions.length])
+
+  // Keyboard navigation
+  const handleKeyDown = (e) => {
+    if (!isOpen) return
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault()
+        setHighlightedIndex(prev => 
+          prev < filteredOptions.length - 1 ? prev + 1 : prev
+        )
+        break
+      case "ArrowUp":
+        e.preventDefault()
+        setHighlightedIndex(prev => prev > 0 ? prev - 1 : prev)
+        break
+      case "Enter":
+        e.preventDefault()
+        if (filteredOptions[highlightedIndex]) {
+          onChange(filteredOptions[highlightedIndex].value)
+          setIsOpen(false)
+          setSearchQuery("")
+        }
+        break
+      case "Escape":
+        setIsOpen(false)
+        setSearchQuery("")
+        break
+    }
+  }
+
+  // Scroll highlighted option into view
+  useEffect(() => {
+    if (isOpen && optionsRef.current[highlightedIndex]) {
+      optionsRef.current[highlightedIndex].scrollIntoView({
+        block: "nearest",
+        behavior: "smooth"
+      })
+    }
+  }, [highlightedIndex, isOpen])
+
   return (
-    <SelectPrimitive.Portal>
-      <SelectPrimitive.Content
-        data-slot="select-content"
-        className={cn(
-          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border shadow-md',
-          position === 'popper' &&
-            'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
-          className,
-        )}
-        position={position}
-        {...props}
+    <div className={`relative ${className}`} ref={selectRef}>
+
+
+      {/* Select Trigger */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        onKeyDown={handleKeyDown}
+        className={`
+          w-full relative flex items-center justify-between
+          px-4 py-2.5 text-left
+          border-1 border-gray-300
+          rounded-lg
+          hover:border-gray-300 dark:hover:border-gray-600
+          focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500
+          transition-all duration-200
+          ${isOpen ? 'border-blue-500 ring-2 ring-blue-500/20' : ''}
+          ${selectedOption ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}
+        `}
       >
-        <SelectScrollUpButton />
-        <SelectPrimitive.Viewport
-          className={cn(
-            'p-1',
-            position === 'popper' &&
-              'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1',
-          )}
+        <div className="flex items-center gap-3 truncate">
+          {Icon && <Icon className="w-5 h-5 text-gray-400" />}
+          <span className="truncate">
+            {selectedOption ? selectedOption.label : placeholder}
+          </span>
+        </div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
         >
-          {children}
-        </SelectPrimitive.Viewport>
-        <SelectScrollDownButton />
-      </SelectPrimitive.Content>
-    </SelectPrimitive.Portal>
+          <ChevronDown className="w-5 h-5 text-gray-400" />
+        </motion.div>
+      </button>
+
+      {/* Dropdown Menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop for mobile */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 z-40 md:hidden"
+            />
+
+            {/* Dropdown */}
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+              className={`
+                absolute z-50 w-full mt-2
+                bg-white dark:bg-gray-900
+                border border-gray-200 dark:border-gray-700
+                rounded-xl shadow-xl
+                overflow-hidden
+              `}
+              style={{
+                transformOrigin: 'top',
+                maxHeight: 'min(400px, calc(100vh - 100px))'
+              }}
+            >
+              {/* Search Input */}
+              <div className="relative border-b border-gray-200 dark:border-gray-700">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={searchPlaceholder}
+                  className="
+                    w-full pl-10 pr-10 py-3.5
+                    bg-white dark:bg-gray-900
+                    text-gray-900 dark:text-gray-100
+                    placeholder:text-gray-400 dark:placeholder:text-gray-500
+                    focus:outline-none
+                    text-sm
+                  "
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="
+                      absolute right-3 top-1/2 -translate-y-1/2
+                      p-1 rounded-full
+                      hover:bg-gray-100 dark:hover:bg-gray-800
+                      transition-colors
+                    "
+                  >
+                    <X className="w-4 h-4 text-gray-400" />
+                  </button>
+                )}
+              </div>
+
+              {/* Options List */}
+              <div className="overflow-y-auto" style={{ maxHeight: '300px' }}>
+                {filteredOptions.length > 0 ? (
+                  <div className="p-1.5">
+                    {filteredOptions.map((option, index) => (
+                      <motion.button
+                        key={option.value}
+                        ref={el => optionsRef.current[index] = el}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.03 }}
+                        onClick={() => {
+                          onChange(option.value)
+                          setIsOpen(false)
+                          setSearchQuery("")
+                        }}
+                        onMouseEnter={() => setHighlightedIndex(index)}
+                        className={`
+                          w-full flex items-center justify-between
+                          px-3 py-2.5 rounded-lg
+                          text-sm text-left
+                          transition-all duration-150
+                          ${value === option.value 
+                            ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
+                            : highlightedIndex === index
+                              ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100'
+                              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                          }
+                        `}
+                      >
+                        <span className="flex-1 truncate">{option.label}</span>
+                        {value === option.value && (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                          >
+                            <Check className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                          </motion.div>
+                        )}
+                      </motion.button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="px-4 py-8 text-center">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {emptyMessage}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Quick Actions */}
+              <div className="flex items-center justify-between px-3 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {filteredOptions.length} options
+                </span>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="
+                    px-3 py-1.5 text-xs
+                    text-gray-600 dark:text-gray-400
+                    hover:text-gray-900 dark:hover:text-gray-200
+                    hover:bg-gray-200 dark:hover:bg-gray-700
+                    rounded-lg transition-colors
+                  "
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
 
-function SelectLabel({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Label>) {
-  return (
-    <SelectPrimitive.Label
-      data-slot="select-label"
-      className={cn('text-muted-foreground px-2 py-1.5 text-xs', className)}
-      {...props}
-    />
-  )
-}
 
-function SelectItem({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Item>) {
+export default AmazingSelect
+
+
+
+
+
+export const ModernSelect = ({
+  options = [],
+  value,
+  onChange,
+  placeholder = "Select...",
+  label,
+  searchable = true,
+  className = ""
+}:any) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const filteredOptions = options.filter(option =>
+    option.label.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const selectedOption = options.find(opt => opt.value === value);
+
   return (
-    <SelectPrimitive.Item
-      data-slot="select-item"
-      className={cn(
-        "focus:bg-accent focus:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
-        className,
+    <div className={`w-full ${className}`}>
+      {label && (
+        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1.5 uppercase tracking-wide">
+          {label}
+        </label>
       )}
-      {...props}
-    >
-      <span className="absolute right-2 flex size-3.5 items-center justify-center">
-        <SelectPrimitive.ItemIndicator>
-          <CheckIcon className="size-4" />
-        </SelectPrimitive.ItemIndicator>
-      </span>
-      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-    </SelectPrimitive.Item>
-  )
-}
+      
+      <Select.Root 
+        value={value && value} 
+        onValueChange={onChange}
+        open={open}
+        onOpenChange={setOpen}
+      >
+        <Select.Trigger 
+          className={`
+            inline-flex items-center justify-between
+            w-full px-4 py-2.5
+            border border-gray-300 dark:border-gray-800
+            rounded-lg
+            text-sm
+            hover:bg-gray-50 dark:hover:bg-gray-800/50
+            focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500
+            transition-all duration-200
+            ${value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}
+          `}
+        >
+          <Select.Value placeholder={placeholder}>
+            {selectedOption?.label}
+          </Select.Value>
+          <Select.Icon>
+            <ChevronDown className="w-4 h-4 text-gray-400" />
+          </Select.Icon>
+        </Select.Trigger>
 
-function SelectSeparator({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Separator>) {
-  return (
-    <SelectPrimitive.Separator
-      data-slot="select-separator"
-      className={cn('bg-border pointer-events-none -mx-1 my-1 h-px', className)}
-      {...props}
-    />
-  )
-}
+        <Select.Portal>
+          <Select.Content 
+            className="
+              z-50
+              bg-white dark:bg-gray-900
+              border border-gray-200 dark:border-gray-800
+              rounded-lg
+              shadow-xl
+              overflow-hidden
+              w-[var(--radix-select-trigger-width)]
+            "
+            position="popper"
+            sideOffset={4}
+          >
+            <Select.ScrollUpButton className="flex items-center justify-center h-6 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300">
+              <ChevronUp className="w-4 h-4" />
+            </Select.ScrollUpButton>
 
-function SelectScrollUpButton({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
-  return (
-    <SelectPrimitive.ScrollUpButton
-      data-slot="select-scroll-up-button"
-      className={cn(
-        'flex cursor-default items-center justify-center py-1',
-        className,
-      )}
-      {...props}
-    >
-      <ChevronUpIcon className="size-4" />
-    </SelectPrimitive.ScrollUpButton>
-  )
-}
+            {searchable && (
+              <div className="p-2 border-b border-gray-200 dark:border-gray-800">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search..."
+                    className="
+                      w-full pl-9 pr-8 py-2
+                      bg-gray-50 dark:bg-gray-800
+                      border border-gray-200 dark:border-gray-700
+                      rounded-md
+                      text-sm
+                      placeholder:text-gray-400
+                      focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500
+                    "
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+                    >
+                      <X className="w-3.5 h-3.5 text-gray-400" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
 
-function SelectScrollDownButton({
-  className,
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {
-  return (
-    <SelectPrimitive.ScrollDownButton
-      data-slot="select-scroll-down-button"
-      className={cn(
-        'flex cursor-default items-center justify-center py-1',
-        className,
-      )}
-      {...props}
-    >
-      <ChevronDownIcon className="size-4" />
-    </SelectPrimitive.ScrollDownButton>
-  )
-}
+            <Select.Viewport className="p-1.5 max-h-60">
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map((option,index) => (
+                  <Select.Item
+                    key={index}
+                    value={option?.value || "Not Found"}
+                    className={`
+                      relative flex items-center
+                      px-8 py-2.5
+                      rounded-md
+                      text-sm
+                      cursor-pointer
+                      select-none
+                      outline-none
+                      data-[highlighted]:bg-blue-50 data-[highlighted]:dark:bg-blue-900/30
+                      data-[state=checked]:text-blue-600 data-[state=checked]:dark:text-blue-400
+                    `}
+                  >
+                    <Select.ItemText>{option.label}</Select.ItemText>
+                    <Select.ItemIndicator className="absolute left-2 inline-flex items-center">
+                      <Check className="w-4 h-4" />
+                    </Select.ItemIndicator>
+                  </Select.Item>
+                ))
+              ) : (
+                <div className="px-3 py-8 text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    No options found
+                  </p>
+                </div>
+              )}
+            </Select.Viewport>
 
-export {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectScrollDownButton,
-  SelectScrollUpButton,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
+            <Select.ScrollDownButton className="flex items-center justify-center h-6 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300">
+              <ChevronDown className="w-4 h-4" />
+            </Select.ScrollDownButton>
+          </Select.Content>
+        </Select.Portal>
+      </Select.Root>
+    </div>
+  );
 }

@@ -23,6 +23,38 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* styles/globals.css or app/globals.css */
+@supports(padding: max(0px)) {
+  /* .safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  } */
+  
+  .safe-area-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+}
+
+/* For mobile web view optimization */
+@media (display-mode: standalone) {
+  header {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .mobile-bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom);
+    height: calc(60px + env(safe-area-inset-bottom));
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
