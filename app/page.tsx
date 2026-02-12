@@ -44,8 +44,8 @@ export default async function Home() {
   const { data } = await getHomePageData();
   const homePage = data.sections;
 
-  const resBlog = await serverInstance.get("/blogs?type=blog&limit=6");
-  const Blogdata = resBlog.data.data || [];
+  
+ 
 
   const [destinationRes, imageRes , Faqres] = await Promise.all([
     serverInstance.get(
@@ -62,7 +62,6 @@ export default async function Home() {
   return (
     <Homepage
       homePage={homePage}
-      Blogdata={Blogdata}
       destinationData={destinationRes.data.data}
       imageData={imageRes.data.data}
       Faqres = {Faqres.data.data}

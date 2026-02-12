@@ -168,7 +168,7 @@ useEffect(() => {
      
          <div className={`items-center text-end px-8   gap-2 bg-white    ` }>
      
-      <span className={`font-medium hidden lg:block ${isScrolled ? "hidden" : "block"}`} >
+      <span className={`font-medium  ${isScrolled ? "hidden" : "block"}`} >
         Contact Your Nearest Centre
       </span>
        {/* LOGO */}

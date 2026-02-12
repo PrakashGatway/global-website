@@ -134,7 +134,7 @@ useEffect(() => {
     
 
   </div>
-   <p className="text-primary text-sm sm:text-base font-medium max-w-3xl text-justify ">
+   <p className="text-gray-100 text-sm sm:text-base font-medium max-w-3xl text-justify ">
       {subtitle}
     </p>
      

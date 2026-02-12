@@ -25,7 +25,7 @@ export default function UniversitySliderClient({universities}) {
           breakpoints: {
             '(min-width: 300px)': {
               slides: {
-                perView: 1,
+                perView: 2,
                 spacing: 0,
               },
             },

@@ -115,7 +115,7 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
             {activeData?.points.map((point, i) => (
               <li
                 key={i}
-                className="flex items-center justify-center sm:justify-start gap-3 text-gray-600 font-medium"
+                className="flex items-center justify-start sm:justify-start gap-3 text-gray-600 font-medium"
               >
                 <span className="text-[#f46c44] text-lg">✓</span>
                 {point}

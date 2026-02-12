@@ -26,7 +26,7 @@ import FAQSection from "./faqPage"
 
 
 
-export default function Homepage({ homePage, Blogdata, destinationData, imageData , Faqres }) {
+export default function Homepage({ homePage, destinationData, imageData , Faqres }) {
 
   const [openForm, setOpenForm] = useState(false);
 
@@ -111,6 +111,13 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
 
 
+  const startYear = 2011; // 👈 apna starting year yaha daalo
+const currentYear = new Date().getFullYear();
+const experienceYears = currentYear - startYear;
+
+
+
+
 
 
 
@@ -177,7 +184,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
                 <a
                   onClick={() => setOpenForm(true)}
                   className="
-    text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-orange-500 rounded-full shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
+    text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#f46c44] rounded-full shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
     text-sm lg:text-base font-semibold
     hover:bg-primary hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
     flex items-center justify-center gap-2
@@ -195,7 +202,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
                   className="
     text-primary px-6 sm:px-8 py-2.5 sm:py-3 border-2 border-primary rounded-full 
     lg:text-base text-sm font-semibold
-    transition-all hover:bg-orange-500 hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
+    transition-all hover:bg-[#f46c44] hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
     inline-flex items-center justify-center
   "
 
@@ -357,19 +364,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
   "
       >
         <div className="absolute -right-20 top-[0%] opacity-30 pointer-events-none hidden lg:block">
-          <div style={{
-            transform: 'rotate(-120deg) scaleY(-1)',
-            filter: 'brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)',
-            mixBlendMode: 'multiply'
-          }}>
-            <Image
-              src="/images/g logo.png"
-              alt="Decorative Arrow"
-              width={600}
-              height={40}
-              className="w-64 h-66 lg:w-116 lg:h-116 object-contain"
-            />
-          </div>
+         
         </div>
         <div className="max-w-7xl mx-auto">
           <div className="w-full px-4 sm:px-6 lg:px-8 relative z-10">
@@ -377,96 +372,28 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
 
               {/* LEFT – IMAGE STACK */}
               <div className="relative w-full h-full min-h-[420px] sm:min-h-[500px] lg:min-h-[550px] flex justify-center lg:justify-start hidden lg:block">
-                <div
-                  className="relative hover:z-999"
-                  style={{ perspective: "500px" }}
-                >
-                  <div
-                    className="absolute
-                top-0 left-0  
-                w-[200px] h-[260px]
-                sm:w-[280px] sm:h-[380px]
-                lg:w-75 lg:h-95
-                rounded-4xl overflow-hidden
-                border-[2px] border-orange-500
-                bg-white
-                cursor-pointer
-                transition-all duration-500 ease-out
-                hover:scale-[1.01] hover:shadow-2xl
-              "
-                    style={{
-                      transform: "rotateX(5deg) rotateZ(4deg) rotatey(7deg) skewX(4deg)",
-                    }}
-                  >
-                    {homePage?.trustedPartners?.bgImage2 && (
-                      <Image
-                        src={homePage.trustedPartners.bgImage2.trim()}
-                        alt="Immigration services"
-                        width={600}
-                        height={800}
-                        className="w-full h-full object-cover scale-110"
-                        style={{
-                          transform:
-                            "rotateY(-12deg) rotateX(5deg) rotateZ(-5deg) skewX(-5deg)",
-                        }}
-                      />
-                    )}
+               
+               <img src="/images/trust-img.png" alt="" className="w-[450px] h-[540px]" />
 
-                  </div>
-                </div>
-
-                {/* FRONT IMAGE */}
-                <div
-                  className="
-              absolute bottom-0
-              left-1/2 lg:left-30 hover:z-999
-              -translate-x-1/2 lg:translate-x-0
-            "
-                  style={{ perspective: "500px" }}
-                >
+                 {/* EXPERIENCE BADGE */}
                   <div
-                    className="
-                w-[220px] h-[280px]
-                sm:w-[300px] sm:h-[380px]
-                lg:w-68 lg:h-95
-                rounded-4xl overflow-hidden
-                border-[2px] border-orange-500
-                bg-white z-20
-                cursor-pointer
-                transition-all duration-500 ease-out
-                hover:scale-[1.01] hover:shadow-2xl
-              "
-                    style={{
-                      transform: "rotateY(-10deg) rotateX(5deg) rotateZ(-5deg) skewX(-5deg)",
-                    }}
-                  >
-                    <img
-                      src={homePage?.trustedPartners?.bgImage1?.trim()}
-                      alt=""
-                      className="w-full h-full object-cover scale-115"
-                      style={{
-                        transform: "rotateY(5deg) rotateX(15deg) rotateZ(8deg) skewX(8deg)",
-                      }}
-                    />
-                  </div>
+  className="
+    absolute -left-8 sm:left-25 bottom-25
+    w-24 h-24 sm:w-28 sm:h-28 lg:w-28 lg:h-28
+    rounded-full bg-white
+    border-[3px] border-orange-600
+    shadow-2xl z-40
+    flex flex-col items-center justify-center
+  "
+>
+  <span className="text-3xl sm:text-4xl font-bold text-red-700">
+    {experienceYears}
+  </span>
 
-                  {/* EXPERIENCE BADGE */}
-                  <div
-                    className="
-                absolute -left-8 sm:-left-12 bottom-30
-                w-24 h-24 sm:w-28 sm:h-28 lg:w-28 lg:h-28
-                rounded-full bg-white
-                border-[3px] border-orange-600
-                shadow-2xl z-40
-                flex flex-col items-center justify-center
-              "
-                  >
-                    <span className="text-3xl sm:text-4xl font-bold text-red-700">15</span>
-                    <span className="text-[10px] sm:text-xs text-gray-500 text-center font-semibold leading-tight">
-                      Years of<br />Experience
-                    </span>
-                  </div>
-                </div>
+  <span className="text-[10px] sm:text-xs text-gray-500 text-center font-semibold leading-tight">
+    Years of<br />Experience
+  </span>
+</div>
               </div>
 
               {/* RIGHT CONTENT */}
@@ -578,127 +505,7 @@ export default function Homepage({ homePage, Blogdata, destinationData, imageDat
       <UniversitySliderClient universities = {homePage.universities} />
 
 
-      <section className="
-   sm:py-14 lg:py-6
-  bg-gradient-to-b from-[#f3f3f3] to-white
-  bg-[url('/bg-01.jpg')]
-  bg-cover bg-center bg-no-repeat
-  relative
-">
-        <div className="max-w-7xl px-4 mx-auto  ">
-
-          {/* Heading */}
-          <div className=" mb-10  relative">
-            <h2 className="text-xl sm:text-3xl lg:text-5xl mb-5 ">
-              <span className="text-red-700">
-                {homePage?.blogs?.title?.split('||')[0]}
-              </span>{" "} <br />
-              <span className="text-primary relative font-bold">
-                {homePage?.blogs?.title?.split('||')[1]}
-        <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-red-600"></span>
-
-              </span>
-
-            </h2>
-            <p className="mt-2 text-sm sm:text-base text-gray-600 font-medium max-w-3xl ">
-              {homePage?.blogs?.subtitle}
-            </p>
-
-          </div>
-
-          {/* Grid */}
-          <div ref={sliderRef} className="keen-slider">
-
-            {Blogdata.map((post) => (
-              <div key={post._id} className="keen-slider__slide px-5">
-                <Link href={`/blog/${post.slug}`} >
-                  <div
-                    key={post._id}
-                    className="
-                  relative bg-white border border-[#FF6B35]
-                  rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]
-                  transition-all duration-300 hover:shadow-xl mt-4 lg:mt-10
-                "
-                  >
-                    {/* ORANGE BACK SHAPE */}
-                    <div
-                      className="
-                    absolute -top-2 -left-[6.5px]
-                    w-28 h-28 sm:w-36 sm:h-36 lg:w-35 lg:h-35
-                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-[20px] lg:rounded-tl-[70px]
-                    bg-[#FF6B35] -z-10
-                  "
-                    />
-
-                    {/* IMAGE */}
-                    <div
-                      className="
-                    relative overflow-hidden bg-gray-300
-                    h-[160px] sm:h-[220px] lg:h-[220px]
-                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[65px]
-                  "
-                    >
-                      <img
-                        src={
-                          post.coverImage ||
-                          "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
-                        }
-                        alt={post.title}
-                        className="w-full h-[160px] lg:h-[220px] object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
-                        }}
-                      />
-
-                      {/* OVERLAY */}
-                      <div
-                        className="
-                      absolute inset-0 bg-black/20
-                      flex flex-col items-center justify-center text-center px-4
-                      rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[65px]
-                    "
-                      >
-                        
-
-                       
-                      </div>
-                    </div>
-
-                    {/* CONTENT */}
-                    <div className="p-3 text-center">
-                      <p className="text-gray-800 text-sm lg:text-base font-medium mb-3 line-clamp-2">
-                        {post.shortDescription}
-                      </p>
-
-                      <div
-
-                        className="
-    text-white px-6 lg:w-50 py-2 mx-auto
-    bg-[#1f2937]
-    rounded-tr-4xl
-    shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
-    text-sm font-semibold
-    hover:bg-[#FF6B35]
-    hover:shadow-[-6px_6px_5px_0px_rgba(0,0,0,0.60)]
-    flex items-center justify-center gap-2
-    transition-all
-  "
-                      >
-                        Read More »
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-
-              </div>
-            )
-            )}
-          </div>
-
-
-        </div>
-      </section>
+    
 
       <FAQSection Faqres = {Faqres} />
     </main>

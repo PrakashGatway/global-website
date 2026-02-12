@@ -8,7 +8,7 @@ const FAQSection = ({ Faqres }) => {
   };
 
   return (
-    <section className="py-12 lg:py-20 px-4 lg:px-0  max-w-7xl mx-auto ">
+    <section className="py-12 lg:py-20 px-4   max-w-7xl mx-auto ">
       <div className="container   ">
         {/* Header */}
         <div className="text-justify mb-12 lg:mb-16    ">
@@ -62,7 +62,7 @@ const FAQSection = ({ Faqres }) => {
                   }`}
                 >
                   <div className="px-6 pb-5 pt-2 border-t border-gray-100">
-                    <p className="text-gray-700 leading-relaxed">
+                    <p className="text-gray-700 text-sm leading-relaxed">
                       {faq.answer}
                     </p>
                     

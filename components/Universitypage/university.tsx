@@ -17,6 +17,7 @@ import OffersSlider, {
 } from "@/components/PageComponent/DistinationSliders";
 import CaseStudy from "@/components/PageComponent/CaseStudy";
 import FAQSection from "../faqPage";
+import UniversityCard from "../UniversityCard";
 
 const images = [
   "https://t3.ftcdn.net/jpg/06/23/84/22/360_F_623842281_ECGgEpMEkQdH83gbmexIn5l3ACl7V3M0.jpg",
@@ -24,7 +25,7 @@ const images = [
   "https://as2.ftcdn.net/jpg/05/29/12/57/1000_F_529125762_omW1yTehDLLFJKwLJjRET0G3sXiQnK5g.jpg",
 ];
 
-export default function UniversityPage({ data ,caseStudy,imageRes,Faqres }) {
+export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires }) {
   const [index, setIndex] = useState(0);
 
   // AUTO SLIDE
@@ -242,6 +243,16 @@ export default function UniversityPage({ data ,caseStudy,imageRes,Faqres }) {
           </div>
         </div>
       </section>
+
+       <div className="flex flex-wrap gap-6 justify-center">
+      {Unires.map((uni) => (
+        <UniversityCard 
+          key={uni._id} 
+          university={uni}
+        />
+      ))}
+    </div>
+
 
       {/* The Ivy Coach Daily */}
       <section className="py-12 bg-[#f5f1f0] overflow-visible">

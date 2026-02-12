@@ -25,11 +25,11 @@ export function Footer({ Featureitem = [],Serviceitem =[]
   return (
     <>
       {/* Footer */}
-      <footer className="bg-gray-100 pt-32 pb-10 overflow-visible">
+      <footer className="bg-secondary pt-32 pb-10 overflow-visible">
         <div className=" mx-auto px-4 sm:px-6 lg:px-16 overflow-visible">
 
           {/* ================= MAIN FOOTER CARD with Orange Border ================= */}
-          <div className="rounded-[50px] px-6 md:px-12 pt-8 pb-12 relative bg-white">
+          <div className="rounded-[50px] px-6 md:px-12 pt-8 pb-12 relative ">
 
             {/* ================= TOP IMAGE STRIP with Orange Border - Positioned Upward ================= */}
            <div className="w-full mb-16 -mt-20">
@@ -81,10 +81,10 @@ export function Footer({ Featureitem = [],Serviceitem =[]
                   alt="GAway Global"
                   width={200}
                   height={50}
-                  className="mb-4"
+                  className="mb-4 text-white"
                 />
-                <h3 className="text-xl font-bold text-gray-800 mb-3">Ooshas Global</h3>
-                <p className="text-gray-600 text-base leading-relaxed mb-6">
+                <h3 className="text-xl font-bold text-gray-100 mb-3">Ooshas Global</h3>
+                <p className="text-gray-100 text-base leading-relaxed mb-6">
                   Your trusted partner for global education, university admissions, and international study planning.
                 </p>
 
@@ -97,14 +97,14 @@ export function Footer({ Featureitem = [],Serviceitem =[]
   {/* STUDY DESTINATIONS */}
   <div className="px-0 sm:px-4 lg:px-6 relative">
     <div className="h-full flex flex-col">
-      <h4 className="text-orange-500 font-bold text-lg mb-4">
+      <h4 className="text-gray-100 font-bold text-lg mb-4">
         Study Destinations
       </h4>
 
       {Featureitem.map((item) => (
         <ul
           key={item._id}
-          className="space-y-2 text-gray-700 text-base"
+          className="space-y-2 text-gray-100 text-base"
         >
           <li
             className="
@@ -129,14 +129,14 @@ export function Footer({ Featureitem = [],Serviceitem =[]
   {/* SERVICES */}
   <div className="px-0 sm:px-4 lg:px-6 relative">
     <div className="h-full flex flex-col">
-      <h4 className="text-orange-500 font-bold text-lg mb-4">
+      <h4 className="text-gray-100 font-bold text-lg mb-4">
         Our Services
       </h4>
 
       {Serviceitem.map((item) => (
         <ul
           key={item._id}
-          className="space-y-2 text-gray-700 text-base"
+          className="space-y-2 text-gray-100 text-base"
         >
           <li
             className="
@@ -161,11 +161,11 @@ export function Footer({ Featureitem = [],Serviceitem =[]
   {/* RESOURCES */}
   <div className="px-0 sm:px-4 lg:px-6 relative">
     <div className="h-full flex flex-col">
-      <h4 className="text-orange-500 font-bold text-lg mb-4">
+      <h4 className="text-gray-100 font-bold text-lg mb-4">
         Resources
       </h4>
 
-      <ul className="space-y-2 text-gray-700 text-base">
+      <ul className="space-y-2 text-gray-100 text-base">
         <li
           className="
             cursor-pointer
@@ -197,11 +197,11 @@ export function Footer({ Featureitem = [],Serviceitem =[]
   {/* CONNECT */}
   <div className="px-0 sm:px-4 lg:px-6">
     <div className="h-full flex flex-col">
-      <h4 className="text-orange-500 font-bold text-lg mb-4">
+      <h4 className="text-gray-100 font-bold text-lg mb-4">
         Connect
       </h4>
 
-      <ul className="space-y-2 text-gray-700 text-base">
+      <ul className="space-y-2 text-gray-100 text-base">
         <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
           Instagram
         </li>
@@ -231,13 +231,13 @@ export function Footer({ Featureitem = [],Serviceitem =[]
           </div>
 
           {/* ================= BOTTOM BAR ================= */}
-          <div className="mt-10 flex flex-col md:flex-row justify-between items-center text-base text-gray-500 gap-4">
+          <div className="mt-10 flex flex-col md:flex-row justify-between items-center text-base text-gray-100 gap-4">
             <p>© 2023 Ooshas Global. All rights reserved.</p>
 
             <div className="flex gap-4 md:gap-6 flex-wrap justify-center">
               <a href="privacy-policy" className="hover:text-orange-500">Privacy Policy</a>
               <a href="terms-condition" className="hover:text-orange-500">Terms of Service</a>
-              <a href="#" className="hover:text-orange-500">Cookie Policy</a>
+            
             </div>
           </div>
 
