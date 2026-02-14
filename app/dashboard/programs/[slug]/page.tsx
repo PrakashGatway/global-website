@@ -10,7 +10,8 @@ import {
     Layers, Sparkles, ArrowLeft, Heart, Shield,
     Trophy, Wallet, Languages, Home, Mail, Phone,
     Instagram, Twitter, Linkedin, Youtube, Facebook,
-    Loader2, TrendingUp, Star, CircleDot
+    Loader2, TrendingUp, Star, CircleDot,
+    Building
 } from "lucide-react"
 import axiosInstance from "@/app/axiosInstance"
 import Link from "next/link"
@@ -136,17 +137,17 @@ const StatCard = ({ icon: Icon, label, value, subValue, color = "primary" }: any
 const TabButton = ({ active, onClick, children, icon: Icon }: any) => (
     <button
         onClick={onClick}
-        className={`px-5 py-3 text-sm font-medium transition-all relative flex items-center gap-2 whitespace-nowrap ${active
-                ? 'text-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
+        className={`px-4 py-3 whitespace-nowrap flex-shrink-0 text-sm font-medium transition-all relative ${active
+            ? 'text-primary'
+            : 'text-muted-foreground hover:text-foreground'
             }`}
     >
-        <Icon className="w-4 h-4" />
+        {/* <Icon className="w-4 h-4" /> */}
         {children}
         {active && (
             <motion.div
                 layoutId="activeCourseTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
             />
         )}
@@ -210,7 +211,7 @@ export default function CourseDetailPage() {
     const router = useRouter()
     const [course, setCourse] = useState<Course | null>(null)
     const [loading, setLoading] = useState(true)
-    const [activeTab, setActiveTab] = useState("overview")
+    const [activeTab, setActiveTab] = useState()
     const [isSaved, setIsSaved] = useState(false)
     const [relatedCourses, setRelatedCourses] = useState([])
 
@@ -223,7 +224,7 @@ export default function CourseDetailPage() {
             setLoading(true)
             const response = await axiosInstance.get(`/courses/${params.slug}`)
             const data = response.data.data
-            console.log(data)
+            setActiveTab(data.extra_content?.sections[0].section_key)
             setCourse(data)
         } catch (error) {
             console.error('Error fetching course details:', error)
@@ -281,7 +282,7 @@ export default function CourseDetailPage() {
                     <div className="animate-pulse space-y-6">
                         {/* Breadcrumb skeleton */}
                         <div className="h-5 bg-gray-200 rounded w-64"></div>
-                        
+
                         {/* Hero skeleton */}
                         <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
                             <div className="flex items-start gap-6">
@@ -293,7 +294,7 @@ export default function CourseDetailPage() {
                                 </div>
                             </div>
                         </div>
-                        
+
                         {/* Stats skeleton */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             {[...Array(4)].map((_, i) => (
@@ -333,8 +334,8 @@ export default function CourseDetailPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen">
+            <div className="max-w-7xl mx-auto">
                 {/* Breadcrumb Navigation */}
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
@@ -353,37 +354,71 @@ export default function CourseDetailPage() {
                 </motion.div>
 
                 {/* Hero Section - University & Course Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-white rounded-2xl border border-gray-200 p-6 mb-6 shadow-sm hover:shadow-md transition-all"
-                >
-                    <div className="flex flex-col md:flex-row items-start gap-6">
-                        {/* University Logo */}
-                        <div className="relative">
-                            <div className="w-28 h-28 rounded-xl bg-gradient-to-br from-gray-50 to-white p-4 border-2 border-gray-100 shadow-sm">
-                                {course.university?.uni_logo ? (
-                                    <img
-                                        src={course.university.uni_logo}
-                                        alt={course.university?.name}
-                                        className="w-full h-full object-contain"
-                                    />
-                                ) : (
-                                    <Building2 className="w-full h-full text-gray-400" />
-                                )}
-                            </div>
-                            {course.university?.uni_rank && course.university.uni_rank.length > 0 && (
-                                <div className="absolute -top-2 -right-2 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1 text-xs font-semibold text-amber-700 shadow-sm">
-                                    #{course.university.uni_rank[0].rank}
-                                </div>
-                            )}
-                        </div>
 
-                        {/* Course Info */}
-                        <div className="flex-1">
-                            <div className="flex flex-wrap items-start justify-between gap-4">
-                                <div className="space-y-2">
+                <div className="relative rounded-3xl overflow-hidden h-[300px] bg-gradient-to-br from-primary/20 via-primary/5 to-background">
+                    {/* Cover Image */}
+                    {course?.university ? (
+                        <img
+                            src={"https://www.ox.ac.uk/sites/files/oxford/styles/ow_large_feature/s3/field/field_image_main/GAF%20Radcliffe%20Square%20Dawn%20-%20Elizabeth%20Nyikos.jpg?itok=U-0F0aPx"}
+                            alt={course?.university.name}
+                            className="absolute rounded-3xl inset-0 w-full h-full object-cover"
+                        />
+                    ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 pattern-grid" />
+                    )}
+                    <div className="absolute rounded-3xl inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+
+                    {/* University Info Overlay */}
+                    <div className="absolute rounded-3xl bottom-0 left-0 right-0 p-6">
+                        <div className="container mx-auto">
+                            <div className="flex items-end gap-6">
+                                {/* Logo */}
+                                <div className="w-32 h-32 rounded-2xl bg-white p-4 shadow-2xl border border-white/50">
+                                    {course?.university.uni_logo ? (
+                                        <img
+                                            src={course?.university.uni_logo}
+                                            alt={course?.university.name}
+                                            className="w-full h-full object-contain"
+                                        />
+                                    ) : (
+                                        <Building className="w-full h-full text-muted-foreground" />
+                                    )}
+                                </div>
+
+                                {/* Info */}
+                                <div className="flex-1">
+
+                                    <h1 className="text-3xl font-bold text-gray-900 py-2">
+                                        {course.name}
+                                    </h1>
+                                    <div className="flex items-center justify-start gap-2">
+                                        <Building2 className="w-5 h-5 text-gray-800 " />
+                                        <h3 className="text-xl font-semibold mb-2">{course?.university.name}</h3>
+
+                                    </div>
+
+                                    <div className="flex items-center gap-4 my-2">
+                                        <span className="flex items-center gap-2 text-sm">
+                                            <MapPin className="w-4 h-4" />
+                                            {course?.university.city}, {course?.university.country}
+                                        </span>
+                                        {course?.university.uni_web && (
+                                            <a
+                                                href={course?.university.uni_web}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+                                            >
+                                                <Globe className="w-4 h-4" />
+                                                Official Website
+                                                <ExternalLink className="w-3 h-3" />
+                                            </a>
+                                        )}
+                                    </div>
                                     <div className="flex items-center gap-3 flex-wrap">
+                                        {/* <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full font-medium border">
+                                            Est. {course?.university.established_year}
+                                        </span> */}
                                         <span className={`px-3 py-1.5 rounded-full text-xs font-medium border ${getLevelColor(course.level)}`}>
                                             {course.level}
                                         </span>
@@ -398,54 +433,21 @@ export default function CourseDetailPage() {
                                             </span>
                                         )}
                                     </div>
-                                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-                                        {course.name}
-                                    </h1>
-                                    {course.shortName && (
-                                        <p className="text-sm text-gray-500">
-                                            Also known as: <span className="font-medium text-gray-700">{course.shortName}</span>
-                                        </p>
-                                    )}
-                                    <div className="flex flex-wrap items-center gap-4 pt-1">
-                                        <Link
-                                            href={`/universities/${course.university?.slug}`}
-                                            className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors group"
-                                        >
-                                            <Building2 className="w-4 h-4 text-gray-400 group-hover:text-blue-600" />
-                                            <span className="font-medium">{course.university?.name}</span>
-                                        </Link>
-                                        <span className="flex items-center gap-1.5 text-gray-600">
-                                            <MapPin className="w-4 h-4 text-gray-400" />
-                                            {course.university?.city}, {course.university?.country}
-                                        </span>
-                                    </div>
                                 </div>
 
-                                {/* Action Buttons */}
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => setIsSaved(!isSaved)}
-                                        className={`p-3 rounded-xl border transition-all ${
-                                            isSaved
-                                                ? 'bg-red-50 border-red-200 text-red-600'
-                                                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
-                                        }`}
-                                    >
-                                        <Heart className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
-                                    </button>
-                                    <button className="p-3 rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition-all">
+                                {/* Actions */}
+                                <div className="flex gap-2">
+                                    <button className="p-3 bg-white/90 backdrop-blur-sm rounded-lg border hover:bg-white transition-colors">
                                         <Share2 className="w-5 h-5" />
                                     </button>
-                                    <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all font-medium flex items-center gap-2 shadow-lg shadow-blue-600/25">
+                                    <button className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
                                         Apply Now
-                                        <ExternalLink className="w-4 h-4" />
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </motion.div>
-
+                </div>
                 {/* Quick Stats Grid */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -492,17 +494,20 @@ export default function CourseDetailPage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm"
+                            className=""
                         >
-                            <div className="border-b border-gray-200 px-4 overflow-x-auto">
-                                <div className="flex gap-2 min-w-max">
-                                    <TabButton
-                                        active={activeTab === "overview"}
-                                        onClick={() => setActiveTab("overview")}
-                                        icon={BookOpen}
-                                    >
-                                        Overview
-                                    </TabButton>
+                            <div className="">
+                                <div className="flex bg-background border-b border-border mb-8 overflow-x-auto no-scrollbar scrollbar-hide ">
+                                      {course.extra_content?.sections?.map((section) => (
+                                        <TabButton
+                                            key={section._id}
+                                            active={activeTab === section.section_key}
+                                            onClick={() => setActiveTab(section.section_key)}
+                                            icon={Layers}
+                                        >
+                                            {section.heading}
+                                        </TabButton>
+                                    ))}
                                     <TabButton
                                         active={activeTab === "requirements"}
                                         onClick={() => setActiveTab("requirements")}
@@ -517,23 +522,13 @@ export default function CourseDetailPage() {
                                     >
                                         Documents
                                     </TabButton>
-                                    {course.extra_content?.sections?.map((section) => (
-                                        <TabButton
-                                            key={section._id}
-                                            active={activeTab === section.section_key}
-                                            onClick={() => setActiveTab(section.section_key)}
-                                            icon={Layers}
-                                        >
-                                            {section.heading}
-                                        </TabButton>
-                                    ))}
+                                  
                                 </div>
                             </div>
-
                             {/* Tab Content */}
-                            <div className="p-6">
+                            <div className="p-2">
                                 {/* Overview Tab */}
-                                {activeTab === "overview" && (
+                                {/* {activeTab === "overview" && (
                                     <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
@@ -589,17 +584,16 @@ export default function CourseDetailPage() {
                                             </div>
                                         )}
                                     </motion.div>
-                                )}
+                                )} */}
 
                                 {/* Requirements Tab */}
                                 {activeTab === "requirements" && (
                                     <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        className="space-y-4"
+                                        className="space-y-2"
                                     >
                                         <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                            <Award className="w-5 h-5 text-purple-600" />
                                             Entry Requirements
                                         </h3>
                                         {course.requirements && Object.keys(course.requirements).length > 0 ? (
@@ -621,10 +615,9 @@ export default function CourseDetailPage() {
                                     <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        className="space-y-4"
+                                        className="space-y-2"
                                     >
                                         <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                            <FileText className="w-5 h-5 text-green-600" />
                                             Required Documents
                                         </h3>
                                         {course.docsRequired && course.docsRequired.length > 0 ? (
@@ -648,14 +641,13 @@ export default function CourseDetailPage() {
                                             key={section._id}
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
-                                            className="space-y-4"
+                                            className="space-y-2"
                                         >
                                             <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                <Layers className="w-5 h-5 text-blue-600" />
                                                 {section.heading}
                                             </h3>
                                             <div
-                                                className="prose prose-sm max-w-none bg-gray-50 rounded-xl p-5 border border-gray-100"
+                                                className="text-muted-foreground text-gray-800 leading-relaxed"
                                                 dangerouslySetInnerHTML={{ __html: section.content }}
                                             />
                                         </motion.div>
@@ -666,18 +658,15 @@ export default function CourseDetailPage() {
                     </div>
 
                     {/* Right Column - Sidebar (1/3 width) */}
-                    <div className="space-y-6">
+                    <div className="space-y-2">
                         {/* University Info Card */}
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all"
+                            className="bg-white rounded-xl border border-gray-200 text-gray-800 p-6 transition-all"
                         >
                             <div className="flex items-center gap-3 mb-5">
-                                <div className="p-2 bg-blue-100 rounded-lg">
-                                    <Building2 className="w-5 h-5 text-blue-600" />
-                                </div>
                                 <h3 className="font-semibold text-gray-900">About the University</h3>
                             </div>
 
@@ -688,16 +677,16 @@ export default function CourseDetailPage() {
                                     </div>
                                 )}
 
-                                <div className="space-y-3">
+                                <div className="space-y-4">
                                     <div className="flex items-start gap-3">
-                                        <MapPin className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Location</p>
-                                            <p className="text-sm text-gray-900">
+                                        <MapPin className="w-4 h-4 text-gray-800 mt-0.5 flex-shrink-0" />
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Location</p>
+                                            <p className="text-sm">
                                                 {course.university?.city}, {course.university?.country}
                                             </p>
                                             {course.university?.address && (
-                                                <p className="text-xs text-gray-500 mt-0.5">{course.university.address}</p>
+                                                <p className="text-sm mt-0.5">{course.university.address}</p>
                                             )}
                                         </div>
                                     </div>
@@ -705,17 +694,17 @@ export default function CourseDetailPage() {
                                     <div className="flex items-start gap-3">
                                         <Calendar className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
                                         <div>
-                                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Established</p>
-                                            <p className="text-sm font-medium text-gray-900">{course.university?.established_year || 'N/A'}</p>
+                                            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Established</p>
+                                            <p className="text-sm font-medium text-gray-80 mt-1">{course.university?.established_year || 'N/A'}</p>
                                         </div>
                                     </div>
 
                                     <div className="flex items-start gap-3">
                                         <Users className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
                                         <div>
-                                            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Acceptance Rate</p>
+                                            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Acceptance Rate</p>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-sm font-bold text-gray-900">{course.university?.acceptanceRate || 'N/A'}%</span>
+                                                <span className="text-sm font-bold text-gray-900 mt-1">{course.university?.acceptanceRate || 'N/A'}%</span>
                                                 <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
                                                     Competitive
                                                 </span>
@@ -727,7 +716,7 @@ export default function CourseDetailPage() {
                                         <div className="flex items-start gap-3">
                                             <Calendar className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
                                             <div>
-                                                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Intakes</p>
+                                                <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Intakes</p>
                                                 <div className="flex flex-wrap gap-1.5 mt-1">
                                                     {course.university.intakes.map((intake, i) => (
                                                         <span key={i} className="text-xs bg-gray-100 px-2.5 py-1 rounded-full border border-gray-200">
@@ -758,19 +747,17 @@ export default function CourseDetailPage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.25 }}
-                                className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all"
+                                className="bg-white rounded-xl border border-gray-200 p-6 transition-all"
                             >
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="p-2 bg-amber-100 rounded-lg">
-                                        <Trophy className="w-5 h-5 text-amber-600" />
-                                    </div>
+                                    
                                     <h3 className="font-semibold text-gray-900">University Rankings</h3>
                                 </div>
                                 <div className="space-y-3">
                                     {course.university.uni_rank.map((rank, index) => (
                                         <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
                                             <div className="flex items-center gap-2">
-                                                <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                                                {/* <Star className="w-4 h-4 text-amber-500 fill-amber-500" /> */}
                                                 <span className="text-sm font-medium text-gray-700">{rank.type}</span>
                                             </div>
                                             <div className="text-right">
@@ -789,12 +776,9 @@ export default function CourseDetailPage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.3 }}
-                                className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all"
+                                className="bg-white rounded-xl border border-gray-200 p-6 transition-all"
                             >
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="p-2 bg-green-100 rounded-lg">
-                                        <Home className="w-5 h-5 text-green-600" />
-                                    </div>
                                     <h3 className="font-semibold text-gray-900">Accommodation</h3>
                                 </div>
                                 <div className="space-y-3">
@@ -845,7 +829,7 @@ export default function CourseDetailPage() {
                         </motion.div>
 
                         {/* Social Media Links */}
-                        {course.university?.social_links && Object.values(course.university.social_links).some(Boolean) && (
+                        {/* {course.university?.social_links && Object.values(course.university.social_links).some(Boolean) && (
                             <motion.div
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -864,7 +848,7 @@ export default function CourseDetailPage() {
                                     ))}
                                 </div>
                             </motion.div>
-                        )}
+                        )} */}
                     </div>
                 </div>
             </div>

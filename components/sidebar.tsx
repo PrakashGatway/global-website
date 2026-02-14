@@ -12,7 +12,7 @@ const menuItems = [
   { icon: BookOpen, label: "Universities", href: "/dashboard/universities" },
   { icon: BarChart3, label: "Find Programs", href: "/dashboard/programs" },
   { icon: FileText, label: "Application", href: "/dashboard/application" },
-  { icon: Wallet, label: "Wallet", href: "/dashboard/wallet" },
+  { icon: Wallet, label: "Payment", href: "/dashboard/payment" },
   { icon: Headphones, label: "Support", href: "/dashboard/support" },
   { icon: MessageSquare, label: "Notifications", href: "/dashboard/notifications" },
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },

@@ -15,7 +15,7 @@ import Link from "next/link"
 import axiosInstance from "@/app/axiosInstance"
 import { ModernSelect } from "@/components/ui/select"
 
-// Types
+
 interface University {
     _id: string
     name: string
@@ -115,7 +115,6 @@ interface ExtraContent {
     }>
 }
 
-// Stats Card Component
 const StatCard = ({ icon: Icon, label, value, trend }: any) => (
     <div className="bg-card border border-border rounded-xl p-4">
         <div className="flex items-center gap-3 mb-2">
@@ -136,7 +135,6 @@ const StatCard = ({ icon: Icon, label, value, trend }: any) => (
     </div>
 )
 
-// Tab Button Component
 const TabButton = ({ active, onClick, children }: any) => (
     <button
         onClick={onClick}
@@ -304,7 +302,7 @@ export default function UniversityDetailPage() {
     const [courses, setCourses] = useState<Course[]>([])
     const [loading, setLoading] = useState(true)
     const [loadingCourses, setLoadingCourses] = useState(false)
-    const [activeTab, setActiveTab] = useState("overview")
+    const [activeTab, setActiveTab] = useState()
     const [saved, setSaved] = useState(false)
 
     // Course Filters State
@@ -326,7 +324,8 @@ export default function UniversityDetailPage() {
                 // Fetch university details
                 const uniResponse = await axiosInstance.get(`/universities/${slug}`)
                 const uniData = uniResponse.data.result
-                console.log(uniData)
+            setActiveTab(uniData.extra_content?.sections[0].section_key)
+                
                 setUniversity(uniData)
             } catch (error) {
                 console.error('Error fetching university details:', error)
@@ -435,10 +434,10 @@ export default function UniversityDetailPage() {
         <main className="flex-1 overflow-y-auto bg-gradient-to-b from-background to-muted/20 relative">
             {/* Back Navigation */}
             <div className="rounded-3xl absolute top-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border">
-                <div className="px-4 py-3">
+                <div className="p-2">
                     <button
                         onClick={() => router.back()}
-                        className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                        className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
                     >
                         <ChevronLeft className="w-5 h-5" />
                         <span>Back</span>
@@ -553,10 +552,10 @@ export default function UniversityDetailPage() {
                 </div>
             </div>
 
-            <div className="container mx-auto px-6 py-8">
+            <div className="container mx-auto px-6 py-8 ">
                 <div className="flex gap-8">
-                    <div className="w-[70%]">
-                        <div className="flex  border-b border-border mb-8 overflow-x-auto no-scrollbar scrollbar-hide ">
+                    <div className="w-[70%] ">
+                        <div className="flex bg-background border-b border-border mb-8 overflow-x-auto no-scrollbar scrollbar-hide ">
                             {university?.extra_content?.sections.map((section, index) => (
                                 <TabButton key={index} active={activeTab === section.section_key} onClick={() => setActiveTab(section?.section_key)}>
                                     {section.heading}
@@ -601,7 +600,7 @@ export default function UniversityDetailPage() {
                                                 <p className="text-sm text-muted-foreground mb-1">University Type</p>
                                                 <p className="font-medium uppercase">{university.uni_type}</p>
                                             </div>
-                                         
+
                                             <div>
                                                 <p className="text-sm text-muted-foreground mb-1">Campus</p>
                                                 <p className="font-medium">{university.campusSize || 'N/A'}</p>
