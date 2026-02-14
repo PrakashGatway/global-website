@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { usePathname } from "next/navigation"
 import axiosInstance from "@/app/axiosInstance"
 import { id } from "date-fns/locale"
+import { useGlobal } from "@/src/statecontext"
 
 
 
@@ -33,6 +34,12 @@ export default function Navbar({
 }) {
   const [isOpen, setIsOpen] = React.useState(false)
   const [mobileDropdown, setMobileDropdown] = React.useState(null)
+  const {profile, loading , Logout} = useGlobal()
+  const [isScrolled, setIsScrolled] = useState(false);
+const [Login , setLogin] = useState(false)
+
+
+
 
   
 
@@ -103,30 +110,28 @@ export default function Navbar({
 
   ]
 
-  // hide footer on auth pages
-  if (
-    pathname === "/login" ||
-    pathname === "/signup" ||
-    pathname.startsWith("/dashboard")
-  ) {
-    return null
-  }
 
 
-  const [isScrolled, setIsScrolled] = useState(false);
 
 useEffect(() => {
   const handleScroll = () => {
-    if (window.scrollY > 80) {
-      setIsScrolled(true);
-    } else {
-      setIsScrolled(false);
-    }
+    const scrollY = window.scrollY;
+
+    setIsScrolled(prev => {
+      // activate only after bigger scroll
+      if (!prev && scrollY > 120) return true;
+
+      // deactivate only when clearly back to top
+      if (prev && scrollY < 60) return false;
+
+      return prev;
+    });
   };
 
   window.addEventListener("scroll", handleScroll);
   return () => window.removeEventListener("scroll", handleScroll);
 }, []);
+
 
 
 useEffect(() => {
@@ -147,6 +152,26 @@ useEffect(() => {
 
 
 
+useEffect(()=>{
+  const token = localStorage.getItem("token")
+  setLogin(!!token)
+}, [])
+
+
+
+  // hide footer on auth pages
+  if (
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname.startsWith("/dashboard")
+  ) {
+    return null
+  }
+
+
+
+
+
 
 
 
@@ -155,7 +180,15 @@ useEffect(() => {
  
 
 {/* ================= MAIN NAVBAR ================= */}
-<nav className={`sticky top-0 z-[999] bg-[#f46c44] shadow-sm  pb-2   `}>
+<nav
+  className={`
+    sticky top-0 z-[999]
+    bg-[#f46c44] shadow-sm 
+    transition-transform duration-300 ease-in-out
+    ${isScrolled ? "-translate-y-1" : "translate-y-0"}
+  `}
+>
+
 
   <div
   className={`mx-auto  flex justify-between relative transition-all duration-500  ease-in-out ${
@@ -168,7 +201,7 @@ useEffect(() => {
      
          <div className={`items-center text-end px-8   gap-2 bg-white    ` }>
      
-      <span className={`font-medium  ${isScrolled ? "hidden" : "block"}`} >
+      <span className={`font-medium  ${isScrolled ? "hidden lg:hidden" : "hidden lg:block"}`} >
         Contact Your Nearest Centre
       </span>
        {/* LOGO */}
@@ -292,15 +325,56 @@ useEffect(() => {
         </div>
       ))}
       {isScrolled && (
-  <div className="flex justify-end  bg-secondary rounded-full p-3  mr-2">
-    <a
-      href="/login"
-      className="text-white text-sm font-semibold transition-all duration-500 animate-slideDown"
-    >
-      Login/Signup
-    </a>
+  <div className="relative group mr-4">
+    {Login && profile ? (
+      <>
+        {/* Profile Button */}
+        <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full cursor-pointer shadow">
+          <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold">
+            {profile?.name?.charAt(0).toUpperCase()}
+          </div>
+        </div>
+
+        {/* Hover Dropdown */}
+        <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100">
+          
+          <div className="p-4 border-b">
+            <p className="font-semibold text-gray-800">
+              {profile?.name}
+            </p>
+            <p className="text-sm text-gray-500">
+              {profile?.email}
+            </p>
+          </div>
+
+          <div className="flex flex-col text-sm">
+            <Link
+              href="/dashboard"
+              className="px-4 py-3 hover:bg-gray-100 transition"
+            >
+              Dashboard
+            </Link>
+
+            <button
+              onClick={Logout}
+              className="text-left px-4 py-3 hover:bg-red-50 text-red-600 transition"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </>
+    ) : (
+      <Link
+        href="/login"
+        className="bg-secondary text-white px-5 py-3 rounded-full text-sm font-semibold"
+      >
+        Login / Signup
+      </Link>
+    )}
   </div>
 )}
+
 
 
     </div>

@@ -46,6 +46,40 @@
   }
 }
 
+/* -------- Rise animation (RUNS ONLY ONCE) -------- */
+@keyframes balloonRise {
+  0% {
+    transform: translateY(140px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* -------- Floating animation (INFINITE) -------- */
+@keyframes balloonFloat {
+  0%   { transform: translate(0,0) rotate(0deg); }
+  25%  { transform: translate(-8px,-10px) rotate(-2deg); }
+  50%  { transform: translate(8px,-18px) rotate(2deg); }
+  75%  { transform: translate(-6px,-10px) rotate(-1deg); }
+  100% { transform: translate(0,0) rotate(0deg); }
+}
+
+/* -------- Combine both -------- */
+.balloon-animation {
+  animation:
+    balloonRise 1.8s ease-out forwards,
+    balloonFloat 6s ease-in-out 1.8s infinite;
+
+  transform-origin: bottom center;
+}
+
+
+
+
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }

@@ -3,11 +3,14 @@ import { baseUrl, serverInstance } from "./axiosInstance";
 
 const getHomePageData = async () => {
   const res = await fetch(`${baseUrl}/page-information/slug/home`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    cache: "force-cache", // 👈 important for dedupe + SEO
-  });
+  headers: {
+    "Content-Type": "application/json",
+  },
+  next: {
+    revalidate: 3600, 
+  },
+});
+
 
   if (!res.ok) {
     throw new Error("Failed to fetch homepage data");

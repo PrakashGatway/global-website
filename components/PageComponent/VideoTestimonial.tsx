@@ -63,6 +63,7 @@ return {
 
 export default function VideoTestimonialsSlider({
   items = [],
+  subtitle,
   title = "Video || Testimonials",
   emptyStateMessage = "No video testimonials available",
   autoPlay = true, // Default to true for auto-play
@@ -160,12 +161,7 @@ export default function VideoTestimonialsSlider({
 
   const item = validItems[index];
 
-  const displayTitle = title.includes('||') ? (
-    <>
-      <span className="text-[#f46c44]">{title.split('||')[0].trim()}</span>{' '}
-      <span className="text-gray-600">{title.split('||')[1].trim()}</span>
-    </>
-  ) : title;
+ 
 
   return (
  <section className="bg-[#efefef] py-10 pb-20 relative">
@@ -187,6 +183,7 @@ export default function VideoTestimonialsSlider({
 
         <span className="absolute right-0 -bottom-1 w-32 h-[2px] lg:h-1 bg-red-600"></span>
       </h3>
+      <p className='text-gray-600 mt-2'> {subtitle}</p>
     </div>
 
     {/* ================= SLIDER ================= */}

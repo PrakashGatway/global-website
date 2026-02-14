@@ -18,6 +18,7 @@ import { useKeenSlider } from "keen-slider/react"
 import MultiStepForm from "./PopupForm"
 import { useState } from "react"
 import FAQSection from "./faqPage"
+import { useGlobal } from "@/src/statecontext"
 
 
 
@@ -29,6 +30,8 @@ import FAQSection from "./faqPage"
 export default function Homepage({ homePage, destinationData, imageData , Faqres }) {
 
   const [openForm, setOpenForm] = useState(false);
+
+  
 
 
 
@@ -425,8 +428,9 @@ const experienceYears = currentYear - startYear;
        
      <VideoTestimonialsSlider
   title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
+  subtitle = {homePage?.videoTestimonials?.subtitle}
   items={imageData?.map((item: any) => ({
-    title: item.title || "Trusted Success",
+    title: item.title,
     text: item.description || homePage?.videoTestimonials?.subtitle || "",
     videoUrl: item.videoUrl || "",
   }))}

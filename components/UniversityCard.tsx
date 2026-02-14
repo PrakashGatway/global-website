@@ -1,8 +1,10 @@
+"use client"
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import KeenSlider from "keen-slider";
 import "keen-slider/keen-slider.min.css";
 import Link from "next/link";
+import { Map, MapPin, Star } from "lucide-react";
 
 export default function UniversityCard({ university }) {
   const sliderRef = useRef(null);
@@ -65,81 +67,89 @@ export default function UniversityCard({ university }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden w-[350px]">
-
    
-      {/* ============================================= */}
+        
+          <div key={university.id} className="bg-gray-100 rounded-3xl  shadow-sm hover:shadow-md transition-shadow relative">
+            
+            {/* Top Section - Logo and Name */}
+            <div className=" p-6 flex gap-4 items-start">
+              {/* Logo Container */}
+              <div className="w-33 h-23 flex-shrink-0 rounded-2xl border shadow-[-4px_-2px_3px_rgba(0,0,0,0.2)] border-gray bg-white flex items-center justify-center overflow-hidden absolute -top-2 -left-12">
+                <img
+                  src={university.uni_logo}
+                  alt={university.name}
+                  className="w-36 h-26 object-contain"
+                />
+              </div>
 
-      {/* Top Section */}
-      <div className="pt-16  text-center">
+              {/* Name and Badge */}
+              <div className="flex-1 pt-1 pl-20 text-end">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  {university.name}
+                </h3>
+                
+                <div className="inline-block bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded">
+                  University
+                </div>
+              </div>
+            </div>
 
-        {/* Logo */}
-        <div className="w-24 h-24  mx-auto rounded-full border-2 border-pink-400 flex items-center justify-center overflow-hidden bg-white -mt-14 relative z-10">
-          <Image
-            src={university.uni_logo || "https://upload.wikimedia.org/wikipedia/en/thumb/0/04/Utoronto_coa.svg/250px-Utoronto_coa.svg.png"}
-            alt={`${university.name} Logo`}
-            width={70}
-            height={70}
-            className="object-contain"
-          />
-        </div>
+            {/* Location Section */}
+            <div className="px-2  py-2 ">
+              <p className="text-sm text-gray-700 flex">
+                <MapPin/>
+              <span>
+                 {university.city} , {university.country}
+                </span> 
+              </p>
+            </div>
 
-        {/* University Name */}
-        <h3 className="mt-4 text-lg font-semibold text-red-600 uppercase">
-          {university.name}
-        </h3>
+            {/* National Ranking */}
+           <div className="px-4 py-3">
+  <div className="flex flex-col-1 gap-3">
+    {university.uni_rank?.map((rank, index) => (
+      <p key={index} className="text-xs text-gray-800 font-medium">
+        {rank.type}: <span className="font-bold">{rank.rank}</span> ({rank.year})
+      </p>
+    ))}
+  </div>
+</div>
 
-        {/* Location */}
-        <p className="text-sm text-gray-600 mt-2">
-          {getFlagEmoji(university.country)} {university.city}, {university.country}
-        </p>
-      </div>
 
-      {/* Ranking Section */}
-      <div className="bg-gray-100 p-5 text-center">
+            {/* Orange Fee Section */}
+            <div className="bg-[#f46c44] px-6 py-4 text-white">
+           
 
-        <div className="flex justify-center gap-10 mb-3">
-          <div>
-            <p className="text-xs text-gray-500">THE</p>
-            <p className="font-semibold text-gray-800">Ranking: {theRank}</p>
+              {/* Fee Information */}
+              <p className="text-sm mb-2 flex justify-center">
+                Average Annual UG Fee: <span className="font-bold pl-2">{university.financials.ug_fees}</span>
+              </p>
+              <p className="text-sm flex justify-center ">
+                Average Annual PG Fee: <span className="font-bold  pl-2">{university.financials.pg_fees}</span>
+              </p>
+            </div>
+
+            {/* Cost of Living Section */}
+            <div className=" px-6 py-2 text-center">
+              <p className="text-sm text-gray-700 mb-3">
+                Average Cost of Living:
+              </p>
+              <p className="text-xl font-bold text-gray-900">
+                {university.financials.cost_of_living}/year
+              </p>
+            </div>
+
+            {/* Button */}
+            <div className="px-6 pb-2 text-center">
+              <Link href={`/universities/${university.slug}`} >
+              <button className="bg-amber-900 hover:bg-amber-950 text-white px-6 py-2 rounded-full text-sm font-bold transition-colors">
+                View Details &gt;
+              </button>
+              </Link>
+              
+            </div>
+
           </div>
-
-          <div>
-            <p className="text-xs text-gray-500">QS</p>
-            <p className="font-semibold text-gray-800">Ranking: {qsRank}</p>
-          </div>
-        </div>
-
-        <p className="text-sm text-gray-700">
-          Average Annual UG Fee: <span className="font-semibold">{formatCurrency(university.financials?.ug_fees)}</span>
-        </p>
-
-        <p className="text-sm text-gray-700 mt-1">
-          Average Annual PG Fee: <span className="font-semibold">{formatCurrency(university.financials?.pg_fees)}</span>
-        </p>
-      </div>
-
-      {/* Cost Section */}
-      <div className="p-5 text-center">
-        <p className="text-sm text-gray-600">
-          Average Cost of Living:
-        </p>
-        <p className="font-semibold text-gray-900">
-          {formatCurrency(university.financials?.cost_of_living)} / year
-        </p>
-      </div>
-
-      {/* Button */}
-     
-      <div className="p-5 text-center">
-         <Link href={`/universities/${university.slug}`}>
-        <button className="bg-[#1f2937] text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-black transition cursor-pointer">
-          VIEW DETAILS →
-        </button>
-        </Link>
-      </div>
-      
-
-    </div>
+   
   );
 }
