@@ -1,133 +1,159 @@
-"use client"
-import Link from "next/link"
+import { useState } from "react";
+// import { NavLink, useLocation } from "react-router-dom";.
 import { usePathname } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
-import { LayoutDashboard, MessageSquare, BarChart3, Settings, Shield, LogOut, ChevronLeft, Crown, BookOpen, FileText, Wallet, Headphones } from "lucide-react"
-import { useGlobal } from "@/src/statecontext"
-import Image from "next/image"
-
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  LayoutDashboard,
+  BookOpen,
+  BarChart3,
+  FileText,
+  Wallet,
+  Headphones,
+  Bell,
+  Settings,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  GraduationCap,
+} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: BookOpen, label: "Universities", href: "/dashboard/universities" },
   { icon: BarChart3, label: "Find Programs", href: "/dashboard/programs" },
   { icon: FileText, label: "Application", href: "/dashboard/application" },
-  { icon: Wallet, label: "Payment", href: "/dashboard/payment" },
+  { icon: Wallet, label: "Wallet", href: "/dashboard/wallet" },
   { icon: Headphones, label: "Support", href: "/dashboard/support" },
-  { icon: MessageSquare, label: "Notifications", href: "/dashboard/notifications" },
+  { icon: Bell, label: "Notifications", href: "/dashboard/notifications" },
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },
-]
+];
 
-export function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const pathname = usePathname()
-
-const {Logout} = useGlobal()
+export function Sidebar() {
+  const [collapsed, setCollapsed] = useState(false);
+  const location = usePathname();
 
   return (
-    <>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            onTap={onClose}
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          />
-        )}
-      </AnimatePresence>
+    <motion.aside
+      animate={{ width: collapsed ? 110 : 260 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className="hidden relative lg:flex flex-col h-screen sticky top-0 bg-[#f26d44] text-sidebar-foreground overflow-hidden z-40"
+    >
 
-      {/* Sidebar with swipe gesture */}
-      <motion.aside
-        initial={{ x: "-100%" }}
-        animate={{ x: isOpen ? 0 : "-100%" }}
-        exit={{ x: "-100%" }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        drag="x"
-        dragElastic={0.2}
-        dragConstraints={{ left: 0, right: 100 }}
-        onDragEnd={(event, { offset, velocity }) => {
-          if (offset.x < -50 || velocity.x < -500) {
-            onClose()
-          }
-        }}
-        className="fixed left-0 top-0 h-screen w-64 shadow-lg bg-sidebar text-sidebar-foreground pt-20 lg:pt-0 z-50 lg:static lg:translate-x-0 overflow-y-auto flex flex-col touch-pan-y"
-      >
-        {/* Logo Section */}
-        <div className="p-6 bg-gray-100 border-b border-sidebar-border lg:block hidden">
-          <div className="flex items-center gap-3 mb-2">
-            <div>
-               <Image
-                      src="/images/newlogo3.png"
-                      alt="Logo"
-                      width={50}
-                      height={10}
-                      className="object-contain w-25 scale-150"
-                      priority
-                    />
-            </div>
-          </div>
-        </div>
-
-        {/* Menu Items */}
-        <nav className="flex-1 p-4 space-y-2">
-          {menuItems.map((item, index) => {
-            const isActive = pathname === item.href
-            return (
-              <motion.div
-                key={item.href}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
-              >
-                <Link href={item.href}>
-                  <motion.div
-                    whileHover={{ x: 4 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all cursor-pointer group ${
-                      isActive
-                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent/20"
-                    }`}
-                  >
-                    <item.icon
-                      className={`w-5 h-5 ${isActive ? "text-sidebar-primary-foreground" : "text-sidebar-foreground/70 group-hover:text-sidebar-foreground"}`}
-                    />
-                    <span className="text-sm font-medium">{item.label}</span>
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeIndicator"
-                        className="ml-auto w-2 h-2 rounded-full bg-sidebar-primary-foreground"
-                      />
-                    )}
-                  </motion.div>
-                </Link>
-              </motion.div>
-            )
-          })}
-        </nav>
-
-        {/* Logout Button */}
-        <div className="p-4 border-t border-sidebar-border">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-destructive/20 hover:text-destructive transition-all group"
-         onClick={Logout} >
-            <LogOut className="w-5 h-5" />
-            <span  className="text-sm font-medium">Logout</span>
-          </motion.button>
-        </div>
-
-        {/* Close Button Mobile */}
+      <div className="absolute top-0 -right-0 bg-red-600">
         <button
-          onClick={onClose}
-          className="absolute top-4 right-4 lg:hidden p-2 hover:bg-sidebar-accent/20 rounded-lg transition-colors"
+          onClick={() => setCollapsed(!collapsed)}
+          className="flex items-center justify-center w-full py-2 hover:bg-sidebar-accent transition-colors"
         >
-          <ChevronLeft className="w-5 h-5" />
+          {collapsed ? (
+            <ChevronRight className="w-5 h-5" />
+          ) : (
+            <ChevronLeft className="w-5 h-5" />
+          )}
         </button>
-      </motion.aside>
-    </>
-  )
+      </div>
+      {/* Logo */}
+      <div className="flex bg-white items-center gap-3 px-6 min-h-[73px]">
+        {/* <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-sidebar-primary flex items-center justify-center">
+          <GraduationCap className="w-6 h-6 text-sidebar-primary-foreground" />
+        </div> */}
+        <AnimatePresence>
+          
+            <Image
+              src="https://ooshasglobal.com/images/newlogo3.png"
+              alt="Logo"
+              width={100}
+              height={100}
+              priority
+              className="scale-160"
+            />
+        
+        </AnimatePresence>
+      </div>
+
+      {/* Menu Items */}
+      <nav className={`flex-1 ${collapsed ? "px-2 py-0 space-y-1" : "px-4 py-2 space-y-2"}  overflow-y-auto mt-6 no-scrollbar scollbar-none`}>
+        {menuItems.map((item) => {
+          const isActive =
+            location === item.href ||
+            (item.href !== "/dashboard" && location.startsWith(item.href));
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="block"
+            >
+              <motion.div
+                whileTap={{ scale: 0.97 }}
+                className={`flex items-center rounded-xl transition-colors relative ${isActive
+                  ? "bg-[#6d1901] font-semibold"
+                  : "hover:bg-[#6d1901]/30"
+
+                  } ${collapsed ? "flex-col gap-1 px-2 py-2" : "gap-3 px-3 py-2.5"}`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="sidebar-active"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  />
+                )}
+
+                <item.icon className="w-5 h-5 flex-shrink-0 mb-0 pb-0" />
+                <AnimatePresence>
+                  {collapsed && (
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: "auto" }}
+                      exit={{ opacity: 0, width: 0 }}
+                      className="text-center overflow-hidden text-[10px] font-medium"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {!collapsed && (
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: "auto" }}
+                      exit={{ opacity: 0, width: 0 }}
+                      className="whitespace-nowrap overflow-hidden text-base font-medium"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Logout */}
+      {/* <div className="px-3 py-2 border-t border-sidebar-border/30">
+        <button className="flex items-center gap-3 px-3 py-2.5 rounded-xl w-full hover:bg-sidebar-accent transition-colors">
+          <LogOut className="w-5 h-5 flex-shrink-0" />
+          <AnimatePresence>
+            {!collapsed && (
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="whitespace-nowrap text-sm"
+              >
+                Logout
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </button>
+      </div> */}
+
+      {/* Collapse Toggle */}
+
+    </motion.aside>
+  );
 }

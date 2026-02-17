@@ -41,23 +41,18 @@ export default function DashboardLayout({
 
   return (
     <GlobalProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-white">
         <div className="flex h-screen overflow-hidden">
-          <Sidebar 
-            isOpen={sidebarOpen} 
-            onClose={() => setSidebarOpen(false)} 
-          />
+          <Sidebar/>
           
           <div className="flex-1 flex flex-col overflow-hidden">
-            <DashboardHeader 
-              onMenuClick={() => setSidebarOpen(!sidebarOpen)} 
-            />
+            <DashboardHeader/>
             
             <main 
               ref={containerRef}
               className="flex-1 overflow-y-auto pb-20 lg:pb-0"
             >
-              <div className="container mx-auto p-4 md:p-6">
+              <div className="container mx-auto p-4">
                 {children}
               </div>
             </main>
