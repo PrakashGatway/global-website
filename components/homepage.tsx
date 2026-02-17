@@ -136,6 +136,7 @@ const experienceYears = currentYear - startYear;
     bg-white
     bg-no-repeat bg-cover bg-bottom
     pt-12 lg:pt-16 
+    
   "
         style={{
           backgroundImage: `url("/images/hero.jpg")`
@@ -171,7 +172,7 @@ const experienceYears = currentYear - startYear;
                 ) : null}
               </h1>
 
-              <p className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0">
+              <p className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0 lg:mb-20">
                 {homePage?.hero?.subtitle ? (
                   <>
                     {homePage.hero.subtitle.split('||')[0]?.trim()}{" "}
@@ -203,9 +204,9 @@ const experienceYears = currentYear - startYear;
                 <a
                   href={homePage?.hero?.ctaLink2}
                   className="
-    text-primary px-6 sm:px-8 py-2.5 sm:py-3 border-2 border-primary rounded-full 
+    text-primary px-6 sm:px-8 py-2.5 sm:py-3 border border-primary rounded-full 
     lg:text-base text-sm font-semibold
-    transition-all hover:bg-[#f46c44] hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
+    transition-all hover:bg-[#f46c44] hover:border-none hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
     inline-flex items-center justify-center
   "
 

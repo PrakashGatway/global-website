@@ -18,7 +18,7 @@ import FAQSection from '@/components/faqPage'
 
 
 
-export default async function Page(){
+export default async function CountryDetails({Universityres , Faqres}){
 
     const benefits = [
     'High Quality of Life',
@@ -130,9 +130,7 @@ export default async function Page(){
   ];
 
 
-  const res = await serverInstance.get("/universities?location_alias=ivy-league")
 
-  const Faqres = await  serverInstance.get("/faqs/public/list?type=General")
     
 
 
@@ -582,7 +580,7 @@ export default async function Page(){
             <div className='w-full bg-white' >
                 <div className=" max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-18 py-20 ">
 
-    {res.data.result.map((uni) => (
+    {Universityres.data.result.map((uni) => (
             <UniversityCard 
               key={uni._id} 
               university={uni}

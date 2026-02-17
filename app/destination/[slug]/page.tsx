@@ -1,57 +1,24 @@
 import { serverInstance } from "@/app/axiosInstance";
-import UniversityPage from "@/components/Universitypage/university";
+import CountryDetails from "@/components/country";
 
-/* ---------------- SEO ---------------- */
-export async function generateMetadata({ params }) {
-  const { slug } = await params;
 
-  const res = await serverInstance.get(
-    `/page-information/slug/${slug}`
-  );
+export default async function Page({params}){
 
-  const seo = res.data.data.seoMeta;
+      const Universityres = await serverInstance.get("/universities?location_alias=ivy-league")
 
-  return {
-    title: seo?.metaTitle?.trim() || slug,
-    description: seo?.metaDescription,
-    keywords: seo?.metaKeywords,
-    alternates: {
-      canonical: `/${seo?.canonicalUrl || `universities/${slug}`}`,
-    },
-    openGraph: {
-      title: seo?.metaTitle,
-      description: seo?.metaDescription,
-      url: `/${seo?.canonicalUrl || `universities/${slug}`}`,
-      type: "website",
-    },
-  };
-}
+  const Faqres = await  serverInstance.get("/faqs/public/list?type=General")
 
-/* ---------------- Page ---------------- */
-export default async function Page({ params }) {
-  const { slug } = await params;
+  const {slug} = await params
 
-  const [pageRes, caseRes,imageRes,Faqres,Unires] = await Promise.all([
-    serverInstance.get(`/page-information/slug/${slug}`),
-    serverInstance.get("/testimonials?type=caseStudy"),
-     serverInstance.get("/testimonials?type=image"),
-         serverInstance.get("/faqs/public/list?type=General"),
-         serverInstance.get("/universities?location_alias=ivy-league")
+  const Pageres =   await  serverInstance.get(`/page-information/slug/${slug}`)
+  console.log(Pageres)
 
 
 
-  ]);
-
- 
 
 
-  return (
-    <UniversityPage
-      data={pageRes.data.data}
-      caseStudy={caseRes.data.data}
-      imageRes = {imageRes.data.data}
-      Faqres = {Faqres.data.data}
-      Unires = {Unires.data.result}
-    />
-  );
+
+    return(
+        <CountryDetails Universityres = {Universityres} Faqres = {Faqres}  />
+    )
 }

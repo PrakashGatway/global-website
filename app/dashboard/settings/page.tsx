@@ -17,6 +17,9 @@ import axiosInstance from "@/app/axiosInstance"
 import Image from "next/image"
 import { format } from "date-fns"
 import { useGlobal } from "@/src/statecontext"
+import FormRenderer from "../stepForm/formRender"
+import { profileSchema } from "@/config/schema"
+import { validateForm } from "@/utils/validateForm"
 
 interface Education {
     _id?: string
@@ -173,10 +176,11 @@ export default function ProfilePage() {
     const router = useRouter()
     const [user, setUser] = useState<any | null>(null)
     const [loading, setLoading] = useState(false)
-    const [activeTab, setActiveTab] = useState<'profile' | 'education' | 'work' | 'preferences' | 'security' | 'applications'>('profile')
+    const [activeTab, setActiveTab] = useState<'profile' | 'address' | 'education' | 'work' | 'preferences' | 'security' | 'applications'>('profile')
     const [isEditing, setIsEditing] = useState(false)
     const [uploadingImage, setUploadingImage] = useState(false)
     const [saving, setSaving] = useState(false)
+const [schools, setSchools] = useState<any[]>([{}]);
 
     const { profile } = useGlobal()
     console.log(profile)
@@ -192,18 +196,23 @@ export default function ProfilePage() {
         maritalStatus: "",
         passportExpiry: '',
         passportNumber: ''
+
+        ,
+        address: '',
+        city: '',
+        state: '',
+        country: '',
+        postalCode: ''
     })
 
-    const [educationForm, setEducationForm] = useState<Education>({
-        level: '',
-        institution: '',
-        country: '',
-        fieldOfStudy: '',
-        startDate: '',
-        endDate: '',
-        grade: '',
-        isCurrent: false
-    })
+  const [educationForm, setEducationForm] = useState({
+  countryOfEducation: "",
+  highestEducationLevel: "",
+  gradingScheme: "",
+  gradeAverage: "",
+  graduated: ""
+});
+
 
     const [workForm, setWorkForm] = useState<WorkExperience>({
         title: '',
@@ -240,11 +249,23 @@ export default function ProfilePage() {
     const [editingWorkIndex, setEditingWorkIndex] = useState<number | null>(null)
     const [showEducationForm, setShowEducationForm] = useState(false)
     const [showWorkForm, setShowWorkForm] = useState(false)
+    const [errors, setErrors] = useState({});
 
 
     // Fetch user data
     useEffect(() => {
+        if (!profile) return;
         setUser(profile)
+        setProfileForm(prev => ({
+            ...prev,
+            ...profile,
+
+            address: profile.address?.address || "",
+            city: profile.address?.city || "",
+            state: profile.address?.state || "",
+            country: profile.address?.country || "",
+            postalCode: profile.address?.postalCode || ""
+        }));
         setLoading(false)
     }, [profile])
 
@@ -267,18 +288,105 @@ export default function ProfilePage() {
             setUploadingImage(false)
         }
     }
-    const handleProfileUpdate = async () => {
+
+
+    const handleProfileUpdate = async (payload: any) => {
         try {
-            setSaving(true)
-            const response = await axiosInstance.patch('/users/profile', profileForm)
-            setUser(prev => prev ? { ...prev, ...response.data.result } : null)
-            setIsEditing(false)
+            setSaving(true);
+
+
+
+            const response = await axiosInstance.put(
+                '/auth/profile',
+                payload
+            );
+
+            setUser(prev =>
+                prev ? { ...prev, ...response.data.result } : null
+            );
+
+            profile(response.data.result); // update global
+
+            setIsEditing(false);
         } catch (error) {
-            console.error('Error updating profile:', error)
+            console.error('Error updating profile:', error);
         } finally {
-            setSaving(false)
+            setSaving(false);
         }
-    }
+    };
+
+    const addSchool = () => {
+  if (schools.length >= 3) return; // 🚫 limit
+
+  setSchools(prev => [...prev, {}]);
+};
+
+
+const removeSchool = (index: number) => {
+  setSchools(prev => prev.filter((_, i) => i !== index));
+};
+
+
+
+    const handleSave = async () => {
+
+        let schema;
+        let payload;
+
+        // ✅ PROFILE TAB
+        if (activeTab === "profile") {
+            schema = profileSchema.profile;
+
+            payload = {
+                name: profileForm.name,
+                phone: profileForm.phone,
+                dateOfBirth: profileForm.dateOfBirth,
+                nationality: profileForm.nationality,
+                gender: profileForm.gender,
+                firstLanguage: profileForm.firstLanguage,
+                maritalStatus: profileForm.maritalStatus,
+                passportExpiry: profileForm.passportExpiry,
+                passportNumber: profileForm.passportNumber
+            };
+        }
+
+        // ✅ ADDRESS TAB (⭐ IMPORTANT CHANGE)
+        if (activeTab === "address") {
+            schema = profileSchema.address;
+
+            payload = {
+                address: {
+                    address: profileForm.address,
+                    city: profileForm.city,
+                    state: profileForm.state,
+                    country: profileForm.country,
+                    postalCode: profileForm.postalCode
+                }
+            };
+        }
+
+        // ✅ EDUCATION TAB
+        if (activeTab === "education") {
+            payload = {
+                education: educationForm
+            };
+        }
+
+        // ✅ VALIDATION
+        if (schema) {
+            const validationErrors = validateForm(schema, profileForm);
+
+            if (Object.keys(validationErrors).length > 0) {
+                setErrors(validationErrors);
+                return;
+            }
+        }
+
+        setErrors({});
+        await handleProfileUpdate(payload);
+    };
+
+
 
     if (loading) {
         return (
@@ -415,792 +523,181 @@ export default function ProfilePage() {
 
                     <div className="flex-1">
                         <AnimatePresence mode="wait">
-                            {activeTab === 'profile' && (
-                                <motion.div
-                                    key="profile"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    className="space-y-6"
-                                >
-                                    <div className="bg-card border border-border rounded-2xl p-6 min-h-[70vh]">
-                                        <div className="flex items-center justify-between mb-6">
-                                            <h2 className="text-xl font-bold">Personal Information</h2>
-                                            <button
-                                                onClick={() => { setIsEditing(!isEditing), setProfileForm(prev => ({ ...prev, name: user?.name || '', phone: user?.phone || '', dateOfBirth: user?.dateOfBirth || '' })) }}
-                                                className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
-                                            >
-                                                {isEditing ? (
-                                                    <>
-                                                        <X className="w-4 h-4" />
-                                                        Cancel
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Edit2 className="w-4 h-4" />
-                                                        Edit
-                                                    </>
-                                                )}
-                                            </button>
-                                        </div>
-
-                                        {isEditing ? (
-                                            <div className="space-y-4">
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Full Name</label>
-                                                        <input
-                                                            type="text"
-                                                            value={profileForm.name}
-                                                            onChange={(e) => setProfileForm(prev => ({ ...prev, name: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Email</label>
-                                                        <input
-                                                            type="email"
-                                                            value={user?.email}
-                                                            disabled
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-muted cursor-not-allowed"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Phone Number</label>
-                                                        <input
-                                                            type="tel"
-                                                            value={profileForm.phone}
-                                                            onChange={(e) => setProfileForm(prev => ({ ...prev, phone: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">First Language</label>
-                                                        <input
-                                                            type="text"
-                                                            value={profileForm.firstLanguage}
-                                                            onChange={(e) => setProfileForm(prev => ({ ...prev, firstLanguage: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Date of Birth</label>
-                                                        <input
-                                                            type="date"
-                                                            value={profileForm.dateOfBirth}
-                                                            onChange={(e) => setProfileForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Nationality</label>
-                                                        <select
-                                                            value={profileForm.nationality}
-                                                            onChange={(e) => setProfileForm(prev => ({ ...prev, nationality: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                                        >
-                                                            <option value="">Select Nationality</option>
-                                                            <option value="USA">United States</option>
-                                                            <option value="UK">United Kingdom</option>
-                                                            <option value="Canada">Canada</option>
-                                                            <option value="Australia">Australia</option>
-                                                            <option value="India">India</option>
-                                                            {/* Add more countries */}
-                                                        </select>
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Gender</label>
-                                                        <select
-                                                            value={profileForm.gender}
-                                                            onChange={(e) => setProfileForm(prev => ({ ...prev, gender: e.target.value as any }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                                        >
-                                                            <option value="">Select Gender</option>
-                                                            <option value="male">Male</option>
-                                                            <option value="female">Female</option>
-                                                            <option value="other">Other</option>
-                                                        </select>
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Passport Number</label>
-                                                        <input
-                                                            type="text"
-                                                            value={profileForm?.passportNumber}
-                                                            onChange={(e) => setProfileForm(prev => ({ ...prev, passportNumber: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Date of Birth</label>
-                                                        <input
-                                                            type="date"
-                                                            value={profileForm.passportExpiry}
-                                                            onChange={(e) => setProfileForm(prev => ({ ...prev, passportExpiry: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Marital Status</label>
-                                                        <select
-                                                            value={profileForm.maritalStatus}
-                                                            onChange={(e) => setProfileForm(prev => ({ ...prev, maritalStatus: e.target.value as any }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                                                        >
-                                                            <option value="">Select</option>
-                                                            <option value="single">Single</option>
-                                                            <option value="married">Married</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-end">
-                                                    <button
-                                                        onClick={handleProfileUpdate}
-                                                        disabled={saving}
-                                                        className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
-                                                    >
-                                                        {saving ? (
-                                                            <>
-                                                                <RefreshCw className="w-4 h-4 animate-spin" />
-                                                                Saving...
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Save className="w-4 h-4" />
-                                                                Save Changes
-                                                            </>
-                                                        )}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="space-y-4">
-                                                <div className="grid grid-cols-2 gap-6">
-                                                    <div>
-                                                        <p className="text-xs text-muted-foreground mb-1">Full Name</p>
-                                                        <p className="font-medium">{user?.name}</p>
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs text-muted-foreground mb-1">Email</p>
-                                                        <p className="font-medium">{user?.email}</p>
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs text-muted-foreground mb-1">Phone</p>
-                                                        <p className="font-medium">{user?.phone || 'Not provided'}</p>
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs text-muted-foreground mb-1">Date of Birth</p>
-                                                        <p className="font-medium">
-                                                            {user?.dateOfBirth ? format(new Date(user.dateOfBirth), 'MMMM dd, yyyy') : 'Not provided'}
-                                                        </p>
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs text-muted-foreground mb-1">Nationality</p>
-                                                        <p className="font-medium">{user?.nationality || 'Not provided'}</p>
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs text-muted-foreground mb-1">First Language</p>
-                                                        <p className="font-medium">{user?.firstLanguage || 'Not provided'}</p>
-                                                    </div>
-                                                       <div>
-                                                        <p className="text-xs text-muted-foreground mb-1">Marital Status</p>
-                                                        <p className="font-medium">{user?.maritalStatus || 'Not provided'}</p>
-                                                    </div>
-                                                       <div>
-                                                        <p className="text-xs text-muted-foreground mb-1">Passport Number</p>
-                                                        <p className="font-medium">{user?.passportNumber || 'Not provided'}</p>
-                                                    </div>
-                                                     <div>
-                                                        <p className="text-xs text-muted-foreground mb-1">Passport Expiry</p>
-                                                        <p className="font-medium">{user?.passportExpiry || 'Not provided'}</p>
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs text-muted-foreground mb-1">Gender</p>
-                                                        <p className="font-medium capitalize">{user?.gender || 'Not provided'}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {/* Education Tab */}
-                            {activeTab === 'education' && (
-                                <motion.div
-                                    key="education"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    className="space-y-6"
-                                >
-                                    <div className="bg-card border border-border rounded-2xl p-6">
-                                        <div className="flex items-center justify-between mb-6">
-                                            <h2 className="text-xl font-bold">Education History</h2>
-                                            <button
-                                                onClick={() => {
-                                                    setEducationForm({
-                                                        level: '',
-                                                        institution: '',
-                                                        country: '',
-                                                        fieldOfStudy: '',
-                                                        startDate: '',
-                                                        endDate: '',
-                                                        grade: '',
-                                                        isCurrent: false
-                                                    })
-                                                    setEditingEducationIndex(null)
-                                                    setShowEducationForm(true)
-                                                }}
-                                                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                                            >
-                                                Add Education
-                                            </button>
-                                        </div>
-
-                                        {showEducationForm && (
-                                            <div className="mb-6 p-6 border-2 border-primary/20 rounded-xl bg-primary/5">
-                                                <h3 className="font-semibold mb-4">
-                                                    {editingEducationIndex !== null ? 'Edit Education' : 'Add New Education'}
-                                                </h3>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Level</label>
-                                                        <select
-                                                            value={educationForm.level}
-                                                            onChange={(e) => setEducationForm(prev => ({ ...prev, level: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        >
-                                                            <option value="">Select Level</option>
-                                                            <option value="High School">High School</option>
-                                                            <option value="Bachelor's">Bachelor's</option>
-                                                            <option value="Master's">Master's</option>
-                                                            <option value="PhD">PhD</option>
-                                                            <option value="Diploma">Diploma</option>
-                                                            <option value="Certificate">Certificate</option>
-                                                        </select>
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Institution</label>
-                                                        <input
-                                                            type="text"
-                                                            value={educationForm.institution}
-                                                            onChange={(e) => setEducationForm(prev => ({ ...prev, institution: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Country</label>
-                                                        <input
-                                                            type="text"
-                                                            value={educationForm.country}
-                                                            onChange={(e) => setEducationForm(prev => ({ ...prev, country: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Field of Study</label>
-                                                        <input
-                                                            type="text"
-                                                            value={educationForm.fieldOfStudy}
-                                                            onChange={(e) => setEducationForm(prev => ({ ...prev, fieldOfStudy: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Start Date</label>
-                                                        <input
-                                                            type="date"
-                                                            value={educationForm.startDate}
-                                                            onChange={(e) => setEducationForm(prev => ({ ...prev, startDate: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">End Date</label>
-                                                        <input
-                                                            type="date"
-                                                            value={educationForm.endDate}
-                                                            onChange={(e) => setEducationForm(prev => ({ ...prev, endDate: e.target.value }))}
-                                                            disabled={educationForm.isCurrent}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background disabled:bg-muted"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Grade</label>
-                                                        <input
-                                                            type="text"
-                                                            value={educationForm.grade}
-                                                            onChange={(e) => setEducationForm(prev => ({ ...prev, grade: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                            placeholder="e.g., 3.8 GPA, First Class"
-                                                        />
-                                                    </div>
-                                                    <div className="flex items-center">
-                                                        <label className="flex items-center gap-2">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={educationForm.isCurrent}
-                                                                onChange={(e) => setEducationForm(prev => ({ ...prev, isCurrent: e.target.checked }))}
-                                                                className="w-4 h-4"
-                                                            />
-                                                            <span className="text-sm">I am currently studying here</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-end gap-2 mt-4">
-                                                    <button
-                                                        onClick={() => {
-                                                            setShowEducationForm(false)
-                                                            setEditingEducationIndex(null)
-                                                        }}
-                                                        className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                    <button
-                                                        onClick={handleProfileUpdate}
-                                                        disabled={saving}
-                                                        className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
-                                                    >
-                                                        {saving ? (
-                                                            <>
-                                                                <RefreshCw className="w-4 h-4 animate-spin" />
-                                                                Saving...
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Save className="w-4 h-4" />
-                                                                {editingEducationIndex !== null ? 'Update' : 'Save'}
-                                                            </>
-                                                        )}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        <div className="space-y-4">
-                                            {educations.length > 0 ? (
-                                                educations.map((edu, index) => (
-                                                    <EducationCard
-                                                        key={edu._id}
-                                                        education={edu}
-                                                        onEdit={() => {
-                                                            setEducationForm(edu)
-                                                            setEditingEducationIndex(index)
-                                                            setShowEducationForm(true)
-                                                        }}
-                                                        onDelete={() => {
-                                                            const updated = educations.filter((_, i) => i !== index)
-                                                            setEducations(updated)
-                                                            axiosInstance.patch('/users/profile', {
-                                                                metadata: { ...user?.metadata, education: updated }
-                                                            })
-                                                        }}
-                                                    />
-                                                ))
-                                            ) : (
-                                                <div className="text-center py-12">
-                                                    <GraduationCap className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                                                    <h3 className="font-semibold mb-2">No Education History</h3>
-                                                    <p className="text-sm text-muted-foreground mb-4">
-                                                        Add your educational background to help us find the right programs for you.
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {/* Work Experience Tab */}
-                            {activeTab === 'work' && (
-                                <motion.div
-                                    key="work"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    className="space-y-6"
-                                >
-                                    <div className="bg-card border border-border rounded-2xl p-6">
-                                        <div className="flex items-center justify-between mb-6">
-                                            <h2 className="text-xl font-bold">Work Experience</h2>
-                                            <button
-                                                onClick={() => {
-                                                    setWorkForm({
-                                                        title: '',
-                                                        company: '',
-                                                        location: '',
-                                                        startDate: '',
-                                                        endDate: '',
-                                                        isCurrent: false,
-                                                        description: ''
-                                                    })
-                                                    setEditingWorkIndex(null)
-                                                    setShowWorkForm(true)
-                                                }}
-                                                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                                            >
-                                                Add Experience
-                                            </button>
-                                        </div>
-
-                                        {showWorkForm && (
-                                            <div className="mb-6 p-6 border-2 border-primary/20 rounded-xl bg-primary/5">
-                                                <h3 className="font-semibold mb-4">
-                                                    {editingWorkIndex !== null ? 'Edit Experience' : 'Add New Experience'}
-                                                </h3>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Job Title</label>
-                                                        <input
-                                                            type="text"
-                                                            value={workForm.title}
-                                                            onChange={(e) => setWorkForm(prev => ({ ...prev, title: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Company</label>
-                                                        <input
-                                                            type="text"
-                                                            value={workForm.company}
-                                                            onChange={(e) => setWorkForm(prev => ({ ...prev, company: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Location</label>
-                                                        <input
-                                                            type="text"
-                                                            value={workForm.location}
-                                                            onChange={(e) => setWorkForm(prev => ({ ...prev, location: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">Start Date</label>
-                                                        <input
-                                                            type="date"
-                                                            value={workForm.startDate}
-                                                            onChange={(e) => setWorkForm(prev => ({ ...prev, startDate: e.target.value }))}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-sm font-medium mb-1 block">End Date</label>
-                                                        <input
-                                                            type="date"
-                                                            value={workForm.endDate}
-                                                            onChange={(e) => setWorkForm(prev => ({ ...prev, endDate: e.target.value }))}
-                                                            disabled={workForm.isCurrent}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background disabled:bg-muted"
-                                                        />
-                                                    </div>
-                                                    <div className="flex items-center">
-                                                        <label className="flex items-center gap-2">
-                                                            <input
-                                                                type="checkbox"
-                                                                checked={workForm.isCurrent}
-                                                                onChange={(e) => setWorkForm(prev => ({ ...prev, isCurrent: e.target.checked }))}
-                                                                className="w-4 h-4"
-                                                            />
-                                                            <span className="text-sm">I currently work here</span>
-                                                        </label>
-                                                    </div>
-                                                    <div className="col-span-2">
-                                                        <label className="text-sm font-medium mb-1 block">Description</label>
-                                                        <textarea
-                                                            value={workForm.description}
-                                                            onChange={(e) => setWorkForm(prev => ({ ...prev, description: e.target.value }))}
-                                                            rows={3}
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                            placeholder="Describe your responsibilities and achievements..."
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="flex justify-end gap-2 mt-4">
-                                                    <button
-                                                        onClick={() => {
-                                                            setShowWorkForm(false)
-                                                            setEditingWorkIndex(null)
-                                                        }}
-                                                        className="px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                    <button
-                                                        onClick={handleProfileUpdate}
-                                                        disabled={saving}
-                                                        className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
-                                                    >
-                                                        {saving ? (
-                                                            <>
-                                                                <RefreshCw className="w-4 h-4 animate-spin" />
-                                                                Saving...
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Save className="w-4 h-4" />
-                                                                {editingWorkIndex !== null ? 'Update' : 'Save'}
-                                                            </>
-                                                        )}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        <div className="space-y-4">
-                                            {workExperiences.length > 0 ? (
-                                                workExperiences.map((work, index) => (
-                                                    <WorkCard
-                                                        key={work._id}
-                                                        work={work}
-                                                        onEdit={() => {
-                                                            setWorkForm(work)
-                                                            setEditingWorkIndex(index)
-                                                            setShowWorkForm(true)
-                                                        }}
-                                                        onDelete={() => {
-                                                            const updated = workExperiences.filter((_, i) => i !== index)
-                                                            setWorkExperiences(updated)
-                                                            axiosInstance.patch('/users/profile', {
-                                                                metadata: { ...user?.metadata, workExperience: updated }
-                                                            })
-                                                        }}
-                                                    />
-                                                ))
-                                            ) : (
-                                                <div className="text-center py-12">
-                                                    <Briefcase className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                                                    <h3 className="font-semibold mb-2">No Work Experience</h3>
-                                                    <p className="text-sm text-muted-foreground mb-4">
-                                                        Add your professional experience to strengthen your profile.
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {/* Preferences Tab */}
-                            {activeTab === 'preferences' && (
-                                <motion.div
-                                    key="preferences"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    className="space-y-6"
-                                >
-                                    <div className="bg-card border border-border rounded-2xl p-6">
-                                        <h2 className="text-xl font-bold mb-6">Study Preferences</h2>
-
+                            {Object.entries(profileSchema).map(([key, value]) => (
+                                <div key={key}>
+                                    {activeTab === key && (
+                                        <>
+                                        {value.type === "multi" ? 
                                         <div className="space-y-6">
-                                            {/* Preferred Study Level */}
-                                            <div>
-                                                <label className="text-sm font-medium mb-2 block">Preferred Study Level</label>
-                                                <select
-                                                    value={preferencesForm.preferredStudyLevel}
-                                                    onChange={(e) => setPreferencesForm(prev => ({ ...prev, preferredStudyLevel: e.target.value }))}
-                                                    className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                >
-                                                    <option value="">Select Level</option>
-                                                    <option value="undergraduate">Undergraduate</option>
-                                                    <option value="postgraduate">Postgraduate</option>
-                                                    <option value="diploma">Diploma</option>
-                                                    <option value="certificate">Certificate</option>
-                                                    <option value="phd">PhD</option>
-                                                </select>
-                                            </div>
 
-                                            {/* Preferred Countries */}
-                                            <div>
-                                                <label className="text-sm font-medium mb-2 block">Preferred Countries</label>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {['USA', 'UK', 'Canada', 'Australia', 'Germany', 'France', 'New Zealand', 'Ireland'].map((country) => (
-                                                        <label key={country} className="flex items-center gap-2 p-2 border border-border rounded-lg hover:bg-muted">
-                                                            <input
-                                                                type="checkbox"
-                                                                value={country}
-                                                                checked={preferencesForm.preferredCountries.includes(country)}
-                                                                onChange={(e) => {
-                                                                    if (e.target.checked) {
-                                                                        setPreferencesForm(prev => ({
-                                                                            ...prev,
-                                                                            preferredCountries: [...prev.preferredCountries, country]
-                                                                        }))
-                                                                    } else {
-                                                                        setPreferencesForm(prev => ({
-                                                                            ...prev,
-                                                                            preferredCountries: prev.preferredCountries.filter(c => c !== country)
-                                                                        }))
-                                                                    }
-                                                                }}
-                                                                className="w-4 h-4"
-                                                            />
-                                                            <span className="text-sm">{country}</span>
-                                                        </label>
-                                                    ))}
+    {Object.entries(value.sections ?? {}).map(
+      ([sectionKey, section]: any) => (
+
+        <motion.div
+          key={sectionKey}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="bg-card border rounded-2xl p-6">
+
+            <h2 className="text-xl font-bold mb-6">
+              {section.title}
+            </h2>
+
+            {/* SINGLE FORM */}
+            {section.type === "single" && (
+              <FormRenderer
+                schema={section}
+                formData={educationForm}
+                setFormData={setEducationForm}
+                errors={errors}
+              />
+            )}
+
+            {/* REPEATABLE FORM (Schools) */}
+            {section.type === "repeatable" && (
+  <>
+    {schools.map((school, index) => (
+      <div
+        key={index}
+        className="relative border rounded-xl p-5 mb-6"
+      >
+        {/* ✅ Delete Button */}
+        {schools.length > 1 && (
+          <button
+            onClick={() => removeSchool(index)}
+            className="absolute top-3 right-3 text-red-500 text-sm font-medium hover:text-red-700"
+          >
+            Delete
+          </button>
+        )}
+
+        {/* School Title */}
+        <h3 className="font-semibold mb-4">
+          School {index + 1}
+        </h3>
+
+        <FormRenderer
+          schema={section}
+          formData={school}
+          setFormData={(data: any) => {
+            setSchools(prev => {
+              const updated = [...prev];
+              updated[index] = data;
+              return updated;
+            });
+          }}
+          errors={errors}
+        />
+      </div>
+    ))}
+
+    {/* ✅ Add Button */}
+    <button
+      onClick={addSchool}
+      disabled={schools.length >= 3}
+      className={`mt-2 font-medium ${
+        schools.length >= 3
+          ? "text-gray-400 cursor-not-allowed"
+          : "text-primary hover:underline"
+      }`}
+    >
+      + Add Attended School
+    </button>
+
+    {/* Limit Message */}
+    {schools.length >= 3 && (
+      <p className="text-xs text-gray-400 mt-1">
+        Maximum 3 schools allowed
+      </p>
+    )}
+  </>
+)}
+
+
+          </div>
+        </motion.div>
+      )
+    )}
+  </div>
+                                        
+                                        : <motion.div
+                                            key="profile"
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -20 }}
+                                            className="space-y-6"
+                                        >
+                                            <div className="bg-card border border-border rounded-2xl p-6 min-h-[70vh]">
+                                                <div className="flex items-center justify-between mb-6">
+                                                    <h2 className="text-xl font-bold">{value.title}</h2>
+                                                    <button
+                                                        onClick={() => { setIsEditing(!isEditing), setProfileForm(prev => ({ ...prev, name: user?.name || '', phone: user?.phone || '', dateOfBirth: user?.dateOfBirth || '' })) }}
+                                                        className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
+                                                    >
+                                                        {isEditing ? (
+                                                            <>
+                                                                <X className="w-4 h-4" />
+                                                                Cancel
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Edit2 className="w-4 h-4" />
+                                                                Edit
+                                                            </>
+                                                        )}
+                                                    </button>
                                                 </div>
-                                            </div>
 
-                                            {/* Preferred Intakes */}
-                                            <div>
-                                                <label className="text-sm font-medium mb-2 block">Preferred Intakes</label>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((month) => (
-                                                        <label key={month} className="flex items-center gap-2 p-2 border border-border rounded-lg hover:bg-muted">
-                                                            <input
-                                                                type="checkbox"
-                                                                value={month}
-                                                                checked={preferencesForm.preferredIntakes.includes(month)}
-                                                                onChange={(e) => {
-                                                                    if (e.target.checked) {
-                                                                        setPreferencesForm(prev => ({
-                                                                            ...prev,
-                                                                            preferredIntakes: [...prev.preferredIntakes, month]
-                                                                        }))
-                                                                    } else {
-                                                                        setPreferencesForm(prev => ({
-                                                                            ...prev,
-                                                                            preferredIntakes: prev.preferredIntakes.filter(m => m !== month)
-                                                                        }))
-                                                                    }
-                                                                }}
-                                                                className="w-4 h-4"
-                                                            />
-                                                            <span className="text-sm">{month}</span>
-                                                        </label>
-                                                    ))}
-                                                </div>
-                                            </div>
+                                                {isEditing ? (
+                                                    <div className="space-y-4">
+                                                        <FormRenderer
+                                                            schema={value}
+                                                            formData={profileForm}
+                                                            setFormData={setProfileForm}
+                                                            errors={errors}
+                                                        />
 
-                                            {/* Budget Range */}
-                                            <div>
-                                                <label className="text-sm font-medium mb-2 block">Annual Budget (USD)</label>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div>
-                                                        <input
-                                                            type="number"
-                                                            value={preferencesForm.budget.min}
-                                                            onChange={(e) => setPreferencesForm(prev => ({
-                                                                ...prev,
-                                                                budget: { ...prev.budget, min: parseInt(e.target.value) }
-                                                            }))}
-                                                            placeholder="Min"
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
+                                                        <div className="flex justify-end">
+                                                            <button
+                                                                onClick={handleSave}
+                                                                disabled={saving}
+                                                                className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+                                                            >
+                                                                {saving ? (
+                                                                    <>
+                                                                        <RefreshCw className="w-4 h-4 animate-spin" />
+                                                                        Saving...
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Save className="w-4 h-4" />
+                                                                        Save Changes
+                                                                    </>
+                                                                )}
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <input
-                                                            type="number"
-                                                            value={preferencesForm.budget.max}
-                                                            onChange={(e) => setPreferencesForm(prev => ({
-                                                                ...prev,
-                                                                budget: { ...prev.budget, max: parseInt(e.target.value) }
-                                                            }))}
-                                                            placeholder="Max"
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
+                                                ) : user && value?.fields?.map(item =>
+                                                    <div key={item.name}>
+                                                        <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
+                                                        <p className="font-medium">{user[item?.name] || "__"}</p>
                                                     </div>
-                                                </div>
+                                                )}
                                             </div>
+                                        </motion.div> }
+                                        
 
-                                            {/* Test Scores */}
-                                            <div>
-                                                <label className="text-sm font-medium mb-2 block">Test Scores</label>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div>
-                                                        <span className="text-xs text-muted-foreground">IELTS</span>
-                                                        <input
-                                                            type="text"
-                                                            value={preferencesForm.testScores.ielts}
-                                                            onChange={(e) => setPreferencesForm(prev => ({
-                                                                ...prev,
-                                                                testScores: { ...prev.testScores, ielts: e.target.value }
-                                                            }))}
-                                                            placeholder="e.g., 6.5"
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-xs text-muted-foreground">TOEFL</span>
-                                                        <input
-                                                            type="text"
-                                                            value={preferencesForm.testScores.toefl}
-                                                            onChange={(e) => setPreferencesForm(prev => ({
-                                                                ...prev,
-                                                                testScores: { ...prev.testScores, toefl: e.target.value }
-                                                            }))}
-                                                            placeholder="e.g., 90"
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-xs text-muted-foreground">PTE</span>
-                                                        <input
-                                                            type="text"
-                                                            value={preferencesForm.testScores.pte}
-                                                            onChange={(e) => setPreferencesForm(prev => ({
-                                                                ...prev,
-                                                                testScores: { ...prev.testScores, pte: e.target.value }
-                                                            }))}
-                                                            placeholder="e.g., 60"
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-xs text-muted-foreground">GRE</span>
-                                                        <input
-                                                            type="text"
-                                                            value={preferencesForm.testScores.gre}
-                                                            onChange={(e) => setPreferencesForm(prev => ({
-                                                                ...prev,
-                                                                testScores: { ...prev.testScores, gre: e.target.value }
-                                                            }))}
-                                                            placeholder="e.g., 320"
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <span className="text-xs text-muted-foreground">GMAT</span>
-                                                        <input
-                                                            type="text"
-                                                            value={preferencesForm.testScores.gmat}
-                                                            onChange={(e) => setPreferencesForm(prev => ({
-                                                                ...prev,
-                                                                testScores: { ...prev.testScores, gmat: e.target.value }
-                                                            }))}
-                                                            placeholder="e.g., 700"
-                                                            className="w-full px-4 py-2 border border-border rounded-lg bg-background"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                         
+                                            
+                                      
+                                  
+                                    </>
+                                    )}
+                                   
 
-                                            <div className="flex justify-end">
-                                                <button
-                                                    onClick={handleProfileUpdate}
-                                                    disabled={saving}
-                                                    className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
-                                                >
-                                                    {saving ? (
-                                                        <>
-                                                            <RefreshCw className="w-4 h-4 animate-spin" />
-                                                            Saving...
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Save className="w-4 h-4" />
-                                                            Save Preferences
-                                                        </>
-                                                    )}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
+                                </div>
+                            ))}
                         </AnimatePresence>
                     </div>
                 </div>
@@ -1208,3 +705,5 @@ export default function ProfilePage() {
         </main>
     )
 }
+
+

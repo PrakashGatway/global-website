@@ -287,7 +287,7 @@ useEffect(()=>{
                     (uni) => (
                       <Link
                         key={uni._id}
-                        href={`/${item.type}/${uni.slug}`}
+                        href={`/group/${uni.slug}`}
                         className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition-all duration-200 group/item"
                       >
 
