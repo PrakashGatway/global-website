@@ -8,7 +8,8 @@ import { useRef, useState, useEffect } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { GlobalProvider } from "../../src/statecontext"
+import { GlobalProvider, useGlobal } from "../../src/statecontext"
+import Loading from "../loading"
 
 export default function DashboardLayout({
   children,
@@ -19,46 +20,53 @@ export default function DashboardLayout({
   const containerRef = useRef<HTMLDivElement>(null)
   const isMobile = useIsMobile()
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile)
+  const { profile, loading, Logout } = useGlobal();
 
-  // Close sidebar when route changes on mobile
   useEffect(() => {
     if (isMobile && sidebarOpen) {
       setSidebarOpen(false)
     }
   }, [router])
 
-  // Close sidebar on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && sidebarOpen && isMobile) {
         setSidebarOpen(false)
       }
     }
-    
+
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
   }, [sidebarOpen, isMobile])
+
+  if (loading) {
+    <Loading />
+  }
+  if (!loading && !profile) {
+    window.location.replace("/login")
+    return null
+  }
 
   return (
     <GlobalProvider>
       <div className="min-h-screen bg-white">
         <div className="flex h-screen overflow-hidden">
-          <Sidebar/>
-          
+          <Sidebar />
+
           <div className="flex-1 flex flex-col overflow-hidden">
-            <DashboardHeader/>
-            
-            <main 
+            <DashboardHeader profile={profile} Logout={Logout} />
+
+            <main
               ref={containerRef}
               className="flex-1 overflow-y-auto pb-20 lg:pb-0"
             >
-              <div className="container mx-auto p-4">
+              <div className="mx-auto p-4">
                 {children}
               </div>
             </main>
           </div>
         </div>
-        
+
         <MobileBottomNav />
       </div>
     </GlobalProvider>

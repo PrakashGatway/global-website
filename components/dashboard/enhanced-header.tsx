@@ -64,7 +64,7 @@ export function EnhancedHeader({
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="sticky top-0 z-40 bg-white border-b border-border/40 backdrop-blur-sm supports-[backdrop-filter]:bg-white/95"
+        className="sticky top-0 z-10 bg-white border-b border-border/40 backdrop-blur-sm supports-[backdrop-filter]:bg-white/95"
       >
 
         {/* Filter Tabs */}

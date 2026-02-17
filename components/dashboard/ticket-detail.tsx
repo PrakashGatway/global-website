@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -37,9 +37,7 @@ interface TicketDetailProps {
 
 export function TicketDetail({
   ticket,
-  replies,
-  onSendReply,
-  isLoading = false,
+  onSendReply
 }: TicketDetailProps) {
   const [replyMessage, setReplyMessage] = useState('')
   const [isSending, setIsSending] = useState(false)
@@ -47,7 +45,6 @@ export function TicketDetail({
 
   const handleSendReply = async () => {
     if (!replyMessage.trim()) return
-
     setIsSending(true)
     try {
       await onSendReply(replyMessage)
@@ -56,6 +53,12 @@ export function TicketDetail({
       setIsSending(false)
     }
   }
+
+    const bottomRef = useRef(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [ticket?.reply])
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleString('en-US', {
@@ -161,7 +164,7 @@ export function TicketDetail({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="flex-1 overflow-y-auto px-6 py-6 space-y-4 bg-gray-100"
+        className="flex-1 overflow-y-auto scrollbar-hide  px-6 py-6 space-y-4 bg-gray-100"
       >
         {ticket?.reply?.length === 0 ? (
           <motion.div
@@ -202,11 +205,13 @@ export function TicketDetail({
                 </div>
               </motion.div>
             ))}
+            <div ref={bottomRef} />
+
           </motion.div>
         )}
       </motion.div>
 
-      {ticket.status != 'resolved' && (
+      {ticket.status == 'pending' && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

@@ -29,8 +29,7 @@ interface Reply {
 
 export default function SupportPage() {
   const [tickets, setTickets] = useState<Ticket[]>([])
-  const [replies, setReplies] = useState<Reply[]>([])
-  const [selectedTicketId, setSelectedTicketId] = useState<string>()
+  const [selectedTicketId, setSelectedTicketId] = useState({})
   const [filter, setFilter] = useState<'all' | 'pending' | 'resolved'>('all')
   const [isLoading, setIsLoading] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -44,11 +43,15 @@ export default function SupportPage() {
     try {
       const params = new URLSearchParams()
       if (filter !== 'all') params.append('status', filter)
+      params.append('limit', '20')
       const res = await axiosInstance.get(`/support?${params}`)
       const data = res.data?.data
       setTickets(data)
-      if (data.length > 0 && !selectedTicketId) {
-        setSelectedTicketId(data[0])
+      if(selectedTicketId._id){
+        let ticket = data.find((t: any) => t._id === selectedTicketId._id)
+        if(ticket){
+          setSelectedTicketId(ticket)
+        }
       }
     } catch (error) {
       toast.error('Failed to fetch tickets.')
@@ -57,38 +60,17 @@ export default function SupportPage() {
     }
   }
 
-  useEffect(() => {
-    if (selectedTicketId) {
-      fetchReplies()
-    }
-  }, [selectedTicketId])
-
-  const fetchReplies = async () => {
-    if (!selectedTicketId) return
-
-    try {
-      const res = await fetch(`/api/support/tickets/${selectedTicketId}/replies`)
-      if (!res.ok) throw new Error('Failed to fetch replies')
-
-      const data = await res.json()
-      setReplies(data)
-    } catch (error) {
-     
-    }
-  }
 
   const handleSendReply = async (message: string) => {
     if (!selectedTicketId._id) return
-
     try {
       const res = await axiosInstance.put(
         `/support/reply/${selectedTicketId._id}`,
         { description: message }
       )
-
-      await fetchReplies()
+      await fetchTickets()
     } catch (error) {
-    
+      toast.error('Failed to send reply.')
     }
   }
 
@@ -142,7 +124,7 @@ export default function SupportPage() {
             transition={{ delay: 0.3, duration: 0.4 }}
             className="flex-1 bg-white rounded-xl shadow-sm overflow-hidden border border-border"
           >
-            {selectedTicketId ? (
+            {selectedTicketId._id ? (
               <TicketDetail
                 ticket={selectedTicketId}
                 isLoading={isLoading}

@@ -2,17 +2,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axiosInstance from "../app/axiosInstance";
 
-
-
 const Globalcontext = createContext()
-
 export function GlobalProvider({ children }) {
-
     const [loading, setLoading] = useState(true)
     const [profile, setProfile] = useState(null)
     const [authToken, setauthToken] = useState(null)
-
-
 
     const getProfile = async () => {
         try {
@@ -25,24 +19,24 @@ export function GlobalProvider({ children }) {
         }
     }
 
-    const Logout = () => {
+    const Logout =() => {
+        setLoading(true)
+        window.location.replace("/")
         localStorage.removeItem("token")
         setProfile(null)
-        window.location.replace("/")
+        setLoading(false)
     }
-
-
-
-
 
     useEffect(() => {
         const token = localStorage.getItem("token")
-
         setauthToken(token)
         if (token) {
             getProfile()
         }
         else {
+            if(window.location.pathname === "/dashboard"){
+                window.location.replace("/")
+            }
             setLoading(false)
         }
     }, [])

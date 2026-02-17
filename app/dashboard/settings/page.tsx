@@ -17,7 +17,7 @@ import axiosInstance from "@/app/axiosInstance"
 import Image from "next/image"
 import { format } from "date-fns"
 import { useGlobal } from "@/src/statecontext"
-import FormRenderer from "../stepForm/formRender"
+import FormRenderer from "../../../components/dashboard/stepForm/formRender"
 import { profileSchema } from "@/config/schema"
 import { validateForm } from "@/utils/validateForm"
 
@@ -180,10 +180,10 @@ export default function ProfilePage() {
     const [isEditing, setIsEditing] = useState(false)
     const [uploadingImage, setUploadingImage] = useState(false)
     const [saving, setSaving] = useState(false)
-const [schools, setSchools] = useState<any[]>([{}]);
+    const [schools, setSchools] = useState<any[]>([{}]);
 
     const { profile } = useGlobal()
-    console.log(profile)
+
 
     // Form States
     const [profileForm, setProfileForm] = useState({
@@ -205,13 +205,13 @@ const [schools, setSchools] = useState<any[]>([{}]);
         postalCode: ''
     })
 
-  const [educationForm, setEducationForm] = useState({
-  countryOfEducation: "",
-  highestEducationLevel: "",
-  gradingScheme: "",
-  gradeAverage: "",
-  graduated: ""
-});
+    const [educationForm, setEducationForm] = useState({
+        countryOfEducation: "",
+        highestEducationLevel: "",
+        gradingScheme: "",
+        gradeAverage: "",
+        graduated: ""
+    });
 
 
     const [workForm, setWorkForm] = useState<WorkExperience>({
@@ -278,10 +278,10 @@ const [schools, setSchools] = useState<any[]>([{}]);
 
         try {
             setUploadingImage(true)
-            const response = await axiosInstance.post('/users/profile/image', formData, {
+            const response = await axiosInstance.put('/upload/profile', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
-            setUser(prev => prev ? { ...prev, profileImage: response.data.result.url } : null)
+            profile.profileImage = response.data.url
         } catch (error) {
             console.error('Error uploading image:', error)
         } finally {
@@ -293,14 +293,10 @@ const [schools, setSchools] = useState<any[]>([{}]);
     const handleProfileUpdate = async (payload: any) => {
         try {
             setSaving(true);
-
-
-
             const response = await axiosInstance.put(
                 '/auth/profile',
                 payload
             );
-
             setUser(prev =>
                 prev ? { ...prev, ...response.data.result } : null
             );
@@ -316,15 +312,15 @@ const [schools, setSchools] = useState<any[]>([{}]);
     };
 
     const addSchool = () => {
-  if (schools.length >= 3) return; // 🚫 limit
+        if (schools.length >= 3) return; // 🚫 limit
 
-  setSchools(prev => [...prev, {}]);
-};
+        setSchools(prev => [...prev, {}]);
+    };
 
 
-const removeSchool = (index: number) => {
-  setSchools(prev => prev.filter((_, i) => i !== index));
-};
+    const removeSchool = (index: number) => {
+        setSchools(prev => prev.filter((_, i) => i !== index));
+    };
 
 
 
@@ -332,8 +328,6 @@ const removeSchool = (index: number) => {
 
         let schema;
         let payload;
-
-        // ✅ PROFILE TAB
         if (activeTab === "profile") {
             schema = profileSchema.profile;
 
@@ -399,15 +393,14 @@ const removeSchool = (index: number) => {
         )
     }
 
+
     return (
         <main className="flex-1 sm:px-6">
             <div className="">
                 <div className="bg-card border border-border rounded-2xl p-6">
                     <div className="flex flex-col md:flex-row items-center gap-8">
-
-                        {/* Profile Image */}
                         <div className="relative">
-                            <div className="w-28 h-28 rounded-full border-4 p-2 border-primary/30 overflow-hidden shadow-md">
+                            <div className="w-28 h-28 rounded-full border-4 border-primary/30 overflow-hidden shadow-md">
                                 {user?.profileImage ? (
                                     <img
                                         src={user.profileImage}
@@ -527,174 +520,173 @@ const removeSchool = (index: number) => {
                                 <div key={key}>
                                     {activeTab === key && (
                                         <>
-                                        {value.type === "multi" ? 
-                                        <div className="space-y-6">
+                                            {value.type === "multi" ?
+                                                <div className="space-y-6">
 
-    {Object.entries(value.sections ?? {}).map(
-      ([sectionKey, section]: any) => (
+                                                    {Object.entries(value.sections ?? {}).map(
+                                                        ([sectionKey, section]: any) => (
 
-        <motion.div
-          key={sectionKey}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="bg-card border rounded-2xl p-6">
+                                                            <motion.div
+                                                                key={sectionKey}
+                                                                initial={{ opacity: 0, y: 20 }}
+                                                                animate={{ opacity: 1, y: 0 }}
+                                                            >
+                                                                <div className="bg-card border rounded-2xl p-6">
 
-            <h2 className="text-xl font-bold mb-6">
-              {section.title}
-            </h2>
+                                                                    <h2 className="text-xl font-bold mb-6">
+                                                                        {section.title}
+                                                                    </h2>
 
-            {/* SINGLE FORM */}
-            {section.type === "single" && (
-              <FormRenderer
-                schema={section}
-                formData={educationForm}
-                setFormData={setEducationForm}
-                errors={errors}
-              />
-            )}
+                                                                    {/* SINGLE FORM */}
+                                                                    {section.type === "single" && (
+                                                                        <FormRenderer
+                                                                            schema={section}
+                                                                            formData={educationForm}
+                                                                            setFormData={setEducationForm}
+                                                                            errors={errors}
+                                                                        />
+                                                                    )}
 
-            {/* REPEATABLE FORM (Schools) */}
-            {section.type === "repeatable" && (
-  <>
-    {schools.map((school, index) => (
-      <div
-        key={index}
-        className="relative border rounded-xl p-5 mb-6"
-      >
-        {/* ✅ Delete Button */}
-        {schools.length > 1 && (
-          <button
-            onClick={() => removeSchool(index)}
-            className="absolute top-3 right-3 text-red-500 text-sm font-medium hover:text-red-700"
-          >
-            Delete
-          </button>
-        )}
+                                                                    {/* REPEATABLE FORM (Schools) */}
+                                                                    {section.type === "repeatable" && (
+                                                                        <>
+                                                                            {schools.map((school, index) => (
+                                                                                <div
+                                                                                    key={index}
+                                                                                    className="relative border rounded-xl p-5 mb-6"
+                                                                                >
+                                                                                    {/* ✅ Delete Button */}
+                                                                                    {schools.length > 1 && (
+                                                                                        <button
+                                                                                            onClick={() => removeSchool(index)}
+                                                                                            className="absolute top-3 right-3 text-red-500 text-sm font-medium hover:text-red-700"
+                                                                                        >
+                                                                                            Delete
+                                                                                        </button>
+                                                                                    )}
 
-        {/* School Title */}
-        <h3 className="font-semibold mb-4">
-          School {index + 1}
-        </h3>
+                                                                                    {/* School Title */}
+                                                                                    <h3 className="font-semibold mb-4">
+                                                                                        School {index + 1}
+                                                                                    </h3>
 
-        <FormRenderer
-          schema={section}
-          formData={school}
-          setFormData={(data: any) => {
-            setSchools(prev => {
-              const updated = [...prev];
-              updated[index] = data;
-              return updated;
-            });
-          }}
-          errors={errors}
-        />
-      </div>
-    ))}
+                                                                                    <FormRenderer
+                                                                                        schema={section}
+                                                                                        formData={school}
+                                                                                        setFormData={(data: any) => {
+                                                                                            setSchools(prev => {
+                                                                                                const updated = [...prev];
+                                                                                                updated[index] = data;
+                                                                                                return updated;
+                                                                                            });
+                                                                                        }}
+                                                                                        errors={errors}
+                                                                                    />
+                                                                                </div>
+                                                                            ))}
 
-    {/* ✅ Add Button */}
-    <button
-      onClick={addSchool}
-      disabled={schools.length >= 3}
-      className={`mt-2 font-medium ${
-        schools.length >= 3
-          ? "text-gray-400 cursor-not-allowed"
-          : "text-primary hover:underline"
-      }`}
-    >
-      + Add Attended School
-    </button>
+                                                                            {/* ✅ Add Button */}
+                                                                            <button
+                                                                                onClick={addSchool}
+                                                                                disabled={schools.length >= 3}
+                                                                                className={`mt-2 font-medium ${schools.length >= 3
+                                                                                    ? "text-gray-400 cursor-not-allowed"
+                                                                                    : "text-primary hover:underline"
+                                                                                    }`}
+                                                                            >
+                                                                                + Add Attended School
+                                                                            </button>
 
-    {/* Limit Message */}
-    {schools.length >= 3 && (
-      <p className="text-xs text-gray-400 mt-1">
-        Maximum 3 schools allowed
-      </p>
-    )}
-  </>
-)}
+                                                                            {/* Limit Message */}
+                                                                            {schools.length >= 3 && (
+                                                                                <p className="text-xs text-gray-400 mt-1">
+                                                                                    Maximum 3 schools allowed
+                                                                                </p>
+                                                                            )}
+                                                                        </>
+                                                                    )}
 
 
-          </div>
-        </motion.div>
-      )
-    )}
-  </div>
-                                        
-                                        : <motion.div
-                                            key="profile"
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -20 }}
-                                            className="space-y-6"
-                                        >
-                                            <div className="bg-card border border-border rounded-2xl p-6 min-h-[70vh]">
-                                                <div className="flex items-center justify-between mb-6">
-                                                    <h2 className="text-xl font-bold">{value.title}</h2>
-                                                    <button
-                                                        onClick={() => { setIsEditing(!isEditing), setProfileForm(prev => ({ ...prev, name: user?.name || '', phone: user?.phone || '', dateOfBirth: user?.dateOfBirth || '' })) }}
-                                                        className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
-                                                    >
-                                                        {isEditing ? (
-                                                            <>
-                                                                <X className="w-4 h-4" />
-                                                                Cancel
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Edit2 className="w-4 h-4" />
-                                                                Edit
-                                                            </>
-                                                        )}
-                                                    </button>
+                                                                </div>
+                                                            </motion.div>
+                                                        )
+                                                    )}
                                                 </div>
 
-                                                {isEditing ? (
-                                                    <div className="space-y-4">
-                                                        <FormRenderer
-                                                            schema={value}
-                                                            formData={profileForm}
-                                                            setFormData={setProfileForm}
-                                                            errors={errors}
-                                                        />
-
-                                                        <div className="flex justify-end">
+                                                : <motion.div
+                                                    key="profile"
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -20 }}
+                                                    className="space-y-6"
+                                                >
+                                                    <div className="bg-card border border-border rounded-2xl p-6 min-h-[70vh]">
+                                                        <div className="flex items-center justify-between mb-6">
+                                                            <h2 className="text-xl font-bold">{value.title}</h2>
                                                             <button
-                                                                onClick={handleSave}
-                                                                disabled={saving}
-                                                                className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+                                                                onClick={() => { setIsEditing(!isEditing), setProfileForm(prev => ({ ...prev, name: user?.name || '', phone: user?.phone || '', dateOfBirth: user?.dateOfBirth || '' })) }}
+                                                                className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
                                                             >
-                                                                {saving ? (
+                                                                {isEditing ? (
                                                                     <>
-                                                                        <RefreshCw className="w-4 h-4 animate-spin" />
-                                                                        Saving...
+                                                                        <X className="w-4 h-4" />
+                                                                        Cancel
                                                                     </>
                                                                 ) : (
                                                                     <>
-                                                                        <Save className="w-4 h-4" />
-                                                                        Save Changes
+                                                                        <Edit2 className="w-4 h-4" />
+                                                                        Edit
                                                                     </>
                                                                 )}
                                                             </button>
                                                         </div>
-                                                    </div>
-                                                ) : user && value?.fields?.map(item =>
-                                                    <div key={item.name}>
-                                                        <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
-                                                        <p className="font-medium">{user[item?.name] || "__"}</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </motion.div> }
-                                        
 
-                                         
-                                            
-                                      
-                                  
-                                    </>
+                                                        {isEditing ? (
+                                                            <div className="space-y-4">
+                                                                <FormRenderer
+                                                                    schema={value}
+                                                                    formData={profileForm}
+                                                                    setFormData={setProfileForm}
+                                                                    errors={errors}
+                                                                />
+
+                                                                <div className="flex justify-end">
+                                                                    <button
+                                                                        onClick={handleSave}
+                                                                        disabled={saving}
+                                                                        className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+                                                                    >
+                                                                        {saving ? (
+                                                                            <>
+                                                                                <RefreshCw className="w-4 h-4 animate-spin" />
+                                                                                Saving...
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                <Save className="w-4 h-4" />
+                                                                                Save Changes
+                                                                            </>
+                                                                        )}
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        ) : user && value?.fields?.map(item =>
+                                                            <div key={item.name}>
+                                                                <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
+                                                                <p className="font-medium">{user[item?.name] || "__"}</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </motion.div>}
+
+
+
+
+
+
+                                        </>
                                     )}
-                                   
+
 
                                 </div>
                             ))}
