@@ -65,27 +65,8 @@ export default function BlogGrid({filteredBlogs}){
                                             }}
                                         />
 
-                                        {/* OVERLAY */}
-                                        <div
-                                            className="
-                      absolute inset-0 bg-black/50
-                      flex flex-col items-center justify-center text-center px-4
-                      rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[65px]
-                    "
-                                        >
-                                            <h3 className="text-white text-lg sm:text-xl lg:text-3xl font-semibold mb-2">
-                                                {post.title}
-                                            </h3>
-
-                                            <p className="text-white text-sm sm:text-base">
-                                                {post.category?.name}{" "}
-                                                {new Date(post.createdAt).toLocaleDateString("en-IN", {
-                                                    day: "2-digit",
-                                                    month: "short",
-                                                    year: "numeric",
-                                                })}
-                                            </p>
-                                        </div>
+                                       
+                                        
                                     </div>
 
                                     {/* CONTENT */}

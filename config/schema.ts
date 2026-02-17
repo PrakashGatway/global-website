@@ -1,5 +1,5 @@
 export const profileSchema = {
-   profile: {
+  profile: {
     title: "Personal Information",
 
     fields: [
@@ -149,20 +149,20 @@ export const profileSchema = {
             label: "Highest level of education",
             type: "select",
             required: true,
-            options: ["Grade 10","Grade 12","Diploma","Bachelor"]
+            options: ["Grade 10", "Grade 12", "Diploma", "Bachelor"]
           },
           {
             name: "gradingScheme",
             label: "Grading scheme",
             type: "select",
             required: true,
-            options: ["Percentage","CGPA"]
+            options: ["Percentage", "CGPA"]
           },
           {
             name: "graduated",
             label: "I have graduated",
             type: "radio",
-            options: ["yes","no"],
+            options: ["yes", "no"],
             required: true,
             col: 2
           }
@@ -241,7 +241,190 @@ export const profileSchema = {
         ]
       }
     }
-  }
+  },
 
-  
+  testscore: {
+    title: "English Test Scores",
+    type: "multi",
+
+    sections: {
+      englishscore: {
+        title: "English Test Scores",
+        type: "single",
+
+        fields: [
+          {
+            name: "englishStatus",
+            label: "English language proficiency",
+            type: "radio",
+
+            options: [
+              {
+                label: "I have valid proof of English language proficiency",
+                value: "hasTest",
+
+                // 👇 only this option shows test selector
+                children: [
+                  {
+                    name: "englishTest",
+                    label: "Select Test Type",
+                    type: "radio",
+
+                    options: [
+                      {
+                        label: "TOEFL",
+                        value: "toefl",
+                        scoreGroup: {
+                          title: "Your Scores",
+                          fields: [
+                            { name: "reading", label: "Reading", type: "number", required: true },
+                            { name: "listening", label: "Listening", type: "number", required: true },
+                            { name: "writing", label: "Writing", type: "number", required: true },
+                            { name: "speaking", label: "Speaking", type: "number", required: true },
+                            { name: "examDate", label: "Date of exam", type: "date", required: true }
+                          ]
+                        }
+                      },
+
+                      {
+                        label: "IELTS",
+                        value: "ielts",
+                        scoreGroup: {
+                          title: "Your Scores",
+                          fields: [
+                            { name: "reading", type: "number", label: "Reading", required: true },
+                            { name: "listening", type: "number", label: "Listening", required: true },
+                            { name: "writing", type: "number", label: "Writing", required: true },
+                            { name: "speaking", type: "number", label: "Speaking", required: true },
+                            { name: "examDate", type: "date", label: "Date of exam", required: true }
+                          ]
+                        }
+                      },
+
+                      {
+                        label: "PTE",
+                        value: "pte",
+                        scoreGroup: {
+                          title: "Your Scores",
+                          fields: [
+                            { name: "totalScore", label: "Total Score", type: "number", required: true },
+                            { name: "examDate", label: "Date of exam", type: "date", required: true }
+                          ]
+                        }
+                      },
+
+                      {
+                        label: "Duolingo",
+                        value: "duolingo",
+                        scoreGroup: {
+                          title: "Your Scores",
+                          fields: [
+                            { name: "totalScore", label: "Total Score", type: "number", required: true },
+                            { name: "examDate", label: "Date of exam", type: "date", required: true }
+                          ]
+                        }
+                      },
+                      {
+                        label: "Other tests",
+                        value: "othertest",
+                        tooltip: "When this option is selected, we will assume that you meet the language proficiency requirements for all programs and bypass the language proficiency check on the search page. This may cause programs to appear for which you are not eligible. Your precise eligibility will be evaluated later, after you create an application and upload the required documents."
+                      }
+                    ]
+                  }
+                ]
+              },
+
+              {
+                label:
+                  "I have not taken a language test and will apply to programs allowing proof after acceptance",
+                value: "afterAcceptance"
+              },
+
+              {
+                label:
+                  "I believe my academic or nationality background qualifies me for an exemption",
+                value: "exemption"
+              },
+
+              {
+                label:
+                  "I have not taken a language test and do not plan to take one",
+                value: "noTest"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+
+ visaStudypermit: {
+  title: "Visa & Study Permit",
+  type: "single",
+
+  fields: [
+    {
+      name: "visaRefused",
+      label:
+        "Have you been refused a visa from Canada, the USA, the United Kingdom, New Zealand, Australia or Ireland?",
+      type: "radio",
+      required: true,
+
+      options: [
+        { label: "Yes", value: "yes" },
+        { label: "No", value: "no" }
+      ],
+
+      tooltip:
+        "Include any past visa refusals. This information helps assess eligibility."
+    },
+
+    {
+      name: "validVisas",
+      label: "Which valid study permits or visas do you have?",
+      type: "checkbox",
+
+      options: [
+        {
+          label: "Canadian Study Permit / Visitor Visa",
+          value: "canada"
+        },
+        {
+          label: "USA F1 Visa",
+          value: "usa"
+        },
+        {
+          label: "Australian Study Visa",
+          value: "australia"
+        },
+        {
+          label: "UK Tier 4 Student / Short Term Study Visa",
+          value: "uk"
+        },
+        {
+          label: "Irish Stamp 2",
+          value: "ireland"
+        },
+        {
+          label: "I don't have this",
+          value: "none"
+        }
+      ]
+    },
+
+    {
+      name: "visaDetails",
+      label:
+        "Please provide more information about your current study permit/visa and any past refusals, if any",
+      type: "textarea",
+      placeholder: "Enter your details..."
+    }
+  ]
+}
+
+
+
+
+
+
 };

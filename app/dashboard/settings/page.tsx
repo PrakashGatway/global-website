@@ -20,6 +20,7 @@ import { useGlobal } from "@/src/statecontext"
 import FormRenderer from "../../../components/dashboard/stepForm/formRender"
 import { profileSchema } from "@/config/schema"
 import { validateForm } from "@/utils/validateForm"
+import { useForm, FormProvider } from "react-hook-form"
 
 interface Education {
     _id?: string
@@ -176,14 +177,45 @@ export default function ProfilePage() {
     const router = useRouter()
     const [user, setUser] = useState<any | null>(null)
     const [loading, setLoading] = useState(false)
-    const [activeTab, setActiveTab] = useState<'profile' | 'address' | 'education' | 'work' | 'preferences' | 'security' | 'applications'>('profile')
-    const [isEditing, setIsEditing] = useState(false)
+    const [activeTab, setActiveTab] = useState<'profile' | 'address' | 'education' | 'testscore' | 'visaStudypermit' | 'security' | 'applications'>('profile')
     const [uploadingImage, setUploadingImage] = useState(false)
     const [saving, setSaving] = useState(false)
     const [schools, setSchools] = useState<any[]>([{}]);
 
     const { profile } = useGlobal()
 
+    // React Hook Form
+    const methods = useForm({
+        defaultValues: {
+            profile: {
+                name: '',
+                phone: '',
+                dateOfBirth: '',
+                nationality: '',
+                gender: '',
+                firstLanguage: '',
+                maritalStatus: '',
+                passportExpiry: '',
+                passportNumber: ''
+            },
+            address: {
+                address: '',
+                city: '',
+                state: '',
+                country: '',
+                postalCode: ''
+            },
+            education: {
+                countryOfEducation: "",
+                highestEducationLevel: "",
+                gradingScheme: "",
+                gradeAverage: "",
+                graduated: ""
+            }
+        }
+    })
+
+    const { reset, watch, setValue } = methods
 
     // Form States
     const [profileForm, setProfileForm] = useState({
@@ -196,13 +228,6 @@ export default function ProfilePage() {
         maritalStatus: "",
         passportExpiry: '',
         passportNumber: ''
-
-        ,
-        address: '',
-        city: '',
-        state: '',
-        country: '',
-        postalCode: ''
     })
 
     const [educationForm, setEducationForm] = useState({
@@ -211,8 +236,7 @@ export default function ProfilePage() {
         gradingScheme: "",
         gradeAverage: "",
         graduated: ""
-    });
-
+    })
 
     const [workForm, setWorkForm] = useState<WorkExperience>({
         title: '',
@@ -242,32 +266,64 @@ export default function ProfilePage() {
         }
     })
 
-
     const [educations, setEducations] = useState<Education[]>([])
     const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([])
     const [editingEducationIndex, setEditingEducationIndex] = useState<number | null>(null)
     const [editingWorkIndex, setEditingWorkIndex] = useState<number | null>(null)
     const [showEducationForm, setShowEducationForm] = useState(false)
     const [showWorkForm, setShowWorkForm] = useState(false)
-    const [errors, setErrors] = useState({});
-
+    const [errors, setErrors] = useState({})
 
     // Fetch user data
     useEffect(() => {
-        if (!profile) return;
+        if (!profile) return
         setUser(profile)
-        setProfileForm(prev => ({
-            ...prev,
-            ...profile,
 
+        const profileData = {
+            ...profile,
             address: profile.address?.address || "",
             city: profile.address?.city || "",
             state: profile.address?.state || "",
             country: profile.address?.country || "",
             postalCode: profile.address?.postalCode || ""
-        }));
+        }
+
+        setProfileForm(prev => ({
+            ...prev,
+            ...profileData
+        }))
+
+        // Reset react-hook-form with user data
+        reset({
+            profile: {
+                name: profile.name || '',
+                phone: profile.phone || '',
+                dateOfBirth: profile.dateOfBirth || '',
+                nationality: profile.nationality || '',
+                gender: profile.gender || '',
+                firstLanguage: profile.firstLanguage || '',
+                maritalStatus: profile.maritalStatus || '',
+                passportExpiry: profile.passportExpiry || '',
+                passportNumber: profile.passportNumber || ''
+            },
+            address: {
+                address: profile.address?.address || '',
+                city: profile.address?.city || '',
+                state: profile.address?.state || '',
+                country: profile.address?.country || '',
+                postalCode: profile.address?.postalCode || ''
+            },
+            education: {
+                countryOfEducation: profile.education?.countryOfEducation || "",
+                highestEducationLevel: profile.education?.highestEducationLevel || "",
+                gradingScheme: profile.education?.gradingScheme || "",
+                gradeAverage: profile.education?.gradeAverage || "",
+                graduated: profile.education?.graduated || ""
+            }
+        })
+
         setLoading(false)
-    }, [profile])
+    }, [profile, reset])
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -289,98 +345,67 @@ export default function ProfilePage() {
         }
     }
 
-
     const handleProfileUpdate = async (payload: any) => {
         try {
-            setSaving(true);
+            setSaving(true)
             const response = await axiosInstance.put(
                 '/auth/profile',
                 payload
-            );
+            )
             setUser(prev =>
                 prev ? { ...prev, ...response.data.result } : null
-            );
-
-            profile(response.data.result); // update global
-
-            setIsEditing(false);
+            )
+            profile(response.data.result) // update global
         } catch (error) {
-            console.error('Error updating profile:', error);
+            console.error('Error updating profile:', error)
         } finally {
-            setSaving(false);
+            setSaving(false)
         }
-    };
+    }
 
     const addSchool = () => {
-        if (schools.length >= 3) return; // 🚫 limit
-
-        setSchools(prev => [...prev, {}]);
-    };
-
+        if (schools.length >= 3) return // 🚫 limit
+        setSchools(prev => [...prev, {}])
+    }
 
     const removeSchool = (index: number) => {
-        setSchools(prev => prev.filter((_, i) => i !== index));
-    };
-
-
+        setSchools(prev => prev.filter((_, i) => i !== index))
+    }
 
     const handleSave = async () => {
+        let schema
+        let payload
 
-        let schema;
-        let payload;
         if (activeTab === "profile") {
-            schema = profileSchema.profile;
-
-            payload = {
-                name: profileForm.name,
-                phone: profileForm.phone,
-                dateOfBirth: profileForm.dateOfBirth,
-                nationality: profileForm.nationality,
-                gender: profileForm.gender,
-                firstLanguage: profileForm.firstLanguage,
-                maritalStatus: profileForm.maritalStatus,
-                passportExpiry: profileForm.passportExpiry,
-                passportNumber: profileForm.passportNumber
-            };
+            schema = profileSchema.profile
+            payload = watch('profile') // ✅ Get from react-hook-form
         }
 
-        // ✅ ADDRESS TAB (⭐ IMPORTANT CHANGE)
         if (activeTab === "address") {
-            schema = profileSchema.address;
-
-            payload = {
-                address: {
-                    address: profileForm.address,
-                    city: profileForm.city,
-                    state: profileForm.state,
-                    country: profileForm.country,
-                    postalCode: profileForm.postalCode
-                }
-            };
+            schema = profileSchema.address
+            payload = { address: watch('address') }
         }
 
-        // ✅ EDUCATION TAB
         if (activeTab === "education") {
-            payload = {
-                education: educationForm
-            };
+            payload = { education: watch('education') }
         }
 
-        // ✅ VALIDATION
         if (schema) {
-            const validationErrors = validateForm(schema, profileForm);
-
+            const validationErrors = validateForm(schema, payload)
             if (Object.keys(validationErrors).length > 0) {
-                setErrors(validationErrors);
-                return;
+                setErrors(validationErrors)
+                return
             }
         }
 
-        setErrors({});
-        await handleProfileUpdate(payload);
-    };
+        setErrors({})
+        await handleProfileUpdate(payload)
+    }
 
-
+    const handleSectionSave = (sectionKey: string) => {
+        console.log("Saving:", sectionKey, educationForm)
+        // API call here
+    }
 
     if (loading) {
         return (
@@ -393,261 +418,274 @@ export default function ProfilePage() {
         )
     }
 
-
     return (
-        <main className="flex-1 sm:px-6">
-            <div className="">
-                <div className="bg-card border border-border rounded-2xl p-6">
-                    <div className="flex flex-col md:flex-row items-center gap-8">
-                        <div className="relative">
-                            <div className="w-28 h-28 rounded-full border-4 border-primary/30 overflow-hidden shadow-md">
-                                {user?.profileImage ? (
-                                    <img
-                                        src={user.profileImage}
-                                        alt={user.name}
-                                        className="w-full h-full object-cover"
+        <FormProvider {...methods}>
+            <main className="flex-1 sm:px-6">
+                <div className="">
+                    <div className="bg-card border border-border rounded-2xl p-6">
+                        <div className="flex flex-col md:flex-row items-center gap-8">
+                            <div className="relative">
+                                <div className="w-28 h-28 rounded-full border-4 border-primary/30 overflow-hidden shadow-md">
+                                    {user?.profileImage ? (
+                                        <img
+                                            src={user.profileImage}
+                                            alt={user.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-muted">
+                                            <User className="w-10 h-10 text-muted-foreground" />
+                                        </div>
+                                    )}
+                                </div>
+
+                                <label
+                                    htmlFor="profile-image"
+                                    className="absolute bottom-0 right-0 p-2 bg-primary text-white rounded-full shadow hover:scale-105 transition cursor-pointer"
+                                >
+                                    {uploadingImage ? (
+                                        <RefreshCw className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                        <Camera className="w-4 h-4" />
+                                    )}
+                                    <input
+                                        id="profile-image"
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleImageUpload}
+                                        disabled={uploadingImage}
                                     />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-muted">
-                                        <User className="w-10 h-10 text-muted-foreground" />
-                                    </div>
-                                )}
+                                </label>
                             </div>
 
-                            <label
-                                htmlFor="profile-image"
-                                className="absolute bottom-0 right-0 p-2 bg-primary text-white rounded-full shadow hover:scale-105 transition cursor-pointer"
-                            >
-                                {uploadingImage ? (
-                                    <RefreshCw className="w-4 h-4 animate-spin" />
-                                ) : (
-                                    <Camera className="w-4 h-4" />
-                                )}
-                                <input
-                                    id="profile-image"
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={handleImageUpload}
-                                    disabled={uploadingImage}
-                                />
-                            </label>
-                        </div>
+                            {/* User Info */}
+                            <div className="flex-1 text-center md:text-left">
+                                <h1 className="text-2xl font-bold mb-1 capitalize">{user?.name || 'User'}</h1>
+                                <p className="text-muted-foreground flex items-center justify-center md:justify-start gap-2">
+                                    <Mail className="w-4 h-4" />
+                                    {user?.email || "Nomailfound@gmail.com"}
+                                </p>
 
-                        {/* User Info */}
-                        <div className="flex-1 text-center md:text-left">
-                            <h1 className="text-2xl font-bold mb-1 capitalize">{user?.name || 'User'}</h1>
-                            <p className="text-muted-foreground flex items-center justify-center md:justify-start gap-2">
-                                <Mail className="w-4 h-4" />
-                                {user?.email || "Nomailfound@gmail.com"}
-                            </p>
-
-                            <div className="mt-2 max-w-xl">
-                                <div className="flex justify-between text-sm mb-1">
-                                    <span>Profile Completion</span>
-                                    <span className="font-semibold text-primary">{10}%</span>
-                                </div>
-                                <div className="h-3 bg-muted rounded-full ">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${10}%` }}
-                                        transition={{ duration: 0.6 }}
-                                        className="h-full bg-primary rounded-full"
-                                    />
+                                <div className="mt-2 max-w-xl">
+                                    <div className="flex justify-between text-sm mb-1">
+                                        <span>Profile Completion</span>
+                                        <span className="font-semibold text-primary">{10}%</span>
+                                    </div>
+                                    <div className="h-3 bg-muted rounded-full ">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${10}%` }}
+                                            transition={{ duration: 0.6 }}
+                                            className="h-full bg-primary rounded-full"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-
-            <div className="container mx-auto mt-3">
-                <div className="flex gap-3">
-                    <div className="w-80 flex-shrink-0 sticky top-[30px] self-start">
-                        <div className="bg-card  border border-border min-h-[80vh] rounded-2xl p-6 sticky top-[73px]">
-                            <h3 className="font-bold mb-4 flex items-center gap-2">
-                                Complete Your Profile
-                            </h3>
-                            <div className="space-y-2">
-                                <ProfileCompletionStep
-                                    step={1}
-                                    title="Basic Information"
-                                    description="Add your personal details"
-                                    isCompleted={!!(user?.name && user?.phone && user?.dateOfBirth)}
-                                    isActive={activeTab === 'profile'}
-                                    onClick={() => setActiveTab('profile')}
-                                />
-                                <ProfileCompletionStep
-                                    step={2}
-                                    title="Address Information"
-                                    description="Add your address details"
-                                    isCompleted={!!(user?.name && user?.phone && user?.dateOfBirth)}
-                                    isActive={activeTab === 'address'}
-                                    onClick={() => setActiveTab('address')}
-                                />
-                                <ProfileCompletionStep
-                                    step={3}
-                                    title="Education History"
-                                    description="Add your academic background"
-                                    isCompleted={educations.length > 0}
-                                    isActive={activeTab === 'education'}
-                                    onClick={() => setActiveTab('education')}
-                                />
-                                <ProfileCompletionStep
-                                    step={4}
-                                    title="Work Experience"
-                                    description="Add your professional experience"
-                                    isCompleted={workExperiences.length > 0}
-                                    isActive={activeTab === 'work'}
-                                    onClick={() => setActiveTab('work')}
-                                />
-                                <ProfileCompletionStep
-                                    step={5}
-                                    title="Study Preferences"
-                                    description="Set your course preferences"
-                                    isCompleted={!!user?.metadata?.preferredStudyLevel}
-                                    isActive={activeTab === 'preferences'}
-                                    onClick={() => setActiveTab('preferences')}
-                                />
+                <div className="container mx-auto mt-3">
+                    <div className="flex gap-3">
+                        <div className="w-80 flex-shrink-0 sticky top-[30px] self-start">
+                            <div className="bg-card border border-border min-h-[80vh] rounded-2xl p-6 sticky top-[73px]">
+                                <h3 className="font-bold mb-4 flex items-center gap-2">
+                                    Complete Your Profile
+                                </h3>
+                                <div className="space-y-2">
+                                    <ProfileCompletionStep
+                                        step={1}
+                                        title="Basic Information"
+                                        description="Add your personal details"
+                                        isCompleted={!!(user?.name && user?.phone && user?.dateOfBirth)}
+                                        isActive={activeTab === 'profile'}
+                                        onClick={() => setActiveTab('profile')}
+                                    />
+                                    <ProfileCompletionStep
+                                        step={2}
+                                        title="Address Information"
+                                        description="Add your address details"
+                                        isCompleted={!!(user?.address?.address)}
+                                        isActive={activeTab === 'address'}
+                                        onClick={() => setActiveTab('address')}
+                                    />
+                                    <ProfileCompletionStep
+                                        step={3}
+                                        title="Education History"
+                                        description="Add your academic background"
+                                        isCompleted={educations.length > 0}
+                                        isActive={activeTab === 'education'}
+                                        onClick={() => setActiveTab('education')}
+                                    />
+                                    <ProfileCompletionStep
+                                        step={4}
+                                        title="Test Scores"
+                                        description="Add your professional experience"
+                                        isCompleted={workExperiences.length > 0}
+                                        isActive={activeTab === 'testscore'}
+                                        onClick={() => setActiveTab('testscore')}
+                                    />
+                                    <ProfileCompletionStep
+                                        step={5}
+                                        title="Study Preferences"
+                                        description="Set your course preferences"
+                                        isCompleted={!!user?.metadata?.preferredStudyLevel}
+                                        isActive={activeTab === 'visaStudypermit'}
+                                        onClick={() => setActiveTab('visaStudypermit')}
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="flex-1">
-                        <AnimatePresence mode="wait">
-                            {Object.entries(profileSchema).map(([key, value]) => (
-                                <div key={key}>
-                                    {activeTab === key && (
-                                        <>
-                                            {value.type === "multi" ?
-                                                <div className="space-y-6">
+                        <div className="flex-1">
+                            <AnimatePresence mode="wait">
+                                {Object.entries(profileSchema).map(([key, value]) => (
+                                    <div key={key}>
+                                        {activeTab === key && (
+                                            <>
+                                                {value.type === "multi" ?
+                                                    <div className="space-y-6">
+                                                        {Object.entries(value.sections ?? {}).map(
+                                                            ([sectionKey, section]: any) => (
+                                                                <motion.div
+                                                                    key={sectionKey}
+                                                                    initial={{ opacity: 0, y: 20 }}
+                                                                    animate={{ opacity: 1, y: 0 }}
+                                                                >
+                                                                    <div className="bg-card border rounded-2xl p-6">
+                                                                        <h2 className="text-xl font-bold mb-6">
+                                                                            {section.title}
+                                                                        </h2>
 
-                                                    {Object.entries(value.sections ?? {}).map(
-                                                        ([sectionKey, section]: any) => (
+                                                                        {/* SINGLE FORM */}
+                                                                        {section.type === "single" && (
+                                                                            <>
+                                                                                <FormRenderer
+                                                                                    schema={section}
+                                                                                    formData={educationForm}
+                                                                                    setFormData={setEducationForm}
+                                                                                    errors={errors}
+                                                                                />
 
-                                                            <motion.div
-                                                                key={sectionKey}
-                                                                initial={{ opacity: 0, y: 20 }}
-                                                                animate={{ opacity: 1, y: 0 }}
-                                                            >
-                                                                <div className="bg-card border rounded-2xl p-6">
-
-                                                                    <h2 className="text-xl font-bold mb-6">
-                                                                        {section.title}
-                                                                    </h2>
-
-                                                                    {/* SINGLE FORM */}
-                                                                    {section.type === "single" && (
-                                                                        <FormRenderer
-                                                                            schema={section}
-                                                                            formData={educationForm}
-                                                                            setFormData={setEducationForm}
-                                                                            errors={errors}
-                                                                        />
-                                                                    )}
-
-                                                                    {/* REPEATABLE FORM (Schools) */}
-                                                                    {section.type === "repeatable" && (
-                                                                        <>
-                                                                            {schools.map((school, index) => (
-                                                                                <div
-                                                                                    key={index}
-                                                                                    className="relative border rounded-xl p-5 mb-6"
-                                                                                >
-                                                                                    {/* ✅ Delete Button */}
-                                                                                    {schools.length > 1 && (
-                                                                                        <button
-                                                                                            onClick={() => removeSchool(index)}
-                                                                                            className="absolute top-3 right-3 text-red-500 text-sm font-medium hover:text-red-700"
-                                                                                        >
-                                                                                            Delete
-                                                                                        </button>
-                                                                                    )}
-
-                                                                                    {/* School Title */}
-                                                                                    <h3 className="font-semibold mb-4">
-                                                                                        School {index + 1}
-                                                                                    </h3>
-
-                                                                                    <FormRenderer
-                                                                                        schema={section}
-                                                                                        formData={school}
-                                                                                        setFormData={(data: any) => {
-                                                                                            setSchools(prev => {
-                                                                                                const updated = [...prev];
-                                                                                                updated[index] = data;
-                                                                                                return updated;
-                                                                                            });
-                                                                                        }}
-                                                                                        errors={errors}
-                                                                                    />
+                                                                                {/* ✅ SAVE BUTTON */}
+                                                                                <div className="flex justify-end mt-6">
+                                                                                    <button
+                                                                                        onClick={() => handleSectionSave(key)}
+                                                                                        className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+                                                                                    >
+                                                                                        Save & Continue
+                                                                                    </button>
                                                                                 </div>
-                                                                            ))}
+                                                                            </>
+                                                                        )}
 
-                                                                            {/* ✅ Add Button */}
-                                                                            <button
-                                                                                onClick={addSchool}
-                                                                                disabled={schools.length >= 3}
-                                                                                className={`mt-2 font-medium ${schools.length >= 3
-                                                                                    ? "text-gray-400 cursor-not-allowed"
-                                                                                    : "text-primary hover:underline"
-                                                                                    }`}
-                                                                            >
-                                                                                + Add Attended School
-                                                                            </button>
+                                                                        {/* REPEATABLE FORM (Schools) */}
+                                                                        {section.type === "repeatable" && (
+                                                                            <>
+                                                                                {schools.map((school, index) => (
+                                                                                    <>
+                                                                                        <div
+                                                                                            key={index}
+                                                                                            className="relative border rounded-xl p-5 mb-10"
+                                                                                        >
+                                                                                            {/* ✅ Delete Button */}
+                                                                                            {schools.length > 1 && (
+                                                                                                <button
+                                                                                                    onClick={() => removeSchool(index)}
+                                                                                                    className="absolute top-3 right-3 text-red-500 text-sm font-medium hover:text-red-700"
+                                                                                                >
+                                                                                                    Delete
+                                                                                                </button>
+                                                                                            )}
 
-                                                                            {/* Limit Message */}
-                                                                            {schools.length >= 3 && (
-                                                                                <p className="text-xs text-gray-400 mt-1">
-                                                                                    Maximum 3 schools allowed
-                                                                                </p>
-                                                                            )}
-                                                                        </>
-                                                                    )}
+                                                                                            {/* School Title */}
+                                                                                            <h3 className="font-semibold mb-4">
+                                                                                                School {index + 1}
+                                                                                            </h3>
 
+                                                                                            <FormRenderer
+                                                                                                schema={section}
+                                                                                                formData={school}
+                                                                                                setFormData={(data: any) => {
+                                                                                                    setSchools(prev => {
+                                                                                                        const updated = [...prev]
+                                                                                                        updated[index] = data
+                                                                                                        return updated
+                                                                                                    })
+                                                                                                }}
+                                                                                                errors={errors}
+                                                                                            />
+                                                                                        </div>
 
-                                                                </div>
-                                                            </motion.div>
-                                                        )
-                                                    )}
-                                                </div>
+                                                                                        {/* ✅ SAVE BUTTON */}
+                                                                                        <div className="flex justify-end mt-6">
+                                                                                            <button
+                                                                                                onClick={() => handleSectionSave(key)}
+                                                                                                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+                                                                                            >
+                                                                                                Save & Continue
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </>
+                                                                                ))}
 
-                                                : <motion.div
-                                                    key="profile"
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    exit={{ opacity: 0, y: -20 }}
-                                                    className="space-y-6"
-                                                >
-                                                    <div className="bg-card border border-border rounded-2xl p-6 min-h-[70vh]">
-                                                        <div className="flex items-center justify-between mb-6">
-                                                            <h2 className="text-xl font-bold">{value.title}</h2>
-                                                            <button
-                                                                onClick={() => { setIsEditing(!isEditing), setProfileForm(prev => ({ ...prev, name: user?.name || '', phone: user?.phone || '', dateOfBirth: user?.dateOfBirth || '' })) }}
-                                                                className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
-                                                            >
-                                                                {isEditing ? (
-                                                                    <>
-                                                                        <X className="w-4 h-4" />
-                                                                        Cancel
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <Edit2 className="w-4 h-4" />
-                                                                        Edit
-                                                                    </>
-                                                                )}
-                                                            </button>
-                                                        </div>
+                                                                                {/* ✅ Add Button */}
+                                                                                <button
+                                                                                    onClick={addSchool}
+                                                                                    disabled={schools.length >= 3}
+                                                                                    className={`mt-2 font-medium ${schools.length >= 3
+                                                                                        ? "text-gray-400 cursor-not-allowed"
+                                                                                        : "text-primary hover:underline"
+                                                                                        }`}
+                                                                                >
+                                                                                    + Add Attended School
+                                                                                </button>
 
-                                                        {isEditing ? (
+                                                                                {/* Limit Message */}
+                                                                                {schools.length >= 3 && (
+                                                                                    <p className="text-xs text-gray-400 mt-1">
+                                                                                        Maximum 3 schools allowed
+                                                                                    </p>
+                                                                                )}
+                                                                            </>
+                                                                        )}
+                                                                    </div>
+                                                                </motion.div>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                    :
+                                                    <motion.div
+                                                        key="profile"
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: -20 }}
+                                                        className="space-y-6"
+                                                    >
+                                                        <div className="bg-card border border-border rounded-2xl p-6 min-h-[70vh]">
+                                                            <h2 className="text-xl font-bold mb-6">{value.title}</h2>
+
+                                                            {/* Always show form inputs */}
                                                             <div className="space-y-4">
                                                                 <FormRenderer
                                                                     schema={value}
-                                                                    formData={profileForm}
-                                                                    setFormData={setProfileForm}
+                                                                    formData={watch(key)}
+                                                                    setFormData={(data) => {
+                                                                        // ✅ Update react-hook-form state directly
+                                                                        Object.entries(data).forEach(([field, value]) => {
+                                                                            setValue(`${key}.${field}`, value, {
+                                                                                shouldValidate: true,
+                                                                                shouldDirty: true,
+                                                                                shouldTouch: true
+                                                                            })
+                                                                        })
+                                                                    }}
                                                                     errors={errors}
+                                                                    sectionKey={key}
+                                                                    register={methods.register} 
+                                                                    control={methods.control}  
+                                                                    setValue={setValue} 
                                                                 />
 
                                                                 <div className="flex justify-end">
@@ -670,32 +708,18 @@ export default function ProfilePage() {
                                                                     </button>
                                                                 </div>
                                                             </div>
-                                                        ) : user && value?.fields?.map(item =>
-                                                            <div key={item.name}>
-                                                                <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
-                                                                <p className="font-medium">{user[item?.name] || "__"}</p>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </motion.div>}
-
-
-
-
-
-
-                                        </>
-                                    )}
-
-
-                                </div>
-                            ))}
-                        </AnimatePresence>
+                                                        </div>
+                                                    </motion.div>
+                                                }
+                                            </>
+                                        )}
+                                    </div>
+                                ))}
+                            </AnimatePresence>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </FormProvider>
     )
 }
-
-

@@ -112,23 +112,23 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
 
   try {
     const res = await serverInstance.get<ApiResponse>(`/universities/${slug}`);
-    if (res.data.success) {
+    if (res?.data?.success) {
       universityData = res.data.result;
     }
   } catch (err) {
     error = 'Failed to load university data';
-    console.error('Error fetching university data:', err);
+    console.log('Error fetching university data');
   }
 
-  if (error || !universityData) {
+  if (!universityData) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      <main className="min-h-[80vh] flex justify-center items-center bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading University Data</h1>
           <p className="text-slate-700">{error || 'University not found'}</p>
-          <Button className="mt-6" onClick={() => window.location.reload()}>
-            Retry
-          </Button>
+          <a className="mt-6" href='/'>
+            Home
+          </a>
         </div>
       </main>
     );
@@ -160,20 +160,7 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
     { label: 'PG Fees', value: universityData.financials?.pg_fees || 'N/A' },
   ];
 
-  const courses = [
-    {
-      name: 'Undergraduate Programs',
-      duration: '3-4 years',
-      fee: universityData.financials?.ug_fees || 'N/A',
-      ranking: universityData.uni_rank?.rank || 'N/A',
-    },
-    {
-      name: 'Postgraduate Programs',
-      duration: '1-2 years',
-      fee: universityData.financials?.pg_fees || 'N/A',
-      ranking: universityData.uni_rank?.rank || 'N/A',
-    },
-  ];
+
 
   // Get active sections from API
   const activeSections = universityData.extra_content?.sections || [];

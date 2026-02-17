@@ -5,7 +5,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 // import ThreeDButton from "./3dbutton"
 
-export function Footer({ Featureitem = [],Serviceitem =[]
+export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
   
 }: {
   Featureitem?: any[]}) {
@@ -25,14 +25,21 @@ export function Footer({ Featureitem = [],Serviceitem =[]
   return (
     <>
       {/* Footer */}
-      <footer className="bg-secondary pt-32 pb-10 overflow-visible">
+      
+      <footer className="bg-secondary  pt-32 pb-10 overflow-visible">
+
+        
+
         <div className=" mx-auto px-4 sm:px-6 lg:px-16 overflow-visible">
+
+          
 
           {/* ================= MAIN FOOTER CARD with Orange Border ================= */}
           <div className="rounded-[50px] px-6 md:px-12 pt-8 pb-12 relative ">
 
             {/* ================= TOP IMAGE STRIP with Orange Border - Positioned Upward ================= */}
            <div className="w-full mb-16 -mt-20">
+           
 
   {/* OUTER ORANGE FRAME */}
   <div
@@ -66,10 +73,20 @@ export function Footer({ Featureitem = [],Serviceitem =[]
         className="w-full h-full object-cover grayscale"
       />
     </div>
+    
 
   </div>
 
 </div>
+ {countryres.map((item)=>
+
+          <div className="text-white pb-20 flex flex-col gap-5">
+            <h1 className="font-bold">Choose Your Destination</h1>
+          <Link  href={`/destination/${item?.slug}`} >
+          <div className="flex gap-4">
+            <span className="cursor-pointer hover:text-orange-500">{item?.navbarTitle}</span></div></Link>  </div>
+          
+          )}
 
 
             <div className="flex flex-col lg:flex-row">

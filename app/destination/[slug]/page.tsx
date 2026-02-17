@@ -19,6 +19,6 @@ export default async function Page({params}){
 
 
     return(
-        <CountryDetails Universityres = {Universityres} Faqres = {Faqres}  />
+        <CountryDetails Universityres = {Universityres} Faqres = {Faqres} Pageres={Pageres.data}  />
     )
 }
