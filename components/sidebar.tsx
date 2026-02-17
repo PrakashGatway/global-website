@@ -11,10 +11,9 @@ import {
   Headphones,
   Bell,
   Settings,
-  LogOut,
   ChevronLeft,
-  ChevronRight,
-  GraduationCap,
+  LucideIndianRupee,
+  ChevronRight
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -24,7 +23,8 @@ const menuItems = [
   { icon: BookOpen, label: "Universities", href: "/dashboard/universities" },
   { icon: BarChart3, label: "Find Programs", href: "/dashboard/programs" },
   { icon: FileText, label: "Application", href: "/dashboard/application" },
-  { icon: Wallet, label: "Wallet", href: "/dashboard/wallet" },
+  { icon: Wallet, label: "Payments", href: "/dashboard/payment" },
+  { icon: LucideIndianRupee, label: "Offers", href: "/dashboard/offers" },
   { icon: Headphones, label: "Support", href: "/dashboard/support" },
   { icon: Bell, label: "Notifications", href: "/dashboard/notifications" },
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },
@@ -59,16 +59,16 @@ export function Sidebar() {
           <GraduationCap className="w-6 h-6 text-sidebar-primary-foreground" />
         </div> */}
         <AnimatePresence>
-          
-            <Image
-              src="https://ooshasglobal.com/images/newlogo3.png"
-              alt="Logo"
-              width={100}
-              height={100}
-              priority
-              className="scale-160"
-            />
-        
+
+          <Image
+            src="https://ooshasglobal.com/images/newlogo3.png"
+            alt="Logo"
+            width={100}
+            height={100}
+            priority
+            className="scale-160"
+          />
+
         </AnimatePresence>
       </div>
 

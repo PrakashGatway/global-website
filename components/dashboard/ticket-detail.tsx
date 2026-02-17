@@ -189,11 +189,11 @@ export function TicketDetail({
             {ticket?.reply?.map((reply, index) => (
               <motion.div
                 key={reply.id}
-                initial={{ opacity: 0, x: reply.user != profile._id ? -20 : 20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: reply.user != profile._id ? 20 : -20 , scale: 0 }}
+                animate={{ opacity: 1, x: 0 , scale: 1 }}
                 transition={{ delay: index * 0.1 }}
-                className={`p-2 rounded-[15px_15px_0px_15px] w-fit shadow-xl hover:shadow-2xl border transition-all max-w-xl w-auto  ${reply.user != profile._id
-                  ? 'bg-primary border-primary'
+                className={`p-2 rounded-[20px_20px_0px_20px] w-fit shadow-xl hover:shadow-2xl border transition-all max-w-xl w-auto  ${reply.user != profile._id
+                  ? 'bg-gray-200 border-primary'
                   : 'border-primary/40 border-2 bg-gray-100'
                   } ${reply.user != profile._id ? '' : 'ml-auto'}`}
               >

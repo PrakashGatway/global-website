@@ -82,9 +82,9 @@ export function TicketList({ tickets, selectedId, onSelectTicket }: TicketListPr
                 whileHover={{ backgroundColor: 'rgb(var(--secondary))' }}
                 onClick={() => onSelectTicket(ticket)}
                 className={cn(
-                  'w-full px-4 py-3 border-b border-border cursor-pointer transition-all text-left',
-                  selectedId === ticket.id &&
-                  'bg-primary/5 border-l-4 border-l-primary'
+                  'w-full px-4 py-2 border-b border-border cursor-pointer transition-all text-left',
+                  selectedId._id == ticket._id &&
+                  '!bg-gray-300 border-l-4  border-l-primary'
                 )}
               >
                 <div className="flex items-start gap-3">
