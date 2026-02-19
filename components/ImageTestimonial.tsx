@@ -18,180 +18,188 @@ interface ImageTestimonialProps {
 
 export default function ImageTestimonial({
   title,
-  subtitle ,
+  subtitle,
   items = [],
   font,
   bg,
 }: ImageTestimonialProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
-  const AUTO_SLIDE_INTERVAL = 3000;
-useEffect(() => {
-  if (!sliderRef.current || items.length === 0) return;
+  const AUTO_SLIDE_INTERVAL = 1000;
+  useEffect(() => {
+    if (!sliderRef.current || items.length === 0) return;
 
-  let timeout: ReturnType<typeof setTimeout> | null = null;
-  let mouseOver = false;
-  let slider: any;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    let mouseOver = false;
+    let slider: any;
 
-  const clearNextTimeout = () => {
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
+  
+
+    const initSlider = async () => {
+  const KeenSlider = (await import("keen-slider")).default;
+
+  // MARQUEE PLUGIN
+  const marquee = (slider: any) => {
+  let raf: number;
+
+  const speed = 0.0008; // ⭐ MAIN SPEED (VERY SMALL)
+
+  const move = () => {
+    if (!slider.track.details) return;
+
+    slider.track.add(speed);
+    raf = requestAnimationFrame(move);
   };
 
-  const nextTimeout = () => {
-    clearNextTimeout();
-    if (mouseOver) return;
+  slider.on("created", () => {
+    raf = requestAnimationFrame(move);
+  });
 
-    timeout = setTimeout(() => {
-      slider?.next();
-      nextTimeout();
-    }, AUTO_SLIDE_INTERVAL); // 👈 speed fully controlled here
-  };
+  slider.on("destroyed", () => {
+    cancelAnimationFrame(raf);
+  });
+};
 
-  const initSlider = async () => {
-    const KeenSlider = (await import("keen-slider")).default;
 
-    slider = new KeenSlider(
-      sliderRef.current!,
-      {
-        loop: true,
-        mode: "free-snap",
-        slides: {
-          origin: "center",
-          perView: 1,
-          spacing: 16,
+  slider = new KeenSlider(
+    sliderRef.current!,
+    {
+      loop: true,
+      renderMode: "performance",
+      drag: false, // keeps smooth marquee feel
+      slides: {
+        perView: 1,
+        spacing: 16,
+      },
+      breakpoints: {
+        "(min-width: 640px)": {
+          slides: { perView: 1.5, spacing: 24 },
         },
-        breakpoints: {
-          "(min-width: 640px)": {
-            slides: { perView: 1.5, spacing: 24 },
-          },
-          "(min-width: 1024px)": {
-            slides: { perView: 3, spacing: 32 },
-          },
+        "(min-width: 1024px)": {
+          slides: { perView: 4, spacing: 0 },
         },
       },
-      [
-        (s) => {
-          s.on("created", () => {
-            nextTimeout();
+    },
+    [marquee]
+  );
+};
 
-            s.container.addEventListener("mouseenter", () => {
-              mouseOver = true;
-              clearNextTimeout();
-            });
 
-            s.container.addEventListener("mouseleave", () => {
-              mouseOver = false;
-              nextTimeout();
-            });
-          });
 
-          s.on("dragStarted", clearNextTimeout);
-          s.on("animationEnded", nextTimeout);
-          s.on("updated", nextTimeout);
-        },
-      ]
-    );
-  };
+    initSlider();
 
-  initSlider();
+    // ✅ CLEANUP (VERY IMPORTANT)
+    return () => {
+     
+      slider?.destroy();
+    };
+  }, [items]);
 
-  // ✅ CLEANUP (VERY IMPORTANT)
-  return () => {
-    clearNextTimeout();
-    slider?.destroy();
-  };
-}, [items]);
 
- 
 
 
 
   return (
-   <section
-  className="py-12 sm:py-14 lg:py-16 bg-[#f46c44]"
-  style={{ overflow: "visible" , fontFamily: font ? "'Poppins', sans-serif" : "inherit" }}
->
-  
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center overflow-visible">
+    <section className="w-full py-16 px-8 bg-background">
+      <div className="mx-auto">
+        {/* Heading */}
+        <div className="max-w-7xl mx-auto mb-12">
+          <h2 className="text-xl lg:text-5xl mb-2">
+            <span className="text-red-700">
+              {title?.split('||')[0]?.trim() || "Image"}
+            </span>{" "} <br />
+            <span className="text-primary font-bold relative">
+              {title?.split('||')[1]?.trim() || "Testimonials"}
+              <span className="absolute right-0 bottom-0 w-25 h-[2px] lg:h-1 bg-red-700"></span>
+            </span>
+          </h2>
+        </div>
 
-  {/* ================= TITLE ================= */}
-  <div className="mb-5 flex items-center relative">
-
-    <h3 className="text-xl lg:text-6xl text-white relative inline-block">
-      <span>{title?.split("||")[0]} {"  "}</span>
-      <span className="text-xl lg:text-6xl font-bold text-white mt-4 relative">
-      {title?.split("||")[1]}
-      <span className="absolute right-0 bottom-0 w-32 h-[2px] lg:h-2 bg-yellow-400"></span>
-
-    </span>
-    </h3>
-    <br />
-
-    
-
-    
-
-  </div>
-   <p className="text-gray-100 text-sm sm:text-base font-medium max-w-3xl text-justify ">
-      {subtitle}
-    </p>
-     
-
-   
-
-    {/* SLIDER */}
-    <div ref={sliderRef} className="keen-slider">
-          {items.map((testimonial) => (
-            <div key={testimonial.id} className="keen-slider__slide">
-              <div className="flex items-start justify-start h-full mt-6 py-1">
-                <div className="relative lg:w-[340px] w-[380px] h-[350px] ">
-                  <div style={{ backgroundImage: "url('/shapes/testi.png')" }} className="absolute left-1 top-1 right-1 w-full h-[97%] bg-contain bg-center bg-no-repeat" />
-                  <div className="absolute top-3 left-0 w-full flex flex-col gap-2 h-full py-12 pl-8 pr-2 ">
-                    <div className="grid grid-cols-20 gap-4">
-                      <div className="col-span-11 ">
-                        <h3 className=" text-base lg:text-[15px] text-left font-bold text-red-700 mb-3">
-                          {testimonial.name}
-                        </h3>
-                        <p className="lg:text-xs font-semibold lg:text-justify text-sm text-blue-700 line-clamp-7">
-                          {testimonial.message}
-                        </p>
-                      </div>
-
-                      <div style={{ perspective: '500px' }} className=" col-span-6 md:col-span-8 lg:col-span-8" >
-                        <div className="border border-gray-400 rounded-2xl overflow-hidden" style={{
-                          transform: `
-          rotateY(-20deg)
-          rotateX(10deg)
-          rotateZ(2deg)
-          skewX(5deg)
-          skewY(5deg)
-        `,
-                        }}>
-                          <img className="scale-112 object-cover h-28 w-full" style={{
-                            transform: `
-          rotateY(0deg)
-          rotateX(-10deg)
-          rotateZ(-2deg)
-          skewX(0deg)
-        `,
-                          }} src={testimonial.image} alt="" />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <img src={testimonial.universityLogo} className="h-full w-25 object-contain" alt="" />
-                    </div>
+        {/* Desktop bento grid (≥1024px) */}
+        <div className=" keen-slider  py-10" ref={sliderRef} >
+          {items.map((item, index) => {
+            const isReverse = index % 2 !== 0;
+            return (
+              <div key={index} className={`keen-slider__slide p-2 py-16`}>
+                <div
+                  className={`flex flex-col ${isReverse &&"flex-col-reverse"} relative`}
+                >
+                  <div className={`absolute bg-orange-500 rounded-4xl ${isReverse ? "w-50 -z-1 -bottom-[5px] h-[200px] -right-[5px]" : "h-50 -top-[54px] -left-[5px] -z-1 w-50"}`}></div>
+                  {/* IMAGE */}
+                  <div className=" h-[300px] -mt-12">
+                    <img
+                      src={item.image}
+                      className="w-full h-full object-cover object-center rounded-4xl"
+                    />
                   </div>
 
+                  {/* CARD */}
+                  <div className={`bg-white rounded-4xl py-6 shadow-lg border border-gray-500 flex gap-4 relative z-10 transform ${isReverse ? "-translate-y-0" : "translate-y-[-56px]"}`}>
+                    <img
+                      src='https://logos-world.net/wp-content/uploads/2021/01/Harvard-Emblem.png'
+                      className="w-40 h-18 object-contain mt-12"
+                    />
+
+                    <div>
+                      <h3 className="text-xl font-bold text-[hsl(0,70%,35%)]">
+                        {item.name}
+                      </h3>
+
+                      <p className="text-base text-[hsl(0,70%,35%)]">
+                        {item.message}
+                      </p>
+                    </div>
+                  </div>
                 </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Tablet grid (768px–1023px) */}
+        <div className="hidden md:grid lg:hidden grid-cols-2 gap-4">
+          {items.map((t, i) => (
+            <div key={t.name} className="flex flex-col gap-4">
+              {i % 2 === 0 ? (
+                <>
+                  <div className="rounded-2xl overflow-hidden border-2 border-[hsl(15,80%,50%)] aspect-[3/4]">
+                    <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="bg-card rounded-2xl p-5 shadow-md border border-border">
+                    <h3 className="text-sm font-bold text-[hsl(0,70%,35%)] mb-2">{t.name}</h3>
+                    <p className="text-xs leading-relaxed text-muted-foreground">{t.text}</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="bg-card rounded-2xl p-5 shadow-md border border-border">
+                    <h3 className="text-sm font-bold text-[hsl(0,70%,35%)] mb-2">{t.name}</h3>
+                    <p className="text-xs leading-relaxed text-muted-foreground">{t.text}</p>
+                  </div>
+                  <div className="rounded-2xl overflow-hidden border-2 border-[hsl(15,80%,50%)] aspect-[3/4]">
+                    <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile (<768px) */}
+        <div className="flex flex-col gap-6 md:hidden">
+          {items.map((t) => (
+            <div key={t.name} className="flex flex-col gap-3">
+              <div className="rounded-2xl overflow-hidden border-2 border-[hsl(15,80%,50%)] aspect-[4/5]">
+                <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
+              </div>
+              <div className="bg-card rounded-2xl p-5 shadow-md border border-border">
+                <h3 className="text-sm font-bold text-[hsl(0,70%,35%)] mb-2">{t.name}</h3>
+                <p className="text-xs leading-relaxed text-muted-foreground">{t.text}</p>
               </div>
             </div>
           ))}
         </div>
-  </div>
-</section>
+      </div>
+    </section>
 
   );
 }

@@ -78,15 +78,17 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
   </div>
 
 </div>
- {countryres.map((item)=>
 
-          <div className="text-white pb-20 flex flex-col gap-5">
-            <h1 className="font-bold">Choose Your Destination</h1>
-          <Link  href={`/destination/${item?.slug}`} >
+          <div className="text-white pb-20 ">
+            <h1 className="font-bold pb-5">Choose Your Destination</h1>
+            <div className="flex flex-wrap gap-5">
+ {countryres.map((item,i)=>
+
+          <Link key={i}  href={`/destination/${item?.slug}`} >
           <div className="flex gap-4">
-            <span className="cursor-pointer hover:text-orange-500">{item?.navbarTitle}</span></div></Link>  </div>
+            <span className="cursor-pointer hover:text-orange-500">{item?.navbarTitle}</span></div></Link> )} </div>  </div>
           
-          )}
+         
 
 
             <div className="flex flex-col lg:flex-row">

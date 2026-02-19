@@ -11,7 +11,7 @@ import { get } from "http";
 import { useForm } from "react-hook-form";
 import FAQSection from "./faqPage";
 
-export default function ServicePage({ serviceData, testimonialimg, galleryData,Faqres }) {
+export default function ServicePage({ serviceData, testimonialimg, galleryData, Faqres }) {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(1);
 
@@ -23,46 +23,46 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData,F
 
 
   const {
-  register,
-  handleSubmit,
-  setValue,
-  watch,
-  formState: { errors, isSubmitting },
-  reset,
-} = useForm({
-  defaultValues: {
-    course: "",
-    country: "",
-    fullName: "",
-    city: "",
-    mobile: "",
-    
-  },
-});
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm({
+    defaultValues: {
+      course: "",
+      country: "",
+      fullName: "",
+      city: "",
+      mobile: "",
+
+    },
+  });
 
   const course = watch("course");
-const country = watch("country");
+  const country = watch("country");
 
 
-const onSubmit = async (data) => {
-  try {
-    await axiosInstance.post("/contactus", {
-      fullName: data.fullName,
-      
-      country : data.country,
-      city : data.city,
-      description : "message from service page",
-      extraDetails: {
-        course : data.course,
-      }
-    });
-    alert("Form submitted successfully ✅");
-    reset();
-    setStep(1);
-  } catch (error) {
-    alert("Failed to submit form ❌");
-  }
-};
+  const onSubmit = async (data) => {
+    try {
+      await axiosInstance.post("/contactus", {
+        fullName: data.fullName,
+
+        country: data.country,
+        city: data.city,
+        description: "message from service page",
+        extraDetails: {
+          course: data.course,
+        }
+      });
+      alert("Form submitted successfully ✅");
+      reset();
+      setStep(1);
+    } catch (error) {
+      alert("Failed to submit form ❌");
+    }
+  };
 
 
 
@@ -82,17 +82,17 @@ const onSubmit = async (data) => {
     }
   }
 
- useEffect(() => {
-  getGallery(activeTab);
-}, []);
+  useEffect(() => {
+    getGallery(activeTab);
+  }, []);
 
-const handleTabClick = (tab) => {
-  if (tab === activeTab) return; 
-  setActiveTab(tab);
-  getGallery(tab);
-};
+  const handleTabClick = (tab) => {
+    if (tab === activeTab) return;
+    setActiveTab(tab);
+    getGallery(tab);
+  };
 
-  
+
 
   const tabs = [
     { label: "Counseling", value: "counseling" },
@@ -294,16 +294,20 @@ const handleTabClick = (tab) => {
           {/* ================= RIGHT SIDE ================= */}
           <div className="relative  flex justify-center lg:justify-end mt-10 lg:0 lg:-top-20">
             {/* ORANGE CARD */}
-            <div className="bg-[#f26b3a] hidden
-      lg:block rounded-tr-[90px] p-6 sm:p-10 lg:p-40 relative w-[450px] max-w-sm sm:max-w-lg lg:h-[430px]">
+            <div
+              className="bg-[#f26b3a] hidden lg:block
+  rounded-tr-[90px] overflow-hidden
+  p-6 sm:p-10 lg:p-40 relative
+  w-[450px] max-w-sm sm:max-w-lg lg:h-[430px]"
+            >
               <Image
                 src={hero.heroImage}
                 alt="Study Abroad"
-                width={800}
-                height={800}
-                className="w-[700px] object-contain absolute inset-0"
+                fill
+                className="object-cotain"
               />
             </div>
+
 
             {/* FLOATING FORM CARD */}
             <div className="mt-6 lg:absolute lg:-left-5 lg:top-5 bg-gradient-to-br from-[#3f3f3f] to-[#5b5b5b] text-white p-8 sm:p-6 sm:py-15 rounded-br-[50px] w-full max-w-xs lg:h-[350px] shadow-xl">
@@ -451,100 +455,98 @@ const handleTabClick = (tab) => {
                     exit="exit"
                   >
                     {step === 1 && (
-  <>
-    <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
-      What Is Your Desired Academic Course?
-    </h2>
+                      <>
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
+                          What Is Your Desired Academic Course?
+                        </h2>
 
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-      {["UG", "PG", "PHD", "MBBS"].map((item) => (
-        <button
-          key={item}
-          type="button"
-          onClick={() => setValue("course", item, { shouldValidate: true })}
-          className={`border border-white rounded-xl rounded-tl-[0px] py-3 sm:py-4 text-base sm:text-lg transition ${
-            course === item
-              ? "bg-white text-[#f26b3a]"
-              : "bg-[#b04f32] text-white hover:bg-white hover:text-[#f26b3a]"
-          }`}
-        >
-          {item}
-        </button>
-      ))}
-    </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                          {["UG", "PG", "PHD", "MBBS"].map((item) => (
+                            <button
+                              key={item}
+                              type="button"
+                              onClick={() => setValue("course", item, { shouldValidate: true })}
+                              className={`border border-white rounded-xl rounded-tl-[0px] py-3 sm:py-4 text-base sm:text-lg transition ${course === item
+                                  ? "bg-white text-[#f26b3a]"
+                                  : "bg-[#b04f32] text-white hover:bg-white hover:text-[#f26b3a]"
+                                }`}
+                            >
+                              {item}
+                            </button>
+                          ))}
+                        </div>
 
-    {errors.course && (
-      <p className="text-red-300 mt-2">Please select a course</p>
-    )}
-  </>
-)}
+                        {errors.course && (
+                          <p className="text-red-300 mt-2">Please select a course</p>
+                        )}
+                      </>
+                    )}
 
 
                     {step === 2 && (
-  <>
-    <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
-      Which country do you want to go to?
-    </h2>
+                      <>
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
+                          Which country do you want to go to?
+                        </h2>
 
-    <div className="grid grid-cols-2 gap-3 sm:gap-4">
-      {["UK", "USA", "Canada", "Australia"].map((item) => (
-        <button
-          key={item}
-          type="button"
-          onClick={() => setValue("country", item, { shouldValidate: true })}
-          className={`border border-white rounded-xl py-3 sm:py-4 transition ${
-            country === item
-              ? "bg-white text-[#f26b3a]"
-              : "bg-[#b04f32] text-white hover:bg-white hover:text-[#f26b3a]"
-          }`}
-        >
-          {item}
-        </button>
-      ))}
-    </div>
+                        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                          {["UK", "USA", "Canada", "Australia"].map((item) => (
+                            <button
+                              key={item}
+                              type="button"
+                              onClick={() => setValue("country", item, { shouldValidate: true })}
+                              className={`border border-white rounded-xl py-3 sm:py-4 transition ${country === item
+                                  ? "bg-white text-[#f26b3a]"
+                                  : "bg-[#b04f32] text-white hover:bg-white hover:text-[#f26b3a]"
+                                }`}
+                            >
+                              {item}
+                            </button>
+                          ))}
+                        </div>
 
-    {errors.country && (
-      <p className="text-red-300 mt-2">Please select a country</p>
-    )}
-  </>
-)}
+                        {errors.country && (
+                          <p className="text-red-300 mt-2">Please select a country</p>
+                        )}
+                      </>
+                    )}
 
 
-                   {step === 3 && (
-  <>
-    <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
-      Basic Details
-    </h2>
+                    {step === 3 && (
+                      <>
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
+                          Basic Details
+                        </h2>
 
-    <div className="space-y-4">
-      <input
-        placeholder="Full Name"
-        {...register("fullName", { required: "Name is required" })}
-        className="w-full px-4 py-3 bg-[#b04f32] rounded-lg text-white border border-white"
-      />
-      {errors.name && <p className="text-red-300">{errors.name.message}</p>}
+                        <div className="space-y-4">
+                          <input
+                            placeholder="Full Name"
+                            {...register("fullName", { required: "Name is required" })}
+                            className="w-full px-4 py-3 bg-[#b04f32] rounded-lg text-white border border-white"
+                          />
+                          {errors.name && <p className="text-red-300">{errors.name.message}</p>}
 
-      <input
-        placeholder="City"
-        {...register("city", { required: "City is required" })}
-        className="w-full bg-[#b04f32] border border-white px-4 py-3 rounded-lg text-white"
-      />
+                          <input
+                            placeholder="City"
+                            {...register("city", { required: "City is required" })}
+                            className="w-full bg-[#b04f32] border border-white px-4 py-3 rounded-lg text-white"
+                          />
 
-      <input
-        placeholder="Mobile"
-        {...register("mobile", {
-          required: "Mobile is required",
-          pattern: {
-            value: /^[0-9]{10}$/,
-            message: "Enter valid 10-digit mobile number",
-          },
-        })}
-        className="w-full bg-[#b04f32] border border-white px-4 py-3 rounded-lg text-white"
-      />
-      {errors.mobile && <p className="text-red-300">{errors.mobile.message}</p>}
-    </div>
-  </>
-)}
+                          <input
+                            placeholder="Mobile"
+                            {...register("mobile", {
+                              required: "Mobile is required",
+                              pattern: {
+                                value: /^[0-9]{10}$/,
+                                message: "Enter valid 10-digit mobile number",
+                              },
+                            })}
+                            className="w-full bg-[#b04f32] border border-white px-4 py-3 rounded-lg text-white"
+                          />
+                          {errors.mobile && <p className="text-red-300">{errors.mobile.message}</p>}
+                        </div>
+                      </>
+                    )}
 
                   </motion.div>
                 </AnimatePresence>
@@ -571,20 +573,20 @@ const handleTabClick = (tab) => {
                       }}
                       disabled={(step === 1 && !course) || (step === 2 && !country)}
                       className={`px-6 sm:px-8 py-3 rounded-lg font-semibold mx-auto transition ${(step === 1 && !course) || (step === 2 && !country)
-                          ? "bg-[#b04f32] cursor-not-allowed"
-                          : "bg-[#b04f32] text-white hover:bg-[#9a3f28]"
+                        ? "bg-[#b04f32] cursor-not-allowed"
+                        : "bg-[#b04f32] text-white hover:bg-[#9a3f28]"
                         }`}
                     >
                       Save & Go Next →
                     </button>
                   ) : (
                     <button
-  onClick={handleSubmit(onSubmit)}
-  disabled={isSubmitting}
-  className="mt-6 px-6 py-3 bg-white text-[#f26b3a] rounded-xl"
->
-  {isSubmitting ? "Submitting..." : "Submit"}
-</button>
+                      onClick={handleSubmit(onSubmit)}
+                      disabled={isSubmitting}
+                      className="mt-6 px-6 py-3 bg-white text-[#f26b3a] rounded-xl"
+                    >
+                      {isSubmitting ? "Submitting..." : "Submit"}
+                    </button>
 
                   )}
                 </div>
@@ -637,104 +639,103 @@ const handleTabClick = (tab) => {
           <p className="text-center text-gray-500 mb-6 max-w-4xl mx-auto">{images.subTitle}</p>
 
           <div className="flex justify-center mt-8 py-10">
-  <div className="flex items-center gap-1 rounded-full border border-orange-200 bg-white p-1">
-    {tabs.map((tab) => {
-      const isActive = activeTab === tab.value;
-      
-
-      return (
-        <button
-          key={tab.value}
-          onClick={() => handleTabClick(tab.value)}
-          className="relative px-5 py-2 text-sm font-medium rounded-full"
-        >
-          {/* SLIDING ACTIVE PILL */}
-          {isActive && (
-            <motion.span
-              layoutId="activeTabPill"
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 35,
-              }}
-              className="absolute inset-0 rounded-full bg-orange-600"
-            />
-          )}
-
-          {/* LABEL */}
-          <span
-            className={`relative z-10 transition-colors ${
-              isActive ? "text-white" : "text-orange-600"
-            }`}
-          >
-            {tab.label}
-          </span>
-        </button>
-      )
-    })}
-  </div>
-</div>
+            <div className="flex items-center gap-1 rounded-full border border-orange-200 bg-white p-1">
+              {tabs.map((tab) => {
+                const isActive = activeTab === tab.value;
 
 
+                return (
+                  <button
+                    key={tab.value}
+                    onClick={() => handleTabClick(tab.value)}
+                    className="relative px-5 py-2 text-sm font-medium rounded-full"
+                  >
+                    {/* SLIDING ACTIVE PILL */}
+                    {isActive && (
+                      <motion.span
+                        layoutId="activeTabPill"
+                        transition={{
+                          type: "spring",
+                          stiffness: 500,
+                          damping: 35,
+                        }}
+                        className="absolute inset-0 rounded-full bg-orange-600"
+                      />
+                    )}
 
-         <AnimatePresence mode="wait">
-  <motion.div
-    key={activeTab} // 🔥 THIS IS THE MAGIC
-    initial={{ x: 60, opacity: 0 }}
-    animate={{ x: 0, opacity: 1 }}
-    exit={{ x: -60, opacity: 0 }}
-    transition={{ duration: 0.45, ease: "easeInOut" }}
-    className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 px-4 sm:px-8 lg:px-10 mx-auto max-w-7xl"
-  >
-
-  {loading ? (
-    <p className="col-span-full text-center text-gray-500">
-      Loading images...
-    </p>
-  ) : Array.isArray(galleryType) && galleryType.length > 0 ? (
-    <>
-      {/* LEFT: 2 SMALL IMAGES */}
-      <div className="grid grid-rows-2 gap-4">
-        {galleryType[1] && (
-          <div className="overflow-hidden rounded-bl-[60px]">
-            <img
-              src={galleryType[1].mediaUrl}
-              alt={galleryType[1].title}
-              loading="lazy"
-              className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover"
-            />
+                    {/* LABEL */}
+                    <span
+                      className={`relative z-10 transition-colors ${isActive ? "text-white" : "text-orange-600"
+                        }`}
+                    >
+                      {tab.label}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
-        )}
 
-        {galleryType[2] && (
-          <div className="overflow-hidden rounded-tl-[60px]">
-            <img
-              src={galleryType[2].mediaUrl}
-              alt={galleryType[2].title}
-              className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover"
-            />
-          </div>
-        )}
-      </div>
 
-      {/* RIGHT: BIG IMAGE */}
-      {galleryType[0] && (
-        <div className="overflow-hidden rounded-br-[120px]">
-          <img
-            src={galleryType[0].mediaUrl}
-            alt={galleryType[0].title}
-            className="w-full h-[260px] sm:h-[360px] lg:h-[500px] object-cover"
-          />
-        </div>
-      )}
-    </>
-  ) : (
-    <p className="col-span-full text-center text-gray-500">
-      No images found
-    </p>
-  )}
-</motion.div>
-</AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab} // 🔥 THIS IS THE MAGIC
+              initial={{ x: 60, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -60, opacity: 0 }}
+              transition={{ duration: 0.45, ease: "easeInOut" }}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 px-4 sm:px-8 lg:px-10 mx-auto max-w-7xl"
+            >
+
+              {loading ? (
+                <p className="col-span-full text-center text-gray-500">
+                  Loading images...
+                </p>
+              ) : Array.isArray(galleryType) && galleryType.length > 0 ? (
+                <>
+                  {/* LEFT: 2 SMALL IMAGES */}
+                  <div className="grid grid-rows-2 gap-4">
+                    {galleryType[1] && (
+                      <div className="overflow-hidden rounded-bl-[60px]">
+                        <img
+                          src={galleryType[1].mediaUrl}
+                          alt={galleryType[1].title}
+                          loading="lazy"
+                          className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover"
+                        />
+                      </div>
+                    )}
+
+                    {galleryType[2] && (
+                      <div className="overflow-hidden rounded-tl-[60px]">
+                        <img
+                          src={galleryType[2].mediaUrl}
+                          alt={galleryType[2].title}
+                          className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* RIGHT: BIG IMAGE */}
+                  {galleryType[0] && (
+                    <div className="overflow-hidden rounded-br-[120px]">
+                      <img
+                        src={galleryType[0].mediaUrl}
+                        alt={galleryType[0].title}
+                        className="w-full h-[260px] sm:h-[360px] lg:h-[500px] object-cover"
+                      />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="col-span-full text-center text-gray-500">
+                  No images found
+                </p>
+              )}
+            </motion.div>
+          </AnimatePresence>
 
 
         </div>
@@ -1039,7 +1040,7 @@ const handleTabClick = (tab) => {
         </div>
       </section>
 
-      <FAQSection Faqres= {Faqres} />
+      <FAQSection Faqres={Faqres} />
     </>
   )
 }

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import axiosInstance from "@/app/axiosInstance";
 import { toast } from "react-hot-toast"
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function CareerPage({ careerData }) {
     // Extract data from the response
@@ -20,8 +21,55 @@ export default function CareerPage({ careerData }) {
 
     const [selectedVacancy, setSelectedVacancy] = useState(null);
 
+    const [resumeUrl, setResumeUrl] = useState(null);
+    const [uploading, setUploading] = useState(false);
 
-   
+
+
+    const handleResumeUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setUploading(true);
+
+
+
+            const formData = new FormData();
+            formData.append("resume", file);
+
+            const res = await axiosInstance.post(
+                "/upload/resume",
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+
+            setValue("resumeUrl", res.data.url);
+
+
+            // ✅ save uploaded file URL
+            setResumeUrl(res.data.url);
+
+            // ✅ IMPORTANT — register uploaded resume as valid
+            setValue("resumeUrl", res.data.url);
+
+            toast.success("Resume uploaded successfully ✅");
+        } catch (err) {
+            setResumeUrl(null)
+            toast.error("Resume upload failed / File must be < 1MB");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+
+
+
 
     // Helper function to split titles with "||"
     const splitTitle = (title) => {
@@ -36,7 +84,11 @@ export default function CareerPage({ careerData }) {
     const cultureTitleParts = splitTitle(cultureTitle);
     const workingTitleParts = splitTitle(workingTitle);
 
-    const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm()
+    const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm()
+
+
+    const resumeFile = watch("resume");
+
 
     const onSubmit = async (data) => {
         try {
@@ -45,9 +97,10 @@ export default function CareerPage({ careerData }) {
                 email: data.email,
                 phone: data.phone,
                 city: data.city,
-                description : "Career Application",
+                description: "Career Application",
                 extraDetails: {
                     interviewTime: data.interviewTime,
+                    resume: data.resumeUrl,
                     position: data.type
                 }
             })
@@ -61,13 +114,15 @@ export default function CareerPage({ careerData }) {
 
         }
     }
+    console.log(resumeUrl)
 
 
-     useEffect(() => {
-  if (selectedVacancy) {
-    setValue("type", selectedVacancy.title);
-  }
-}, [selectedVacancy, setValue]);
+
+    useEffect(() => {
+        if (selectedVacancy) {
+            setValue("type", selectedVacancy.title);
+        }
+    }, [selectedVacancy, setValue]);
 
 
 
@@ -227,47 +282,61 @@ export default function CareerPage({ careerData }) {
 
             </section>
 
-            {selectedVacancy && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4">
-                    <div className="bg-white max-w-2xl w-full rounded-lg shadow-xl relative p-6">
-
-                        {/* CLOSE */}
-                        <button
-                            onClick={() => setSelectedVacancy(null)}
-                            className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+            <AnimatePresence>
+                {selectedVacancy && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.85, y: 60, opacity: 0 }}
+                            animate={{ scale: 1, y: 0, opacity: 1 }}
+                            exit={{ scale: 0.9, y: 40, opacity: 0 }}
+                            transition={{ duration: 0.35, ease: "easeOut" }}
+                            className="bg-white max-w-2xl w-full rounded-lg shadow-xl relative p-6"
                         >
-                            ✕
-                        </button>
+                            {/* CLOSE */}
+                            <button
+                                onClick={() => setSelectedVacancy(null)}
+                                className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+                            >
+                                ✕
+                            </button>
 
-                        {/* TITLE */}
-                        <h3 className="text-2xl font-semibold text-[#f46c44] mb-4">
-                            {selectedVacancy.title}
-                        </h3>
+                            {/* TITLE */}
+                            <h3 className="text-2xl font-semibold text-[#f46c44] mb-4">
+                                {selectedVacancy.title}
+                            </h3>
 
-                        {/* FULL DESCRIPTION */}
-                        <ul className="list-disc list-inside space-y-2 text-gray-700 text-base mb-6">
-                            {selectedVacancy.description
-                                .split("||")
-                                .map((line, i) => (
-                                    <li key={i}>{line.trim()}</li>
-                                ))}
-                        </ul>
+                            {/* DESCRIPTION */}
+                            <ul className="list-disc list-inside space-y-2 text-gray-700 text-base mb-6">
+                                {selectedVacancy.description
+                                    .split("||")
+                                    .map((line, i) => (
+                                        <li key={i}>{line.trim()}</li>
+                                    ))}
+                            </ul>
 
-                        {/* ACTION */}
-                        <button
-                            onClick={() => {
-                                setSelectedVacancy(null);
-                                document
-                                    .querySelector("#application-form")
-                                    ?.scrollIntoView({ behavior: "smooth" });
-                            }}
-                            className="bg-[#f46c44] text-white px-6 py-2 rounded hover:opacity-90"
-                        >
-                            Proceed to Apply
-                        </button>
-                    </div>
-                </div>
-            )}
+                            {/* ACTION */}
+                            <button
+                                onClick={() => {
+                                    setSelectedVacancy(null);
+                                    document
+                                        .querySelector("#application-form")
+                                        ?.scrollIntoView({ behavior: "smooth" });
+                                }}
+                                className="bg-[#f46c44] text-white px-6 py-2 rounded hover:opacity-90"
+                            >
+                                Proceed to Apply
+                            </button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
 
 
             {/* ================= FORM ================= */}
@@ -304,42 +373,169 @@ export default function CareerPage({ careerData }) {
                         </h2>
 
                         {/* FORM */}
-                        <form onSubmit={handleSubmit(onSubmit)} className="bg-white mt-8 sm:mt-10 p-5 sm:p-6 md:p-8 shadow-lg flex flex-col gap-5 text-left">
+                        <form onSubmit={handleSubmit(onSubmit)} className="bg-white mt-8 sm:mt-10 p-5 sm:p-6 md:p-8 shadow-lg flex flex-col gap-2 text-left">
                             <input
-                                {...register("name", { required: true })}
-                                className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
+                                {...register("name", {
+                                    required: "Name is required",
+                                    minLength: {
+                                        value: 3,
+                                        message: "Minimum 3 characters",
+                                    },
+                                })}
+                                className="border-0 border-b-2 border-gray-300 p-2 focus:border-orange-500 outline-none
+focus:outline-none
+focus:ring-0"
                                 placeholder="Name*"
                             />
 
+                            {errors.name && (
+                                <p className="text-red-500 text-xs">{errors.name.message}</p>
+                            )}
+
+
                             <input
-                                {...register("phone", { required: true })}
-                                className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
+                                {...register("phone", {
+                                    required: "Mobile number required",
+                                    pattern: {
+                                        value: /^[6-9]\d{9}$/,
+                                        message: "Enter valid 10 digit number",
+                                    },
+                                })}
                                 placeholder="Mobile Number*"
+                                className="border-b-2 border-gray-300 p-2 focus:border-orange-500 outline-none
+focus:outline-none
+focus:ring-0"
                             />
 
+                            {errors.phone && (
+                                <p className="text-red-500 text-xs">{errors.phone.message}</p>
+                            )}
+
+
                             <input
-                                {...register("email", { required: true })}
-                                className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
+                                {...register("email", {
+                                    required: "Email required",
+                                    pattern: {
+                                        value: /^\S+@\S+$/i,
+                                        message: "Invalid email address",
+                                    },
+                                })}
                                 placeholder="Email Address*"
+                                className="border-b-2 border-gray-300 p-2 focus:border-orange-500 outline-none
+focus:outline-none
+focus:ring-0"
                             />
+
+                            {errors.email && (
+                                <p className="text-red-500 text-xs">{errors.email.message}</p>
+                            )}
+
 
                             <input
-                                {...register("city", { required: true })}
-                                className="border-0 border-b-2 border-gray-300 p-2 focus:outline-none focus:border-orange-500 text-sm sm:text-base"
+                                {...register("city", {
+                                    required: "City required",
+                                })}
                                 placeholder="State, City"
+                                className="border-b-2 border-gray-300 p-2 focus:border-orange-500 outline-none
+focus:outline-none
+focus:ring-0"
                             />
 
-                            <select {...register("interviewTime", { required: true })} className="border-0 border-b-2 border-gray-300 p-2 bg-transparent focus:outline-none focus:border-orange-500 text-sm sm:text-base">
-                                <option>Select Time for Interview</option>
+                            {errors.city && (
+                                <p className="text-red-500 text-xs">{errors.city.message}</p>
+                            )}
+
+
+                            <select
+                                {...register("interviewTime", {
+                                    required: "Please select interview time",
+                                })}
+                                className="border-b-2 border-gray-300 p-2"
+                            >
+                                <option value="">Select Time for Interview</option>
                                 <option>Morning (9 AM - 12 PM)</option>
                                 <option>Afternoon (12 PM - 4 PM)</option>
                                 <option>Evening (4 PM - 7 PM)</option>
                             </select>
 
+                            {errors.interviewTime && (
+                                <p className="text-red-500 text-xs">
+                                    {errors.interviewTime.message}
+                                </p>
+                            )}
+
+
                             <input
                                 type="hidden"
-                                {...register("type", { required: true })}
+                                {...register("type")}
                             />
+
+                            <input
+                                type="hidden"
+                                value={resumeUrl || ""}
+                                {...register("resumeUrl", {
+                                    required: "Resume required",
+                                })}
+                            />
+
+
+
+                            <div className="flex flex-col gap-2 mt-2">
+                                <label className="text-sm text-gray-600 flex items-center gap-2">
+                                    {/* ICON */}
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="w-4 h-4 text-orange-500"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                            d="M7 16V4a2 2 0 012-2h6l4 4v10a2 2 0 01-2 2H7z" />
+                                    </svg>
+                                    Upload Resume*
+                                </label>
+
+                                <label className="flex items-center justify-between border-b-2 border-gray-300 py-3 cursor-pointer hover:border-orange-500 transition">
+
+                                    <span className="text-sm text-gray-600 truncate max-w-[70%]">
+                                        {resumeFile?.[0]?.name || "Choose your resume (PDF/DOC)"}
+                                    </span>
+
+                                    <span className="bg-orange-500 text-white text-xs px-3 py-1 rounded-md">
+                                        Browse
+                                    </span>
+
+                                    <input
+                                        type="file"
+                                        accept=".pdf,.doc,.docx"
+                                        onChange={handleResumeUpload}
+                                        className="hidden"
+                                    />
+
+                                </label>
+
+                                {/* ✅ ERROR HERE */}
+                                {errors.resumeUrl && (
+                                    <p className="text-red-500 text-xs">
+                                        {errors.resumeUrl.message}
+                                    </p>
+                                )}
+
+
+
+                                {/* SUCCESS TEXT */}
+                                <span className="text-sm text-gray-600 truncate">
+                                    {uploading
+                                        ? "Uploading..."
+                                        : resumeUrl
+                                            ? "✅ Resume uploaded"
+                                            : "file must be less than 1MB"}
+                                </span>
+
+                            </div>
+
+
 
 
                             <div className="text-xs sm:text-sm text-gray-500">
@@ -349,11 +545,12 @@ export default function CareerPage({ careerData }) {
 
                             {/* BUTTON */}
                             <button
-  type="submit"
-  className="bg-orange-500 text-white py-3 font-semibold w-full sm:w-40 mx-auto hover:bg-orange-600 transition-colors cursor-pointer"
->
-  Submit
-</button>
+                               
+                                type="submit"
+                                className="bg-orange-500 text-white py-3 font-semibold w-full sm:w-40 mx-auto hover:bg-orange-600 transition-colors cursor-pointer"
+                            >
+                                Submit
+                            </button>
 
                         </form>
                     </div>

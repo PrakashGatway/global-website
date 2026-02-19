@@ -1,8 +1,10 @@
 "use client";
 
 import axiosInstance from "@/app/axiosInstance";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { motion, AnimatePresence } from "framer-motion";
+
 
 export default function MultiStepForm({ onClose }: any) {
   const [step, setStep] = useState(1);
@@ -26,6 +28,39 @@ export default function MultiStepForm({ onClose }: any) {
 
     if (valid) setStep((s) => Math.min(s + 1, 4));
   };
+
+  const education = watch("education");
+const timeline = watch("timeline");
+
+const prevEducation = useRef();
+const prevTimeline = useRef();
+
+
+
+useEffect(() => {
+  // move only when value actually changes
+  if (
+    step === 2 &&
+    education &&
+    prevEducation.current !== education
+  ) {
+    prevEducation.current = education;
+    setTimeout(() => setStep(3), 200);
+  }
+}, [education, step]);
+
+useEffect(() => {
+  if (
+    step === 3 &&
+    timeline &&
+    prevTimeline.current !== timeline
+  ) {
+    prevTimeline.current = timeline;
+    setTimeout(() => setStep(4), 200);
+  }
+}, [timeline, step]);
+
+
 
   const back = () => setStep((s) => Math.max(s - 1, 1));
 
@@ -68,11 +103,21 @@ export default function MultiStepForm({ onClose }: any) {
 
 
   return (
-    <div className="fixed lg:mt-10 inset-0 bg-black/50 flex items-center justify-center p-4 z-11">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white rounded-xl w-full max-w-md p-6 shadow-lg relative "
-      >
+    <motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+  transition={{ duration: 0.25 }}
+  className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center p-4 z-[999]"
+>
+      <motion.form
+  onSubmit={handleSubmit(onSubmit)}
+  initial={{ opacity: 0, scale: 0.9, y: 40 }}
+  animate={{ opacity: 1, scale: 1, y: 0 }}
+  exit={{ opacity: 0, scale: 0.9, y: 40 }}
+  transition={{ duration: 0.3, ease: "easeOut" }}
+  className="bg-white rounded-xl w-full max-w-md p-6 shadow-lg relative"
+>
 
           {/* Close Button */}
     <button
@@ -87,7 +132,7 @@ export default function MultiStepForm({ onClose }: any) {
         <p className="text-sm mb-2">Step {step} of 4</p>
         <div className="w-full bg-gray-200 h-2 rounded-full mb-6">
           <div
-            className="bg-orange-500 h-2 rounded-full"
+            className="bg-orange-500 h-2 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -232,7 +277,7 @@ export default function MultiStepForm({ onClose }: any) {
             </button>
           )}
         </div>
-      </form>
-    </div>
+      </motion.form>
+    </motion.div>
   );
 }

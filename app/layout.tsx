@@ -109,7 +109,8 @@ export default async function RootLayout({
       <body className={`${notoSans.className} antialiased`}>
         <GlobalProvider>
           
-        <Navbar Featureitem={featureRes || []} Serviceitem={serviceres || []}
+        <Navbar Featureitem={featureRes || []} Serviceitem={serviceres || [] }
+        countryres = {countryres.data.data}
         />
         
           {children}

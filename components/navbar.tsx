@@ -19,13 +19,15 @@ import { usePathname } from "next/navigation"
 import axiosInstance from "@/app/axiosInstance"
 import { id } from "date-fns/locale"
 import { useGlobal } from "@/src/statecontext"
+import MultiStepForm from "./PopupForm"
 
 
 
 
 export default function Navbar({
   Featureitem,
-  Serviceitem
+  Serviceitem,
+  countryres
 
 }: {
   Featureitem?: any[],
@@ -37,6 +39,7 @@ export default function Navbar({
   const { profile, loading, Logout } = useGlobal()
   const [isScrolled, setIsScrolled] = useState(false);
   const [Login, setLogin] = useState(false)
+  const [openForm,setOpenForm] = useState(false)
 
 
 
@@ -74,6 +77,15 @@ export default function Navbar({
       title: "Destination",
       route: "/",
       hasDropdown: true,
+      type: "country",
+      id: 4
+
+
+    },
+     {
+      title: "Universities",
+      route: "/",
+      hasDropdown: true,
       type: "destination",
       id: 4
 
@@ -86,13 +98,7 @@ export default function Navbar({
 
 
     },
-    {
-      title: "Events",
-      route: "/events"
-      , id: 6
 
-
-    },
     {
       title: "Career",
       route: "/career"
@@ -213,7 +219,7 @@ export default function Navbar({
                 alt="Logo"
                 width={800}
                 height={100}
-                className="object-contain w-36 lg:w-44 lg:ml-40"
+                className="object-contain w-36 lg:w-44 lg:ml-10"
                 priority
               />
             </Link>
@@ -227,15 +233,22 @@ export default function Navbar({
             {!isScrolled && (
               <>
                 {/* Right */}
-                <div className=" w-full justify-end  items-center gap-6 lg:flex hidden z-10 px-30  text-white">
+                <div className=" w-full justify-end  items-center gap-6 lg:flex hidden z-10 px-4  text-white">
                   <div className="bg-[#6d1901]    flex justify-center items-center gap-2 px-4 py-2  text-sm font-medium gap-8">
 
 
-                    <a href="/about" className="hover:opacity-80 transition">
-                      Our Centres
-                    </a>
+                    <a
+  href="tel:+919876543210"
+  className="flex items-center gap-2 hover:opacity-80 transition font-medium"
+>
+  <span>Consult With Expert:</span>
+  <span className="font-semibold text-yellow-300">
+    +91 9887120429
+  </span>
+</a>
 
-                    <button className=" text-[var(--secondary-foreground)]  text-sm font-semibold shadow hover:opacity-90 transition">
+
+                    <button onClick={()=> setOpenForm(true)} className=" text-[var(--secondary-foreground)]  text-sm font-semibold shadow hover:opacity-90 transition">
                       Free Demo
                     </button>
 
@@ -263,12 +276,16 @@ export default function Navbar({
                 </div>
               </>
             )}
+
+
+            
+
             {/* ================= DESKTOP MENU ================= */}
             <div className={`hidden lg:flex items-end gap-2 ${isScrolled ? "flex justify-end" : "justify-center"} `} >
 
 
-              {navbar?.map((item) => (
-                <div key={item?.id} className="relative group ">
+              {navbar?.map((item,i) => (
+                <div key={i} className="relative group ">
 
                   <Link
                     href={item.route}
@@ -297,51 +314,57 @@ export default function Navbar({
               "
                     >
                       <div className="bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.12)] w-[640px] p-5 border border-gray-100">
+                         {/* ===== TITLE ONLY FOR UNIVERSITIES ===== */}
+  {item.type === "destination" && (
+    <div className="mb-4 px-1">
+      <h3 className="text-sm font-semibold text-gray-800">
+       Top Group
+      </h3>
+      <div className="w-12 h-[2px] bg-[var(--primary)] mt-1 rounded-full"></div>
+    </div>
+  )}
 
                         <div className="grid grid-cols-2 gap-3">
+  {(
+    item.type === "service"
+      ? Serviceitem
+      : item.type === "country"
+      ? countryres
+      : Featureitem
+  )?.map((uni) => {
 
-                          {(item.type === "destination" ? Featureitem : Serviceitem)?.map(
-                            (uni) => {
+    const href =
+      item.type === "service"
+        ? `/service/${uni.slug}`
+        : item.type === "country"
+        ? `/destination/${uni.slug}`
+        : `/universities/group/${uni.slug}`;
 
-                              const href =
-                                item.type === "destination"
-                                  ? `/universities/group/${uni.slug}`
-                                  : `/services/${uni.slug}`;
+    return (
+      <Link
+        key={uni._id}
+        href={href}
+        className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition"
+      >
+        <div className="w-10 h-10 rounded-full bg-white shadow overflow-hidden">
+          <Image
+            src={uni?.navbarImage}
+            alt={uni?.navbarTitle}
+            width={40}
+            height={40}
+            className="object-cover w-full h-full"
+          />
+        </div>
 
-                              return (
-                                <Link
-                                  key={uni._id}
-                                  href={href}
-                                  className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition-all duration-200 group/item"
-                                >
-                                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-white shadow flex items-center justify-center relative overflow-hidden">
-                                    <Image
-                                      src={
-                                        uni.navbarImage ||
-                                        "https://www.countryflags.com/wp-content/uploads/canada-flag-png-xl.png"
-                                      }
-                                      alt={uni?.navbarTitle}
-                                      width={28}
-                                      height={28}
-                                      className="object-cover w-full h-full rounded-full"
-                                    />
-                                  </div>
+        <div>
+          <p className="font-semibold text-sm">{uni.navbarTitle}</p>
+          <p className="text-xs opacity-70">{uni.subTitle}</p>
+        </div>
+      </Link>
+    );
+  })}
+</div>
 
-                                  <div>
-                                    <p className="font-semibold text-sm leading-tight">
-                                      {uni?.navbarTitle}
-                                    </p>
-                                    <p className="text-xs opacity-70">
-                                      {uni.subTitle || "Test Preparation"}
-                                    </p>
-                                  </div>
-                                </Link>
-                              );
-                            }
-                          )}
-
-
-                        </div>
                       </div>
                     </div>
                   )}
@@ -534,6 +557,12 @@ export default function Navbar({
         </AnimatePresence>
 
       </nav>
+
+      <AnimatePresence>
+       {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
+
+      </AnimatePresence>
+
 
     </>
   )

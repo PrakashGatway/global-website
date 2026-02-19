@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import { ArrowRight, BadgeIcon, Globe, NutOffIcon, PanelsTopLeftIcon, TargetIcon, Users, VideoIcon, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
@@ -217,7 +217,12 @@ const experienceYears = currentYear - startYear;
 
               </div>
 
+              <AnimatePresence>
               {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
+
+
+              </AnimatePresence>
+
 
             </div>
 

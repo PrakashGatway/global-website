@@ -31,16 +31,19 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const { slug } = await params;
 
-  const [pageRes, caseRes,imageRes,Faqres,Unires] = await Promise.all([
+  const [pageRes, caseRes,imageRes,Faqres,Unires,Unicategory] = await Promise.all([
     serverInstance.get(`/page-information/slug/${slug}`),
     serverInstance.get("/testimonials?type=caseStudy"),
      serverInstance.get("/testimonials?type=image"),
          serverInstance.get("/faqs/public/list?type=General"),
-         serverInstance.get("/universities?location_alias=ivy-league")
+         serverInstance.get("/universities?location_alias=ivy-league"),
+         serverInstance.get("/blogs?catslugivyleague")
+
 
 
 
   ]);
+  console.log(Unicategory)
 
  
 
@@ -52,6 +55,7 @@ export default async function Page({ params }) {
       imageRes = {imageRes.data.data}
       Faqres = {Faqres.data.data}
       Unires = {Unires.data.result}
+      Unicategory = {Unicategory.data.data}
     />
   );
 }

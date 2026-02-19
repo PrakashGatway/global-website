@@ -402,7 +402,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres })
               {(pageData?.sections?.lifeIn?.items || []).map((item, index) => (
                 <div key={index} className="flex items-center gap-4 w-120 relative z-1">
                   {/* Left Border Accent */}
-                  <div className="w-60 h-30 bg-secondary absolute -z-1 -top-2 -left-2"></div>
+                  <div className="w-60 h-20 bg-secondary absolute -z-1 -top-2 -left-2"></div>
 
                   {/* Benefit Box */}
                   <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[50px] px-6 md:px-3 py-4 md:py-5 text-white  text-base ">

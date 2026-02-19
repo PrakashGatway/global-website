@@ -18,6 +18,8 @@ import OffersSlider, {
 import CaseStudy from "@/components/PageComponent/CaseStudy";
 import FAQSection from "../faqPage";
 import UniversityCard from "../UniversityCard";
+import { format } from "path";
+import { formatDate } from "date-fns";
 
 const images = [
   "https://t3.ftcdn.net/jpg/06/23/84/22/360_F_623842281_ECGgEpMEkQdH83gbmexIn5l3ACl7V3M0.jpg",
@@ -25,7 +27,7 @@ const images = [
   "https://as2.ftcdn.net/jpg/05/29/12/57/1000_F_529125762_omW1yTehDLLFJKwLJjRET0G3sXiQnK5g.jpg",
 ];
 
-export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires }) {
+export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires,Unicategory }) {
   const [index, setIndex] = useState(0);
 
   // AUTO SLIDE
@@ -268,29 +270,10 @@ export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires 
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10" style={{ width: '100%' }}>
-            {[
-              {
-                uni: 'Harvard University',
-                text: 'Harvard University Class of 2028 Early Action Admission Rate is 7.2%',
-                date: 'December 15, 2023',
-                img: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop'
-              },
-              {
-                uni: 'Cornell University',
-                text: 'Cornell University Class of 2028 Early Decision Admission Rate is 17.9%',
-                date: 'December 15, 2023',
-                img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=300&fit=crop'
-              },
-              {
-                uni: 'Yale University',
-                text: 'Yale University Class of 2028 Early Action Admission Rate is 9.0%',
-                date: 'December 15, 2023',
-                img: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&h=600&fit=crop'
-              }
-            ].map((item, i) => (
+            {Unicategory.map((item, i) => (
               <div key={`ivy-coach-${i}`} className="overflow-hidden transition w-full">
                 <Image
-                  src={item.img}
+                  src={item.coverImage}
                   alt={item.uni}
                   width={400}
                   height={300}
@@ -299,9 +282,9 @@ export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires 
                 />
                 <div className="py-4">
                   <h4 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial' }} className="text-lg font-bold text-gray-700 mb-2 leading-tight">
-                    {item.text}
+                    {item.title}
                   </h4>
-                  <p className="text-sm text-center text-gray-600">by S.K. Date: {item.date}</p>
+                  <p className="text-sm text-center text-gray-600">by S.K. Date: {new Date(item?.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
             ))}
