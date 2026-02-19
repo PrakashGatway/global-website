@@ -26,9 +26,6 @@ export function EnhancedHeader({
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <motion.h1
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1, duration: 0.4 }}
             className="text-2xl font-bold tracking-tight text-foreground"
           >
             Support Center
@@ -61,30 +58,21 @@ export function EnhancedHeader({
         </motion.button>
       </div>
       <motion.header
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
         className="sticky top-0 z-10 bg-white border-b border-border/40 backdrop-blur-sm supports-[backdrop-filter]:bg-white/95"
       >
 
         {/* Filter Tabs */}
         <div className="mt-3">
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.4 }}
             className="flex gap-1"
           >
             {tabs.map((tab, index) => (
               <motion.button
                 key={tab.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 + index * 0.1, duration: 0.3 }}
                 onClick={() =>
                   onFilterChange(tab.id as 'all' | 'pending' | 'resolved')
                 }
-                className="relative px-4 py-2 text-sm font-medium transition-colors"
+                className="relative px-4 py-2 text-base font-semibold transition-colors"
               >
                 <span
                   className={`transition-colors ${filter === tab.id

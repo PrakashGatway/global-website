@@ -19,6 +19,15 @@ export function GlobalProvider({ children }) {
         }
     }
 
+    const updateProfile = async () => {
+        try {
+            const res = await axiosInstance.get("/auth/me")
+            setProfile(res.data.data)
+        } catch (err) {
+            console.log("Not authorized")
+        }
+    }
+
     const Logout =() => {
         setLoading(true)
         window.location.replace("/")
@@ -44,7 +53,7 @@ export function GlobalProvider({ children }) {
 
     return (
         <Globalcontext.Provider value={{
-            profile, loading, Logout
+            profile, loading, Logout,updateProfile
         }}>
             {children}
 

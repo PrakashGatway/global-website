@@ -108,7 +108,7 @@ export default function SupportPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.4 }}
-            className="w-96 bg-white rounded-xl overflow-hidden border border-border"
+            className="w-96 bg-white rounded-xl overflow-hidden border-2"
           >
             <TicketList
               tickets={tickets}
@@ -122,7 +122,7 @@ export default function SupportPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3, duration: 0.4 }}
-            className="flex-1 bg-white rounded-xl shadow-sm overflow-hidden border border-border"
+            className="flex-1 bg-white rounded-xl overflow-hidden border border-2"
           >
             {selectedTicketId._id ? (
               <TicketDetail

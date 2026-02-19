@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { Mail, AlertCircle, CheckCircle } from 'lucide-react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 interface Ticket {
   id: string
@@ -41,16 +42,16 @@ export function TicketList({ tickets, selectedId, onSelectTicket }: TicketListPr
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="px-4 py-4 border-b border-border sticky top-0 bg-white"
+        className="px-4 py-3 border-b border-border sticky top-0 bg-white"
       >
-        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-          <Mail className="w-4 h-4" />
+        <div className="flex items-center gap-2 font-semibold transition-colors">
+          <Mail className="w-5 h-5" />
           <span>Support Tickets</span>
           <motion.span
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="ml-auto text-xs font-normal text-muted-foreground"
+            className="ml-auto "
           >
             {tickets.length}
           </motion.span>
@@ -62,10 +63,10 @@ export function TicketList({ tickets, selectedId, onSelectTicket }: TicketListPr
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="p-6 text-center"
+            className="p-6 text-center min-h-[60vh]"
+
           >
-            <Mail className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">No support tickets yet</p>
+            <Image src="https://assets-v2.lottiefiles.com/a/09c40a94-1179-11ee-a418-7394edff93c8/NEgtRnqrdz.gif" alt="No tickets" width={250} height={250} className="m-auto opacity-50" />
           </motion.div>
         ) : (
           <motion.div

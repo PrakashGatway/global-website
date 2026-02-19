@@ -27,13 +27,6 @@ export function DashboardHeader({ profile,Logout }) {
 
         {/* Right Icons */}
         <div className="flex items-center gap-2">
-          {/* <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="p-2.5 hover:bg-muted rounded-xl transition-colors relative"
-          >
-            <Settings className="w-5 h-5 text-muted-foreground" />
-          </motion.button> */}
           <Link
             href="/dashboard/notifications"
             className="h-11 w-11 flex items-center justify-center border rounded-full p-0 m-0 shadow-lg relative overflow-hidden"

@@ -2,120 +2,51 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion"
 import {
-  Bell, AlertCircle, MessageSquare, FileText, CheckCircle, X, 
+  Bell, AlertCircle, MessageSquare, FileText, CheckCircle, X,
   Eye, EyeOff, Search as SearchIcon, Filter, Clock, Calendar,
   Trash2, Archive, Star, Tag, GraduationCap, Users, TrendingUp,
-  Loader2, ChevronLeft, ChevronRight
+  Loader2, ChevronLeft, ChevronRight, RefreshCw
 } from "lucide-react"
 import { formatDistanceToNow, format } from "date-fns"
+import axios from "axios"
+import axiosInstance from "@/app/axiosInstance"
 
 // Notification interface
 interface Notification {
   id: string
-  type: 'missing_requirement' | 'note' | 'application_status'
+  recipientId: string
+  type: 'missing_requirement' | 'note' | 'application_status' | string
   title: string
   message: string
   timestamp: string
   read: boolean
   applicationName?: string
   priority: 'high' | 'medium' | 'low'
-  actionUrl?: string
+  redirectUrl?: string
+  entityId?: string
+  entityType?: string
+  metadata?: any
+  expiresAt?: string
 }
 
-// Dummy notifications data
-const dummyNotifications: Notification[] = [
-  {
-    id: 'req_001',
-    type: 'missing_requirement',
-    title: 'Missing Document: Passport Copy',
-    message: 'Your application for Harvard University is missing a valid passport copy. Please upload it within 7 days.',
-    timestamp: '2026-02-14T10:30:00Z',
-    read: false,
-    applicationName: 'Harvard University - MBA',
-    priority: 'high',
-    actionUrl: '/dashboard/applications/app_001/documents'
-  },
-  {
-    id: 'note_001',
-    type: 'note',
-    title: 'Counselor Note: Application Strategy',
-    message: 'I\'ve reviewed your profile and recommend applying to 3 additional universities to increase your chances.',
-    timestamp: '2026-02-14T08:45:00Z',
-    read: false,
-    applicationName: 'Harvard University - MBA',
-    priority: 'medium',
-    actionUrl: '/dashboard/applications/app_001/notes'
-  },
-  {
-    id: 'status_001',
-    type: 'application_status',
-    title: 'Application Submitted Successfully!',
-    message: 'Your application for Harvard University has been successfully submitted. You will receive a confirmation email shortly.',
-    timestamp: '2026-02-14T15:10:00Z',
-    read: false,
-    applicationName: 'Harvard University - MBA',
-    priority: 'low',
-    actionUrl: '/dashboard/applications/app_001'
-  },
-  {
-    id: 'req_002',
-    type: 'missing_requirement',
-    title: 'IELTS Score Required',
-    message: 'Stanford University requires a minimum IELTS score of 7.0. Please upload your test results to proceed.',
-    timestamp: '2026-02-13T14:20:00Z',
-    read: true,
-    applicationName: 'Stanford University - CS',
-    priority: 'high',
-    actionUrl: '/dashboard/applications/app_002/documents'
-  },
-  {
-    id: 'note_002',
-    type: 'note',
-    title: 'Important: Visa Interview Preparation',
-    message: 'Your visa interview is scheduled for March 15th. Please prepare the following documents and review common questions.',
-    timestamp: '2026-02-13T11:30:00Z',
-    read: false,
-    applicationName: 'Stanford University - CS',
-    priority: 'high',
-    actionUrl: '/dashboard/applications/app_002/notes'
-  },
-  {
-    id: 'status_002',
-    type: 'application_status',
-    title: 'Application Under Review',
-    message: 'Stanford University has started reviewing your application. The review process typically takes 4-6 weeks.',
-    timestamp: '2026-02-13T09:45:00Z',
-    read: true,
-    applicationName: 'Stanford University - CS',
-    priority: 'medium',
-    actionUrl: '/dashboard/applications/app_002'
-  },
-  {
-    id: 'req_003',
-    type: 'missing_requirement',
-    title: 'Statement of Purpose Needed',
-    message: 'Your application for MIT is missing the Statement of Purpose document. This is a critical requirement.',
-    timestamp: '2026-02-12T09:15:00Z',
-    read: false,
-    applicationName: 'MIT - Engineering',
-    priority: 'medium',
-    actionUrl: '/dashboard/applications/app_003/documents'
-  },
-  {
-    id: 'status_003',
-    type: 'application_status',
-    title: 'Interview Invitation',
-    message: 'Congratulations! You\'ve been invited for an interview with MIT admissions committee. Please schedule your slot.',
-    timestamp: '2026-02-12T14:30:00Z',
-    read: false,
-    applicationName: 'MIT - Engineering',
-    priority: 'high',
-    actionUrl: '/dashboard/applications/app_003/interview'
+// API Response interface
+interface ApiResponse {
+  success: boolean
+  data: {
+    notifications: Notification[]
+    pagination: {
+      total: number
+      page: number
+      limit: number
+      pages: number
+      hasNext: boolean
+      hasPrev: boolean
+    }
   }
-]
+}
 
 // Notification type configuration
-const notificationTypes = {
+const notificationTypes: Record<string, { label: string; icon: JSX.Element; color: string; badge: string; gradient: string }> = {
   missing_requirement: {
     label: 'Missing Requirements',
     icon: <AlertCircle className="w-5 h-5" />,
@@ -136,6 +67,55 @@ const notificationTypes = {
     color: 'bg-green-50 border-green-200 text-green-700',
     badge: 'bg-green-100 text-green-600',
     gradient: 'from-green-400 to-green-600'
+  },
+  application_update: {
+    label: 'Application Update',
+    icon: <FileText className="w-5 h-5" />,
+    color: 'bg-blue-50 border-blue-200 text-blue-700',
+    badge: 'bg-blue-100 text-blue-600',
+    gradient: 'from-blue-400 to-blue-600'
+  },
+  document_request: {
+    label: 'Document Request',
+    icon: <AlertCircle className="w-5 h-5" />,
+    color: 'bg-orange-50 border-orange-200 text-orange-700',
+    badge: 'bg-orange-100 text-orange-600',
+    gradient: 'from-orange-400 to-orange-600'
+  },
+  document_verified: {
+    label: 'Document Verified',
+    icon: <CheckCircle className="w-5 h-5" />,
+    color: 'bg-green-50 border-green-200 text-green-700',
+    badge: 'bg-green-100 text-green-600',
+    gradient: 'from-green-400 to-green-600'
+  },
+  document_rejected: {
+    label: 'Document Rejected',
+    icon: <X className="w-5 h-5" />,
+    color: 'bg-red-50 border-red-200 text-red-700',
+    badge: 'bg-red-100 text-red-600',
+    gradient: 'from-red-400 to-red-600'
+  },
+  deadline_reminder: {
+    label: 'Deadline Reminder',
+    icon: <Clock className="w-5 h-5" />,
+    color: 'bg-yellow-50 border-yellow-200 text-yellow-700',
+    badge: 'bg-yellow-100 text-yellow-600',
+    gradient: 'from-yellow-400 to-yellow-600'
+  },
+  offer_received: {
+    label: 'Offer Received',
+    icon: <Star className="w-5 h-5" />,
+    color: 'bg-purple-50 border-purple-200 text-purple-700',
+    badge: 'bg-purple-100 text-purple-600',
+    gradient: 'from-purple-400 to-purple-600'
+  },
+  default: {
+    label: 'Notification',
+    icon: <Bell className="w-5 h-5" />,
+    color: 'bg-gray-50 border-gray-200 text-gray-700',
+    badge: 'bg-gray-100 text-gray-600',
+    gradient: 'from-gray-400 to-gray-600'
   }
 }
 
@@ -149,10 +129,19 @@ const priorityConfig = {
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const filterButtonRef = useRef(null)
   const [markingAllRead, setMarkingAllRead] = useState(false)
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    limit: 15,
+    pages: 0,
+    hasNext: false,
+    hasPrev: false
+  })
 
   // Filters state
   const [filters, setFilters] = useState({
@@ -163,15 +152,16 @@ export default function NotificationsPage() {
 
   // Handle click outside filter drawer
   useEffect(() => {
-    function handleClickOutside(event) {
-      const isClickInsideSelect = event.target.closest('[data-radix-select-content]') || 
-                                  event.target.closest('[data-headlessui-state="open"]') ||
-                                  event.target.closest('[role="listbox"]') ||
-                                  event.target.closest('.select-dropdown')
-      
-      if (filterButtonRef.current && 
-          !filterButtonRef.current.contains(event.target) && 
-          !isClickInsideSelect) {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as HTMLElement
+      const isClickInsideSelect = target.closest('[data-radix-select-content]') ||
+        target.closest('[data-headlessui-state="open"]') ||
+        target.closest('[role="listbox"]') ||
+        target.closest('.select-dropdown')
+
+      if (filterButtonRef.current &&
+        !(filterButtonRef.current as HTMLElement).contains(target) &&
+        !isClickInsideSelect) {
         setShowFilters(false)
       }
     }
@@ -182,25 +172,69 @@ export default function NotificationsPage() {
     }
   }, [])
 
-  // Initialize notifications
-  useEffect(() => {
-    setTimeout(() => {
-      setNotifications(dummyNotifications)
-      setLoading(false)
-    }, 600)
-  }, [])
+  // Fetch notifications
+  const fetchNotifications = useCallback(async (page = 1, append = false) => {
+    try {
+      if (page === 1) {
+        setLoading(true)
+      } else {
+        setLoadingMore(true)
+      }
 
-  // Filter notifications
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: pagination.limit.toString()
+      })
+
+      if (filters.showUnreadOnly) {
+        params.append('unread', 'true')
+      }
+
+      const response = await axiosInstance.get<any>(`/notifications?${params.toString()}`)
+
+      if (response.data.success) {
+        const newNotifications = response.data.data.notifications
+        setNotifications(prev => append ? [...prev, ...newNotifications] : newNotifications)
+        setPagination(response.data.data.pagination)
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error)
+    } finally {
+      setLoading(false)
+      setLoadingMore(false)
+    }
+  }, [filters.showUnreadOnly, pagination.limit])
+
+  // Initial fetch
+  useEffect(() => {
+      fetchNotifications(1, false)
+  }, [ fetchNotifications])
+
+  // Polling every 3 minutes
+  useEffect(() => {
+
+    const pollInterval = setInterval(() => {
+      fetchNotifications(1, false)
+    }, 3 * 60 * 1000) // 3 minutes
+
+    return () => clearInterval(pollInterval)
+  }, [ fetchNotifications])
+
+  // Load more notifications
+  const loadMore = () => {
+    if (pagination.hasNext && !loadingMore) {
+      fetchNotifications(pagination.page + 1, true)
+    }
+  }
+
+  // Filter notifications locally
   const filteredNotifications = notifications.filter(notification => {
     // Type filter
     if (filters.type && notification.type !== filters.type) return false
-    
+
     // Priority filter
     if (filters.priority && notification.priority !== filters.priority) return false
-    
-    // Unread filter
-    if (filters.showUnreadOnly && notification.read) return false
-    
+
     // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
@@ -210,42 +244,86 @@ export default function NotificationsPage() {
         notification.applicationName?.toLowerCase().includes(query)
       )
     }
-    
+
     return true
   })
 
   // Get counts for tabs
-  const getUnreadCount = (type: string) => {
-    return notifications.filter(n => 
-      (type === 'all' || n.type === type) && !n.read
+  const getUnreadCount = (type?: string) => {
+    return notifications.filter(n =>
+      (!type || n.type === type) && !n.read
     ).length
   }
 
   // Toggle read status
-  const toggleReadStatus = (id: string) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, read: !n.read } : n)
-    )
+  const toggleReadStatus = async (id: string) => {
+    try {
+      const notification = notifications.find(n => n.id === id)
+      if (!notification) return
+
+      // Optimistic update
+      setNotifications(prev =>
+        prev.map(n => n.id === id ? { ...n, read: !n.read } : n)
+      )
+
+      // API call
+      await axios.patch(`/api/notifications/${id}/read`)
+    } catch (error) {
+      console.error('Error toggling read status:', error)
+      // Revert on error
+      setNotifications(prev =>
+        prev.map(n => n.id === id ? { ...n, read: !n.read } : n)
+      )
+    }
   }
 
   // Delete notification
-  const deleteNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id))
+  const deleteNotification = async (id: string) => {
+    try {
+      // Optimistic update
+      setNotifications(prev => prev.filter(n => n.id !== id))
+
+      // API call
+      await axiosInstance.delete(`/notifications/${id}`)
+    } catch (error) {
+      console.error('Error deleting notification:', error)
+      // Refresh on error
+      fetchNotifications(1, false)
+    }
   }
 
   // Mark all as read
-  const markAllAsRead = () => {
-    setMarkingAllRead(true)
-    setTimeout(() => {
+  const markAllAsRead = async () => {
+    try {
+      setMarkingAllRead(true)
+
+      // Optimistic update
       setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+
+      // API call
+      await axiosInstance.patch('/notifications/mark-all-read')
+    } catch (error) {
+      console.error('Error marking all as read:', error)
+      // Refresh on error
+      fetchNotifications(1, false)
+    } finally {
       setMarkingAllRead(false)
-    }, 500)
+    }
   }
 
   // Clear all notifications
-  const clearAllNotifications = () => {
-    if (confirm('Are you sure you want to clear all notifications?')) {
+  const clearAllNotifications = async () => {
+    if (!confirm('Are you sure you want to clear all notifications?')) return
+
+    try {
+      // This would need a bulk delete endpoint
+      // For now, we'll delete one by one
+      for (const notification of notifications) {
+        await axios.delete(`/notifications/${notification.id}`)
+      }
       setNotifications([])
+    } catch (error) {
+      console.error('Error clearing notifications:', error)
     }
   }
 
@@ -275,14 +353,24 @@ export default function NotificationsPage() {
     setSearchQuery("")
   }
 
+  // Refresh notifications
+  const refreshNotifications = () => {
+    fetchNotifications(1, false)
+  }
+
+  // Get notification type config
+  const getTypeConfig = (type: string) => {
+    return notificationTypes[type] || notificationTypes.default
+  }
+
   // Notification Card with Swipe Actions
   const NotificationCard = ({ notification }: { notification: Notification }) => {
     const x = useMotionValue(0)
     const opacity = useTransform(x, [-100, 0], [1, 0])
     const rotate = useTransform(x, [-100, 0], [0, 0])
-    
-    const typeConfig = notificationTypes[notification.type]
-    const priorityConfigItem = priorityConfig[notification.priority]
+
+    const typeConfig = getTypeConfig(notification.type)
+    const priorityConfigItem = priorityConfig[notification.priority] || priorityConfig.medium
 
     // Handle swipe actions
     const handleDragEnd = (_: any, info: any) => {
@@ -303,21 +391,21 @@ export default function NotificationsPage() {
         onDragEnd={handleDragEnd}
         style={{ x }}
         className={`group relative bg-white rounded-2xl border ${
-          notification.read 
-            ? 'border-border' 
+          notification.read
+            ? 'border-border'
             : `border-2 ${typeConfig.color.replace('text', 'border')}`
         } overflow-hidden transition-all duration-300 hover:shadow-md`}
       >
         {/* Left Swipe Action (Delete) */}
-        <motion.div 
+        <motion.div
           className="absolute left-0 top-0 bottom-0 w-24 bg-red-500 flex items-center justify-center"
           style={{ opacity: useTransform(x, [-120, -60], [1, 0]) }}
         >
           <Trash2 className="w-6 h-6 text-white" />
         </motion.div>
-        
+
         {/* Right Swipe Action (Mark Read) */}
-        <motion.div 
+        <motion.div
           className="absolute right-0 top-0 bottom-0 w-24 bg-green-500 flex items-center justify-center"
           style={{ opacity: useTransform(x, [60, 120], [0, 1]) }}
         >
@@ -344,18 +432,18 @@ export default function NotificationsPage() {
                   </span>
                 )}
               </div>
-              
+
               <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                 {notification.message}
               </p>
-              
+
               {notification.applicationName && (
                 <div className="mt-2 flex items-center gap-2 text-sm text-primary font-medium">
                   <GraduationCap className="w-4 h-4" />
                   <span className="truncate">{notification.applicationName}</span>
                 </div>
               )}
-              
+
               <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
                 <span className="flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5" />
@@ -373,16 +461,16 @@ export default function NotificationsPage() {
           {/* RIGHT SECTION */}
           <div className="flex items-center justify-between md:justify-end gap-3 md:min-w-[200px]">
             {/* Action Button */}
-            {notification.actionUrl && (
+            {notification.redirectUrl && (
               <a
-                href={notification.actionUrl}
+                href={notification.redirectUrl}
                 className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors text-sm whitespace-nowrap"
               >
-                {notification.type === 'missing_requirement' ? 'Upload' : 'View'}
+                {notification.type.includes('document') ? 'Upload' : 'View'}
                 <ChevronRight className="w-4 h-4" />
               </a>
             )}
-            
+
             {/* Actions */}
             <div className="flex items-center gap-2">
               <button
@@ -391,8 +479,8 @@ export default function NotificationsPage() {
                   toggleReadStatus(notification.id)
                 }}
                 className={`p-2 rounded-lg transition-colors ${
-                  notification.read 
-                    ? 'text-muted-foreground hover:text-foreground hover:bg-muted' 
+                  notification.read
+                    ? 'text-muted-foreground hover:text-foreground hover:bg-muted'
                     : 'text-primary bg-primary/10 hover:bg-primary/20'
                 }`}
                 title={notification.read ? 'Mark as unread' : 'Mark as read'}
@@ -403,7 +491,7 @@ export default function NotificationsPage() {
                   <Eye className="w-4 h-4" />
                 )}
               </button>
-              
+
               <button
                 onClick={(e) => {
                   e.stopPropagation()
@@ -417,16 +505,16 @@ export default function NotificationsPage() {
             </div>
           </div>
         </div>
-        
+
         {/* Mobile Action Button */}
-        {notification.actionUrl && (
+        {notification.redirectUrl && (
           <div className="md:hidden p-4 pt-0 border-t border-border">
             <a
-              href={notification.actionUrl}
+              href={notification.redirectUrl}
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors font-medium"
             >
-              {notification.type === 'missing_requirement' ? 'Upload Document' : 
-               notification.type === 'note' ? 'View Details' : 'View Application'}
+              {notification.type.includes('document') ? 'Upload Document' :
+               notification.type.includes('note') ? 'View Details' : 'View Application'}
               <ChevronRight className="w-4 h-4" />
             </a>
           </div>
@@ -437,7 +525,7 @@ export default function NotificationsPage() {
 
   return (
     <main className="flex-1 overflow-y-auto">
-      <div className="space-y-4 sm:p-6">
+      <div className="space-y-4 sm:p-6 p-4">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -447,13 +535,26 @@ export default function NotificationsPage() {
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               Notifications
+              {pagination.total > 0 && (
+                <span className="text-sm font-normal text-muted-foreground ml-2">
+                  ({pagination.total} total)
+                </span>
+              )}
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
               Stay updated with your application progress
             </p>
           </div>
-          
+
           <div className="flex items-center gap-3">
+            <button
+              onClick={refreshNotifications}
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              title="Refresh notifications"
+            >
+              <RefreshCw className="w-5 h-5" />
+            </button>
+
             <button
               onClick={markAllAsRead}
               disabled={markingAllRead || notifications.every(n => n.read)}
@@ -466,7 +567,7 @@ export default function NotificationsPage() {
               )}
               Mark All Read
             </button>
-            
+
             <button
               onClick={clearAllNotifications}
               className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
@@ -521,7 +622,7 @@ export default function NotificationsPage() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     onClick={() => setShowFilters(false)}
-                    className="fixed inset-0 z-40"
+                    className="fixed inset-0 z-10"
                     style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}
                   />
 
@@ -560,8 +661,14 @@ export default function NotificationsPage() {
                         >
                           <option value="">All Types</option>
                           <option value="missing_requirement">Missing Requirements</option>
-                          <option value="note">Notes</option>
+                          <option value="document_request">Document Request</option>
+                          <option value="document_verified">Document Verified</option>
+                          <option value="document_rejected">Document Rejected</option>
+                          <option value="application_update">Application Update</option>
                           <option value="application_status">Application Status</option>
+                          <option value="deadline_reminder">Deadline Reminder</option>
+                          <option value="offer_received">Offer Received</option>
+                          <option value="note">Notes</option>
                         </select>
                       </div>
 
@@ -602,7 +709,7 @@ export default function NotificationsPage() {
                           <div className="flex flex-wrap gap-1.5">
                             {filters.type && (
                               <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                                {filters.type.replace('_', ' ')}
+                                {filters.type.replace(/_/g, ' ')}
                                 <button onClick={() => handleFilterChange('type', '')} className="hover:bg-primary/20 rounded-full p-0.5">
                                   <X className="w-3 h-3" />
                                 </button>
@@ -652,7 +759,7 @@ export default function NotificationsPage() {
 
         {/* Notifications List */}
         <motion.div
-          className="flex flex-col gap-3"
+          className="flex flex-col gap-3 min-h-[400px]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
@@ -669,7 +776,7 @@ export default function NotificationsPage() {
               </div>
             ))
           ) : filteredNotifications.length === 0 ? (
-            <div className="text-center py-12  bg-card border border-border rounded-2xl">
+            <div className="text-center py-12 bg-card border border-border rounded-2xl">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
                 <Bell className="w-10 h-10 text-muted-foreground" />
               </div>
@@ -692,6 +799,34 @@ export default function NotificationsPage() {
               {filteredNotifications.map((notification, index) => (
                 <NotificationCard key={notification.id} notification={notification} />
               ))}
+
+              {/* Show More Button */}
+              {pagination.hasNext && (
+                <div className="flex justify-center mt-6">
+                  <button
+                    onClick={loadMore}
+                    disabled={loadingMore}
+                    className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  >
+                    {loadingMore ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      <>
+                        Show More
+                        <ChevronRight className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {/* Showing count */}
+              <div className="text-center text-sm text-muted-foreground mt-4">
+                Showing {filteredNotifications.length} of {pagination.total} notifications
+              </div>
             </>
           )}
         </motion.div>

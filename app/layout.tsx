@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer"
 import { serverInstance } from "./axiosInstance"
 import { GlobalProvider } from "@/src/statecontext"
 import { Toaster } from "react-hot-toast";
+import Script from "next/script"
 
 
 
@@ -60,52 +61,48 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const [feature,countryres] = await Promise.all([
+  const [feature, countryres] = await Promise.all([
     serverInstance.get("/page-information/navbar?isNavbar=true"),
     serverInstance.get("/page-information/navbar?isFeatured=true&type=country"),
-
-    
-   
-
   ])
 
-  
-  
 
-  const featureRes = feature.data.data.filter((item) => 
-    item.pageType === "destinations" 
+
+
+  const featureRes = feature.data.data.filter((item) =>
+    item.pageType === "destinations"
   )
 
-  const servicedata = feature.data.data.filter((item) => 
+  const servicedata = feature.data.data.filter((item) =>
     item.pageType === "service"
-  ) 
+  )
 
-  
 
- 
   const serviceres = servicedata.reverse()
-
-  
-
-
-  
-
-
-
-  
-  
-  
-
 
 
   return (
     <html lang="en">
-     
-        <head>
-  <link rel="icon" href="/images/fevi-icon.png" className="w-20 " />
-</head>
 
-      
+      <head>
+        <link rel="icon" href="/images/fevi-icon.png" className="w-20 " />
+        <meta name="google-site-verification" content="VU_q7Dhlnq-bXvbs2_KwmafQK7MCZMSeu_dHgPEiCtE" />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-Z5PEF3NSXZ"
+          strategy="afterInteractive"
+        />
+
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-Z5PEF3NSXZ');
+          `}
+        </Script>
+      </head>
+
+
       <body className={`${notoSans.className} antialiased`}>
         <GlobalProvider>
           
@@ -115,16 +112,16 @@ export default async function RootLayout({
         
           {children}
           <Toaster
-          position="bottom-right"
-          reverseOrder={false}
-        />
-        
-        
-        <Footer Featureitem={featureRes || []} Serviceitem={serviceres || []} countryres = {countryres.data.data} />
+            position="bottom-right"
+            reverseOrder={false}
+          />
+
+
+          <Footer Featureitem={featureRes || []} Serviceitem={serviceres || []} countryres={countryres.data.data} />
 
         </GlobalProvider>
 
-       
+
       </body>
     </html>
   )

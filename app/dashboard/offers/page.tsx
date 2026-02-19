@@ -7,20 +7,15 @@ import {
     Loader2, Sparkles, GiftIcon, BadgePercent, QrCode,
     Info, X, UserPlus, Wallet, CreditCard, Calendar,
     Eye, EyeOff, AlertCircle, Heart, Percent,
-    Send, Mail, Trophy
+    Send, Mail, Trophy,
+    MessageCirclePlus
 } from "lucide-react"
 import { addDays, format, formatDistanceToNow } from "date-fns"
+import { useGlobal } from "@/src/statecontext"
+import axiosInstance from "@/app/axiosInstance"
+import toast from "react-hot-toast"
+import Image from "next/image"
 
-// --- Types ---
-interface Referral {
-    id: string
-    friendName: string
-    friendEmail: string
-    status: 'pending' | 'joined' | 'earned'
-    date: string
-    pointsEarned: number
-    avatar?: string
-}
 
 interface Coupon {
     id: string
@@ -35,180 +30,14 @@ interface Coupon {
     category: 'welcome' | 'special' | 'referral' | 'festive'
 }
 
-// --- Constants & Config ---
-const categoryConfig = {
-    welcome: {
-        label: 'Welcome',
-        gradient: 'from-purple-500 to-indigo-600',
-        bgColor: 'bg-purple-50',
-        textColor: 'text-purple-700',
-        borderColor: 'border-purple-200',
-        icon: <Gift className="w-4 h-4" />
-    },
-    special: {
-        label: 'Special',
-        gradient: 'from-blue-500 to-cyan-600',
-        bgColor: 'bg-blue-50',
-        textColor: 'text-blue-700',
-        borderColor: 'border-blue-200',
-        icon: <Star className="w-4 h-4" />
-    },
-    referral: {
-        label: 'Referral',
-        gradient: 'from-emerald-500 to-green-600',
-        bgColor: 'bg-emerald-50',
-        textColor: 'text-emerald-700',
-        borderColor: 'border-emerald-200',
-        icon: <Users className="w-4 h-4" />
-    },
-    festive: {
-        label: 'Festive',
-        gradient: 'from-orange-500 to-red-600',
-        bgColor: 'bg-orange-50',
-        textColor: 'text-orange-700',
-        borderColor: 'border-orange-200',
-        icon: <Sparkles className="w-4 h-4" />
-    }
-}
-
-const statusConfig = {
-    pending: {
-        label: 'Pending',
-        color: 'bg-yellow-100 text-yellow-700',
-        icon: <Clock className="w-3 h-3" />
-    },
-    joined: {
-        label: 'Joined',
-        color: 'bg-blue-100 text-blue-700',
-        icon: <Users className="w-3 h-3" />
-    },
-    earned: {
-        label: 'Earned',
-        color: 'bg-green-100 text-green-700',
-        icon: <Award className="w-3 h-3" />
-    }
-}
-
-// --- Dummy Data ---
-const initialReferrals: Referral[] = [
-    {
-        id: 'ref_001',
-        friendName: 'Sarah Johnson',
-        friendEmail: 'sarah.j@example.com',
-        status: 'earned',
-        date: '2026-02-15T10:30:00Z',
-        pointsEarned: 50,
-        avatar: 'SJ'
-    },
-    {
-        id: 'ref_002',
-        friendName: 'Michael Chen',
-        friendEmail: 'michael.c@example.com',
-        status: 'joined',
-        date: '2026-02-14T15:45:00Z',
-        pointsEarned: 0,
-        avatar: 'MC'
-    },
-    {
-        id: 'ref_003',
-        friendName: 'Priya Patel',
-        friendEmail: 'priya.p@example.com',
-        status: 'pending',
-        date: '2026-02-13T09:15:00Z',
-        pointsEarned: 0,
-        avatar: 'PP'
-    },
-    {
-        id: 'ref_004',
-        friendName: 'David Kim',
-        friendEmail: 'david.k@example.com',
-        status: 'earned',
-        date: '2026-02-12T14:20:00Z',
-        pointsEarned: 50,
-        avatar: 'DK'
-    }
-]
-
-const initialCoupons: Coupon[] = [
-    {
-        id: 'cpn_001',
-        code: 'WELCOME50',
-        description: 'Get 50% off on your first purchase',
-        discount: '50% OFF',
-        validUntil: '2026-03-31',
-        minPurchase: '1000',
-        maxDiscount: '500',
-        isScratched: false,
-        isRedeemed: false,
-        category: 'welcome'
-    },
-    {
-        id: 'cpn_002',
-        code: 'FLAT200',
-        description: 'Flat ₹200 off on orders above ₹2000',
-        discount: '₹200 OFF',
-        validUntil: '2026-02-28',
-        minPurchase: '2000',
-        isScratched: true,
-        isRedeemed: false,
-        category: 'special'
-    },
-    {
-        id: 'cpn_003',
-        code: 'REFER50',
-        description: 'Special reward for successful referrals',
-        discount: '50% OFF',
-        validUntil: '2026-04-15',
-        minPurchase: '1500',
-        maxDiscount: '750',
-        isScratched: false,
-        isRedeemed: false,
-        category: 'referral'
-    },
-    {
-        id: 'cpn_004',
-        code: 'FESTIVE25',
-        description: 'Festive season special discount',
-        discount: '25% OFF',
-        validUntil: '2026-03-15',
-        minPurchase: '500',
-        maxDiscount: '300',
-        isScratched: true,
-        isRedeemed: true,
-        category: 'festive'
-    },
-    {
-        id: 'cpn_005',
-        code: 'STUDENT15',
-        description: 'Student discount on all products',
-        discount: '15% OFF',
-        validUntil: '2026-05-30',
-        minPurchase: '800',
-        maxDiscount: '400',
-        isScratched: false,
-        isRedeemed: false,
-        category: 'special'
-    }
-]
-
-// --- Sub-Components ---
-
-// 1. Scratch Card Component (Optimized)
-interface ScratchCardProps {
-    coupon: Coupon
-    onScratchComplete: (id: string) => void
-}
-
-const ScratchCard = ({ coupon, onScratchComplete }: ScratchCardProps) => {
+const ScratchCard = ({ coupon, onScratchComplete }: any) => {
     const [isScratching, setIsScratching] = useState(false)
     const [scratchPercentage, setScratchPercentage] = useState(0)
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
     const isScratched = scratchPercentage >= 70 || coupon.isScratched
     const [isDrawing, setIsDrawing] = useState(false)
-    const category = categoryConfig[coupon.category]
 
-    // Initialize Canvas
     useEffect(() => {
         if (!canvasRef.current || !containerRef.current || coupon.isScratched) return
 
@@ -258,7 +87,7 @@ const ScratchCard = ({ coupon, onScratchComplete }: ScratchCardProps) => {
         ctx.fillStyle = '#cbd5e1'
         ctx.fillText('to reveal coupon', rect.width / 2, rect.height / 2 + 15)
 
-    }, [coupon.id, coupon.isScratched])
+    }, [coupon._id, coupon.isScratched])
 
     // Calculate Scratch Percentage (Optimized)
     const calculateScratchPercentage = useCallback(() => {
@@ -290,13 +119,10 @@ const ScratchCard = ({ coupon, onScratchComplete }: ScratchCardProps) => {
     const handleScratch = useCallback((e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
         if (!canvasRef.current || isScratched) return
 
-        // Desktop: Only scratch if mouse is down
         if ('touches' in e) {
             // Mobile: Always scratch on touch move
         } else {
-            // Desktop: Check isDrawing state
             if (!isDrawing) return
-            // Prevent text selection while dragging
             e.preventDefault()
         }
 
@@ -324,14 +150,13 @@ const ScratchCard = ({ coupon, onScratchComplete }: ScratchCardProps) => {
         ctx.arc(x, y, 25 * dpr, 0, Math.PI * 2)
         ctx.fill()
 
-        // Throttle percentage calculation slightly
         const percentage = calculateScratchPercentage()
         setScratchPercentage(percentage)
 
         if (percentage >= 70) {
-            onScratchComplete(coupon.id)
+            onScratchComplete(coupon._id)
         }
-    }, [isScratched, isDrawing, coupon.id, onScratchComplete, calculateScratchPercentage])
+    }, [isScratched, isDrawing, coupon._id, onScratchComplete, calculateScratchPercentage])
     const handleScratchEnd = useCallback(() => {
         setIsScratching(false)
     }, [])
@@ -341,7 +166,7 @@ const ScratchCard = ({ coupon, onScratchComplete }: ScratchCardProps) => {
     const handleMouseLeave = () => setIsDrawing(false)
     // Manual Reveal Button for Accessibility
     const handleManualReveal = () => {
-        onScratchComplete(coupon.id)
+        onScratchComplete(coupon._id)
     }
 
     return (
@@ -349,18 +174,9 @@ const ScratchCard = ({ coupon, onScratchComplete }: ScratchCardProps) => {
             ref={containerRef}
             className="relative w-full h-[240px] rounded-3xl overflow-hidden shadow-lg select-none touch-none"
         >
-            {/* Revealed Content */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${category.gradient} p-6 flex flex-col items-center justify-center text-white transition-opacity duration-500`}>
-                <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-white/20 text-white backdrop-blur-sm flex items-center gap-1">
-                        {category.icon}
-                        {category.label}
-                    </span>
-                </div>
-
+            <div className={`absolute inset-0 bg-gradient-to-br from-indigo-100 via-indigo-400 to-blue-100 p-6 flex flex-col items-center justify-center text-white transition-opacity duration-500`}>
                 <div className="absolute bottom-4 left-4 right-4 text-xs text-white/70 flex justify-between">
-                    <span>Min. ₹{coupon.minPurchase}</span>
-                    <span>Valid till {format(new Date(coupon.validUntil), 'dd MMM')}</span>
+                    <span>Valid till {format(new Date(coupon.expiresAt), 'dd MMM')}</span>
                 </div>
             </div>
 
@@ -375,73 +191,44 @@ const ScratchCard = ({ coupon, onScratchComplete }: ScratchCardProps) => {
                 onTouchStart={handleScratch}
                 onTouchEnd={handleScratchEnd}
             />
-            {/* 
-      {!isScratched && (
-        <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
-          <div className="bg-black/40 backdrop-blur-sm rounded-full h-1.5 overflow-hidden">
-            <motion.div
-              className="h-full bg-white"
-              initial={{ width: 0 }}
-              animate={{ width: `${Math.min(scratchPercentage, 70)}%` }}
-            />
-          </div>
-          <p className="text-center text-white text-[10px] mt-1 font-medium opacity-80">
-            {Math.round(scratchPercentage)}% Scratched
-          </p>
-        </div>
-      )} */}
-
-            {/* Reveal Button (Fallback) */}
-            {/* {!isScratched && (
-        <button
-          onClick={handleManualReveal}
-          className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full text-white backdrop-blur-sm transition-colors pointer-events-auto"
-          title="Reveal instantly"
-        >
-          <Eye className="w-4 h-4" />
-        </button>
-      )} */}
         </div>
     )
 }
 
-// --- Main Component ---
 export default function OffersPage() {
-    const [activeTab, setActiveTab] = useState<'refer' | 'coupons'>('refer')
-    const [referrals, setReferrals] = useState<Referral[]>(initialReferrals)
-    const [coupons, setCoupons] = useState<Coupon[]>(initialCoupons)
+    const [activeTab, setActiveTab] = useState<any>('refer')
+    const [referrals, setReferrals] = useState<[]>([])
+    const [coupons, setCoupons] = useState<any>()
     const [copiedCode, setCopiedCode] = useState<string | null>(null)
+    const [rewards, setRewards] = useState<[]>([])
     const [showReferModal, setShowReferModal] = useState(false)
-    const [referEmail, setReferEmail] = useState('')
-    const [referMessage, setReferMessage] = useState('')
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    const { profile, loading ,updateProfile } = useGlobal()
     const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null)
+    const [link, setLink] = useState('')
 
-    // Stats Calculation
-    const stats = {
-        totalReferrals: referrals.length,
-        pointsEarned: referrals.reduce((acc, ref) => acc + ref.pointsEarned, 0),
-        couponsAvailable: coupons.filter(c => !c.isRedeemed).length
-    }
-
+    useEffect(() => {
+        if (profile?.referalCode) {
+            const address = `https://www.ooshasglobal.com?code=${profile?.referalCode}`
+            setLink(address)
+        }
+    })
     // Actions
     const copyReferralLink = () => {
-        const link = 'https://yourapp.com/refer?code=USER123'
         navigator.clipboard.writeText(link)
         setCopiedCode('referral')
         setTimeout(() => setCopiedCode(null), 2000)
     }
 
-    const handleScratchComplete = useCallback((couponId: string) => {
-        setCoupons(prev => prev.map(coupon =>
-            coupon.id === couponId ? { ...coupon, isScratched: true } : coupon
+    const handleScratchComplete = useCallback(async (couponId: string) => {
+        const rewardsRes = await axiosInstance.post(`/coupons/scratch/use/${couponId}`);
+        if(rewardsRes.data?.success){ 
+            updateProfile()
+            toast.success(rewardsRes.data?.message
+            )}
+        setRewards(prev => prev.map(coupon =>
+            coupon._id === couponId ? rewardsRes.data?.updatedCard : coupon
         ))
-        const coupon = coupons.find(c => c.id === couponId)
-        if (coupon) {
-            // Small delay to allow state update before showing modal
-            setTimeout(() => setSelectedCoupon({ ...coupon, isScratched: true }), 300)
-        }
-    }, [coupons])
+    }, [rewards])
 
     const copyCouponCode = (code: string, e: React.MouseEvent) => {
         e.stopPropagation()
@@ -450,43 +237,13 @@ export default function OffersPage() {
         setTimeout(() => setCopiedCode(null), 2000)
     }
 
-    const redeemCoupon = (couponId: string, e: React.MouseEvent) => {
-        e.stopPropagation()
-        setCoupons(prev => prev.map(coupon =>
-            coupon.id === couponId ? { ...coupon, isRedeemed: true } : coupon
-        ))
-        setSelectedCoupon(null)
-    }
-
-    const sendReferral = (e: React.FormEvent) => {
-        e.preventDefault()
-        setIsSubmitting(true)
-        setTimeout(() => {
-            const newReferral: Referral = {
-                id: `ref_${Date.now()}`,
-                friendName: referEmail.split('@')[0],
-                friendEmail: referEmail,
-                status: 'pending',
-                date: new Date().toISOString(),
-                pointsEarned: 0,
-                avatar: referEmail.substring(0, 2).toUpperCase()
-            }
-            setReferrals(prev => [newReferral, ...prev])
-            setShowReferModal(false)
-            setReferEmail('')
-            setReferMessage('')
-            setIsSubmitting(false)
-        }, 1500)
-    }
-
     const shareViaSocial = (platform: string) => {
         const text = "Join me on this amazing platform and get 50 points! Use my referral link:"
-        const link = "https://yourapp.com/refer?code=USER123"
         let shareUrl = ''
         switch (platform) {
-            //   case 'whatsapp':
-            //     shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + link)}`
-            //     break
+            case 'whatsapp':
+                shareUrl = `https://wa.me/?text=${encodeURIComponent(text + '\n' + link)}`
+                break
             case 'telegram':
                 shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`
                 break
@@ -497,8 +254,30 @@ export default function OffersPage() {
         window.open(shareUrl, '_blank')
     }
 
+    const myReferrals = async () => {
+        try {
+            const [response, coupouns, rewardsRes] = await Promise.all([
+                await axiosInstance.get('/auth/my-referrals'),
+                await axiosInstance.get('/coupons/available/list'),
+                await axiosInstance.get('/coupons/scratch/my')
+            ])
+            setCoupons(coupouns.data)
+            setReferrals(response.data);
+            setRewards(rewardsRes.data?.data)
+            if (response?.data?.success) {
+                toast.success("Referrals Refresh successfully")
+            }
+        } catch (error) {
+            toast.error('Error fetching referrals')
+        }
+    }
+
+    useEffect(() => {
+        myReferrals()
+    }, [])
+
     return (
-        <main className="flex-1 overflow-y-auto bg-slate-50 min-h-screen">
+        <main className="flex-1 overflow-y-auto min-h-screen">
             <div className=" mx-auto sm:p-4 space-y-6">
 
                 {/* Header */}
@@ -511,19 +290,15 @@ export default function OffersPage() {
                         <h1 className="text-2xl font-bold text-slate-900">Offers & Rewards</h1>
                         <p className="text-slate-500 text-sm mt-1">Earn points, unlock coupons, and enjoy exclusive benefits</p>
                     </div>
-                    <div className="flex gap-4">
-                        <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100 flex items-center gap-2">
-                            <Trophy className="w-5 h-5 text-amber-500" />
-                            <div>
-                                <p className="text-xs text-slate-500 font-medium">Points</p>
-                                <p className="text-lg font-bold text-slate-900">{stats.pointsEarned}</p>
-                            </div>
-                        </div>
+                    <div className="flex font-semibold items-center gap-2 border-2 border-slate-500 rounded-full px-4 py-1 shadow-xl ">
+                        <p className="">Wallet: {profile?.wallet}</p>
+                        <Image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd6RT3_38mLmgDzUAuy2ZcS0ERldqSXpTdQw&s" alt="wallet" width={30} height={30} />
                     </div>
+
                 </motion.div>
 
                 {/* Tabs */}
-                <div className="flex gap-2 border-b border-slate-200 bg-white sticky top-0 z-30 px-4 sm:px-0 pt-4 sm:pt-0">
+                <div className="flex gap-2 border-b border-slate-200 bg-white sticky top-0 z-10 px-4 sm:px-0 pt-4 sm:pt-0">
                     {['refer', 'coupons', "rewards"].map((tab) => (
                         <motion.button
                             key={tab}
@@ -536,7 +311,7 @@ export default function OffersPage() {
                             {tab === 'refer' ? <UserPlus className="w-5 h-5" /> : tab == "rewards" ? <Gift className="w-5 h-5" /> : <Ticket className="w-5 h-5" />}
                             {tab === 'refer' ? 'Refer & Earn' : tab == "rewards" ? 'Rewards' : 'My Coupons'}
 
-                            {activeTab === tab && (
+                            {activeTab == tab && (
                                 <motion.div
                                     layoutId="activeTab"
                                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900"
@@ -555,7 +330,6 @@ export default function OffersPage() {
                             exit={{ opacity: 0, x: 20 }}
                             className="space-y-6"
                         >
-                            {/* Referral Banner */}
                             <div className="relative overflow-hidden rounded-3xl bg-slate-900 p-8 text-white shadow-xl">
                                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
                                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
@@ -582,9 +356,8 @@ export default function OffersPage() {
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() => setShowReferModal(true)}
-                                        className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded-xl font-bold shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 whitespace-nowrap"
+                                        className="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded-xl font-bold shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 whitespace-nowrap"
                                     >
-                                        <UserPlus className="w-5 h-5" />
                                         Refer Now
                                     </motion.button>
                                 </div>
@@ -601,8 +374,8 @@ export default function OffersPage() {
                                         <input
                                             type="text"
                                             readOnly
-                                            value="https://yourapp.com/refer?code=USER123"
-                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                            value={link}
+                                            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                                         />
                                         <button
                                             onClick={copyReferralLink}
@@ -617,7 +390,7 @@ export default function OffersPage() {
                                     </div>
                                     <div className="flex gap-2">
                                         {[
-                                            //   { id: 'whatsapp', icon: Whatsapp, color: 'bg-green-500 hover:bg-green-600' },
+                                            { id: 'whatsapp', icon: MessageCirclePlus, color: 'bg-green-500 hover:bg-green-600' },
                                             { id: 'telegram', icon: Send, color: 'bg-blue-500 hover:bg-blue-600' },
                                             { id: 'email', icon: Mail, color: 'bg-slate-700 hover:bg-slate-800' }
                                         ].map((platform) => (
@@ -639,38 +412,33 @@ export default function OffersPage() {
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold text-slate-900">Recent Referrals</h3>
                                 <div className="space-y-3">
-                                    {referrals.map((referral, index) => (
+                                    {referrals?.data?.map((referral, index) => (
                                         <motion.div
                                             key={referral.id}
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: index * 0.05 }}
-                                            className="rounded-xl p-4 bg-white border border-slate-200 shadow-sm flex items-center justify-between"
+                                            className="rounded-lg hover:shadow-lg p-4 bg-gray-50 border border-slate-200 flex items-center justify-between"
                                         >
                                             <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
-                                                    {referral.avatar}
+                                                <div className="w-12 h-12 rounded-full shadow-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
+                                                    <Image src={referral?.profileImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s"} alt="Profile" width={32} height={32} className="w-full h-full object-cover rounded-full" />
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-semibold text-slate-900">{referral.friendName}</h4>
-                                                    <p className="text-sm text-slate-500">{referral.friendEmail}</p>
+                                                    <h4 className="font-semibold text-slate-900 capitalize">{referral?.name || "Unknown"}</h4>
+                                                    <p className="text-sm text-slate-500 mask">{referral?.email || "__"}</p>
                                                     <div className="flex items-center gap-2 mt-1">
-                                                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusConfig[referral.status].color}`}>
-                                                            {statusConfig[referral.status].icon}
-                                                            {statusConfig[referral.status].label}
-                                                        </span>
+
                                                         <span className="text-xs text-slate-400">
-                                                            {formatDistanceToNow(new Date(referral.date), { addSuffix: true })}
+                                                            {formatDistanceToNow(new Date(referral?.createdAt), { addSuffix: true })}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            {referral.pointsEarned > 0 && (
-                                                <div className="text-right">
-                                                    <p className="text-xs text-slate-500">Points Earned</p>
-                                                    <p className="text-lg font-bold text-green-600">+{referral.pointsEarned}</p>
-                                                </div>
-                                            )}
+                                            <div className="text-right">
+                                                <p className="text-xs text-slate-500">Points Earned</p>
+                                                <p className="text-lg font-bold text-green-600"> + 50</p>
+                                            </div>
                                         </motion.div>
                                     ))}
                                 </div>
@@ -687,88 +455,67 @@ export default function OffersPage() {
                             className="space-y-6 max-w-6xl mx-auto"
                         >
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                {coupons.map((coupon, index) => (
+                                {coupons?.data?.map((coupon, index) => (
                                     <motion.div
-                                        key={coupon.id}
+                                        key={coupon._id}
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
                                     >
-                                        {!coupon.isScratched ? (
-                                            <ScratchCard coupon={coupon} onScratchComplete={handleScratchComplete} />
-                                        ) : (
-                                            <div
-                                                onClick={() => setSelectedCoupon(coupon)}
-                                                className={`relative group cursor-pointer rounded-3xl p-[1px] 
-  bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 
-  hover:scale-[1.01] transition-all duration-300 shadow-lg hover:shadow-2xl`}
-                                            >
+                                        <div
+                                            onClick={() => setSelectedCoupon(coupon)}
+                                            className={`relative group cursor-pointer rounded-3xl overflow-hidden bg-gradient-to-r from-[#F26D44] via-purple-500 to-indigo-800 hover:scale-[1.01] transition-all duration-300 shadow-lg hover:shadow-2xl`}
+                                        >
 
-                                                {/* Glass Card */}
-                                                <div className="relative bg-white/90 backdrop-blur-xl rounded-3xl overflow-hidden">
+                                            <div className="relative bg-white/90 backdrop-blur-xl rounded-3xl">
+                                                {new Date(coupon.validTo) < addDays(new Date(), 7) && (
+                                                    <div className="absolute top-4 right-[-40px] rotate-45 bg-red-500 text-white text-xs px-10 py-1 shadow-lg animate-pulse">
+                                                        Expiring Soon
+                                                    </div>
+                                                )}
 
-                                                    {/* Shine Effect */}
-                                                    <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
+                                                <div className={`p-6 bg-gradient-to-br from-[#F26D44] to-indigo-600 text-white`}>
+                                                    <div className="mt-2 text-center">
+                                                        <p className="text-2xl font-extrabold tracking-tight drop-shadow-xl">
+                                                            {coupon?.couponData?.discountValue} {coupon?.couponData?.discountType == 'percentage' ? '%' : 'OFF'}
+                                                        </p>
+                                                        <p className="text-sm text-white/90 mt-1 line-clamp-2">
+                                                            {coupon.description}
+                                                        </p>
+                                                    </div>
+                                                </div>
 
-                                                    {/* <div className={`absolute top-4 left-4 z-20 px-3 py-1 rounded-full text-xs font-semibold shadow-md flex items-center gap-1 
-      ${categoryConfig[coupon.category].bgColor} ${categoryConfig[coupon.category].textColor}`}>
-                                                        {categoryConfig[coupon.category].icon}
-                                                        {categoryConfig[coupon.category].label}
-                                                    </div> */}
+                                                <div className="p-4 space-y-3 mb-1">
 
-                                                    {/* Expiring Soon Ribbon */}
-                                                    {new Date(coupon.validUntil) < addDays(new Date(), 7) && !coupon.isRedeemed && (
-                                                        <div className="absolute top-4 right-[-40px] rotate-45 bg-red-500 text-white text-xs px-10 py-1 shadow-lg animate-pulse">
-                                                            Expiring Soon
-                                                        </div>
-                                                    )}
+                                                    {/* Coupon Code */}
+                                                    <div className="bg-slate-100 rounded-xl px-1 py-1 flex items-center justify-between border border-dashed border-slate-300 hover:border-slate-400 transition">
+                                                        <code className="font-medium px-2 text-slate-800">
+                                                            {coupon.code}
+                                                        </code>
 
-                                                    {/* Gradient Header */}
-                                                    <div className={`p-6 bg-gradient-to-br ${categoryConfig[coupon.category].gradient} text-white`}>
-                                                        <div className="mt-2 text-center">
-                                                            <p className="text-2xl font-extrabold tracking-tight drop-shadow-lg">
-                                                                {coupon.discount}
-                                                            </p>
-                                                            <p className="text-sm text-white/90 mt-1 line-clamp-2">
-                                                                {coupon.description}
-                                                            </p>
-                                                        </div>
+                                                        <button
+                                                            onClick={(e) => copyCouponCode(coupon.code, e)}
+                                                            className="p-2 rounded-full bg-white shadow hover:scale-110 transition"
+                                                        >
+                                                            {copiedCode === coupon.code ? (
+                                                                <Check className="w-4 h-4 text-green-600" />
+                                                            ) : (
+                                                                <Copy className="w-4 h-4 text-slate-600" />
+                                                            )}
+                                                        </button>
                                                     </div>
 
-                                                    {/* Body */}
-                                                    <div className="p-3 space-y-3 mb-4">
-
-                                                        {/* Coupon Code */}
-                                                        <div className="bg-slate-100 rounded-xl px-2 py-1 flex items-center justify-between border border-dashed border-slate-300 hover:border-slate-400 transition">
-                                                            <code className="font-medium text-slate-800">
-                                                                {coupon.code}
-                                                            </code>
-
-                                                            <button
-                                                                onClick={(e) => copyCouponCode(coupon.code, e)}
-                                                                className="p-2 rounded-full bg-white shadow hover:scale-110 transition"
-                                                            >
-                                                                {copiedCode === coupon.code ? (
-                                                                    <Check className="w-4 h-4 text-green-600" />
-                                                                ) : (
-                                                                    <Copy className="w-4 h-4 text-slate-600" />
-                                                                )}
-                                                            </button>
-                                                        </div>
-
-                                                        {/* Info Row */}
-                                                        <div className="flex items-center justify-between text-xs text-slate-500">
-                                                            <span className="font-medium">Min. ₹{coupon.minPurchase}</span>
-                                                            <span className="flex items-center gap-1">
-                                                                <Calendar className="w-3 h-3" />
-                                                                {format(new Date(coupon.validUntil), 'dd MMM yyyy')}
-                                                            </span>
-                                                        </div>
+                                                    {/* Info Row */}
+                                                    <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+                                                        <span className="font-medium">Min. ₹{coupon?.couponData?.minPurchaseAmount}</span>
+                                                        <span className="flex items-center gap-1">
+                                                            <Calendar className="w-3 h-3" />
+                                                            {format(new Date(coupon.validTo), 'dd MMM yyyy')}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
-
-                                        )}
+                                        </div>
                                     </motion.div>
                                 ))}
                             </div>
@@ -784,9 +531,9 @@ export default function OffersPage() {
                             className="space-y-6 max-w-6xl mx-auto"
                         >
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                {coupons.map((coupon, index) => (
+                                {rewards?.map((coupon, index) => (
                                     <motion.div
-                                        key={coupon.id}
+                                        key={coupon._id}
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.05 }}
@@ -796,75 +543,36 @@ export default function OffersPage() {
                                         ) : (
                                             <div
                                                 onClick={() => setSelectedCoupon(coupon)}
-                                                className={`relative group cursor-pointer rounded-3xl p-[1px] 
-  bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 
+                                                className={`flex flex-col items-center justify-center group cursor-pointer rounded-3xl min-h-[240px] 
+  bg-gradient-to-r from-pink-200 via-purple-400 to-indigo-100 
   hover:scale-[1.01] transition-all duration-300 shadow-lg hover:shadow-2xl`}
                                             >
 
-                                                {/* Glass Card */}
-                                                <div className="relative bg-white/90 backdrop-blur-xl rounded-3xl overflow-hidden">
+                                                <div className="backdrop-blur-sm rounded-3xl overflow-hidden">
 
-                                                    {/* Shine Effect */}
-                                                    <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" />
-
-                                                    {/* <div className={`absolute top-4 left-4 z-20 px-3 py-1 rounded-full text-xs font-semibold shadow-md flex items-center gap-1 
-      ${categoryConfig[coupon.category].bgColor} ${categoryConfig[coupon.category].textColor}`}>
-                                                        {categoryConfig[coupon.category].icon}
-                                                        {categoryConfig[coupon.category].label}
-                                                    </div> */}
+                                                    {/* <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" /> */}
 
                                                     {/* Expiring Soon Ribbon */}
-                                                    {new Date(coupon.validUntil) < addDays(new Date(), 7) && !coupon.isRedeemed && (
+                                                    {/* {new Date(coupon.rewardId?.validTo) < addDays(new Date(), 7) && (
                                                         <div className="absolute top-4 right-[-40px] rotate-45 bg-red-500 text-white text-xs px-10 py-1 shadow-lg animate-pulse">
                                                             Expiring Soon
                                                         </div>
-                                                    )}
+                                                    )} */}
 
                                                     {/* Gradient Header */}
-                                                    <div className={`p-6 bg-gradient-to-br ${categoryConfig[coupon.category].gradient} text-white`}>
-                                                        <div className="mt-2 text-center">
-                                                            <p className="text-2xl font-extrabold tracking-tight drop-shadow-lg">
-                                                                {coupon.discount}
-                                                            </p>
-                                                            <p className="text-sm text-white/90 mt-1 line-clamp-2">
-                                                                {coupon.description}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Body */}
-                                                    <div className="p-3 space-y-3 mb-4">
-
-                                                        {/* Coupon Code */}
-                                                        <div className="bg-slate-100 rounded-xl px-2 py-1 flex items-center justify-between border border-dashed border-slate-300 hover:border-slate-400 transition">
-                                                            <code className="font-medium text-slate-800">
-                                                                {coupon.code}
-                                                            </code>
-
-                                                            <button
-                                                                onClick={(e) => copyCouponCode(coupon.code, e)}
-                                                                className="p-2 rounded-full bg-white shadow hover:scale-110 transition"
-                                                            >
-                                                                {copiedCode === coupon.code ? (
-                                                                    <Check className="w-4 h-4 text-green-600" />
-                                                                ) : (
-                                                                    <Copy className="w-4 h-4 text-slate-600" />
-                                                                )}
-                                                            </button>
-                                                        </div>
-
-                                                        {/* Info Row */}
-                                                        <div className="flex items-center justify-between text-xs text-slate-500">
-                                                            <span className="font-medium">Min. ₹{coupon.minPurchase}</span>
-                                                            <span className="flex items-center gap-1">
-                                                                <Calendar className="w-3 h-3" />
-                                                                {format(new Date(coupon.validUntil), 'dd MMM yyyy')}
-                                                            </span>
-                                                        </div>
+                                                    <div className=" text-center flex p-2 flex-col items-center justify-center">
+                                                        <p className="text-2xl font-extrabold tracking-tight drop-shadow-lg">
+                                                            You have earned {coupon?.rewardId?.rewardData?.rewardValue || '0'} Points
+                                                        </p>
+                                                        <p className="text-lg text-white/90 mt-1 line-clamp-2">
+                                                            {coupon?.rewardId?.title || "__"}
+                                                        </p>
+                                                        <p className="text-sm text-white/90 mt-1 line-clamp-2">
+                                                            {coupon?.rewardId?.description || "__"}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
-
                                         )}
                                     </motion.div>
                                 ))}
@@ -873,89 +581,6 @@ export default function OffersPage() {
                     )}
                 </AnimatePresence>
             </div>
-            <AnimatePresence>
-                {showReferModal && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-                        onClick={() => setShowReferModal(false)}
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.9, y: 20 }}
-                            onClick={(e) => e.stopPropagation()}
-                            className="bg-white rounded-2xl max-w-md w-full p-8 shadow-2xl border border-slate-200"
-                        >
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-2xl font-bold flex items-center gap-2 text-slate-900">
-                                    <UserPlus className="w-6 h-6 text-amber-500" />
-                                    Refer a Friend
-                                </h2>
-                                <button
-                                    onClick={() => setShowReferModal(false)}
-                                    className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                                >
-                                    <X className="w-5 h-5 text-slate-500" />
-                                </button>
-                            </div>
-                            <form onSubmit={sendReferral} className="space-y-5">
-                                <div>
-                                    <label className="block text-sm font-semibold text-slate-900 mb-2">
-                                        Friend's Email
-                                    </label>
-                                    <input
-                                        type="email"
-                                        required
-                                        value={referEmail}
-                                        onChange={(e) => setReferEmail(e.target.value)}
-                                        placeholder="friend@example.com"
-                                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-slate-50 text-slate-900 placeholder-slate-400 transition-all"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-semibold text-slate-900 mb-2">
-                                        Personal Message (Optional)
-                                    </label>
-                                    <textarea
-                                        value={referMessage}
-                                        onChange={(e) => setReferMessage(e.target.value)}
-                                        placeholder="Hey! I thought you might like this platform..."
-                                        rows={4}
-                                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-slate-50 text-slate-900 placeholder-slate-400 resize-none transition-all"
-                                    />
-                                </div>
-                                <motion.button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20"
-                                >
-                                    {isSubmitting ? (
-                                        <>
-                                            <Loader2 className="w-5 h-5 animate-spin" />
-                                            <span>Sending...</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Send className="w-5 h-5" />
-                                            <span>Send Invitation</span>
-                                        </>
-                                    )}
-                                </motion.button>
-                            </form>
-                            <div className="mt-6 pt-6 border-t border-slate-100">
-                                <p className="text-sm text-slate-500 text-center font-medium">
-                                    Both of you get <span className="text-amber-600 font-bold">50 points</span> when they join!
-                                </p>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </main>
     )
 }
