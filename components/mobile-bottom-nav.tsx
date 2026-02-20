@@ -4,14 +4,14 @@
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { LayoutDashboard, BarChart3, MessageSquare, Settings, Shield, Bell, Wallet, FileText } from "lucide-react"
+import { LayoutDashboard, BarChart3, MessageSquare, Settings, Shield, Bell, Wallet, FileText, GraduationCapIcon, GiftIcon } from "lucide-react"
 
 // Updated to match sidebar items or create a subset for mobile
 const tabs = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: BarChart3, label: "Universities", href: "/dashboard/reports" },
-  { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },
-  { icon: Bell, label: "Notifications", href: "/dashboard/notifications" },
+  { icon: BarChart3, label: "Universities", href: "/dashboard/universities" },
+  { icon: GraduationCapIcon, label: "Programs", href: "/dashboard/programs" },
+  { icon: GiftIcon, label: "Offers", href: "/dashboard/offers" },
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },
 ]
 

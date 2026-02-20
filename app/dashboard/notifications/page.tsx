@@ -5,7 +5,12 @@ import {
   Bell, AlertCircle, MessageSquare, FileText, CheckCircle, X,
   Eye, EyeOff, Search as SearchIcon, Filter, Clock, Calendar,
   Trash2, Archive, Star, Tag, GraduationCap, Users, TrendingUp,
-  Loader2, ChevronLeft, ChevronRight, RefreshCw
+  Loader2, ChevronLeft, ChevronRight, RefreshCw,
+  ChartNoAxesColumn,
+  DoorClosedIcon,
+  GalleryVerticalEnd,
+  ArrowRight,
+  ArrowUpRight
 } from "lucide-react"
 import { formatDistanceToNow, format } from "date-fns"
 import axios from "axios"
@@ -27,22 +32,6 @@ interface Notification {
   entityType?: string
   metadata?: any
   expiresAt?: string
-}
-
-// API Response interface
-interface ApiResponse {
-  success: boolean
-  data: {
-    notifications: Notification[]
-    pagination: {
-      total: number
-      page: number
-      limit: number
-      pages: number
-      hasNext: boolean
-      hasPrev: boolean
-    }
-  }
 }
 
 // Notification type configuration
@@ -207,18 +196,18 @@ export default function NotificationsPage() {
 
   // Initial fetch
   useEffect(() => {
-      fetchNotifications(1, false)
-  }, [ fetchNotifications])
+    fetchNotifications(1, false)
+  }, [fetchNotifications])
 
   // Polling every 3 minutes
   useEffect(() => {
 
     const pollInterval = setInterval(() => {
       fetchNotifications(1, false)
-    }, 3 * 60 * 1000) // 3 minutes
+    }, 5 * 60 * 1000) // 3 minutes
 
     return () => clearInterval(pollInterval)
-  }, [ fetchNotifications])
+  }, [fetchNotifications])
 
   // Load more notifications
   const loadMore = () => {
@@ -248,13 +237,6 @@ export default function NotificationsPage() {
     return true
   })
 
-  // Get counts for tabs
-  const getUnreadCount = (type?: string) => {
-    return notifications.filter(n =>
-      (!type || n.type === type) && !n.read
-    ).length
-  }
-
   // Toggle read status
   const toggleReadStatus = async (id: string) => {
     try {
@@ -267,10 +249,9 @@ export default function NotificationsPage() {
       )
 
       // API call
-      await axios.patch(`/api/notifications/${id}/read`)
+      await axiosInstance.patch(`/notifications/read/${id}`)
     } catch (error) {
-      console.error('Error toggling read status:', error)
-      // Revert on error
+      console.error('Error toggling read status:')
       setNotifications(prev =>
         prev.map(n => n.id === id ? { ...n, read: !n.read } : n)
       )
@@ -301,7 +282,7 @@ export default function NotificationsPage() {
       setNotifications(prev => prev.map(n => ({ ...n, read: true })))
 
       // API call
-      await axiosInstance.patch('/notifications/mark-all-read')
+      await axiosInstance.patch('/notifications/read-all')
     } catch (error) {
       console.error('Error marking all as read:', error)
       // Refresh on error
@@ -314,12 +295,9 @@ export default function NotificationsPage() {
   // Clear all notifications
   const clearAllNotifications = async () => {
     if (!confirm('Are you sure you want to clear all notifications?')) return
-
     try {
-      // This would need a bulk delete endpoint
-      // For now, we'll delete one by one
       for (const notification of notifications) {
-        await axios.delete(`/notifications/${notification.id}`)
+        await axiosInstance.delete(`/notifications/${notification.id}`)
       }
       setNotifications([])
     } catch (error) {
@@ -375,10 +353,8 @@ export default function NotificationsPage() {
     // Handle swipe actions
     const handleDragEnd = (_: any, info: any) => {
       if (info.offset.x < -100) {
-        // Swipe left to delete
         deleteNotification(notification.id)
       } else if (info.offset.x > 100) {
-        // Swipe right to mark as read
         toggleReadStatus(notification.id)
       }
     }
@@ -390,15 +366,13 @@ export default function NotificationsPage() {
         dragElastic={0.2}
         onDragEnd={handleDragEnd}
         style={{ x }}
-        className={`group relative bg-white rounded-2xl border ${
-          notification.read
-            ? 'border-border'
-            : `border-2 ${typeConfig.color.replace('text', 'border')}`
-        } overflow-hidden transition-all duration-300 hover:shadow-md`}
+        className={`group relative rounded-2xl border ${notification.read
+          ? 'border-border bg-white'
+          : `border-2 bg-gray-100 ${typeConfig.color.replace('text', 'border')}`
+          } overflow-hidden transition-all duration-300 hover:shadow-md`}
       >
-        {/* Left Swipe Action (Delete) */}
         <motion.div
-          className="absolute left-0 top-0 bottom-0 w-24 bg-red-500 flex items-center justify-center"
+          className="absolute left-0 top-0 bottom-0 w-24 bg-red-600 flex items-center justify-center"
           style={{ opacity: useTransform(x, [-120, -60], [1, 0]) }}
         >
           <Trash2 className="w-6 h-6 text-white" />
@@ -426,11 +400,6 @@ export default function NotificationsPage() {
                 <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
                   {notification.title}
                 </h3>
-                {!notification.read && (
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${priorityConfigItem.color}`}>
-                    {priorityConfigItem.label}
-                  </span>
-                )}
               </div>
 
               <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
@@ -464,35 +433,15 @@ export default function NotificationsPage() {
             {notification.redirectUrl && (
               <a
                 href={notification.redirectUrl}
-                className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors text-sm whitespace-nowrap"
+                className="hidden md:inline-flex items-center gap-1.5 px-3 py-2.5 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors text-sm whitespace-nowrap"
               >
-                {notification.type.includes('document') ? 'Upload' : 'View'}
-                <ChevronRight className="w-4 h-4" />
+                <ArrowUpRight className="w-5 h-5" />
               </a>
             )}
 
             {/* Actions */}
             <div className="flex items-center gap-2">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  toggleReadStatus(notification.id)
-                }}
-                className={`p-2 rounded-lg transition-colors ${
-                  notification.read
-                    ? 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                    : 'text-primary bg-primary/10 hover:bg-primary/20'
-                }`}
-                title={notification.read ? 'Mark as unread' : 'Mark as read'}
-              >
-                {notification.read ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
-              </button>
-
-              <button
+              {/* <button
                 onClick={(e) => {
                   e.stopPropagation()
                   deleteNotification(notification.id)
@@ -500,8 +449,8 @@ export default function NotificationsPage() {
                 className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                 title="Delete notification"
               >
-                <Trash2 className="w-4 h-4" />
-              </button>
+                <Trash2 className="w-5 h-5" />
+              </button> */}
             </div>
           </div>
         </div>
@@ -514,7 +463,7 @@ export default function NotificationsPage() {
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors font-medium"
             >
               {notification.type.includes('document') ? 'Upload Document' :
-               notification.type.includes('note') ? 'View Details' : 'View Application'}
+                notification.type.includes('note') ? 'View Details' : 'View Application'}
               <ChevronRight className="w-4 h-4" />
             </a>
           </div>
@@ -530,26 +479,21 @@ export default function NotificationsPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between flex-wrap gap-4"
+          className="flex items-center justify-between flex-wrap gap-1"
         >
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               Notifications
-              {pagination.total > 0 && (
-                <span className="text-sm font-normal text-muted-foreground ml-2">
-                  ({pagination.total} total)
-                </span>
-              )}
             </h1>
-            <p className="text-muted-foreground text-sm mt-1">
+            <p className="text-muted-foreground text-sm">
               Stay updated with your application progress
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={refreshNotifications}
-              className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+              className="p-2.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
               title="Refresh notifications"
             >
               <RefreshCw className="w-5 h-5" />
@@ -558,204 +502,179 @@ export default function NotificationsPage() {
             <button
               onClick={markAllAsRead}
               disabled={markingAllRead || notifications.every(n => n.read)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               {markingAllRead ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                <CheckCircle className="w-4 h-4" />
+                <GalleryVerticalEnd className="w-5 h-5" />
               )}
-              Mark All Read
             </button>
+            <div className="relative" ref={filterButtonRef}>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 px-3 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                <Filter className="w-5 h-5" />
+                {activeFilterCount > 0 && (
+                  <span className="ml-1 px-2 py-0.5 text-xs bg-white/20 rounded-full">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Filter Drawer */}
+              <AnimatePresence>
+                {showFilters && (
+                  <>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      onClick={() => setShowFilters(false)}
+                      className="fixed inset-0 z-50"
+                      style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}
+                    />
+
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-80 bg-background border border-border rounded-xl shadow-lg z-50 overflow-hidden"
+                      style={{ transformOrigin: 'top right' }}
+                    >
+                      <div className="flex items-center justify-between p-4 py-3 border-b border-border">
+                        <h2 className="font-semibold flex items-center gap-2">
+                          <Filter className="w-4 h-4" />
+                          Filters
+                        </h2>
+                        <button
+                          onClick={() => setShowFilters(false)}
+                          className="text-sm"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      <div className="p-4 space-y-4">
+                        {/* Type Filter */}
+                        <div className="space-y-2">
+                          <label className="text-xs font-medium flex items-center gap-2">
+                            <Bell className="w-4 h-4" />
+                            Notification Type
+                          </label>
+                          <select
+                            value={filters.type}
+                            onChange={(e) => handleFilterChange('type', e.target.value)}
+                            className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+                          >
+                            <option value="">All Types</option>
+                            <option value="missing_requirement">Missing Requirements</option>
+                            <option value="document_request">Document Request</option>
+                            <option value="document_verified">Document Verified</option>
+                            <option value="document_rejected">Document Rejected</option>
+                            <option value="application_update">Application Update</option>
+                            <option value="application_status">Application Status</option>
+                            <option value="deadline_reminder">Deadline Reminder</option>
+                            <option value="offer_received">Offer Received</option>
+                            <option value="note">Notes</option>
+                          </select>
+                        </div>
+
+                        {/* Priority Filter */}
+                        <div className="space-y-2">
+                          <label className="text-xs font-medium flex items-center gap-2">
+                            <Star className="w-4 h-4" />
+                            Priority
+                          </label>
+                          <select
+                            value={filters.priority}
+                            onChange={(e) => handleFilterChange('priority', e.target.value)}
+                            className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+                          >
+                            <option value="">All Priorities</option>
+                            <option value="high">High Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="low">Low Priority</option>
+                          </select>
+                        </div>
+
+                        {/* Unread Only */}
+                        <div className="space-y-2 pt-2 border-t border-border">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={filters.showUnreadOnly}
+                              onChange={(e) => handleFilterChange('showUnreadOnly', e.target.checked)}
+                              className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
+                            />
+                            <span className="text-sm font-medium">Show unread only</span>
+                          </label>
+                        </div>
+
+                        {/* Active Filters Display */}
+                        {activeFilterCount > 0 && (
+                          <div className="pt-2 border-t border-border">
+                            <div className="flex flex-wrap gap-1.5">
+                              {filters.type && (
+                                <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
+                                  {filters.type.replace(/_/g, ' ')}
+                                  <button onClick={() => handleFilterChange('type', '')} className="hover:bg-primary/20 rounded-full p-0.5">
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </span>
+                              )}
+                              {filters.priority && (
+                                <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
+                                  {filters.priority} priority
+                                  <button onClick={() => handleFilterChange('priority', '')} className="hover:bg-primary/20 rounded-full p-0.5">
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </span>
+                              )}
+                              {filters.showUnreadOnly && (
+                                <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
+                                  Unread only
+                                  <button onClick={() => handleFilterChange('showUnreadOnly', false)} className="hover:bg-primary/20 rounded-full p-0.5">
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-end gap-2 p-4 py-3 border-t border-border bg-muted/20">
+                        <button
+                          onClick={clearFilters}
+                          className="px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          Reset
+                        </button>
+                        <button
+                          onClick={() => setShowFilters(false)}
+                          className="px-4 py-1.5 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                        >
+                          Apply
+                        </button>
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
 
             <button
               onClick={clearAllNotifications}
-              className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+              className="p-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors rounded-lg"
               title="Clear all notifications"
             >
               <Trash2 className="w-5 h-5" />
             </button>
           </div>
         </motion.div>
-
-        {/* Search & Filters */}
-        <div className="flex gap-4 flex-wrap">
-          <motion.div className="relative flex-1 min-w-[250px]">
-            <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search notifications by title, message, or application..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-2.5 border-2 border-border rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-background"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-muted rounded-full"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </motion.div>
-
-          <div className="relative" ref={filterButtonRef}>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              <Filter className="w-4 h-4" />
-              Filters
-              {activeFilterCount > 0 && (
-                <span className="ml-1 px-2 py-0.5 text-xs bg-white/20 rounded-full">
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
-
-            {/* Filter Drawer */}
-            <AnimatePresence>
-              {showFilters && (
-                <>
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onClick={() => setShowFilters(false)}
-                    className="fixed inset-0 z-10"
-                    style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}
-                  />
-
-                  <motion.div
-                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-80 bg-background border border-border rounded-xl shadow-lg z-50 overflow-hidden"
-                    style={{ transformOrigin: 'top right' }}
-                  >
-                    <div className="flex items-center justify-between p-4 py-3 border-b border-border">
-                      <h2 className="font-semibold flex items-center gap-2">
-                        <Filter className="w-4 h-4" />
-                        Filters
-                      </h2>
-                      <button
-                        onClick={() => setShowFilters(false)}
-                        className="text-sm"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-
-                    <div className="p-4 space-y-4">
-                      {/* Type Filter */}
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium flex items-center gap-2">
-                          <Bell className="w-4 h-4" />
-                          Notification Type
-                        </label>
-                        <select
-                          value={filters.type}
-                          onChange={(e) => handleFilterChange('type', e.target.value)}
-                          className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                        >
-                          <option value="">All Types</option>
-                          <option value="missing_requirement">Missing Requirements</option>
-                          <option value="document_request">Document Request</option>
-                          <option value="document_verified">Document Verified</option>
-                          <option value="document_rejected">Document Rejected</option>
-                          <option value="application_update">Application Update</option>
-                          <option value="application_status">Application Status</option>
-                          <option value="deadline_reminder">Deadline Reminder</option>
-                          <option value="offer_received">Offer Received</option>
-                          <option value="note">Notes</option>
-                        </select>
-                      </div>
-
-                      {/* Priority Filter */}
-                      <div className="space-y-2">
-                        <label className="text-xs font-medium flex items-center gap-2">
-                          <Star className="w-4 h-4" />
-                          Priority
-                        </label>
-                        <select
-                          value={filters.priority}
-                          onChange={(e) => handleFilterChange('priority', e.target.value)}
-                          className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
-                        >
-                          <option value="">All Priorities</option>
-                          <option value="high">High Priority</option>
-                          <option value="medium">Medium Priority</option>
-                          <option value="low">Low Priority</option>
-                        </select>
-                      </div>
-
-                      {/* Unread Only */}
-                      <div className="space-y-2 pt-2 border-t border-border">
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={filters.showUnreadOnly}
-                            onChange={(e) => handleFilterChange('showUnreadOnly', e.target.checked)}
-                            className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
-                          />
-                          <span className="text-sm font-medium">Show unread only</span>
-                        </label>
-                      </div>
-
-                      {/* Active Filters Display */}
-                      {activeFilterCount > 0 && (
-                        <div className="pt-2 border-t border-border">
-                          <div className="flex flex-wrap gap-1.5">
-                            {filters.type && (
-                              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                                {filters.type.replace(/_/g, ' ')}
-                                <button onClick={() => handleFilterChange('type', '')} className="hover:bg-primary/20 rounded-full p-0.5">
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </span>
-                            )}
-                            {filters.priority && (
-                              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                                {filters.priority} priority
-                                <button onClick={() => handleFilterChange('priority', '')} className="hover:bg-primary/20 rounded-full p-0.5">
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </span>
-                            )}
-                            {filters.showUnreadOnly && (
-                              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                                Unread only
-                                <button onClick={() => handleFilterChange('showUnreadOnly', false)} className="hover:bg-primary/20 rounded-full p-0.5">
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-end gap-2 p-4 py-3 border-t border-border bg-muted/20">
-                      <button
-                        onClick={clearFilters}
-                        className="px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        Reset
-                      </button>
-                      <button
-                        onClick={() => setShowFilters(false)}
-                        className="px-4 py-1.5 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                      >
-                        Apply
-                      </button>
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
 
         {/* Notifications List */}
         <motion.div
@@ -799,8 +718,6 @@ export default function NotificationsPage() {
               {filteredNotifications.map((notification, index) => (
                 <NotificationCard key={notification.id} notification={notification} />
               ))}
-
-              {/* Show More Button */}
               {pagination.hasNext && (
                 <div className="flex justify-center mt-6">
                   <button
@@ -822,11 +739,6 @@ export default function NotificationsPage() {
                   </button>
                 </div>
               )}
-
-              {/* Showing count */}
-              <div className="text-center text-sm text-muted-foreground mt-4">
-                Showing {filteredNotifications.length} of {pagination.total} notifications
-              </div>
             </>
           )}
         </motion.div>

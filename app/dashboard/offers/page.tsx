@@ -202,7 +202,7 @@ export default function OffersPage() {
     const [copiedCode, setCopiedCode] = useState<string | null>(null)
     const [rewards, setRewards] = useState<[]>([])
     const [showReferModal, setShowReferModal] = useState(false)
-    const { profile, loading ,updateProfile } = useGlobal()
+    const { profile, loading, updateProfile } = useGlobal()
     const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null)
     const [link, setLink] = useState('')
 
@@ -221,10 +221,11 @@ export default function OffersPage() {
 
     const handleScratchComplete = useCallback(async (couponId: string) => {
         const rewardsRes = await axiosInstance.post(`/coupons/scratch/use/${couponId}`);
-        if(rewardsRes.data?.success){ 
+        if (rewardsRes.data?.success) {
             updateProfile()
             toast.success(rewardsRes.data?.message
-            )}
+            )
+        }
         setRewards(prev => prev.map(coupon =>
             coupon._id === couponId ? rewardsRes.data?.updatedCard : coupon
         ))
@@ -277,7 +278,7 @@ export default function OffersPage() {
     }, [])
 
     return (
-        <main className="flex-1 overflow-y-auto min-h-screen">
+        <main className="flex-1 overflow-y-auto min-h-[70vh]">
             <div className=" mx-auto sm:p-4 space-y-6">
 
                 {/* Header */}
@@ -294,9 +295,7 @@ export default function OffersPage() {
                         <p className="">Wallet: {profile?.wallet}</p>
                         <Image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd6RT3_38mLmgDzUAuy2ZcS0ERldqSXpTdQw&s" alt="wallet" width={30} height={30} />
                     </div>
-
                 </motion.div>
-
                 {/* Tabs */}
                 <div className="flex gap-2 border-b border-slate-200 bg-white sticky top-0 z-10 px-4 sm:px-0 pt-4 sm:pt-0">
                     {['refer', 'coupons', "rewards"].map((tab) => (
@@ -454,6 +453,14 @@ export default function OffersPage() {
                             exit={{ opacity: 0, x: -20 }}
                             className="space-y-6 max-w-6xl mx-auto"
                         >
+                                  {
+                                coupons?.data?.length === 0 && (
+                                    <div className="flex flex-col items-center justify-center h-100 w-full">
+                                        <Image src="https://assets-v2.lottiefiles.com/a/0953d504-117d-11ee-aa49-1f149204cb5f/9uZcoEJaoF.gif" alt="No rewards" width={250} height={250} className="mx-auto max-w-full max-h-full" />
+                                        <p className="font-medium text-lg">No rewards found</p>
+                                    </div>
+                                )
+                            }
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 {coupons?.data?.map((coupon, index) => (
                                     <motion.div
@@ -530,6 +537,14 @@ export default function OffersPage() {
                             exit={{ opacity: 0, x: -20 }}
                             className="space-y-6 max-w-6xl mx-auto"
                         >
+                            {
+                                rewards?.length === 0 && (
+                                    <div className="flex flex-col items-center justify-center h-100 w-full">
+                                        <Image src="https://assets-v2.lottiefiles.com/a/0953d504-117d-11ee-aa49-1f149204cb5f/9uZcoEJaoF.gif" alt="No rewards" width={250} height={250} className="mx-auto max-w-full max-h-full" />
+                                        <p className="font-medium text-lg">No rewards found</p>
+                                    </div>
+                                )
+                            }
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 {rewards?.map((coupon, index) => (
                                     <motion.div
@@ -552,17 +567,14 @@ export default function OffersPage() {
 
                                                     {/* <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-500" /> */}
 
-                                                    {/* Expiring Soon Ribbon */}
                                                     {/* {new Date(coupon.rewardId?.validTo) < addDays(new Date(), 7) && (
                                                         <div className="absolute top-4 right-[-40px] rotate-45 bg-red-500 text-white text-xs px-10 py-1 shadow-lg animate-pulse">
                                                             Expiring Soon
                                                         </div>
                                                     )} */}
-
-                                                    {/* Gradient Header */}
                                                     <div className=" text-center flex p-2 flex-col items-center justify-center">
                                                         <p className="text-2xl font-extrabold tracking-tight drop-shadow-lg">
-                                                            You have earned {coupon?.rewardId?.rewardData?.rewardValue || '0'} Points
+                                                            + {coupon?.rewardId?.rewardData?.rewardValue || '0'} Points
                                                         </p>
                                                         <p className="text-lg text-white/90 mt-1 line-clamp-2">
                                                             {coupon?.rewardId?.title || "__"}

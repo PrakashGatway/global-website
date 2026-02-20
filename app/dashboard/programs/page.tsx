@@ -11,6 +11,7 @@ import {
 import axiosInstance from "@/app/axiosInstance"
 import { ModernSelect } from "@/components/ui/select"
 import Link from "next/link"
+import { CreateApplicationModal } from "@/components/dashboard/applicationModel"
 
 interface Course {
   _id: string
@@ -47,17 +48,6 @@ interface Course {
   createdAt: string
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
-    },
-  },
-}
-
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
@@ -78,6 +68,16 @@ export default function CoursesPage() {
   const [showFilters, setShowFilters] = useState(false)
   const observerTarget = useRef<HTMLDivElement>(null)
   const filterButtonRef = useRef(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const program = {
+    id: '123',
+    name: 'Bachelor of Science - Data Science',
+    university: 'Middle Tennessee State University',
+    school: 'College of Basic and Applied Sciences',
+    intake: 'Jan 2027',
+    deadline: 'Nov 02, 2026'
+  }
 
   // Filter options state
   const [countries, setCountries] = useState([])
@@ -284,20 +284,20 @@ export default function CoursesPage() {
   return (
     <main className="flex-1 overflow-y-auto bg-gray-50/50">
       <div className="sm:p-6 space-y-6">
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="space-y-2"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h1 className="text-2xl font-bold">Find Your Dream Program</h1>
-                      <p className="text-muted-foreground text-dm">
-                        Explore {courses.length}+ programs worldwide
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-2"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">Find Your Dream Program</h1>
+              <p className="text-muted-foreground text-dm">
+                Explore {courses.length}+ programs worldwide
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Search & Filter Bar */}
         <div className="flex gap-3">
@@ -359,7 +359,7 @@ export default function CoursesPage() {
                 </span>
               )}
             </button>
-           
+
 
             {/* Filters Drawer */}
             <AnimatePresence>
@@ -724,12 +724,13 @@ export default function CoursesPage() {
                     >
                       View Details
                     </Link>
-                    <Link
-                      href={`/dashboard/programs/${course.slug}`}
+                    <button
+                    onClick={()=>setIsModalOpen(true)}
+                      
                       className="flex-1 text-sm px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium text-center"
                     >
                       Create Application
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -761,6 +762,14 @@ export default function CoursesPage() {
             </motion.div>
           )}
         </div>
+        <CreateApplicationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onApplicationCreated={() => {
+            // Refresh applications list or show success message
+          }}
+          program={program}
+        />
       </div>
     </main>
   )
