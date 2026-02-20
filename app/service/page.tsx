@@ -4,7 +4,7 @@ import { serverInstance } from "../axiosInstance";
 
 /* ---------------- SEO ---------------- */
 export async function generateMetadata() {
-  const res = await serverInstance.get("/page-information/slug/test-preparation");
+  const res = await serverInstance.get("/page-information/slug/service");
   const seo = res.data.data.seoMeta;
 
   return {
@@ -12,7 +12,7 @@ export async function generateMetadata() {
     description: seo?.metaDescription,
     keywords: seo?.metaKeywords,
     alternates: {
-      canonical: `/${seo?.canonicalUrl || "service"}`
+      canonical: `${seo?.canonicalUrl || `https://ooshasglobal.com/service/`}`
     },
     openGraph: {
       title: seo?.metaTitle,

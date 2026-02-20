@@ -4,8 +4,9 @@ import Image from 'next/image'
 
 import FAQSection from '@/components/faqPage'
 import { DynamicLucideIcon } from '@/components/DynamicLucideIcon'
+import ImageTestimonial from './ImageTestimonial'
 
-export default async function CountryDetails({ Universityres, Faqres, Pageres }) {
+export default async function CountryDetails({ Universityres, Faqres, Pageres , imageData }) {
   const pageData = Pageres?.data;
 
 
@@ -110,6 +111,10 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres })
     },
   ];
 
+
+  
+  
+
   return (
     <>
       <section>
@@ -134,7 +139,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres })
                 absolute
                 left-6 top-20
                 sm:left-12 sm:top-24
-                lg:left-30 lg:top-auto
+                lg:left-15 lg:top-auto
               "
             >
               <img
@@ -150,7 +155,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres })
                 absolute
                 top-60 left-6
                 sm:left-12 sm:top-40
-                lg:top-50 lg:left-60
+                lg:top-50 lg:left-40
               "
             >
               {/* Heading */}
@@ -158,7 +163,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres })
                 text-3xl sm:text-4xl md:text-5xl lg:text-6xl
                 font-bold text-white
                 text-left
-                mb-6 max-w-xl lg:max-w-2xl
+                mb-6 max-w-xl lg:max-w-xl
               ">
                 {pageData?.sections?.hero?.title || "Study in Germany"}
                 
@@ -307,12 +312,12 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres })
       </section>
 
       <section className="w-full bg-[#ef6a42] py-20 px-6">
-        <div className="max-w-5xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto text-left">
 
           {/* Heading */}
           <h2 className="text-white text-4xl md:text-5xl font-bold relative inline-block">
             {pageData?.sections?.whyChooseUs?.title || "Why Choose Germany ?"}
-            <span className="block w-16 h-1 bg-yellow-400 absolute right-0 mt-3"></span>
+            <span className="block w-16 h-1 bg-yellow-400 absolute left-0 mt-3"></span>
           </h2>
 
           {/* Paragraph */}
@@ -321,9 +326,9 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres })
           </p>
 
           {/* Button */}
-          <div className="mt-10">
+          <div className="mt-10 text-center">
             <a href={pageData?.sections?.whyChooseUs?.ctaLink1 || "/contact"}>
-              <button className="bg-secondary hover:bg-[#5a1002] text-white px-8 py-3 rounded-full text-lg font-semibold transition">
+              <button className="bg-secondary hover:bg-[#5a1002] text-white  px-8 py-3 rounded-full text-lg font-semibold transition">
                 {pageData?.sections?.whyChooseUs?.ctaText1 || "Read More >>"}
               </button>
             </a>
@@ -343,7 +348,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres })
             </h2>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="">
 
             {/* ================= LEFT CONTENT ================= */}
             <div>
@@ -351,34 +356,29 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres })
                 {pageData?.sections?.whyStudy?.subTitle || "Germany is one of the most preferred study destinations for international students due to its world-class education system and strong career opportunities."}
               </p>
 
-              <div className="space-y-8">
-                {(pageData?.sections?.whyStudy?.items || []).map((item, index) => (
-                  <div key={index} className="flex items-start gap-4">
-                    <div className="text-[#8b1d04]">
-                      <DynamicLucideIcon name={item.icon} size={34} />
-                    </div>
-                    <div>
-                      <h4 className="text-xl font-semibold text-gray-900">
-                        {item.title}
-                      </h4>
-                      <p className="text-[#123b73]">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 ">
+  {(pageData?.sections?.whyStudy?.items || []).map((item, index) => (
+    
+    <div key={index} className="flex items-start gap-4 bg-gray-200 p-4 rounded-xl">
+      <div className="text-[#8b1d04]">
+        <DynamicLucideIcon name={item.icon} size={34} />
+      </div>
+
+      <div>
+        <h4 className="text-xl font-semibold text-gray-900">
+          {item.title}
+        </h4>
+        <p className="text-[#123b73]">
+          {item.description}
+        </p>
+      </div>
+    </div>
+
+  ))}
+</div>
             </div>
 
-            {/* ================= RIGHT IMAGE ================= */}
-            <div className="relative w-[350px] h-[450px] md:w-[700px] md:h-[500px] rounded-tl-[40px] rounded-br-[40px]">
-              <Image
-                src={pageData?.sections?.whyStudy?.image || "/images/country-why-img.png"}
-                alt="Students in Germany"
-                fill
-                className="object-contain rounded-tl-[40px] rounded-br-[40px] absolute inset-0 w-full h-full"
-              />
-            </div>
+          
 
           </div>
 
@@ -477,19 +477,12 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres })
         </div>
 
         {/* ================= BOTTOM YELLOW ACCENT ================= */}
-        <div className="absolute -bottom-6 left-20 w-74 h-6 bg-yellow-300"></div>
+        <div className="absolute bottom-12 left-20 w-74 h-6 bg-yellow-300"></div>
 
       </section>
 
-      <div className='w-full bg-white'>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-18 py-20">
-          {Universityres?.data?.result?.map((uni) => (
-            <UniversityCard
-              key={uni._id}
-              university={uni}
-            />
-          ))}
-        </div>
+      <div className='w-full bg-[#ef6a42] px-8 pb-10 mx-auto'>
+        <UniversityCard university = {Universityres?.data?.result} />
       </div>
 
       <section className="w-full bg-white py-16">
@@ -668,103 +661,12 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres })
         </div>
       </section>
 
-      <section className="w-full py-16 px-8 bg-background">
-        <div className="mx-auto">
-          {/* Heading */}
-          <div className="max-w-7xl mx-auto mb-12">
-            <h2 className="text-xl lg:text-5xl mb-2">
-              <span className="text-red-700">
-                {pageData?.sections?.imageTestimonials?.title?.split('||')[0]?.trim() || "Image"}
-              </span>{" "} <br />
-              <span className="text-primary font-bold relative">
-                {pageData?.sections?.imageTestimonials?.title?.split('||')[1]?.trim() || "Testimonials"}
-                <span className="absolute right-0 bottom-0 w-25 h-[2px] lg:h-1 bg-red-700"></span>
-              </span>
-            </h2>
-          </div>
-
-          {/* Desktop bento grid (≥1024px) */}
-          <div className="hidden lg:grid grid-cols-4 gap-6 py-10">
-            {testimonials.map((item, index) => {
-              const isReverse = index % 2 !== 0;
-              return (
-                <div className={`flex ${isReverse ? "flex-col-reverse relative" : "flex-col"} relative z-1`}>
-                  <div className={`absolute bg-orange-500 rounded-4xl ${isReverse ? "w-50 -z-1 -bottom-[5px] h-[200px] -right-[5px]" : "h-50 -top-[55px] -left-[5px] -z-1 w-50"}`}></div>
-                  {/* IMAGE */}
-                  <div className="overflow-hidden h-[300px] -mt-12">
-                    <img
-                      src={item.image}
-                      className="w-full h-full object-cover object-center rounded-4xl"
-                    />
-                  </div>
-
-                  {/* CARD */}
-                  <div className={`bg-white rounded-4xl py-6 shadow-lg border border-gray-500 flex gap-4 relative z-10 transform ${isReverse ? "-translate-y-0" : "translate-y-[-56px]"}`}>
-                    <img
-                      src='https://logos-world.net/wp-content/uploads/2021/01/Harvard-Emblem.png'
-                      className="w-40 h-18 object-contain mt-12"
-                    />
-
-                    <div>
-                      <h3 className="text-xl font-bold text-[hsl(0,70%,35%)]">
-                        {item.name}
-                      </h3>
-
-                      <p className="text-base text-[hsl(0,70%,35%)]">
-                        {item.text}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Tablet grid (768px–1023px) */}
-          <div className="hidden md:grid lg:hidden grid-cols-2 gap-4">
-            {testimonials.map((t, i) => (
-              <div key={t.name} className="flex flex-col gap-4">
-                {i % 2 === 0 ? (
-                  <>
-                    <div className="rounded-2xl overflow-hidden border-2 border-[hsl(15,80%,50%)] aspect-[3/4]">
-                      <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
-                    </div>
-                    <div className="bg-card rounded-2xl p-5 shadow-md border border-border">
-                      <h3 className="text-sm font-bold text-[hsl(0,70%,35%)] mb-2">{t.name}</h3>
-                      <p className="text-xs leading-relaxed text-muted-foreground">{t.text}</p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="bg-card rounded-2xl p-5 shadow-md border border-border">
-                      <h3 className="text-sm font-bold text-[hsl(0,70%,35%)] mb-2">{t.name}</h3>
-                      <p className="text-xs leading-relaxed text-muted-foreground">{t.text}</p>
-                    </div>
-                    <div className="rounded-2xl overflow-hidden border-2 border-[hsl(15,80%,50%)] aspect-[3/4]">
-                      <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Mobile (<768px) */}
-          <div className="flex flex-col gap-6 md:hidden">
-            {testimonials.map((t) => (
-              <div key={t.name} className="flex flex-col gap-3">
-                <div className="rounded-2xl overflow-hidden border-2 border-[hsl(15,80%,50%)] aspect-[4/5]">
-                  <img src={t.image} alt={t.name} className="w-full h-full object-cover" />
-                </div>
-                <div className="bg-card rounded-2xl p-5 shadow-md border border-border">
-                  <h3 className="text-sm font-bold text-[hsl(0,70%,35%)] mb-2">{t.name}</h3>
-                  <p className="text-xs leading-relaxed text-muted-foreground">{t.text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <ImageTestimonial
+            title={Pageres?.imageTestimonials?.title}
+              
+              subtitle={Pageres?.imageTestimonials?.subtitle}
+              items={imageData}
+            />
 
       <section className="bg-[#f3f3f3] py-20 px-20">
         <div className="mx-auto">

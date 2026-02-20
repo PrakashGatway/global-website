@@ -4,6 +4,27 @@ import { serverInstance } from "../axiosInstance"
 
 export const dynamic = "force-dynamic"
 
+
+export async function generateMetadata() {
+  const res = await serverInstance.get("/blogs?type=blog");
+  const seo = res.data.data.seoMeta;
+
+  return {
+    title: seo?.metaTitle?.trim() || "blogs",
+    description: seo?.metaDescription,
+    keywords: seo?.metaKeywords,
+    alternates: {
+      canonical: `${seo?.canonicalUrl || `https://ooshasglobal.com/blog/`}`
+    },
+    openGraph: {
+      title: seo?.metaTitle,
+      description: seo?.metaDescription,
+      url: `/${seo?.canonicalUrl || "service"}`,
+      type: "website"
+    }
+  };
+}
+
 export default async function BlogPage({
   searchParams,
 }: {

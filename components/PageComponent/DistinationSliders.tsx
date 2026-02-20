@@ -682,7 +682,7 @@ gsap.registerPlugin(ScrollTrigger);
                 key={item.title}
                 className={`help-right help-right-${i} absolute inset-0`}
               >
-                <div className="absolute top-2 right-25 w-[380px] h-[440px] shadow-2xl border border-orange-500 rotate-[5deg]" />
+                {/* <div className="absolute top-2 right-25 w-[380px] h-[440px] shadow-2xl border border-orange-500 rotate-[5deg]" /> */}
 
                 <div className="absolute top-6 right-12 w-[380px] h-[440px] shadow-lg bg-white">
                   <img
@@ -693,7 +693,7 @@ gsap.registerPlugin(ScrollTrigger);
                 </div>
 
                 <div
-                  className="absolute bottom-1 right-[70%] translate-x-1/2 w-[180px] h-[180px] bg-white border-2 shadow-lg overflow-hidden"
+                  className="absolute bottom-25 right-[70%] translate-x-1/2 w-[180px] h-[180px] bg-white border-2 shadow-lg overflow-hidden"
                   style={{
                     fontFamily:
                       "'Mileast','Playfair Display','Cormorant Garamond',Georgia,serif",

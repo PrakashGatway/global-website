@@ -39,7 +39,7 @@ export default function Navbar({
   const { profile, loading, Logout } = useGlobal()
   const [isScrolled, setIsScrolled] = useState(false);
   const [Login, setLogin] = useState(false)
-  const [openForm,setOpenForm] = useState(false)
+  const [openForm, setOpenForm] = useState(false)
 
 
 
@@ -82,7 +82,7 @@ export default function Navbar({
 
 
     },
-     {
+    {
       title: "Universities",
       route: "/",
       hasDropdown: true,
@@ -175,7 +175,7 @@ export default function Navbar({
   }
 
 
-   
+
 
 
 
@@ -207,9 +207,9 @@ export default function Navbar({
 
           {/* Left */}
 
-          <div className={`items-center text-end px-8   gap-2 bg-white    `}>
+          <div className={`items-center text-end px-8 py-2  gap-2 bg-white    `}>
 
-            <span className={`font-medium  ${isScrolled ? "hidden lg:hidden" : "hidden lg:block"}`} >
+            <span className={`font-medium  ${isScrolled ? "hidden lg:hidden" : "hidden lg:block "}`} >
               Contact Your Nearest Centre
             </span>
             {/* LOGO */}
@@ -238,39 +238,39 @@ export default function Navbar({
 
 
                     <a
-  href="tel:+919876543210"
-  className="flex items-center gap-2 hover:opacity-80 transition font-medium"
->
-  <span>Consult With Expert:</span>
-  <span className="font-semibold text-yellow-300">
-    +91 9887120429
-  </span>
-</a>
+                      href="tel:+919876543210"
+                      className="flex items-center gap-2 hover:opacity-80 transition font-medium"
+                    >
+                      <span>Consult With Expert:</span>
+                      <span className="font-semibold text-yellow-300">
+                        +91 9887120429
+                      </span>
+                    </a>
 
 
-                    <button onClick={()=> setOpenForm(true)} className=" text-[var(--secondary-foreground)]  text-sm font-semibold shadow hover:opacity-90 transition">
+                    <button onClick={() => setOpenForm(true)} className=" text-[var(--secondary-foreground)]  text-sm font-semibold shadow hover:opacity-90 transition">
                       Free Demo
                     </button>
 
                     {
                       Login ? (
                         <Link
-                            href="/dashboard"
-                            className="flex items-center gap-2 hover:opacity-80 transition"
-                          >
-                            <span className={`w-3 h-3 bg-yellow-300 rounded-full`}></span>
-                            Dashboard
-                          </Link>
+                          href="/dashboard"
+                          className="flex items-center gap-2 hover:opacity-80 transition"
+                        >
+                          <span className={`w-3 h-3 bg-yellow-300 rounded-full`}></span>
+                          Dashboard
+                        </Link>
                       ) :
-                      (
-                        <a href="/login" className={`flex items-center gap-2 hover:opacity-80 transition ${Login ? "hidden" : "block"}  `}>
-                      <span className={`w-3 h-3 bg-yellow-300 rounded-full`}></span>
-                      Student Login
-                    </a>
-                      )
+                        (
+                          <a href="/login" className={`flex items-center gap-2 hover:opacity-80 transition ${Login ? "hidden" : "block"}  `}>
+                            <span className={`w-3 h-3 bg-yellow-300 rounded-full`}></span>
+                            Student Login
+                          </a>
+                        )
                     }
 
-                    
+
                   </div>
 
                 </div>
@@ -278,13 +278,13 @@ export default function Navbar({
             )}
 
 
-            
+
 
             {/* ================= DESKTOP MENU ================= */}
             <div className={`hidden lg:flex items-end gap-2 ${isScrolled ? "flex justify-end" : "justify-center"} `} >
 
 
-              {navbar?.map((item,i) => (
+              {navbar?.map((item, i) => (
                 <div key={i} className="relative group ">
 
                   <Link
@@ -314,56 +314,56 @@ export default function Navbar({
               "
                     >
                       <div className="bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.12)] w-[640px] p-5 border border-gray-100">
-                         {/* ===== TITLE ONLY FOR UNIVERSITIES ===== */}
-  {item.type === "destination" && (
-    <div className="mb-4 px-1">
-      <h3 className="text-sm font-semibold text-gray-800">
-       Top Group
-      </h3>
-      <div className="w-12 h-[2px] bg-[var(--primary)] mt-1 rounded-full"></div>
-    </div>
-  )}
+                        {/* ===== TITLE ONLY FOR UNIVERSITIES ===== */}
+                        {item.type === "destination" && (
+                          <div className="mb-4 px-1">
+                            <h3 className="text-sm font-semibold text-gray-800">
+                              Top Group
+                            </h3>
+                            <div className="w-12 h-[2px] bg-[var(--primary)] mt-1 rounded-full"></div>
+                          </div>
+                        )}
 
                         <div className="grid grid-cols-2 gap-3">
-  {(
-    item.type === "service"
-      ? Serviceitem
-      : item.type === "country"
-      ? countryres
-      : Featureitem
-  )?.map((uni) => {
+                          {(
+                            item.type === "service"
+                              ? Serviceitem
+                              : item.type === "country"
+                                ? countryres
+                                : Featureitem
+                          )?.map((uni) => {
 
-    const href =
-      item.type === "service"
-        ? `/service/${uni.slug}`
-        : item.type === "country"
-        ? `/destination/${uni.slug}`
-        : `/universities/group/${uni.slug}`;
+                            const href =
+                              item.type === "service"
+                                ? `/service/${uni.slug}`
+                                : item.type === "country"
+                                  ? `/destination/${uni.slug}`
+                                  : `/universities/group/${uni.slug}`;
 
-    return (
-      <Link
-        key={uni._id}
-        href={href}
-        className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition"
-      >
-        <div className="w-10 h-10 rounded-full bg-white shadow overflow-hidden">
-          <Image
-            src={uni?.navbarImage}
-            alt={uni?.navbarTitle}
-            width={40}
-            height={40}
-            className="object-cover w-full h-full"
-          />
-        </div>
+                            return (
+                              <Link
+                                key={uni._id}
+                                href={href}
+                                className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-white shadow overflow-hidden">
+                                  <Image
+                                    src={uni?.navbarImage}
+                                    alt={uni?.navbarTitle}
+                                    width={40}
+                                    height={40}
+                                    className="object-cover w-full h-full"
+                                  />
+                                </div>
 
-        <div>
-          <p className="font-semibold text-sm">{uni.navbarTitle}</p>
-          <p className="text-xs opacity-70">{uni.subTitle}</p>
-        </div>
-      </Link>
-    );
-  })}
-</div>
+                                <div>
+                                  <p className="font-semibold text-sm">{uni.navbarTitle}</p>
+                                  <p className="text-xs opacity-70">{uni.subTitle}</p>
+                                </div>
+                              </Link>
+                            );
+                          })}
+                        </div>
 
                       </div>
                     </div>
@@ -444,7 +444,7 @@ export default function Navbar({
         {/* ================= MOBILE SIDEBAR ================= */}
         <AnimatePresence>
           {isOpen && (
-            <div className="fixed inset-0 z-[9999] bg-black/40 flex ">
+            <div className="fixed inset-0 z-[9999] bg-black/40 flex h-[100vh] ">
 
               <div
                 className="absolute inset-0 bg-transparent"
@@ -559,7 +559,7 @@ export default function Navbar({
       </nav>
 
       <AnimatePresence>
-       {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
+        {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
 
       </AnimatePresence>
 

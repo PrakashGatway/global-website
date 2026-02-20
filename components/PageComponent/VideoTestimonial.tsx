@@ -2,22 +2,25 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
 
 interface VideoTestimonialItem {
-  title: string;
-  text: string;
+  _id: string;
+  name: string;
+  message: string;
   videoUrl: string;
+  designation?: string;
+  university?: string;
+  image?: string;
+  rating?: number;
 }
 
 interface VideoTestimonialsSliderProps {
-  items: VideoTestimonialItem[] | any[];
+  items: VideoTestimonialItem[];
   title?: string;
-  emptyStateMessage?: string;
+  subtitle?: string;
   autoPlay?: boolean;
   interval?: number;
   showProgress?: boolean;
-  showControls?: boolean;
   pauseOnHover?: boolean;
 }
 
@@ -41,244 +44,174 @@ const getYouTubeId = (url: string): string | null => {
   }
 };
 
-const normalizeItem = (item: any): (VideoTestimonialItem & { videoId: string | null }) | null => {
-  if (!item) return null;
-
-  const title = item.title || item.heading || item.name || "Trusted Success";
-  const text = item.text || item.description || item.subtitle || item.content || item.review || "";
-  const videoUrl = item.videoUrl || item.video || item.youtube_link || item.youtubeUrl || item.url || "";
-  const videoId = getYouTubeId(videoUrl);
-  
- const isMp4 = videoUrl.endsWith(".mp4");
-
-return {
-  title,
-  text,
-  videoUrl,
-  videoId: isMp4 ? null : getYouTubeId(videoUrl),
-  isMp4,
-};
-
-};
-
 export default function VideoTestimonialsSlider({
   items = [],
-  subtitle,
   title = "Video || Testimonials",
-  emptyStateMessage = "No video testimonials available",
-  autoPlay = true, // Default to true for auto-play
-  interval = 5000, // 5 seconds default
+  subtitle = "What our students say",
+  autoPlay = true,
+  interval = 5000,
   showProgress = true,
-  showControls = true,
   pauseOnHover = true,
 }: VideoTestimonialsSliderProps) {
-  // Process items
-  const validItems = items
-    .map(normalizeItem)
-    .filter(Boolean) as (VideoTestimonialItem & { videoId: string })[];
-
-  const [index, setIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(autoPlay);
   const [isHovering, setIsHovering] = useState(false);
 
-  // Memoized navigation functions
-  const next = useCallback(() => {
-    setIndex((i) => (i + 1) % validItems.length);
-  }, [validItems.length]);
+  // Filter only video testimonials
+  const videoItems = items.filter(item => item.videoUrl);
 
-  const prev = useCallback(() => {
-    setIndex((i) => (i - 1 + validItems.length) % validItems.length);
-  }, [validItems.length]);
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % videoItems.length);
+  }, [videoItems.length]);
 
-  // Go to specific slide
-  const goToSlide = useCallback((slideIndex: number) => {
-    if (slideIndex >= 0 && slideIndex < validItems.length) {
-      setIndex(slideIndex);
-      // Reset auto-play timer when manually changing slide
-      if (isAutoPlaying) {
-        setIsAutoPlaying(false);
-        setTimeout(() => setIsAutoPlaying(true), 100);
-      }
-    }
-  }, [validItems.length, isAutoPlaying]);
+  const prevSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + videoItems.length) % videoItems.length);
+  }, [videoItems.length]);
 
-  // Auto-play effect with pause on hover
+  // Auto-play effect
   useEffect(() => {
-    if (!isAutoPlaying || validItems.length <= 1) return;
-    
-    // Pause auto-play when hovering if enabled
+    if (!isAutoPlaying || videoItems.length <= 1) return;
     if (pauseOnHover && isHovering) return;
 
-    const timer = setInterval(() => {
-      next();
-    }, interval);
-
+    const timer = setInterval(nextSlide, interval);
     return () => clearInterval(timer);
-  }, [isAutoPlaying, validItems.length, interval, next, pauseOnHover, isHovering]);
+  }, [isAutoPlaying, interval, nextSlide, pauseOnHover, isHovering, videoItems.length]);
 
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (validItems.length <= 1) return;
-      
-      switch(e.key) {
-        case 'ArrowLeft':
-          e.preventDefault();
-          prev();
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          next();
-          break;
-        case ' ':
-        case 'Spacebar':
-          e.preventDefault();
-          setIsAutoPlaying(prev => !prev);
-          break;
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+        setIsAutoPlaying(prev => !prev);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [prev, next, validItems.length]);
+  }, [nextSlide, prevSlide]);
 
   // Empty state
-  if (validItems.length === 0) {
+  if (!videoItems.length) {
     return (
-      <section className=" py-4 lg:py-12 text-center">
-        <h2 className="text-lg lg:text-2xl font-bold mb-4">
-          {title.includes('||') ? (
-            <>
-              <span className="text-[#f46c44]">{title.split('||')[0].trim()}</span>{' '}
-              <span className="text-gray-600">{title.split('||')[1].trim()}</span>
-            </>
-          ) : title}
-        </h2>
-        <p className="text-gray-500">{emptyStateMessage}</p>
+      <section className="bg-[#efefef] py-10 pb-20">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className="text-lg lg:text-2xl font-bold mb-4">
+            {title.includes('||') ? (
+              <>
+                <span className="text-[#f46c44]">{title.split('||')[0].trim()}</span>{' '}
+                <span className="text-gray-600">{title.split('||')[1].trim()}</span>
+              </>
+            ) : title}
+          </h2>
+          <p className="text-gray-500">No video testimonials available</p>
+        </div>
       </section>
     );
   }
 
-  const item = validItems[index];
-
- 
+  const currentItem = videoItems[currentIndex];
+  const videoId = getYouTubeId(currentItem.videoUrl);
+  const isMp4 = currentItem.videoUrl?.endsWith('.mp4');
 
   return (
- <section className="bg-[#efefef] py-10 pb-20 relative">
+    <section className="bg-[#efefef] py-10 pb-20 relative max-w-screen overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Title Section */}
+        <div className="mb-10 lg:mb-20">
+          <h2 className="text-lg lg:text-5xl font-light text-red-700">
+            {title.includes("||") ? title.split("||")[0].trim() : ""}
+          </h2>
+          <h3 className="text-xl lg:text-6xl font-bold text-primary relative inline-block lg:mt-2">
+            {title.includes("||") ? title.split("||")[1].trim() : "Testimonials"}
+            <span className="absolute right-0 -bottom-1 w-32 h-[2px] lg:h-1 bg-red-600"></span>
+          </h3>
+          <p className="text-gray-600 mt-2">{subtitle}</p>
+        </div>
 
-  <div className="max-w-7xl mx-auto px-6">
+        {/* Slider */}
+        <div
+          className="relative mx-auto"
+          onMouseEnter={() => pauseOnHover && setIsHovering(true)}
+          onMouseLeave={() => pauseOnHover && setIsHovering(false)}
+        >
+          {/* Background decorative element */}
+          <div className="hidden lg:block absolute -left-40 -top-10 w-[45%] h-[75%] bg-[#e5cfc5] rounded-tr-[40px] rounded-br-[30px] z-0"></div>
 
-    {/* ================= TITLE ================= */}
-    <div className=" mb-10 lg:mb-20">
-      <h2 className="text-lg lg:text-5xl font-light text-red-700">
-        {title.includes("||")
-          ? title.split("||")[0].trim()
-          : ""}
-      </h2>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ x: 100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -100, opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className=" "
+            >
+              
+              {/* Video Container */}
+              <div className="relative w-full lg:w-[95%] mx-auto  lg:h-[500px] rounded-[30px] lg:rounded-[40px] shadow-2xl bg-white overflow-hidden">
+                <div className="aspect-video lg:h-full w-full">
+                  {isMp4 ? (
+                    <video
+                      src={currentItem.videoUrl}
+                      controls
+                      className="w-full h-full  inset-0"
+                    />
+                  ) : videoId ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={`https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title={`${currentItem.name} testimonial`}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <p className="text-gray-500">Video unavailable</p>
+                    </div>
+                  )}
+                </div>
+              </div>
 
-      <h3 className="text-xl lg:text-6xl font-bold text-primary relative inline-block lg:mt-2">
-        {title.includes("||")
-          ? title.split("||")[1].trim()
-          : "Testimonials"}
+              {/* Testimonial Badge */}
+              <div className="absolute bottom-[-40px] right-[-10px] sm:right-0 sm:bottom-[-30px] lg:-bottom-10 lg:-right-16 bg-[#6d1901] w-[90%] sm:w-[320px] text-white px-5 sm:px-6 py-5 sm:py-6 rounded-2xl lg:rounded-3xl shadow-xl z-20 hidden lg:block">
+                <p className="text-base sm:text-lg font-semibold leading-relaxed">
+                  {currentItem.message}
+                </p>
+                <div className="mt-3">
+                  <p className="font-bold text-lg">{currentItem.name}</p>
+                
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
 
-        <span className="absolute right-0 -bottom-1 w-32 h-[2px] lg:h-1 bg-red-600"></span>
-      </h3>
-      <p className='text-gray-600 mt-2'> {subtitle}</p>
-    </div>
+          {/* Progress Indicators */}
+          {showProgress && videoItems.length > 1 && (
+            <div className="flex justify-center gap-2 mt-16 lg:mt-20">
+              {videoItems.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`h-2 rounded-full transition-all ${
+                    idx === currentIndex 
+                      ? 'w-8 bg-red-600' 
+                      : 'w-2 bg-gray-400 hover:bg-gray-600'
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+          )}
 
-    {/* ================= SLIDER ================= */}
-    <div
-  className="relative mx-auto"
-  onMouseEnter={() => pauseOnHover && setIsHovering(true)}
-  onMouseLeave={() => pauseOnHover && setIsHovering(false)}
->
-
-  {/* ===== STATIC BEIGE BACKGROUND (NOT INSIDE MOTION) ===== */}
-  <div className="hidden lg:block absolute -left-40 -top-10 w-[45%] h-[75%] bg-[#e5cfc5] rounded-tr-[40px] rounded-br-[30px] z-0"></div>
-
-  <AnimatePresence mode="wait">
-    <motion.div
-  key={index}
-  initial={{ x: 100 }}
-  animate={{ x: 0 }}
-  exit={{ x: -100 }}
-  transition={{ duration: 0.4, ease: "easeInOut" }}
-  className="relative z-10"
->
-
-      {/* ================= VIDEO ================= */}
-     <div className="relative 
-                w-full 
-                sm:w-[90%] 
-                md:w-[80%] 
-                lg:w-[95%] 
-                mx-auto 
-                py-1 
-                lg:h-[500px] 
-                rounded-[30px] lg:rounded-[40px] 
-                shadow-2xl 
-                bg-white">
-
-  <div className="aspect-video lg:h-full">
-    {item.isMp4 ? (
-      <video
-        src={item.videoUrl}
-        controls
-        className="w-full h-full object-cover rounded-[30px] lg:rounded-[40px]"
-      />
-    ) : item.videoId ? (
-      <iframe
-        className="w-full h-full rounded-[30px] lg:rounded-[40px]"
-        src={`https://www.youtube.com/embed/${item.videoId}`}
-        allowFullScreen
-      />
-    ) : (
-      <p className="text-center text-gray-500 py-20">
-        Video unavailable
-      </p>
-    )}
-  </div>
-
-  {/* ================= BADGE ================= */}
-  <div className="
-      absolute 
-      bottom-[-40px] 
-      right-[-10px] 
-      sm:right-0 
-      sm:bottom-[-30px]
-      lg:-bottom-10 
-      lg:-right-16 
-      bg-[#6d1901] 
-      w-[90%] 
-      sm:w-[320px] 
-      text-white 
-      px-5 
-      sm:px-6 
-      py-5 
-      sm:py-6 
-      rounded-2xl 
-      lg:rounded-3xl 
-      shadow-xl 
-      z-20
-      lg:block hidden
-    ">
-    <p className="text-base sm:text-lg font-semibold leading-relaxed">
-      {item.title}
-      <br />
-      {item.text}
-    </p>
-  </div>
-
-</div>
-
-    </motion.div>
-  </AnimatePresence>
-
-</div>
-
-  </div>
-</section>
-
-);
-
+       
+        </div>
+      </div>
+    </section>
+  );
 }

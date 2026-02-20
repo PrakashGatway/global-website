@@ -18,7 +18,7 @@ export default function Tooltip({ text }: { text: string }) {
 
       {/* TOOLTIP */}
       {open && (
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-8 w-72 z-50">
+        <div className="absolute -left-14 -translate-x-1/2 bottom-8 w-72 z-50">
           <div className="relative bg-slate-600 text-white text-xs p-4 rounded-lg shadow-xl">
             {text}
 

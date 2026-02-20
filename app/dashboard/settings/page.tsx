@@ -298,12 +298,16 @@ export default function ProfilePage() {
             profile: {
                 name: profile.name || '',
                 phone: profile.phone || '',
-                dateOfBirth: profile.dateOfBirth || '',
+                dateOfBirth: profile.dateOfBirth
+                    ? profile.dateOfBirth.split("T")[0]
+                    : "",
                 nationality: profile.nationality || '',
                 gender: profile.gender || '',
                 firstLanguage: profile.firstLanguage || '',
                 maritalStatus: profile.maritalStatus || '',
-                passportExpiry: profile.passportExpiry || '',
+                passportExpiry: profile.passportExpiry
+                ? profile.passportExpiry.split("T")[0]
+                :"",
                 passportNumber: profile.passportNumber || ''
             },
             address: {
@@ -356,6 +360,7 @@ export default function ProfilePage() {
                 prev ? { ...prev, ...response.data.result } : null
             )
             profile(response.data.result) // update global
+            console.log()
         } catch (error) {
             console.error('Error updating profile:', error)
         } finally {
@@ -409,7 +414,7 @@ export default function ProfilePage() {
 
     if (loading) {
         return (
-            <div className="flex-1 flex items-center justify-center min-h-screen">
+            <div className="flex-1 flex items-center justify-center min-h-screen ">
                 <div className="text-center">
                     <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                     <p className="text-muted-foreground">Loading profile...</p>
@@ -417,6 +422,12 @@ export default function ProfilePage() {
             </div>
         )
     }
+
+    const values = watch();
+
+    useEffect(() => {
+  console.log("FORM VALUES 👉", values);
+}, [values]);
 
     return (
         <FormProvider {...methods}>
@@ -683,9 +694,9 @@ export default function ProfilePage() {
                                                                     }}
                                                                     errors={errors}
                                                                     sectionKey={key}
-                                                                    register={methods.register} 
-                                                                    control={methods.control}  
-                                                                    setValue={setValue} 
+                                                                    register={methods.register}
+                                                                    control={methods.control}
+                                                                    setValue={setValue}
                                                                 />
 
                                                                 <div className="flex justify-end">

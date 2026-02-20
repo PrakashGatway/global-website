@@ -4,7 +4,7 @@ export const profileSchema = {
 
     fields: [
       {
-        name: "fullName",
+        name: "name",
         label: "Full Name",
         type: "text",
         required: true,
@@ -66,7 +66,10 @@ export const profileSchema = {
         name: "maritalStatus",
         label: "Marital Status",
         type: "radio",
-        options: ["Single", "Married"],
+        options: [
+          { label: "Single", value: "Single" },
+          { label: "Married", value: "Married" }
+        ],
         required: true
       },
 
@@ -74,7 +77,11 @@ export const profileSchema = {
         name: "gender",
         label: "Gender",
         type: "radio",
-        options: ["male", "female", "other"],
+        options: [
+          { label: "Male", value: "male" },
+          { label: "Female", value: "female" },
+          { label: "Other", value: "other" }
+        ],
         required: true
       }
     ]
@@ -162,7 +169,10 @@ export const profileSchema = {
             name: "graduated",
             label: "I have graduated",
             type: "radio",
-            options: ["yes", "no"],
+            options: [
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" }
+            ],
             required: true,
             col: 2
           }
@@ -354,73 +364,183 @@ export const profileSchema = {
             ]
           }
         ]
-      }
-    }
-  },
-
- visaStudypermit: {
-  title: "Visa & Study Permit",
+      },
+      coursescore: {
+  title: "GRE or GMAT Scores",
   type: "single",
 
   fields: [
     {
-      name: "visaRefused",
-      label:
-        "Have you been refused a visa from Canada, the USA, the United Kingdom, New Zealand, Australia or Ireland?",
-      type: "radio",
-      required: true,
+      name: "hasGmat",
+      label: "I have GMAT exam scores",
+      type: "switch",
+      defaultValue: false,
 
-      options: [
-        { label: "Yes", value: "yes" },
-        { label: "No", value: "no" }
-      ],
-
-      tooltip:
-        "Include any past visa refusals. This information helps assess eligibility."
-    },
-
-    {
-      name: "validVisas",
-      label: "Which valid study permits or visas do you have?",
-      type: "checkbox",
-
-      options: [
+      children: [
         {
-          label: "Canadian Study Permit / Visitor Visa",
-          value: "canada"
+          name: "gmatTotal",
+          label: "Total",
+          type: "scoreGroup",
+          fields: [
+            { name: "score", label: "Score", type: "number", required: true },
+            { name: "rank", label: "Rank %", type: "number", required: true }
+          ]
         },
         {
-          label: "USA F1 Visa",
-          value: "usa"
+          name: "gmatVerbal",
+          label: "Verbal",
+          type: "scoreGroup",
+          fields: [
+            { name: "score", label: "Score", type: "number", required: true },
+            { name: "rank", label: "Rank %", type: "number", required: true }
+          ]
         },
         {
-          label: "Australian Study Visa",
-          value: "australia"
+          name: "gmatQuantitative",
+          label: "Quantitative",
+          type: "scoreGroup",
+          fields: [
+            { name: "score", label: "Score", type: "number", required: true },
+            { name: "rank", label: "Rank %", type: "number", required: true }
+          ]
         },
         {
-          label: "UK Tier 4 Student / Short Term Study Visa",
-          value: "uk"
+          name: "gmatAwa",
+          label: "AWA",
+          type: "scoreGroup",
+          fields: [
+            { name: "score", label: "Score", type: "number", required: true },
+            { name: "rank", label: "Rank %", type: "number", required: true }
+          ]
         },
         {
-          label: "Irish Stamp 2",
-          value: "ireland"
-        },
-        {
-          label: "I don't have this",
-          value: "none"
+          name: "gmatExamDate",
+          label: "Date of exam",
+          type: "date",
+          required: true
         }
       ]
     },
 
     {
-      name: "visaDetails",
-      label:
-        "Please provide more information about your current study permit/visa and any past refusals, if any",
-      type: "textarea",
-      placeholder: "Enter your details..."
+      name: "hasGre",
+      label: "I have GRE exam scores",
+      type: "switch",
+      defaultValue: false,
+
+      children: [
+        {
+          name: "greTotal",
+          label: "Total",
+          type: "scoreGroup",
+          fields: [
+            { name: "score", label: "Score", type: "number", required: true },
+            { name: "rank", label: "Rank %", type: "number", required: true }
+          ]
+        },
+        {
+          name: "greVerbal",
+          label: "Verbal",
+          type: "scoreGroup",
+          fields: [
+            { name: "score", label: "Score", type: "number", required: true },
+            { name: "rank", label: "Rank %", type: "number", required: true }
+          ]
+        },
+        {
+          name: "greQuantitative",
+          label: "Quantitative",
+          type: "scoreGroup",
+          fields: [
+            { name: "score", label: "Score", type: "number", required: true },
+            { name: "rank", label: "Rank %", type: "number", required: true }
+          ]
+        },
+        {
+          name: "greAwa",
+          label: "AWA",
+          type: "scoreGroup",
+          fields: [
+            { name: "score", label: "Score", type: "number", required: true },
+            { name: "rank", label: "Rank %", type: "number", required: true }
+          ]
+        },
+        {
+          name: "greExamDate",
+          label: "Date of exam",
+          type: "date",
+          required: true
+        }
+      ]
     }
   ]
 }
+    }
+  },
+
+  visaStudypermit: {
+    title: "Visa & Study Permit",
+    type: "single",
+
+    fields: [
+      {
+        name: "visaRefused",
+        label:
+          "Have you been refused a visa from Canada, the USA, the United Kingdom, New Zealand, Australia or Ireland?",
+        type: "radio",
+        required: true,
+
+        options: [
+          { label: "Yes", value: "yes" },
+          { label: "No", value: "no" }
+        ],
+
+        tooltip:
+          "Include any past visa refusals. This information helps assess eligibility."
+      },
+
+      {
+        name: "validVisas",
+        label: "Which valid study permits or visas do you have?",
+        type: "checkbox",
+
+        options: [
+          {
+            label: "Canadian Study Permit / Visitor Visa",
+            value: "canada"
+          },
+          {
+            label: "USA F1 Visa",
+            value: "usa"
+          },
+          {
+            label: "Australian Study Visa",
+            value: "australia"
+          },
+          {
+            label: "UK Tier 4 Student / Short Term Study Visa",
+            value: "uk"
+          },
+          {
+            label: "Irish Stamp 2",
+            value: "ireland"
+          },
+          {
+            label: "I don't have this",
+            value: "none"
+          }
+        ]
+      },
+
+      {
+        name: "visaDetails",
+        label:
+          "Please provide more information about your current study permit/visa and any past refusals, if any",
+        type: "textarea",
+        placeholder: "Enter your details..."
+      }
+    ]
+  }
 
 
 

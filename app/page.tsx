@@ -35,7 +35,7 @@ export async function generateMetadata() {
     openGraph: {
       title: seo?.metaTitle,
       description: seo?.metaDescription,
-      url: `/${seo?.canonicalUrl || ""}`,
+      url: `${seo?.canonicalUrl || "https://ooshasglobal.com/home/"}`,
       type: "website",
     },
   };
@@ -50,12 +50,14 @@ export default async function Home() {
   
  
 
-  const [destinationRes, imageRes , Faqres] = await Promise.all([
+  const [destinationRes, imageRes  , Faqres, videoRes] = await Promise.all([
     serverInstance.get(
       "/page-information/navbar?isFeatured=true&type=destinations&limit=6"
     ),
-    serverInstance.get("/testimonials?type=image"),
-    serverInstance.get("/faqs/public/list?type=General"),
+    serverInstance.get("/testimonials?type=image&limit=5"),
+    serverInstance.get("/faqs/public/list?type=General&limit=8"),
+    serverInstance.get("/testimonials?type=video&limit=5"),
+
 
   ]);
 
@@ -68,6 +70,7 @@ export default async function Home() {
       destinationData={destinationRes.data.data}
       imageData={imageRes.data.data}
       Faqres = {Faqres.data.data}
+      videoRes={videoRes.data.data}
     />
   );
 }

@@ -27,7 +27,7 @@ import { useGlobal } from "@/src/statecontext"
 
 
 
-export default function Homepage({ homePage, destinationData, imageData , Faqres }) {
+export default function Homepage({ homePage, destinationData, imageData , Faqres,videoRes }) {
 
   const [openForm, setOpenForm] = useState(false);
 
@@ -123,7 +123,7 @@ const experienceYears = currentYear - startYear;
 
 
 
-
+console.log(videoRes)
 
 
 
@@ -435,11 +435,7 @@ const experienceYears = currentYear - startYear;
      <VideoTestimonialsSlider
   title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
   subtitle = {homePage?.videoTestimonials?.subtitle}
-  items={imageData?.map((item: any) => ({
-    title: item.title,
-    text: item.description || homePage?.videoTestimonials?.subtitle || "",
-    videoUrl: item.videoUrl || "",
-  }))}
+  items={videoRes}
   // Auto-play is enabled by default
 />
 
@@ -473,7 +469,7 @@ const experienceYears = currentYear - startYear;
 
           <div
             ref={sliderRefD}
-            className="keen-slider lg:grid lg:grid-cols-4 lg:gap-1 items-start"
+            className="keen-slider items-start"
           >
             {destinationData.map((item) => (
               <div
@@ -481,7 +477,7 @@ const experienceYears = currentYear - startYear;
                 className="keen-slider__slide "
               >
                 {/* 👇 YOUR EXISTING UI (UNCHANGED) */}
-                <Link href={`/destination/${item.slug}`}>
+                <Link href={`/universities/group/${item.slug}`}>
                   <div className="text-center group">
                     <div className="relative mx-auto w-full max-w-[280px] mb-6">
                       <img

@@ -2,11 +2,37 @@ import { serverInstance } from "@/app/axiosInstance";
 import CountryDetails from "@/components/country";
 
 
+
+
+/* ---------------- SEO ---------------- */
+export async function generateMetadata({params}) {
+  const {slug} = await params
+  const res = await serverInstance.get(`/page-information/slug/${slug}`);
+  const seo = res.data.data.seoMeta;
+
+  return {
+    title: seo?.metaTitle?.trim() || "Services",
+    description: seo?.metaDescription,
+    keywords: seo?.metaKeywords,
+    alternates: {
+      canonical: `${seo?.canonicalUrl || "service"}`
+    },
+    openGraph: {
+      title: seo?.metaTitle,
+      description: seo?.metaDescription,
+      url: `/${seo?.canonicalUrl || "service"}`,
+      type: "website"
+    }
+  };
+}
+
+
 export default async function Page({params}){
 
       const Universityres = await serverInstance.get("/universities?location_alias=ivy-league")
 
   const Faqres = await  serverInstance.get("/faqs/public/list?type=General")
+  const imageRes = await serverInstance.get("/testimonials?type=image&limit=5")
 
   const {slug} = await params
 
@@ -19,6 +45,6 @@ export default async function Page({params}){
 
 
     return(
-        <CountryDetails Universityres = {Universityres} Faqres = {Faqres} Pageres={Pageres.data}  />
+        <CountryDetails Universityres = {Universityres} Faqres = {Faqres} Pageres={Pageres.data} imageData= {imageRes.data.data}  />
     )
 }

@@ -1,10 +1,14 @@
 import { serverInstance } from "@/app/axiosInstance";
+import NotFound from "@/app/not-found";
 import ServicePage from "@/components/ServicePage";
+import { redirect } from "next/navigation";
+
 
 
 /* ---------------- SEO ---------------- */
-export async function generateMetadata() {
-  const res = await serverInstance.get("/page-information/slug/test-preparation");
+export async function generateMetadata({params}) {
+  const {slug} = await params
+  const res = await serverInstance.get(`/page-information/slug/${slug}`);
   const seo = res.data.data.seoMeta;
 
   return {
@@ -12,7 +16,7 @@ export async function generateMetadata() {
     description: seo?.metaDescription,
     keywords: seo?.metaKeywords,
     alternates: {
-      canonical: `/${seo?.canonicalUrl || "service"}`
+      canonical: `${seo?.canonicalUrl || "service"}`
     },
     openGraph: {
       title: seo?.metaTitle,
@@ -25,7 +29,14 @@ export async function generateMetadata() {
 
 /* ---------------- Page ---------------- */
 export default async function Page({params}) {
+
     const { slug } = await params;
+
+    if(slug==="service"){
+      return redirect("/service")
+    }
+
+
   const [serviceRes, testimonialImgRes , Faqres] = await Promise.all([
     serverInstance.get(`/page-information/slug/${slug}`),
     serverInstance.get("/testimonials?type=image"),
