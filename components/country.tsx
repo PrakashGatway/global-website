@@ -1,16 +1,16 @@
 import UniversityCard from '@/components/UniversityCard'
-import { Facebook, Instagram, Linkedin, PhoneIcon, Send, Twitter, Youtube } from 'lucide-react'
+import { Divide, Facebook, Instagram, Linkedin, PhoneIcon, Send, Twitter, Youtube } from 'lucide-react'
 import Image from 'next/image'
 
 import FAQSection from '@/components/faqPage'
 import { DynamicLucideIcon } from '@/components/DynamicLucideIcon'
 import ImageTestimonial from './ImageTestimonial'
 
-export default async function CountryDetails({ Universityres, Faqres, Pageres , imageData }) {
+export default async function CountryDetails({ Universityres, Faqres, Pageres, imageData }) {
   const pageData = Pageres?.data;
 
 
-
+  console.log(pageData)
   const rows = [
     ["Total Number of Universities", "100+ (Public & Private)"],
     ["Oldest University", "University of Bologna (Established in 1088)"],
@@ -54,7 +54,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres , 
     "Rhodes Scholarship",
     "Commonwealth Scholarship and Fellowship Plan",
   ];
-  
+
   const rightScholarships = scholarshipItems.slice(midPoint).map(item => item.title) || [
     "A.S Hornby Educational Trust Scholarship",
     "Felix Scholarships",
@@ -112,8 +112,8 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres , 
   ];
 
 
-  
-  
+
+
 
   return (
     <>
@@ -122,7 +122,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres , 
         <div
           className="w-full h-[80vh] relative flex items-center justify-start"
           style={{
-            backgroundImage: `url(${pageData?.sections?.hero?.heroImagee ||"/images/country-bg.jpeg"})`,
+            backgroundImage: `url(${pageData?.sections?.hero?.heroImagee || "/images/country-bg.jpeg"})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -166,13 +166,13 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres , 
                 mb-6 max-w-xl lg:max-w-xl
               ">
                 {pageData?.sections?.hero?.title || "Study in Germany"}
-                
+
               </h1>
 
               {/* Button */}
               <div className='flex gap-2'>
                 <a href={pageData?.sections?.hero?.ctaLink1 || "/contact"}>
-                <button className="
+                  <button className="
                   bg-yellow-400 hover:bg-yellow-500
                   transition duration-300
                   rounded-full
@@ -183,13 +183,13 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres , 
                   text-sm md:text-base lg:text-lg
                   shadow-lg
                 ">
-                  <PhoneIcon size={20} />
-                  <span>{pageData?.sections?.hero?.ctaText1 || "Talk to an Expert Counsellor for FREE"}</span>
-                </button>
-              </a>
+                    <PhoneIcon size={20} />
+                    <span>{pageData?.sections?.hero?.ctaText1 || "Talk to an Expert Counsellor for FREE"}</span>
+                  </button>
+                </a>
 
-              <a href={pageData?.sections?.hero?.ctaLink2 || "/contact"}>
-                <button className="
+                <a href={pageData?.sections?.hero?.ctaLink2 || "/contact"}>
+                  <button className="
                   bg-yellow-400 hover:bg-yellow-500
                   transition duration-300
                   rounded-full
@@ -200,13 +200,13 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres , 
                   text-sm md:text-base lg:text-lg
                   shadow-lg
                 ">
-                  <PhoneIcon size={20} />
-                  <span>{pageData?.sections?.hero?.ctaText2 || "Talk to an Expert Counsellor for FREE"}</span>
-                </button>
-              </a>
+                    <PhoneIcon size={20} />
+                    <span>{pageData?.sections?.hero?.ctaText2 || "Talk to an Expert Counsellor for FREE"}</span>
+                  </button>
+                </a>
 
               </div>
-              
+
             </div>
           </div>
 
@@ -357,28 +357,28 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres , 
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 ">
-  {(pageData?.sections?.whyStudy?.items || []).map((item, index) => (
-    
-    <div key={index} className="flex items-start gap-4 bg-gray-200 p-4 rounded-xl">
-      <div className="text-[#8b1d04]">
-        <DynamicLucideIcon name={item.icon} size={34} />
-      </div>
+                {(pageData?.sections?.whyStudy?.items || []).map((item, index) => (
 
-      <div>
-        <h4 className="text-xl font-semibold text-gray-900">
-          {item.title}
-        </h4>
-        <p className="text-[#123b73]">
-          {item.description}
-        </p>
-      </div>
-    </div>
+                  <div key={index} className="flex items-start gap-4 bg-gray-200 p-4 rounded-xl">
+                    <div className="text-[#8b1d04]">
+                      <DynamicLucideIcon name={item.icon} size={34} />
+                    </div>
 
-  ))}
-</div>
+                    <div>
+                      <h4 className="text-xl font-semibold text-gray-900">
+                        {item.title}
+                      </h4>
+                      <p className="text-[#123b73]">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+
+                ))}
+              </div>
             </div>
 
-          
+
 
           </div>
 
@@ -406,8 +406,8 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres , 
 
                   {/* Benefit Box */}
                   <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[50px] px-6 md:px-3 py-4 md:py-5 text-white  text-base ">
-                  <h1 className='text-3xl font-semibold' >{item.title}</h1>  
-                  <p className='text-sm text-white'>{item?.description}</p>
+                    <h1 className='text-3xl font-semibold' >{item.title}</h1>
+                    <p className='text-sm text-white'>{item?.description}</p>
 
                   </div>
                 </div>
@@ -482,124 +482,41 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres , 
       </section>
 
       <div className='w-full bg-[#ef6a42] px-8 pb-10 mx-auto'>
-        <UniversityCard university = {Universityres?.data?.result} />
+        <UniversityCard university={Universityres?.data?.result} />
       </div>
 
-      <section className="w-full bg-white py-16">
-        <div className="max-w-7xl mx-auto">
-
-          {/* Heading */}
-          <div className="mb-10">
-            <p className="text-red-500 text-xl md:text-5xl font-medium">
-              How to find the best
-            </p>
-
-            <h2 className="text-primary text-3xl md:text-5xl font-bold relative inline-block">
-              German university for you
-              <span className="absolute right-0 -bottom-3 w-24 h-1 bg-red-600"></span>
-            </h2>
-          </div>
-
-          {/* Container */}
-          <div className="bg-white text-center rounded-2xl border border-gray-300 p-6 md:p-10 shadow-sm">
-
-            <h3 className="text-[#123b73] text-start text-2xl font-semibold mb-6">
-              {pageData?.sections?.contentSection?.items?.[0]?.title || "Highlight Table"}
-            </h3>
-
-            {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-
-                {/* Header */}
-                <thead>
-                  <tr className="bg-[#ef6a42] text-white text-center">
-                    <th className="py-4 px-6 border border-gray-300 font-semibold">
-                      Parameters
-                    </th>
-                    <th className="py-4 px-6 border border-gray-300 font-semibold">
-                      Details
-                    </th>
-                  </tr>
-                </thead>
-
-                {/* Body */}
-                <tbody>
-                  {rows.map((row, i) => (
-                    <tr key={i} className="bg-white">
-                      <td className="py-4 px-6 border border-gray-300 text-[#ef6a42] font-medium">
-                        {row[0]}
-                      </td>
-                      <td className="py-4 px-6 border border-gray-300 text-[#123b73]">
-                        {row[1]}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
+    
 
       <section className="w-full bg-white py-16">
         <div className="max-w-7xl mx-auto">
 
-          {/* Heading */}
-          <div className="text-center mb-10">
-            <h2 className="text-primary text-3xl md:text-5xl font-bold relative inline-block">
-              Tuition fees, visas and financial aid
-              <span className="absolute right-0 -bottom-3 w-24 h-1 bg-red-600"></span>
-            </h2>
-          </div>
+         
 
           {/* Table Wrapper */}
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
+            {pageData?.sections?.contentSection?.items?.map((item, i) => (
+              <>
+              <div key={i}>
+               {/* Heading */}
+          <div className=" m-10 ">
+            <h2 className="text-primary text-3xl md:text-4xl font-bold relative inline-block">
+            <span className='text-red-600'>{item.title.split("||")[0]}</span> 
+           <br /> <span>{item.title.split("||")[1]}</span> 
+            <span className=' border-b-4 border-red-600'>{item.title.split("||")[2]}</span> 
 
-              {/* Header */}
-              <thead>
-                <tr className="bg-[#ef6a42] text-white text-center">
-                  <th className="py-5 px-6 text-lg font-semibold">
-                    Category
-                  </th>
-                  <th className="py-5 px-6 text-lg font-semibold">
-                    Details
-                  </th>
-                  <th className="py-5 px-6 text-lg font-semibold text-center">
-                    Information
-                  </th>
-                </tr>
-              </thead>
 
-              {/* Body */}
-              <tbody>
-                {row.map((row, index) => (
-                  <tr key={index} className="bg-white text-center border-2 border-gray-300">
-
-                    {/* Category */}
-                    <td className="py-10 px-6 text-[#ef6a42] font-semibold text-lg border border-gray-300">
-                      {row.category}
-                    </td>
-
-                    {/* Details */}
-                    <td className="py-10 px-6 text-[#123b73] text-lg border border-gray-300">
-                      {row.details}
-                    </td>
-
-                    {/* Button */}
-                    <td className="py-10 px-6 text-center border border-gray-300">
-                      <button className="bg-[#7a1b05] hover:bg-[#5e1404] text-white px-8 py-3 rounded-full font-semibold transition">
-                        {row.button}
-                      </button>
-                    </td>
-
-                  </tr>
-                ))}
-              </tbody>
-
-            </table>
+            </h2>
+          </div>
+              <div
+                
+                className=""
+                dangerouslySetInnerHTML={{
+                  __html: item.description
+                }}
+              />
+              </div>
+              </>
+            ))}
           </div>
         </div>
       </section>
@@ -662,11 +579,11 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres , 
       </section>
 
       <ImageTestimonial
-            title={Pageres?.imageTestimonials?.title}
-              
-              subtitle={Pageres?.imageTestimonials?.subtitle}
-              items={imageData}
-            />
+        title={Pageres?.imageTestimonials?.title}
+
+        subtitle={Pageres?.imageTestimonials?.subtitle}
+        items={imageData}
+      />
 
       <section className="bg-[#f3f3f3] py-20 px-20">
         <div className="mx-auto">

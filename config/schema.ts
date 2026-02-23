@@ -41,6 +41,7 @@ export const profileSchema = {
           "UK",
           "Australia"
         ],
+        optionsSource: "countries",
         required: true
       },
 
@@ -92,10 +93,20 @@ export const profileSchema = {
 
     fields: [
       {
-        name: "address",
-        label: "Address",
+        name: "address1",
+        label: "Address Line 1",
         type: "text",
         required: true,
+        validation: {
+          minLength: 5,
+          message: "Address too short"
+        },
+        col: 2
+      },
+      {
+        name: "address2",
+        label: "Address Line 2",
+        type: "text",
         validation: {
           minLength: 5,
           message: "Address too short"
@@ -114,6 +125,7 @@ export const profileSchema = {
         name: "country",
         label: "Country",
         type: "select",
+        optionsSource: "countries",
         options: ["India", "Canada", "UK"],
         required: true
       },
@@ -126,7 +138,7 @@ export const profileSchema = {
       },
 
       {
-        name: "zip",
+        name: "postalcode",
         label: "Postal Code",
         type: "text",
         validation: {
@@ -145,9 +157,10 @@ export const profileSchema = {
         title: "Education Summary",
         fields: [
           {
-            name: "countryOfEducation",
+            name: "country",
             label: "Country of education",
             type: "select",
+            optionsSource: "countries",
             required: true,
             options: ["India", "Canada", "USA"]
           },
@@ -188,7 +201,9 @@ export const profileSchema = {
             name: "country",
             label: "Country of institution",
             type: "select",
+            optionsSource: "countries",
             required: true
+
           },
           {
             name: "institutionName",
@@ -200,13 +215,15 @@ export const profileSchema = {
             name: "educationLevel",
             label: "Level of education",
             type: "select",
-            required: true
+            required: true,
+            options: ["Grade1", "Grade2", "Grade3"]
           },
           {
             name: "gradingScheme",
             label: "Grading Scheme",
             type: "select",
-            required: true
+            required: true,
+            options: ["Other"]
           },
           {
             name: "startDate",

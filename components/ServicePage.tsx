@@ -638,43 +638,61 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
           </h2>
           <p className="text-center text-gray-500 mb-6 max-w-4xl mx-auto">{images.subTitle}</p>
 
-          <div className="flex justify-center mt-8 py-10">
-            <div className="flex items-center gap-1 rounded-full border border-orange-200 bg-white p-1">
-              {tabs.map((tab) => {
-                const isActive = activeTab === tab.value;
+         <div className="flex justify-center mt-8 py-6 lg:py-10 px-2">
+  <div
+    className="
+      flex items-center gap-1
+      rounded-full border border-orange-200 bg-white p-1
+      max-w-full
+      overflow-x-auto
+      sm:flex-wrap sm:justify-center
+    "
+  >
+    {tabs.map((tab) => {
+      const isActive = activeTab === tab.value;
 
+      return (
+        <button
+          key={tab.value}
+          onClick={() => handleTabClick(tab.value)}
+          className="
+            relative
+            px-3 py-2
+            sm:px-4
+            lg:px-5 lg:py-2
+            text-xs sm:text-sm lg:text-sm
+            font-medium
+            rounded-full
+            whitespace-nowrap
+            flex-shrink-0
+          "
+        >
+          {/* Sliding Active Pill */}
+          {isActive && (
+            <motion.span
+              layoutId="activeTabPill"
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                damping: 35,
+              }}
+              className="absolute inset-0 rounded-full bg-orange-600"
+            />
+          )}
 
-                return (
-                  <button
-                    key={tab.value}
-                    onClick={() => handleTabClick(tab.value)}
-                    className="relative px-5 py-2 text-sm font-medium rounded-full"
-                  >
-                    {/* SLIDING ACTIVE PILL */}
-                    {isActive && (
-                      <motion.span
-                        layoutId="activeTabPill"
-                        transition={{
-                          type: "spring",
-                          stiffness: 500,
-                          damping: 35,
-                        }}
-                        className="absolute inset-0 rounded-full bg-orange-600"
-                      />
-                    )}
-
-                    {/* LABEL */}
-                    <span
-                      className={`relative z-10 transition-colors ${isActive ? "text-white" : "text-orange-600"
-                        }`}
-                    >
-                      {tab.label}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
+          {/* Label */}
+          <span
+            className={`relative z-10 transition-colors ${
+              isActive ? "text-white" : "text-orange-600"
+            }`}
+          >
+            {tab.label}
+          </span>
+        </button>
+      );
+    })}
+  </div>
+</div>
 
 
 

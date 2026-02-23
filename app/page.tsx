@@ -54,9 +54,9 @@ export default async function Home() {
     serverInstance.get(
       "/page-information/navbar?isFeatured=true&type=destinations&limit=6"
     ),
-    serverInstance.get("/testimonials?type=image&limit=5"),
+    serverInstance.get("/testimonials?type=image&limit=6"),
     serverInstance.get("/faqs/public/list?type=General&limit=8"),
-    serverInstance.get("/testimonials?type=video&limit=5"),
+    serverInstance.get("/testimonials?type=video&limit=6"),
 
 
   ]);

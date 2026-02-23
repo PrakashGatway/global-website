@@ -9,6 +9,8 @@ import { serverInstance } from "./axiosInstance"
 import { GlobalProvider } from "@/src/statecontext"
 import { Toaster } from "react-hot-toast";
 import Script from "next/script"
+import BreadcrumbSchema from "@/components/BreadcrumbSchema"
+
 
 
 
@@ -58,8 +60,10 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({
   children,
+  params
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode,
+  params: any;
 }>) {
   const [feature, countryres] = await Promise.all([
     serverInstance.get("/page-information/navbar?isNavbar=true"),
@@ -100,11 +104,14 @@ export default async function RootLayout({
             gtag('config', 'G-Z5PEF3NSXZ');
           `}
         </Script>
+        <BreadcrumbSchema  params={params}/>
+    
       </head>
 
 
       <body className={`${notoSans.className} antialiased`}>
         <GlobalProvider>
+        
           
         <Navbar Featureitem={featureRes || []} Serviceitem={serviceres || [] }
         countryres = {countryres.data.data}

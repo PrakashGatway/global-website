@@ -431,7 +431,7 @@ export default function UniversityDetailPage() {
     }
 
     return (
-        <main className="flex-1 overflow-y-auto bg-gradient-to-b from-background to-muted/20 relative">
+        <main className="flex-1 overflow-y-auto  bg-gradient-to-b from-background to-muted/20 relative">
             {/* Back Navigation */}
             <div className="rounded-3xl absolute top-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border">
                 <div className="p-2">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -173,564 +173,572 @@ const WorkCard = ({
 )
 
 // Main Profile Page Component
+interface ProfileFormData {
+  profile: {
+    name: string;
+    phone: string;
+    dateOfBirth: string;
+    nationality: string;
+    gender: 'male' | 'female' | 'other' | '';
+    firstLanguage: string;
+    maritalStatus: string;
+    passportExpiry: string;
+    passportNumber: string;
+  };
+  address: {
+    address1: string;
+    address2: string
+    city: string;
+    state: string;
+    country: string;
+    postalCode: string;
+  };
+  education: {
+    countryOfEducation: string;
+    highestEducationLevel: string;
+    gradingScheme: string;
+    gradeAverage: string;
+    graduated: string;
+  };
+  testscore: {
+    ielts?: string;
+    toefl?: string;
+    pte?: string;
+    gre?: string;
+    gmat?: string;
+  };
+  visaStudypermit: {
+    preferredStudyLevel: string;
+    preferredCountries: string[];
+    preferredIntakes: string[];
+    budget: {
+      min: number;
+      max: number;
+      currency: string;
+    };
+  };
+}
+
 export default function ProfilePage() {
-    const router = useRouter()
-    const [user, setUser] = useState<any | null>(null)
-    const [loading, setLoading] = useState(false)
-    const [activeTab, setActiveTab] = useState<'profile' | 'address' | 'education' | 'testscore' | 'visaStudypermit' | 'security' | 'applications'>('profile')
-    const [uploadingImage, setUploadingImage] = useState(false)
-    const [saving, setSaving] = useState(false)
-    const [schools, setSchools] = useState<any[]>([{}]);
+  const router = useRouter();
+  const { profile } = useGlobal();
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'profile' | 'address' | 'education' | 'testscore' | 'visaStudypermit'>('profile');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [educations, setEducations] = useState<any[]>([]);
+  const [workExperiences, setWorkExperiences] = useState<any[]>([]);
 
-    const { profile } = useGlobal()
+    const [countries, setCountries] = useState([])
+      const [page, setPage] = useState(1)
+    
 
-    // React Hook Form
-    const methods = useForm({
-        defaultValues: {
-            profile: {
-                name: '',
-                phone: '',
-                dateOfBirth: '',
-                nationality: '',
-                gender: '',
-                firstLanguage: '',
-                maritalStatus: '',
-                passportExpiry: '',
-                passportNumber: ''
-            },
-            address: {
-                address: '',
-                city: '',
-                state: '',
-                country: '',
-                postalCode: ''
-            },
-            education: {
-                countryOfEducation: "",
-                highestEducationLevel: "",
-                gradingScheme: "",
-                gradeAverage: "",
-                graduated: ""
-            }
-        }
-    })
+    const [filters, setFilters] = useState({
+        country: "",
+        city: "",
+        uni_type: "",
+        has_accommodation: "",
+        min_acceptance_rate: "",
+        max_acceptance_rate: "",
+        sort_by: "name",
+        sort_order: "asc"
+      })
+  
 
-    const { reset, watch, setValue } = methods
+      const fetchCountries = useCallback(async () => {
+          try {
+            const response = await axiosInstance.get('/countries?limit=300')
+            const data = response.data.data
+            let formatData = data.map(country => ({ label: country.name, value: country.code }))
+            setCountries(formatData)
+          } catch (error) {
+            console.error('Error fetching countries:', error)
+          }
+        })
+      
+        useEffect(() => {
+          fetchCountries()
+        },[])
 
-    // Form States
-    const [profileForm, setProfileForm] = useState({
+
+          const handleFilterChange = (key: keyof typeof filters, value: string) => {
+    setFilters(prev => ({
+      ...prev,
+      [key]: value
+    }))
+    setPage(1)
+  }
+
+  // Initialize React Hook Form
+  const methods = useForm<ProfileFormData>({
+    defaultValues: {
+      profile: {
         name: '',
         phone: '',
         dateOfBirth: '',
         nationality: '',
-        gender: '' as 'male' | 'female' | 'other' | '',
+        gender: '',
         firstLanguage: '',
-        maritalStatus: "",
+        maritalStatus: '',
         passportExpiry: '',
         passportNumber: ''
-    })
+      },
+      address: {
+        address1: '',
+        address2: '',
+        city: '',
+        state: '',
+        country: '',
+        postalcode: ''
+      },
+      education: {
+  summary: {
+    countryOfEducation: '',
+    highestEducationLevel: '',
+    gradingScheme: '',
+    graduated: ''
+  },
 
-    const [educationForm, setEducationForm] = useState({
-        countryOfEducation: "",
-        highestEducationLevel: "",
-        gradingScheme: "",
-        gradeAverage: "",
-        graduated: ""
-    })
+  // ⭐ repeatable array
+  schools: [
+    {
+      country: '',
+      institutionName: '',
+      educationLevel: '',
+      gradingScheme: '',
+      startDate: '',
+      endDate: '',
+      degreeName: '',
+      address: '',
+      city: '',
+      state: '',
+      postalcode: ''
+    }
+  ]
+},
+      testscore: {
+  // Match the 'sections' key from your schema
+  englishscore: {
+    // Match the first radio field name
+    englishStatus: "", 
+    // Match the nested radio field name (inside children)
+    englishTest: "", 
+    
+    // Optional: Pre-fill score fields if needed, otherwise empty strings work
+    reading: "",
+    listening: "",
+    writing: "",
+    speaking: "",
+    examDate: "",
+    totalScore: ""
+  },
+  
+  // Match the 'coursescore' section
+  coursescore: {
+    hasGmat: false, // Matches switch default
+    hasGre: false,  // Matches switch default
+    
+    // GMAT Score fields
+    gmatTotal_score: "",
+    gmatTotal_rank: "",
+    gmatVerbal_score: "",
+    gmatVerbal_rank: "",
+    gmatQuantitative_score: "",
+    gmatQuantitative_rank: "",
+    gmatAwa_score: "",
+    gmatAwa_rank: "",
+    gmatExamDate: "",
 
-    const [workForm, setWorkForm] = useState<WorkExperience>({
-        title: '',
-        company: '',
-        location: '',
-        startDate: '',
-        endDate: '',
-        isCurrent: false,
-        description: ''
-    })
-
-    const [preferencesForm, setPreferencesForm] = useState({
+    // GRE Score fields
+    greTotal_score: "",
+    greTotal_rank: "",
+    greVerbal_score: "",
+    greVerbal_rank: "",
+    greQuantitative_score: "",
+    greQuantitative_rank: "",
+    greAwa_score: "",
+    greAwa_rank: "",
+    greExamDate: ""
+  }
+},
+      visaStudypermit: {
         preferredStudyLevel: '',
-        preferredCountries: [] as string[],
-        preferredIntakes: [] as string[],
+        preferredCountries: [],
+        preferredIntakes: [],
         budget: {
-            min: 0,
-            max: 0,
-            currency: 'USD'
-        },
-        testScores: {
-            ielts: '',
-            toefl: '',
-            pte: '',
-            gre: '',
-            gmat: ''
+          min: 0,
+          max: 0,
+          currency: 'USD'
         }
-    })
-
-    const [educations, setEducations] = useState<Education[]>([])
-    const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([])
-    const [editingEducationIndex, setEditingEducationIndex] = useState<number | null>(null)
-    const [editingWorkIndex, setEditingWorkIndex] = useState<number | null>(null)
-    const [showEducationForm, setShowEducationForm] = useState(false)
-    const [showWorkForm, setShowWorkForm] = useState(false)
-    const [errors, setErrors] = useState({})
-
-    // Fetch user data
-    useEffect(() => {
-        if (!profile) return
-        setUser(profile)
-
-        const profileData = {
-            ...profile,
-            address: profile.address?.address || "",
-            city: profile.address?.city || "",
-            state: profile.address?.state || "",
-            country: profile.address?.country || "",
-            postalCode: profile.address?.postalCode || ""
-        }
-
-        setProfileForm(prev => ({
-            ...prev,
-            ...profileData
-        }))
-
-        // Reset react-hook-form with user data
-        reset({
-            profile: {
-                name: profile.name || '',
-                phone: profile.phone || '',
-                dateOfBirth: profile.dateOfBirth
-                    ? profile.dateOfBirth.split("T")[0]
-                    : "",
-                nationality: profile.nationality || '',
-                gender: profile.gender || '',
-                firstLanguage: profile.firstLanguage || '',
-                maritalStatus: profile.maritalStatus || '',
-                passportExpiry: profile.passportExpiry
-                ? profile.passportExpiry.split("T")[0]
-                :"",
-                passportNumber: profile.passportNumber || ''
-            },
-            address: {
-                address: profile.address?.address || '',
-                city: profile.address?.city || '',
-                state: profile.address?.state || '',
-                country: profile.address?.country || '',
-                postalCode: profile.address?.postalCode || ''
-            },
-            education: {
-                countryOfEducation: profile.education?.countryOfEducation || "",
-                highestEducationLevel: profile.education?.highestEducationLevel || "",
-                gradingScheme: profile.education?.gradingScheme || "",
-                gradeAverage: profile.education?.gradeAverage || "",
-                graduated: profile.education?.graduated || ""
-            }
-        })
-
-        setLoading(false)
-    }, [profile, reset])
-
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (!file) return
-
-        const formData = new FormData()
-        formData.append('image', file)
-
-        try {
-            setUploadingImage(true)
-            const response = await axiosInstance.put('/upload/profile', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            })
-            profile.profileImage = response.data.url
-        } catch (error) {
-            console.error('Error uploading image:', error)
-        } finally {
-            setUploadingImage(false)
-        }
+      }
     }
 
-    const handleProfileUpdate = async (payload: any) => {
-        try {
-            setSaving(true)
-            const response = await axiosInstance.put(
-                '/auth/profile',
-                payload
-            )
-            setUser(prev =>
-                prev ? { ...prev, ...response.data.result } : null
-            )
-            profile(response.data.result) // update global
-            console.log()
-        } catch (error) {
-            console.error('Error updating profile:', error)
-        } finally {
-            setSaving(false)
-        }
+  });
+
+  const { reset, watch, formState: { errors } } = methods;
+
+  // Fetch user data and reset form
+  useEffect(() => {
+    if (!profile) return;
+
+    // Format dates properly
+    const formatDate = (date: string) => {
+      return date ? date.split('T')[0] : '';
+    };
+
+    // Reset form with profile data
+    reset({
+      profile: {
+        name: profile.name || '',
+        phone: profile.phone || '',
+        dateOfBirth: formatDate(profile.dateOfBirth),
+        nationality: profile.nationality || '',
+        gender: profile.gender || '',
+        firstLanguage: profile.firstLanguage || '',
+        maritalStatus: profile.maritalStatus || '',
+        passportExpiry: formatDate(profile.passportExpiry),
+        passportNumber: profile.passportNumber || ''
+      },
+      address: {
+        address1: profile.address?.address1 || '',
+        address2: profile.address?.address2 || '',
+        city: profile.address?.city || '',
+        state: profile.address?.state || '',
+        country: profile.address?.country || '',
+        postalcode: profile.address?.postalcode || ''
+      },
+      education: {
+        countryOfEducation: profile.education?.countryOfEducation || '',
+        highestEducationLevel: profile.education?.highestEducationLevel || '',
+        gradingScheme: profile.education?.gradingScheme || '',
+        gradeAverage: profile.education?.gradeAverage || '',
+        graduated: profile.education?.graduated || ''
+      },
+      testscore: {
+        ielts: profile.testScores?.ielts || '',
+        toefl: profile.testScores?.toefl || '',
+        pte: profile.testScores?.pte || '',
+        gre: profile.testScores?.gre || '',
+        gmat: profile.testScores?.gmat || ''
+      },
+      visaStudypermit: {
+        preferredStudyLevel: profile.preferences?.preferredStudyLevel || '',
+        preferredCountries: profile.preferences?.preferredCountries || [],
+        preferredIntakes: profile.preferences?.preferredIntakes || [],
+        budget: profile.preferences?.budget || { min: 0, max: 0, currency: 'USD' }
+      }
+    });
+
+    setEducations(profile.educations || []);
+    setWorkExperiences(profile.workExperiences || []);
+    setLoading(false);
+  }, [profile, reset]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      setUploadingImage(true);
+      const response = await axiosInstance.put('/upload/profile', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      // Update profile image in context
+      profile({ ...profile, profileImage: response.data.url });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+    } finally {
+      setUploadingImage(false);
     }
+  };
 
-    const addSchool = () => {
-        if (schools.length >= 3) return // 🚫 limit
-        setSchools(prev => [...prev, {}])
+  useEffect(() => {
+  const subscription = methods.watch((value) => {
+    console.log("LIVE FORM DATA 🔥", value);
+  });
+
+  return () => subscription.unsubscribe();
+}, [methods]);
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      
+      // Get current form values
+      const formValues = methods.getValues();
+      
+      // Prepare payload based on active tab
+      let payload = {};
+      
+      switch (activeTab) {
+        case 'profile':
+          payload = { ...formValues.profile };
+          break;
+        case 'address':
+          payload = { address: formValues.address };
+          break;
+        case 'education':
+          payload = { education: formValues.education };
+          break;
+        case 'testscore':
+          payload = { testScores: formValues.testscore };
+          break;
+        case 'visaStudypermit':
+          payload = { preferences: formValues.visaStudypermit };
+          break;
+      }
+
+      // Trigger validation
+      const isValid = await methods.trigger();
+      if (!isValid) {
+        console.log('Validation errors:', errors);
+        return;
+      }
+
+      // Save to API
+      const response = await axiosInstance.put('/auth/profile', payload);
+      
+      // Update global context
+      profile(response.data.result);
+      
+
+  console.log("✅ FORM RESPONSE:", formValues);
+      
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    } finally {
+      setSaving(false);
     }
+  };
 
-    const removeSchool = (index: number) => {
-        setSchools(prev => prev.filter((_, i) => i !== index))
-    }
+  // Calculate profile completion
+  const calculateCompletion = () => {
+    const values = methods.getValues();
+    let completed = 0;
+    const total = 5;
 
-    const handleSave = async () => {
-        let schema
-        let payload
+    if (values.profile.name && values.profile.phone && values.profile.dateOfBirth) completed++;
+    if (values.address.address1 && values.address.address2 && values.address.city && values.address.country) completed++;
+    if (educations.length > 0) completed++;
+    if (values.testscore.ielts || values.testscore.toefl) completed++;
+    if (values.visaStudypermit.preferredStudyLevel) completed++;
 
-        if (activeTab === "profile") {
-            schema = profileSchema.profile
-            payload = watch('profile') // ✅ Get from react-hook-form
-        }
+    return Math.round((completed / total) * 100);
+  };
 
-        if (activeTab === "address") {
-            schema = profileSchema.address
-            payload = { address: watch('address') }
-        }
-
-        if (activeTab === "education") {
-            payload = { education: watch('education') }
-        }
-
-        if (schema) {
-            const validationErrors = validateForm(schema, payload)
-            if (Object.keys(validationErrors).length > 0) {
-                setErrors(validationErrors)
-                return
-            }
-        }
-
-        setErrors({})
-        await handleProfileUpdate(payload)
-    }
-
-    const handleSectionSave = (sectionKey: string) => {
-        console.log("Saving:", sectionKey, educationForm)
-        // API call here
-    }
-
-    if (loading) {
-        return (
-            <div className="flex-1 flex items-center justify-center min-h-screen ">
-                <div className="text-center">
-                    <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                    <p className="text-muted-foreground">Loading profile...</p>
-                </div>
-            </div>
-        )
-    }
-
-    const values = watch();
-
-    useEffect(() => {
-  console.log("FORM VALUES 👉", values);
-}, [values]);
-
+  if (loading) {
     return (
-        <FormProvider {...methods}>
-            <main className="flex-1 sm:px-6">
-                <div className="">
-                    <div className="bg-card border border-border rounded-2xl p-6">
-                        <div className="flex flex-col md:flex-row items-center gap-8">
-                            <div className="relative">
-                                <div className="w-28 h-28 rounded-full border-4 border-primary/30 overflow-hidden shadow-md">
-                                    {user?.profileImage ? (
-                                        <img
-                                            src={user.profileImage}
-                                            alt={user.name}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-muted">
-                                            <User className="w-10 h-10 text-muted-foreground" />
-                                        </div>
-                                    )}
-                                </div>
+      <div className="flex-1 flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
 
-                                <label
-                                    htmlFor="profile-image"
-                                    className="absolute bottom-0 right-0 p-2 bg-primary text-white rounded-full shadow hover:scale-105 transition cursor-pointer"
-                                >
-                                    {uploadingImage ? (
-                                        <RefreshCw className="w-4 h-4 animate-spin" />
-                                    ) : (
-                                        <Camera className="w-4 h-4" />
-                                    )}
-                                    <input
-                                        id="profile-image"
-                                        type="file"
-                                        accept="image/*"
-                                        className="hidden"
-                                        onChange={handleImageUpload}
-                                        disabled={uploadingImage}
-                                    />
-                                </label>
-                            </div>
+  
 
-                            {/* User Info */}
-                            <div className="flex-1 text-center md:text-left">
-                                <h1 className="text-2xl font-bold mb-1 capitalize">{user?.name || 'User'}</h1>
-                                <p className="text-muted-foreground flex items-center justify-center md:justify-start gap-2">
-                                    <Mail className="w-4 h-4" />
-                                    {user?.email || "Nomailfound@gmail.com"}
-                                </p>
+  const completionPercentage = calculateCompletion();
 
-                                <div className="mt-2 max-w-xl">
-                                    <div className="flex justify-between text-sm mb-1">
-                                        <span>Profile Completion</span>
-                                        <span className="font-semibold text-primary">{10}%</span>
-                                    </div>
-                                    <div className="h-3 bg-muted rounded-full ">
-                                        <motion.div
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${10}%` }}
-                                            transition={{ duration: 0.6 }}
-                                            className="h-full bg-primary rounded-full"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+  return (
+    <FormProvider {...methods}>
+      <main className="flex-1 sm:px-6 min-h-0">
+        {/* Profile Header */}
+        <div className="container mx-auto mt-6">
+          <div className="bg-card border border-border rounded-2xl p-6">
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              {/* Profile Image */}
+              <div className="relative">
+                <div className="w-28 h-28 rounded-full border-4 border-primary/30 overflow-hidden shadow-md">
+                  {profile?.profileImage ? (
+                    <img
+                      src={profile.profileImage}
+                      alt={profile.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted">
+                      <User className="w-10 h-10 text-muted-foreground" />
                     </div>
+                  )}
                 </div>
 
-                <div className="container mx-auto mt-3">
-                    <div className="flex gap-3">
-                        <div className="w-80 flex-shrink-0 sticky top-[30px] self-start">
-                            <div className="bg-card border border-border min-h-[80vh] rounded-2xl p-6 sticky top-[73px]">
-                                <h3 className="font-bold mb-4 flex items-center gap-2">
-                                    Complete Your Profile
-                                </h3>
-                                <div className="space-y-2">
-                                    <ProfileCompletionStep
-                                        step={1}
-                                        title="Basic Information"
-                                        description="Add your personal details"
-                                        isCompleted={!!(user?.name && user?.phone && user?.dateOfBirth)}
-                                        isActive={activeTab === 'profile'}
-                                        onClick={() => setActiveTab('profile')}
-                                    />
-                                    <ProfileCompletionStep
-                                        step={2}
-                                        title="Address Information"
-                                        description="Add your address details"
-                                        isCompleted={!!(user?.address?.address)}
-                                        isActive={activeTab === 'address'}
-                                        onClick={() => setActiveTab('address')}
-                                    />
-                                    <ProfileCompletionStep
-                                        step={3}
-                                        title="Education History"
-                                        description="Add your academic background"
-                                        isCompleted={educations.length > 0}
-                                        isActive={activeTab === 'education'}
-                                        onClick={() => setActiveTab('education')}
-                                    />
-                                    <ProfileCompletionStep
-                                        step={4}
-                                        title="Test Scores"
-                                        description="Add your professional experience"
-                                        isCompleted={workExperiences.length > 0}
-                                        isActive={activeTab === 'testscore'}
-                                        onClick={() => setActiveTab('testscore')}
-                                    />
-                                    <ProfileCompletionStep
-                                        step={5}
-                                        title="Study Preferences"
-                                        description="Set your course preferences"
-                                        isCompleted={!!user?.metadata?.preferredStudyLevel}
-                                        isActive={activeTab === 'visaStudypermit'}
-                                        onClick={() => setActiveTab('visaStudypermit')}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                <label
+                  htmlFor="profile-image"
+                  className="absolute bottom-0 right-0 p-2 bg-primary text-white rounded-full shadow hover:scale-105 transition cursor-pointer"
+                >
+                  {uploadingImage ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Camera className="w-4 h-4" />
+                  )}
+                  <input
+                    id="profile-image"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                    disabled={uploadingImage}
+                  />
+                </label>
+              </div>
 
-                        <div className="flex-1">
-                            <AnimatePresence mode="wait">
-                                {Object.entries(profileSchema).map(([key, value]) => (
-                                    <div key={key}>
-                                        {activeTab === key && (
-                                            <>
-                                                {value.type === "multi" ?
-                                                    <div className="space-y-6">
-                                                        {Object.entries(value.sections ?? {}).map(
-                                                            ([sectionKey, section]: any) => (
-                                                                <motion.div
-                                                                    key={sectionKey}
-                                                                    initial={{ opacity: 0, y: 20 }}
-                                                                    animate={{ opacity: 1, y: 0 }}
-                                                                >
-                                                                    <div className="bg-card border rounded-2xl p-6">
-                                                                        <h2 className="text-xl font-bold mb-6">
-                                                                            {section.title}
-                                                                        </h2>
+              {/* User Info */}
+              <div className="flex-1 text-center md:text-left">
+                <h1 className="text-2xl font-bold mb-1 capitalize">
+                  {profile?.name || 'User'}
+                </h1>
+                <p className="text-muted-foreground flex items-center justify-center md:justify-start gap-2">
+                  <Mail className="w-4 h-4" />
+                  {profile?.email || 'No email found'}
+                </p>
 
-                                                                        {/* SINGLE FORM */}
-                                                                        {section.type === "single" && (
-                                                                            <>
-                                                                                <FormRenderer
-                                                                                    schema={section}
-                                                                                    formData={educationForm}
-                                                                                    setFormData={setEducationForm}
-                                                                                    errors={errors}
-                                                                                />
-
-                                                                                {/* ✅ SAVE BUTTON */}
-                                                                                <div className="flex justify-end mt-6">
-                                                                                    <button
-                                                                                        onClick={() => handleSectionSave(key)}
-                                                                                        className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
-                                                                                    >
-                                                                                        Save & Continue
-                                                                                    </button>
-                                                                                </div>
-                                                                            </>
-                                                                        )}
-
-                                                                        {/* REPEATABLE FORM (Schools) */}
-                                                                        {section.type === "repeatable" && (
-                                                                            <>
-                                                                                {schools.map((school, index) => (
-                                                                                    <>
-                                                                                        <div
-                                                                                            key={index}
-                                                                                            className="relative border rounded-xl p-5 mb-10"
-                                                                                        >
-                                                                                            {/* ✅ Delete Button */}
-                                                                                            {schools.length > 1 && (
-                                                                                                <button
-                                                                                                    onClick={() => removeSchool(index)}
-                                                                                                    className="absolute top-3 right-3 text-red-500 text-sm font-medium hover:text-red-700"
-                                                                                                >
-                                                                                                    Delete
-                                                                                                </button>
-                                                                                            )}
-
-                                                                                            {/* School Title */}
-                                                                                            <h3 className="font-semibold mb-4">
-                                                                                                School {index + 1}
-                                                                                            </h3>
-
-                                                                                            <FormRenderer
-                                                                                                schema={section}
-                                                                                                formData={school}
-                                                                                                setFormData={(data: any) => {
-                                                                                                    setSchools(prev => {
-                                                                                                        const updated = [...prev]
-                                                                                                        updated[index] = data
-                                                                                                        return updated
-                                                                                                    })
-                                                                                                }}
-                                                                                                errors={errors}
-                                                                                            />
-                                                                                        </div>
-
-                                                                                        {/* ✅ SAVE BUTTON */}
-                                                                                        <div className="flex justify-end mt-6">
-                                                                                            <button
-                                                                                                onClick={() => handleSectionSave(key)}
-                                                                                                className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
-                                                                                            >
-                                                                                                Save & Continue
-                                                                                            </button>
-                                                                                        </div>
-                                                                                    </>
-                                                                                ))}
-
-                                                                                {/* ✅ Add Button */}
-                                                                                <button
-                                                                                    onClick={addSchool}
-                                                                                    disabled={schools.length >= 3}
-                                                                                    className={`mt-2 font-medium ${schools.length >= 3
-                                                                                        ? "text-gray-400 cursor-not-allowed"
-                                                                                        : "text-primary hover:underline"
-                                                                                        }`}
-                                                                                >
-                                                                                    + Add Attended School
-                                                                                </button>
-
-                                                                                {/* Limit Message */}
-                                                                                {schools.length >= 3 && (
-                                                                                    <p className="text-xs text-gray-400 mt-1">
-                                                                                        Maximum 3 schools allowed
-                                                                                    </p>
-                                                                                )}
-                                                                            </>
-                                                                        )}
-                                                                    </div>
-                                                                </motion.div>
-                                                            )
-                                                        )}
-                                                    </div>
-                                                    :
-                                                    <motion.div
-                                                        key="profile"
-                                                        initial={{ opacity: 0, y: 20 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        exit={{ opacity: 0, y: -20 }}
-                                                        className="space-y-6"
-                                                    >
-                                                        <div className="bg-card border border-border rounded-2xl p-6 min-h-[70vh]">
-                                                            <h2 className="text-xl font-bold mb-6">{value.title}</h2>
-
-                                                            {/* Always show form inputs */}
-                                                            <div className="space-y-4">
-                                                                <FormRenderer
-                                                                    schema={value}
-                                                                    formData={watch(key)}
-                                                                    setFormData={(data) => {
-                                                                        // ✅ Update react-hook-form state directly
-                                                                        Object.entries(data).forEach(([field, value]) => {
-                                                                            setValue(`${key}.${field}`, value, {
-                                                                                shouldValidate: true,
-                                                                                shouldDirty: true,
-                                                                                shouldTouch: true
-                                                                            })
-                                                                        })
-                                                                    }}
-                                                                    errors={errors}
-                                                                    sectionKey={key}
-                                                                    register={methods.register}
-                                                                    control={methods.control}
-                                                                    setValue={setValue}
-                                                                />
-
-                                                                <div className="flex justify-end">
-                                                                    <button
-                                                                        onClick={handleSave}
-                                                                        disabled={saving}
-                                                                        className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
-                                                                    >
-                                                                        {saving ? (
-                                                                            <>
-                                                                                <RefreshCw className="w-4 h-4 animate-spin" />
-                                                                                Saving...
-                                                                            </>
-                                                                        ) : (
-                                                                            <>
-                                                                                <Save className="w-4 h-4" />
-                                                                                Save Changes
-                                                                            </>
-                                                                        )}
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </motion.div>
-                                                }
-                                            </>
-                                        )}
-                                    </div>
-                                ))}
-                            </AnimatePresence>
-                        </div>
-                    </div>
+                <div className="mt-2 max-w-xl">
+                  <div className="flex justify-between text-sm mb-1">
+                    <span>Profile Completion</span>
+                    <span className="font-semibold text-primary">
+                      {completionPercentage}%
+                    </span>
+                  </div>
+                  <div className="h-3 bg-muted rounded-full">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${completionPercentage}%` }}
+                      transition={{ duration: 0.6 }}
+                      className="h-full bg-primary rounded-full"
+                    />
+                  </div>
                 </div>
-            </main>
-        </FormProvider>
-    )
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="container mx-auto mt-6">
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Sidebar Navigation */}
+            <div className="lg:w-80 flex-shrink-0">
+              <div className="bg-card border border-border rounded-2xl p-6 sticky top-[73px]">
+                <h3 className="font-bold mb-4 flex items-center gap-2">
+                  <Settings className="w-4 h-4" />
+                  Complete Your Profile
+                </h3>
+                <div className="space-y-2">
+                  <ProfileCompletionStep
+                    step={1}
+                    title="Basic Information"
+                    description="Add your personal details"
+                    isCompleted={!!(watch('profile.name') && watch('profile.phone') && watch('profile.dateOfBirth'))}
+                    isActive={activeTab === 'profile'}
+                    onClick={() => setActiveTab('profile')}
+                  />
+                  <ProfileCompletionStep
+                    step={2}
+                    title="Address Information"
+                    description="Add your address details"
+                    isCompleted={!!(watch('address.address') && watch('address.city'))}
+                    isActive={activeTab === 'address'}
+                    onClick={() => setActiveTab('address')}
+                  />
+                  <ProfileCompletionStep
+                    step={3}
+                    title="Education History"
+                    description="Add your academic background"
+                    isCompleted={educations.length > 0}
+                    isActive={activeTab === 'education'}
+                    onClick={() => setActiveTab('education')}
+                  />
+                  <ProfileCompletionStep
+                    step={4}
+                    title="Test Scores"
+                    description="Add your standardized test scores"
+                    isCompleted={!!(watch('testscore.ielts') || watch('testscore.toefl'))}
+                    isActive={activeTab === 'testscore'}
+                    onClick={() => setActiveTab('testscore')}
+                  />
+                  <ProfileCompletionStep
+                    step={5}
+                    title="Study Preferences"
+                    description="Set your course preferences"
+                    isCompleted={!!watch('visaStudypermit.preferredStudyLevel')}
+                    isActive={activeTab === 'visaStudypermit'}
+                    onClick={() => setActiveTab('visaStudypermit')}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Main Form Area */}
+            <div className="flex-1">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="bg-card border border-border rounded-2xl p-6">
+                    <h2 className="text-xl font-bold mb-6">
+                      {profileSchema[activeTab]?.title}
+                    </h2>
+
+                    {/* Render form based on active tab */}
+                    <div className="space-y-6">
+                      <FormRenderer
+                        schema={profileSchema[activeTab]}
+                        sectionKey={activeTab}
+                        countries={countries}
+                      />
+
+                      {/* Education List (if needed) */}
+                      {activeTab === 'education' && educations.length > 0 && (
+                        <div className="mt-6 pt-6 border-t border-border">
+                          <h3 className="font-semibold mb-4">Saved Education</h3>
+                          {educations.map((edu, index) => (
+                            <div key={index} className="bg-muted/30 rounded-lg p-4 mb-3">
+                              <p className="font-medium">{edu.institution}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {edu.degree} - {edu.fieldOfStudy}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Save Button */}
+                      <div className="flex justify-end pt-4 border-t border-border">
+                        <button
+                          onClick={handleSave}
+                          disabled={saving}
+                          className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+                        >
+                          {saving ? (
+                            <>
+                              <RefreshCw className="w-4 h-4 animate-spin" />
+                              Saving...
+                            </>
+                          ) : (
+                            <>
+                              <Save className="w-4 h-4" />
+                              Save Changes
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+      </main>
+    </FormProvider>
+  );
 }

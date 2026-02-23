@@ -19,7 +19,7 @@ export default function UniversityCard({ university }) {
     return null;
   }
 
-
+console.log(university)
 
   // If array, setup slider
   useEffect(() => {
@@ -138,10 +138,16 @@ export default function UniversityCard({ university }) {
             </div>
 
             {/* Button */}
-            <div className="px-6 pb-2 text-center">
+            <div className="px-6 pb-4 text-center flex gap-2">
               <Link href={`/universities/${uni.slug}`}>
                 <button className="bg-amber-900 hover:bg-amber-950 text-white px-6 py-2 rounded-full text-sm font-bold transition-colors">
                   View Details &gt;
+                </button>
+              </Link>
+
+              <Link href={`/universities/${uni.slug}`}>
+                <button className="bg-amber-900 hover:bg-amber-950 text-white px-6 py-2 rounded-full text-sm font-bold transition-colors">
+                  Apply &gt;
                 </button>
               </Link>
             </div>

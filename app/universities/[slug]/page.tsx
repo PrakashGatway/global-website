@@ -173,7 +173,7 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
   const galleryVideos = universityData.uni_gallery?.videos || [];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white ">
       {/* Hero Section with Slider */}
       <div className="relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -186,8 +186,8 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
       </div>
 
       {/* Header Info */}
-      <div className="sticky top-20 z-40 border-b bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="sticky top-28 z-40 border-b bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-[18px]">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-slate-900">{universityData.name}</h1>
@@ -278,22 +278,24 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
 
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b sticky top-16 z-30 mt-2">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-white border-b  z-30  ">
+        <div className=" mx-auto px-4 sm:px-6">
+
           <Tabs defaultValue={defaultTab} className="w-full">
-            <TabsList className="w-full justify-start rounded-none border-0 bg-transparent h-auto p-0 gap-8">
+            <div className='overflow-x-auto sticky top-54'>
+            <TabsList className="w-max inline-flex justify-start rounded-none border-0 h-auto p-1 gap-8 bg-white">
               {/* Generate tabs dynamically from sections */}
               {activeSections.map((section) => (
                 <TabsTrigger
                   key={section._id}
                   value={section.section_key}
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-gray-600 px-0 py-4 text-slate-700 data-[state=active]:text-slate-900"
+                  className="flex-shrink-0 rounded-none border-b-2 border-transparent data-[state=active]:border-orange-600 px-2 py-4 text-slate-700 data-[state=active]:text-slate-900"
                 >
                   {section.heading}
                 </TabsTrigger>
               ))}
             </TabsList>
-
+              </div>
             {/* Content Section */}
             <div className="max-w-7xl mx-auto px-0 py-8">
               <div className="grid lg:grid-cols-3 gap-8">

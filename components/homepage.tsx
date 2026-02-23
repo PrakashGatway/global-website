@@ -27,11 +27,11 @@ import { useGlobal } from "@/src/statecontext"
 
 
 
-export default function Homepage({ homePage, destinationData, imageData , Faqres,videoRes }) {
+export default function Homepage({ homePage, destinationData, imageData, Faqres, videoRes }) {
 
   const [openForm, setOpenForm] = useState(false);
 
-  
+
 
 
 
@@ -105,7 +105,7 @@ export default function Homepage({ homePage, destinationData, imageData , Faqres
           slides: { perView: 2, spacing: 20 },
         },
         "(min-width: 1024px)": {
-          slides: { perView: 4, spacing: 24 },
+          slides: { perView: 4, spacing: 0 },
         },
       },
     }, destination
@@ -115,15 +115,15 @@ export default function Homepage({ homePage, destinationData, imageData , Faqres
 
 
   const startYear = 2011; // 👈 apna starting year yaha daalo
-const currentYear = new Date().getFullYear();
-const experienceYears = currentYear - startYear;
+  const currentYear = new Date().getFullYear();
+  const experienceYears = currentYear - startYear;
 
 
 
 
 
 
-console.log(videoRes)
+  console.log(videoRes)
 
 
 
@@ -218,7 +218,7 @@ console.log(videoRes)
               </div>
 
               <AnimatePresence>
-              {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
+                {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
 
 
               </AnimatePresence>
@@ -228,8 +228,8 @@ console.log(videoRes)
 
             {/* RIGHT IMAGE */}
             <div className="flex justify-center lg:justify-end relative">
-              
-                 {homePage?.hero?.heroImage && (
+
+              {homePage?.hero?.heroImage && (
                 <Image
                   src={homePage.hero.heroImage.trim()}
                   width={450}
@@ -241,20 +241,20 @@ console.log(videoRes)
 
               <div className="absolute origin-center
  w-[500px] h-full -right-4 -top-23 animate-spin [animation-duration:60s] -z-10 hidden lg:block">
-  <img
-    src="/images/hero-bg-2.png"
-    alt=""
-    className="w-full h-full object-contain"
-  />
-</div>
+                <img
+                  src="/images/hero-bg-2.png"
+                  alt=""
+                  className="w-full h-full object-contain"
+                />
+              </div>
 
-          
-             
+
+
 
             </div>
           </div>
 
-         
+
 
         </div>
       </section>
@@ -262,108 +262,108 @@ console.log(videoRes)
 
       <section className="bg-[#f46c44] pb-20 relative overflow-hidden">
 
-  <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-6">
 
-    {/* ================= HEADING ================= */}
-    <div className=" mb-8 lg:mb-16">
-     
+          {/* ================= HEADING ================= */}
+          <div className=" mb-8 lg:mb-16">
 
-      <h3 className="text-white text-xl lg:text-7xl  relative inline-block mt-4">
-        <span className="">{homePage?.whyUs?.title.split("||")[0]}</span>
-        <span className="font-bold">{homePage?.whyUs?.title.split("||")[1]}</span>
 
-        {/* Yellow Brush Underline */}
-        <span className="absolute left-0 -bottom-2 lg:-bottom-6 w-full h-[2px] lg:h-2 bg-yellow-400 rounded-full"></span>
-      </h3>
-    </div>
+            <h3 className="text-white text-xl lg:text-7xl  relative inline-block mt-4">
+              <span className="">{homePage?.whyUs?.title.split("||")[0]}</span>
+              <span className="font-bold">{homePage?.whyUs?.title.split("||")[1]}</span>
 
-    {/* ================= CARDS ================= */}
-    <div className=" space-y-4 lg:space-y-10">
-
-      {/* TOP 3 CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-10">
-
-        {/* ITEM 1 */}
-        <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
-          <NutOffIcon className=" w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
-          <div>
-            <h4 className=" text-sm lg:text-2xl font-semibold text-black">
-              {homePage?.whyUs?.items?.[0]?.title}
-            </h4>
-            <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
-              {homePage?.whyUs?.items?.[0]?.description}
-            </p>
+              {/* Yellow Brush Underline */}
+              <span className="absolute left-0 -bottom-2 lg:-bottom-6 w-full h-[2px] lg:h-2 bg-yellow-400 rounded-full"></span>
+            </h3>
           </div>
-        </div>
 
-        {/* ITEM 2 */}
-        <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
-          <BadgeIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
-          <div>
-            <h4 className="text-sm lg:text-2xl font-semibold text-black">
-              {homePage?.whyUs?.items?.[1]?.title}
-            </h4>
-            <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
-              {homePage?.whyUs?.items?.[1]?.description}
-            </p>
-          </div>
-        </div>
+          {/* ================= CARDS ================= */}
+          <div className=" space-y-4 lg:space-y-10">
 
-        {/* ITEM 3 */}
-        <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
-          <TargetIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
-          <div>
-            <h4 className="text-sm lg:text-2xl font-semibold text-black">
-              {homePage?.whyUs?.items?.[2]?.title}
-            </h4>
-            <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
-              {homePage?.whyUs?.items?.[2]?.description}
-            </p>
-          </div>
-        </div>
+            {/* TOP 3 CARDS */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-10">
 
-      </div>
+              {/* ITEM 1 */}
+              <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
+                <NutOffIcon className=" w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
+                <div>
+                  <h4 className=" text-sm lg:text-2xl font-semibold text-black">
+                    {homePage?.whyUs?.items?.[0]?.title}
+                  </h4>
+                  <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
+                    {homePage?.whyUs?.items?.[0]?.description}
+                  </p>
+                </div>
+              </div>
 
-      {/* BOTTOM 2 CENTERED CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-10 md:w-2/3 mx-auto">
+              {/* ITEM 2 */}
+              <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
+                <BadgeIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
+                <div>
+                  <h4 className="text-sm lg:text-2xl font-semibold text-black">
+                    {homePage?.whyUs?.items?.[1]?.title}
+                  </h4>
+                  <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
+                    {homePage?.whyUs?.items?.[1]?.description}
+                  </p>
+                </div>
+              </div>
 
-        {/* ITEM 4 */}
-        <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
-          <PanelsTopLeftIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
-          <div>
-            <h4 className="text-sm lg:text-2xl font-semibold text-black">
-              {homePage?.whyUs?.items?.[3]?.title}
-            </h4>
-            <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
-              {homePage?.whyUs?.items?.[3]?.description}
-            </p>
-          </div>
-        </div>
+              {/* ITEM 3 */}
+              <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
+                <TargetIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
+                <div>
+                  <h4 className="text-sm lg:text-2xl font-semibold text-black">
+                    {homePage?.whyUs?.items?.[2]?.title}
+                  </h4>
+                  <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
+                    {homePage?.whyUs?.items?.[2]?.description}
+                  </p>
+                </div>
+              </div>
 
-        {/* ITEM 5 (If exists) */}
-        {homePage?.whyUs?.items?.[4] && (
-          <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
-            <PanelsTopLeftIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
-            <div>
-              <h4 className="text-sm lg:text-2xl font-semibold text-black">
-                {homePage?.whyUs?.items?.[4]?.title}
-              </h4>
-              <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
-                {homePage?.whyUs?.items?.[4]?.description}
-              </p>
             </div>
+
+            {/* BOTTOM 2 CENTERED CARDS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-10 md:w-2/3 mx-auto">
+
+              {/* ITEM 4 */}
+              <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
+                <PanelsTopLeftIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
+                <div>
+                  <h4 className="text-sm lg:text-2xl font-semibold text-black">
+                    {homePage?.whyUs?.items?.[3]?.title}
+                  </h4>
+                  <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
+                    {homePage?.whyUs?.items?.[3]?.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* ITEM 5 (If exists) */}
+              {homePage?.whyUs?.items?.[4] && (
+                <div className="bg-white rounded-3xl px-4 py-6 lg:p-10 flex items-center gap-6">
+                  <PanelsTopLeftIcon className="w-12 h-8 lg:w-16 lg:h-16 text-[#6d1901]" />
+                  <div>
+                    <h4 className="text-sm lg:text-2xl font-semibold text-black">
+                      {homePage?.whyUs?.items?.[4]?.title}
+                    </h4>
+                    <p className="text-[#1f3a5f] mt-2 text-sm lg:text-base">
+                      {homePage?.whyUs?.items?.[4]?.description}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+            </div>
+
           </div>
-        )}
 
-      </div>
+        </div>
 
-    </div>
+      </section>
 
-  </div>
 
-</section>
-
- 
 
 
       <section
@@ -373,7 +373,7 @@ console.log(videoRes)
   "
       >
         <div className="absolute -right-20 top-[0%] opacity-30 pointer-events-none hidden lg:block">
-         
+
         </div>
         <div className="max-w-7xl mx-auto">
           <div className="w-full px-4 sm:px-6 lg:px-8 relative z-10">
@@ -381,12 +381,12 @@ console.log(videoRes)
 
               {/* LEFT – IMAGE STACK */}
               <div className="relative w-full h-full min-h-[420px] sm:min-h-[500px] lg:min-h-[550px] flex justify-center lg:justify-start hidden lg:block">
-               
-               <img src="/images/trust-img.png" alt="" className="w-[450px] h-[540px]" />
 
-                 {/* EXPERIENCE BADGE */}
-                  <div
-  className="
+                <img src="/images/trust-img.png" alt="" className="w-[450px] h-[540px]" />
+
+                {/* EXPERIENCE BADGE */}
+                <div
+                  className="
     absolute -left-8 sm:left-25 bottom-25
     w-24 h-24 sm:w-28 sm:h-28 lg:w-28 lg:h-28
     rounded-full bg-white
@@ -394,15 +394,15 @@ console.log(videoRes)
     shadow-2xl z-40
     flex flex-col items-center justify-center
   "
->
-  <span className="text-3xl sm:text-4xl font-bold text-red-700">
-    {experienceYears}
-  </span>
+                >
+                  <span className="text-3xl sm:text-4xl font-bold text-red-700">
+                    {experienceYears}
+                  </span>
 
-  <span className="text-[10px] sm:text-xs text-gray-500 text-center font-semibold leading-tight">
-    Years of<br />Experience
-  </span>
-</div>
+                  <span className="text-[10px] sm:text-xs text-gray-500 text-center font-semibold leading-tight">
+                    Years of<br />Experience
+                  </span>
+                </div>
               </div>
 
               {/* RIGHT CONTENT */}
@@ -423,7 +423,7 @@ console.log(videoRes)
 
                 <AboutTabsSection tabs={homePage?.trustedPartners?.items || []} />
 
-               
+
               </div>
 
             </div>
@@ -431,33 +431,33 @@ console.log(videoRes)
         </div>
       </section>
 
-       
-     <VideoTestimonialsSlider
-  title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
-  subtitle = {homePage?.videoTestimonials?.subtitle}
-  items={videoRes}
-  // Auto-play is enabled by default
-/>
 
-       
+      <VideoTestimonialsSlider
+        title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
+        subtitle={homePage?.videoTestimonials?.subtitle}
+        items={videoRes}
+      // Auto-play is enabled by default
+      />
+
+
       <ImageTestimonial
-      title={homePage?.imageTestimonials?.title}
-        
+        title={homePage?.imageTestimonials?.title}
+
         subtitle={homePage?.imageTestimonials?.subtitle}
         items={imageData}
       />
       <section className="py-18 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 overflow-hidden ">
           <div className=" mb-12 ">
             <h2 className=" text-xl lg:text-5xl  mb-2 ">
-              <span  className="text-red-700" >
+              <span className="text-red-700" >
                 {homePage?.topUniversities?.title?.split('||')[0]?.trim()}
               </span>{" "} <br />
               <span className="text-primary font-bold relative">
                 {homePage?.topUniversities?.title?.split('||')[1]?.trim()}
-        <span className="absolute right-0 bottom-0  w-25 h-[2px] lg:h-1 bg-red-700"></span>
+                <span className="absolute right-0 bottom-0  w-25 h-[2px] lg:h-1 bg-red-700"></span>
 
-                
+
               </span>
 
 
@@ -469,26 +469,26 @@ console.log(videoRes)
 
           <div
             ref={sliderRefD}
-            className="keen-slider items-start"
+            className="keen-slider items-start "
           >
             {destinationData.map((item) => (
               <div
                 key={item._id}
-                className="keen-slider__slide "
+                className="keen-slider__slide p-6 "
               >
                 {/* 👇 YOUR EXISTING UI (UNCHANGED) */}
                 <Link href={`/universities/group/${item.slug}`}>
                   <div className="text-center group">
-                    <div className="relative mx-auto w-full max-w-[280px] mb-6">
+                    <div className="relative mx-auto w-full max-w-[280px] mb-6 shadow-[0_0px_20px_rgba(0,0,0,0.15)] border border-gray-300">
                       <img
-                          src={item.cardImage || "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop"}
-                          x="0"
-                          y="0"
-                          width="300"
-                          height="200"
-                          clipPath={`url(#tiltedClip-${item._id})`}
-                          preserveAspectRatio="xMidYMid slice"
-                        />
+                        src={item.cardImage || "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop"}
+                        x="0"
+                        y="0"
+                        width="300"
+                        height="200"
+                        clipPath={`url(#tiltedClip-${item._id})`}
+                        preserveAspectRatio="xMidYMid slice"
+                      />
                     </div>
 
                     <h3 className=" text-xl font-bold text-primary mb-2">
@@ -508,12 +508,12 @@ console.log(videoRes)
         </div>
       </section>
 
-      <UniversitySliderClient universities = {homePage.universities} />
+      <UniversitySliderClient universities={homePage.universities} />
 
 
-    
 
-      <FAQSection Faqres = {Faqres} />
+
+      <FAQSection Faqres={Faqres} />
     </main>
   )
 }

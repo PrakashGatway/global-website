@@ -27,7 +27,7 @@ const images = [
   "https://as2.ftcdn.net/jpg/05/29/12/57/1000_F_529125762_omW1yTehDLLFJKwLJjRET0G3sXiQnK5g.jpg",
 ];
 
-export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires,Unicategory }) {
+export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unires, Unicategory }) {
   const [index, setIndex] = useState(0);
 
   // AUTO SLIDE
@@ -52,9 +52,9 @@ export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires,
     sections.imageTestimonials?.bottomText
   );
 
-  
 
-  
+
+
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
@@ -72,11 +72,11 @@ export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires,
         <div className="relative z-10 h-full flex flex-col justify-center items-start text-left max-w-7xl mx-auto">
           <div className="max-w-4xl" style={{ transform: 'none', perspective: 'none' }}>
             <h1 className="text-5xl md:text-6xl lg:text-7xl text-white mb-0 leading-tight" style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'left', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }}>
-              <span className="block">{sections.hero?.title }</span>
-              <span className="block">{data?.title }</span>
+              <span className="block">{sections.hero?.title}</span>
+              <span className="block">{data?.title}</span>
             </h1>
             <p className="text-lg md:text-xl text-white mb-10 leading-relaxed" style={{ textAlign: 'left' }}>
-              {data?.subTitle }
+              {data?.subTitle}
             </p>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires,
       <section className="py-12 bg-white">
         <div className="mx-auto px-5">
           <h2 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }} className="text-[2.6rem] font-bold text-center mb-6 text-gray-600">
-            {sections.universities?.title }
+            {sections.universities?.title}
           </h2>
           <IvyLeagueUniversitySlider />
         </div>
@@ -246,15 +246,12 @@ export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires,
         </div>
       </section>
 
-       <div className=" max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-18 py-20">
+      <div className="w-full px-8 pb-10 mx-auto">
 
-      {Unires.map((uni) => (
-        <UniversityCard 
-          key={uni._id} 
-          university={uni}
-        />
-      ))}
-    </div>
+
+        <UniversityCard university={Unires} />
+
+      </div>
 
 
       {/* The Ivy Coach Daily */}
@@ -262,7 +259,7 @@ export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires,
         <div className="max-w-7xl mx-auto px-4 overflow-visible">
           <div className="text-center mb-8">
             <h2 className="text-[2.6rem] font-bold uppercase" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }}>
-              {sections.blogs?.title }
+              {sections.blogs?.title}
             </h2>
             <p className="text-lg font-semibold text-gray-700">
               {sections.blogs?.subtitle}
@@ -301,30 +298,30 @@ export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires,
       {/* Reusable Sections — These likely already use `data` internally */}
       <OffersSlider />
 
-       <section className="mx-auto bg-[#fff9f4] py-20 px-5">
+      <section className="mx-auto bg-[#fff9f4] py-20 px-5">
         <div className="max-w-7xl mx-auto mb-8 mx-auto">
           <h2 className="text-[2.6rem] font-bold text-center" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
-             <span className="text-[#f46c44]">{sections.whySpecial.title.split('||')[0]}</span> {""}
-          <span className="text-gray-600">{sections.whySpecial.title.split('||')[1]}</span>
+            <span className="text-[#f46c44]">{sections.whySpecial.title.split('||')[0]}</span> {""}
+            <span className="text-gray-600">{sections.whySpecial.title.split('||')[1]}</span>
           </h2>
           <p className="text-lg font-semibold text-gray-700">{sections.roadMap.subtitle}</p>
 
-      <StickyPaymentSection sections={data.sections.whySpecial.items} />
+          <StickyPaymentSection sections={data.sections.whySpecial.items} />
 
 
-         
+
         </div>
       </section>
-      
-<AdmissionRequirementsUK admissionData={data.sections.admissionRequirements} />
+
+      <AdmissionRequirementsUK admissionData={data.sections.admissionRequirements} />
       <HowGawayHelps howWeHelpData={data.sections.howWeHelp} />
 
       {/* Admission Process Roadmap */}
       <section className="mx-auto bg-[#fff9f4] py-20 px-5">
         <div className="max-w-7xl mx-auto mb-8 mx-auto">
           <h2 className="text-[2.6rem] font-bold text-center" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
-             <span className="text-[#f46c44]">{sections.roadMap.title.split('||')[0].trim()}</span> {""}
-          <span className="text-gray-600">{sections.roadMap.title.split('||')[1].trim()}</span>
+            <span className="text-[#f46c44]">{sections.roadMap.title.split('||')[0].trim()}</span> {""}
+            <span className="text-gray-600">{sections.roadMap.title.split('||')[1].trim()}</span>
           </h2>
           <p className="text-lg font-semibold text-gray-700">{sections.roadMap.subtitle}</p>
 
@@ -334,17 +331,17 @@ export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires,
         </div>
       </section>
 
-     
-<ScholarshipRequirements scholarshipData={data.sections.scholarships} />
+
+      <ScholarshipRequirements scholarshipData={data.sections.scholarships} />
 
 
       <ImageTestimonial
-              title={sections?.bottomTestimonial?.title}
-              subtitle={sections?.bottomTestimonial?.subtitle}
-              font = {true}
-              items={imageRes}
-            />
-      <CaseStudy font={true} caseStudydata ={sections.caseStudies} caseStudy = {caseStudy} />
+        title={sections?.bottomTestimonial?.title}
+        subtitle={sections?.bottomTestimonial?.subtitle}
+        font={true}
+        items={imageRes}
+      />
+      <CaseStudy font={true} caseStudydata={sections.caseStudies} caseStudy={caseStudy} />
 
       {/* Final CTA */}
       <section className="py-24" style={{ backgroundColor: '#f46c44' }}>
@@ -361,7 +358,7 @@ export default function UniversityPage({ data ,caseStudy,imageRes,Faqres,Unires,
         </div>
       </section>
 
-      <FAQSection Faqres = {Faqres}/>
+      <FAQSection Faqres={Faqres} />
     </div>
   );
 }

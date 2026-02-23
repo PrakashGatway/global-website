@@ -86,42 +86,42 @@ export default function OffersSlider() {
   const sliderRef2 = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-  if (!sliderRef1.current || !sliderRef2.current) return;
+    if (!sliderRef1.current || !sliderRef2.current) return;
 
-  const slider1 = new KeenSlider(
-  sliderRef1.current,
-  {
-    loop: true,
-    drag: true,
-    renderMode: "performance",
-    slides: {
-      perView: "auto",
-      spacing: 16,
-    },
-  },
-  [marquee(0.4)]
-);
+    const slider1 = new KeenSlider(
+      sliderRef1.current,
+      {
+        loop: true,
+        drag: true,
+        renderMode: "performance",
+        slides: {
+          perView: "auto",
+          spacing: 16,
+        },
+      },
+      [marquee(0.4)]
+    );
 
-const slider2 = new KeenSlider(
-  sliderRef2.current,
-  {
-    loop: true,
-    drag: true,
-    renderMode: "performance",
-    slides: {
-      perView: "auto",
-      spacing: 16,
-    },
-  },
-  [marquee(-0.4)]
-);
+    const slider2 = new KeenSlider(
+      sliderRef2.current,
+      {
+        loop: true,
+        drag: true,
+        renderMode: "performance",
+        slides: {
+          perView: "auto",
+          spacing: 16,
+        },
+      },
+      [marquee(-0.4)]
+    );
 
 
-  return () => {
-    slider1.destroy();
-    slider2.destroy();
-  };
-}, []);
+    return () => {
+      slider1.destroy();
+      slider2.destroy();
+    };
+  }, []);
 
 
 
@@ -170,15 +170,8 @@ const StickyPaymentSection = ({ sections }) => {
   }, [sections]);
 
 
-  const rightImages = [
-    "https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg",
-    "https://tinypng.com/images/social/website.jpg",
-    "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/14235/production/_100058428_mediaitem100058424.jpg",
-    "https://img.freepik.com/free-photo/closeup-shot-beautiful-butterfly-with-interesting-textures-orange-petaled-flower_181624-7640.jpg",
-    "https://thumbs.dreamstime.com/b/young-conceptual-image-large-stone-shape-human-brain-conceptual-image-large-stone-shape-110748113.jpg",
-    "https://png.pngtree.com/thumb_back/fh260/background/20241010/pngtree-the-bengal-tiger-emblem-of-wild-image_16362570.jpg",
-    "https://smileyworldz.com/wp-content/uploads/2023/11/20250423_111058-1-1024x1024.jpg"
-  ];
+
+
 
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -189,136 +182,136 @@ const StickyPaymentSection = ({ sections }) => {
   }, []);
 
   useLayoutEffect(() => {
-  if (!sectionRef.current || !cards.length) return;
+    if (!sectionRef.current || !cards.length) return;
 
-  const mm = gsap.matchMedia();
-  let lastIndex = 0;
+    const mm = gsap.matchMedia();
+    let lastIndex = 0;
 
-  mm.add("(min-width: 1024px)", () => {
-    const ctx = gsap.context(() => {
-      // INITIAL IMAGE STATE
-      gsap.set(".right-image-0", { opacity: 1, scale: 1 });
+    mm.add("(min-width: 1024px)", () => {
+      const ctx = gsap.context(() => {
+        // INITIAL IMAGE STATE
+        gsap.set(".right-image-0", { opacity: 1, scale: 1 });
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: `+=${cards.length * 70}%`,
-          scrub: 0.6,
-          pin: true,
-          anticipatePin: 1,
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: `+=${cards.length * 70}%`,
+            scrub: 0.6,
+            pin: true,
+            anticipatePin: 1,
 
-          onUpdate: (self) => {
-            const index = Math.min(
-              cards.length - 1,
-              Math.floor(self.progress * cards.length)
-            );
+            onUpdate: (self) => {
+              const index = Math.min(
+                cards.length - 1,
+                Math.floor(self.progress * cards.length)
+              );
 
-            if (index !== lastIndex) {
-              lastIndex = index;
-              setActiveIndex(index);
-            }
+              if (index !== lastIndex) {
+                lastIndex = index;
+                setActiveIndex(index);
+              }
+            },
+
+            onLeave: () => {
+              gsap.to(".pin-wrapper", {
+                autoAlpha: 0,
+                y: -40,
+                duration: 0.5,
+                ease: "power2.out",
+              });
+            },
+
+            onEnterBack: () => {
+              gsap.to(".pin-wrapper", {
+                autoAlpha: 1,
+                y: 0,
+                duration: 0.4,
+                ease: "power2.out",
+              });
+            },
           },
+        });
 
-          onLeave: () => {
-            gsap.to(".pin-wrapper", {
-              autoAlpha: 0,
-              y: -40,
-              duration: 0.5,
-              ease: "power2.out",
-            });
-          },
+        // IMAGE SEQUENCE
+        cards.forEach((_, i) => {
+          if (i === 0) return;
 
-          onEnterBack: () => {
-            gsap.to(".pin-wrapper", {
-              autoAlpha: 1,
-              y: 0,
+          tl.to(
+            `.right-image-${i - 1}`,
+            {
+              opacity: 0,
+              yPercent: -30,
+              scale: 0.95,
               duration: 0.4,
               ease: "power2.out",
-            });
-          },
-        },
-      });
+            },
+            "+=0.5"
+          );
 
-      // IMAGE SEQUENCE
-      cards.forEach((_, i) => {
-        if (i === 0) return;
+          tl.fromTo(
+            `.right-image-${i}`,
+            { opacity: 0, yPercent: 30, scale: 0.95 },
+            {
+              opacity: 1,
+              yPercent: 0,
+              scale: 1,
+              duration: 0.6,
+              ease: "power2.out",
+            }
+          );
+        });
 
         tl.to(
-          `.right-image-${i - 1}`,
+          cards.map((_, i) => `.right-image-${i}`),
           {
             opacity: 0,
-            yPercent: -30,
-            scale: 0.95,
-            duration: 0.4,
-            ease: "power2.out",
-          },
-          "+=0.5"
-        );
-
-        tl.fromTo(
-          `.right-image-${i}`,
-          { opacity: 0, yPercent: 30, scale: 0.95 },
-          {
-            opacity: 1,
-            yPercent: 0,
-            scale: 1,
+            scale: 0.92,
+            y: -40,
             duration: 0.6,
             ease: "power2.out",
-          }
+          },
+          "+=0.3"
         );
-      });
+      }, sectionRef);
 
-      tl.to(
-        cards.map((_, i) => `.right-image-${i}`),
-        {
-          opacity: 0,
-          scale: 0.92,
-          y: -40,
-          duration: 0.6,
-          ease: "power2.out",
-        },
-        "+=0.3"
-      );
-    }, sectionRef);
+      return () => ctx.revert();
+    });
 
-    return () => ctx.revert();
-  });
-
-  return () => mm.revert();
-}, [cards]);
+    return () => mm.revert();
+  }, [cards]);
 
 
-const rightContentRef = useRef(null);
+  const rightContentRef = useRef(null);
 
-useEffect(() => {
-  if (!rightContentRef.current) return;
+  useEffect(() => {
+    if (!rightContentRef.current) return;
 
-  if (window.innerWidth < 1024) return; // ❌ no animation on mobile
+    if (window.innerWidth < 1024) return; // ❌ no animation on mobile
 
-  gsap.fromTo(
-    rightContentRef.current,
-    { y: 60, opacity: 0 },
-    {
-      y: 0,
-      opacity: 1,
-      duration: 0.5,
-      ease: "power3.out",
+    gsap.fromTo(
+      rightContentRef.current,
+      { y: 60, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.5,
+        ease: "power3.out",
+      }
+    );
+  }, [activeIndex]);
+
+
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      setActiveIndex(0);
     }
-  );
-}, [activeIndex]);
-
-
-useEffect(() => {
-  if (window.innerWidth < 1024) {
-    setActiveIndex(0);
-  }
-}, []);
+  }, []);
 
 
 
 
-  
+
 
 
 
@@ -326,78 +319,77 @@ useEffect(() => {
 
   return (
     <section ref={sectionRef} className="max-w-7xl mx-auto px-6">
-  {/* pin-wrapper only pins on desktop */}
-  <div className="pin-wrapper lg:h-screen flex items-center">
-    <div className="w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
+      {/* pin-wrapper only pins on desktop */}
+      <div className="pin-wrapper lg:h-screen flex items-center">
+        <div className="w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
 
-      {/* RIGHT: IMAGE AREA (DESKTOP ONLY GSAP) */}
-      <div className="relative w-full lg:h-[600px] flex items-center justify-center">
+          {/* RIGHT: IMAGE AREA (DESKTOP ONLY GSAP) */}
+          <div className="relative w-full lg:h-[600px] flex items-center justify-center">
 
-        <div className="relative w-full">
-          {rightImages.map((img, i) => (
-            <div
-              key={img}
-              className={`
+            <div className="relative w-full">
+              {sections.map((img, i) => (
+                <div
+                  key={img}
+                  className={`
                 right-image-${i}
                 hidden lg:block
                 absolute -top-40
               `}
-            >
-              <Image
-                src={img}
-                width={500}
-                height={700}
-                alt="img"
-              />
+                >
+                  <Image
+                    src={img.image}
+                    width={500}
+                    height={700}
+                    alt="img"
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-      </div>
+          </div>
 
-      {/* TEXT CONTENT */}
-      <div
-        ref={rightContentRef}
-        className="relative lg:h-[580px]"
-      >
-        {cards.map((card, i) => (
+          {/* TEXT CONTENT */}
           <div
-            key={card.id}
-            className={`
+            ref={rightContentRef}
+            className="relative lg:h-[580px]"
+          >
+            {cards.map((card, i) => (
+              <div
+                key={card.id}
+                className={`
               py-10 lg:py-20
               lg:absolute lg:inset-0
-              ${
-                i === activeIndex
-                  ? "opacity-100 lg:z-10"
-                  : "opacity-100 lg:opacity-0 lg:pointer-events-none"
-              }
+              ${i === activeIndex
+                    ? "opacity-100 lg:z-10"
+                    : "opacity-100 lg:opacity-0 lg:pointer-events-none"
+                  }
             `}
-          >
-            <div className=" max-w-lg lg:w-2xl lg:h-[580px]">
-
-              <h3
-                className="text-orange-500 text-[2.2rem] lg:text-[3rem] font-bold mb-4"
-                style={{
-                  fontFamily:
-                    "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif",
-                  fontWeight: 600,
-                }}
               >
-                {card.title}
-              </h3>
+                <div className=" max-w-lg lg:w-2xl lg:h-[580px]">
 
-              <ul className="list-disc list-inside text-gray-600 text-base lg:text-lg space-y-3">
-                {card.description
-                  .split("•")
-                  .filter(Boolean)
-                  .map((p, idx) => (
-                    <li key={idx}>{p.trim()}</li>
-                  ))}
-              </ul>
+                  <h3
+                    className="text-orange-500 text-[2.2rem] lg:text-[3rem] font-bold mb-4"
+                    style={{
+                      fontFamily:
+                        "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {card.title}
+                  </h3>
 
-              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <a
-                  className="
+                  <ul className="list-disc list-inside text-gray-600 text-base lg:text-lg space-y-3">
+                    {card.description
+                      .split("•")
+                      .filter(Boolean)
+                      .map((p, idx) => (
+                        <li key={idx}>{p.trim()}</li>
+                      ))}
+                  </ul>
+
+                  <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                    <a
+                      className="
                     text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
                     rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
                     text-base font-semibold
@@ -405,19 +397,19 @@ useEffect(() => {
                     flex items-center justify-center gap-2
                     transition-all hover:opacity-90 cursor-pointer
                   "
-                >
-                  {card.ctaText || "Get Free Counselling"}
-                </a>
+                    >
+                      {card.ctaText || "Get Free Counselling"}
+                    </a>
+                  </div>
+
+                </div>
               </div>
-
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-    </div>
-  </div>
-</section>
+        </div>
+      </div>
+    </section>
 
   );
 };
@@ -548,7 +540,7 @@ function Item({
 
 export function HowGawayHelps({ howWeHelpData }: { howWeHelpData: any }) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
-gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger);
 
 
   /* 🔹 NORMALIZE DATA (same as StickyPaymentSection) */
@@ -557,80 +549,76 @@ gsap.registerPlugin(ScrollTrigger);
 
 
   /* 🔥 GSAP LOGIC — SAME AS YOUR WORKING COMPONENT */
- useLayoutEffect(() => {
-  if (!sectionRef.current || !items.length) return;
+  useLayoutEffect(() => {
+    if (!sectionRef.current || !items.length) return;
 
-  const mm = gsap.matchMedia();
+    const mm = gsap.matchMedia();
 
-  mm.add("(min-width: 1024px)", () => {
-    const ctx = gsap.context(() => {
-      gsap.set(".help-left", { opacity: 0, y: 30 });
-      gsap.set(".help-right", { opacity: 0, y: 40, scale: 0.95 });
+    mm.add("(min-width: 1024px)", () => {
+      const ctx = gsap.context(() => {
 
-      gsap.set(".help-left-0", { opacity: 1, y: 0 });
-      gsap.set(".help-right-0", { opacity: 1, y: 0, scale: 1 });
+        gsap.set(".help-right", { opacity: 0, y: 40, scale: 0.95 });
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: `+=${items.length * 80}%`,
-          scrub: 0.6,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: false,
-        },
-      });
+        gsap.set(".help-left", { autoAlpha: 0 });
+        gsap.set(".help-left-0", { autoAlpha: 1 });
+        gsap.set(".help-right-0", { opacity: 1, y: 0, scale: 1 });
 
-      items.forEach((_, i) => {
-        if (i === 0) return;
-
-        tl.to(`.help-right-${i - 1}`, {
-          opacity: 0,
-          y: -120,
-          scale: 0.95,
-          duration: 0.4,
-          ease: "power2.out",
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top top",
+            end: `+=${items.length * 40}%`,
+            scrub: 0.6,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: false,
+          },
         });
 
-        tl.fromTo(
-          `.help-right-${i}`,
-          { opacity: 0, y: 40, scale: 0.95 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.6,
-            ease: "power2.out",
-          }
-        );
+        items.forEach((_, i) => {
+  if (i === 0) return;
 
-        tl.to(
-          `.help-left-${i - 1}`,
-          { opacity: 0, y: -20, duration: 0.2 },
-          "<-0.25"
-        );
-
-        tl.fromTo(
-          `.help-left-${i}`,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 0.2 },
-          "<"
-        );
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
+  // OLD IMAGE OUT
+  tl.to(`.help-right-${i - 1}`, {
+    opacity: 0,
+    y: -120,
+    scale: 0.95,
+    duration: 0.4,
+    ease: "power2.out",
   });
 
-  return () => mm.revert();
-}, [items]);
+  // NEW IMAGE IN
+  tl.fromTo(
+    `.help-right-${i}`,
+    { opacity: 0, y: 40, scale: 0.95 },
+    {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.6,
+      ease: "power2.out",
+    },
+    "<" // ⭐ start SAME TIME as previous animation
+  );
+
+  // ⭐ TEXT SWITCH — NO DELAY
+  tl.set(`.help-left-${i - 1}`, { autoAlpha: 0 }, "<");
+
+  tl.set(`.help-left-${i}`, { autoAlpha: 1 }, "<");
+});
+      }, sectionRef);
+
+      return () => ctx.revert();
+    });
+
+    return () => mm.revert();
+  }, [items]);
 
 
 
 
   return (
-     <section
+    <section
       ref={sectionRef}
       className="bg-[#fff9f4] flex items-center min-h-screen lg:h-screen"
     >
@@ -643,36 +631,36 @@ gsap.registerPlugin(ScrollTrigger);
 
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* LEFT TEXT */}
-         {/* LEFT TEXT STACK */}
-<div className="relative lg:h-[260px] space-y-10 lg:space-y-0">
-  {items.map((item: any, i: number) => (
-    <div
-      key={item.title}
-      className={`
+          {/* LEFT TEXT STACK */}
+          <div className="relative lg:h-[260px] space-y-10 lg:space-y-0">
+            {items.map((item: any, i: number) => (
+              <div
+                key={item.title}
+                className={`
         help-left help-left-${i}
         lg:absolute lg:inset-0
         opacity-100
       `}
-    >
-      <h2
-        className="text-[2.2rem] lg:text-[3.6rem] font-semibold text-[#f46c44] leading-tight mb-2"
-        style={{
-          fontFamily:
-            "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif",
-          fontWeight: 600,
-        }}
-      >
-        {item.title}
-      </h2>
+              >
+                <h2
+                  className="text-[2.2rem] lg:text-[3.6rem] font-semibold text-[#f46c44] leading-tight mb-2"
+                  style={{
+                    fontFamily:
+                      "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif",
+                    fontWeight: 600,
+                  }}
+                >
+                  {item.title}
+                </h2>
 
-      <ul className="text-gray-700 text-base lg:text-lg space-y-2">
-        {item.subtitle.split("||").map((p: string, idx: number) => (
-          <li key={idx}>• {p.trim()}</li>
-        ))}
-      </ul>
-    </div>
-  ))}
-</div>
+                <ul className="text-gray-700 text-base lg:text-lg space-y-2">
+                  {item.subtitle.split("||").map((p: string, idx: number) => (
+                    <li key={idx}>• {p.trim()}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
 
 
           {/* RIGHT IMAGE STACK (DESKTOP ONLY) */}
