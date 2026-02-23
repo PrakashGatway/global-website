@@ -1,24 +1,52 @@
 'use client'
 
 import * as React from 'react'
-import { motion } from 'framer-motion'
-import { Calendar, Clock, AlertCircle } from 'lucide-react'
-import { Check, X, FileText, Download, Upload } from 'lucide-react'
-import {  AnimatePresence } from 'framer-motion'
-import { GraduationCap, Plus, ChevronUp, ChevronDown } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  Calendar, Clock, AlertCircle, Check, X, FileText, 
+  Download, Upload, GraduationCap, Plus, ChevronUp, 
+  ChevronDown, DollarSign, BookOpen, Users 
+} from 'lucide-react'
 
 interface ApplicationFormProps {
   program: any
   formData: any
   setFormData: (data: any) => void
+  availableIntakes?: string[]
 }
 
-export function ApplicationForm({ program, formData, setFormData }: ApplicationFormProps) {
-  const intakes = [
-    { id: 'jan2027', month: 'January', year: '2027', deadline: 'Nov 02, 2026', status: 'available' },
-    { id: 'may2027', month: 'May', year: '2027', deadline: 'Mar 15, 2027', status: 'available' },
-    { id: 'sep2027', month: 'September', year: '2027', deadline: 'Jul 30, 2027', status: 'coming-soon' },
-  ]
+export function ApplicationForm({ program, formData, setFormData, availableIntakes }: ApplicationFormProps) {
+  // Format intakes from program data
+  const intakes = React.useMemo(() => {
+    if (availableIntakes && availableIntakes.length > 0) {
+      return availableIntakes.map((intake, index) => {
+        // Parse intake string (e.g., "March 2026")
+        const parts = intake.split(' ')
+        const month = parts[0]
+        const year = parts[1] || '2026'
+        
+        // Generate a deadline (3 months before intake)
+        const deadlineDate = new Date()
+        deadlineDate.setMonth(deadlineDate.getMonth() + (index + 1))
+        
+        return {
+          id: intake.toLowerCase().replace(' ', ''),
+          month,
+          year,
+          deadline: deadlineDate.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+          status: index === 0 ? 'available' : index === 1 ? 'available' : 'coming-soon',
+          fullIntake: intake
+        }
+      })
+    }
+    
+    // Fallback intakes
+    return [
+      { id: 'fall2024', month: 'Fall', year: '2024', deadline: 'Jul 30, 2024', status: 'available', fullIntake: 'Fall 2024' },
+      { id: 'spring2025', month: 'Spring', year: '2025', deadline: 'Nov 15, 2024', status: 'available', fullIntake: 'Spring 2025' },
+      { id: 'fall2025', month: 'Fall', year: '2025', deadline: 'Jul 30, 2025', status: 'coming-soon', fullIntake: 'Fall 2025' },
+    ]
+  }, [availableIntakes])
 
   return (
     <div className="space-y-6">
@@ -30,22 +58,40 @@ export function ApplicationForm({ program, formData, setFormData }: ApplicationF
         className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
       >
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Program Details</h3>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <p className="text-sm text-gray-500">Program</p>
             <p className="font-medium text-gray-900">{program.name}</p>
+            {program.shortName && (
+              <p className="text-xs text-gray-500">{program.shortName}</p>
+            )}
           </div>
           <div className="space-y-2">
-            <p className="text-sm text-gray-500">School</p>
-            <p className="font-medium text-gray-900">{program.school || program.university}</p>
+            <p className="text-sm text-gray-500">University</p>
+            <p className="font-medium text-gray-900">{program.university?.name}</p>
+            <p className="text-xs text-gray-500">{program.university?.country}</p>
           </div>
           <div className="space-y-2">
-            <p className="text-sm text-gray-500">Intake</p>
-            <p className="font-medium text-gray-900">{program.intake}</p>
+            <p className="text-sm text-gray-500">Duration & Mode</p>
+            <p className="font-medium text-gray-900">{program.duration || '4 years'}</p>
+            <p className="text-xs text-gray-500">{program.studyMode || 'Full-time'}</p>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm text-gray-500">Tuition Fee</p>
+            <p className="font-medium text-gray-900">
+              {program.currency || 'USD'} {program.tuitionFee?.toLocaleString() || 'N/A'}
+            </p>
+            {program.applicationFee && (
+              <p className="text-xs text-gray-500">App Fee: {program.currency} {program.applicationFee}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm text-gray-500">Level</p>
+            <p className="font-medium text-gray-900">{program.level || 'Undergraduate'}</p>
           </div>
           <div className="space-y-2">
             <p className="text-sm text-gray-500">Deadline</p>
-            <p className="font-medium text-red-600">{program.deadline}</p>
+            <p className="font-medium text-red-600">{program.deadline || 'Rolling Admission'}</p>
           </div>
         </div>
       </motion.div>
@@ -70,16 +116,16 @@ export function ApplicationForm({ program, formData, setFormData }: ApplicationF
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + index * 0.1 }}
               className={`relative flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                formData.selectedIntake === intake.id
-                  ? 'border-blue-500 bg-blue-50'
+                formData.selectedIntake === intake.fullIntake
+                  ? 'border-[#F26D44] bg-orange-50'
                   : 'border-gray-200 hover:border-gray-300'
               } ${intake.status === 'coming-soon' ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
               <input
                 type="radio"
                 name="intake"
-                value={intake.id}
-                checked={formData.selectedIntake === intake.id}
+                value={intake.fullIntake}
+                checked={formData.selectedIntake === intake.fullIntake}
                 onChange={(e) => setFormData({ ...formData, selectedIntake: e.target.value })}
                 disabled={intake.status === 'coming-soon'}
                 className="sr-only"
@@ -87,10 +133,10 @@ export function ApplicationForm({ program, formData, setFormData }: ApplicationF
               <div className="flex-1 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className={`p-2 rounded-lg ${
-                    formData.selectedIntake === intake.id ? 'bg-blue-100' : 'bg-gray-100'
+                    formData.selectedIntake === intake.fullIntake ? 'bg-orange-100' : 'bg-gray-100'
                   }`}>
                     <Calendar className={`w-5 h-5 ${
-                      formData.selectedIntake === intake.id ? 'text-blue-600' : 'text-gray-500'
+                      formData.selectedIntake === intake.fullIntake ? 'text-[#F26D44]' : 'text-gray-500'
                     }`} />
                   </div>
                   <div>
@@ -108,11 +154,11 @@ export function ApplicationForm({ program, formData, setFormData }: ApplicationF
                   </span>
                 ) : (
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    formData.selectedIntake === intake.id
-                      ? 'border-blue-500 bg-blue-500'
+                    formData.selectedIntake === intake.fullIntake
+                      ? 'border-[#F26D44] bg-[#F26D44]'
                       : 'border-gray-300'
                   }`}>
-                    {formData.selectedIntake === intake.id && (
+                    {formData.selectedIntake === intake.fullIntake && (
                       <div className="w-2 h-2 bg-white rounded-full" />
                     )}
                   </div>
@@ -139,8 +185,6 @@ export function ApplicationForm({ program, formData, setFormData }: ApplicationF
   )
 }
 
-
-
 interface PrerequisitesFormProps {
   program: any
   formData: any
@@ -148,55 +192,104 @@ interface PrerequisitesFormProps {
 }
 
 export function PrerequisitesForm({ program, formData, setFormData }: PrerequisitesFormProps) {
-  const prerequisites = [
-    {
-      id: 'transcript',
-      name: 'Official Transcripts',
-      description: 'Official transcripts from all previous institutions',
-      required: true,
-      format: 'PDF (max 10MB)'
-    },
-    {
-      id: 'english',
-      name: 'English Proficiency Test',
-      description: 'TOEFL/IELTS score report',
-      required: true,
-      format: 'PDF (max 5MB)'
-    },
-    {
-      id: 'recommendation',
-      name: 'Letters of Recommendation',
-      description: 'Minimum 2 academic/professional recommendations',
-      required: true,
-      format: 'PDF (max 5MB)'
-    },
-    {
-      id: 'statement',
-      name: 'Statement of Purpose',
-      description: '500-1000 words explaining your goals',
-      required: true,
-      format: 'PDF/DOC (max 5MB)'
-    },
-    {
-      id: 'resume',
-      name: 'Resume/CV',
-      description: 'Updated resume highlighting relevant experience',
-      required: false,
-      format: 'PDF (max 5MB)'
+  // Generate prerequisites from program data
+  const prerequisites = React.useMemo(() => {
+    const prereqs = []
+    
+    // Add requirements from program.requirements
+    if (program.requirements) {
+      Object.entries(program.requirements).forEach(([key, value]) => {
+        prereqs.push({
+          id: key.toLowerCase().replace(/\s+/g, '-'),
+          name: key,
+          description: `Required: ${value}`,
+          required: true,
+          format: 'Upload proof/documentation',
+          category: 'requirement'
+        })
+      })
     }
-  ]
+    
+    // Add documents from program.docsRequired
+    if (program.docsRequired) {
+      program.docsRequired.forEach((doc: any) => {
+        Object.entries(doc).forEach(([key, value]) => {
+          prereqs.push({
+            id: key.toLowerCase().replace(/\s+/g, '-'),
+            name: key,
+            description: value === 'copy' ? 'Copy required' : String(value),
+            required: true,
+            format: 'PDF/Image (max 10MB)',
+            category: 'document'
+          })
+        })
+      })
+    }
+    
+    // Add standard prerequisites if none exist
+    if (prereqs.length === 0) {
+      prereqs.push(
+        {
+          id: 'transcript',
+          name: 'Official Transcripts',
+          description: 'Official transcripts from all previous institutions',
+          required: true,
+          format: 'PDF (max 10MB)',
+          category: 'document'
+        },
+        {
+          id: 'english-proficiency',
+          name: 'English Proficiency Test',
+          description: 'TOEFL/IELTS score report',
+          required: true,
+          format: 'PDF (max 5MB)',
+          category: 'document'
+        },
+        {
+          id: 'recommendation',
+          name: 'Letters of Recommendation',
+          description: 'Minimum 2 academic/professional recommendations',
+          required: true,
+          format: 'PDF (max 5MB)',
+          category: 'document'
+        },
+        {
+          id: 'statement',
+          name: 'Statement of Purpose',
+          description: '500-1000 words explaining your goals',
+          required: true,
+          format: 'PDF/DOC (max 5MB)',
+          category: 'document'
+        }
+      )
+    }
+    
+    return prereqs
+  }, [program])
 
   const handleFileUpload = (prerequisiteId: string, file: File) => {
-    // Handle file upload logic here
     const updatedDocuments = [...(formData.prerequisites.documents || [])]
     const index = updatedDocuments.findIndex(d => d.id === prerequisiteId)
     
     if (index >= 0) {
-      updatedDocuments[index] = { id: prerequisiteId, file, uploaded: true }
+      updatedDocuments[index] = { 
+        id: prerequisiteId, 
+        name: file.name,
+        file, 
+        uploaded: true,
+        url: URL.createObjectURL(file)
+      }
     } else {
-      updatedDocuments.push({ id: prerequisiteId, file, uploaded: true })
+      updatedDocuments.push({ 
+        id: prerequisiteId, 
+        name: file.name,
+        file, 
+        uploaded: true,
+        url: URL.createObjectURL(file)
+      })
     }
 
+    // Check if all required documents are uploaded
     const allRequiredUploaded = prerequisites
       .filter(p => p.required)
       .every(p => updatedDocuments.some(d => d.id === p.id && d.uploaded))
@@ -211,6 +304,33 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
     })
   }
 
+  const markRequirementMet = (requirementId: string) => {
+    const updatedReqs = [...(formData.prerequisites.requirements || [])]
+    const index = updatedReqs.findIndex(r => r.id === requirementId)
+    
+    if (index >= 0) {
+      updatedReqs[index] = { ...updatedReqs[index], met: true }
+    } else {
+      updatedReqs.push({ id: requirementId, met: true })
+    }
+
+    setFormData({
+      ...formData,
+      prerequisites: {
+        ...formData.prerequisites,
+        requirements: updatedReqs
+      }
+    })
+  }
+
+  const isDocumentUploaded = (id: string) => {
+    return formData.prerequisites.documents?.some((d: any) => d.id === id && d.uploaded)
+  }
+
+  const isRequirementMet = (id: string) => {
+    return formData.prerequisites.requirements?.some((r: any) => r.id === id && r.met)
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -221,7 +341,7 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
       >
         <h3 className="text-lg font-semibold text-gray-900 mb-2">Program Prerequisites</h3>
         <p className="text-sm text-gray-500">
-          Please upload all required documents to proceed with your application.
+          Please complete all requirements and upload the required documents to proceed with your application.
         </p>
       </motion.div>
 
@@ -237,18 +357,26 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
           >
             <div className="flex items-start gap-3">
               <div className={`p-2 rounded-lg ${
-                formData.prerequisites.documents?.some(d => d.id === prerequisite.id)
-                  ? 'bg-green-100'
-                  : prerequisite.required
-                  ? 'bg-amber-100'
-                  : 'bg-gray-100'
+                prerequisite.category === 'document' 
+                  ? isDocumentUploaded(prerequisite.id) 
+                    ? 'bg-green-100' 
+                    : 'bg-amber-100'
+                  : isRequirementMet(prerequisite.id)
+                    ? 'bg-green-100'
+                    : 'bg-blue-100'
               }`}>
-                {formData.prerequisites.documents?.some(d => d.id === prerequisite.id) ? (
-                  <Check className="w-4 h-4 text-green-600" />
+                {prerequisite.category === 'document' ? (
+                  isDocumentUploaded(prerequisite.id) ? (
+                    <Check className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <FileText className="w-4 h-4 text-amber-600" />
+                  )
                 ) : (
-                  <FileText className={`w-4 h-4 ${
-                    prerequisite.required ? 'text-amber-600' : 'text-gray-500'
-                  }`} />
+                  isRequirementMet(prerequisite.id) ? (
+                    <Check className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <BookOpen className="w-4 h-4 text-blue-600" />
+                  )
                 )}
               </div>
               
@@ -264,35 +392,55 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
                 <p className="text-sm text-gray-500 mt-1">{prerequisite.description}</p>
                 <p className="text-xs text-gray-400 mt-1">{prerequisite.format}</p>
 
-                {/* Upload Area */}
+                {/* Action Area */}
                 <div className="mt-3">
-                  {formData.prerequisites.documents?.some(d => d.id === prerequisite.id) ? (
-                    <div className="flex items-center justify-between p-2 bg-green-50 rounded-lg border border-green-200">
-                      <div className="flex items-center gap-2">
-                        <Check className="w-4 h-4 text-green-600" />
-                        <span className="text-sm text-green-700">Uploaded successfully</span>
+                  {prerequisite.category === 'document' ? (
+                    // Document Upload
+                    isDocumentUploaded(prerequisite.id) ? (
+                      <div className="flex items-center justify-between p-2 bg-green-50 rounded-lg border border-green-200">
+                        <div className="flex items-center gap-2">
+                          <Check className="w-4 h-4 text-green-600" />
+                          <span className="text-sm text-green-700">
+                            {formData.prerequisites.documents?.find((d: any) => d.id === prerequisite.id)?.name || 'Uploaded'}
+                          </span>
+                        </div>
+                        <button className="text-xs text-green-600 hover:text-green-700">
+                          Replace
+                        </button>
                       </div>
-                      <button className="text-xs text-green-600 hover:text-green-700">
-                        Replace
-                      </button>
-                    </div>
+                    ) : (
+                      <label className="relative block">
+                        <input
+                          type="file"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                          onChange={(e) => {
+                            if (e.target.files?.[0]) {
+                              handleFileUpload(prerequisite.id, e.target.files[0])
+                            }
+                          }}
+                        />
+                        <div className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-200 rounded-lg hover:border-[#F26D44] transition-colors">
+                          <Upload className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm text-gray-600">Click to upload</span>
+                        </div>
+                      </label>
+                    )
                   ) : (
-                    <label className="relative block">
-                      <input
-                        type="file"
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        accept=".pdf,.doc,.docx"
-                        onChange={(e) => {
-                          if (e.target.files?.[0]) {
-                            handleFileUpload(prerequisite.id, e.target.files[0])
-                          }
-                        }}
-                      />
-                      <div className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
-                        <Upload className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">Click to upload</span>
+                    // Requirement Checkbox
+                    isRequirementMet(prerequisite.id) ? (
+                      <div className="flex items-center gap-2 p-2 bg-green-50 rounded-lg border border-green-200">
+                        <Check className="w-4 h-4 text-green-600" />
+                        <span className="text-sm text-green-700">Requirement met</span>
                       </div>
-                    </label>
+                    ) : (
+                      <button
+                        onClick={() => markRequirementMet(prerequisite.id)}
+                        className="px-4 py-2 bg-blue-50 text-blue-600 text-sm rounded-lg hover:bg-blue-100 transition-colors"
+                      >
+                        Mark as Met
+                      </button>
+                    )
                   )}
                 </div>
               </div>
@@ -327,8 +475,6 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
   )
 }
 
-
-
 interface BackupsFormProps {
   program: any
   formData: any
@@ -337,15 +483,59 @@ interface BackupsFormProps {
 
 export function BackupsForm({ program, formData, setFormData }: BackupsFormProps) {
   const [showProgramSelector, setShowProgramSelector] = React.useState(false)
+  const [searchTerm, setSearchTerm] = React.useState('')
   
-  // Mock available programs
-  const availablePrograms = [
-    { id: '1', name: 'Computer Science', university: 'Middle Tennessee State University', school: 'College of Basic and Applied Sciences' },
-    { id: '2', name: 'Information Systems', university: 'Middle Tennessee State University', school: 'Jones College of Business' },
-    { id: '3', name: 'Data Analytics', university: 'Middle Tennessee State University', school: 'College of Basic and Applied Sciences' },
-    { id: '4', name: 'Cybersecurity', university: 'Middle Tennessee State University', school: 'College of Basic and Applied Sciences' },
-    { id: '5', name: 'Software Engineering', university: 'Middle Tennessee State University', school: 'College of Basic and Applied Sciences' },
-  ]
+  // Mock available programs (replace with actual API call)
+  const availablePrograms = React.useMemo(() => {
+    // This should be replaced with actual data from your backend
+    return [
+      { 
+        id: '1', 
+        name: 'Computer Science', 
+        university: program.university?.name || 'University',
+        school: 'College of Basic and Applied Sciences',
+        level: 'Undergraduate',
+        duration: '4 years'
+      },
+      { 
+        id: '2', 
+        name: 'Information Systems', 
+        university: program.university?.name || 'University',
+        school: 'College of Business',
+        level: 'Undergraduate',
+        duration: '4 years'
+      },
+      { 
+        id: '3', 
+        name: 'Data Analytics', 
+        university: program.university?.name || 'University',
+        school: 'College of Basic and Applied Sciences',
+        level: 'Undergraduate',
+        duration: '4 years'
+      },
+      { 
+        id: '4', 
+        name: 'Cybersecurity', 
+        university: program.university?.name || 'University',
+        school: 'College of Basic and Applied Sciences',
+        level: 'Undergraduate',
+        duration: '4 years'
+      },
+      { 
+        id: '5', 
+        name: 'Software Engineering', 
+        university: program.university?.name || 'University',
+        school: 'College of Basic and Applied Sciences',
+        level: 'Undergraduate',
+        duration: '4 years'
+      },
+    ]
+  }, [program])
+
+  const filteredPrograms = availablePrograms.filter(p => 
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    p.school.toLowerCase().includes(searchTerm.toLowerCase())
+  )
 
   const addBackup = (backupProgram: any) => {
     if (formData.backups.length >= 10) {
@@ -353,9 +543,16 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
     }
     setFormData({
       ...formData,
-      backups: [...formData.backups, { ...backupProgram, priority: formData.backups.length + 1 }]
+      backups: [...formData.backups, { 
+        ...backupProgram, 
+        priority: formData.backups.length + 1,
+        programId: backupProgram.id,
+        programName: backupProgram.name,
+        university: backupProgram.university
+      }]
     })
     setShowProgramSelector(false)
+    setSearchTerm('')
   }
 
   const removeBackup = (index: number) => {
@@ -444,12 +641,13 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
                   exit={{ opacity: 0, x: 20 }}
                   className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
                 >
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold">
+                  <div className="w-8 h-8 bg-[#F26D44] bg-opacity-10 rounded-full flex items-center justify-center text-[#F26D44] font-semibold">
                     {backup.priority}
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">{backup.name}</p>
                     <p className="text-xs text-gray-500">{backup.university}</p>
+                    <p className="text-xs text-gray-400">{backup.school}</p>
                   </div>
                   <div className="flex items-center gap-1">
                     <button
@@ -491,11 +689,11 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
           className={`mt-4 w-full py-3 rounded-lg border-2 border-dashed transition-colors ${
             formData.backups.length >= 10
               ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
-              : 'border-blue-300 hover:border-blue-500 hover:bg-blue-50'
+              : 'border-[#F26D44] border-opacity-30 hover:border-[#F26D44] hover:bg-orange-50'
           }`}
         >
           <Plus className={`w-5 h-5 mx-auto ${
-            formData.backups.length >= 10 ? 'text-gray-400' : 'text-blue-500'
+            formData.backups.length >= 10 ? 'text-gray-400' : 'text-[#F26D44]'
           }`} />
         </motion.button>
       </motion.div>
@@ -520,13 +718,20 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
               <div className="p-6 border-b">
                 <h3 className="text-lg font-semibold">Select Backup Program</h3>
                 <p className="text-sm text-gray-500 mt-1">
-                  Choose from available programs at {program.university}
+                  Choose from available programs
                 </p>
+                <input
+                  type="text"
+                  placeholder="Search programs..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="mt-4 w-full p-2 border rounded-lg focus:ring-2 focus:ring-[#F26D44] focus:border-transparent"
+                />
               </div>
               
               <div className="p-6 overflow-y-auto max-h-[50vh]">
                 <div className="space-y-2">
-                  {availablePrograms
+                  {filteredPrograms
                     .filter(p => !formData.backups.some((b: any) => b.id === p.id))
                     .map((prog, index) => (
                       <motion.button
@@ -535,10 +740,18 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
                         onClick={() => addBackup(prog)}
-                        className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                        className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-[#F26D44] hover:bg-orange-50 transition-colors"
                       >
                         <p className="font-medium text-gray-900">{prog.name}</p>
                         <p className="text-sm text-gray-500">{prog.school}</p>
+                        <div className="flex gap-2 mt-1">
+                          <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">
+                            {prog.level}
+                          </span>
+                          <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">
+                            {prog.duration}
+                          </span>
+                        </div>
                       </motion.button>
                     ))}
                 </div>
@@ -566,14 +779,12 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
       >
         <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
         <p className="text-xs text-amber-700">
-          Choose up to 10 backup programs in order of preference. These will be considered if your main program is not available.
+          Backup programs increase your chances of admission. You can add up to 10 programs in order of preference.
         </p>
       </motion.div>
     </div>
   )
 }
-
-import { DollarSign, BookOpen, Users } from 'lucide-react'
 
 interface ExpectationsFormProps {
   program: any
@@ -582,32 +793,36 @@ interface ExpectationsFormProps {
 }
 
 export function ExpectationsForm({ program, formData, setFormData }: ExpectationsFormProps) {
-  const expectations = [
-    {
-      icon: Clock,
-      title: 'Program Duration',
-      description: '4 years (8 semesters) full-time study',
-      color: 'blue'
-    },
-    {
-      icon: BookOpen,
-      title: 'Course Load',
-      description: '15-18 credit hours per semester',
-      color: 'green'
-    },
-    {
-      icon: DollarSign,
-      title: 'Tuition & Fees',
-      description: 'Approximately $25,000 per year for international students',
-      color: 'purple'
-    },
-    {
-      icon: Users,
-      title: 'Class Size',
-      description: 'Average 25-30 students per class',
-      color: 'orange'
-    }
-  ]
+  const expectations = React.useMemo(() => {
+    const items = [
+      {
+        icon: Clock,
+        title: 'Program Duration',
+        description: program.duration || '4 years full-time study',
+        color: 'blue'
+      },
+      {
+        icon: BookOpen,
+        title: 'Study Mode',
+        description: program.studyMode || 'Full-time on campus',
+        color: 'green'
+      },
+      {
+        icon: DollarSign,
+        title: 'Tuition & Fees',
+        description: `${program.currency || 'USD'} ${program.tuitionFee?.toLocaleString() || 'Contact university'} per year`,
+        color: 'purple'
+      },
+      {
+        icon: Users,
+        title: 'Class Size',
+        description: 'Average 25-30 students per class',
+        color: 'orange'
+      }
+    ]
+    
+    return items
+  }, [program])
 
   return (
     <div className="space-y-6">
@@ -670,8 +885,8 @@ export function ExpectationsForm({ program, formData, setFormData }: Expectation
               <span className="text-xs font-bold text-red-600">1</span>
             </div>
             <p className="text-sm text-gray-600">
-              Application deadline: <span className="font-medium text-red-600">{program.deadline}</span>. 
-              Late applications will not be considered.
+              Application deadline: <span className="font-medium text-red-600">{program.deadline || 'Rolling admission'}</span>. 
+              Late applications may not be considered.
             </p>
           </div>
           
@@ -723,7 +938,7 @@ export function ExpectationsForm({ program, formData, setFormData }: Expectation
                   understood: e.target.checked
                 }
               })}
-              className="mt-1"
+              className="mt-1 w-4 h-4 text-[#F26D44] rounded focus:ring-[#F26D44]"
             />
             <span className="text-sm text-gray-600">
               I understand the program requirements and expectations as outlined above.
@@ -741,7 +956,7 @@ export function ExpectationsForm({ program, formData, setFormData }: Expectation
                   agreed: e.target.checked
                 }
               })}
-              className="mt-1"
+              className="mt-1 w-4 h-4 text-[#F26D44] rounded focus:ring-[#F26D44]"
             />
             <span className="text-sm text-gray-600">
               I agree to the terms and conditions of the application process.
@@ -750,15 +965,30 @@ export function ExpectationsForm({ program, formData, setFormData }: Expectation
         </div>
       </motion.div>
 
+      {/* Application Fee Notice */}
+      {program.applicationFee && program.applicationFee > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200"
+        >
+          <DollarSign className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+          <p className="text-xs text-blue-700">
+            An application fee of <strong>{program.currency} {program.applicationFee}</strong> will be charged upon submission.
+          </p>
+        </motion.div>
+      )}
+
       {/* Final Note */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200"
+        transition={{ delay: 0.6 }}
+        className="flex items-start gap-2 p-3 bg-green-50 rounded-lg border border-green-200"
       >
-        <Check className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-        <p className="text-xs text-blue-700">
+        <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+        <p className="text-xs text-green-700">
           By checking both boxes and submitting, you confirm that all information provided is accurate and complete.
         </p>
       </motion.div>
