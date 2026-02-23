@@ -96,7 +96,7 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
               {/* BRAND */}
               <div className="w-full lg:w-1/4 pr-0 lg:pr-8 mb-10 lg:mb-0">
                 <Image
-                  src="/images/newlogo3.png"
+                  src="/images/footer-logo.png"
                   alt="GAway Global"
                   width={200}
                   height={50}
