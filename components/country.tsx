@@ -5,6 +5,7 @@ import Image from 'next/image'
 import FAQSection from '@/components/faqPage'
 import { DynamicLucideIcon } from '@/components/DynamicLucideIcon'
 import ImageTestimonial from './ImageTestimonial'
+import Balloon from './balloon'
 
 export default async function CountryDetails({ Universityres, Faqres, Pageres, imageData }) {
   const pageData = Pageres?.data;
@@ -62,36 +63,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
     "Dr. Manmohan Singh Scholarships",
   ];
 
-  const testimonials = [
-    {
-      name: "Rohan Sharma",
-      university: "Harvard University",
-      text: "Achieved admission in my preferred German university with clear, structured expert guidance.",
-      image: "https://t4.ftcdn.net/jpg/04/67/95/73/360_F_467957383_3yRd5rVS1KcK6mjVNXaNwnGkxe2JOqDu.jpg",
-      align: "image-left",
-    },
-    {
-      name: "Priya Mehta",
-      university: "Yale University",
-      text: "Application and documentation process felt simple, transparent, and professionally handled.",
-      image: "https://www.shutterstock.com/image-photo/happy-pretty-gen-z-latin-600nw-2440430295.jpg",
-      align: "image-right",
-    },
-    {
-      name: "Aman Verma",
-      university: "Brown University",
-      text: "Achieved admission in my preferred German university with clear, structured expert guidance.",
-      image: "https://t4.ftcdn.net/jpg/05/76/75/39/360_F_576753965_UPYWF1GHjZuQfQo0Qupv776ubn5uWaiJ.jpg",
-      align: "image-left",
-    },
-    {
-      name: "Neha Kapoor",
-      university: "Princeton University",
-      text: "Proper counselling helped me confidently choose the right German university for my career.",
-      image: "https://www.shutterstock.com/image-photo/happy-pretty-gen-z-latin-600nw-2440430295.jpg",
-      align: "image-right",
-    },
-  ];
+
 
   const videos = [
     {
@@ -118,7 +90,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
   return (
     <>
       <section>
-        {/* Hero Section */}
+        {/* Hero Section - ORIGINAL (UNCHANGED) */}
         <div
           className="w-full h-[80vh] relative flex items-center justify-start"
           style={{
@@ -128,7 +100,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
           }}
         >
           {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/50 h-70 top-40"></div>
+          <div className="absolute inset-0 bg-black/50 h-106 top-40"></div>
 
           {/* Content */}
           <div className="relative z-10 w-full h-full flex flex-col justify-center px-4 md:px-8 lg:px-16">
@@ -136,52 +108,59 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
             {/* 🎈 Balloon */}
             <div
               className="
-                absolute
-                left-6 top-20
-                sm:left-12 sm:top-24
-                lg:left-15 lg:top-auto
-              "
+              absolute
+              left-6 -top-80
+              sm:left-12 sm:top-24
+              lg:left-15 lg:-top-80
+            "
             >
-              <img
-                src="/images/country-balloon.png"
-                className="w-10 sm:w-12 lg:w-15 balloon-animation"
-                alt=""
-              />
+              <Balloon Pageres= {Pageres} />
             </div>
 
             {/* TEXT BLOCK */}
             <div
               className="
-                absolute
-                top-60 left-6
-                sm:left-12 sm:top-40
-                lg:top-50 lg:left-40
-              "
+              absolute
+              top-60 left-6
+              sm:left-12 sm:top-40
+              lg:top-43 lg:left-40
+              
+            "
             >
               {/* Heading */}
               <h1 className="
-                text-3xl sm:text-4xl md:text-5xl lg:text-6xl
-                font-bold text-white
-                text-left
-                mb-6 max-w-xl lg:max-w-xl
-              ">
+              text-lg sm:text-4xl md:text-5xl lg:text-5xl
+              font-bold text-white
+              text-left
+              mb-6 max-w-xl lg:max-w-xl
+            ">
                 {pageData?.sections?.hero?.title || "Study in Germany"}
-
+          <p className='text-white text-sm mt-5'
+          dangerouslySetInnerHTML={{
+            __html : pageData?.sections?.hero?.subtitle || ""
+          }}
+          />
               </h1>
+              
+              
 
               {/* Button */}
-              <div className='flex gap-2'>
+              <div className='lg:flex gap-4'>
                 <a href={pageData?.sections?.hero?.ctaLink1 || "/contact"}>
                   <button className="
-                  bg-yellow-400 hover:bg-yellow-500
+                  bg-yellow-400 hover:bg-[#f46c44]
+                  hover:text-white
+                  hover:scale-105
                   transition duration-300
                   rounded-full
                   px-5 sm:px-6 md:px-4
                   py-3 md:py-4
                   flex items-center gap-3
                   font-bold text-gray-900
-                  text-sm md:text-base lg:text-lg
+                  text-xs md:text-base lg:text-sm
                   shadow-lg
+                  mb-2
+                  cursor-pointer
                 ">
                     <PhoneIcon size={20} />
                     <span>{pageData?.sections?.hero?.ctaText1 || "Talk to an Expert Counsellor for FREE"}</span>
@@ -190,14 +169,17 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
 
                 <a href={pageData?.sections?.hero?.ctaLink2 || "/contact"}>
                   <button className="
-                  bg-yellow-400 hover:bg-yellow-500
+                  bg-[#f46c44] hover:bg-yellow-400
+                  hover:text-black
+                  hover:scale-105
+                  cursor-pointer
                   transition duration-300
                   rounded-full
                   px-5 sm:px-6 md:px-8
                   py-3 md:py-4
                   flex items-center gap-3
-                  font-bold text-gray-900
-                  text-sm md:text-base lg:text-lg
+                  font-bold text-white
+                  text-xs md:text-base lg:text-sm
                   shadow-lg
                 ">
                     <PhoneIcon size={20} />
@@ -213,10 +195,10 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
           {/* RIGHT IMAGE */}
           <div
             className="
-              absolute bottom-0 right-0
-              w-[260px] sm:w-[420px] md:w-[600px]
-              lg:w-[900px]
-            "
+            absolute bottom-0 right-0
+            w-[260px] sm:w-[420px] md:w-[600px]
+            lg:w-[900px]
+          "
           >
             <img
               src={pageData?.sections?.hero?.heroImage || "/images/country-hero.png"}
@@ -227,35 +209,36 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
         </div>
       </section>
 
-      <section className="pr-10 py-16 relative overflow-hidden">
-        <div className="mx-auto grid lg:grid-cols-2 gap-12 items-center">
+      {/* Form Section - RESPONSIVE */}
+      <section className="px-4 sm:px-6 lg:pr-10 py-12 sm:py-16 lg:py-20 relative overflow-hidden">
+        <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
           {/* ================= LEFT FORM ================= */}
-          <div className="bg-white border border-gray-300 p-8 lg:px-4 shadow-sm">
-            <h2 className="text-orange-500 text-2xl font-semibold mb-8 pl-12 tracking-wide">
+          <div className="bg-white border border-gray-300 p-6 sm:p-8 lg:px-4 shadow-sm rounded-lg">
+            <h2 className="text-orange-500 text-base sm:text-2xl font-semibold mb-6 sm:mb-8 pl-6 sm:pl-8 lg:pl-12 tracking-wide">
               GET IN TOUCH
             </h2>
 
-            <div className="space-y-8 pl-10">
+            <div className="space-y-6 pl-6 sm:pl-8 lg:pl-10">
               <input
                 type="text"
                 placeholder="Name"
-                className="w-lg border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent"
+                className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent text-sm"
               />
 
               <input
                 type="email"
                 placeholder="Email"
-                className="w-lg border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent"
+                className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent text-sm"
               />
 
               <input
                 type="text"
                 placeholder="Mobile"
-                className="w-lg border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent"
+                className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent text-sm"
               />
 
-              <select className="w-lg border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent">
+              <select className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent text-sm">
                 <option>Nearest Center</option>
                 <option>Delhi</option>
                 <option>Mumbai</option>
@@ -265,35 +248,38 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
               <textarea
                 placeholder="Queries"
                 rows={3}
-                className="focus:outline-none focus:border-orange-500 bg-transparent resize-none"
+                className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent resize-none text-sm"
               />
 
               <a className='' href={pageData?.sections?.formSection?.ctaLink1 || "/contact"}>
-                <button className="bg-secondary hover:bg-[#6d1403] text-white px-8 py-3 rounded-full font-semibold transition mb-4 ">
-                  {"CONTACT Us"}
+                <button className="bg-secondary hover:bg-[#6d1403] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold transition mb-4 text-xs sm:text-base">
+                  {"CONTACT US"}
                 </button>
               </a>
-              <div className='w-lg border-b-2 border-gray-400'></div>
+              <div className='w-full border-b-2 border-gray-400'></div>
             </div>
           </div>
 
           {/* ================= RIGHT CONTENT ================= */}
           <div className="relative z-10">
-            <h4 className="text-red-600 text-3xl font-medium mb-2">
+            <h4 className="text-red-600 text-2xl sm:text-3xl font-medium mb-2">
               {pageData?.sections?.formSection?.title?.split('||')[0]?.trim() || "Overview of"}
             </h4>
 
-            <h2 className="text-[#123b73] text-4xl lg:text-5xl font-bold mb-6 relative inline-block">
+            <h2 className="text-[#123b73] text-lg sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 relative inline-block">
               {pageData?.sections?.formSection?.title?.split('||')[1]?.trim() || "Study in Germany"}
-              <span className="absolute right-0 -bottom-4 w-16 h-1 bg-red-600"></span>
+              <span className="absolute right-0 -bottom-2 w-12 sm:w-16 h-1 bg-red-600"></span>
             </h2>
 
-            <p className="text-gray-700 leading-relaxed text-lg mb-6 w-xl">
-              {pageData?.sections?.formSection?.subtitle || "Germany is one of the most popular study destinations, known for its world-class education, globally recognized universities, and affordable study options."}
-            </p>
+            <p
+              className="text-gray-700 leading-relaxed text-xs sm:text-lg mb-6"
+              dangerouslySetInnerHTML={{
+                __html: pageData?.sections?.formSection?.subtitle || "",
+              }}
+            />
 
             <a href={pageData?.sections?.formSection?.ctaLink1 || "/contact"}>
-              <button className="bg-secondary hover:bg-[#6d1403] text-white px-6 py-3 rounded-full font-semibold transition">
+              <button className="bg-secondary hover:bg-[#6d1403] text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold transition text-xs sm:text-base">
                 {pageData?.sections?.formSection?.ctaText1 || "Read More >>"}
               </button>
             </a>
@@ -311,24 +297,29 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
         </div>
       </section>
 
-      <section className="w-full bg-[#ef6a42] py-20 px-6">
+      {/* Why Choose Germany Section - RESPONSIVE */}
+      <section className="w-full bg-[#ef6a42] py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto text-left">
 
           {/* Heading */}
-          <h2 className="text-white text-4xl md:text-5xl font-bold relative inline-block">
+          <h2 className="text-white text-lg sm:text-4xl md:text-5xl font-bold relative inline-block">
             {pageData?.sections?.whyChooseUs?.title || "Why Choose Germany ?"}
-            <span className="block w-16 h-1 bg-yellow-400 absolute left-0 mt-3"></span>
+            <span className="block w-12 sm:w-16 h-1 bg-yellow-400 absolute left-0 mt-2 sm:mt-3"></span>
           </h2>
 
           {/* Paragraph */}
-          <p className="text-white text-lg md:text-xl mt-8 leading-relaxed">
-            {pageData?.sections?.whyChooseUs?.subtitle || "Germany is one of the top study destinations in the world, known for its high-quality education, globally recognized degrees, and affordable tuition fees."}
-          </p>
+          <p className="text-white text-xs sm:text-lg md:text-xl mt-6 sm:mt-8 leading-relaxed"
+
+            dangerouslySetInnerHTML={{
+              __html: pageData?.sections?.whyChooseUs?.subtitle ?? ""
+
+            }}
+          />
 
           {/* Button */}
-          <div className="mt-10 text-center">
+          <div className="mt-8 sm:mt-10 text-center">
             <a href={pageData?.sections?.whyChooseUs?.ctaLink1 || "/contact"}>
-              <button className="bg-secondary hover:bg-[#5a1002] text-white  px-8 py-3 rounded-full text-lg font-semibold transition">
+              <button className="bg-secondary hover:bg-[#5a1002] text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-xs sm:text-lg font-semibold transition">
                 {pageData?.sections?.whyChooseUs?.ctaText1 || "Read More >>"}
               </button>
             </a>
@@ -337,138 +328,132 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
         </div>
       </section>
 
-      <section className="w-full py-20 px-6 bg-white">
+      {/* Why Study Section - RESPONSIVE */}
+      <section className="w-full py-12 sm:py-16 lg:py-20 px-4 sm:px-6 bg-white">
         <div className="max-w-7xl mx-auto">
 
           {/* Heading */}
-          <div className="mb-6">
-            <h2 className="text-4xl md:text-5xl font-bold text-[#123b73] relative inline-block">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-4xl md:text-5xl font-bold text-[#123b73] relative inline-block">
               {pageData?.sections?.whyStudy?.title || "Why Study in Germany ?"}
-              <span className="absolute right-0 -bottom-3 w-20 h-1 bg-red-600"></span>
+              <span className="absolute right-0 -bottom-2 w-16 sm:w-20 h-1 bg-red-600"></span>
             </h2>
           </div>
 
-          <div className="">
-
+          <div>
             {/* ================= LEFT CONTENT ================= */}
             <div>
-              <p className="text-[#123b73] text-lg mb-10 leading-relaxed">
-                {pageData?.sections?.whyStudy?.subTitle || "Germany is one of the most preferred study destinations for international students due to its world-class education system and strong career opportunities."}
+              <p className="text-[#123b73] text-xs sm:text-lg mb-8 sm:mb-10 leading-relaxed">
+                {pageData?.sections?.whyStudy?.subTitle}
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 ">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                 {(pageData?.sections?.whyStudy?.items || []).map((item, index) => (
-
-                  <div key={index} className="flex items-start gap-4 bg-gray-200 p-4 rounded-xl">
-                    <div className="text-[#8b1d04]">
-                      <DynamicLucideIcon name={item.icon} size={34} />
+                  <div key={index} className="flex items-start gap-3 sm:gap-4 bg-gray-200 p-4 rounded-xl">
+                    <div className="text-[#8b1d04] flex-shrink-0">
+                      <DynamicLucideIcon name={item.icon} size={28} className="sm:w-8 sm:h-8" />
                     </div>
 
                     <div>
-                      <h4 className="text-xl font-semibold text-gray-900">
+                      <h4 className="text-base sm:text-xl font-semibold text-gray-900">
                         {item.title}
                       </h4>
-                      <p className="text-[#123b73]">
+                      <p className="text-[#123b73] text-xs sm:text-base">
                         {item.description}
                       </p>
                     </div>
                   </div>
-
                 ))}
               </div>
             </div>
-
-
-
           </div>
 
         </div>
       </section>
 
-      <section className="w-full min-h-screen px-30 bg-white lg:pt-20 lg:pb-62 relative">
-        <div className='max-w-7xl ml-6'>
+      {/* Life in Germany Section - RESPONSIVE */}
+      <section className="w-full min-h-auto lg:min-h-screen px-4 sm:px-6 lg:px-30 bg-white lg:pt-20 lg:pb-62 relative py-12 lg:py-20">
+        <div className='max-w-7xl mx-auto'>
           {/* Title Section */}
-          <div className="mb-8 md:mb-12 w-4xl">
-            <h1 className="text-4xl relative md:text-5xl lg:text-6xl font-bold text-primary mb-4">
+          <div className="mb-8 md:mb-12">
+            <h1 className="text-lg sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-4 relative">
               {pageData?.sections?.lifeIn?.title || "Life in Germany"}
-              <span className="w-25 h-1.5 absolute right-80 -bottom-4 bg-red-600 rounded-full"></span>
+              <span className="w-20 sm:w-25 h-1.5 absolute right-1/4 sm:right-80 -bottom-2 sm:-bottom-4 bg-red-600 rounded-full"></span>
             </h1>
           </div>
 
           {/* Content Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 lg:gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
             {/* Left Section - Benefits List */}
-            <div className="flex flex-col  gap-5 md:gap-6">
+            <div className="flex flex-col gap-4 sm:gap-5 lg:gap-6">
               {(pageData?.sections?.lifeIn?.items || []).map((item, index) => (
-                <div key={index} className="flex items-center gap-4 w-120 relative z-1">
-                  {/* Left Border Accent */}
-                  <div className="w-60 h-20 bg-secondary absolute -z-1 -top-2 -left-2"></div>
+                <div key={index} className="flex items-center gap-4 w-full lg:w-120 relative z-1">
+                  {/* Left Border Accent - Hidden on mobile */}
+                  <div className="hidden sm:block w-60 h-20 bg-secondary absolute -z-1 -top-2 -left-2"></div>
 
                   {/* Benefit Box */}
-                  <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[50px] px-6 md:px-3 py-4 md:py-5 text-white  text-base ">
-                    <h1 className='text-3xl font-semibold' >{item.title}</h1>
-                    <p className='text-sm text-white'>{item?.description}</p>
-
+                  <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[30px] sm:rounded-tr-[50px] px-4 sm:px-6 py-3 sm:py-4 lg:py-5 text-white text-sm sm:text-base lg:w-40 ">
+                    <h1 className='text-base sm:text-2xl lg:text-3xl font-semibold'>{item.title}</h1>
+                    <p className='text-xs sm:text-sm text-white mt-1'>{item?.description}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Right Section - Images */}
-            <div className="flex flex-col gap-4 absolute right-0 top-50">
-              {/* Yellow Accent Bar */}
+            <div className="flex flex-col gap-4 relative lg:absolute lg:right-0 lg:top-50">
+              {/* Yellow Accent Bar - Hidden on mobile */}
+              <div className="hidden sm:block w-70 h-10 bg-yellow-400 absolute -top-5 right-20 -z-1"></div>
 
               {/* Top Image - Woman with Laptop */}
-              <div className="relative w-full h-48 md:h-56 lg:h-140 shadow-md z-1">
-                <div className="w-70 h-10 bg-yellow-400 absolute -top-5 right-20 -z-1"></div>
-
+              <div className="relative w-full h-48 sm:h-56 lg:h-140 shadow-md z-1">
                 <img
                   src={pageData?.sections?.lifeIn?.image || ""}
                   alt="Woman working on laptop"
-                  className="w-170 h-full object-cover "
+                  className="w-full h-full object-cover rounded-lg "
                 />
               </div>
-
             </div>
-
           </div>
         </div>
+
         {/* Bottom Image - Munich Cityscape */}
         <img
           src={pageData?.sections?.lifeIn?.buttomImage || "/images/life-germany-img-1.png"}
           alt="Munich cityscape"
-          className="w-[700px] h-[600px] object-contain absolute left-130 bottom-0 z-11"
+          className="w-full max-w-[400px] sm:max-w-[500px] lg:w-[700px] h-auto object-contain absolute left-1/2 -translate-x-1/2 lg:left-130 lg:translate-x-0 bottom-0 z-11 hidden lg:block"
         />
       </section>
 
-      <section className="relative w-full bg-[#ef6a42] py-10">
+      {/* Choosing University Section - RESPONSIVE */}
+      <section className="relative w-full bg-[#ef6a42]  sm:py-12 lg:py-16">
         {/* Main Content */}
-        <div className="grid lg:grid-cols-2 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
 
           {/* ================= LEFT IMAGE ================= */}
-          <div className="relative w-full -left-50 h-[400px] lg:h-[450px]">
+          <div className="relative w-full h-[250px] sm:h-[350px] lg:h-[500px] lg:-left-50">
             <Image
               src={pageData?.sections?.choosingUs?.image || "/images/country-university-img.png"}
               alt="Germany University"
               fill
-              className="object-contain"
+              className="object-contain "
               priority
             />
           </div>
 
           {/* ================= RIGHT CONTENT ================= */}
-          <div className="px-8 py-16 lg:px-4 text-white">
+          <div className="px-6 sm:px-8 lg:px-4 py-8 lg:py-16 text-white">
 
-            <h4 className="text-3xl md:text-5xl font-light mb-2">
+            <h4 className="text-lg sm:text-3xl md:text-4xl lg:text-5xl font-light mb-2">
               {pageData?.sections?.choosingUs?.title?.split('||')[0]?.trim() || "Choosing the Right"}
             </h4>
 
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold relative inline-block mb-6 ">
+            <h2 className="text-lg sm:text-4xl md:text-5xl lg:text-6xl font-bold relative inline-block mb-4 sm:mb-6">
               {pageData?.sections?.choosingUs?.title?.split('||')[1]?.trim() || "University in Germany"}
-              <span className="absolute left-0 -bottom-4 w-20 h-1 bg-yellow-400"></span>
+              <span className="absolute left-0 -bottom-2 w-16 sm:w-20 h-1 bg-yellow-400"></span>
             </h2>
 
-            <p className="text-lg md:text-xl leading-relaxed max-w-xl">
+            <p className="text-xs sm:text-lg md:text-xl leading-relaxed">
               {pageData?.sections?.choosingUs?.subtitle || "Germany offers exceptional educational opportunities, but choosing the right university requires more than just rankings."}
             </p>
 
@@ -477,82 +462,129 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
         </div>
 
         {/* ================= BOTTOM YELLOW ACCENT ================= */}
-        <div className="absolute bottom-12 left-20 w-74 h-6 bg-yellow-300"></div>
-
+        <div className="hidden sm:block absolute bottom-8 left-20 w-74 h-6 bg-yellow-300"></div>
       </section>
 
-      <div className='w-full bg-[#ef6a42] px-8 pb-10 mx-auto'>
+      {/* University Card Section - RESPONSIVE */}
+      <div className='w-full bg-[#ef6a42] px-4 sm:px-6 lg:px-8 pb-10 mx-auto'>
         <UniversityCard university={Universityres?.data?.result} />
       </div>
 
-    
-
-      <section className="w-full bg-white py-16">
+      {/* ================= TABLE/CONTENT SECTION - RESPONSIVE ================= */}
+      <section className="w-full bg-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-
-         
 
           {/* Table Wrapper */}
           <div className="overflow-x-auto">
             {pageData?.sections?.contentSection?.items?.map((item, i) => (
-              <>
-              <div key={i}>
-               {/* Heading */}
-          <div className=" m-10 ">
-            <h2 className="text-primary text-3xl md:text-4xl font-bold relative inline-block">
-            <span className='text-red-600'>{item.title.split("||")[0]}</span> 
-           <br /> <span>{item.title.split("||")[1]}</span> 
-            <span className=' border-b-4 border-red-600'>{item.title.split("||")[2]}</span> 
+              <div key={i} className="min-w-full mb-8 lg:mb-10">
+                {/* Heading */}
+                <div className="mb-6 sm:mb-8">
+                  <h2 className="text-primary text-lg sm:text-3xl md:text-4xl font-bold">
+                    <span className='text-red-600 block'>{item.title.split("||")[0]}</span>
+                    <div className='flex gap-2'>
+                      <span className=' mt-1 sm:mt-2'>{item.title.split("||")[1]}</span> 
+                    <span className=' mt-1 sm:mt-2 border-b-4 border-red-600 inline-block'>{item.title.split("||")[2]}</span>
+                    </div>
+                    
+                  </h2>
+                </div>
 
+                <div>
+  {/* ===== Responsive Table CSS ===== */}
+  <style>
+    {`
+      /* Wrapper */
+      .country-table {
+        width: 100%;
+        overflow-x: auto;
+      }
 
-            </h2>
-          </div>
-              <div
-                
-                className=""
-                dangerouslySetInnerHTML={{
-                  __html: item.description
-                }}
-              />
+      /* Target API table */
+      .country-table * table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      /* ===== Desktop (default) ===== */
+      .country-table * {
+        font-size: 14px!important;
+        line-height: 1.5;
+        padding:0!important;
+       
+      }
+
+      /* ===== Tablet ===== */
+      @media (max-width: 1024px) {
+        .country-table * table th,
+        .country-table table td {
+          font-size: 14px;
+        }
+      }
+
+      /* ===== Mobile ===== */
+      @media (max-width: 640px) {
+        .country-table * table th,
+        .country-table * table td {
+          font-size: 12px !important;
+          padding: 6px 8px;
+        }
+
+        /* keep columns readable */
+        .country-table * table {
+          min-width: 520px;
+        }
+      }
+    `}
+  </style>
+
+  {/* ===== API HTML Render ===== */}
+  <div
+    className="max-w-none country-table overflow-x-auto"
+    dangerouslySetInnerHTML={{
+      __html: item.description,
+    }}
+  />
+</div>
               </div>
-              </>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="w-full bg-[#ef6a42] py-20 px-6">
+      {/* Scholarships Section - RESPONSIVE */}
+      <section className="w-full bg-[#ef6a42] py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto text-white">
 
           {/* Heading */}
-          <div className="mb-10">
-            <p className="text-5xl font-light mb-2">
+          <div className="mb-8 sm:mb-10">
+            <p className="text-lg sm:text-4xl md:text-5xl font-light mb-2">
               {pageData?.sections?.scholarships?.title?.split('||')[0]?.trim() || "scholarships to"}
             </p>
 
-            <h2 className="text-5xl md:text-6xl font-bold relative inline-block">
+            <h2 className="text-lg sm:text-4xl md:text-5xl lg:text-6xl font-bold relative inline-block">
               {pageData?.sections?.scholarships?.title?.split('||')[1]?.trim() || "Study in germany"}
-              <span className="absolute right-0 -bottom-4 w-16 h-1 bg-yellow-400"></span>
+              <span className="absolute right-0 -bottom-2 w-12 sm:w-16 h-1 bg-yellow-400"></span>
             </h2>
 
             {/* Description */}
-            <p className="mt-6 max-w-3xl text-lg leading-relaxed">
+            <p className="mt-4 sm:mt-6 max-w-3xl text-xs sm:text-lg leading-relaxed">
               {pageData?.sections?.scholarships?.subTitle || "Germany provides various scholarships for international students, including DAAD and university-funded options."}
             </p>
           </div>
 
           {/* Scholarship Lists */}
-          <div className="grid md:grid-cols-2 gap-x-20 gap-y-6 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 sm:gap-x-20 gap-y-4 sm:gap-y-6 mt-8 sm:mt-12">
 
             {/* LEFT COLUMN */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {leftScholarships.map((item, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <div className="bg-yellow-400 text-black rounded-full p-2">
-                    <DynamicLucideIcon name="CircleDollarSign" size={18} />
+                <div key={i} className="flex items-center gap-3 sm:gap-4">
+                  <div className="bg-yellow-400 text-black rounded-full p-1.5 sm:p-2 flex-shrink-0">
+                    <DynamicLucideIcon name="CircleDollarSign" size={16} className="sm:w-5 sm:h-5" />
                   </div>
 
-                  <p className="border-b border-white pb-1 hover:opacity-80 cursor-pointer">
+                  <p className="border-b border-white pb-1 hover:opacity-80 cursor-pointer text-xs sm:text-base">
                     {item}
                   </p>
                 </div>
@@ -560,14 +592,14 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
             </div>
 
             {/* RIGHT COLUMN */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {rightScholarships.map((item, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <div className="bg-yellow-400 text-black rounded-full p-2">
-                    <DynamicLucideIcon name="CircleDollarSign" size={18} />
+                <div key={i} className="flex items-center gap-3 sm:gap-4">
+                  <div className="bg-yellow-400 text-black rounded-full p-1.5 sm:p-2 flex-shrink-0">
+                    <DynamicLucideIcon name="CircleDollarSign" size={16} className="sm:w-5 sm:h-5" />
                   </div>
 
-                  <p className="border-b border-white pb-1 hover:opacity-80 cursor-pointer">
+                  <p className="border-b border-white pb-1 hover:opacity-80 cursor-pointer text-xs sm:text-base">
                     {item}
                   </p>
                 </div>
@@ -578,50 +610,51 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
         </div>
       </section>
 
+      {/* Image Testimonial - Keep as is */}
       <ImageTestimonial
         title={Pageres?.imageTestimonials?.title}
-
         subtitle={Pageres?.imageTestimonials?.subtitle}
         items={imageData}
       />
 
-      <section className="bg-[#f3f3f3] py-20 px-20">
+      {/* Video Testimonials - RESPONSIVE */}
+      <section className="bg-white py-2 sm:py-5 lg:py-6 px-4 sm:px-8 lg:px-20">
         <div className="mx-auto">
 
           {/* ===== HEADING ===== */}
-          <div className="mb-16">
-            <h2 className="text-xl lg:text-5xl mb-2">
+          <div className="mb-10 sm:mb-12 lg:mb-16">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl mb-2">
               <span className="text-red-700">
                 {pageData?.sections?.videoTestimonials?.title?.split('||')[0]?.trim() || "Video"}
               </span>{" "} <br />
-              <span className="text-primary font-bold relative">
+              <span className="text-primary font-bold relative inline-block">
                 {pageData?.sections?.videoTestimonials?.title?.split('||')[1]?.trim() || "Testimonials"}
-                <span className="absolute right-0 bottom-0 w-25 h-[2px] lg:h-1 bg-red-700"></span>
+                <span className="absolute right-0 bottom-0 w-20 sm:w-25 h-[2px] lg:h-1 bg-red-700"></span>
               </span>
             </h2>
           </div>
 
           {/* ===== CARDS ===== */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
             {videos.map((item, index) => (
               <div key={index} className="relative">
 
                 {/* IMAGE */}
-                <div className="overflow-hidden rounded-3xl">
+                <div className="overflow-hidden rounded-2xl sm:rounded-3xl">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-[520px] object-cover object-top rounded-3xl"
+                    className="w-full h-[400px] sm:h-[480px] lg:h-[520px] object-cover object-top rounded-2xl sm:rounded-3xl"
                   />
                 </div>
 
                 {/* INFO CARD */}
-                <div className="absolute left-[213.5px] -translate-x-1/2 bottom-[0px] w-full bg-white rounded-2xl border border-gray-500 shadow-md px-4 py-5 text-left">
-                  <h3 className="font-bold text-primary mb-2">
+                <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[90%] sm:w-[85%] lg:w-full lg:left-[213.5px] lg:translate-x-[-50%] bg-white rounded-xl sm:rounded-2xl border border-gray-500 shadow-md px-3 sm:px-4 py-3 sm:py-5 text-left">
+                  <h3 className="font-bold text-primary mb-1 sm:mb-2 text-sm sm:text-base">
                     {item.name}
                   </h3>
 
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                     "{item.text}"
                   </p>
                 </div>
@@ -633,68 +666,69 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
         </div>
       </section>
 
-      <section className="relative bg-[#ee6a43] overflow-hidden">
+      {/* CTA Section - RESPONSIVE */}
+      <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
 
         {/* ===== MAIN CONTENT ===== */}
-        <div className="max-w-7xl mx-auto px-6 py-20 grid lg:grid-cols-2 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 grid grid-cols-1 lg:grid-cols-2 items-center">
 
           {/* LEFT SIDE */}
           <div className="text-white relative z-10">
 
-            {/* Graduation Cap */}
+            {/* Graduation Cap - Hidden on mobile */}
             <img
               src="/images/country-cap.png"
               alt=""
-              className="w-28 mb-4 absolute -top-15 -left-13 z-1"
+              className="hidden sm:block w-20 sm:w-24 lg:w-28 mb-4 absolute -top-12 sm:-top-15 -left-10 sm:-left-13 z-1"
             />
 
             {/* HEADING */}
-            <h2 className="text-5xl font-semibold leading-tight relative mb-4">
+            <h2 className="text-lg sm:text-4xl md:text-5xl font-semibold leading-tight relative mb-4">
               {pageData?.sections?.cta?.title || "Start Your Global Education Journey"}
 
-              <div className="w-56 h-2 bg-yellow-400 mt-2 rounded-full absolute right-50"></div>
+              <div className="w-40 sm:w-48 lg:w-56 h-2 bg-yellow-400 mt-2 rounded-full absolute right-1/4 sm:right-50"></div>
             </h2>
 
             {/* DESCRIPTION */}
-            <p className="mt-6 text-lg max-w-xl text-white/90">
+            <p className="mt-4 sm:mt-6 text-xs sm:text-base lg:text-lg max-w-xl text-white/90">
               Explore top universities, expert guidance, and seamless
               admission support with Ooshas Global.
             </p>
 
             {/* BUTTON + SOCIAL */}
-            <div className="flex items-center gap-6 mt-8 flex-wrap">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 mt-6 sm:mt-8">
 
               <a href="/contact">
-                <button className="bg-[#7a1e0e] px-8 py-3 rounded-full font-medium shadow-md hover:scale-105 transition">
+                <button className="bg-[#7a1e0e] px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md hover:scale-105 transition text-xs sm:text-base">
                   Contact US
                 </button>
               </a>
 
               {/* SOCIAL ICONS */}
-              <div className="flex gap-4">
-                <div className="w-10 h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
-                  <Facebook size={18} />
+              <div className="flex gap-3 sm:gap-4 flex-wrap">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
+                  <Facebook size={16} className="sm:w-5 sm:h-5" />
                 </div>
-                <div className="w-10 h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
-                  <Instagram size={18} />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
+                  <Instagram size={16} className="sm:w-5 sm:h-5" />
                 </div>
-                <div className="w-10 h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
-                  <Twitter size={18} />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
+                  <Twitter size={16} className="sm:w-5 sm:h-5" />
                 </div>
-                <div className="w-10 h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
-                  <Youtube size={18} />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
+                  <Youtube size={16} className="sm:w-5 sm:h-5" />
                 </div>
-                <div className="w-10 h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
-                  <Send size={18} />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
+                  <Send size={16} className="sm:w-5 sm:h-5" />
                 </div>
-                <div className="w-10 h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
-                  <Linkedin size={18} />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 bg-black/70 rounded-full flex items-center justify-center text-white">
+                  <Linkedin size={16} className="sm:w-5 sm:h-5" />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT GRAPHIC */}
+          {/* RIGHT GRAPHIC - Hidden on mobile */}
           <div className="hidden lg:block relative h-[380px]">
 
             {/* London Eye */}
@@ -713,15 +747,15 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
           </div>
         </div>
 
-        {/* CITY SILHOUETTE */}
+        {/* CITY SILHOUETTE - Smaller on mobile */}
         <img
           src="/images/country-building-img.png"
           alt=""
-          className="absolute bottom-0 right-0 w-1/2"
+          className="absolute bottom-0 right-0 w-full sm:w-1/2 object-contain"
         />
 
         {/* YELLOW STRIP */}
-        <div className="absolute bottom-0 left-0 w-1/2 h-3 bg-yellow-400"></div>
+        <div className="absolute bottom-0 left-0 w-full sm:w-1/2 h-2 sm:h-3 bg-yellow-400"></div>
 
       </section>
 

@@ -129,7 +129,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
   return (
-    <main className="bg-[#fffaf7]">
+    <main className="bg-white">
       <section
         className="
     relative overflow-hidden
@@ -270,7 +270,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
             <h3 className="text-white text-xl lg:text-7xl  relative inline-block mt-4">
               <span className="">{homePage?.whyUs?.title.split("||")[0]}</span>
-              <span className="font-bold">{homePage?.whyUs?.title.split("||")[1]}</span>
+             <br /> <span className="font-bold">{homePage?.whyUs?.title.split("||")[1]}</span>
 
               {/* Yellow Brush Underline */}
               <span className="absolute left-0 -bottom-2 lg:-bottom-6 w-full h-[2px] lg:h-2 bg-yellow-400 rounded-full"></span>
@@ -367,7 +367,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
       <section
-        className=" bg-[#f2eeed]
+        className=" bg-white
     relative overflow-hidden w-full
     py-12 sm:py-16 lg:py-18
   "
@@ -446,7 +446,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         subtitle={homePage?.imageTestimonials?.subtitle}
         items={imageData}
       />
-      <section className="py-18 overflow-hidden">
+      <section className="lg:py-18 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden ">
           <div className=" mb-12 ">
             <h2 className=" text-xl lg:text-5xl  mb-2 ">

@@ -95,7 +95,7 @@ export default function ImageTestimonial({
   }, [items]);
 
   return (
-    <section className="w-full py-16 lg:px-4 sm:px-8 bg-background overflow-hidden">
+    <section className="w-full lg:pt-4  lg:px-4 sm:px-8 bg-white overflow-hidden">
       <div className="mx-auto">
         {/* Heading */}
         <div className="max-w-7xl mx-auto px-4 mb-12">

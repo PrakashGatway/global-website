@@ -9,8 +9,8 @@ const FAQSection = ({ Faqres }) => {
   };
 
   return (
-    <section className="py-12 lg:py-20 px-4   max-w-7xl mx-auto ">
-      <div className="container   ">
+    <section className="py-12 lg:py-20 px-4  bg-white    ">
+      <div className="container  max-w-7xl mx-auto ">
         {/* Header */}
         <div className="text-justify mb-12 lg:mb-16    ">
           <h2 className="text-3xl   text-gray-900 mb-4 ">
@@ -31,13 +31,13 @@ const FAQSection = ({ Faqres }) => {
             {(Faqres || []).map((faq, index) => (
               <div
                 key={faq._id || index}
-                className="bg-white rounded-xl shadow-sm border border-secondary overflow-hidden transition-all duration-300 hover:shadow-md"
+                className="bg-white rounded-xl shadow-sm border border-orange-500 overflow-hidden transition-all duration-300 hover:shadow-md"
               >
                 <button
                   onClick={() => toggleFAQ(index)}
                   className="w-full px-4 lg:px-6 py-3 lg:py-5 text-left flex justify-between items-center focus:outline-none  focus:ring-opacity-50 rounded-xl"
                 >
-                  <span className=" text-base lg:text-lg font-semibold text-gray-900 pr-4">
+                  <span className=" text-sm lg:text-lg font-semibold text-gray-900 pr-4">
                     {faq.question}
                   </span>
                   <svg
@@ -63,7 +63,7 @@ const FAQSection = ({ Faqres }) => {
                   }`}
                 >
                   <div className="px-6 pb-5 pt-2 border-t border-gray-100">
-                    <p className="text-gray-700 text-sm leading-relaxed">
+                    <p className="text-gray-700 text-xs lg:text-sm leading-relaxed">
                       {faq.answer}
                     </p>
                     

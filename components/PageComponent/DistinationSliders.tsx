@@ -624,7 +624,7 @@ export function HowGawayHelps({ howWeHelpData }: { howWeHelpData: any }) {
     >
       <div className="max-w-7xl mx-auto w-full px-4 lg:px-0">
         {/* TITLE */}
-        <h3 className="text-center text-[2.6rem] font-semibold mb-12" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
+        <h3 className="text-center text-[2.6rem] font-semibold mb-2" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
           <span className="text-[#f46c44]">{howWeHelpData?.title.split("||")[0]}</span>{" "}
           <span className="text-gray-600">{howWeHelpData?.title.split("||")[1]}</span>
         </h3>

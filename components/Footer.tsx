@@ -117,7 +117,7 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
   <div className="px-0 sm:px-4 lg:px-6 relative">
     <div className="h-full flex flex-col">
       <h4 className="text-gray-100 font-bold text-lg mb-4">
-        Study Destinations
+        Top Group of Universities
       </h4>
 
       {Featureitem.map((item) => (

@@ -99,7 +99,7 @@ export default function VideoTestimonialsSlider({
   // Empty state
   if (!videoItems.length) {
     return (
-      <section className="bg-[#efefef] py-10 pb-20">
+      <section className="bg-white py-10 pb-20">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-lg lg:text-2xl font-bold mb-4">
             {title.includes('||') ? (
@@ -120,7 +120,7 @@ export default function VideoTestimonialsSlider({
   const isMp4 = currentItem.videoUrl?.endsWith('.mp4');
 
   return (
-    <section className="bg-[#efefef] py-10 pb-20 relative max-w-screen overflow-hidden">
+    <section className="bg-white py-10 pb-20 relative max-w-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         {/* Title Section */}
         <div className="mb-10 lg:mb-20">

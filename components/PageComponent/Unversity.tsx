@@ -7,83 +7,63 @@ export default function UniversitySliderClient({universities}) {
   const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const initSlider = async () => {
-      const KeenSlider = (await import('keen-slider')).default;
+  const initSlider = async () => {
+    const KeenSlider = (await import("keen-slider")).default;
 
-      if (!sliderRef.current) return;
+    if (!sliderRef.current) return;
 
-      const slider = new KeenSlider(
-        sliderRef.current,
-        {
-          loop: true,
-          mode: 'loop',
-          slides: {
-            origin: 'center',
-            perView: 3,
-            spacing: 0,
-          },
-          breakpoints: {
-            '(min-width: 300px)': {
-              slides: {
-                perView: 2,
-                spacing: 0,
-              },
-            },
-            '(min-width: 640px)': {
-              slides: {
-                perView: 4.2,
-                spacing: 0,
-              },
-            },
-            '(min-width: 1024px)': {
-              slides: {
-                perView: 6,
-                spacing: 12,
-              },
-            },
-          },
-        },
-        [
-          (slider) => {
-            let timeout: ReturnType<typeof setTimeout>;
-            let mouseOver = false;
+    // ✅ MARQUEE PLUGIN
+    const marquee = (slider: any) => {
+      let raf: number;
+      const speed = 0.0008; // ⭐ control speed here
 
-            function clearNextTimeout() {
-              clearTimeout(timeout);
-            }
+      const move = () => {
+        if (!slider.track.details) return;
 
-            function nextTimeout() {
-              clearTimeout(timeout);
-              if (mouseOver) return;
-              timeout = setTimeout(() => {
-                slider.next();
-              }, 3000);
-            }
+        slider.track.add(speed);
+        raf = requestAnimationFrame(move);
+      };
 
-            slider.on('created', () => {
-              slider.container.addEventListener('mouseenter', () => {
-                mouseOver = true;
-                clearNextTimeout();
-              });
-              slider.container.addEventListener('mouseleave', () => {
-                mouseOver = false;
-                nextTimeout();
-              });
-              nextTimeout();
-            });
+      slider.on("created", () => {
+        raf = requestAnimationFrame(move);
+      });
 
-            slider.on('dragStarted', clearNextTimeout);
-            slider.on('animationEnded', nextTimeout);
-            slider.on('updated', nextTimeout);
-          },
-        ]
-      );
-
-      return () => slider.destroy();
+      slider.on("destroyed", () => {
+        cancelAnimationFrame(raf);
+      });
     };
 
-    initSlider();
-  }, []);
+    const slider = new KeenSlider(
+      sliderRef.current,
+      {
+        loop: true,
+        renderMode: "performance",
+        drag: false, // important for marquee feel
+        slides: {
+          origin: "center",
+          perView: 3,
+          spacing: 0,
+        },
+        breakpoints: {
+          "(min-width: 300px)": {
+            slides: { perView: 2, spacing: 0 },
+          },
+          "(min-width: 640px)": {
+            slides: { perView: 4.2, spacing: 0 },
+          },
+          "(min-width: 1024px)": {
+            slides: { perView: 6, spacing: 12 },
+          },
+        },
+      },
+      [marquee]
+    );
+
+    return () => slider.destroy();
+  };
+
+  initSlider();
+}, []);
 
   const universitie = [
     { id: 1, src: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'University 1' },

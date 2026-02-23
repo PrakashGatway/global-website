@@ -796,84 +796,130 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
         </div>
       </section>
 
-      <section className="bg-[#fffaf6] py-20 lg:py-10 overflow-hidden">
-        <div className="text-center max-w-5xl mx-auto px-4">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-gray-700">
-            <span className="text-gray-700">{studyDestinations.title.split("||")[0]}</span>{" "}
-            <span className="text-[#f26b3a]">{studyDestinations.title.split("||")[1]}</span>
-          </h2>
-          <p className="text-gray-500 mt-4 text-sm md:text-base">{studyDestinations.subtitle}</p>
+      <section className="bg-[#fffaf6] py-12 sm:py-16 lg:py-20 overflow-hidden">
+  <div className="text-center max-w-5xl mx-auto px-4">
+    <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-gray-700">
+      <span className="text-gray-700">{studyDestinations.title.split("||")[0]}</span>{" "}
+      <span className="text-[#f26b3a]">{studyDestinations.title.split("||")[1]}</span>
+    </h2>
+    <p className="text-gray-500 mt-3 sm:mt-4 text-sm md:text-base px-2">
+      {studyDestinations.subtitle}
+    </p>
+  </div>
+
+  {/* Tabs */}
+  <div className="bg-[#f26b3a] mt-6 sm:mt-8 lg:mt-10">
+    <div className="max-w-7xl mx-auto flex flex-wrap justify-center gap-2 sm:gap-4 lg:gap-8 text-white py-3 sm:py-4 text-xs sm:text-sm md:text-base px-4">
+      {["Medical", "Engineering", "Business", "MBA", "Others"].map((tab) => (
+        <button key={tab} className="hover:underline whitespace-nowrap py-1">{tab}</button>
+      ))}
+    </div>
+  </div>
+
+  {/* Main Content */}
+  <div className="relative mx-auto mt-8 sm:mt-10 lg:mt-16 px-4 overflow-hidden">
+    
+    {/* Decorative Arrow - Desktop Only */}
+    <div className="hidden lg:block absolute -right-20 top-52 -translate-y-1/2 pointer-events-none lg:w-[400px] opacity-10 z-10">
+      <div style={{ transform: "rotate(30deg)", filter: "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)", mixBlendMode: "multiply" }}>
+        <Image src="/images/g logo.png" alt="Decorative Arrow" width={600} height={40} className="object-contain scale-x-[-1]" />
+      </div>
+    </div>
+
+    {/* Background Image Area */}
+    <div className="absolute left-0 top-0 w-full h-[200px] sm:h-[280px] md:h-[360px] lg:h-[450px] bg-[#f2f2f2] rounded-tr-[80px] sm:rounded-tr-[100px] lg:rounded-tr-[120px] overflow-hidden z-0 lg:-left-31 lg:w-[55%] lg:h-[620px] lg:rounded-tr-[160px]">
+      <img 
+        src="https://www.hdwallpapers.in/download/black_and_white_image_of_colosseum_piazza_del_colosseo_rome_italy_hd_travel-HD.jpg" 
+        alt="Italy" 
+        className="absolute inset-0 w-full h-full object-cover grayscale" 
+      />
+      
+      {/* Logo Grid - Desktop Only */}
+      <div className="hidden lg:grid absolute top-8 right-40 grid-cols-2 gap-3 p-3">
+        {[1, 2, 3, 4].map((i) => (
+          <img 
+            key={i} 
+            src="https://www.shutterstock.com/shutterstock/photos/2098674772/display_1500/stock-vector-university-logo-college-school-logo-crests-and-emblems-2098674772.jpg" 
+            className="w-46 h-20 border border-gray-500 rounded" 
+            alt={`Logo ${i}`}
+          />
+        ))}
+      </div>
+    </div>
+
+    {/* Content Grid */}
+    <div className="relative z-10 grid lg:grid-cols-2 gap-6 lg:gap-10 items-start pt-4 sm:pt-8">
+      {/* Left Spacer - Mobile Hidden */}
+      <div className="hidden lg:block" />
+
+      {/* Italy Card */}
+      <div className="relative flex justify-center lg:block lg:absolute lg:top-40 lg:right-40 w-full">
+        <div className="bg-white rounded-tr-[50px] sm:rounded-tr-[60px] lg:rounded-tr-[70px] py-4 sm:py-5 lg:py-25 px-6 sm:px-10 lg:px-8 shadow-[-12px_-1px_10px_rgba(0,0,0,0.25)] relative max-w-md mx-auto lg:mx-0 lg:max-w-lg">
+          {/* Corner Accent */}
+          <div className="absolute -top-1 right-0 w-20 sm:w-24 lg:w-30 h-20 sm:h-24 lg:h-30 border-t-4 sm:border-t-6 lg:border-t-7 border-r-4 sm:border-r-6 lg:border-r-8 border-[#f26b3a] rounded-tr-[50px] sm:rounded-tr-[60px] lg:rounded-tr-[70px]" />
+          
+          {/* Flag + Title */}
+          <div className="flex items-center gap-2 sm:gap-3 justify-center lg:justify-start">
+            <img src="https://flagcdn.com/w40/it.png" alt="Italy" className="w-8 sm:w-10 lg:w-15 rounded-sm" />
+            <h3 className="text-3xl sm:text-4xl lg:text-[70px] font-semibold text-gray-700 leading-none">ITALY</h3>
+          </div>
+          
+          {/* Subtitle */}
+          <p className="text-[#f26b3a] text-lg sm:text-xl lg:text-3xl mt-2 sm:mt-3 font-medium text-center lg:text-left lg:ml-24 lg:w-140">
+            100+ Universities
+          </p>
+          
+          {/* Arrow Button */}
+          <button className="mt-4 sm:mt-6 lg:mt-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-gray-300 flex items-center justify-center lg:absolute lg:right-5 lg:bottom-5 text-sm sm:text-base hover:bg-gray-50 transition">
+            ↑
+          </button>
         </div>
+      </div>
+    </div>
 
-        <div className="bg-[#f26b3a] mt-8 lg:mt-10">
-          <div className="max-w-7xl mx-auto flex flex-wrap justify-center gap-4 lg:gap-8 text-white py-4 text-sm md:text-base px-4">
-            {["Medical", "Engineering", "Business", "MBA", "Others"].map((tab) => (
-              <button key={tab} className="hover:underline whitespace-nowrap">{tab}</button>
-            ))}
-          </div>
-        </div>
+    {/* CTA Section */}
+    <div className="text-center mt-10 sm:mt-14 lg:mt-80 relative z-10 pb-4">
+      <p className="text-gray-500 text-sm sm:text-base lg:text-lg mb-4 px-2">
+        Check whether you are eligible for dream university
+      </p>
+      <button className="bg-[#f26b3a] text-white text-base sm:text-lg lg:text-2xl px-8 sm:px-10 lg:px-15 py-3 sm:py-4 lg:py-5 rounded-full hover:bg-[#e55a2b] transition shadow-md">
+        Check My Eligibility
+      </button>
+    </div>
+  </div>
+</section>
 
-        <div className="relative mx-auto mt-12 lg:mt-16 px-4 overflow-hidden">
-          <div className="hidden lg:block absolute -right-20 top-52 -translate-y-1/2 pointer-events-none lg:w-[400px] opacity-10 z-111">
-            <div style={{ transform: "rotate(30deg)", filter: "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)", mixBlendMode: "multiply" }}>
-              <Image src="/images/g logo.png" alt="Decorative Arrow" width={600} height={40} className="object-contain scale-x-[-1]" />
-            </div>
-          </div>
-
-          <div className="absolute left-0 top-0 w-full h-[280px] sm:h-[360px] md:h-[450px] bg-[#f2f2f2] rounded-tr-[120px] overflow-hidden z-0 lg:-left-31 lg:w-[55%] lg:h-[620px] lg:rounded-tr-[160px]">
-            <img src="https://www.hdwallpapers.in/download/black_and_white_image_of_colosseum_piazza_del_colosseo_rome_italy_hd_travel-HD.jpg" alt="Italy" className="absolute inset-0 w-full h-full object-cover grayscale" />
-            <div className="hidden lg:grid absolute top-8 right-40 grid-cols-2 gap-3 p-3">
-              {[1, 2, 3, 4].map((i) => (
-                <img key={i} src="https://www.shutterstock.com/shutterstock/photos/2098674772/display_1500/stock-vector-university-logo-college-school-logo-crests-and-emblems-2098674772.jpg" className="w-46 h-20 border border-gray-500" />
-              ))}
-            </div>
-          </div>
-
-          <div className="relative z-10 grid lg:grid-cols-2 gap-10 items-center">
-            <div />
-            <div className="relative mt-10 lg:top-40 lg:right-40 flex justify-center lg:block">
-              <div className="bg-white rounded-tr-[70px] py-5 px-8 sm:px-16 lg:py-25 shadow-[-12px_-1px_10px_rgba(0,0,0,0.25)] relative max-w-lg">
-                <div className="absolute -top-1 right-0 w-30 h-30 border-t-7 border-r-8 border-[#f26b3a] rounded-tr-[70px]" />
-                <div className="flex items-center gap-3 justify-center lg:justify-start">
-                  <img src="https://flagcdn.com/w40/it.png" alt="Italy" className="w-10 lg:w-15" />
-                  <h3 className="text-4xl sm:text-5xl lg:text-[70px] font-semibold text-gray-700">ITALY</h3>
-                </div>
-                <p className="text-[#f26b3a] text-xl sm:text-2xl lg:text-3xl mt-2 font-medium text-center lg:text-left lg:ml-30 lg:w-140">100+ Universities</p>
-                <button className="mt-6 lg:mt-0 w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center lg:absolute lg:right-5 lg:bottom-5">↑</button>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center lg:mt-80">
-            <p className="text-gray-500 text-base lg:text-lg mb-4">Check whether you are eligible for dream university</p>
-            <button className="bg-[#f26b3a] text-white text-lg sm:text-xl lg:text-2xl px-10 sm:px-12 lg:px-15 py-4 lg:py-5 rounded-full">Check My Eligibility</button>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#fffaf6] py-12 lg:py-20 px-4 overflow-hidden relative">
+      <section className="bg-[#fffaf6] py-12 lg:py-20 px-4 lg:overflow-hidden overflow-visible relative">
         <div className="hidden lg:block absolute top-60 left-0 w-[400px] h-[400px] -translate-y-1/2 z-10 pointer-events-none -rotate-150" style={{ transform: "rotate(30deg)", filter: "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)", mixBlendMode: "multiply" }}>
           <Image src="/images/g logo.png" alt="arrow" fill className="object-contain rotate-[-15deg] scale-x-[-1] opacity-10" />
         </div>
 
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-          <div className="text-center lg:text-left">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-gray-700 leading-snug">
-              {stories.title.split("||")[0]}
-              <br />
-              <span className="text-[#f26b3a] font-semibold">{stories.title.split("||")[1]}</span>
-            </h2>
-            <p className="text-gray-500 mt-4 max-w-xl mx-auto lg:mx-0">{stories.subtitle}</p>
-            <ul className="mt-6 space-y-3 text-gray-600 max-w-xl mx-auto lg:mx-0">
-              {stories.features.split(",").map((feature, i) => (
-                <li key={i} className="flex items-start gap-3">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div className="w-full lg:w-auto text-center lg:text-left px-2 sm:px-4 lg:px-0">
+  <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-gray-700 leading-snug break-words">
+    {stories.title.split("||")[0]}
+    <br />
+    <span className="text-[#f26b3a] font-semibold">
+      {stories.title.split("||")[1]}
+    </span>
+  </h2>
 
-                  {feature.trim()}
-                </li>
-              ))}
-            </ul>
-            <button className="mt-8 px-8 py-3 border border-[#f26b3a] rounded-full text-[#f26b3a] font-medium hover:bg-[#f26b3a] hover:text-white transition">Start Your Journey →</button>
-          </div>
+  <p className="text-gray-500 mt-4 max-w-xl mx-auto lg:mx-0 text-sm sm:text-base">
+    {stories.subtitle}
+  </p>
+
+  <ul className="mt-6 space-y-3 text-gray-600 max-w-xl mx-auto lg:mx-0 text-sm sm:text-base">
+    {stories.features.split(",").map((feature, i) => (
+      <li key={i} className="flex items-start gap-3 leading-relaxed">
+        {feature.trim()}
+      </li>
+    ))}
+  </ul>
+
+  <button className="mt-8 px-6 sm:px-8 py-3 border border-[#f26b3a] rounded-full text-[#f26b3a] font-medium hover:bg-[#f26b3a] hover:text-white transition text-sm sm:text-base">
+    Start Your Journey →
+  </button>
+</div>
 
           {/* SLIDER SECTION - UPDATED */}
           <div className="relative w-full py-4 ">

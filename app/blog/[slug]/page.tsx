@@ -247,8 +247,8 @@ export default async function BlogDetailsPage({
                             <h1>{blog.seo?.metaTitle || blog.title}</h1>
                             <p>{blog.seo?.metaDescription}</p>
                             <p>
-  Keywords: {blog.seo?.keywords?.split(",").join(", ")}
-</p>
+                                Keywords: {blog.seo?.keywords?.split(",").join(", ")}
+                            </p>
 
                         </div>
 

@@ -32,11 +32,12 @@ export default async function Page({params}){
       const Universityres = await serverInstance.get("/universities?location_alias=ivy-league")
 
   const Faqres = await  serverInstance.get("/faqs/public/list?type=General")
-  const imageRes = await serverInstance.get("/testimonials?type=image&limit=5")
+  const imageRes = await serverInstance.get("/testimonials?type=image&limit=6")
 
   const {slug} = await params
 
   const Pageres =   await  serverInstance.get(`/page-information/slug/${slug}`)
+  
   console.log(Pageres)
 
 

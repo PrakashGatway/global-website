@@ -87,14 +87,14 @@ export default function Navbar({
       route: "/",
       hasDropdown: true,
       type: "destination",
-      id: 4
+      id: 5
 
 
     },
     {
       title: "Blogs",
       route: "/blog"
-      , id: 5
+      , id: 6
 
 
     },
@@ -492,9 +492,7 @@ export default function Navbar({
                         {item.hasDropdown && (
                           <button
                             onClick={() =>
-                              setMobileDropdown(
-                                mobileDropdown === item.id ? null : item.id
-                              )
+                              setMobileDropdown(mobileDropdown === item.id ? null : item.id)
                             }
                             className="p-2"
                           >
@@ -505,7 +503,6 @@ export default function Navbar({
                             </motion.div>
                           </button>
                         )}
-
                       </div>
 
                       <AnimatePresence>
@@ -516,33 +513,54 @@ export default function Navbar({
                             exit={{ height: 0, opacity: 0 }}
                             className="overflow-hidden pl-5 pb-3"
                           >
-                            {(item.type === "destination"
-                              ? Featureitem
-                              : Serviceitem
-                            )?.map((uni) => (
-                              <Link
-                                key={uni._id}
-                                href={`/${item.type}/${uni.slug}`}
-                                onClick={() => {
-                                  setIsOpen(false);
-                                  setMobileDropdown(null);
-                                }}
-                                className="flex items-center gap-3 py-3 text-gray-600 hover:text-[var(--primary)]"
-                              >
-                                <Image
-                                  src={
-                                    uni.navbarImage ||
-                                    "https://www.countryflags.com/wp-content/uploads/canada-flag-png-xl.png"
-                                  }
-                                  alt={uni.navbarTitle}
-                                  width={28}
-                                  height={28}
-                                />
-                                <span className="font-medium">
-                                  {uni.navbarTitle}
-                                </span>
-                              </Link>
-                            ))}
+                            {/* ✅ SAME DATA SOURCE LOGIC AS DESKTOP */}
+                            {(
+                              item.type === "service"
+                                ? Serviceitem
+                                : item.type === "country"
+                                  ? countryres
+                                  : Featureitem
+                            )?.map((uni) => {
+
+                              // ✅ SAME ROUTE LOGIC AS DESKTOP
+                              const href =
+                                item.type === "service"
+                                  ? `/service/${uni.slug}`
+                                  : item.type === "country"
+                                    ? `/destination/${uni.slug}`
+                                    : `/universities/group/${uni.slug}`;
+
+                              return (
+                                <Link
+                                  key={uni._id}
+                                  href={href}
+                                  onClick={() => {
+                                    setIsOpen(false);
+                                    setMobileDropdown(null);
+                                  }}
+                                  className="flex items-center gap-3 py-3 text-gray-600 hover:text-[var(--primary)]"
+                                >
+                                  <div className="w-7 h-7 rounded-full bg-gray-100 overflow-hidden flex-shrink-0">
+                                    <Image
+                                      src={
+                                        uni.navbarImage ||
+                                        "https://www.countryflags.com/wp-content/uploads/canada-flag-png-xl.png"
+                                      }
+                                      alt={uni.navbarTitle}
+                                      width={28}
+                                      height={28}
+                                      className="object-cover w-full h-full"
+                                    />
+                                  </div>
+                                  <div>
+                                    <span className="font-medium text-sm">{uni.navbarTitle}</span>
+                                    {uni.subTitle && (
+                                      <p className="text-xs text-gray-400">{uni.subTitle}</p>
+                                    )}
+                                  </div>
+                                </Link>
+                              );
+                            })}
                           </motion.div>
                         )}
                       </AnimatePresence>

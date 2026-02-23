@@ -557,6 +557,19 @@ export const profileSchema = {
         placeholder: "Enter your details..."
       }
     ]
+  },
+
+  chooseCourse: {
+    title: "Destination Country",
+    type: "single",
+    fields:[
+      {
+        name: "countryintrested",
+        label: "Which countries are you intrested in?",
+        image: ""
+
+      }
+    ]
   }
 
 
