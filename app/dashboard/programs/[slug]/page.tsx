@@ -11,11 +11,16 @@ import {
     Trophy, Wallet, Languages, Home, Mail, Phone,
     Instagram, Twitter, Linkedin, Youtube, Facebook,
     Loader2, TrendingUp, Star, CircleDot,
-    Building
+    Building,
+    IndianRupeeIcon,
+    TrendingDown,
+    MinusCircle,
+    Building2Icon
 } from "lucide-react"
 import axiosInstance from "@/app/axiosInstance"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
+import { CreateApplicationModal } from "@/components/dashboard/applicationModel"
 
 // Types based on your actual payload
 interface Course {
@@ -108,46 +113,40 @@ interface Course {
 }
 
 // Stats Card Component
-const StatCard = ({ icon: Icon, label, value, subValue, color = "primary" }: any) => {
-    const colorClasses = {
-        primary: "bg-blue-50 text-blue-600 border-blue-100",
-        green: "bg-green-50 text-green-600 border-green-100",
-        purple: "bg-purple-50 text-purple-600 border-purple-100",
-        amber: "bg-amber-50 text-amber-600 border-amber-100",
-        red: "bg-red-50 text-red-600 border-red-100",
-    }
-
-    return (
-        <div className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-all">
-            <div className="flex items-center gap-3 mb-2">
-                <div className={`p-2 rounded-lg ${colorClasses[color as keyof typeof colorClasses] || colorClasses.primary}`}>
-                    <Icon className="w-4 h-4" />
-                </div>
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</span>
+const StatCard = ({ icon: Icon, label, value, trend, small = false }: any) => (
+    <div className="bg-[#f3f4f6] rounded-2xl hover:bg-[#e5e7eb] hover:outline hover:outline-2 hover:outline-[#F26D44] p-4 pl-1">
+        <div className="flex items-center gap-1 mb-2">
+            <div className="p-2">
+                <Icon className="w-11 h-11 text-black" strokeWidth={1.1} />
             </div>
-            <div className="flex items-end justify-between">
-                <span className="text-xl font-bold text-gray-900">{value}</span>
-                {subValue && <span className="text-xs text-gray-500">{subValue}</span>}
-            </div>
+            <span className="flex flex-col gap-1 text-sm text-gray-800">{label}
+                <span className={`font-bold line-wrapping w-full ${small ? 'text-lg' : 'text-xl'}`}>{value}</span>
+                {trend && (
+                    <span className={`text-sm flex items-center gap-1 ${trend > 0 ? 'text-green-600' : trend < 0 ? 'text-red-600' : 'text-yellow-600'}`}>
+                        {trend > 0 ? <TrendingUp className="w-4 h-4" /> : trend < 0 ? <TrendingDown className="w-4 h-4" /> : <MinusCircle className="w-4 h-4" />}
+                        {Math.abs(trend)}%
+                    </span>
+                )}
+            </span>
         </div>
-    )
-}
+    </div>
+)
 
 // Tab Button Component
-const TabButton = ({ active, onClick, children, icon: Icon }: any) => (
+const TabButton = ({ active, onClick, children }: any) => (
     <button
         onClick={onClick}
-        className={`px-4 py-3 whitespace-nowrap flex-shrink-0 text-sm font-medium transition-all relative ${active
-            ? 'text-primary'
+        className={`px-4 py-3 whitespace-nowrap flex-shrink-0 text-base font-medium transition-all relative ${active
+            ? 'text-gray-900'
             : 'text-muted-foreground hover:text-foreground'
             }`}
     >
-        {/* <Icon className="w-4 h-4" /> */}
         {children}
+
         {active && (
             <motion.div
-                layoutId="activeCourseTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                layoutId="activeTab"
+                className="absolute bottom-0 left-0 right-0 h-[3px] rounded-xl bg-[#F26D44]"
                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
             />
         )}
@@ -214,6 +213,7 @@ export default function CourseDetailPage() {
     const [activeTab, setActiveTab] = useState()
     const [isSaved, setIsSaved] = useState(false)
     const [relatedCourses, setRelatedCourses] = useState([])
+    const [isModalOpen , setIsModalOpen] = useState(false)
 
     useEffect(() => {
         fetchCourseDetails()
@@ -340,13 +340,13 @@ export default function CourseDetailPage() {
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-2 text-sm text-gray-600 mb-6"
+                    className="flex items-center gap-2 text-sm text-gray-600 mb-4"
                 >
-                    <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+                    <Link href="/dashboard" className="hover:text-blue-600 transition-colors">Home</Link>
                     <ChevronRight className="w-4 h-4" />
-                    <Link href="/universities" className="hover:text-blue-600 transition-colors">Universities</Link>
+                    <Link href="/dashboard/universities" className="hover:text-blue-600 transition-colors">Universities</Link>
                     <ChevronRight className="w-4 h-4" />
-                    <Link href={`/universities/${course.university?.slug}`} className="hover:text-blue-600 transition-colors">
+                    <Link href={`/dashboard/universities/${course.university?.slug}`} className="hover:text-blue-600 transition-colors">
                         {course.university?.name}
                     </Link>
                     <ChevronRight className="w-4 h-4" />
@@ -355,11 +355,11 @@ export default function CourseDetailPage() {
 
                 {/* Hero Section - University & Course Header */}
 
-                <div className="relative rounded-3xl overflow-hidden h-[300px] bg-gradient-to-br from-primary/20 via-primary/5 to-background">
+                <div className="relative rounded-3xl overflow-hidden h-[300px] mb-4">
                     {/* Cover Image */}
                     {course?.university ? (
                         <img
-                            src={"https://www.ox.ac.uk/sites/files/oxford/styles/ow_large_feature/s3/field/field_image_main/GAF%20Radcliffe%20Square%20Dawn%20-%20Elizabeth%20Nyikos.jpg?itok=U-0F0aPx"}
+                            src={course?.university?.cover_photo || "https://www.ox.ac.uk/sites/files/oxford/styles/ow_large_feature/s3/field/field_image_main/GAF%20Radcliffe%20Square%20Dawn%20-%20Elizabeth%20Nyikos.jpg?itok=U-0F0aPx"}
                             alt={course?.university.name}
                             className="absolute rounded-3xl inset-0 w-full h-full object-cover"
                         />
@@ -385,7 +385,6 @@ export default function CourseDetailPage() {
                                     )}
                                 </div>
 
-                                {/* Info */}
                                 <div className="flex-1">
 
                                     <h1 className="text-3xl font-bold text-gray-900 py-2">
@@ -393,7 +392,7 @@ export default function CourseDetailPage() {
                                     </h1>
                                     <div className="flex items-center justify-start gap-2">
                                         <Building2 className="w-5 h-5 text-gray-800 " />
-                                        <h3 className="text-xl font-semibold mb-2">{course?.university.name}</h3>
+                                        <h3 className="text-xl font-semibold mb-1">{course?.university.name}</h3>
 
                                     </div>
 
@@ -435,12 +434,11 @@ export default function CourseDetailPage() {
                                     </div>
                                 </div>
 
-                                {/* Actions */}
                                 <div className="flex gap-2">
-                                    <button className="p-3 bg-white/90 backdrop-blur-sm rounded-lg border hover:bg-white transition-colors">
+                                    {/* <button className="p-3 bg-white/90 backdrop-blur-sm rounded-lg border hover:bg-white transition-colors">
                                         <Share2 className="w-5 h-5" />
-                                    </button>
-                                    <button className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
+                                    </button> */}
+                                    <button onClick={() => setIsModalOpen(true)} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
                                         Apply Now
                                     </button>
                                 </div>
@@ -453,10 +451,10 @@ export default function CourseDetailPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"
+                    className="grid grid-cols-2 md:grid-cols-5 max-w-7xl mx-auto gap-4 mb-6 px-4 sm:px-6 lg:px-8"
                 >
                     <StatCard
-                        icon={DollarSign}
+                        icon={IndianRupeeIcon}
                         label="Tuition Fee"
                         value={formatCurrency(course.tuitionFee, course.currency)}
                         subValue="per year"
@@ -472,6 +470,7 @@ export default function CourseDetailPage() {
                     <StatCard
                         icon={GraduationCap}
                         label="Level"
+                        small={true}
                         value={course.level}
                         subValue={course.shortName || 'Degree'}
                         color="purple"
@@ -483,10 +482,18 @@ export default function CourseDetailPage() {
                         subValue="non-refundable"
                         color="amber"
                     />
+                    <StatCard
+                        icon={TrendingUp}
+                        label="Acceptance Rate"
+                        value={course.university?.acceptanceRate + "%" || 'N/A'}
+                        // trend={course.university?.acceptanceRate ? -Math.random() * 10 : undefined} // Random trend for demo
+                        subValue="Percentage"
+                        color="amber"
+                    />
                 </motion.div>
 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 max-w-7xl mx-auto px-6 gap-6">
                     {/* Left Column - Main Content (2/3 width) */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Tabs Navigation */}
@@ -497,8 +504,8 @@ export default function CourseDetailPage() {
                             className=""
                         >
                             <div className="">
-                                <div className="flex bg-background border-b border-border mb-8 overflow-x-auto no-scrollbar scrollbar-hide ">
-                                      {course.extra_content?.sections?.map((section) => (
+                                <div className="flex border-b border-border mb-8 overflow-x-auto no-scrollbar scrollbar-hide ">
+                                    {course.extra_content?.sections?.map((section) => (
                                         <TabButton
                                             key={section._id}
                                             active={activeTab === section.section_key}
@@ -522,69 +529,12 @@ export default function CourseDetailPage() {
                                     >
                                         Documents
                                     </TabButton>
-                                  
+
                                 </div>
                             </div>
                             {/* Tab Content */}
                             <div className="p-2">
-                                {/* Overview Tab */}
-                                {/* {activeTab === "overview" && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="space-y-6"
-                                    >
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                <BookOpen className="w-5 h-5 text-blue-600" />
-                                                Course Description
-                                            </h3>
-                                            <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
-                                                <p className="text-gray-700 leading-relaxed">
-                                                    {course.description || "No description available."}
-                                                </p>
-                                            </div>
-                                        </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-5 border border-blue-100">
-                                                <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                    <GraduationCap className="w-4 h-4 text-blue-600" />
-                                                    Subject Details
-                                                </h4>
-                                                <p className="text-lg font-bold text-gray-900 mb-1">{course.subject?.name}</p>
-                                                <p className="text-sm text-gray-600">{course.subject?.description || 'No description available'}</p>
-                                            </div>
-                                            <div className="bg-gradient-to-br from-purple-50 to-white rounded-xl p-5 border border-purple-100">
-                                                <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                    <Tag className="w-4 h-4 text-purple-600" />
-                                                    Category
-                                                </h4>
-                                                <p className="text-lg font-bold text-gray-900 mb-1">{course.category?.name}</p>
-                                                <p className="text-sm text-gray-600">{course.category?.description || 'No description available'}</p>
-                                            </div>
-                                        </div>
-
-                                        {course.tags && course.tags.length > 0 && (
-                                            <div>
-                                                <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                    <Tag className="w-4 h-4 text-gray-600" />
-                                                    Course Tags
-                                                </h4>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {course.tags.map((tag, index) => (
-                                                        <span
-                                                            key={index}
-                                                            className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium border border-gray-200"
-                                                        >
-                                                            {tag}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </motion.div>
-                                )} */}
 
                                 {/* Requirements Tab */}
                                 {activeTab === "requirements" && (
@@ -653,18 +603,67 @@ export default function CourseDetailPage() {
                                         </motion.div>
                                     )
                                 ))}
+
+                                <motion.div
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.35 }}
+                                    className="relative overflow-hidden rounded-2xl mt-12 bg-gradient-to-r from-[#F26D44]/10 via-pink-200 to-indigo-100 text-gray-800"
+                                >
+                                    <div className="px-8 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+
+                                        {/* Left Content */}
+                                        <div className="max-w-2xl">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <GraduationCap className="w-10 h-10 opacity-90" strokeWidth={1.3} />
+                                                <h3 className="text-2xl font-semibold">
+                                                    Ready to Apply?
+                                                </h3>
+                                            </div>
+
+                                            <p className=" text-lg leading-relaxed">
+                                                Take the next step toward your academic journey at{" "}
+                                                <span className="font-semibold">
+                                                    {course.university?.name}
+                                                </span>.
+                                                Begin your application today and secure your place.
+                                            </p>
+
+                                            <p className="text-sm mt-4">
+                                                Application Fee:{" "}
+                                                <span className="font-semibold">
+                                                    {formatCurrency(course.applicationFee, course.currency)}
+                                                </span>
+                                            </p>
+                                        </div>
+
+                                        {/* Right Action */}
+                                        <div className="w-full md:w-auto">
+                                            <button
+                                                onClick={() => setIsModalOpen(true)} 
+                                                className="w-full md:w-auto px-8 py-2.5 bg-white text-gray-700 rounded-xl hover:bg-indigo-100 transition-all font-semibold flex items-center justify-center gap-2"
+                                            >
+                                                Apply
+                                                <ExternalLink className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Decorative Blur Circle */}
+                                    <div className="absolute -top-20 -right-20 w-60 h-60 bg-white/10 rounded-full blur-3xl" />
+                                </motion.div>
                             </div>
                         </motion.div>
                     </div>
 
                     {/* Right Column - Sidebar (1/3 width) */}
-                    <div className="space-y-2">
+                    <div className="space-y-2 p-2">
                         {/* University Info Card */}
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="bg-white rounded-xl border border-gray-200 text-gray-800 p-6 transition-all"
+                            className="bg-gray-100 rounded-xl border-2 border-[#F26D44] text-gray-800 p-6 transition-all"
                         >
                             <div className="flex items-center gap-3 mb-5">
                                 <h3 className="font-semibold text-gray-900">About the University</h3>
@@ -678,34 +677,32 @@ export default function CourseDetailPage() {
                                 )}
 
                                 <div className="space-y-4">
-                                    <div className="flex items-start gap-3">
-                                        <MapPin className="w-4 h-4 text-gray-800 mt-0.5 flex-shrink-0" />
+                                    <div className="flex items-start gap-2">
+                                        <MapPin className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                                         <div className="space-y-1">
                                             <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Location</p>
-                                            <p className="text-sm">
-                                                {course.university?.city}, {course.university?.country}
-                                            </p>
+
                                             {course.university?.address && (
-                                                <p className="text-sm mt-0.5">{course.university.address}</p>
+                                                <p className="text-base mt-0.5">{course.university.address}</p>
                                             )}
                                         </div>
                                     </div>
 
-                                    <div className="flex items-start gap-3">
-                                        <Calendar className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                                    <div className="flex items-start gap-2">
+                                        <Building2Icon className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                                         <div>
                                             <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Established</p>
-                                            <p className="text-sm font-medium text-gray-80 mt-1">{course.university?.established_year || 'N/A'}</p>
+                                            <p className=" font-medium text-gray-80 mt-1">{course.university?.established_year || 'N/A'}</p>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-start gap-3">
-                                        <Users className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                                    <div className="flex items-start gap-2">
+                                        <Users className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                                         <div>
                                             <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Acceptance Rate</p>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-sm font-bold text-gray-900 mt-1">{course.university?.acceptanceRate || 'N/A'}%</span>
-                                                <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
+                                                <span className=" font-bold text-gray-900 mt-1">{course.university?.acceptanceRate || 'N/A'}%</span>
+                                                <span className="text-sm px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
                                                     Competitive
                                                 </span>
                                             </div>
@@ -713,13 +710,13 @@ export default function CourseDetailPage() {
                                     </div>
 
                                     {course.university?.intakes && course.university.intakes.length > 0 && (
-                                        <div className="flex items-start gap-3">
-                                            <Calendar className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                                        <div className="flex items-start gap-2">
+                                            <Calendar className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                                             <div>
                                                 <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Intakes</p>
                                                 <div className="flex flex-wrap gap-1.5 mt-1">
                                                     {course.university.intakes.map((intake, i) => (
-                                                        <span key={i} className="text-xs bg-gray-100 px-2.5 py-1 rounded-full border border-gray-200">
+                                                        <span key={i} className="text-sm bg-gray-100 px-2.5 py-1 rounded-full border border-gray-200">
                                                             {intake}
                                                         </span>
                                                     ))}
@@ -731,7 +728,7 @@ export default function CourseDetailPage() {
 
                                 <div className="pt-4 border-t border-gray-200">
                                     <Link
-                                        href={`/universities/${course.university?.slug}`}
+                                        href={`/dashboard/universities/${course.university?.slug}`}
                                         className="w-full px-4 py-2.5 bg-gradient-to-r from-gray-50 to-white text-gray-700 rounded-xl hover:from-gray-100 hover:to-gray-50 transition-all text-sm font-medium flex items-center justify-center gap-2 border border-gray-200"
                                     >
                                         View University Profile
@@ -747,10 +744,10 @@ export default function CourseDetailPage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.25 }}
-                                className="bg-white rounded-xl border border-gray-200 p-6 transition-all"
+                                className="bg-orange-100 rounded-xl border border-gray-200 p-6 transition-all"
                             >
                                 <div className="flex items-center gap-3 mb-4">
-                                    
+
                                     <h3 className="font-semibold text-gray-900">University Rankings</h3>
                                 </div>
                                 <div className="space-y-3">
@@ -807,23 +804,22 @@ export default function CourseDetailPage() {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.35 }}
-                            className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-xl p-6 text-white shadow-lg"
+                            className="bg-gradient-to-br from-[#F26D44] via-pink-600 to-indigo-700 rounded-xl p-6 text-white shadow-lg"
                         >
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-                                    <GraduationCap className="w-6 h-6" />
+                                <div className="">
+                                    <GraduationCap className="w-8 h-8" strokeWidth={1.2} />
                                 </div>
                                 <h3 className="text-lg font-semibold">Ready to Apply?</h3>
                             </div>
                             <p className="text-sm text-blue-100 mb-5 leading-relaxed">
                                 Start your application process today and take the first step towards your future at {course.university?.name}.
                             </p>
-                            <button className="w-full px-4 py-3 bg-white text-blue-700 rounded-xl hover:bg-blue-50 transition-all font-medium flex items-center justify-center gap-2 shadow-lg">
+                            <button onClick={() => setIsModalOpen(true)} className="w-full px-4 py-2.5 bg-white text-blue-700 rounded-xl hover:bg-blue-50 transition-all font-medium flex items-center justify-center gap-2 shadow-lg">
                                 Apply Now
                                 <ExternalLink className="w-4 h-4" />
                             </button>
                             <p className="text-xs text-blue-200 mt-4 text-center flex items-center justify-center gap-1">
-                                <Wallet className="w-3 h-3" />
                                 Application fee: {formatCurrency(course.applicationFee, course.currency)}
                             </p>
                         </motion.div>
@@ -849,6 +845,15 @@ export default function CourseDetailPage() {
                                 </div>
                             </motion.div>
                         )} */}
+
+                        <CreateApplicationModal
+                            isOpen={isModalOpen}
+                            onClose={() => setIsModalOpen(false)}
+                            onApplicationCreated={() => {
+                                // Refresh applications list or show success message
+                            }}
+                            program={course}
+                        />
                     </div>
                 </div>
             </div>

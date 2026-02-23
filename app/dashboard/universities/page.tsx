@@ -100,13 +100,6 @@ useEffect(() => {
     sort_order: "asc"
   })
 
-  // Extract unique values for filter options
-  const [filterOptions, setFilterOptions] = useState({
-    countries: [] as string[],
-    cities: [] as string[],
-    uni_types: [] as string[]
-  })
-
   const fetchCountries = useCallback(async () => {
     try {
       const response = await axiosInstance.get('/countries?limit=300')
@@ -131,7 +124,8 @@ useEffect(() => {
         ...(searchQuery && { name: searchQuery }),
         ...(filters.country && { country: filters.country }),
         ...(filters.sort_by && { sort_by: filters.sort_by }),
-        ...(filters.sort_order && { sort_order: filters.sort_order })
+        ...(filters.city && { city: filters.city }),
+        ...(filters.uni_type && { type: filters.uni_type })
       })
 
       const response = await axiosInstance.get(`/universities?${params}`)
@@ -409,10 +403,7 @@ useEffect(() => {
                           // label="Type"
                           options={[
                             { value: 'public', label: 'Public University' },
-                            { value: 'private', label: 'Private University' },
-                            { value: 'ivy', label: 'Ivy League' },
-                            { value: 'technical', label: 'Technical Institute' },
-                            { value: 'liberal', label: 'Liberal Arts College' },
+                            { value: 'private', label: 'Private University' }
                           ]}
                           value={filters.uni_type}
                           onChange={(value) => setFilters(prev => ({ ...prev, uni_type: value }))}
@@ -421,7 +412,7 @@ useEffect(() => {
                         />
                       </div>
 
-                      <div className="space-y-2">
+                      {/* <div className="space-y-2">
                         <label className="text-xs font-medium flex items-center gap-2">
                           <Users className="w-4 h-4" />
                           Accommodation
@@ -439,7 +430,7 @@ useEffect(() => {
                           placeholder="Select type"
                           className="py-0"
                         />
-                      </div>
+                      </div> */}
 
                       {/* Active Filters Display */}
                       {activeFilterCount > 0 && (

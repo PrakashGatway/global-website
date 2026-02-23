@@ -13,9 +13,6 @@ export const profileSchema = {
           message: "full name must be at least 2 characters"
         }
       },
-
-
-
       {
         name: "dateOfBirth",
         label: "Date of Birth",

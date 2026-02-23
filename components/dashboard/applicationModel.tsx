@@ -5,20 +5,40 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronRight, ChevronLeft, Check, GraduationCap, Calendar, BookOpen, AlertCircle, Download } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 import axiosInstance from '@/app/axiosInstance'
-import { ApplicationForm ,PrerequisitesForm ,BackupsForm,ExpectationsForm} from './applicationSteps'
-
+import { ApplicationForm, PrerequisitesForm, BackupsForm, ExpectationsForm } from './applicationSteps'
 
 interface CreateApplicationModalProps {
   isOpen: boolean
   onClose: () => void
   onApplicationCreated?: () => void
   program: {
-    id: string
+    _id: string
     name: string
-    university: string
-    intake: string
-    deadline: string
+    university: {
+      _id: string
+      name: string
+      slug: string
+      country: string
+      city: string
+      uni_logo?: string
+      intakes?: string[]
+    }
+    subject?: {
+      _id: string
+      name: string
+    }
+    studyMode?: string
+    shortName?: string
+    tuitionFee?: number
+    currency?: string
+    level?: string
+    duration?: string
+    applicationFee?: number
+    intake?: string
+    deadline?: string
     school?: string
+    requirements?: Record<string, string>
+    docsRequired?: Array<Record<string, string>>
   }
 }
 
@@ -37,19 +57,64 @@ export function CreateApplicationModal({
 }: CreateApplicationModalProps) {
   const [currentStep, setCurrentStep] = React.useState(0)
   const [isLoading, setIsLoading] = React.useState(false)
+  
+  // Get available intakes from program data
+  const availableIntakes = React.useMemo(() => {
+    // Try to get intakes from university first, then from program
+    return program.university?.intakes || [program.intake].filter(Boolean) || ['Fall 2024', 'Spring 2025']
+  }, [program])
+
   const [formData, setFormData] = React.useState({
-    selectedIntake: program.intake,
+    selectedIntake: program.intake || (availableIntakes[0] || ''),
     prerequisites: {
-      documents: [],
-      requirements: [],
+      documents: [] as Array<{ name: string; uploaded: boolean; url?: string }>,
+      requirements: [] as Array<{ name: string; met: boolean }>,
       isVerified: false
     },
-    backups: [],
+    backups: [] as Array<{
+      programId: string
+      programName: string
+      university: string
+      priority: number
+    }>,
     expectations: {
       understood: false,
       agreed: false
     }
   })
+
+  // Initialize prerequisites from program requirements
+  React.useEffect(() => {
+    if (program.requirements) {
+      const reqs = Object.entries(program.requirements).map(([key, value]) => ({
+        name: `${key}: ${value}`,
+        met: false
+      }))
+      setFormData(prev => ({
+        ...prev,
+        prerequisites: {
+          ...prev.prerequisites,
+          requirements: reqs
+        }
+      }))
+    }
+
+    if (program.docsRequired) {
+      const docs = program.docsRequired.flatMap(doc => 
+        Object.entries(doc).map(([key, value]) => ({
+          name: `${key}${value !== 'copy' ? ` - ${value}` : ''}`,
+          uploaded: false
+        }))
+      )
+      setFormData(prev => ({
+        ...prev,
+        prerequisites: {
+          ...prev.prerequisites,
+          documents: docs
+        }
+      }))
+    }
+  }, [program])
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -66,23 +131,40 @@ export function CreateApplicationModal({
   const handleSubmit = async () => {
     setIsLoading(true)
     try {
-      const response = await axiosInstance.post('/applications', {
-        programId: program.id,
+      const applicationData = {
+        programId: program._id,
         programName: program.name,
-        university: program.university,
-        school: program.school,
+        university: {
+          id: program.university._id,
+          name: program.university.name,
+          country: program.university.country,
+          city: program.university.city
+        },
+        school: program.subject?.name || program.university.name,
         selectedIntake: formData.selectedIntake,
-        prerequisites: formData.prerequisites,
+        prerequisites: {
+          documents: formData.prerequisites.documents.filter(doc => doc.uploaded).map(doc => doc.name),
+          requirements: formData.prerequisites.requirements.filter(req => req.met).map(req => req.name),
+          isVerified: formData.prerequisites.isVerified
+        },
         backups: formData.backups,
         expectations: formData.expectations,
-        status: 'submitted'
-      })
+        status: 'submitted',
+        applicationFee: program.applicationFee,
+        tuitionFee: program.tuitionFee,
+        currency: program.currency || 'INR',
+        duration: program.duration,
+        level: program.level,
+        studyMode: program.studyMode
+      }
+
+      const response = await axiosInstance.post('/applications', applicationData)
 
       toast.success('Application submitted successfully!')
       onApplicationCreated?.()
       onClose()
     } catch (error: any) {
-      toast.error(error.message || 'Failed to submit application')
+      toast.error(error.response?.data?.message || error.message || 'Failed to submit application')
     } finally {
       setIsLoading(false)
     }
@@ -93,9 +175,12 @@ export function CreateApplicationModal({
       case 0: // Intakes
         return !!formData.selectedIntake
       case 1: // Prerequisites
-        return formData.prerequisites.isVerified
+        // Check if all required documents are uploaded and requirements are met
+        const allDocsUploaded = formData.prerequisites.documents.every(doc => doc.uploaded)
+        const allReqsMet = formData.prerequisites.requirements.every(req => req.met)
+        return allDocsUploaded && allReqsMet && formData.prerequisites.isVerified
       case 2: // Backups
-        return true // Optional, but we can add validation if needed
+        return true // Optional
       case 3: // Expectations
         return formData.expectations.understood && formData.expectations.agreed
       default:
@@ -111,6 +196,7 @@ export function CreateApplicationModal({
             program={program}
             formData={formData}
             setFormData={setFormData}
+            availableIntakes={availableIntakes}
           />
         )
       case 1:
@@ -153,7 +239,7 @@ export function CreateApplicationModal({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 top-0 buttom-0 h-screen bg-black/50 backdrop-blur-[1px] z-40"
+            className="fixed inset-0 top-0 bottom-0 h-screen bg-black/50 backdrop-blur-[1px] z-40"
           />
 
           {/* Modal */}
@@ -164,7 +250,7 @@ export function CreateApplicationModal({
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="fixed inset-0 z-40 flex items-center justify-center p-2 overflow-hidden"
           >
-            <div className="relative rounded-3xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="relative rounded-3xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col bg-white">
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -201,18 +287,27 @@ export function CreateApplicationModal({
                     <div className='col-span-4'>
                       <p className="text-blue-200 text-xs">Program</p>
                       <p className="text-white font-medium text-sm truncate">{program.name}</p>
+                      {program.shortName && (
+                        <p className="text-blue-200 text-xs">{program.shortName}</p>
+                      )}
                     </div>
                     <div className='col-span-4'>
-                      <p className="text-blue-200 text-xs">School</p>
-                      <p className="text-white font-medium text-sm truncate">{program.school || program.university}</p>
+                      <p className="text-blue-200 text-xs">University</p>
+                      <p className="text-white font-medium text-sm truncate">{program.university?.name}</p>
+                      <p className="text-blue-200 text-xs">{program.university?.country}, {program.university?.city}</p>
                     </div>
                     <div className='col-span-2'>
                       <p className="text-blue-200 text-xs">Intake</p>
-                      <p className="text-white font-medium text-sm">{program.intake}</p>
+                      <p className="text-white font-medium text-sm">{program.intake || 'Flexible'}</p>
                     </div>
                     <div className='col-span-2'>
-                      <p className="text-blue-200 text-xs">Deadline</p>
-                      <p className="text-white font-medium text-sm">{program.deadline}</p>
+                      <p className="text-blue-200 text-xs">Fee</p>
+                      <p className="text-white font-medium text-sm">
+                        {program.currency} {program.tuitionFee?.toLocaleString()}
+                      </p>
+                      {program.applicationFee && (
+                        <p className="text-blue-200 text-xs">App Fee: {program.currency} {program.applicationFee}</p>
+                      )}
                     </div>
                   </div>
                 </motion.div>
@@ -233,7 +328,7 @@ export function CreateApplicationModal({
                             backgroundColor: isActive ? '#ffffff' : isCompleted ? '#22c55e' : 'rgba(255,255,255,0.2)'
                           }}
                           className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
-                            isActive ? 'text-blue-600' : isCompleted ? 'text-white' : 'text-white'
+                            isActive ? 'text-[#F26D44]' : isCompleted ? 'text-white' : 'text-white'
                           }`}
                         >
                           {isCompleted ? (
@@ -286,8 +381,6 @@ export function CreateApplicationModal({
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  
-                  
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -309,7 +402,7 @@ export function CreateApplicationModal({
                       whileTap={{ scale: 0.98 }}
                       onClick={handleSubmit}
                       disabled={!isStepValid() || isLoading}
-                      className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="px-6 py-2 bg-gradient-to-r from-[#F26D44] to-[#626363] text-white text-sm font-medium rounded-lg hover:from-[#d55a3a] hover:to-[#4a4a4a] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       {isLoading ? (
                         <>
@@ -328,8 +421,8 @@ export function CreateApplicationModal({
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={handleNext}
-                      disabled={!isStepValid()}
-                      className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      // disabled={!isStepValid()}
+                      className="px-6 py-2 bg-gradient-to-r from-[#F26D44] to-[#626363] text-white text-sm font-medium rounded-lg hover:from-[#d55a3a] hover:to-[#4a4a4a] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       Next
                       <ChevronRight className="w-4 h-4" />

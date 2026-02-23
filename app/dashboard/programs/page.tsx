@@ -12,6 +12,7 @@ import axiosInstance from "@/app/axiosInstance"
 import { ModernSelect } from "@/components/ui/select"
 import Link from "next/link"
 import { CreateApplicationModal } from "@/components/dashboard/applicationModel"
+  import { useSearchParams } from 'next/navigation';
 
 interface Course {
   _id: string
@@ -86,10 +87,15 @@ export default function CoursesPage() {
   const [categories, setCategories] = useState([])
   const [universities, setUniversities] = useState([])
 
+
+const searchParams = useSearchParams();
+const university = searchParams.get('university');
+
+
   // Filters state
   const [filters, setFilters] = useState({
     country: "",
-    university: "",
+    university: university || "",
     category: "",
     studyMode: "",
     level: "",
@@ -103,35 +109,38 @@ export default function CoursesPage() {
   const fetchFilterOptions = useCallback(async () => {
     try {
       // Fetch countries
-      const countriesRes = await axiosInstance.get('/countries?limit=300')
+
+      const [countriesRes, uniRes, catRes] = await Promise.all([
+        axiosInstance.get('/countries?limit=300'),
+        axiosInstance.get('/universities/flat'),
+        axiosInstance.get('/courses/categories?limit=100')
+      ])
       const countriesData = countriesRes.data.data
       setCountries(countriesData.map(c => ({ label: c.name, value: c.code })))
 
       // Fetch universities for filter
-      const uniRes = await axiosInstance.get('/universities?limit=100')
-      const uniData = uniRes.data.result
+      const uniData = uniRes.data.data
       setUniversities(uniData.map(u => ({ label: u.name, value: u._id })))
 
       // Fetch categories
-      const catRes = await axiosInstance.get('/course-categories?limit=50')
       const catData = catRes.data.data
       setCategories(catData.map(c => ({ label: c.name, value: c._id })))
 
       // Extract unique study modes and levels from courses later
       // For now, set static options
       setStudyModes([
-        { label: "Full Time", value: "Full Time" },
-        { label: "Part Time", value: "Part Time" },
+        { label: "Full Time", value: "Full-time" },
+        { label: "Part Time", value: "Part-time" },
         { label: "Online", value: "Online" },
-        { label: "Distance Learning", value: "Distance Learning" }
+        { label: "Hybrid", value: "Hybrid" }
       ])
-
       setLevels([
-        { label: "Bachelor", value: "Bachelor" },
-        { label: "Master", value: "Master" },
+        { label: "Undergraduate", value: "Undergraduate" },
+        { label: "Postgraduate", value: "Postgraduate" },
         { label: "PhD", value: "PhD" },
         { label: "Diploma", value: "Diploma" },
-        { label: "Certificate", value: "Certificate" }
+        { label: "Certificate", value: "Certificate" },
+        { label: "Other", value: "Other" }
       ])
     } catch (error) {
       console.error('Error fetching filter options:', error)
@@ -144,16 +153,15 @@ export default function CoursesPage() {
       const currentPage = reset ? 1 : page
       const params = new URLSearchParams({
         page: currentPage.toString(),
+        isExtra: 'false',
         limit: '12',
-        populate: 'university,category,subject',
+
         ...(searchQuery && { name: searchQuery }),
         ...(filters.country && { 'university.country': filters.country }),
         ...(filters.university && { university: filters.university }),
         ...(filters.category && { category: filters.category }),
         ...(filters.studyMode && { studyMode: filters.studyMode }),
         ...(filters.level && { level: filters.level }),
-        ...(filters.minFee && { minFee: filters.minFee }),
-        ...(filters.maxFee && { maxFee: filters.maxFee }),
         ...(filters.sort_by && { sort_by: filters.sort_by }),
         ...(filters.sort_order && { sort_order: filters.sort_order })
       })
@@ -360,8 +368,6 @@ export default function CoursesPage() {
               )}
             </button>
 
-
-            {/* Filters Drawer */}
             <AnimatePresence>
               {showFilters && (
                 <>
@@ -469,7 +475,7 @@ export default function CoursesPage() {
                       </div>
 
                       {/* Tuition Fee Range */}
-                      <div className="space-y-2">
+                      {/* <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                           <DollarSign className="w-4 h-4" />
                           Tuition Fee Range
@@ -490,7 +496,7 @@ export default function CoursesPage() {
                             className="px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 text-sm"
                           />
                         </div>
-                      </div>
+                      </div> */}
 
                       {/* Active Filters Display */}
                       {getActiveFilterCount() > 0 && (

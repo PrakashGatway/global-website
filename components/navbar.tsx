@@ -169,7 +169,7 @@ export default function Navbar({
   if (
     pathname === "/login" ||
     pathname === "/signup" ||
-    pathname.startsWith("/dashboard")
+    pathname.startsWith("/dashboard") || pathname.startsWith("/api") 
   ) {
     return null
   }
