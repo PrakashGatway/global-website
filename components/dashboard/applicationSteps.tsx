@@ -49,49 +49,41 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
   }, [availableIntakes])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Program Details Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+        className="rounded-xl p-4 border-2 border-[#F26D44]/50 bg-pink-100"
       >
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Program Details</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <p className="text-sm text-gray-500">Program</p>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Program Information</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+          <div className="space-y-1">
+            <p className="text-xs text-gray-500">Program</p>
             <p className="font-medium text-gray-900">{program.name}</p>
-            {program.shortName && (
-              <p className="text-xs text-gray-500">{program.shortName}</p>
-            )}
           </div>
-          <div className="space-y-2">
-            <p className="text-sm text-gray-500">University</p>
+          <div className="space-y-1">
+            <p className="text-xs text-gray-500">University</p>
             <p className="font-medium text-gray-900">{program.university?.name}</p>
-            <p className="text-xs text-gray-500">{program.university?.country}</p>
           </div>
-          <div className="space-y-2">
-            <p className="text-sm text-gray-500">Duration & Mode</p>
-            <p className="font-medium text-gray-900">{program.duration || '4 years'}</p>
-            <p className="text-xs text-gray-500">{program.studyMode || 'Full-time'}</p>
+          <div className="space-y-1">
+            <p className="text-xs text-gray-500">Duration & Mode</p>
+            <p className="font-medium text-gray-900">{program.duration || '4 years'} {program.studyMode || 'Full-time'}</p>
           </div>
-          <div className="space-y-2">
-            <p className="text-sm text-gray-500">Tuition Fee</p>
+          <div className="space-y-1">
+            <p className="text-xs text-gray-500">Tuition Fee</p>
             <p className="font-medium text-gray-900">
               {program.currency || 'USD'} {program.tuitionFee?.toLocaleString() || 'N/A'}
             </p>
-            {program.applicationFee && (
-              <p className="text-xs text-gray-500">App Fee: {program.currency} {program.applicationFee}</p>
-            )}
           </div>
-          <div className="space-y-2">
-            <p className="text-sm text-gray-500">Level</p>
+          <div className="space-y-1">
+            <p className="text-xs text-gray-500">Level</p>
             <p className="font-medium text-gray-900">{program.level || 'Undergraduate'}</p>
           </div>
           <div className="space-y-2">
-            <p className="text-sm text-gray-500">Deadline</p>
-            <p className="font-medium text-red-600">{program.deadline || 'Rolling Admission'}</p>
+            <p className="text-xs text-gray-500">Campus</p>
+            <p className="font-medium text-gray-800">{program?.university?.address  || 'Rolling Admission'}</p>
           </div>
         </div>
       </motion.div>
@@ -101,9 +93,9 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+        className="p-2"
       >
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Select Intake</h3>
+        <h3 className="text-base font-bold text-gray-900 ">Select Intake</h3>
         <p className="text-sm text-gray-500 mb-4">
           Choose your preferred intake date for this program.
         </p>
@@ -115,7 +107,7 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + index * 0.1 }}
-              className={`relative flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
+              className={`relative flex items-center p-4 py-2 rounded-lg border-2 cursor-pointer transition-all ${
                 formData.selectedIntake === intake.fullIntake
                   ? 'border-[#F26D44] bg-orange-50'
                   : 'border-gray-200 hover:border-gray-300'
@@ -132,10 +124,10 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
               />
               <div className="flex-1 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className={`p-2 rounded-lg ${
-                    formData.selectedIntake === intake.fullIntake ? 'bg-orange-100' : 'bg-gray-100'
+                  <div className={`${
+                    formData.selectedIntake === intake.fullIntake ? '' : ''
                   }`}>
-                    <Calendar className={`w-5 h-5 ${
+                    <Calendar className={`w-7 h-7 stroke-[1.5px] ${
                       formData.selectedIntake === intake.fullIntake ? 'text-[#F26D44]' : 'text-gray-500'
                     }`} />
                   </div>

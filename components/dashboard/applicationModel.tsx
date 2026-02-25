@@ -60,12 +60,11 @@ export function CreateApplicationModal({
   
   // Get available intakes from program data
   const availableIntakes = React.useMemo(() => {
-    // Try to get intakes from university first, then from program
-    return program.university?.intakes || [program.intake].filter(Boolean) || ['Fall 2024', 'Spring 2025']
+    return program?.university?.intakes || [program?.intake].filter(Boolean) || ['Fall 2024', 'Spring 2025']
   }, [program])
 
   const [formData, setFormData] = React.useState({
-    selectedIntake: program.intake || (availableIntakes[0] || ''),
+    selectedIntake: program?.intake || (availableIntakes[0] || ''),
     prerequisites: {
       documents: [] as Array<{ name: string; uploaded: boolean; url?: string }>,
       requirements: [] as Array<{ name: string; met: boolean }>,
@@ -85,7 +84,7 @@ export function CreateApplicationModal({
 
   // Initialize prerequisites from program requirements
   React.useEffect(() => {
-    if (program.requirements) {
+    if (program?.requirements) {
       const reqs = Object.entries(program.requirements).map(([key, value]) => ({
         name: `${key}: ${value}`,
         met: false
@@ -99,8 +98,8 @@ export function CreateApplicationModal({
       }))
     }
 
-    if (program.docsRequired) {
-      const docs = program.docsRequired.flatMap(doc => 
+    if (program?.docsRequired) {
+      const docs = program?.docsRequired?.flatMap(doc => 
         Object.entries(doc).map(([key, value]) => ({
           name: `${key}${value !== 'copy' ? ` - ${value}` : ''}`,
           uploaded: false
@@ -239,7 +238,7 @@ export function CreateApplicationModal({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 top-0 bottom-0 h-screen bg-black/50 backdrop-blur-[1px] z-40"
+            className="fixed inset-0 top-0 bottom-0 h-screen bg-black/20 backdrop-blur-[1px] z-40"
           />
 
           {/* Modal */}
@@ -255,14 +254,14 @@ export function CreateApplicationModal({
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.3 }}
-                className="bg-gradient-to-r from-[#F26D44] to-[#626363] p-6"
+                className="bg-pink-100 p-6"
               >
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between !text-gray-800">
                   <div>
-                    <h2 className="text-xl font-bold text-white">
+                    <h2 className="text-xl font-bold text-gray-800">
                       New Application
                     </h2>
-                    <p className="text-blue-100 text-xs">
+                    <p className="text-xs">
                       Apply for {program.name}
                     </p>
                   </div>
@@ -270,14 +269,14 @@ export function CreateApplicationModal({
                     whileHover={{ rotate: 90, scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={onClose}
-                    className="text-white/80 hover:text-white transition-colors"
+                    className="transition-colors"
                   >
                     <X className="w-6 h-6" />
                   </motion.button>
                 </div>
 
                 {/* Program Summary Card */}
-                <motion.div
+                {/* <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.3 }}
@@ -310,44 +309,47 @@ export function CreateApplicationModal({
                       )}
                     </div>
                   </div>
-                </motion.div>
+                </motion.div> */}
 
                 {/* Progress Steps */}
-                <div className="mt-6 flex items-center justify-center">
+                <div className="mt-4 flex items-center justify-center gap-1">
                   {steps.map((step, index) => {
                     const StepIcon = step.icon
                     const isActive = index === currentStep
                     const isCompleted = index < currentStep
                     
                     return (
-                      <div key={step.id} className="flex items-center">
+                      <React.Fragment key={step.id}>
+                      <div key={step.id} className="flex gap-1 items-center">
                         <motion.div
                           initial={false}
                           animate={{
-                            scale: isActive ? 1.1 : 1,
-                            backgroundColor: isActive ? '#ffffff' : isCompleted ? '#22c55e' : 'rgba(255,255,255,0.2)'
+                            scale: isActive ? 1.1 : 0.9,
+                            backgroundColor: isActive ? '#ffffff' : isCompleted ? '#30ff7c' : 'rgb(231, 223, 223)'
                           }}
-                          className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
-                            isActive ? 'text-[#F26D44]' : isCompleted ? 'text-white' : 'text-white'
+                          className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
+                            isActive ? 'text-gray-600' : isCompleted ? 'text-gray-800' : 'text-gray-600'
                           }`}
                         >
                           {isCompleted ? (
-                            <Check className="w-4 h-4" />
+                            <Check className="w-5 h-5" strokeWidth={1.7} />
                           ) : (
-                            <StepIcon className="w-4 h-4" />
+                            <StepIcon className="w-5 h-5" strokeWidth={1.7} />
                           )}
                         </motion.div>
                         <div className="ml-2 flex-1">
                           <p className={`text-xs font-medium ${
-                            isActive ? 'text-white' : 'text-blue-200'
+                            isActive ? 'text-gray-800' : 'text-gray-500'
                           }`}>
                             {step.title}
                           </p>
                         </div>
-                        {index < steps.length - 1 && (
-                          <ChevronRight className="w-4 h-4 text-blue-300 mx-2" />
-                        )}
+                       
                       </div>
+                       {index < steps.length - 1 && (
+                          <ChevronRight className="w-6 h-6 text-gray-400 mx-2" />
+                        )}
+                      </React.Fragment>
                     )
                   })}
                 </div>

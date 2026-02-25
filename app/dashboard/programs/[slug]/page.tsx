@@ -21,6 +21,7 @@ import axiosInstance from "@/app/axiosInstance"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { CreateApplicationModal } from "@/components/dashboard/applicationModel"
+import CourseDetailScholarships from "@/components/dashboard/scholarship"
 
 // Types based on your actual payload
 interface Course {
@@ -213,7 +214,7 @@ export default function CourseDetailPage() {
     const [activeTab, setActiveTab] = useState()
     const [isSaved, setIsSaved] = useState(false)
     const [relatedCourses, setRelatedCourses] = useState([])
-    const [isModalOpen , setIsModalOpen] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     useEffect(() => {
         fetchCourseDetails()
@@ -603,7 +604,14 @@ export default function CourseDetailPage() {
                                         </motion.div>
                                     )
                                 ))}
-
+                                <CourseDetailScholarships
+                                    countryId={course?.university?.country} // Pass the country ID from your course data
+                                    universityId={course.university._id} // Optional: filter by university
+                                    subjectId={course.subject._id} // Optional: filter by subject
+                                    limit={5} // Number of scholarships per page
+                                    showFilters={true} // Show/hide filter panel
+                                    title="Scholarships for this Course" // Custom title
+                                />
                                 <motion.div
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -638,10 +646,10 @@ export default function CourseDetailPage() {
                                         </div>
 
                                         {/* Right Action */}
-                                        <div className="w-full md:w-auto">
+                                        <div className="relative z-50 w-full md:w-auto">
                                             <button
-                                                onClick={() => setIsModalOpen(true)} 
-                                                className="w-full md:w-auto px-8 py-2.5 bg-white text-gray-700 rounded-xl hover:bg-indigo-100 transition-all font-semibold flex items-center justify-center gap-2"
+                                                onClick={() => { setIsModalOpen(true) }}
+                                                className="w-full md:w-auto px-8 py-2.5 cursor-pointer bg-white text-gray-700 rounded-xl hover:bg-indigo-100 transition-all font-semibold flex items-center justify-center gap-2"
                                             >
                                                 Apply
                                                 <ExternalLink className="w-4 h-4" />
@@ -652,6 +660,7 @@ export default function CourseDetailPage() {
                                     {/* Decorative Blur Circle */}
                                     <div className="absolute -top-20 -right-20 w-60 h-60 bg-white/10 rounded-full blur-3xl" />
                                 </motion.div>
+
                             </div>
                         </motion.div>
                     </div>

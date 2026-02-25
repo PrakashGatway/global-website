@@ -70,15 +70,7 @@ export default function CoursesPage() {
   const observerTarget = useRef<HTMLDivElement>(null)
   const filterButtonRef = useRef(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const program = {
-    id: '123',
-    name: 'Bachelor of Science - Data Science',
-    university: 'Middle Tennessee State University',
-    school: 'College of Basic and Applied Sciences',
-    intake: 'Jan 2027',
-    deadline: 'Nov 02, 2026'
-  }
+  const [selectedCourse, setSelectedCourse] = useState(null)
 
   // Filter options state
   const [countries, setCountries] = useState([])
@@ -731,7 +723,7 @@ const university = searchParams.get('university');
                       View Details
                     </Link>
                     <button
-                    onClick={()=>setIsModalOpen(true)}
+                    onClick={()=>{setSelectedCourse(course),setIsModalOpen(true)}}
                       
                       className="flex-1 text-sm px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium text-center"
                     >
@@ -774,7 +766,7 @@ const university = searchParams.get('university');
           onApplicationCreated={() => {
             // Refresh applications list or show success message
           }}
-          program={program}
+          program={selectedCourse}
         />
       </div>
     </main>

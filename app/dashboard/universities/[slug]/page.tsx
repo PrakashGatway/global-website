@@ -155,133 +155,133 @@ const TabButton = ({ active, onClick, children }: any) => (
 // Course Card Component
 const CourseCard = ({ course, university }: { course: Course; university: University }) => {
     return (
-<motion.div
-  key={course._id}
-  whileHover={{ y: -1 }}
-  className="group relative bg-gray-100 border-2 border-[#F26D44] rounded-xl mb-2 overflow-hidden transition-all duration-100 hover:shadow-md"
->
-  <div className="p-4 space-y-3">
+        <motion.div
+            key={course._id}
+            whileHover={{ y: -1 }}
+            className="group relative bg-gray-100 border-2 border-[#F26D44] rounded-xl mb-2 overflow-hidden transition-all duration-100 hover:shadow-md"
+        >
+            <div className="p-4 space-y-3">
 
-    {/* Header */}
-    <div className="flex gap-3">
-      <div className="w-14 h-14 rounded-lg bg-gray-50 p-2 border flex items-center justify-center">
-        {course.university?.uni_logo ? (
-          <img
-            src={course.university.uni_logo}
-            alt={course.university?.name}
-            className="w-full h-full object-contain"
-          />
-        ) : (
-          <Building2 className="w-6 h-6 text-muted-foreground" />
-        )}
-      </div>
+                {/* Header */}
+                <div className="flex gap-3">
+                    <div className="w-14 h-14 rounded-lg bg-gray-50 p-2 border flex items-center justify-center">
+                        {course.university?.uni_logo ? (
+                            <img
+                                src={course.university.uni_logo}
+                                alt={course.university?.name}
+                                className="w-full h-full object-contain"
+                            />
+                        ) : (
+                            <Building2 className="w-6 h-6 text-muted-foreground" />
+                        )}
+                    </div>
 
-      <div className="flex-1 min-w-0">
-        <h3 className="font-semibold text-[15px] leading-tight group-hover:text-primary transition-colors line-clamp-2">
-          {course.name}
-        </h3>
+                    <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-[15px] leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                            {course.name}
+                        </h3>
 
-        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-          <Building2 className="w-3 h-3" />
-          {course.university?.name}
-        </p>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                            <Building2 className="w-3 h-3" />
+                            {course.university?.name}
+                        </p>
 
-        <p className="text-xs text-muted-foreground flex items-center gap-1">
-          <MapPin className="w-3 h-3" />
-          {course.university?.city}, {course.university?.country}
-        </p>
-      </div>
-    </div>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {course.university?.city}, {course.university?.country}
+                        </p>
+                    </div>
+                </div>
 
-    {/* Description */}
-    {course.description && (
-      <p className="text-xs text-foreground/70 line-clamp-2">
-        {course.description}
-      </p>
-    )}
+                {/* Description */}
+                {course.description && (
+                    <p className="text-xs text-foreground/70 line-clamp-2">
+                        {course.description}
+                    </p>
+                )}
 
-    {/* Key Details Grid */}
-    <div className="grid grid-cols-2 gap-2 text-xs">
+                {/* Key Details Grid */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
 
-      <div className="flex items-center gap-1">
-        <IndianRupee className="w-3.5 h-3.5" />
-        <span>Tuition</span>
-      </div>
-      <div className="text-right ">
-        {course?.tuitionFee  || "N/A"}
-        <span className="text-muted-foreground font-normal ml-1 text-[11px]">
-           per year
-        </span>
-      </div>
+                    <div className="flex items-center gap-1">
+                        <IndianRupee className="w-3.5 h-3.5" />
+                        <span>Tuition</span>
+                    </div>
+                    <div className="text-right ">
+                        {course?.tuitionFee || "N/A"}
+                        <span className="text-muted-foreground font-normal ml-1 text-[11px]">
+                            per year
+                        </span>
+                    </div>
 
-      <div className="flex items-center gap-1">
-        <Clock className="w-3.5 h-3.5" />
-        <span>Duration</span>
-      </div>
-      <div className="text-right">
-        {course.duration || "N/A"} 
-        <span className="text-muted-foreground font-normal text-[11px] ml-1">
-          full-time
-        </span>
-      </div>
+                    <div className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>Duration</span>
+                    </div>
+                    <div className="text-right">
+                        {course.duration || "N/A"}
+                        <span className="text-muted-foreground font-normal text-[11px] ml-1">
+                            full-time
+                        </span>
+                    </div>
 
-      <div className="flex items-center gap-1">
-        <FileText className="w-3.5 h-3.5" />
-        <span>Application fee</span>
-      </div>
-      <div className="text-right ">
-        {course?.applicationFee || "N/A"}
-        <span className="text-muted-foreground font-normal ml-1 text-[11px]">
-          one-time
-        </span>
-      </div>
-    </div>
+                    <div className="flex items-center gap-1">
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>Application fee</span>
+                    </div>
+                    <div className="text-right ">
+                        {course?.applicationFee || "N/A"}
+                        <span className="text-muted-foreground font-normal ml-1 text-[11px]">
+                            one-time
+                        </span>
+                    </div>
+                </div>
 
-    {/* Tags */}
-    {course.tags?.length > 0 && (
-      <div className="flex flex-wrap gap-1">
-        {course.tags.slice(0, 2).map((tag, i) => (
-          <span
-            key={i}
-            className="px-2 py-0.5 bg-gray-100 rounded text-[11px] font-medium"
-          >
-            {tag}
-          </span>
-        ))}
-        {course.tags.length > 2 && (
-          <span className="text-[11px] text-muted-foreground">
-            +{course.tags.length - 2}
-          </span>
-        )}
-      </div>
-    )}
+                {/* Tags */}
+                {course.tags?.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                        {course.tags.slice(0, 2).map((tag, i) => (
+                            <span
+                                key={i}
+                                className="px-2 py-0.5 bg-gray-100 rounded text-[11px] font-medium"
+                            >
+                                {tag}
+                            </span>
+                        ))}
+                        {course.tags.length > 2 && (
+                            <span className="text-[11px] text-muted-foreground">
+                                +{course.tags.length - 2}
+                            </span>
+                        )}
+                    </div>
+                )}
 
-    {/* Intakes */}
-    {course?.university?.intakes?.length > 0 && (
-      <div className="flex flex-wrap gap-1 text-[11px]">
-        {course.university.intakes.map((intake, i) => (
-          <span
-            key={i}
-            className="px-2 py-0.5 bg-primary/10 text-primary rounded-full"
-          >
-            {intake}
-          </span>
-        ))}
-      </div>
-    )}
+                {/* Intakes */}
+                {course?.university?.intakes?.length > 0 && (
+                    <div className="flex flex-wrap gap-1 text-[11px]">
+                        {course.university.intakes.map((intake, i) => (
+                            <span
+                                key={i}
+                                className="px-2 py-0.5 bg-primary/10 text-primary rounded-full"
+                            >
+                                {intake}
+                            </span>
+                        ))}
+                    </div>
+                )}
 
-    {/* Button */}
-    <div className="pt-2">
-      <Link
-        href={`/dashboard/programs/${course.slug}`}
-        className="block w-full text-center text-xs py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition"
-      >
-        View Details
-      </Link>
-    </div>
+                {/* Button */}
+                <div className="pt-2">
+                    <Link
+                        href={`/dashboard/programs/${course.slug}`}
+                        className="block w-full text-center text-xs py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition"
+                    >
+                        View Details
+                    </Link>
+                </div>
 
-  </div>
-</motion.div>
+            </div>
+        </motion.div>
     )
 }
 
@@ -661,7 +661,78 @@ export default function UniversityDetailPage() {
                                 </motion.div>
                             )}
 
-                            {/* Courses Tab */}
+                            {activeTab === "fees" && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="space-y-8"
+                                >
+                                    <div
+                                        className="prose max-w-none"
+                                        dangerouslySetInnerHTML={{ __html: getSectionContent('fees') }}
+                                    />
+
+                                    {/* Average Tuition */}
+                                    <div className="bg-card border border-border rounded-2xl p-6">
+                                        <h3 className="text-lg font-bold mb-4">Estimated Tuition Fees</h3>
+                                        <div className="grid grid-cols-2 gap-6">
+                                            <div>
+                                                <p className="text-sm text-muted-foreground mb-1">Undergraduate</p>
+                                                <p className="text-2xl font-bold text-primary">$15,000 - $35,000</p>
+                                                <p className="text-xs text-muted-foreground mt-1">per year</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm text-muted-foreground mb-1">Postgraduate</p>
+                                                <p className="text-2xl font-bold text-primary">$20,000 - $45,000</p>
+                                                <p className="text-xs text-muted-foreground mt-1">per year</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Scholarships */}
+                                    <div className="bg-card border border-border rounded-2xl p-6">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <div className="p-2 bg-amber-100 rounded-lg">
+                                                <Award className="w-5 h-5 text-amber-600" />
+                                            </div>
+                                            <h3 className="text-lg font-bold">Scholarships & Financial Aid</h3>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <div className="p-4 bg-muted/30 rounded-lg">
+                                                <h4 className="font-semibold mb-2">Merit-based Scholarships</h4>
+                                                <p className="text-sm text-muted-foreground mb-2">
+                                                    Awarded to outstanding students based on academic excellence.
+                                                </p>
+                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
+                                                    Up to 50% tuition fee waiver
+                                                </span>
+                                            </div>
+                                            <div className="p-4 bg-muted/30 rounded-lg">
+                                                <h4 className="font-semibold mb-2">Need-based Financial Aid</h4>
+                                                <p className="text-sm text-muted-foreground mb-2">
+                                                    Available for students demonstrating financial need.
+                                                </p>
+                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
+                                                    Varies based on need
+                                                </span>
+                                            </div>
+                                            <div className="p-4 bg-muted/30 rounded-lg">
+                                                <h4 className="font-semibold mb-2">International Student Scholarships</h4>
+                                                <p className="text-sm text-muted-foreground mb-2">
+                                                    Specifically designed for international students.
+                                                </p>
+                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
+                                                    Up to 30% tuition fee waiver
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <button className="mt-6 w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
+                                            Apply for Scholarships
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            )}
+
                             {(activeTab === "courses" || activeTab) && (
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
@@ -758,79 +829,7 @@ export default function UniversityDetailPage() {
                                     </div>
                                 </motion.div>
                             )}
-
-                            {/* Fees & Scholarships Tab */}
-                            {activeTab === "fees" && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="space-y-8"
-                                >
-                                    <div
-                                        className="prose max-w-none"
-                                        dangerouslySetInnerHTML={{ __html: getSectionContent('fees') }}
-                                    />
-
-                                    {/* Average Tuition */}
-                                    <div className="bg-card border border-border rounded-2xl p-6">
-                                        <h3 className="text-lg font-bold mb-4">Estimated Tuition Fees</h3>
-                                        <div className="grid grid-cols-2 gap-6">
-                                            <div>
-                                                <p className="text-sm text-muted-foreground mb-1">Undergraduate</p>
-                                                <p className="text-2xl font-bold text-primary">$15,000 - $35,000</p>
-                                                <p className="text-xs text-muted-foreground mt-1">per year</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-sm text-muted-foreground mb-1">Postgraduate</p>
-                                                <p className="text-2xl font-bold text-primary">$20,000 - $45,000</p>
-                                                <p className="text-xs text-muted-foreground mt-1">per year</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Scholarships */}
-                                    <div className="bg-card border border-border rounded-2xl p-6">
-                                        <div className="flex items-center gap-3 mb-6">
-                                            <div className="p-2 bg-amber-100 rounded-lg">
-                                                <Award className="w-5 h-5 text-amber-600" />
-                                            </div>
-                                            <h3 className="text-lg font-bold">Scholarships & Financial Aid</h3>
-                                        </div>
-                                        <div className="space-y-4">
-                                            <div className="p-4 bg-muted/30 rounded-lg">
-                                                <h4 className="font-semibold mb-2">Merit-based Scholarships</h4>
-                                                <p className="text-sm text-muted-foreground mb-2">
-                                                    Awarded to outstanding students based on academic excellence.
-                                                </p>
-                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
-                                                    Up to 50% tuition fee waiver
-                                                </span>
-                                            </div>
-                                            <div className="p-4 bg-muted/30 rounded-lg">
-                                                <h4 className="font-semibold mb-2">Need-based Financial Aid</h4>
-                                                <p className="text-sm text-muted-foreground mb-2">
-                                                    Available for students demonstrating financial need.
-                                                </p>
-                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
-                                                    Varies based on need
-                                                </span>
-                                            </div>
-                                            <div className="p-4 bg-muted/30 rounded-lg">
-                                                <h4 className="font-semibold mb-2">International Student Scholarships</h4>
-                                                <p className="text-sm text-muted-foreground mb-2">
-                                                    Specifically designed for international students.
-                                                </p>
-                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
-                                                    Up to 30% tuition fee waiver
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <button className="mt-6 w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
-                                            Apply for Scholarships
-                                        </button>
-                                    </div>
-                                </motion.div>
-                            )}
+                            
                         </div>
                     </div>
 
