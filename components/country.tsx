@@ -92,7 +92,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
       <section>
         {/* Hero Section - ORIGINAL (UNCHANGED) */}
         <div
-          className="w-full h-[80vh] relative flex items-center justify-start"
+          className="w-full min-h-screen sm:h-[80vh] relative flex items-center justify-start"
           style={{
             backgroundImage: `url(${pageData?.sections?.hero?.heroImagee || "/images/country-bg.jpeg"})`,
             backgroundSize: "cover",
@@ -100,7 +100,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
           }}
         >
           {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/50 h-106 top-40"></div>
+          <div className="absolute inset-0 bg-black/50 lg:h-106 lg:top-40"></div>
 
           {/* Content */}
           <div className="relative z-10 w-full h-full flex flex-col justify-center px-4 md:px-8 lg:px-16">
@@ -109,6 +109,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
             <div
               className="
               absolute
+              
               left-6 -top-80
               sm:left-12 sm:top-24
               lg:left-15 lg:-top-80
@@ -121,7 +122,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
             <div
               className="
               absolute
-              top-60 left-6
+              
               sm:left-12 sm:top-40
               lg:top-43 lg:left-40
               
@@ -194,7 +195,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
 
           {/* RIGHT IMAGE */}
           <div
-            className="
+            className="hidden lg:block
             absolute bottom-0 right-0
             w-[260px] sm:w-[420px] md:w-[600px]
             lg:w-[900px]

@@ -556,18 +556,221 @@ export const profileSchema = {
     ]
   },
 
-  chooseCourse: {
-    title: "Destination Country",
-    type: "single",
-    fields:[
-      {
-        name: "countryintrested",
-        label: "Which countries are you intrested in?",
-        image: ""
+  chooseCourse : {
+  type: "stepper",
+  steps: [
+    /* ---------------- STEP 1 ---------------- */
+    {
+      title: "Destination Country",
+      name: "countryInterested",
+      label: "Which countries are you interested in?",
+      image: "https://images.unsplash.com/photo-1699347914926-19507156bb72?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      type: "select-card",
+      required: true,
+      options: [
+        { label: "Canada", value: "canada",image: "https://plus.unsplash.com/premium_photo-1674591172352-0af9308f0dac?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+        { label: "U.S.A", value: "usa" , image : "https://plus.unsplash.com/premium_photo-1674591172747-2c1d461d7b68?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+        { label: "Australia", value: "australia" , image : "https://images.unsplash.com/photo-1680173764109-bfe1a34a1877?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+        { label: "U.K.", value: "uk" , image: "https://plus.unsplash.com/premium_photo-1674591172569-834e3c928c3d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+        { label: "Germany", value: "germany" , image: "https://plus.unsplash.com/premium_photo-1674590091046-18f2ad87f344?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" },
+        { label: "Ireland", value: "ireland" , image : "https://plus.unsplash.com/premium_photo-1675865394105-f4b090661646?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" }
+      ]
+    },
 
-      }
+    /* ---------------- STEP 2 ---------------- */
+    {
+      title: "Field of Study",
+      name: "studyPreference",
+      label: "What would you like to study?",
+      image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format&fit=crop",
+      type: "group",
+      fields: [
+        {
+          name: "fieldOfStudy",
+          label: "Select a field of study",
+          type: "select",
+          required: true,
+          options: [
+            "Engineering and Technology",
+            "Sciences",
+            "Arts",
+            "Business, Management and Economics",
+            "Law, Politics, Social & Teaching"
+          ]
+        },
+        {
+          name: "programOfStudy",
+          label: "Select a program of study",
+          type: "select",
+          required: true,
+          options: [
+            "Engineering and Technology",
+            "Sciences",
+            "Arts",
+            "Business, Management and Economics",
+            "Law, Politics, Social & Teaching"
+          ]
+        }
+      ]
+    },
+
+    /* ---------------- STEP 3 ---------------- */
+    {
+      title: "Study Level",
+      name: "studyLevel",
+      label: "What is your intended level of study?",
+      image: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1200&auto=format&fit=crop",
+      type: "radio-card",
+      required: true,
+      options: [
+        {
+          label: "Master's or Post-Graduate Certificate",
+          value: "masters"
+        },
+        {
+          label: "Bachelor's Degree",
+          value: "bachelors"
+        },
+        {
+          label: "College Diploma / Certificate",
+          value: "diploma"
+        }
+      ]
+    },
+
+    /* ---------------- STEP 4 ---------------- */
+    {
+      title: "Nationality",
+      name: "nationality",
+      label: "What is your nationality?",
+      image: "https://plus.unsplash.com/premium_photo-1670517733844-f3b8fd6de86c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      type: "select",
+      required: true,
+      helperText:
+        "(auto detected) — you can change this if needed",
+      options: [
+        "India",
+        "Canada",
+        "USA",
+        "UK",
+        "Australia",
+        "Germany",
+        "Ireland"
+      ]
+    },
+
+    /* ---------------- STEP 5 ---------------- */
+    {
+      title: "English Proficiency",
+      name: "englishProficiency",
+      label: "Let's talk about English tests",
+      image: "/images/onboarding/english.png",
+      type: "conditional-radio",
+      question: "Do you have any English test results?",
+      subLabel: "IELTS, TOEFL, PTE, Duolingo, etc.",
+      required: true,
+
+      options: [
+        {
+          label: "Yes, I have results",
+          value: "yes",
+          fields: [
+            {
+              name: "englishExamType",
+              label: "Select your Test",
+              type: "select",
+              required: true,
+              options: [
+                "IELTS",
+                "TOEFL",
+                "PTE",
+                "Duolingo"
+              ]
+            },
+            {
+              name: "overallScore",
+              label: "Enter your score",
+              type: "input",
+              inputType: "number",
+              required: true,
+              placeholder: "Enter your score"
+            }
+          ]
+        },
+        {
+          label: "No, I don't have any",
+          value: "no"
+        }
+      ]
+    },
+
+    /* ---------------- STEP 6 ---------------- */
+    {
+      title: "Financials",
+      name: "financialFunds",
+      label:
+        "Available funds for tuition and living expenses abroad? (USD)",
+      image: "/images/onboarding/financials.png",
+      type: "range",
+      required: true,
+      min: 0,
+      max: 50000,
+      step: 500,
+      unit: "USD"
+    },
+    {
+  title: "Personalized Study Plan",
+  name: "studyPlanUnlocked",
+  type: "success",
+  buttonText: "Start Now",
+
+  bannerMessage: "🎉 You've unlocked your personalized study plan!",
+
+  description:
+    "Congratulations! Your personalized plan is ready with exclusive benefits designed just for you.",
+
+  benefits: [
+    {
+      icon: "💰",
+      title: "$500 offer",
+      sub: "for early applicants"
+    },
+    {
+      icon: "🎓",
+      title: "Scholarship opportunities",
+      sub: "matched to your profile"
+    },
+    {
+      icon: "👨‍🏫",
+      title: "Free 1:1 session",
+      sub: "with an education advisor"
+    }
+  ],
+
+  freeService: {
+    title: "Free services",
+    desc: "Our service is 100% free. You'll never pay for assistance."
+  },
+
+  offerBox: {
+    title: "⚡ Limited Time Offer",
+    message:
+      "Create your free account to access your plan and claim your rewards.",
+    points: [
+      "100% Free Service",
+      "Instant Access",
+      "Secure Process"
     ]
-  }
+  },
+
+  stats: [
+    { value: "1.3M+", label: "Students helped" },
+    { value: "95%", label: "Success rate" },
+    { value: "1,500+", label: "Universities" }
+  ]
+}
+  ]
+}
 
 
 

@@ -18,7 +18,7 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
   if (
     pathname === "/login" ||
     pathname === "/signup" ||
-    pathname.startsWith("/dashboard") || pathname.startsWith("/api")
+    pathname.startsWith("/dashboard") || pathname.startsWith("/api") || pathname.startsWith("/onboarding")
   ) {
     return null
   }
@@ -133,7 +133,7 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
               hover:translate-x-2
             "
           >
-            <Link href={`/destination/${item.slug}`}>
+            <Link href={`/universities/group/${item.slug}`}>
               {item?.navbarTitle}
             </Link>
           </li>

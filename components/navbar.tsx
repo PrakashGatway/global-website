@@ -169,7 +169,7 @@ export default function Navbar({
   if (
     pathname === "/login" ||
     pathname === "/signup" ||
-    pathname.startsWith("/dashboard") || pathname.startsWith("/api") 
+    pathname.startsWith("/dashboard") || pathname.startsWith("/api") || pathname.startsWith("/onboarding")
   ) {
     return null
   }
@@ -219,7 +219,7 @@ export default function Navbar({
                 alt="Logo"
                 width={800}
                 height={100}
-                className="object-contain w-36 lg:w-44 lg:ml-10"
+                className="object-contain w-20 lg:w-44 lg:ml-10"
                 priority
               />
             </Link>
@@ -281,7 +281,7 @@ export default function Navbar({
 
 
             {/* ================= DESKTOP MENU ================= */}
-            <div className={`hidden lg:flex items-end gap-2 ${isScrolled ? "flex justify-end" : "justify-center"} `} >
+            <div className={`hidden lg:flex items-center gap-2 ${isScrolled ? "justify-end" : "justify-center"} `}>
 
 
               {navbar?.map((item, i) => (
@@ -376,15 +376,26 @@ export default function Navbar({
                   {Login && profile ? (
                     <>
                       {/* Profile Button */}
-                      <div className="flex items-center cursor-pointer">
+                      <div className="flex   items-center cursor-pointer">
                         <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold">
                           {profile?.name?.charAt(0).toUpperCase()}
                         </div>
                       </div>
 
                       {/* Hover Dropdown */}
-                      <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-gray-100 group-hover:translate-y-0 translate-y-2
-">
+                      <div
+                        className="
+    absolute right-0 mt-3 w-56
+    bg-white rounded-xl shadow-xl border border-gray-100
+    opacity-0 invisible
+    translate-y-2
+    group-hover:opacity-100
+    group-hover:visible
+    group-hover:translate-y-0
+    transition-all duration-300
+    z-50
+  "
+                      >
 
                         <div className="p-4 border-b">
                           <p className="font-semibold text-gray-800">
@@ -395,7 +406,7 @@ export default function Navbar({
                           </p>
                         </div>
 
-                        <div className="flex flex-col text-sm">
+                        <div className="flex flex-col  text-sm ">
                           <Link
                             href="/dashboard"
                             className="px-4 py-3 hover:bg-gray-100 transition"
@@ -413,12 +424,16 @@ export default function Navbar({
                       </div>
                     </>
                   ) : (
-                    <Link
-                      href="/login"
-                      className="bg-secondary text-white px-5 py-3 rounded-full text-sm font-semibold"
-                    >
-                      Login / Signup
-                    </Link>
+                    <div className="">
+                      <Link
+                        href="/login"
+                        className="bg-secondary text-white px-5 py-3  rounded-full text-sm font-semibold"
+                      >
+                        Login / Signup
+                      </Link>
+
+                    </div>
+
                   )}
                 </div>
               )}
@@ -444,47 +459,69 @@ export default function Navbar({
         {/* ================= MOBILE SIDEBAR ================= */}
         <AnimatePresence>
           {isOpen && (
-            <div className="fixed inset-0 z-[9999] bg-black/40 flex h-[100vh] ">
+            <div className="fixed inset-0 z-[9999] bg-black/30 backdrop-blur-sm flex h-[100vh]">
 
+              {/* Overlay click close */}
               <div
-                className="absolute inset-0 bg-transparent"
+                className="absolute inset-0 "
                 onClick={() => setIsOpen(false)}
               />
 
+              {/* Drawer */}
               <motion.aside
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={{ type: "spring", stiffness: 260, damping: 30 }}
-                className="relative w-full  h-full bg-white shadow-2xl flex flex-col overflow-y-auto overscroll-contain"
+                className="
+          relative
+          w-full max-w-[300px]
+          h-full
+          bg-white
+          shadow-2xl
+          flex flex-col
+          overflow-y-auto
+        "
               >
-
-
-                <div className="flex items-center justify-between px-6 py-5 border-b">
+                {/* ================= HEADER ================= */}
+                <div className="flex items-center justify-between px-5  border-b bg-gray-50">
                   <Image
                     src="/images/newlogo3.png"
                     alt="Logo"
-                    width={120}
-                    height={40}
+                    width={110}
+                    height={36}
                   />
-                  <button onClick={() => setIsOpen(false)}>
-                    <X size={26} />
+
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-2 rounded-lg hover:bg-gray-200 transition"
+                  >
+                    <X size={22} />
                   </button>
                 </div>
 
-                <div className="flex-1 px-6 py-4 space-y-1">
+                {/* ================= MENU ================= */}
+                <div className="flex-1 px-4  ">
 
                   {navbar.map((item) => (
-                    <div key={item.title} className="border-b last:border-0">
-
-                      <div className="flex items-center justify-between py-4">
+                    <div
+                      key={item.title}
+                      className="rounded-xl px-2 py-1 hover:bg-gray-50 transition"
+                    >
+                      {/* MAIN ITEM */}
+                      <div className="flex items-center justify-between py-2">
 
                         <Link
                           href={item.route}
                           onClick={() => {
-                            if (!item.hasDropdown) setIsOpen(false)
+                            if (!item.hasDropdown) setIsOpen(false);
                           }}
-                          className="text-lg font-semibold text-gray-800 hover:text-[var(--primary)]"
+                          className="
+                    text-[15px]
+                    font-semibold
+                    text-gray-800
+                    hover:text-[var(--primary)]
+                  "
                         >
                           {item.title}
                         </Link>
@@ -492,83 +529,159 @@ export default function Navbar({
                         {item.hasDropdown && (
                           <button
                             onClick={() =>
-                              setMobileDropdown(mobileDropdown === item.id ? null : item.id)
+                              setMobileDropdown(
+                                mobileDropdown === item.id ? null : item.id
+                              )
                             }
                             className="p-2"
                           >
                             <motion.div
-                              animate={{ rotate: mobileDropdown === item.id ? 180 : 0 }}
+                              animate={{
+                                rotate:
+                                  mobileDropdown === item.id ? 180 : 0,
+                              }}
+                              transition={{ duration: 0.25 }}
                             >
-                              <ChevronDown size={20} />
+                              <ChevronDown size={18} />
                             </motion.div>
                           </button>
                         )}
                       </div>
 
+                      {/* ================= DROPDOWN ================= */}
                       <AnimatePresence>
-                        {item.hasDropdown && mobileDropdown === item.id && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            className="overflow-hidden pl-5 pb-3"
-                          >
-                            {/* ✅ SAME DATA SOURCE LOGIC AS DESKTOP */}
-                            {(
-                              item.type === "service"
-                                ? Serviceitem
-                                : item.type === "country"
-                                  ? countryres
-                                  : Featureitem
-                            )?.map((uni) => {
-
-                              // ✅ SAME ROUTE LOGIC AS DESKTOP
-                              const href =
+                        {item.hasDropdown &&
+                          mobileDropdown === item.id && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.25 }}
+                              className="
+                        overflow-hidden
+                        pl-4
+                        
+                        
+                        border-l-2 border-gray-100
+                      "
+                            >
+                              {(
                                 item.type === "service"
-                                  ? `/service/${uni.slug}`
+                                  ? Serviceitem
                                   : item.type === "country"
-                                    ? `/destination/${uni.slug}`
-                                    : `/universities/group/${uni.slug}`;
+                                    ? countryres
+                                    : Featureitem
+                              )?.map((uni) => {
 
-                              return (
-                                <Link
-                                  key={uni._id}
-                                  href={href}
-                                  onClick={() => {
-                                    setIsOpen(false);
-                                    setMobileDropdown(null);
-                                  }}
-                                  className="flex items-center gap-3 py-3 text-gray-600 hover:text-[var(--primary)]"
-                                >
-                                  <div className="w-7 h-7 rounded-full bg-gray-100 overflow-hidden flex-shrink-0">
-                                    <Image
-                                      src={
-                                        uni.navbarImage ||
-                                        "https://www.countryflags.com/wp-content/uploads/canada-flag-png-xl.png"
-                                      }
-                                      alt={uni.navbarTitle}
-                                      width={28}
-                                      height={28}
-                                      className="object-cover w-full h-full"
-                                    />
-                                  </div>
-                                  <div>
-                                    <span className="font-medium text-sm">{uni.navbarTitle}</span>
-                                    {uni.subTitle && (
-                                      <p className="text-xs text-gray-400">{uni.subTitle}</p>
-                                    )}
-                                  </div>
-                                </Link>
-                              );
-                            })}
-                          </motion.div>
-                        )}
+                                const href =
+                                  item.type === "service"
+                                    ? `/service/${uni.slug}`
+                                    : item.type === "country"
+                                      ? `/destination/${uni.slug}`
+                                      : `/universities/group/${uni.slug}`;
+
+                                return (
+                                  <Link
+                                    key={uni._id}
+                                    href={href}
+                                    onClick={() => {
+                                      setIsOpen(false);
+                                      setMobileDropdown(null);
+                                    }}
+                                    className="
+                              flex items-center gap-3
+                              px-2 py-2.5
+                              rounded-lg
+                              hover:bg-gray-50
+                              transition
+                            "
+                                  >
+                                    {/* ICON */}
+                                    <div className="
+                              w-9 h-9
+                              rounded-full
+                              bg-gray-50
+                              border border-gray-100
+                              overflow-hidden
+                              flex-shrink-0
+                            ">
+                                      <Image
+                                        src={
+                                          uni.navbarImage ||
+                                          "https://www.countryflags.com/wp-content/uploads/canada-flag-png-xl.png"
+                                        }
+                                        alt={uni.navbarTitle}
+                                        width={36}
+                                        height={36}
+                                        className="object-cover w-20 h-full"
+                                      />
+                                    </div>
+
+                                    {/* TEXT */}
+                                    <div>
+                                      <span className="text-xs font-medium text-gray-700">
+                                        {uni.navbarTitle}
+                                      </span>
+
+                                      {uni.subTitle && (
+                                        <p className="text-[10px] text-gray-400">
+                                          {uni.subTitle}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </Link>
+                                );
+                              })}
+                            </motion.div>
+                          )}
                       </AnimatePresence>
-
                     </div>
                   ))}
+                </div>
+
+                {/* ================= CTA FOOTER ================= */}
+                <div className="p-5 border-t bg-white">
+                  {!Login && !profile ? (
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setIsOpen(false)}
+                      className="
+              block text-center
+              bg-[var(--primary)]
+              text-white
+              pb-3
+              rounded-xl
+              font-semibold
+              hover:opacity-90
+              transition
+            "
+                    >
+                      Login/Signup
+                    </Link>
+
+                  ) :
+                    (
+                      <Link
+                        href="/login"
+                        onClick={() => setIsOpen(false)}
+                        className="
+              block text-center
+              bg-[var(--primary)]
+              text-white
+              py-3
+              rounded-xl
+              font-semibold
+              hover:opacity-90
+              transition
+            "
+                      >
+                        Dashboard
+                      </Link>
+
+                    )}
 
                 </div>
+
               </motion.aside>
             </div>
           )}

@@ -1,6 +1,7 @@
 const Balloon = async ({ Pageres }) => {
   return (
-    <div className="flex min-h-screen items-end justify-center pb-12 ">
+    <div className="flex min-h-screen items-end justify-center pb-12 hidden
+              lg:block">
       <div className="flex flex-col items-center">
 
         {/* BALLOON */}
@@ -18,14 +19,14 @@ const Balloon = async ({ Pageres }) => {
 
             {/* ✅ FLAG IMAGE COVERING ENTIRE BALLOON */}
             <image
-  href={Pageres?.data?.country?.flg}
-  x="-60"
-  y="-40"
-  width="360"
-  height="315"
-  clipPath="url(#balloonClip)"
-  preserveAspectRatio="xMidYMid slice"
-/>
+              href={Pageres?.data?.country?.flg}
+              x="-60"
+              y="-40"
+              width="360"
+              height="315"
+              clipPath="url(#balloonClip)"
+              preserveAspectRatio="xMidYMid slice"
+            />
 
             {/* Balloon border overlay */}
             <path
@@ -38,7 +39,7 @@ const Balloon = async ({ Pageres }) => {
               strokeWidth="2"
             />
 
-         
+
 
             {/* Knot */}
             <polygon points="95,216 105,216 100,230" fill="#666" />
