@@ -2,7 +2,7 @@
 
 import { profileSchema } from "@/config/schema"
 import { useState } from "react"
-import StepRenderer from "./StepRenderer"
+import StepRenderer, { ProgressBar } from "./StepRenderer"
 import { FormProvider, useForm } from "react-hook-form"
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react"
 import { AnimatePresence,motion } from "framer-motion"
@@ -43,7 +43,7 @@ export default function OnboardingStepper() {
             </div>
 
             {/* Content */}
-            <div className="px-6 pb-4 min-h-[400px]">
+            {/* <div className="px-6 pb-4 min-h-[400px]">
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={stepIndex}
@@ -57,7 +57,7 @@ export default function OnboardingStepper() {
                   <StepRenderer step={step} />
                 </motion.div>
               </AnimatePresence>
-            </div>
+            </div> */}
 
             {/* Footer */}
           
@@ -89,7 +89,7 @@ export default function OnboardingStepper() {
                   Get My Free Study Plan
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </button>
-                <button
+                {/* <button
                   type="button"
                   variant="ghost"
                   onClick={prev}
@@ -97,7 +97,7 @@ export default function OnboardingStepper() {
                 >
                   <ArrowLeft className="w-4 h-4 mr-1" />
                   Go Back
-                </button>
+                </button> */}
               </div>
   
           </div>
