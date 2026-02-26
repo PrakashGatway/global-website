@@ -6,6 +6,7 @@ import { X, ChevronRight, ChevronLeft, Check, GraduationCap, Calendar, BookOpen,
 import { toast } from 'react-hot-toast'
 import axiosInstance from '@/app/axiosInstance'
 import { ApplicationForm, PrerequisitesForm, BackupsForm, ExpectationsForm } from './applicationSteps'
+import { count } from 'console'
 
 interface CreateApplicationModalProps {
   isOpen: boolean
@@ -57,7 +58,7 @@ export function CreateApplicationModal({
 }: CreateApplicationModalProps) {
   const [currentStep, setCurrentStep] = React.useState(0)
   const [isLoading, setIsLoading] = React.useState(false)
-  
+
   // Get available intakes from program data
   const availableIntakes = React.useMemo(() => {
     return program?.university?.intakes || [program?.intake].filter(Boolean) || ['Fall 2024', 'Spring 2025']
@@ -99,7 +100,7 @@ export function CreateApplicationModal({
     }
 
     if (program?.docsRequired) {
-      const docs = program?.docsRequired?.flatMap(doc => 
+      const docs = program?.docsRequired?.flatMap(doc =>
         Object.entries(doc).map(([key, value]) => ({
           name: `${key}${value !== 'copy' ? ` - ${value}` : ''}`,
           uploaded: false
@@ -131,30 +132,15 @@ export function CreateApplicationModal({
     setIsLoading(true)
     try {
       const applicationData = {
-        programId: program._id,
-        programName: program.name,
-        university: {
-          id: program.university._id,
-          name: program.university.name,
-          country: program.university.country,
-          city: program.university.city
-        },
-        school: program.subject?.name || program.university.name,
-        selectedIntake: formData.selectedIntake,
-        prerequisites: {
-          documents: formData.prerequisites.documents.filter(doc => doc.uploaded).map(doc => doc.name),
-          requirements: formData.prerequisites.requirements.filter(req => req.met).map(req => req.name),
-          isVerified: formData.prerequisites.isVerified
-        },
-        backups: formData.backups,
+        course: program._id,
+        country: program.university.country,
+        intake: formData.selectedIntake,
+        backups: formData.backups.map(backup => ({
+          course: backup.programId,
+          intake: backup.selectedIntake,
+          order: backup.priority
+        })),
         expectations: formData.expectations,
-        status: 'submitted',
-        applicationFee: program.applicationFee,
-        tuitionFee: program.tuitionFee,
-        currency: program.currency || 'INR',
-        duration: program.duration,
-        level: program.level,
-        studyMode: program.studyMode
       }
 
       const response = await axiosInstance.post('/applications', applicationData)
@@ -174,11 +160,16 @@ export function CreateApplicationModal({
       case 0: // Intakes
         return !!formData.selectedIntake
       case 1: // Prerequisites
-        // Check if all required documents are uploaded and requirements are met
-        const allDocsUploaded = formData.prerequisites.documents.every(doc => doc.uploaded)
-        const allReqsMet = formData.prerequisites.requirements.every(req => req.met)
-        return allDocsUploaded && allReqsMet && formData.prerequisites.isVerified
+        return true
       case 2: // Backups
+        if (formData.backups.length === 0) return true // Optional
+        if (formData.backups.length > 0) {
+          const allBackupsHaveIntake = formData.backups.every(
+            (backup: any) => backup.selectedIntake && backup.selectedIntake.trim() !== ''
+          )
+          if (!allBackupsHaveIntake) return false
+        }
+
         return true // Optional
       case 3: // Expectations
         return formData.expectations.understood && formData.expectations.agreed
@@ -317,36 +308,34 @@ export function CreateApplicationModal({
                     const StepIcon = step.icon
                     const isActive = index === currentStep
                     const isCompleted = index < currentStep
-                    
+
                     return (
                       <React.Fragment key={step.id}>
-                      <div key={step.id} className="flex gap-1 items-center">
-                        <motion.div
-                          initial={false}
-                          animate={{
-                            scale: isActive ? 1.1 : 0.9,
-                            backgroundColor: isActive ? '#ffffff' : isCompleted ? '#30ff7c' : 'rgb(231, 223, 223)'
-                          }}
-                          className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
-                            isActive ? 'text-gray-600' : isCompleted ? 'text-gray-800' : 'text-gray-600'
-                          }`}
-                        >
-                          {isCompleted ? (
-                            <Check className="w-5 h-5" strokeWidth={1.7} />
-                          ) : (
-                            <StepIcon className="w-5 h-5" strokeWidth={1.7} />
-                          )}
-                        </motion.div>
-                        <div className="ml-2 flex-1">
-                          <p className={`text-xs font-medium ${
-                            isActive ? 'text-gray-800' : 'text-gray-500'
-                          }`}>
-                            {step.title}
-                          </p>
+                        <div key={step.id} className="flex gap-1 items-center">
+                          <motion.div
+                            initial={false}
+                            animate={{
+                              scale: isActive ? 1.1 : 0.9,
+                              backgroundColor: isActive ? '#ffffff' : isCompleted ? '#30ff7c' : 'rgb(231, 223, 223)'
+                            }}
+                            className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${isActive ? 'text-gray-600' : isCompleted ? 'text-gray-800' : 'text-gray-600'
+                              }`}
+                          >
+                            {isCompleted ? (
+                              <Check className="w-5 h-5" strokeWidth={1.7} />
+                            ) : (
+                              <StepIcon className="w-5 h-5" strokeWidth={1.7} />
+                            )}
+                          </motion.div>
+                          <div className="ml-2 flex-1">
+                            <p className={`text-xs font-medium ${isActive ? 'text-gray-800' : 'text-gray-500'
+                              }`}>
+                              {step.title}
+                            </p>
+                          </div>
+
                         </div>
-                       
-                      </div>
-                       {index < steps.length - 1 && (
+                        {index < steps.length - 1 && (
                           <ChevronRight className="w-6 h-6 text-gray-400 mx-2" />
                         )}
                       </React.Fragment>
@@ -356,7 +345,7 @@ export function CreateApplicationModal({
               </motion.div>
 
               {/* Content Area */}
-              <div className="flex-1 overflow-y-auto p-8 bg-gray-50">
+              <div className="flex-1 overflow-y-auto p-4 px-6 bg-gray-50">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentStep}
@@ -365,6 +354,42 @@ export function CreateApplicationModal({
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.3 }}
                   >
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="rounded-xl p-4 bg-pink-100"
+                    >
+                      <h3 className=" font-bold text-gray-900 mb-2">Program Information</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 font-semibold text-sm">
+                        <div className="space-y-1">
+                          <p className="text-xs text-gray-500">Program</p>
+                          <p className="font-medium text-gray-900">{program.name}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xs text-gray-500">University</p>
+                          <p className="font-medium text-gray-900">{program.university?.name}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xs text-gray-500">Duration & Mode</p>
+                          <p className="font-medium text-gray-900">{program.duration || '4 years'} {program.studyMode || 'Full-time'}</p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xs text-gray-500">Tuition Fee</p>
+                          <p className="font-medium text-gray-900">
+                            {program.currency || 'USD'} {program.tuitionFee?.toLocaleString() || 'N/A'}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-xs text-gray-500">Level</p>
+                          <p className="font-medium text-gray-900">{program.level || 'Undergraduate'}</p>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-xs text-gray-500">Campus</p>
+                          <p className="font-medium text-gray-800">{program?.university?.address || 'Rolling Admission'}</p>
+                        </div>
+                      </div>
+                    </motion.div>
                     {renderStepContent()}
                   </motion.div>
                 </AnimatePresence>
@@ -388,11 +413,10 @@ export function CreateApplicationModal({
                     whileTap={{ scale: 0.98 }}
                     onClick={handlePrevious}
                     disabled={currentStep === 0}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg flex items-center gap-2 transition-all ${
-                      currentStep === 0
+                    className={`px-4 py-2 text-sm font-medium rounded-lg flex items-center gap-2 transition-all ${currentStep === 0
                         ? 'text-gray-400 cursor-not-allowed'
                         : 'text-gray-700 hover:bg-gray-100'
-                    }`}
+                      }`}
                   >
                     <ChevronLeft className="w-4 h-4" />
                     Previous
@@ -423,7 +447,7 @@ export function CreateApplicationModal({
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={handleNext}
-                      // disabled={!isStepValid()}
+                      disabled={!isStepValid()}
                       className="px-6 py-2 bg-gradient-to-r from-[#F26D44] to-[#626363] text-white text-sm font-medium rounded-lg hover:from-[#d55a3a] hover:to-[#4a4a4a] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       Next

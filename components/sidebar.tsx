@@ -37,14 +37,14 @@ export function Sidebar() {
   return (
     <motion.aside
       animate={{ width: collapsed ? 110 : 260 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      transition={{ duration: 0.2, ease: "easeInOut" }}
       className="hidden relative lg:flex flex-col h-screen sticky top-0 bg-[#f26d44] text-sidebar-foreground overflow-hidden z-40"
     >
 
-      <div className="absolute top-0 -right-0 bg-red-600">
+      <div className="absolute z-10 top-0 -right-0 bg-red-600">
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center justify-center w-full py-2 hover:bg-sidebar-accent transition-colors"
+          className="flex items-center justify-center w-full py-2 px-0.5 hover:bg-sidebar-accent transition-colors"
         >
           {collapsed ? (
             <ChevronRight className="w-5 h-5" />
@@ -54,21 +54,19 @@ export function Sidebar() {
         </button>
       </div>
       {/* Logo */}
-      <div className="flex bg-white items-center gap-3 px-6 min-h-[73px]">
+      <div className="flex bg-white items-center gap-3 pl-6 pr-3 min-h-[73px]">
         {/* <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-sidebar-primary flex items-center justify-center">
           <GraduationCap className="w-6 h-6 text-sidebar-primary-foreground" />
         </div> */}
         <AnimatePresence>
-
           <Image
             src="https://ooshasglobal.com/images/newlogo3.png"
             alt="Logo"
             width={100}
             height={100}
             priority
-            className="scale-160"
+            className="scale-130"
           />
-
         </AnimatePresence>
       </div>
 

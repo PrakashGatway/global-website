@@ -12,10 +12,6 @@ import Script from "next/script"
 import BreadcrumbSchema from "@/components/BreadcrumbSchema"
 
 
-
-
-
-
 const notoSans = Noto_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -24,27 +20,9 @@ const notoSans = Noto_Sans({
 
 
 export const metadata: Metadata = {
-  title: "Global Way - Your Education Ooshas Global",
+  title: "Ooshas Global – Study Abroad Consultants for UK, Germany, Italy & Australia",
   description: "Connect with top universities worldwide and find the perfect program for your educational journey",
-  keywords: "education, universities, countries, study abroad, global education",
-  generator: "v0.app",
-  icons: {
-    icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
-    apple: "/images/fevi-icon.png",
-  },
+  keywords: "education, universities, countries, study abroad, global education"
 }
 
 export const viewport: Viewport = {

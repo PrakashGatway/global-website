@@ -271,16 +271,6 @@ const university = searchParams.get('university');
     }
   }
 
-  // Get study mode icon
-  const getStudyModeIcon = (mode: string) => {
-    switch (mode?.toLowerCase()) {
-      case 'full time': return <Clock className="w-3 h-3" />
-      case 'part time': return <Briefcase className="w-3 h-3" />
-      case 'online': return <Globe className="w-3 h-3" />
-      default: return <BookOpen className="w-3 h-3" />
-    }
-  }
-
   return (
     <main className="flex-1 overflow-y-auto bg-gray-50/50">
       <div className="sm:p-6 space-y-6">

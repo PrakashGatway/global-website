@@ -10,6 +10,7 @@ import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { GlobalProvider, useGlobal } from "../../src/statecontext"
 import Loading from "../loading"
+import { usePathname } from "next/navigation"
 
 export default function DashboardLayout({
   children,
@@ -47,6 +48,22 @@ export default function DashboardLayout({
     return null
   }
 
+  if (usePathname().includes("/checkout")) {
+    return (
+      <GlobalProvider>
+        <div className="min-h-screen bg-white">
+          <main
+            className="flex-1 overflow-y-auto pb-20 lg:pb-0"
+          >
+            <div className="mx-auto">
+              {children}
+            </div>
+          </main>
+        </div>
+      </GlobalProvider>
+    )
+  }
+
   return (
     <GlobalProvider>
       <div className="min-h-screen bg-white">
@@ -66,7 +83,6 @@ export default function DashboardLayout({
             </main>
           </div>
         </div>
-
         <MobileBottomNav />
       </div>
     </GlobalProvider>

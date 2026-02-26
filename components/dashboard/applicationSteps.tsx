@@ -2,11 +2,43 @@
 
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Calendar, Clock, AlertCircle, Check, X, FileText, 
-  Download, Upload, GraduationCap, Plus, ChevronUp, 
-  ChevronDown, DollarSign, BookOpen, Users 
+import {
+  Calendar, Clock, AlertCircle, Check, X, FileText,
+  Download, Upload, GraduationCap, Plus, ChevronUp,
+  ChevronDown, DollarSign, BookOpen, Users,
+  IndianRupee, Eye, MapPin, Building2, Award,
+  Globe, ChevronRight, ChevronLeft, ChevronFirst, ChevronLast
 } from 'lucide-react'
+import axiosInstance from '@/app/axiosInstance'
+import toast from 'react-hot-toast'
+import Image from 'next/image'
+
+// Types
+interface BackupProgram {
+  _id: string
+  name: string
+  university: {
+    _id: string
+    name: string
+    uni_logo?: string
+    country: string
+    city: string
+    intakes?: string[]
+  }
+  tuitionFee?: number
+  currency?: string
+  level?: string
+  duration?: string
+  intake?: string
+}
+
+interface BackupWithIntake extends BackupProgram {
+  priority: number
+  selectedIntake: string
+  programId: string
+  programName: string
+  availableIntakes: string[]
+}
 
 interface ApplicationFormProps {
   program: any
@@ -16,19 +48,16 @@ interface ApplicationFormProps {
 }
 
 export function ApplicationForm({ program, formData, setFormData, availableIntakes }: ApplicationFormProps) {
-  // Format intakes from program data
   const intakes = React.useMemo(() => {
     if (availableIntakes && availableIntakes.length > 0) {
       return availableIntakes.map((intake, index) => {
-        // Parse intake string (e.g., "March 2026")
         const parts = intake.split(' ')
         const month = parts[0]
-        const year = parts[1] || '2026'
-        
-        // Generate a deadline (3 months before intake)
+        const year = new Date().getFullYear()
+
         const deadlineDate = new Date()
         deadlineDate.setMonth(deadlineDate.getMonth() + (index + 1))
-        
+
         return {
           id: intake.toLowerCase().replace(' ', ''),
           month,
@@ -39,7 +68,7 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
         }
       })
     }
-    
+
     // Fallback intakes
     return [
       { id: 'fall2024', month: 'Fall', year: '2024', deadline: 'Jul 30, 2024', status: 'available', fullIntake: 'Fall 2024' },
@@ -49,45 +78,7 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
   }, [availableIntakes])
 
   return (
-    <div className="space-y-3">
-      {/* Program Details Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="rounded-xl p-4 border-2 border-[#F26D44]/50 bg-pink-100"
-      >
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Program Information</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          <div className="space-y-1">
-            <p className="text-xs text-gray-500">Program</p>
-            <p className="font-medium text-gray-900">{program.name}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-xs text-gray-500">University</p>
-            <p className="font-medium text-gray-900">{program.university?.name}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-xs text-gray-500">Duration & Mode</p>
-            <p className="font-medium text-gray-900">{program.duration || '4 years'} {program.studyMode || 'Full-time'}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-xs text-gray-500">Tuition Fee</p>
-            <p className="font-medium text-gray-900">
-              {program.currency || 'USD'} {program.tuitionFee?.toLocaleString() || 'N/A'}
-            </p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-xs text-gray-500">Level</p>
-            <p className="font-medium text-gray-900">{program.level || 'Undergraduate'}</p>
-          </div>
-          <div className="space-y-2">
-            <p className="text-xs text-gray-500">Campus</p>
-            <p className="font-medium text-gray-800">{program?.university?.address  || 'Rolling Admission'}</p>
-          </div>
-        </div>
-      </motion.div>
-
+    <div className="space-y-2">
       {/* Intake Selection */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -95,8 +86,8 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
         transition={{ delay: 0.2 }}
         className="p-2"
       >
-        <h3 className="text-base font-bold text-gray-900 ">Select Intake</h3>
-        <p className="text-sm text-gray-500 mb-4">
+        <h3 className="text-base font-bold text-gray-700">Select Intake</h3>
+        <p className="text-xs text-gray-500 mb-4">
           Choose your preferred intake date for this program.
         </p>
 
@@ -107,11 +98,13 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + index * 0.1 }}
-              className={`relative flex items-center p-4 py-2 rounded-lg border-2 cursor-pointer transition-all ${
+              className={`relative flex items-center p-4 py-2.5 rounded-lg border-2 cursor-pointer transition-all ${
                 formData.selectedIntake === intake.fullIntake
                   ? 'border-[#F26D44] bg-orange-50'
                   : 'border-gray-200 hover:border-gray-300'
-              } ${intake.status === 'coming-soon' ? 'opacity-60 cursor-not-allowed' : ''}`}
+              } ${
+                intake.status === 'coming-soon' ? 'opacity-60 cursor-not-allowed' : ''
+              }`}
             >
               <input
                 type="radio"
@@ -124,18 +117,16 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
               />
               <div className="flex-1 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className={`${
-                    formData.selectedIntake === intake.fullIntake ? '' : ''
-                  }`}>
+                  <div className={formData.selectedIntake === intake.fullIntake ? '' : ''}>
                     <Calendar className={`w-7 h-7 stroke-[1.5px] ${
                       formData.selectedIntake === intake.fullIntake ? 'text-[#F26D44]' : 'text-gray-500'
                     }`} />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-sm text-gray-900">
                       {intake.month} {intake.year}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-xs text-gray-500">
                       Deadline: {intake.deadline}
                     </p>
                   </div>
@@ -187,7 +178,7 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
   // Generate prerequisites from program data
   const prerequisites = React.useMemo(() => {
     const prereqs = []
-    
+
     // Add requirements from program.requirements
     if (program.requirements) {
       Object.entries(program.requirements).forEach(([key, value]) => {
@@ -201,7 +192,7 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
         })
       })
     }
-    
+
     // Add documents from program.docsRequired
     if (program.docsRequired) {
       program.docsRequired.forEach((doc: any) => {
@@ -217,81 +208,37 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
         })
       })
     }
-    
-    // Add standard prerequisites if none exist
-    if (prereqs.length === 0) {
-      prereqs.push(
-        {
-          id: 'transcript',
-          name: 'Official Transcripts',
-          description: 'Official transcripts from all previous institutions',
-          required: true,
-          format: 'PDF (max 10MB)',
-          category: 'document'
-        },
-        {
-          id: 'english-proficiency',
-          name: 'English Proficiency Test',
-          description: 'TOEFL/IELTS score report',
-          required: true,
-          format: 'PDF (max 5MB)',
-          category: 'document'
-        },
-        {
-          id: 'recommendation',
-          name: 'Letters of Recommendation',
-          description: 'Minimum 2 academic/professional recommendations',
-          required: true,
-          format: 'PDF (max 5MB)',
-          category: 'document'
-        },
-        {
-          id: 'statement',
-          name: 'Statement of Purpose',
-          description: '500-1000 words explaining your goals',
-          required: true,
-          format: 'PDF/DOC (max 5MB)',
-          category: 'document'
-        }
-      )
-    }
-    
+
     return prereqs
   }, [program])
 
   const handleFileUpload = (prerequisiteId: string, file: File) => {
     const updatedDocuments = [...(formData.prerequisites.documents || [])]
     const index = updatedDocuments.findIndex(d => d.id === prerequisiteId)
-    
+
     if (index >= 0) {
-      updatedDocuments[index] = { 
-        id: prerequisiteId, 
+      updatedDocuments[index] = {
+        id: prerequisiteId,
         name: file.name,
-        file, 
+        file,
         uploaded: true,
         url: URL.createObjectURL(file)
       }
     } else {
-      updatedDocuments.push({ 
-        id: prerequisiteId, 
+      updatedDocuments.push({
+        id: prerequisiteId,
         name: file.name,
-        file, 
+        file,
         uploaded: true,
         url: URL.createObjectURL(file)
       })
     }
 
-    // Check if all required documents are uploaded
-    const allRequiredUploaded = prerequisites
-      .filter(p => p.required)
-      .every(p => updatedDocuments.some(d => d.id === p.id && d.uploaded))
-
     setFormData({
       ...formData,
       prerequisites: {
         ...formData.prerequisites,
-        documents: updatedDocuments,
-        isVerified: allRequiredUploaded
+        documents: updatedDocuments
       }
     })
   }
@@ -299,7 +246,7 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
   const markRequirementMet = (requirementId: string) => {
     const updatedReqs = [...(formData.prerequisites.requirements || [])]
     const index = updatedReqs.findIndex(r => r.id === requirementId)
-    
+
     if (index >= 0) {
       updatedReqs[index] = { ...updatedReqs[index], met: true }
     } else {
@@ -324,146 +271,211 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
   }
 
   return (
-    <div className="space-y-6">
+    <div className="p-3">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
       >
         <h3 className="text-lg font-semibold text-gray-900 mb-2">Program Prerequisites</h3>
-        <p className="text-sm text-gray-500">
+        <p className="text-xs text-gray-500">
           Please complete all requirements and upload the required documents to proceed with your application.
         </p>
       </motion.div>
 
       {/* Prerequisites List */}
-      <div className="space-y-3">
+      <div className="space-y-3 grid grid-cols-2 gap-2 mt-4">
         {prerequisites.map((prerequisite, index) => (
           <motion.div
             key={prerequisite.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-white rounded-xl p-4 shadow-sm border border-gray-100"
+            className="p-3 border-2 rounded-lg"
           >
             <div className="flex items-start gap-3">
-              <div className={`p-2 rounded-lg ${
-                prerequisite.category === 'document' 
-                  ? isDocumentUploaded(prerequisite.id) 
-                    ? 'bg-green-100' 
-                    : 'bg-amber-100'
-                  : isRequirementMet(prerequisite.id)
-                    ? 'bg-green-100'
-                    : 'bg-blue-100'
-              }`}>
-                {prerequisite.category === 'document' ? (
-                  isDocumentUploaded(prerequisite.id) ? (
-                    <Check className="w-4 h-4 text-green-600" />
-                  ) : (
-                    <FileText className="w-4 h-4 text-amber-600" />
-                  )
-                ) : (
-                  isRequirementMet(prerequisite.id) ? (
-                    <Check className="w-4 h-4 text-green-600" />
-                  ) : (
-                    <BookOpen className="w-4 h-4 text-blue-600" />
-                  )
-                )}
-              </div>
-              
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h4 className="font-medium text-gray-900">{prerequisite.name}</h4>
                   {prerequisite.required && (
                     <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
-                      Required
+                      {prerequisite.category === 'document' ? 'Document' : 'Requirement'}
                     </span>
                   )}
                 </div>
                 <p className="text-sm text-gray-500 mt-1">{prerequisite.description}</p>
-                <p className="text-xs text-gray-400 mt-1">{prerequisite.format}</p>
-
-                {/* Action Area */}
-                <div className="mt-3">
-                  {prerequisite.category === 'document' ? (
-                    // Document Upload
-                    isDocumentUploaded(prerequisite.id) ? (
-                      <div className="flex items-center justify-between p-2 bg-green-50 rounded-lg border border-green-200">
-                        <div className="flex items-center gap-2">
-                          <Check className="w-4 h-4 text-green-600" />
-                          <span className="text-sm text-green-700">
-                            {formData.prerequisites.documents?.find((d: any) => d.id === prerequisite.id)?.name || 'Uploaded'}
-                          </span>
-                        </div>
-                        <button className="text-xs text-green-600 hover:text-green-700">
-                          Replace
-                        </button>
-                      </div>
-                    ) : (
-                      <label className="relative block">
-                        <input
-                          type="file"
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                          onChange={(e) => {
-                            if (e.target.files?.[0]) {
-                              handleFileUpload(prerequisite.id, e.target.files[0])
-                            }
-                          }}
-                        />
-                        <div className="flex items-center justify-center gap-2 p-3 border-2 border-dashed border-gray-200 rounded-lg hover:border-[#F26D44] transition-colors">
-                          <Upload className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm text-gray-600">Click to upload</span>
-                        </div>
-                      </label>
-                    )
-                  ) : (
-                    // Requirement Checkbox
-                    isRequirementMet(prerequisite.id) ? (
-                      <div className="flex items-center gap-2 p-2 bg-green-50 rounded-lg border border-green-200">
-                        <Check className="w-4 h-4 text-green-600" />
-                        <span className="text-sm text-green-700">Requirement met</span>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => markRequirementMet(prerequisite.id)}
-                        className="px-4 py-2 bg-blue-50 text-blue-600 text-sm rounded-lg hover:bg-blue-100 transition-colors"
-                      >
-                        Mark as Met
-                      </button>
-                    )
-                  )}
-                </div>
               </div>
             </div>
           </motion.div>
         ))}
       </div>
-
-      {/* Sample Documents */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="bg-blue-50 rounded-lg p-4 border border-blue-200"
-      >
-        <div className="flex items-start gap-3">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <Download className="w-4 h-4 text-blue-600" />
-          </div>
-          <div>
-            <h4 className="text-sm font-medium text-blue-900">Need help?</h4>
-            <p className="text-xs text-blue-700 mt-1">
-              Download sample documents to understand the format requirements.
-            </p>
-            <button className="mt-2 text-xs text-blue-600 hover:text-blue-700 font-medium">
-              Download Samples →
-            </button>
-          </div>
-        </div>
-      </motion.div>
     </div>
+  )
+}
+
+// Program Details Modal Component
+interface ProgramDetailsModalProps {
+  program: BackupProgram
+  isOpen: boolean
+  onClose: () => void
+  onSelect: (program: BackupProgram, selectedIntake: string) => void
+}
+
+function ProgramDetailsModal({ program, isOpen, onClose, onSelect }: ProgramDetailsModalProps) {
+  const [selectedIntake, setSelectedIntake] = React.useState<string>('')
+
+  // Get available intakes for this program
+  const availableIntakes = React.useMemo(() => {
+    return program.university?.intakes || [program.intake].filter(Boolean) || ['Fall 2024', 'Spring 2025']
+  }, [program])
+
+  React.useEffect(() => {
+    if (availableIntakes.length > 0 && !selectedIntake) {
+      setSelectedIntake(availableIntakes[0])
+    }
+  }, [availableIntakes, selectedIntake])
+
+  const handleSelect = () => {
+    if (!selectedIntake) {
+      toast.error('Please select an intake')
+      return
+    }
+    onSelect(program, selectedIntake)
+    onClose()
+  }
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            onClick={onClose}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+              {/* Header */}
+              <div className="relative h-32 bg-gradient-to-r from-[#F26D44] to-[#626363] p-6">
+                <button
+                  onClick={onClose}
+                  className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+                <div className="absolute -bottom-12 left-6">
+                  <div className="w-24 h-24 bg-white rounded-2xl shadow-lg p-3 flex items-center justify-center">
+                    {program.university?.uni_logo ? (
+                      <Image
+                        src={program.university.uni_logo}
+                        alt={program.university.name}
+                        width={80}
+                        height={80}
+                        className="object-contain"
+                      />
+                    ) : (
+                      <Building2 className="w-12 h-12 text-gray-400" />
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="pt-16 p-6">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900">{program.name}</h2>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Building2 className="w-4 h-4 text-gray-400" />
+                    <p className="text-gray-600">{program.university?.name}</p>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <MapPin className="w-4 h-4 text-gray-400" />
+                    <p className="text-gray-600">{program.university?.city}, {program.university?.country}</p>
+                  </div>
+                </div>
+
+                {/* Program Details Grid */}
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="p-4 bg-gray-50 rounded-xl">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Award className="w-4 h-4 text-[#F26D44]" />
+                      <span className="text-sm font-medium text-gray-700">Level</span>
+                    </div>
+                    <p className="text-lg font-semibold text-gray-900">{program.level || 'Graduate'}</p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-xl">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Clock className="w-4 h-4 text-[#F26D44]" />
+                      <span className="text-sm font-medium text-gray-700">Duration</span>
+                    </div>
+                    <p className="text-lg font-semibold text-gray-900">{program.duration || '2 Years'}</p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-xl">
+                    <div className="flex items-center gap-2 mb-2">
+                      <IndianRupee className="w-4 h-4 text-[#F26D44]" />
+                      <span className="text-sm font-medium text-gray-700">Tuition Fee</span>
+                    </div>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {program.currency || 'USD'} {program.tuitionFee?.toLocaleString() || 'Contact Uni'}
+                    </p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-xl">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Calendar className="w-4 h-4 text-[#F26D44]" />
+                      <span className="text-sm font-medium text-gray-700">Next Intake</span>
+                    </div>
+                    <p className="text-lg font-semibold text-gray-900">{program.intake || 'Rolling'}</p>
+                  </div>
+                </div>
+
+                {/* Intake Selection */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Intake for Backup Program <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={selectedIntake}
+                    onChange={(e) => setSelectedIntake(e.target.value)}
+                    className="w-full p-3 border-2 border-gray-200 rounded-xl focus:border-[#F26D44] focus:outline-none transition-colors"
+                  >
+                    <option value="">Choose an intake</option>
+                    {availableIntakes.map((intake) => (
+                      <option key={intake} value={intake}>
+                        {intake}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={onClose}
+                    className="flex-1 px-4 py-3 border-2 border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSelect}
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-[#F26D44] to-[#626363] text-white rounded-xl hover:from-[#d55a3a] hover:to-[#4a4a4a] transition-colors font-medium"
+                  >
+                    Add as Backup
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   )
 }
 
@@ -476,84 +488,68 @@ interface BackupsFormProps {
 export function BackupsForm({ program, formData, setFormData }: BackupsFormProps) {
   const [showProgramSelector, setShowProgramSelector] = React.useState(false)
   const [searchTerm, setSearchTerm] = React.useState('')
-  
-  // Mock available programs (replace with actual API call)
-  const availablePrograms = React.useMemo(() => {
-    // This should be replaced with actual data from your backend
-    return [
-      { 
-        id: '1', 
-        name: 'Computer Science', 
-        university: program.university?.name || 'University',
-        school: 'College of Basic and Applied Sciences',
-        level: 'Undergraduate',
-        duration: '4 years'
-      },
-      { 
-        id: '2', 
-        name: 'Information Systems', 
-        university: program.university?.name || 'University',
-        school: 'College of Business',
-        level: 'Undergraduate',
-        duration: '4 years'
-      },
-      { 
-        id: '3', 
-        name: 'Data Analytics', 
-        university: program.university?.name || 'University',
-        school: 'College of Basic and Applied Sciences',
-        level: 'Undergraduate',
-        duration: '4 years'
-      },
-      { 
-        id: '4', 
-        name: 'Cybersecurity', 
-        university: program.university?.name || 'University',
-        school: 'College of Basic and Applied Sciences',
-        level: 'Undergraduate',
-        duration: '4 years'
-      },
-      { 
-        id: '5', 
-        name: 'Software Engineering', 
-        university: program.university?.name || 'University',
-        school: 'College of Basic and Applied Sciences',
-        level: 'Undergraduate',
-        duration: '4 years'
-      },
-    ]
-  }, [program])
+  const [selectedProgramForDetails, setSelectedProgramForDetails] = React.useState<BackupProgram | null>(null)
+  const [availablePrograms, setAvailablePrograms] = React.useState<BackupProgram[]>([])
+  const [isLoading, setIsLoading] = React.useState(false)
 
-  const filteredPrograms = availablePrograms.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.school.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const fetchAvailablePrograms = async () => {
+    setIsLoading(true)
+    const params = new URLSearchParams({
+      isExtra: 'false',
+      university: program.university?._id
+    })
+    try {
+      const response = await axiosInstance.get(`/courses?${params}&limit=20`)
+      const data = response.data.result || response.data.data || []
+      const filtered = data.filter((p: any) => p._id !== program._id)
+      setAvailablePrograms(filtered)
+    } catch (error) {
+      toast.error('Failed to fetch programs. Please try again later.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-  const addBackup = (backupProgram: any) => {
+  React.useEffect(() => {
+    fetchAvailablePrograms()
+  }, [])
+
+  const addBackup = (backupProgram: BackupProgram, selectedIntake: string) => {
     if (formData.backups.length >= 10) {
+      toast.error('Maximum 10 backup programs allowed')
       return
     }
+
+    // Check if program already added
+    if (formData.backups.some((b: BackupWithIntake) => b.programId === backupProgram._id)) {
+      toast.error('This program is already added as a backup')
+      return
+    }
+
+    const newBackup: BackupWithIntake = {
+      ...backupProgram,
+      priority: formData.backups.length + 1,
+      programId: backupProgram._id,
+      programName: backupProgram.name,
+      selectedIntake,
+      availableIntakes: backupProgram.university?.intakes || [backupProgram.intake].filter(Boolean) || ['Fall 2024', 'Spring 2025']
+    }
+
     setFormData({
       ...formData,
-      backups: [...formData.backups, { 
-        ...backupProgram, 
-        priority: formData.backups.length + 1,
-        programId: backupProgram.id,
-        programName: backupProgram.name,
-        university: backupProgram.university
-      }]
+      backups: [...formData.backups, newBackup]
     })
-    setShowProgramSelector(false)
-    setSearchTerm('')
+    
+    toast.success('Backup program added successfully')
   }
 
   const removeBackup = (index: number) => {
     const newBackups = formData.backups.filter((_: any, i: number) => i !== index)
-    // Update priorities
-    newBackups.forEach((backup: any, i: number) => {
+    newBackups.forEach((backup: BackupWithIntake, i: number) => {
       backup.priority = i + 1
     })
     setFormData({ ...formData, backups: newBackups })
+    toast.success('Backup program removed')
   }
 
   const moveUp = (index: number) => {
@@ -562,8 +558,7 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
     const temp = newBackups[index]
     newBackups[index] = newBackups[index - 1]
     newBackups[index - 1] = temp
-    // Update priorities
-    newBackups.forEach((backup: any, i: number) => {
+    newBackups.forEach((backup: BackupWithIntake, i: number) => {
       backup.priority = i + 1
     })
     setFormData({ ...formData, backups: newBackups })
@@ -576,118 +571,198 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
     newBackups[index] = newBackups[index + 1]
     newBackups[index + 1] = temp
     // Update priorities
-    newBackups.forEach((backup: any, i: number) => {
+    newBackups.forEach((backup: BackupWithIntake, i: number) => {
       backup.priority = i + 1
     })
     setFormData({ ...formData, backups: newBackups })
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
-      >
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Backup Programs</h3>
-        <p className="text-sm text-gray-500">
-          Choose up to 10 backup programs in order of preference. These will be considered if your main program is not available.
-        </p>
-      </motion.div>
+  const updateBackupIntake = (index: number, newIntake: string) => {
+    const newBackups = [...formData.backups]
+    newBackups[index].selectedIntake = newIntake
+    setFormData({ ...formData, backups: newBackups })
+  }
 
+  return (
+    <div className="space-y-3 mt-3">
       {/* Current Backups */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+        className="bg-white rounded-xl p-6 border-2"
       >
         <div className="flex items-center justify-between mb-4">
-          <h4 className="font-medium text-gray-900">
-            Backup Programs ({formData.backups.length}/10)
-          </h4>
+          <div>
+            <h4 className="font-medium text-gray-900">
+              Backup Programs ({formData.backups.length}/10)
+            </h4>
+            <p className="text-xs text-gray-500 mt-1">
+              Add backup programs with their preferred intakes
+            </p>
+          </div>
           <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
             Max 10
           </span>
         </div>
 
         {formData.backups.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <GraduationCap className="w-8 h-8 text-gray-400" />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed"
+          >
+            <div className="flex items-center justify-center mx-auto mb-4">
+              <div className="p-4 bg-orange-100 rounded-full">
+                <GraduationCap className="w-12 h-12 stroke-[1px] text-[#F26D44]" />
+              </div>
             </div>
-            <p className="text-gray-500 text-sm">No backup programs added yet.</p>
-            <p className="text-gray-400 text-xs mt-1">
-              Click the button below to explore available options.
+            <p className="text-gray-700 font-medium">No backup programs added yet</p>
+            <p className="text-gray-400 text-xs mt-1 mb-4">
+              Click the button below to explore and add backup options
             </p>
-          </div>
+            <button
+              onClick={() => setShowProgramSelector(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#F26D44] text-white rounded-lg hover:bg-[#d55a3a] transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Add Your First Backup
+            </button>
+          </motion.div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
             <AnimatePresence>
-              {formData.backups.map((backup: any, index: number) => (
+              {formData.backups.map((backup: BackupWithIntake, index: number) => (
                 <motion.div
-                  key={backup.id}
+                  key={`${backup.programId}-${index}`}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                  className="bg-white border-2 border-gray-100 rounded-xl overflow-hidden hover:border-[#F26D44] transition-colors group"
                 >
-                  <div className="w-8 h-8 bg-[#F26D44] bg-opacity-10 rounded-full flex items-center justify-center text-[#F26D44] font-semibold">
-                    {backup.priority}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">{backup.name}</p>
-                    <p className="text-xs text-gray-500">{backup.university}</p>
-                    <p className="text-xs text-gray-400">{backup.school}</p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => moveUp(index)}
-                      disabled={index === 0}
-                      className={`p-1 rounded hover:bg-gray-200 transition-colors ${
-                        index === 0 ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}
-                    >
-                      <ChevronUp className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => moveDown(index)}
-                      disabled={index === formData.backups.length - 1}
-                      className={`p-1 rounded hover:bg-gray-200 transition-colors ${
-                        index === formData.backups.length - 1 ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}
-                    >
-                      <ChevronDown className="w-4 h-4" />
-                    </button>
+                  {/* Priority Badge */}
+                  <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-medium text-gray-500">Priority #{backup.priority}</span>
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => moveUp(index)}
+                          disabled={index === 0}
+                          className={`p-1 rounded hover:bg-white transition-colors ${
+                            index === 0 ? 'opacity-30 cursor-not-allowed' : ''
+                          }`}
+                        >
+                          <ChevronUp className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => moveDown(index)}
+                          disabled={index === formData.backups.length - 1}
+                          className={`p-1 rounded hover:bg-white transition-colors ${
+                            index === formData.backups.length - 1 ? 'opacity-30 cursor-not-allowed' : ''
+                          }`}
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
                     <button
                       onClick={() => removeBackup(index)}
-                      className="p-1 rounded hover:bg-red-100 text-red-500 transition-colors"
+                      className="p-1 rounded hover:bg-red-100 text-red-400 hover:text-red-600 transition-colors"
                     >
                       <X className="w-4 h-4" />
                     </button>
                   </div>
+
+                  {/* Program Info */}
+                  <div className="p-4">
+                    <div className="flex gap-4">
+                      <div className="w-16 h-16 flex-shrink-0 bg-gray-50 rounded-lg p-2 flex items-center justify-center">
+                        {backup.university?.uni_logo ? (
+                          <Image
+                            src={backup.university.uni_logo}
+                            alt={backup.university.name}
+                            width={60}
+                            height={60}
+                            className="object-contain"
+                          />
+                        ) : (
+                          <Building2 className="w-8 h-8 text-gray-400" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h5 className="font-medium text-gray-900">{backup.name}</h5>
+                        <p className="text-sm text-gray-600">{backup.university?.name}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <MapPin className="w-3 h-3 text-gray-400" />
+                          <span className="text-xs text-gray-500">
+                            {backup.university?.city}, {backup.university?.country}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Intake Selection */}
+                    <div className="mt-4 grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-500 mb-1">
+                          Select Intake <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          value={backup.selectedIntake || ''}
+                          onChange={(e) => updateBackupIntake(index, e.target.value)}
+                          className="w-full p-2 text-sm border-2 border-gray-200 rounded-lg focus:border-[#F26D44] focus:outline-none"
+                        >
+                          <option value="">Choose intake</option>
+                          {backup.availableIntakes?.map((intake) => (
+                            <option key={intake} value={intake}>
+                              {intake}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-500 mb-1">
+                          Tuition Fee
+                        </label>
+                        <div className="p-2 bg-gray-50 rounded-lg text-sm text-gray-700">
+                          {backup.currency || 'USD'} {backup.tuitionFee?.toLocaleString() || 'Contact Uni'}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Quick Stats */}
+                    <div className="mt-3 flex gap-3 text-xs text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <Award className="w-3 h-3" />
+                        {backup.level || 'Graduate'}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {backup.duration || '2 Years'}
+                      </span>
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </AnimatePresence>
+
+            {/* Add More Button */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setShowProgramSelector(true)}
+              disabled={formData.backups.length >= 10}
+              className={`mt-4 w-full py-4 rounded-xl border-2 border-dashed transition-all flex items-center justify-center gap-2 ${
+                formData.backups.length >= 10
+                  ? 'border-gray-200 bg-gray-50 cursor-not-allowed text-gray-400'
+                  : 'border-[#F26D44] border-opacity-30 hover:border-[#F26D44] hover:bg-orange-50 text-[#F26D44]'
+              }`}
+            >
+              <Plus className="w-5 h-5" />
+              <span className="font-medium">Add Backup Program</span>
+            </motion.button>
           </div>
         )}
-
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setShowProgramSelector(true)}
-          disabled={formData.backups.length >= 10}
-          className={`mt-4 w-full py-3 rounded-lg border-2 border-dashed transition-colors ${
-            formData.backups.length >= 10
-              ? 'border-gray-200 bg-gray-50 cursor-not-allowed'
-              : 'border-[#F26D44] border-opacity-30 hover:border-[#F26D44] hover:bg-orange-50'
-          }`}
-        >
-          <Plus className={`w-5 h-5 mx-auto ${
-            formData.backups.length >= 10 ? 'text-gray-400' : 'text-[#F26D44]'
-          }`} />
-        </motion.button>
       </motion.div>
 
       {/* Program Selector Modal */}
@@ -697,7 +772,7 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/10 z-50 flex items-center justify-center p-4"
             onClick={() => setShowProgramSelector(false)}
           >
             <motion.div
@@ -705,54 +780,100 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden"
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden"
             >
-              <div className="p-6 border-b">
-                <h3 className="text-lg font-semibold">Select Backup Program</h3>
-                <p className="text-sm text-gray-500 mt-1">
-                  Choose from available programs
-                </p>
-                <input
-                  type="text"
-                  placeholder="Search programs..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="mt-4 w-full p-2 border rounded-lg focus:ring-2 focus:ring-[#F26D44] focus:border-transparent"
-                />
-              </div>
-              
-              <div className="p-6 overflow-y-auto max-h-[50vh]">
-                <div className="space-y-2">
-                  {filteredPrograms
-                    .filter(p => !formData.backups.some((b: any) => b.id === p.id))
-                    .map((prog, index) => (
-                      <motion.button
-                        key={prog.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        onClick={() => addBackup(prog)}
-                        className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-[#F26D44] hover:bg-orange-50 transition-colors"
-                      >
-                        <p className="font-medium text-gray-900">{prog.name}</p>
-                        <p className="text-sm text-gray-500">{prog.school}</p>
-                        <div className="flex gap-2 mt-1">
-                          <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">
-                            {prog.level}
-                          </span>
-                          <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">
-                            {prog.duration}
-                          </span>
-                        </div>
-                      </motion.button>
-                    ))}
+              <div className="p-6 border-b sticky top-0 bg-white z-10">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold">Select Backup Program</h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Choose from available programs at {program.university?.name}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowProgramSelector(false)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
-              
-              <div className="p-6 border-t bg-gray-50">
+
+              <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="w-8 h-8 border-4 border-[#F26D44] border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : availablePrograms.length === 0 ? (
+                  <div className="text-center py-12">
+                    <GraduationCap className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">No programs found</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {availablePrograms.map((prog) => (
+                      <motion.div
+                        key={prog._id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="group"
+                      >
+                        <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl hover:bg-orange-50 transition-colors border-2 border-transparent hover:border-[#F26D44]">
+                          <div className="w-16 h-16 flex-shrink-0 bg-white rounded-lg p-2 flex items-center justify-center">
+                            {prog.university?.uni_logo ? (
+                              <Image
+                                src={prog.university.uni_logo}
+                                alt={prog.university.name}
+                                width={60}
+                                height={60}
+                                className="object-contain"
+                              />
+                            ) : (
+                              <Building2 className="w-8 h-8 text-gray-400" />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-gray-900">{prog.name}</h4>
+                            <p className="text-sm text-gray-600">{prog.university?.name}</p>
+                            <div className="flex items-center gap-3 mt-2">
+                              <span className="text-xs bg-gray-200 px-2 py-1 rounded">
+                                {prog.level || 'Graduate'}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {prog.currency || 'USD'} {prog.tuitionFee?.toLocaleString() || 'Contact Uni'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => setSelectedProgramForDetails(prog)}
+                              className="p-2 bg-white rounded-lg hover:bg-gray-100 transition-colors"
+                              title="View Details"
+                            >
+                              <Eye className="w-5 h-5 text-gray-600" />
+                            </button>
+                            <button
+                              onClick={() => {
+                                const defaultIntake = prog.university?.intakes?.[0] || prog.intake || 'Fall 2024'
+                                addBackup(prog, defaultIntake)
+                                setShowProgramSelector(false)
+                              }}
+                              className="px-4 py-2 bg-gradient-to-r from-[#F26D44] to-[#626363] text-white rounded-lg hover:from-[#d55a3a] hover:to-[#4a4a4a] transition-colors text-sm font-medium"
+                            >
+                              Add
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="p-4 border-t bg-gray-50">
                 <button
                   onClick={() => setShowProgramSelector(false)}
-                  className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                  className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
                 >
                   Cancel
                 </button>
@@ -762,18 +883,36 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
         )}
       </AnimatePresence>
 
-      {/* Note */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-200"
-      >
-        <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
-        <p className="text-xs text-amber-700">
-          Backup programs increase your chances of admission. You can add up to 10 programs in order of preference.
-        </p>
-      </motion.div>
+      {/* Program Details Modal */}
+      {selectedProgramForDetails && (
+        <ProgramDetailsModal
+          program={selectedProgramForDetails}
+          isOpen={!!selectedProgramForDetails}
+          onClose={() => setSelectedProgramForDetails(null)}
+          onSelect={(prog, intake) => {
+            addBackup(prog, intake)
+            setSelectedProgramForDetails(null)
+            setShowProgramSelector(false)
+          }}
+        />
+      )}
+
+      {/* Validation Note */}
+      {formData.backups.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200"
+        >
+          <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-xs text-blue-700 font-medium">Intake Selection Required</p>
+            <p className="text-xs text-blue-600 mt-1">
+              Please select an intake for each backup program. This helps us process your applications correctly.
+            </p>
+          </div>
+        </motion.div>
+      )}
     </div>
   )
 }
@@ -812,76 +951,46 @@ export function ExpectationsForm({ program, formData, setFormData }: Expectation
         color: 'orange'
       }
     ]
-    
+
     return items
   }, [program])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-2 mt-3 p-2">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+        className=""
       >
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">What to Expect</h3>
-        <p className="text-sm text-gray-500">
+        <h3 className="text-lg font-semibold text-gray-900">What to Expect</h3>
+        <p className="text-xs text-gray-500">
           Please review the following information about your program and university.
         </p>
       </motion.div>
-
-      {/* Expectations Grid */}
-      <div className="grid grid-cols-2 gap-4">
-        {expectations.map((item, index) => {
-          const Icon = item.icon
-          const colors = {
-            blue: 'bg-blue-100 text-blue-600',
-            green: 'bg-green-100 text-green-600',
-            purple: 'bg-purple-100 text-purple-600',
-            orange: 'bg-orange-100 text-orange-600'
-          }
-          
-          return (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + index * 0.1 }}
-              className="bg-white rounded-xl p-4 shadow-sm border border-gray-100"
-            >
-              <div className={`w-10 h-10 rounded-lg ${colors[item.color as keyof typeof colors]} flex items-center justify-center mb-3`}>
-                <Icon className="w-5 h-5" />
-              </div>
-              <h4 className="font-medium text-gray-900 mb-1">{item.title}</h4>
-              <p className="text-xs text-gray-500">{item.description}</p>
-            </motion.div>
-          )
-        })}
-      </div>
 
       {/* Important Information */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+        className="bg-white rounded-xl p-6 mt-3 border-2"
       >
         <h4 className="font-medium text-gray-900 mb-4 flex items-center gap-2">
-          <FileText className="w-4 h-4 text-blue-500" />
           Important Information
         </h4>
-        
+
         <div className="space-y-4">
           <div className="flex items-start gap-3">
             <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0 mt-0.5">
               <span className="text-xs font-bold text-red-600">1</span>
             </div>
             <p className="text-sm text-gray-600">
-              Application deadline: <span className="font-medium text-red-600">{program.deadline || 'Rolling admission'}</span>. 
+              Application deadline: <span className="font-medium text-red-600">{program.deadline || 'Rolling admission'}</span>.
               Late applications may not be considered.
             </p>
           </div>
-          
+
           <div className="flex items-start gap-3">
             <div className="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
               <span className="text-xs font-bold text-amber-600">2</span>
@@ -890,7 +999,7 @@ export function ExpectationsForm({ program, formData, setFormData }: Expectation
               All documents must be uploaded in the required format. Incomplete applications may be rejected.
             </p>
           </div>
-          
+
           <div className="flex items-start gap-3">
             <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
               <span className="text-xs font-bold text-green-600">3</span>
@@ -899,7 +1008,7 @@ export function ExpectationsForm({ program, formData, setFormData }: Expectation
               You will receive a confirmation email within 24 hours of submission.
             </p>
           </div>
-          
+
           <div className="flex items-start gap-3">
             <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
               <span className="text-xs font-bold text-blue-600">4</span>
@@ -911,12 +1020,11 @@ export function ExpectationsForm({ program, formData, setFormData }: Expectation
         </div>
       </motion.div>
 
-      {/* Confirmation Checkboxes */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
+        className="bg-white rounded-xl p-6 border-2"
       >
         <div className="space-y-3">
           <label className="flex items-start gap-3 cursor-pointer">
@@ -936,7 +1044,7 @@ export function ExpectationsForm({ program, formData, setFormData }: Expectation
               I understand the program requirements and expectations as outlined above.
             </span>
           </label>
-          
+
           <label className="flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
@@ -965,7 +1073,7 @@ export function ExpectationsForm({ program, formData, setFormData }: Expectation
           transition={{ delay: 0.5 }}
           className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200"
         >
-          <DollarSign className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+          <IndianRupee className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
           <p className="text-xs text-blue-700">
             An application fee of <strong>{program.currency} {program.applicationFee}</strong> will be charged upon submission.
           </p>
