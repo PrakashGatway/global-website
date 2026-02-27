@@ -203,8 +203,6 @@ export default function CheckoutPage() {
   const [showConfetti, setShowConfetti] = useState(false)
   const [showBreakdown, setShowBreakdown] = useState(false)
 
-  // Payment states
-  const [selectedMethod, setSelectedMethod] = useState<string>('card')
   const [promoCode, setPromoCode] = useState('')
   const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null)
   const [promoLoading, setPromoLoading] = useState(false)
@@ -446,11 +444,11 @@ export default function CheckoutPage() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="min-h-screen max-w-7xl mx-auto"
+        className="min-h-screen max-w-6xl mx-auto"
       >
         {/* Header */}
-        <header className="bg-white fixed left-0 right-0 max-w-7xl mx-auto top-0 z-10">
-          <div className="container mx-auto px-2 py-3">
+        <header className="bg-white fixed left-0 right-0 max-w-6xl mx-auto top-0 z-10">
+          <div className="mx-auto px-2 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Link
@@ -487,7 +485,7 @@ export default function CheckoutPage() {
                 animate={{ y: 0, opacity: 1 }}
                 className="bg-white rounded-2xl border overflow-hidden"
               >
-                <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-[#1C3058] to-[#2a3f6e]">
+                <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-[#1C3058] to-[#2a3f6e]/60">
                   <div className="flex items-center gap-4">
                     {checkoutItem.university?.logo ? (
                       <div className="w-24 h-20 bg-white rounded-xl p-2">
@@ -535,124 +533,6 @@ export default function CheckoutPage() {
                       <p className="font-semibold text-gray-900">{checkoutItem.amount} {checkoutItem.currency}</p>
                     </div>
                   </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Have a promo code?
-                    </label>
-                    <div className="flex gap-2">
-                      <div className="flex-1 relative">
-                        <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input
-                          type="text"
-                          value={promoCode}
-                          onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                          placeholder="Enter promo code"
-                          className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#F26D44] focus:border-transparent transition-all"
-                          disabled={!!appliedPromo || promoLoading}
-                        />
-                      </div>
-                      {appliedPromo ? (
-                        <button
-                          onClick={removePromoCode}
-                          className="px-6 py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors font-medium"
-                        >
-                          Remove
-                        </button>
-                      ) : (
-                        <button
-                          onClick={applyPromoCode}
-                          disabled={promoLoading || !promoCode}
-                          className="px-6 py-3 bg-[#1C3058] text-white rounded-xl hover:bg-[#1C3058]/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed min-w-[100px]"
-                        >
-                          {promoLoading ? (
-                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
-                          ) : (
-                            'Apply'
-                          )}
-                        </button>
-                      )}
-                    </div>
-                    {promoError && (
-                      <p className="text-red-500 text-sm mt-2">{promoError}</p>
-                    )}
-                    {appliedPromo && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-2 p-3 bg-green-50 rounded-xl flex items-center gap-2"
-                      >
-                        <CheckCircle className="w-5 h-5 text-green-600" />
-                        <span className="text-sm text-green-700">{appliedPromo.message}</span>
-                      </motion.div>
-                    )}
-                  </div>
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Wallet className="w-5 h-5 text-[#1C3058]" />
-                        <span className="font-medium text-sm text-gray-900">Your Wallet</span>
-                      </div>
-                      <span className="text-sm text-gray-600">
-                       Available Points: {wallet.balance.toLocaleString()}
-                      </span>
-                    </div>
-
-                    <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2">
-                          <Coins className="w-5 h-5 text-yellow-600" />
-                          <span className="font-medium">Points Balance</span>
-                        </div>
-                        <span className="text-lg font-bold text-purple-800">
-                          {wallet.points.toLocaleString()} pts
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => setUseWallet(!useWallet)}
-                          className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${useWallet
-                            ? 'bg-[#1C3058] text-white shadow-lg shadow-[#1C3058]/30'
-                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-                            }`}
-                        >
-                          {useWallet ? 'Using Wallet' : 'Use Wallet Balance'}
-                        </button>
-
-                        {useWallet && wallet.points >= 1000 && (
-                          <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="px-3 py-2 bg-purple-100 rounded-lg"
-                          >
-                            <span className="text-xs font-medium text-purple-700">
-                              +5% Bonus
-                            </span>
-                          </motion.div>
-                        )}
-                      </div>
-
-                      {useWallet && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          className="mt-3 text-sm text-gray-600"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Info className="w-4 h-4 text-blue-500" />
-                            <span>Using {checkoutItem.currency} {walletAmount.toLocaleString()} from wallet</span>
-                          </div>
-                          {walletDiscount > 0 && (
-                            <div className="flex items-center gap-2 mt-1 text-green-600">
-                              <Star className="w-4 h-4 fill-green-500" />
-                              <span>You get {checkoutItem.currency} {walletDiscount.toLocaleString()} bonus discount!</span>
-                            </div>
-                          )}
-                        </motion.div>
-                      )}
-                    </div>
-                  </div>
                 </div>
               </motion.div>
             </div>
@@ -665,7 +545,7 @@ export default function CheckoutPage() {
                 transition={{ delay: 0.2 }}
                 className="bg-white rounded-2xl border overflow-hidden flex flex-col h-full !font-medium"
               >
-                <div className="p-4 py-3 bg-blue-600 border-b border-gray-200">
+                <div className="p-4 py-3 bg-gradient-to-r from-[#1C3058] to-[#2a3f6e]/60 border-b border-gray-200">
                   <h2 className="font-bold text-gray-100">Order Summary</h2>
                 </div>
 
@@ -713,6 +593,86 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Wallet className="w-5 h-5 text-[#1C3058]" />
+                        <span className="font-medium text-sm text-gray-900">Your Wallet</span>
+                      </div>
+                      <span className="text-sm text-gray-600">
+                        Available Points: {wallet.balance.toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 text-sm rounded-xl">
+
+
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setUseWallet(!useWallet)}
+                          className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${useWallet
+                            ? 'bg-[#1C3058] text-white shadow-lg shadow-[#1C3058]/30'
+                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                            }`}
+                        >
+                          {useWallet ? <span>Using {checkoutItem.currency} {walletAmount.toLocaleString()} from wallet</span> : 'Use Wallet Points'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Have a promo code?
+                    </label>
+                    <div className="flex gap-2">
+                      <div className="flex-1 relative">
+                        <Tag className="absolute left-3 top-[50%] -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                          type="text"
+                          value={promoCode}
+                          onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                          placeholder="Enter promo code"
+                          className="w-full pl-9 pr-4 py-2 border border-gray-300 text-sm rounded-lg focus:ring-2 focus:ring-[#F26D44] focus:border-transparent transition-all"
+                          disabled={!!appliedPromo || promoLoading}
+                        />
+                      </div>
+                      {appliedPromo ? (
+                        <button
+                          onClick={removePromoCode}
+                          className="p-2 px-3 bg-red-500 text-white text-sm rounded-lg hover:bg-red-600 transition-colors font-medium"
+                        >
+                          Remove
+                        </button>
+                      ) : (
+                        <button
+                          onClick={applyPromoCode}
+                          disabled={promoLoading || !promoCode}
+                          className="p-2 px-3 bg-[#1C3058] text-white rounded-lg hover:bg-[#1C3058]/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed min-w-[100px]"
+                        >
+                          {promoLoading ? (
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                          ) : (
+                            'Apply'
+                          )}
+                        </button>
+                      )}
+                    </div>
+                    {promoError && (
+                      <p className="text-red-500 text-sm mt-2">{promoError}</p>
+                    )}
+                    {appliedPromo && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-2 p-3 bg-green-50 rounded-lg flex items-center gap-2"
+                      >
+                        <CheckCircle className="w-5 h-5 text-green-600" />
+                        <span className="text-xs text-green-700">{appliedPromo.message}</span>
+                      </motion.div>
+                    )}
+                  </div>
+
                   <button
                     onClick={handlePayment}
                     disabled={processing}
@@ -727,7 +687,7 @@ export default function CheckoutPage() {
                       ) : (
                         <>
                           <Lock className="w-5 h-5" />
-                          Pay {total.toLocaleString()} {checkoutItem.currency == "INR" ? "₹" : "$"} 
+                          Pay {total.toLocaleString()} {checkoutItem.currency == "INR" ? "₹" : "$"}
                         </>
                       )}
                     </span>
@@ -740,24 +700,6 @@ export default function CheckoutPage() {
                   <div className="flex items-center justify-center gap-2 text-sm text-gray-500 mt-4">
                     <ShieldCheck className="w-4 h-4" />
                     <span>Secured by industry-standard encryption</span>
-                  </div>
-                </div>
-
-                {/* Trust Badges */}
-                <div className="p-6 rounded-b-2xl">
-                  <div className="flex flex-col items-start gap-4 justify-start text-sm text-gray-500">
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-6 h-6 stroke-[1.5px]" />
-                      <span>24/7 Support</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Shield className="w-6 h-6 stroke-[1.5px]" />
-                      <span>Money-back guarantee</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-6 h-6 stroke-[1.5px]" />
-                      <span>Instant confirmation</span>
-                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -774,17 +716,6 @@ export default function CheckoutPage() {
             <p className="text-sm text-gray-500">
               © {new Date().getFullYear()} Ooshas Global. All rights reserved.
             </p>
-            {/* <div className="flex items-center gap-6">
-                <Link href="/terms" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
-                  Terms
-                </Link>
-                <Link href="/privacy" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
-                  Privacy
-                </Link>
-                <Link href="/refund" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
-                  Refund Policy
-                </Link>
-              </div> */}
           </div>
         </div>
       </footer>
