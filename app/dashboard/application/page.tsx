@@ -148,17 +148,17 @@ const getPaymentStatusInfo = (status: string) => {
   const statusMap: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
     'Pending': {
       color: 'bg-yellow-100 text-yellow-700',
-      icon: <Clock className="w-5 h-5 stroke-[1.5px]" />,
+      icon: <Clock className="w-4 h-4 stroke-[1.5px]" />,
       label: 'Pending'
     },
     'Completed': {
       color: 'bg-green-100 text-green-700',
-      icon: <CheckCircle className="w-5 h-5 stroke-[1.5px]" />,
+      icon: <CheckCircle className="w-4 h-4 stroke-[1.5px]" />,
       label: 'Completed'
     },
     'Failed': {
       color: 'bg-red-100 text-red-700',
-      icon: <AlertCircle className="w-5 h-5 stroke-[1.5px]" />,
+      icon: <AlertCircle className="w-4 h-4 stroke-[1.5px]" />,
       label: 'Failed'
     }
   }
@@ -316,14 +316,12 @@ export default function ApplicationHistoryPage() {
                 Application Fee: {application.course.currency || 'USD'} {application.course.applicationFee.toLocaleString()}
               </span>
             )}
-            <div className="flex gap-1">
+            <div className="flex items-end justify-end gap-1">
 
-              <button className="text-sm shadow-md transition-colors hover:shadow-xl font-medium border border-gray-300 px-3 py-1 rounded-full text-gray-800">
-
+              <button className="text-sm hover:ring-1 shadow-md transition-colors hover:shadow-xl font-medium border border-gray-300 px-3 py-1 rounded-full text-gray-800">
                 View
-
               </button>
-              {statusInfo.label == "Pending" && (
+              {paymentInfo.label == "Pending" && (
                 <button onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
@@ -378,10 +376,10 @@ export default function ApplicationHistoryPage() {
               <span>
                 Payment Status :
               </span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium border ${statusInfo.color}`}>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium border ${paymentInfo.color}`}>
                 <span className="flex items-center gap-1">
-                  {statusInfo.icon}
-                  {statusInfo.label == "Pending" ? "Unpaid" : paymentInfo.label}
+                  {paymentInfo.icon}
+                  {paymentInfo.label == "Pending" ? "Unpaid" : paymentInfo.label}
                 </span>
               </span>
             </div>

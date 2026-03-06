@@ -15,6 +15,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import axiosInstance from "@/app/axiosInstance"
+import { useGlobal } from "@/src/statecontext"
 
 // Types
 interface CheckoutItem {
@@ -34,10 +35,9 @@ interface CheckoutItem {
 }
 
 interface WalletInfo {
-  balance: number
-  currency: string
   points: number
-  pointsValue: number
+  balanceInRupees: number
+  currency: string
 }
 
 interface PromoCode {
@@ -49,28 +49,6 @@ interface PromoCode {
   valid: boolean
   message?: string
 }
-
-interface PaymentMethod {
-  id: string
-  name: string
-  icon: React.ReactNode
-  description: string
-}
-
-const paymentMethods: PaymentMethod[] = [
-  {
-    id: 'card',
-    name: 'Credit / Debit Card',
-    icon: <CreditCard className="w-6 h-6" />,
-    description: 'Pay securely with your card'
-  },
-  {
-    id: 'wallet',
-    name: 'Wallet Balance',
-    icon: <Wallet className="w-6 h-6" />,
-    description: 'Use your available wallet balance'
-  }
-]
 
 // Confetti effect component
 const Confetti = ({ active }: { active: boolean }) => {
@@ -149,36 +127,28 @@ const PriceBreakdown = ({
 
         <div className="space-y-3">
           <div className="flex justify-between text-gray-600">
-            <span>Subtotal</span>
-            <span>{currency} {subtotal.toLocaleString()}</span>
+            <span>Application Fee</span>
+            <span>₹{subtotal.toLocaleString()}</span>
           </div>
 
           {discount > 0 && (
             <div className="flex justify-between text-green-600">
               <span>Promo Discount</span>
-              <span>-{currency} {discount.toLocaleString()}</span>
+              <span>-₹{discount.toLocaleString()}</span>
             </div>
           )}
 
           {walletUsed > 0 && (
-            <>
-              <div className="flex justify-between text-blue-600">
-                <span>Wallet Points Used</span>
-                <span>-{currency} {walletUsed.toLocaleString()}</span>
-              </div>
-              {walletDiscount > 0 && (
-                <div className="flex justify-between text-purple-600">
-                  <span>Wallet Bonus Discount</span>
-                  <span>-{currency} {walletDiscount.toLocaleString()}</span>
-                </div>
-              )}
-            </>
+            <div className="flex justify-between text-blue-600">
+              <span>Wallet Points Used</span>
+              <span>-₹{walletUsed.toLocaleString()}</span>
+            </div>
           )}
 
           <div className="border-t border-gray-200 my-3 pt-3">
             <div className="flex justify-between font-bold text-lg">
               <span>Total</span>
-              <span className="text-[#F26D44]">{currency} {total.toLocaleString()}</span>
+              <span className="text-[#F26D44]">₹{total.toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -202,18 +172,17 @@ export default function CheckoutPage() {
   const [checkoutItem, setCheckoutItem] = useState<CheckoutItem | null>(null)
   const [showConfetti, setShowConfetti] = useState(false)
   const [showBreakdown, setShowBreakdown] = useState(false)
-
   const [promoCode, setPromoCode] = useState('')
   const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null)
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError, setPromoError] = useState('')
+  const { profile } = useGlobal();
 
   // Wallet states
   const [wallet, setWallet] = useState<WalletInfo>({
-    balance: 2500,
-    currency: 'USD',
-    points: 5000,
-    pointsValue: 50
+    points: 0,
+    balanceInRupees: 0,
+    currency: 'INR'
   })
   const [useWallet, setUseWallet] = useState(false)
   const [walletAmount, setWalletAmount] = useState(0)
@@ -222,64 +191,35 @@ export default function CheckoutPage() {
   const [subtotal, setSubtotal] = useState(0)
   const [discount, setDiscount] = useState(0)
   const [walletUsed, setWalletUsed] = useState(0)
-  const [walletDiscount, setWalletDiscount] = useState(0)
   const [total, setTotal] = useState(0)
-
-  // Card payment states
-  const [cardDetails, setCardDetails] = useState({
-    number: '',
-    name: '',
-    expiry: '',
-    cvv: ''
-  })
 
   // Fetch checkout item details
   useEffect(() => {
     const fetchCheckoutDetails = async () => {
       try {
-        // Get application ID from URL or context
+        // Get application ID from URL
         const params = new URLSearchParams(window.location.search)
         const applicationId = params.get('application')
 
         if (!applicationId) {
           toast.error('No application specified')
-          //   router.push('/dashboard/applications')
+          router.push('/dashboard/application')
           return
         }
 
-        // Fetch application details
-        const response = await axiosInstance.get(`/applications/${applicationId}`)
-        const application = response.data?.data
+        // Fetch checkout details from API
+        const response = await axiosInstance.get(`/purchases/${applicationId}`)
+        const data = response.data?.data
 
-        // Create checkout item based on type
-        const item: CheckoutItem = {
-          id: application._id,
-          type: 'application_fee', // or 'program_fee' based on your logic
-          name: application.course.name,
-          description: `For ${application.course.name} at ${application.course.university.name}`,
-          amount: application.course.applicationFee || 100,
-          currency: application.course.currency || 'USD',
-          university: {
-            name: application.course.university.name,
-            logo: application.course.university.uni_logo
-          },
-          applicationNumber: application.applicationNumber,
-          programName: application.course.name,
-          intake: application.intake
-        }
+        setCheckoutItem(data.checkoutItem)
+        setWallet(data.wallet)
+        setSubtotal(data.checkoutItem.amount)
+        setTotal(data.checkoutItem.amount)
 
-        setCheckoutItem(item)
-        setSubtotal(item.amount)
-        setTotal(item.amount)
-
-        // Fetch wallet details
-        // const walletResponse = await axiosInstance.get('/wallet')
-        // setWallet(walletResponse.data)
-
-      } catch (error) {
+      } catch (error: any) {
         console.log(error)
-        toast.error('Failed to load checkout details')
-        // router.push('/dashboard/applications')
+        toast.error(error.response?.data?.message || 'Failed to load checkout details')
+        router.push('/dashboard/application')
       } finally {
         setLoading(false)
       }
@@ -293,26 +233,17 @@ export default function CheckoutPage() {
     let newTotal = subtotal - discount
 
     if (useWallet) {
-      const maxWalletUse = Math.min(wallet.balance, newTotal)
+      const maxWalletUse = Math.min(wallet.balanceInRupees, newTotal)
       setWalletAmount(maxWalletUse)
       setWalletUsed(maxWalletUse)
       newTotal -= maxWalletUse
-
-      // Additional discount for using wallet
-      if (wallet.points >= 1000) {
-        const bonus = maxWalletUse * 0.05 // 5% bonus
-        setWalletDiscount(bonus)
-        newTotal -= bonus
-      } else {
-        setWalletDiscount(0)
-      }
     } else {
+      setWalletAmount(0)
       setWalletUsed(0)
-      setWalletDiscount(0)
     }
 
     setTotal(Math.max(0, newTotal))
-  }, [subtotal, discount, useWallet, wallet.balance, wallet.points])
+  }, [subtotal, discount, useWallet, wallet.balanceInRupees])
 
   // Apply promo code
   const applyPromoCode = async () => {
@@ -325,38 +256,22 @@ export default function CheckoutPage() {
     setPromoError('')
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      const params = new URLSearchParams(window.location.search)
+      const applicationId = params.get('application')
 
-      // Mock promo code validation
-      if (promoCode.toUpperCase() === 'SAVE20') {
-        const discountAmount = subtotal * 0.2 // 20% off
-        setAppliedPromo({
-          code: promoCode,
-          discountType: 'percentage',
-          discountValue: 20,
-          maxDiscount: 500,
-          valid: true,
-          message: '20% discount applied!'
-        })
-        setDiscount(Math.min(discountAmount, 500))
-        toast.success('Promo code applied successfully!')
-      } else if (promoCode.toUpperCase() === 'WELCOME50') {
-        setAppliedPromo({
-          code: promoCode,
-          discountType: 'fixed',
-          discountValue: 50,
-          valid: true,
-          message: '$50 discount applied!'
-        })
-        setDiscount(50)
-        toast.success('Promo code applied successfully!')
-      } else {
-        setPromoError('Invalid promo code')
-        toast.error('Invalid promo code')
-      }
-    } catch (error) {
-      setPromoError('Failed to apply promo code')
+      const response = await axiosInstance.post(`/purchases/${applicationId}/apply-coupon`, {
+        code: promoCode
+      })
+
+      const data = response.data?.data
+
+      setAppliedPromo(data.coupon)
+      setDiscount(data.discountAmount)
+      toast.success('Promo code applied successfully!')
+
+    } catch (error: any) {
+      setPromoError(error.response?.data?.message || 'Failed to apply promo code')
+      toast.error(error.response?.data?.message || 'Failed to apply promo code')
     } finally {
       setPromoLoading(false)
     }
@@ -374,20 +289,25 @@ export default function CheckoutPage() {
   const handlePayment = async () => {
     setProcessing(true)
     try {
-      // await axiosInstance.post('/applications/payment/complete', {
-      //   applicationId: checkoutItem?.id,
-      //   amount: 0,
-      //   method: 'wallet'
-      // })
+      const params = new URLSearchParams(window.location.search)
+      const applicationId = params.get('application')
+
+      const response = await axiosInstance.post(`/purchases/${applicationId}/payment`, {
+        useWallet,
+        couponCode: appliedPromo?.code,
+        paymentMethod: 'Wallet',
+        transactionId: `TXN${Date.now()}`
+      })
 
       setShowConfetti(true)
       toast.success('Payment completed successfully!')
 
       setTimeout(() => {
-        //   router.push('/dashboard/applications')
+        router.push('/dashboard/application?payment=success')
       }, 3000)
-    } catch (error) {
-      toast.error('Payment failed')
+
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Payment failed')
     } finally {
       setProcessing(false)
     }
@@ -433,9 +353,9 @@ export default function CheckoutPage() {
             subtotal={subtotal}
             discount={discount}
             walletUsed={walletUsed}
-            walletDiscount={walletDiscount}
+            walletDiscount={0}
             total={total}
-            currency={checkoutItem.currency}
+            currency="₹"
             onClose={() => setShowBreakdown(false)}
           />
         )}
@@ -530,7 +450,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="p-4 bg-gray-50 rounded-xl">
                       <p className="text-sm text-gray-500 mb-1">Application fee</p>
-                      <p className="font-semibold text-gray-900">{checkoutItem.amount} {checkoutItem.currency}</p>
+                      <p className="font-semibold text-gray-900">₹{checkoutItem.amount.toLocaleString()}</p>
                     </div>
                   </div>
                 </div>
@@ -551,8 +471,8 @@ export default function CheckoutPage() {
 
                 <div className="p-4 px-6 space-y-3">
                   <div className="flex justify-between text-gray-700">
-                    <span>Subtotal</span>
-                    <span>{checkoutItem.currency} {subtotal.toLocaleString()}</span>
+                    <span>Application Fee</span>
+                    <span>₹{subtotal.toLocaleString()}</span>
                   </div>
 
                   {discount > 0 && (
@@ -562,7 +482,7 @@ export default function CheckoutPage() {
                       className="flex justify-between text-green-600"
                     >
                       <span>Promo Discount</span>
-                      <span>-{checkoutItem.currency} {discount.toLocaleString()}</span>
+                      <span>-₹{discount.toLocaleString()}</span>
                     </motion.div>
                   )}
 
@@ -573,7 +493,7 @@ export default function CheckoutPage() {
                       className="flex justify-between text-gray-600"
                     >
                       <span>Wallet Used</span>
-                      <span>-{checkoutItem.currency} {walletUsed.toLocaleString()}</span>
+                      <span>-₹{walletUsed.toLocaleString()}</span>
                     </motion.div>
                   )}
 
@@ -582,11 +502,11 @@ export default function CheckoutPage() {
                       <span className="text-lg font-semibold text-gray-900">Total</span>
                       <div className="text-right">
                         <span className="text-2xl font-bold text-[#F26D44]">
-                          {checkoutItem.currency} {total.toLocaleString()}
+                          ₹{total.toLocaleString()}
                         </span>
                         {total < subtotal && (
                           <p className="text-sm text-green-600 mt-1">
-                            You save {(subtotal - total).toLocaleString()}
+                            You save ₹{(subtotal - total).toLocaleString()}
                           </p>
                         )}
                       </div>
@@ -600,22 +520,29 @@ export default function CheckoutPage() {
                         <span className="font-medium text-sm text-gray-900">Your Wallet</span>
                       </div>
                       <span className="text-sm text-gray-600">
-                        Available Points: {wallet.balance.toLocaleString()}
+                        Balance: ₹{wallet.balanceInRupees.toLocaleString()} ({wallet.points} points)
                       </span>
                     </div>
 
                     <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 text-sm rounded-xl">
-
-
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => setUseWallet(!useWallet)}
+                          disabled={wallet.balanceInRupees === 0}
                           className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all ${useWallet
                             ? 'bg-[#1C3058] text-white shadow-lg shadow-[#1C3058]/30'
-                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                            : wallet.balanceInRupees > 0
+                              ? 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                              : 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
                             }`}
                         >
-                          {useWallet ? <span>Using {checkoutItem.currency} {walletAmount.toLocaleString()} from wallet</span> : 'Use Wallet Points'}
+                          {useWallet ? (
+                            <span>Using ₹{walletAmount.toLocaleString()} from wallet</span>
+                          ) : wallet.balanceInRupees > 0 ? (
+                            'Use Wallet Points'
+                          ) : (
+                            'No wallet balance'
+                          )}
                         </button>
                       </div>
                     </div>
@@ -675,7 +602,7 @@ export default function CheckoutPage() {
 
                   <button
                     onClick={handlePayment}
-                    disabled={processing}
+                    disabled={processing || total === 0}
                     className="w-full mt-4 py-2.5 bg-gradient-to-r from-[#F26D44] to-[#ff8b5c] text-white rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-[#F26D44]/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
@@ -687,7 +614,7 @@ export default function CheckoutPage() {
                       ) : (
                         <>
                           <Lock className="w-5 h-5" />
-                          Pay {total.toLocaleString()} {checkoutItem.currency == "INR" ? "₹" : "$"}
+                          Pay ₹{total.toLocaleString()}
                         </>
                       )}
                     </span>
@@ -708,17 +635,16 @@ export default function CheckoutPage() {
         </div>
 
         {/* Footer */}
-
-      </motion.div>
-      <footer className="border-t border-gray-200 bg-white/50 backdrop-blur-sm mt-6">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-sm text-gray-500">
-              © {new Date().getFullYear()} Ooshas Global. All rights reserved.
-            </p>
+        <footer className="border-t border-gray-200 bg-white/50 backdrop-blur-sm mt-6">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <p className="text-sm text-gray-500">
+                © {new Date().getFullYear()} Ooshas Global. All rights reserved.
+              </p>
+            </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </motion.div>
     </>
   )
 }
