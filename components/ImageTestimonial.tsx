@@ -54,6 +54,7 @@ export default function ImageTestimonial({
           cancelAnimationFrame(raf);
         });
       };
+      console.log(items)
 
       slider = new KeenSlider(
         sliderRef.current!,
@@ -99,12 +100,12 @@ export default function ImageTestimonial({
       <div className="mx-auto">
         {/* Heading */}
         <div className="max-w-7xl mx-auto px-4 mb-12">
-          <h2 className="text-xl lg:text-5xl mb-2">
-            <span className="text-red-700">
+          <h2 className="text-xl  mb-2">
+            <span className="text-red-700 lg:text-4xl font-light">
               {title?.split("||")[0]?.trim() || "Image"}
             </span>{" "}
             <br />
-            <span className="text-primary font-bold relative inline-block">
+            <span className="text-primary font-bold relative inline-block lg:text-5xl">
               {title?.split("||")[1]?.trim() || "Testimonials"}
               <span className="absolute right-0 bottom-0 w-25 h-[2px] lg:h-1 bg-red-700"></span>
             </span>
@@ -158,9 +159,9 @@ export default function ImageTestimonial({
                   >
                     {/* LOGO */}
                     <img
-                      src="https://logos-world.net/wp-content/uploads/2021/01/Harvard-Emblem.png"
+                      src={item?.universityLogo}
                       alt="Logo"
-                      className="w-10 h-10 lg:w-40 lg:h-18 object-contain mt-2 lg:mt-12 flex-shrink-0"
+                      className="w-10 h-10 lg:w-40 lg:h-18 object-contain mt-2 lg:mt-6 flex-shrink-0"
                     />
 
                     {/* TEXT */}
@@ -169,7 +170,7 @@ export default function ImageTestimonial({
                         {item.name}
                       </h3>
 
-                      <p className="text-xs lg:text-base text-[hsl(0,70%,35%)] line-clamp-2 lg:line-clamp-4">
+                      <p className="text-xs lg:text-base text-[hsl(0,70%,35%)] line-clamp-2 lg:line-clamp-4 text-left">
                         {item.message}
                       </p>
                     </div>

@@ -329,7 +329,7 @@ const StickyPaymentSection = ({ sections }) => {
             <div className="relative w-full">
               {sections.map((img, i) => (
                 <div
-                  key={img}
+                  key={i}
                   className={`
                 right-image-${i}
                 hidden lg:block

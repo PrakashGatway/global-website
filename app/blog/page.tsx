@@ -51,7 +51,7 @@ export default async function BlogPage({
     params: {
       page,
       limit,
-      category
+      catslug:category
     },
   })
 
@@ -59,7 +59,7 @@ export default async function BlogPage({
 
   const blogcategory = await serverInstance.get("/blogs/categories")
 
-  
+  console.log("SERVER PARAM:", searchParams.catslug);
 
   return (
     <>

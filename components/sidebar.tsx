@@ -24,6 +24,7 @@ const menuItems = [
   { icon: BarChart3, label: "Find Programs", href: "/dashboard/programs" },
   { icon: FileText, label: "Application", href: "/dashboard/application" },
   { icon: Wallet, label: "Payments", href: "/dashboard/payment" },
+  { icon: Wallet, label: "Ooshas Solution", href: "/dashboard/solution" },
   { icon: LucideIndianRupee, label: "Offers", href: "/dashboard/offers" },
   { icon: Headphones, label: "Support", href: "/dashboard/support" },
   { icon: Bell, label: "Notifications", href: "/dashboard/notifications" },
@@ -33,6 +34,11 @@ const menuItems = [
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = usePathname();
+
+  // if(location){
+  //   location.startsWith("/dashboard/loan")
+  //   return null
+  // }
 
   return (
     <motion.aside

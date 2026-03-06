@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import axiosInstance from '@/app/axiosInstance';
 import { DynamicLucideIcon } from './DynamicLucideIcon';
+import toast from 'react-hot-toast';
 
 export default function AboutUsPage({ aboutData }) {
   const [openForm, setOpenForm] = useState(false);
@@ -88,11 +89,11 @@ export default function AboutUsPage({ aboutData }) {
 
 
       })
-      alert("Message sent successfully!")
+      toast.success("Message sent successfully!")
       reset()
     }
     catch (err) {
-      alert("Failed to submit the form. Please try again later.")
+      toast.error("Failed to submit the form. Please try again later.")
     }
   }
 
@@ -100,20 +101,7 @@ export default function AboutUsPage({ aboutData }) {
     <div className='bg-[#fbfbfb] relative'>
       {/* Hero Section */}
       <section className="relative flex items-center" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
-        <div className="lg:absolute z-[-1] lg:-left-40 lg:top-[0%] opacity-10 pointer-events-none hidden lg:block">
-          <div style={{
-            transform: 'rotate(-30deg) scaleY(1)',
-            mixBlendMode: 'multiply'
-          }}>
-            <Image
-              src="/images/g logo.png"
-              alt="Decorative Arrow"
-              width={600}
-              height={40}
-              className="w-64 h-66 lg:w-116 lg:h-116 object-contain"
-            />
-          </div>
-        </div>
+    
         <div className="w-full mx-auto grid lg:grid-cols-2 gap-12 items-center sm:pl-30">
           <div className="text-white space-y-6 p-6 sm:pt-0 pt-12">
             <h1 className="text-4xl lg:text-6xl font-bold text-white tracking-tight">
@@ -150,7 +138,6 @@ export default function AboutUsPage({ aboutData }) {
               </Link>
             </div>
           </div>
-          {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
           <div className="h-full w-full">
             <div className='relative flex items-center justify-center h-[106%] w-full rounded-bl-[55%] overflow-hidden mr-10'>
               <img className='h-full w-full object-cover' src="https://buffer.com/resources/content/images/2025/03/social-media-image-sizes.png" alt="" />
@@ -536,6 +523,8 @@ export default function AboutUsPage({ aboutData }) {
           </div>
         </div>
       </section>
+          {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
+
     </div>
   );
 }

@@ -644,6 +644,7 @@ export const profileSchema = {
       name: "nationality",
       label: "What is your nationality?",
       image: "https://plus.unsplash.com/premium_photo-1670517733844-f3b8fd6de86c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      optionsSource : "countries",
       type: "select",
       required: true,
       helperText:
@@ -710,7 +711,7 @@ export const profileSchema = {
       name: "financialFunds",
       label:
         "Available funds for tuition and living expenses abroad? (USD)",
-      image: "/images/onboarding/financials.png",
+      image: "https://plus.unsplash.com/premium_photo-1661718074815-1564d2eb920f?q=80&w=1285&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       type: "range",
       required: true,
       min: 0,

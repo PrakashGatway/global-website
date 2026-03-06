@@ -1,4 +1,5 @@
 const Balloon = async ({ Pageres }) => {
+  console.log(Pageres)
   return (
     <div className="flex min-h-screen items-end justify-center pb-12 hidden
               lg:block">

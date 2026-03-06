@@ -220,41 +220,9 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
     <>
       <section className="bg-[#fffaf6] py-12 md:py-20 overflow-hidden relative">
         {/* DECORATIVE ARROWS — DESKTOP ONLY */}
-        <div className="absolute -left-30 top-50 -translate-y-1/2 pointer-events-none hidden lg:block lg:w-[250px] opacity-10">
-          <div
-            style={{
-              transform: "rotate(-10deg)",
-              filter: "brightness(10) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)",
-              mixBlendMode: "multiply",
-            }}
-          >
-            <Image
-              src="/images/g logo.png"
-              alt="Decorative Arrow"
-              width={600}
-              height={40}
-              className="object-contain"
-            />
-          </div>
-        </div>
+   
 
-        <div className="absolute -right-30 bottom-0 -translate-y-1/2 pointer-events-none hidden lg:block lg:w-[250px] opacity-10">
-          <div
-            style={{
-              transform: "rotate(30deg)",
-              filter: "brightness(10) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)",
-              mixBlendMode: "multiply",
-            }}
-          >
-            <Image
-              src="/images/g logo.png"
-              alt="Decorative Arrow"
-              width={600}
-              height={40}
-              className="object-contain scale-x-[-1]"
-            />
-          </div>
-        </div>
+  
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
           {/* ================= LEFT CONTENT ================= */}
@@ -597,11 +565,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
       </section>
 
       <section className="bg-[#fffaf6] py-16 lg:py-35 px-4 relative overflow-hidden">
-        <div className="absolute -right-10 top-52 -translate-y-1/2 pointer-events-none hidden lg:block lg:w-[450px] opacity-10 z-1">
-          <div style={{ transform: "rotate(-40deg)", filter: "brightness(20) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(90%)", mixBlendMode: "multiply" }}>
-            <Image src="/images/g logo.png" alt="Decorative Arrow" width={600} height={40} className="object-contain scale-x-[-1]" />
-          </div>
-        </div>
+       
 
         <div className="max-w-7xl mx-auto relative">
           <div className="bg-[#f26b3a] rounded-bl-[120px] px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-15 relative">
@@ -760,9 +724,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
       </section>
 
       <section className="bg-[#fffaf6] py-20 px-4 relative overflow-hidden">
-        <div className="absolute top-50 -left-15 w-[400px] h-[400px] -translate-y-1/2 z-10 pointer-events-none -rotate-150" style={{ transform: 'rotate(-70deg)', mixBlendMode: 'multiply' }}>
-          <Image src="/images/g logo.png" alt="arrow" fill className="object-contain rotate-[-15deg] scale-x-[-1] opacity-10" />
-        </div>
+       
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-medium text-gray-700">
@@ -819,12 +781,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
   {/* Main Content */}
   <div className="relative mx-auto mt-8 sm:mt-10 lg:mt-16 px-4 overflow-hidden">
     
-    {/* Decorative Arrow - Desktop Only */}
-    <div className="hidden lg:block absolute -right-20 top-52 -translate-y-1/2 pointer-events-none lg:w-[400px] opacity-10 z-10">
-      <div style={{ transform: "rotate(30deg)", filter: "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)", mixBlendMode: "multiply" }}>
-        <Image src="/images/g logo.png" alt="Decorative Arrow" width={600} height={40} className="object-contain scale-x-[-1]" />
-      </div>
-    </div>
+
 
     {/* Background Image Area */}
     <div className="absolute left-0 top-0 w-full h-[200px] sm:h-[280px] md:h-[360px] lg:h-[450px] bg-[#f2f2f2] rounded-tr-[80px] sm:rounded-tr-[100px] lg:rounded-tr-[120px] overflow-hidden z-0 lg:-left-31 lg:w-[55%] lg:h-[620px] lg:rounded-tr-[160px]">
@@ -853,7 +810,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
       <div className="hidden lg:block" />
 
       {/* Italy Card */}
-      <div className="relative flex justify-center lg:block lg:absolute lg:top-40 lg:right-40 w-full">
+      <div className="relative flex justify-center lg:block lg:absolute lg:top-40 lg:-right-150 w-full">
         <div className="bg-white rounded-tr-[50px] sm:rounded-tr-[60px] lg:rounded-tr-[70px] py-4 sm:py-5 lg:py-25 px-6 sm:px-10 lg:px-8 shadow-[-12px_-1px_10px_rgba(0,0,0,0.25)] relative max-w-md mx-auto lg:mx-0 lg:max-w-lg">
           {/* Corner Accent */}
           <div className="absolute -top-1 right-0 w-20 sm:w-24 lg:w-30 h-20 sm:h-24 lg:h-30 border-t-4 sm:border-t-6 lg:border-t-7 border-r-4 sm:border-r-6 lg:border-r-8 border-[#f26b3a] rounded-tr-[50px] sm:rounded-tr-[60px] lg:rounded-tr-[70px]" />
@@ -878,7 +835,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
     </div>
 
     {/* CTA Section */}
-    <div className="text-center mt-10 sm:mt-14 lg:mt-80 relative z-10 pb-4">
+    <div className="text-center mt-10 sm:mt-14 lg:mt-150 relative z-10 pb-4 ">
       <p className="text-gray-500 text-sm sm:text-base lg:text-lg mb-4 px-2">
         Check whether you are eligible for dream university
       </p>
@@ -890,9 +847,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
 </section>
 
       <section className="bg-[#fffaf6] py-12 lg:py-20 px-4 lg:overflow-hidden overflow-visible relative">
-        <div className="hidden lg:block absolute top-60 left-0 w-[400px] h-[400px] -translate-y-1/2 z-10 pointer-events-none -rotate-150" style={{ transform: "rotate(30deg)", filter: "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)", mixBlendMode: "multiply" }}>
-          <Image src="/images/g logo.png" alt="arrow" fill className="object-contain rotate-[-15deg] scale-x-[-1] opacity-10" />
-        </div>
+       
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           <div className="w-full lg:w-auto text-center lg:text-left px-2 sm:px-4 lg:px-0">
@@ -1006,17 +961,15 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
       </section>
 
       <section className="bg-[#fffaf6] py-12 lg:py-20 relative overflow-hidden">
-        <div className="absolute right-0 top-82 -translate-y-1/2 pointer-events-none hidden lg:block lg:w-[350px] opacity-10">
-          <div style={{ transform: "rotate(-130deg)", mixBlendMode: "multiply" }}>
-            <Image src="/images/g logo.png" alt="Decorative Arrow" width={600} height={40} className="object-contain" />
-          </div>
-        </div>
+        
 
         <div className="mx-auto max-w-7xl px-4 lg:px-0">
           <div className="text-center mb-10 lg:mb-14">
             <h2 className="text-2xl md:text-4xl font-semibold text-gray-700">
-              <span className="text-gray-700">{exams.title.split("to Enter")[0]}</span>{" "}
-              <span className="text-orange-500">to Enter Your Dream Nation</span>
+              <span className="text-gray-700">{exams.title.split("||")[0]}</span>{" "}
+              <span className="text-[#F46C44]">{exams.title.split("||")[1]}</span>
+
+             
             </h2>
             <p className="mt-3 lg:mt-4 text-gray-500 text-sm md:text-lg">{exams.subtitle}</p>
           </div>
@@ -1070,7 +1023,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
                         </div>
                       </Link>
 
-                    );
+                    )
                   })}
                 </div>
               ))}
@@ -1080,11 +1033,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
       </section>
 
       <section className="py-10 bg-[#FF6B35] relative overflow-visible">
-        <div className="absolute -left-40 top-62 -translate-y-1/2 opacity-30 pointer-events-none hidden lg:block lg:w-[500px]">
-          <div style={{ transform: 'rotate(-20deg)', filter: 'brightness(10)', mixBlendMode: 'multiply' }}>
-            <Image src="/images/g logo.png" alt="Decorative Arrow" width={600} height={40} className="mix-blend-multiply object-contain" />
-          </div>
-        </div>
+      
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl lg:text-5xl font-bold text-white mb-4">Join Our Exclusive Study Abroad Network</h2>

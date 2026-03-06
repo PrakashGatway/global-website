@@ -1,15 +1,17 @@
 "use client"
 
 import { profileSchema } from "@/config/schema"
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import StepRenderer, { ProgressBar } from "./StepRenderer"
 import { FormProvider, useForm } from "react-hook-form"
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react"
 import { AnimatePresence,motion } from "framer-motion"
+import axiosInstance from "@/app/axiosInstance"
 
 export default function OnboardingStepper() {
 
   const [stepIndex, setStepIndex] = useState(0)
+  const [countries, setCountries] = useState([])
 
   const steps = profileSchema.chooseCourse.steps
   const step = steps[stepIndex]
@@ -20,8 +22,37 @@ export default function OnboardingStepper() {
     shouldUnregister: false
   })
 
-  const nextStep = () => setStepIndex((p) => p + 1)
-  const previousStep = () => setStepIndex((p) => p - 1)
+  const isLastStep = stepIndex === steps.length - 1;
+  const isFirststep = stepIndex === 0
+
+  const nextStep = () => { 
+    if(!isLastStep){
+       setStepIndex((p) => p + 1)}
+    }
+
+  const previousStep = () => {
+    if(!isFirststep){
+     setStepIndex((p) => p - 1)}
+
+
+    }
+
+    const fetchCountries = useCallback(async () => {
+              try {
+                const response = await axiosInstance.get('/countries?limit=300')
+                const data = response.data.data
+                let formatData = data.map(country => ({ label: country.name, value: country.code }))
+                setCountries(formatData)
+              } catch (error) {
+                console.error('Error fetching countries:', error)
+              }
+            })
+          
+            useEffect(() => {
+              fetchCountries()
+            },[])
+
+   
 
   const onSubmit = (data) => {
     console.log("ALL DATA", data)
@@ -39,57 +70,58 @@ export default function OnboardingStepper() {
                 <span className="text-sm font-semibold text-primary">Study Abroad</span>
               </div>
               <ProgressBar currentStep={stepIndex} totalSteps={steps.length} />
-              <h2 className="text-lg font-bold text-foreground mb-1">{step.label}</h2>
+              <h2 className="text-lg font-bold text-foreground mb-1">{steps?.label}</h2>
             </div>
 
             {/* Content */}
-            {/* <div className="px-6 pb-4 min-h-[400px]">
-              <AnimatePresence mode="wait" custom={direction}>
+            <div className="px-6 pb-4 min-h-[400px]">
+              <AnimatePresence mode="wait" >
                 <motion.div
                   key={stepIndex}
-                  custom={direction}
-                  variants={pageVariants}
+                  // custom={direction}
+                  // variants={pageVariants}
                   initial="enter"
                   animate="center"
                   exit="exit"
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                 >
-                  <StepRenderer step={step} />
+                  <StepRenderer step={step} countries= {countries} />
                 </motion.div>
               </AnimatePresence>
-            </div> */}
+            </div>
 
             {/* Footer */}
           
               <div className="px-6 pb-6 pt-2 flex gap-3">
-                     <button
-                    type="button"
-                    variant="outline"
-                    onClick={previousStep}
-                    className="flex-1 h-12 rounded-xl border-2 text-sm font-semibold"
-                  >
-                    <ArrowLeft className="w-4 h-4 mr-1" />
-                    Back
-                  </button>
+                    {!isFirststep && (
+  <button
+    type="button"
+    onClick={previousStep}
+    className="flex-1 h-12 rounded-xl border-2 text-sm font-semibold"
+  >
+    Back
+  </button>
+)}
         
                 <button
                   type="button"
+                    variant="outline"
                   onClick={nextStep}
-                  className="flex-1 h-12 rounded-xl text-sm font-semibold shadow-lg shadow-primary/20"
+                  className="flex-1 h-12 rounded-xl border-2 text-sm font-semibold "
                 >
                   Continue
-                  <ArrowRight className="w-4 h-4 ml-1" />
+                
                 </button>
               </div>
             
 
         
-              <div className="px-6 pb-6 pt-2 space-y-3">
+              {/* <div className="px-6 pb-6 pt-2 space-y-3">
                 <button className="w-full h-12 rounded-xl text-sm font-semibold shadow-lg shadow-primary/20">
                   Get My Free Study Plan
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </button>
-                {/* <button
+                <button
                   type="button"
                   variant="ghost"
                   onClick={prev}
@@ -97,8 +129,8 @@ export default function OnboardingStepper() {
                 >
                   <ArrowLeft className="w-4 h-4 mr-1" />
                   Go Back
-                </button> */}
-              </div>
+                </button>
+              </div> */}
   
           </div>
         </FormProvider>

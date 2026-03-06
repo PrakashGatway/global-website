@@ -1,28 +1,33 @@
 "use client"
 
 
+import Loading from "@/app/loading";
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 
-export default function BlogGrid({filteredBlogs}){
+export default function BlogGrid({ filteredBlogs }) {
 
+        const [isPending, startTransition] = useTransition()
 
+        const router = useRouter()
+
+        const goToBlog = (slug) => {
+  startTransition(() => {
+    router.push(`/blog/${slug}`);
+  });
+};
     
-    return(
+
+
+    return (
         <>
-        <section className=" py-12 sm:py-14 lg:py-16 px-2 relative overflow-hidden">
+            <section className=" py-12 sm:py-14 lg:py-16 px-2 relative overflow-hidden">
+                {isPending && <Loading/>}
                 <div className="max-w-7xl mx-auto">
-                    <div className="absolute right-[-70px] top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0">
-                        <Image
-                            src="/images/g logo.png"
-                            alt="Decorative Arrow"
-                            width={400}
-                            height={80}
-                            className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-                            style={{ transform: 'scaleX(-1) rotate(-40deg)' }}
-                        />
-                    </div>
+               
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-12 relative z-[10]">
                         {filteredBlogs.length > 0 ? (
                             filteredBlogs.map((post) => (
@@ -65,8 +70,8 @@ export default function BlogGrid({filteredBlogs}){
                                             }}
                                         />
 
-                                       
-                                        
+
+
                                     </div>
 
                                     {/* CONTENT */}
@@ -75,8 +80,8 @@ export default function BlogGrid({filteredBlogs}){
                                             {post.shortDescription}
                                         </p>
 
-                                        <Link
-                                            href={`/blog/${post.slug}`}
+                                        <button
+                                            onClick={() => goToBlog(post.slug)}
                                             className="
     text-white px-6 lg:w-50 py-2 mx-auto
     bg-[#1f2937]
@@ -90,7 +95,7 @@ export default function BlogGrid({filteredBlogs}){
   "
                                         >
                                             Read More »
-                                        </Link>
+                                        </button>
                                     </div>
                                 </div>
                             ))

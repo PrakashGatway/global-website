@@ -3,10 +3,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Bell, User, Settings, LogOut, ChevronDown, BellElectricIcon, BellIcon, HistoryIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function DashboardHeader({ profile,Logout }) {
   const [searchFocus, setSearchFocus] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+
+  const location = usePathname()
+
+  // if(location){
+  //   location.startsWith("/dashboard/loan")
+  //   return null
+  // }
 
   return (
     <header className="sticky top-0 z-30 w-full bg-card border-b border-border">

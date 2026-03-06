@@ -5,7 +5,7 @@ let mode = "dev"
 const BASE_URL =
   mode === "dev"
     ? "https://api.ooshasglobal.com/api"
-    : "http://192.168.1.13:5000/api"
+    : "http://192.168.1.7:5000/api"
 
 
 export const serverInstance = axios.create({

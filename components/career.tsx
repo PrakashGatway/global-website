@@ -130,21 +130,7 @@ export default function CareerPage({ careerData }) {
         <main className="bg-[#fffaf6] overflow-hidden">
             <section className="bg-[#f46c44] py-32 text-center text-white relative overflow-hidden">
                 {/* Decorative Arrow on Left Side */}
-                <div className="absolute -left-30 top-52 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-                    <div style={{
-                        transform: 'rotate(-20deg)',
-                        filter: 'brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)',
-                        mixBlendMode: 'multiply'
-                    }}>
-                        <Image
-                            src="/images/g logo.png"
-                            alt="Decorative Arrow"
-                            width={400}
-                            height={40}
-                            className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-                        />
-                    </div>
-                </div>
+         
                 <h1 className="text-3xl md:text-6xl font-bold">{heroTitle}</h1>
                 <p className="mt-4 max-w-5xl mx-auto text-sm md:text-lg font-medium">
                     {pageDescription}
@@ -152,23 +138,7 @@ export default function CareerPage({ careerData }) {
             </section>
 
             <section className="max-w-7xl mx-auto  py-20 grid md:grid-cols-2 gap-14 items-center relative">
-                <div className="absolute -right-100 -top-22 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block w-[600px] h-[700px]">
-                    <div
-                        className="w-full h-full rotate-[20deg]"
-                        style={{
-                            filter:
-                                "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)",
-                            mixBlendMode: "multiply",
-                        }}
-                    >
-                        <Image
-                            src="/images/g logo.png"
-                            alt="Decorative Arrow"
-                            fill
-                            className="object-contain scale-x-[-1]"
-                        />
-                    </div>
-                </div>
+            
                 <Image
                     src="https://t4.ftcdn.net/jpg/00/35/30/85/360_F_35308534_WGRVXlymcjQqoRXzeWEfVCOfBHBq9YdW.jpg"
                     width={750}
@@ -211,22 +181,7 @@ export default function CareerPage({ careerData }) {
 
             {/* ================= VACANCIES ================= */}
             <section className="py-20 text-center relative overflow-hidden">
-                {/* Decorative Arrow on Left Side */}
-                <div className="absolute -left-30 top-40  -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-                    <div style={{
-                        transform: 'rotate(-20deg)',
-                        filter: 'brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)',
-                        mixBlendMode: 'multiply'
-                    }}>
-                        <Image
-                            src="/images/g logo.png"
-                            alt="Decorative Arrow"
-                            width={400}
-                            height={40}
-                            className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-                        />
-                    </div>
-                </div>
+              
                 <h2 className="text-3xl font-semibold text-gray-700 mb-12">
                     {vacanciesTitle}
                 </h2>
@@ -341,25 +296,7 @@ export default function CareerPage({ careerData }) {
 
             {/* ================= FORM ================= */}
             <section id="application-form" className="py-20 relative overflow-hidden">
-                {/* Decorative Arrow */}
-                <div className="absolute -right-30 -bottom-40 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-                    <div
-                        style={{
-                            transform: "rotate(20deg)",
-                            filter:
-                                "brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)",
-                            mixBlendMode: "multiply",
-                        }}
-                    >
-                        <Image
-                            src="/images/g logo.png"
-                            alt="Decorative Arrow"
-                            width={400}
-                            height={40}
-                            className="w-64 h-66 lg:w-96 lg:h-96 object-contain scale-x-[-1]"
-                        />
-                    </div>
-                </div>
+             
 
                 {/* BACKGROUND */}
                 <div className="max-w-7xl mx-auto bg-[#fff3ec] py-12 sm:py-16 md:py-20 px-4">
@@ -559,22 +496,7 @@ focus:ring-0"
 
             {/* Join Our Exclusive Study Abroad Network */}
             <section className="py-10 bg-[#FF6B35] relative overflow-visible">
-                {/* Decorative Arrow on Left Side */}
-                <div className="absolute -left-30 top-52 -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-                    <div style={{
-                        transform: 'rotate(-20deg)',
-                        filter: 'brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)',
-                        mixBlendMode: 'multiply'
-                    }}>
-                        <Image
-                            src="/images/g logo.png"
-                            alt="Decorative Arrow"
-                            width={400}
-                            height={40}
-                            className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-                        />
-                    </div>
-                </div>
+            
                 <div className="container mx-auto px-6">
                     <div className="max-w-4xl mx-auto text-center">
                         <h2 className="text-3xl lg:text-5xl font-bold text-white mb-4">

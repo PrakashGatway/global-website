@@ -85,9 +85,9 @@ interface FormRendererProps {
   sectionKey?: string;
 }
 
-export default function FormRenderer({ schema, sectionKey = "" , countries }: FormRendererProps) {
+export default function FormRenderer({ schema, sectionKey = "", countries }: FormRendererProps) {
   const { register, watch, setValue, formState: { errors } } = useFormContext();
-  
+
 
 
   if (schema?.type === "multi" && schema.sections) {
@@ -106,7 +106,7 @@ export default function FormRenderer({ schema, sectionKey = "" , countries }: Fo
               {section.type === "repeatable" ? (
                 <RepeatableSection
                   section={section}
-                  countries = {countries}
+                  countries={countries}
                   sectionKey={
                     sectionKey
                       ? `${sectionKey}.${sectionName}`
@@ -133,9 +133,9 @@ export default function FormRenderer({ schema, sectionKey = "" , countries }: Fo
   }
 
 
-  
 
-  
+
+
 
   if (!schema || !schema.fields) return null;
 
@@ -354,56 +354,56 @@ export default function FormRenderer({ schema, sectionKey = "" , countries }: Fo
               />
             )}
 
-         
+
 
             {/* SELECT */}
             {field.type === "select" && (
 
-  // ✅ ONLY COUNTRY USES ModernSelect
-  field.optionsSource === "countries" ? (
+              // ✅ ONLY COUNTRY USES ModernSelect
+              field.optionsSource === "countries" ? (
 
-    <ModernSelect
-      options={countries}   // API data
-      value={watch(fullName)}
-      onChange={(value) => setValue(fullName, value)}
-      placeholder={`Select ${field.label}`}
-      className="py-0"
-    />
+                <ModernSelect
+                  options={countries}   // API data
+                  value={watch(fullName)}
+                  onChange={(value) => setValue(fullName, value)}
+                  placeholder={`Select ${field.label}`}
+                  className="py-0"
+                />
 
-  ) : (
+              ) : (
 
-    // ✅ ALL OTHER SELECTS (your existing UI)
-    <motion.div
-      className="relative"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <motion.select
-        id={fullName}
-        {...register(fullName, {
-          required: isRequired ? `${field.label} is required` : false,
-        })}
-        disabled={isDisabled}
-        aria-invalid={!!fieldError}
-        className={cn(
-          baseInputStyles,
-          "appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTUgN2w1IDVsNS01Ii /></svg>')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:1.25em_1.25em]"
-        )}
-        whileFocus={{ scale: 1.01 }}
-      >
-        <option value="" disabled>Select {field.label}</option>
+                // ✅ ALL OTHER SELECTS (your existing UI)
+                <motion.div
+                  className="relative"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.select
+                    id={fullName}
+                    {...register(fullName, {
+                      required: isRequired ? `${field.label} is required` : false,
+                    })}
+                    disabled={isDisabled}
+                    aria-invalid={!!fieldError}
+                    className={cn(
+                      baseInputStyles,
+                      "appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTUgN2w1IDVsNS01Ii /></svg>')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:1.25em_1.25em]"
+                    )}
+                    whileFocus={{ scale: 1.01 }}
+                  >
+                    <option value="" disabled>Select {field.label}</option>
 
-        {field.options?.map((option: any) => (
-          <option key={option.value ?? option} value={option.value ?? option}>
-            {option.label ?? option}
-          </option>
-        ))}
-      </motion.select>
-    </motion.div>
+                    {field.options?.map((option: any) => (
+                      <option key={option.value ?? option} value={option.value ?? option}>
+                        {option.label ?? option}
+                      </option>
+                    ))}
+                  </motion.select>
+                </motion.div>
 
-  )
-)}
+              )
+            )}
 
             {/* DATE */}
             {field.type === "date" && (
@@ -426,216 +426,216 @@ export default function FormRenderer({ schema, sectionKey = "" , countries }: Fo
               />
             )}
 
-          {/* RADIO GROUP */}
-{field.type === "radio" && (
-  <motion.fieldset className="space-y-2.5 mt-1">
-    <legend className="sr-only">{field.label}</legend>
-    
-    {field.options?.map((option: any, idx: number) => {
-      const optionId = `${fullName}-${option.value}`;
-      const fieldValue = watch(fullName);
-      const isSelected = fieldValue === option.value;
+            {/* RADIO GROUP */}
+            {field.type === "radio" && (
+              <motion.fieldset className="space-y-2.5 mt-1">
+                <legend className="sr-only">{field.label}</legend>
 
-      return (
-        <motion.div key={option.value} className="relative">
-          {/* ... label code ... */}
-          <motion.label
-  htmlFor={optionId}
-  className={cn(
-    "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all duration-200",
-    isSelected
-      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-      : "border-border hover:border-primary/50 hover:bg-muted/30",
-    isDisabled && "opacity-60 cursor-not-allowed"
-  )}
-  whileHover={{ scale: 1.01 }}
-  whileTap={{ scale: 0.99 }}
->
-  <input
-    id={optionId}
-    type="radio"
-    value={option.value}
-    {...register(fullName, {
-      required: isRequired ? `${field.label} is required` : false,
-    })}
-    disabled={isDisabled}
-    className="w-4 h-4 text-primary border-border focus:ring-primary/30 disabled:opacity-60 flex-shrink-0"
-  />
-  
-  {/* ✅ EXPLICIT TEXT COLOR - This fixes invisible labels */}
-  <div className="flex-1 min-w-0">
-    <span className="text-sm font-medium text-gray-900 dark:text-gray-100 block">
-      {option.label}
-    </span>
-    {option.description && (
-      <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-        {option.description}
-      </p>
-    )}
-  </div>
-  
-  {option.tooltip && (
-    <div className="flex-shrink-0">
-      <Tooltip text={option.tooltip} side="top" />
-    </div>
-  )}
-</motion.label>
+                {field.options?.map((option: any, idx: number) => {
+                  const optionId = `${fullName}-${option.value}`;
+                  const fieldValue = watch(fullName);
+                  const isSelected = fieldValue === option.value;
 
-          {/* 👇 CONDITIONAL CONTENT: This is where you place the scoreGroup code */}
-          <AnimatePresence mode="wait">
-            {isSelected && (
-              <motion.div
-                className="ml-7 mt-3 pl-4 border-l-2 border-primary/30 space-y-4"
-                variants={childVariants}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-              >
-                {/* 1️⃣ Render nested children (e.g., the englishTest radio group) */}
-                {option.children && (
-                  <FormRenderer
-                    schema={{ fields: option.children }}
-                    sectionKey={sectionKey}  // ✅ Use parent sectionKey, NOT fullName
-                    countries={countries}
-                  />
-                )}
-                
-                {/* 2️⃣ 👇 PLACE THE SCOREGROUP CODE HERE 👇 */}
-                {option.scoreGroup && option.scoreGroup.fields && (
-                  <div className="space-y-3 pt-2">
-                    {option.scoreGroup.title && (
-                      <h4 className="text-sm font-semibold text-foreground/80">
-                        {option.scoreGroup.title}
-                      </h4>
-                    )}
-                    {option.scoreGroup.fields.map((scoreField: any) => {
-                      const scoreFieldName = `${sectionKey}.${scoreField.name}`;
-                      const scoreError = errors?.[scoreFieldName]?.message as string | undefined;
-                      
-                      return (
-                        <div key={scoreField.name} className="space-y-1">
-                          <FieldLabel
-                            label={scoreField.label}
-                            required={scoreField.required}
-                            htmlFor={scoreFieldName}
-                          />
-                          <input
-                            id={scoreFieldName}
-                            type={scoreField.type || "text"}
-                            {...register(scoreFieldName, {
-                              required: scoreField.required ? `${scoreField.label} is required` : false
-                            })}
-                            className={baseInputStyles}
-                            aria-invalid={!!scoreError}
-                          />
-                          <FieldError message={scoreError} />
+                  return (
+                    <motion.div key={option.value} className="relative">
+                      {/* ... label code ... */}
+                      <motion.label
+                        htmlFor={optionId}
+                        className={cn(
+                          "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all duration-200",
+                          isSelected
+                            ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                            : "border-border hover:border-primary/50 hover:bg-muted/30",
+                          isDisabled && "opacity-60 cursor-not-allowed"
+                        )}
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                      >
+                        <input
+                          id={optionId}
+                          type="radio"
+                          value={option.value}
+                          {...register(fullName, {
+                            required: isRequired ? `${field.label} is required` : false,
+                          })}
+                          disabled={isDisabled}
+                          className="w-4 h-4 text-primary border-border focus:ring-primary/30 disabled:opacity-60 flex-shrink-0"
+                        />
+
+                        {/* ✅ EXPLICIT TEXT COLOR - This fixes invisible labels */}
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100 block">
+                            {option.label}
+                          </span>
+                          {option.description && (
+                            <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                              {option.description}
+                            </p>
+                          )}
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-                {/* 👆 END OF SCOREGROUP CODE 👆 */}
 
-              </motion.div>
+                        {option.tooltip && (
+                          <div className="flex-shrink-0">
+                            <Tooltip text={option.tooltip} side="top" />
+                          </div>
+                        )}
+                      </motion.label>
+
+                      {/* 👇 CONDITIONAL CONTENT: This is where you place the scoreGroup code */}
+                      <AnimatePresence mode="wait">
+                        {isSelected && (
+                          <motion.div
+                            className="ml-7 mt-3 pl-4 border-l-2 border-primary/30 space-y-4"
+                            variants={childVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="hidden"
+                          >
+                            {/* 1️⃣ Render nested children (e.g., the englishTest radio group) */}
+                            {option.children && (
+                              <FormRenderer
+                                schema={{ fields: option.children }}
+                                sectionKey={sectionKey}  // ✅ Use parent sectionKey, NOT fullName
+                                countries={countries}
+                              />
+                            )}
+
+                            {/* 2️⃣ 👇 PLACE THE SCOREGROUP CODE HERE 👇 */}
+                            {option.scoreGroup && option.scoreGroup.fields && (
+                              <div className="space-y-3 pt-2">
+                                {option.scoreGroup.title && (
+                                  <h4 className="text-sm font-semibold text-foreground/80">
+                                    {option.scoreGroup.title}
+                                  </h4>
+                                )}
+                                {option.scoreGroup.fields.map((scoreField: any) => {
+                                  const scoreFieldName = `${sectionKey}.${scoreField.name}`;
+                                  const scoreError = errors?.[scoreFieldName]?.message as string | undefined;
+
+                                  return (
+                                    <div key={scoreField.name} className="space-y-1">
+                                      <FieldLabel
+                                        label={scoreField.label}
+                                        required={scoreField.required}
+                                        htmlFor={scoreFieldName}
+                                      />
+                                      <input
+                                        id={scoreFieldName}
+                                        type={scoreField.type || "text"}
+                                        {...register(scoreFieldName, {
+                                          required: scoreField.required ? `${scoreField.label} is required` : false
+                                        })}
+                                        className={baseInputStyles}
+                                        aria-invalid={!!scoreError}
+                                      />
+                                      <FieldError message={scoreError} />
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                            {/* 👆 END OF SCOREGROUP CODE 👆 */}
+
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  );
+                })}
+              </motion.fieldset>
             )}
-          </AnimatePresence>
-        </motion.div>
-      );
-    })}
-  </motion.fieldset>
-)}
 
 
-            
+
 
             {/* CHECKBOX GROUP */}
-         {field.type === "checkbox" && (
-  <motion.fieldset
-    className="space-y-2 mt-1"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 0.3 }}
-  >
-    <legend className="sr-only">{field.label}</legend>
+            {field.type === "checkbox" && (
+              <motion.fieldset
+                className="space-y-2 mt-1"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <legend className="sr-only">{field.label}</legend>
 
-    <motion.div
-      className="grid grid-cols-1 sm:grid-cols-2 gap-2"
-      variants={{
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: { staggerChildren: 0.02 }
-        }
-      }}
-      initial="hidden"
-      animate="visible"
-    >
-      {field.options?.map((option: any) => {
-        const checkboxId = `${fullName}-${option.value}`;
-        const selectedValues: string[] = currentValue || [];
+                <motion.div
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    visible: {
+                      opacity: 1,
+                      transition: { staggerChildren: 0.02 }
+                    }
+                  }}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {field.options?.map((option: any) => {
+                    const checkboxId = `${fullName}-${option.value}`;
+                    const selectedValues: string[] = currentValue || [];
 
-        // ⭐ exclusive checkbox logic
-        const handleChange = () => {
-          const NONE_VALUE = "none"; // value for "I don't have this"
+                    // ⭐ exclusive checkbox logic
+                    const handleChange = () => {
+                      const NONE_VALUE = "none"; // value for "I don't have this"
 
-          // if clicking NONE option
-          if (option.value === NONE_VALUE) {
-            setValue(fullName, [NONE_VALUE]);
-            return;
-          }
+                      // if clicking NONE option
+                      if (option.value === NONE_VALUE) {
+                        setValue(fullName, [NONE_VALUE]);
+                        return;
+                      }
 
-          // remove NONE if selecting others
-          let updated = selectedValues.filter(v => v !== NONE_VALUE);
+                      // remove NONE if selecting others
+                      let updated = selectedValues.filter(v => v !== NONE_VALUE);
 
-          if (updated.includes(option.value)) {
-            updated = updated.filter(v => v !== option.value);
-          } else {
-            updated.push(option.value);
-          }
+                      if (updated.includes(option.value)) {
+                        updated = updated.filter(v => v !== option.value);
+                      } else {
+                        updated.push(option.value);
+                      }
 
-          setValue(fullName, updated);
-        };
+                      setValue(fullName, updated);
+                    };
 
-        return (
-          <motion.label
-            key={option.value}
-            htmlFor={checkboxId}
-            variants={{
-              hidden: { opacity: 0, scale: 0.95 },
-              visible: { opacity: 1, scale: 1 }
-            }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={cn(
-              "flex items-center gap-2.5 p-2.5 rounded-lg border cursor-pointer transition-all duration-200 select-none",
-              selectedValues.includes(option.value)
-                ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                : "border-border hover:border-primary/50 hover:bg-muted/30",
-              isDisabled && "opacity-60 cursor-not-allowed"
+                    return (
+                      <motion.label
+                        key={option.value}
+                        htmlFor={checkboxId}
+                        variants={{
+                          hidden: { opacity: 0, scale: 0.95 },
+                          visible: { opacity: 1, scale: 1 }
+                        }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={cn(
+                          "flex items-center gap-2.5 p-2.5 rounded-lg border cursor-pointer transition-all duration-200 select-none",
+                          selectedValues.includes(option.value)
+                            ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                            : "border-border hover:border-primary/50 hover:bg-muted/30",
+                          isDisabled && "opacity-60 cursor-not-allowed"
+                        )}
+                      >
+                        <input
+                          id={checkboxId}
+                          type="checkbox"
+                          checked={selectedValues.includes(option.value)}
+                          onChange={handleChange}
+                          disabled={isDisabled}
+                          className="w-4 h-4 text-primary border-border rounded focus:ring-primary/30"
+                        />
+
+                        <span className="text-sm text-foreground">
+                          {option.label}
+                        </span>
+
+                        {option.tooltip && (
+                          <Tooltip text={option.tooltip} side="top" />
+                        )}
+                      </motion.label>
+                    );
+                  })}
+                </motion.div>
+              </motion.fieldset>
             )}
-          >
-            <input
-              id={checkboxId}
-              type="checkbox"
-              checked={selectedValues.includes(option.value)}
-              onChange={handleChange}
-              disabled={isDisabled}
-              className="w-4 h-4 text-primary border-border rounded focus:ring-primary/30"
-            />
-
-            <span className="text-sm text-foreground">
-              {option.label}
-            </span>
-
-            {option.tooltip && (
-              <Tooltip text={option.tooltip} side="top" />
-            )}
-          </motion.label>
-        );
-      })}
-    </motion.div>
-  </motion.fieldset>
-)}
 
             {/* ERROR MESSAGE */}
             <AnimatePresence>
@@ -661,7 +661,7 @@ export default function FormRenderer({ schema, sectionKey = "" , countries }: Fo
 }
 
 
-function RepeatableSection({ section, sectionKey , countries}: any) {
+function RepeatableSection({ section, sectionKey, countries }: any) {
   const { control } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({

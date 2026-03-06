@@ -1,3 +1,5 @@
+"use client"
+
 import UniversityCard from '@/components/UniversityCard'
 import { Divide, Facebook, Instagram, Linkedin, PhoneIcon, Send, Twitter, Youtube } from 'lucide-react'
 import Image from 'next/image'
@@ -6,45 +8,16 @@ import FAQSection from '@/components/faqPage'
 import { DynamicLucideIcon } from '@/components/DynamicLucideIcon'
 import ImageTestimonial from './ImageTestimonial'
 import Balloon from './balloon'
+import { useState } from 'react'
 
-export default async function CountryDetails({ Universityres, Faqres, Pageres, imageData }) {
-  const pageData = Pageres?.data;
+export default function CountryDetails({ Universityres, Faqres, pageData, imageData }) {
+  
 
 
-  console.log(pageData)
-  const rows = [
-    ["Total Number of Universities", "100+ (Public & Private)"],
-    ["Oldest University", "University of Bologna (Established in 1088)"],
-    ["Top-Ranked Universities", "30+ universities featured in QS World Rankings"],
-    ["Language of Instruction", "Italian & English (many programs offered in English)"],
-    ["Tuition Fees (Public Universities)", "€500 €4,000 per year"],
-    ["Intake Months", "Primarily September/October, some programs in February"],
-    ["Popular Fields of Study", "Arts, Design, Architecture, Engineering, Medicine, Business"],
-    ["Scholarships Available", "Yes Government, university-specific, and international grants"],
-  ];
 
-  const row = [
-    {
-      category: "Tuition Fees",
-      details: "Undergraduate and Postgraduate Fee Structure",
-      button: "View Tuition Costs >",
-    },
-    {
-      category: "Student Visas",
-      details: "Visa Requirements & Application Process",
-      button: "Visa Guidelines >",
-    },
-    {
-      category: "Scholarships",
-      details: "Available Scholarships & Eligibility",
-      button: "Explore Scholarships >",
-    },
-    {
-      category: "Financial Aid",
-      details: "Grants, Loans & Financial Support",
-      button: "Financial Aid Options >",
-    },
-  ];
+
+
+
 
   // Split scholarships into left and right columns
   const scholarshipItems = pageData?.sections?.scholarships?.items || [];
@@ -109,13 +82,12 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
             <div
               className="
               absolute
-              
               left-6 -top-80
               sm:left-12 sm:top-24
-              lg:left-15 lg:-top-80
+              lg:left-15 lg:-top-0
             "
             >
-              <Balloon Pageres= {Pageres} />
+              <Balloon Pageres= {pageData} />
             </div>
 
             {/* TEXT BLOCK */}
@@ -304,18 +276,30 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
 
           {/* Heading */}
           <h2 className="text-white text-lg sm:text-4xl md:text-5xl font-bold relative inline-block">
-            {pageData?.sections?.whyChooseUs?.title || "Why Choose Germany ?"}
+           <span>{pageData?.sections?.whyChooseUs?.title?.split("||")[0] }</span> 
+           <span>{pageData?.sections?.whyChooseUs?.title?.split("||")[1] }</span> 
+
             <span className="block w-12 sm:w-16 h-1 bg-yellow-400 absolute left-0 mt-2 sm:mt-3"></span>
           </h2>
 
           {/* Paragraph */}
-          <p className="text-white text-xs sm:text-lg md:text-xl mt-6 sm:mt-8 leading-relaxed"
+         <div className="mt-6 sm:mt-8">
 
-            dangerouslySetInnerHTML={{
-              __html: pageData?.sections?.whyChooseUs?.subtitle ?? ""
+  <p
+    className={`text-white text-xs sm:text-lg md:text-xl leading-relaxed `}
+    dangerouslySetInnerHTML={{
+      __html: pageData?.sections?.whyChooseUs?.subtitle ?? "",
+    }}
+  />
 
-            }}
-          />
+  {/* <button
+    onClick={() => setShowMore(!showMore)}
+    className="text-orange-400 text-sm mt-2"
+  >
+    {showMore ? "Read Less" : "Read More"}
+  </button> */}
+
+</div>
 
           {/* Button */}
           <div className="mt-8 sm:mt-10 text-center">
@@ -336,7 +320,9 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
           {/* Heading */}
           <div className="mb-6 sm:mb-8">
             <h2 className="text-lg sm:text-4xl md:text-5xl font-bold text-[#123b73] relative inline-block">
-              {pageData?.sections?.whyStudy?.title || "Why Study in Germany ?"}
+             <span>{pageData?.sections?.whyStudy?.title.split("||")[0]}</span>
+             <span className='text-[#F46C44]'>{pageData?.sections?.whyStudy?.title.split("||")[1]}</span> 
+
               <span className="absolute right-0 -bottom-2 w-16 sm:w-20 h-1 bg-red-600"></span>
             </h2>
           </div>
@@ -468,7 +454,7 @@ export default async function CountryDetails({ Universityres, Faqres, Pageres, i
 
       {/* University Card Section - RESPONSIVE */}
       <div className='w-full bg-[#ef6a42] px-4 sm:px-6 lg:px-8 pb-10 mx-auto'>
-        <UniversityCard university={Universityres?.data?.result} />
+        <UniversityCard university={Universityres} />
       </div>
 
       {/* ================= TABLE/CONTENT SECTION - RESPONSIVE ================= */}

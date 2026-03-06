@@ -200,14 +200,14 @@ export default function Navbar({
 
 
         <div
-          className={`mx-auto  flex justify-between relative transition-all duration-500  ease-in-out ${isScrolled ? "h-full" : ""
+          className={`mx-auto  flex justify-between relative transition-all duration-500  ease-in-out ${isScrolled ? "h-full " : ""
             }`}
         >
 
 
           {/* Left */}
 
-          <div className={`items-center text-end px-8 py-2  gap-2 bg-white    `}>
+          <div className={`items-center text-end px-8   gap-2 bg-white    `}>
 
             <span className={`font-medium  ${isScrolled ? "hidden lg:hidden" : "hidden lg:block "}`} >
               Contact Your Nearest Centre
@@ -219,7 +219,7 @@ export default function Navbar({
                 alt="Logo"
                 width={800}
                 height={100}
-                className="object-contain w-20 lg:w-44 lg:ml-10"
+                className={`object-contain w-20 lg:w-28 lg:ml-10 ${isScrolled ? "py-3" : ""}`}
                 priority
               />
             </Link>
@@ -228,13 +228,13 @@ export default function Navbar({
 
 
 
-          <div className={`flex flex-col    ${isScrolled ? "justify-center" : "item-center gap-6 px-15"}  `}>
+          <div className={`flex flex-col    ${isScrolled ? "justify-center " : "item-center gap-6 px-15"}  `}>
 
             {!isScrolled && (
               <>
                 {/* Right */}
                 <div className=" w-full justify-end  items-center gap-6 lg:flex hidden z-10 px-4  text-white">
-                  <div className="bg-[#6d1901]    flex justify-center items-center gap-2 px-4 py-2  text-sm font-medium gap-8">
+                  <div className="bg-[#6d1901]    flex justify-center items-center gap-2 px-4 py-0.5  text-sm font-medium gap-8">
 
 
                     <a
@@ -281,7 +281,7 @@ export default function Navbar({
 
 
             {/* ================= DESKTOP MENU ================= */}
-            <div className={`hidden lg:flex items-center gap-2 ${isScrolled ? "justify-end" : "justify-center"} `}>
+            <div className={`hidden lg:flex items-center  gap-2 ${isScrolled ? "justify-end " : "justify-center"} `}>
 
 
               {navbar?.map((item, i) => (
@@ -289,7 +289,7 @@ export default function Navbar({
 
                   <Link
                     href={item.route}
-                    className="flex items-center gap-1 px-4 py-2 text-[15px] font-medium text-white hover:text-[var(--primary)] transition"
+                    className="flex items-center gap-1 px-4 text-[15px] font-medium text-white hover:text-[var(--primary)] transition"
                   >
                     <span>{item.title}</span>
 

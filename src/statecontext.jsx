@@ -6,12 +6,14 @@ const Globalcontext = createContext()
 export function GlobalProvider({ children }) {
     const [loading, setLoading] = useState(true)
     const [profile, setProfile] = useState(null)
+  
     const [authToken, setauthToken] = useState(null)
 
     const getProfile = async () => {
         try {
             const res = await axiosInstance.get("/auth/me")
             setProfile(res.data.data)
+       
         } catch (err) {
             console.log("Not authorized")
         } finally {

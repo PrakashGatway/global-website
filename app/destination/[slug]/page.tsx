@@ -36,9 +36,9 @@ export default async function Page({params}){
 
   const {slug} = await params
 
-  const Pageres =   await  serverInstance.get(`/page-information/slug/${slug}`)
+  const Pageres =   await serverInstance.get(`/page-information/slug/${slug}`)
   
-  console.log(Pageres)
+
 
 
 
@@ -46,6 +46,6 @@ export default async function Page({params}){
 
 
     return(
-        <CountryDetails Universityres = {Universityres} Faqres = {Faqres} Pageres={Pageres.data} imageData= {imageRes.data.data}  />
+        <CountryDetails Universityres = {Universityres?.data?.result} Faqres = {Faqres} pageData={Pageres?.data?.data} imageData= {imageRes.data.data}  />
     )
 }

@@ -9,14 +9,14 @@ const FAQSection = ({ Faqres }) => {
   };
 
   return (
-    <section className="py-12 lg:py-20 px-4  bg-white    ">
+    <section className="py-12 lg:py-20 px-6  bg-white    ">
       <div className="container  max-w-7xl mx-auto ">
         {/* Header */}
         <div className="text-justify mb-12 lg:mb-16    ">
           <h2 className="text-3xl   text-gray-900 mb-4 ">
-            <span className=' text-xl lg:text-5xl text-secondary '>Frequently</span>{" "}
+            <span className=' text-xl lg:text-4xl font-light text-secondary '>Frequently</span>{" "}
             
-            <br /><span className=' text-xl lg:text-6xl text-primary font-bold relative'>Asked Questions
+            <br /><span className=' text-xl lg:text-5xl text-primary font-bold relative'>Asked Questions
               
         <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-red-600"></span>
               </span> 
@@ -26,7 +26,7 @@ const FAQSection = ({ Faqres }) => {
         </div>
 
         {/* FAQ Grid */}
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="space-y-4">
             {(Faqres || []).map((faq, index) => (
               <div

@@ -221,13 +221,18 @@ interface ProfileFormData {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { profile } = useGlobal();
+  const { profile , allprofile} = useGlobal();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'profile' | 'address' | 'education' | 'testscore' | 'visaStudypermit'>('profile');
   const [uploadingImage, setUploadingImage] = useState(false);
   const [saving, setSaving] = useState(false);
   const [educations, setEducations] = useState<any[]>([]);
   const [workExperiences, setWorkExperiences] = useState<any[]>([]);
+
+// const profiledata = profiledata?.data
+
+
+
 
     const [countries, setCountries] = useState([])
       const [page, setPage] = useState(1)
@@ -334,32 +339,23 @@ export default function ProfilePage() {
   },
   
   // Match the 'coursescore' section
-  coursescore: {
-    hasGmat: false, // Matches switch default
-    hasGre: false,  // Matches switch default
-    
-    // GMAT Score fields
-    gmatTotal_score: "",
-    gmatTotal_rank: "",
-    gmatVerbal_score: "",
-    gmatVerbal_rank: "",
-    gmatQuantitative_score: "",
-    gmatQuantitative_rank: "",
-    gmatAwa_score: "",
-    gmatAwa_rank: "",
-    gmatExamDate: "",
+ coursescore: {
+  hasGmat: {
+    gmatTotal: { score: "", rank: "" },
+    gmatVerbal: { score: "", rank: "" },
+    gmatQuantitative: { score: "", rank: "" },
+    gmatAwa: { score: "", rank: "" },
+    gmatExamDate: ""
+  },
 
-    // GRE Score fields
-    greTotal_score: "",
-    greTotal_rank: "",
-    greVerbal_score: "",
-    greVerbal_rank: "",
-    greQuantitative_score: "",
-    greQuantitative_rank: "",
-    greAwa_score: "",
-    greAwa_rank: "",
+  hasGre: {
+    greTotal: { score: "", rank: "" },
+    greVerbal: { score: "", rank: "" },
+    greQuantitative: { score: "", rank: "" },
+    greAwa: { score: "", rank: "" },
     greExamDate: ""
   }
+}
 },
       visaStudypermit: {
         preferredStudyLevel: '',
@@ -379,7 +375,7 @@ export default function ProfilePage() {
 
   // Fetch user data and reset form
   useEffect(() => {
-    if (!profile) return;
+    if (!profile && !allprofile) return;
 
     // Format dates properly
     const formatDate = (date: string) => {
@@ -463,56 +459,193 @@ export default function ProfilePage() {
   return () => subscription.unsubscribe();
 }, [methods]);
 
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-      
-      // Get current form values
-      const formValues = methods.getValues();
-      
-      // Prepare payload based on active tab
-      let payload = {};
-      
-      switch (activeTab) {
-        case 'profile':
-          payload = { ...formValues.profile };
-          break;
-        case 'address':
-          payload = { address: formValues.address };
-          break;
-        case 'education':
-          payload = { education: formValues.education };
-          break;
-        case 'testscore':
-          payload = { testScores: formValues.testscore };
-          break;
-        case 'visaStudypermit':
-          payload = { preferences: formValues.visaStudypermit };
-          break;
-      }
 
-      // Trigger validation
-      const isValid = await methods.trigger();
-      if (!isValid) {
-        console.log('Validation errors:', errors);
-        return;
-      }
 
-      // Save to API
-      const response = await axiosInstance.put('/auth/profile', payload);
-      
-      // Update global context
-      profile(response.data.result);
-      
+const buildProfilePayload = (values) => {
+  return {
+    // ADDRESS
+    currentAddress: {
+      addressLine1: values.address.address1,
+      addressLine2: values.address.address2,
+      city: values.address.city,
+      state: values.address.state,
+      country: values.address.country,
+      postalCode: values.address.postalcode,
+    },
 
-  console.log("✅ FORM RESPONSE:", formValues);
-      
-    } catch (error) {
-      console.error('Error updating profile:', error);
-    } finally {
-      setSaving(false);
+    // EDUCATION SUMMARY
+    highestAcademic: {
+      countryOfEducation:
+        values.education.summary.countryOfEducation,
+      highestEducationLevel:
+        values.education.summary.highestEducationLevel,
+      gradingScheme:
+        values.education.summary.gradingScheme,
+      graduated:
+        values.education.summary.graduated === "true",
+    },
+
+    // EDUCATION HISTORY
+    educationHistory:
+      values.education.schools?.map((school) => ({
+        educationLevel: school.educationLevel,
+        institutionName: school.institutionName,
+        gradingScheme: school.gradingScheme,
+        startDate: school.startDate,
+        endDate: school.endDate,
+        degreeName: school.degreeName,
+        address: school.address,
+        city: school.city,
+        state: school.state,
+        country: school.country,
+        postalCode: school.postalcode,
+      })) || [],
+
+    // ENGLISH TEST
+    englishProficiencyScore: {
+      englishStatus:
+        values.testscore.englishscore.englishStatus,
+      englishTest:
+        values.testscore.englishscore.englishTest,
+      reading: values.testscore.englishscore.reading,
+      listening: values.testscore.englishscore.listening,
+      writing: values.testscore.englishscore.writing,
+      speaking: values.testscore.englishscore.speaking,
+      examDate: values.testscore.englishscore.examDate,
+    },
+
+   // FLAGS (convert object → boolean)
+hasGmat: !!values.testscore.coursescore.hasGmat,
+hasGre: !!values.testscore.coursescore.hasGre,
+
+// GMAT SCORE
+gmatScore: values.testscore.coursescore.hasGmat
+  ? {
+      totalScore: {
+        score: Number(
+          values.testscore.coursescore.hasGmat?.gmatTotal?.score
+        ) || null,
+        rank: Number(
+          values.testscore.coursescore.hasGmat?.gmatTotal?.rank
+        ) || null,
+      },
+      verbal: {
+        score: Number(
+          values.testscore.coursescore.hasGmat?.gmatVerbal?.score
+        ) || null,
+        rank: Number(
+          values.testscore.coursescore.hasGmat?.gmatVerbal?.rank
+        ) || null,
+      },
+      quantitative: {
+        score: Number(
+          values.testscore.coursescore.hasGmat?.gmatQuantitative?.score
+        ) || null,
+        rank: Number(
+          values.testscore.coursescore.hasGmat?.gmatQuantitative?.rank
+        ) || null,
+      },
+      analyticalWriting: {
+        score: Number(
+          values.testscore.coursescore.hasGmat?.gmatAwa?.score
+        ) || null,
+        rank: Number(
+          values.testscore.coursescore.hasGmat?.gmatAwa?.rank
+        ) || null,
+      },
+      examDate:
+        values.testscore.coursescore.hasGmat?.gmatExamDate || null,
     }
+  : undefined,
+
+  // ✅ GRE SCORE
+greScore: values.testscore.coursescore.hasGre
+  ? {
+      totalScore: {
+        score: Number(
+          values.testscore.coursescore.hasGre?.greTotal?.score
+        ) || null,
+        rank: Number(
+          values.testscore.coursescore.hasGre?.greTotal?.rank
+        ) || null,
+      },
+      verbal: {
+        score: Number(
+          values.testscore.coursescore.hasGre?.greVerbal?.score
+        ) || null,
+        rank: Number(
+          values.testscore.coursescore.hasGre?.greVerbal?.rank
+        ) || null,
+      },
+      quantitative: {
+        score: Number(
+          values.testscore.coursescore.hasGre?.greQuantitative?.score
+        ) || null,
+        rank: Number(
+          values.testscore.coursescore.hasGre?.greQuantitative?.rank
+        ) || null,
+      },
+      analyticalWriting: {
+        score: Number(
+          values.testscore.coursescore.hasGre?.greAwa?.score
+        ) || null,
+        rank: Number(
+          values.testscore.coursescore.hasGre?.greAwa?.rank
+        ) || null,
+      },
+      examDate:
+        values.testscore.coursescore.hasGre?.greExamDate || null,
+    }
+  : undefined,
+
+    // STUDY PREFERENCES
+   // ================= VISA =================
+visaRefused:
+  values.visaStudypermit.visaRefused === "yes",
+
+validVisas:
+  values.visaStudypermit.validVisas || [],
+
+visaRefusedInfo:
+  values.visaStudypermit.visaDetails || "",
+
+// ================= STUDY PREFERENCES =================
+preferences: {
+  preferredCountries:
+    values.visaStudypermit.preferredCountries,
+  preferredIntake:
+    values.visaStudypermit.preferredIntakes,
+  preferredCourse:
+    values.visaStudypermit.preferredStudyLevel,
+  budgetRange: {
+    min: values.visaStudypermit.budget.min,
+    max: values.visaStudypermit.budget.max,
+  },
+},
   };
+};
+
+
+  const handleSave = async () => {
+  try {
+    setSaving(true);
+
+    const formValues = methods.getValues();
+    console.log("FINAL FORM VALUES", formValues);
+
+    const payload = buildProfilePayload(formValues);
+
+    await axiosInstance.post(
+      "/auth/profile_info",
+      payload
+    );
+
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setSaving(false);
+  }
+};
 
   // Calculate profile completion
   const calculateCompletion = () => {
@@ -714,6 +847,7 @@ export default function ProfilePage() {
                       {/* Save Button */}
                       <div className="flex justify-end pt-4 border-t border-border">
                         <button
+                        type="button"
                           onClick={handleSave}
                           disabled={saving}
                           className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"

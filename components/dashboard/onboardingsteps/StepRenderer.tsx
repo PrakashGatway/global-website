@@ -2,6 +2,7 @@ import { useFormContext } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Search, MapPin, ChevronDown } from "lucide-react";
 import { useState, useMemo } from "react";
+import { ModernSelect } from "@/components/ui/select";
 
 
 const cardVariants = {
@@ -22,7 +23,7 @@ const slideIn = {
 
 
 
-export default function StepRenderer({ step }) {
+export default function StepRenderer({ step, countries }) {
   const { watch, setValue, register } = useFormContext();
   const value = watch(step.name);
 
@@ -44,15 +45,14 @@ export default function StepRenderer({ step }) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => setValue(step.name, opt.value)}
-            className={`flex flex-col items-center justify-center h-28 rounded-2xl border-2 cursor-pointer transition-shadow ${
-              value === opt.value
+            className={`flex flex-col items-center justify-center h-28 rounded-2xl border-2 cursor-pointer transition-shadow ${value === opt.value
                 ? "border-primary bg-primary/5 shadow-lg shadow-primary/20"
                 : "border-border hover:border-primary/40 hover:shadow-md"
-            }`}
+              }`}
           >
             <img src={opt.image} className="w-10 h-10 rounded-sm mb-2 object-cover" alt={opt.label} />
             <span className="text-sm font-medium text-foreground">{opt.label}</span>
-            {value === opt.value && (
+            {/* {value === opt.value && (
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -60,7 +60,7 @@ export default function StepRenderer({ step }) {
               >
                 <Check className="w-3 h-3 text-primary-foreground" />
               </motion.div>
-            )}
+            )} */}
           </motion.div>
         ))}
       </div>
@@ -126,21 +126,18 @@ export default function StepRenderer({ step }) {
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setValue(step.name, opt.value)}
-            className={`flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
-              value === opt.value
+            className={`flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${value === opt.value
                 ? "border-primary bg-primary/5 shadow-md shadow-primary/10"
                 : "border-border hover:border-primary/30"
-            }`}
+              }`}
           >
-            <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg ${
-              value === opt.value ? "bg-primary/10" : "bg-muted"
-            }`}>
+            <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg ${value === opt.value ? "bg-primary/10" : "bg-muted"
+              }`}>
               {opt.icon}
             </div>
             <span className="font-medium text-foreground flex-1">{opt.label}</span>
-            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
-              value === opt.value ? "border-primary bg-primary" : "border-border"
-            }`}>
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${value === opt.value ? "border-primary bg-primary" : "border-border"
+              }`}>
               {value === opt.value && (
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
                   <Check className="w-3.5 h-3.5 text-primary-foreground" />
@@ -154,16 +151,16 @@ export default function StepRenderer({ step }) {
   );
 
   // — Nationality —
-//   const [nationalitySearch, setNationalitySearch] = useState("");
-//   const filteredNationalities = useMemo(
-//     () =>
-//       step.name === "nationality"
-//         ? step.options?.filter((o) =>
-//             o.label.toLowerCase().includes(nationalitySearch.toLowerCase())
-//           )
-//         : [],
-//     [step, nationalitySearch]
-//   );
+  //   const [nationalitySearch, setNationalitySearch] = useState("");
+  //   const filteredNationalities = useMemo(
+  //     () =>
+  //       step.name === "nationality"
+  //         ? step.options?.filter((o) =>
+  //             o.label.toLowerCase().includes(nationalitySearch.toLowerCase())
+  //           )
+  //         : [],
+  //     [step, nationalitySearch]
+  //   );
 
   const renderNationality = () => (
     <div className="space-y-5">
@@ -175,36 +172,16 @@ export default function StepRenderer({ step }) {
         <img src={step.image} alt="Nationality" className="w-full h-40 object-cover" />
       </div>
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <input
-          type="text"
-          value={""}
-        //   onChange={(e) => setNationalitySearch(e.target.value)}
-          placeholder="Search nationality..."
-          className="w-full pl-9 pr-4 py-3 border-2 border-border rounded-xl text-sm focus:border-primary outline-none transition-colors bg-background text-foreground"
+
+        <ModernSelect
+          options={countries}   // API data
+          value={watch(step.name)}
+          onChange={(value) => setValue(step.name, value)}
+          placeholder={`Select ${step.label}`}
+          className="py-0 "
         />
       </div>
-      <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
-        {step?.options?.map((opt, i) => (
-          <motion.div
-            key={opt.value}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: i * 0.03 }}
-            onClick={() => {
-              setValue(step.name, opt.value);
-              
-            }}
-            className={`px-4 py-3 rounded-xl cursor-pointer transition-all text-sm ${
-              value === opt.value
-                ? "bg-primary/10 border-2 border-primary font-medium text-foreground"
-                : "border-2 border-transparent hover:bg-muted text-foreground"
-            }`}
-          >
-            {opt}
-          </motion.div>
-        ))}
-      </div>
+
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <MapPin className="w-4 h-4" />
         <span>(auto detected) — you can change this if needed</span>
@@ -237,11 +214,10 @@ export default function StepRenderer({ step }) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => setValue(step.name, opt.value)}
-              className={`border-2 rounded-2xl py-5 text-sm font-semibold transition-all ${
-                selected === opt.value
+              className={`border-2 rounded-2xl py-5 text-sm font-semibold transition-all ${selected === opt.value
                   ? "border-primary bg-primary/5 text-primary shadow-md shadow-primary/10"
                   : "border-border text-muted-foreground hover:border-primary/40"
-              }`}
+                }`}
             >
               {opt.label}
             </motion.button>
@@ -446,41 +422,47 @@ interface Props {
   totalSteps: number;
 }
 
-export  function ProgressBar({ currentStep, totalSteps }: Props) {
-  const progress = ((currentStep + 1) / totalSteps) * 100;
+export function ProgressBar({ currentStep, totalSteps }: Props) {
+  const progress = (currentStep / (totalSteps - 1)) * 100;
 
   return (
-    <div className="mb-8">
-      <div className="flex items-center justify-between mb-3">
-        {Array.from({ length: totalSteps }).map((_, i) => (
-          <div key={i} className="flex flex-col items-center relative">
-            <motion.div
-              initial={false}
-              animate={{
-                backgroundColor: i <= currentStep ? "hsl(var(--primary))" : "hsl(var(--muted))",
-                scale: i === currentStep ? 1.15 : 1,
-              }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold z-10"
-            >
-              {i < currentStep ? (
-                <Check className="w-4 h-4 text-primary-foreground" />
-              ) : (
-                <span className={i <= currentStep ? "text-primary-foreground" : "text-muted-foreground"}>
-                  {i + 1}
-                </span>
-              )}
-            </motion.div>
-          </div>
-        ))}
-      </div>
-      <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+    <div className="mb-4 relative px-4 mt-4">
+
+      {/* Progress Line Background */}
+      <div className="absolute top-4 left-4 right-4 h-1.5 bg-muted rounded-full">
         <motion.div
           className="h-full bg-primary rounded-full"
           initial={false}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         />
+      </div>
+
+      {/* Step Circles */}
+      <div className="flex justify-between relative z-10">
+        {Array.from({ length: totalSteps }).map((_, i) => (
+          <motion.div
+  key={i}
+  initial={false}
+  animate={{
+    scale: i === currentStep ? 1.15 : 1,
+  }}
+  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold
+    ${
+      i <= currentStep
+        ? "bg-primary text-white"
+        : "bg-muted text-gray-500"
+    }
+  `}
+>
+  {i < currentStep ? (
+    <Check className="w-4 h-4 text-white" />
+  ) : (
+    i + 1
+  )}
+</motion.div>
+        ))}
       </div>
     </div>
   );
