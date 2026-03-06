@@ -221,7 +221,7 @@ interface ProfileFormData {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { profile , allprofile} = useGlobal();
+  const { profile,allProfile } = useGlobal();
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'profile' | 'address' | 'education' | 'testscore' | 'visaStudypermit'>('profile');
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -232,7 +232,7 @@ export default function ProfilePage() {
 // const profiledata = profiledata?.data
 
 
-
+console.log(allProfile)
 
     const [countries, setCountries] = useState([])
       const [page, setPage] = useState(1)
@@ -373,9 +373,11 @@ export default function ProfilePage() {
 
   const { reset, watch, formState: { errors } } = methods;
 
+
+
   // Fetch user data and reset form
   useEffect(() => {
-    if (!profile && !allprofile) return;
+    if (!profile) return;
 
     // Format dates properly
     const formatDate = (date: string) => {
@@ -647,20 +649,7 @@ preferences: {
   }
 };
 
-  // Calculate profile completion
-  const calculateCompletion = () => {
-    const values = methods.getValues();
-    let completed = 0;
-    const total = 5;
 
-    if (values.profile.name && values.profile.phone && values.profile.dateOfBirth) completed++;
-    if (values.address.address1 && values.address.address2 && values.address.city && values.address.country) completed++;
-    if (educations.length > 0) completed++;
-    if (values.testscore.ielts || values.testscore.toefl) completed++;
-    if (values.visaStudypermit.preferredStudyLevel) completed++;
-
-    return Math.round((completed / total) * 100);
-  };
 
   if (loading) {
     return (
@@ -675,7 +664,7 @@ preferences: {
 
   
 
-  const completionPercentage = calculateCompletion();
+
 
   return (
     <FormProvider {...methods}>
@@ -734,13 +723,13 @@ preferences: {
                   <div className="flex justify-between text-sm mb-1">
                     <span>Profile Completion</span>
                     <span className="font-semibold text-primary">
-                      {completionPercentage}%
+                      {allProfile?.profile?.profileCompletion}%
                     </span>
                   </div>
                   <div className="h-3 bg-muted rounded-full">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: `${completionPercentage}%` }}
+                      animate={{ width: `${allProfile?.profile?.profileCompletion}%` }}
                       transition={{ duration: 0.6 }}
                       className="h-full bg-primary rounded-full"
                     />

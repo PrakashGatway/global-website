@@ -20,7 +20,9 @@ import { useState } from "react"
 import FAQSection from "./faqPage"
 import { useGlobal } from "@/src/statecontext"
 import { usePathname } from "next/navigation"
-import VideoSlider from "./homevideoslider"
+import { HowGawayHelps } from "./PageComponent/DistinationSliders"
+import { Destinationhome } from "./dummydestination"
+
 
 
 
@@ -129,7 +131,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
 
-  console.log(videoRes)
+  console.log(homePage?.whyUs)
 
 
 
@@ -247,11 +249,11 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
   <div className="relative flex items-center justify-center">
 
     {/* Animated Circle */}
-    <div className="absolute -right-[20px] top-51 -translate-y-1/2 z-10 animate-spin [animation-duration:60s] hidden lg:block">
+    <div className="absolute -right-[130px] top-51 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
   <img
     src="/images/hero-bg-2.png"
     alt="circle"
-    className="w-[500px] max-w-none"
+    className="w-[720px] max-w-none"
   />
 </div>
 
@@ -261,14 +263,14 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         initial={{ scale: 0.9 }}
         animate={{ scale: 1 }}
         transition={{ duration: 0.6, delay: 0.5 }}
-        className="relative z-1 -left-18 -bottom-10"
+        className="relative z-1  -bottom-10"
       >
         <Image
           src={homePage.hero.heroImage.trim()}
           width={450}
           height={900}
           alt="cap"
-          className="lg:w-[300px] w-[200px]"
+          className="lg:w-[420px] w-[200px]"
         />
       </motion.div>
     )}
@@ -281,7 +283,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 </motion.section>
 
          <section className="bg-white pt-10  overflow-hidden relative">
-          <div className="absolute w-200 h-full left-0 z-1"><img src="/images/enquiry-bg.png" alt="" /></div>
+          <div className="absolute w-200 h-full left-0 z-1"><img src="/images/home-enquiry-2.png" alt="" /></div>
 
       <div className="px-20 flex gap-22 py-10 justify-around items-center">
 
@@ -317,7 +319,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       <input
         type="text"
         placeholder="Enter your first name"
-        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
+        className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
       />
     </motion.div>
 
@@ -334,7 +336,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       <input
         type="text"
         placeholder="Enter your last name"
-        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
+        className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
       />
     </motion.div>
 
@@ -351,7 +353,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       <input
         type="email"
         placeholder="example@email.com"
-        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
+        className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
       />
     </motion.div>
 
@@ -368,7 +370,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       <input
         type="tel"
         placeholder="+91 9876543210"
-        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
+        className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
       />
     </motion.div>
 
@@ -382,7 +384,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       <label className="text-sm font-medium text-gray-600 mb-1 block">
         Preferred Destination
       </label>
-      <select className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all">
+      <select className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all">
         <option>Select Destination</option>
         <option>USA</option>
         <option>UK</option>
@@ -403,7 +405,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       <input
         type="text"
         placeholder="e.g. MBA, Computer Science"
-        className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
+        className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
       />
     </motion.div>
 
@@ -417,7 +419,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       <label className="text-sm font-medium text-gray-600 mb-1 block">
         When do you plan to study
       </label>
-      <select className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all">
+      <select className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all">
         <option>Select Month</option>
         <option>January</option>
         <option>May</option>
@@ -435,7 +437,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       <label className="text-sm font-medium text-gray-600 mb-1 block">
         Your Preferred Year
       </label>
-      <select className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all">
+      <select className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all">
         <option>Select Year</option>
         <option>2025</option>
         <option>2026</option>
@@ -467,18 +469,20 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       </div>
     </section>
 
+<Destinationhome/>
+    
+
    
 
 
-      <motion.section
+      {/* <motion.section
   initial={{ opacity: 0 }}
   whileInView={{ opacity: 1 }}
   transition={{ duration: 0.6 }}
   viewport={{ once: true }}
-  className="bg-[#eaeaf2] py-10 relative overflow-hidden"
+  className="bg-[#F46C44] py-10 relative overflow-hidden"
 >
   <div className=" px-6">
-      {/* ================= HEADING ================= */}
     <motion.div
       initial={{ y: 40, opacity: 0 }}
       whileInView={{ y: 0, opacity: 1 }}
@@ -486,121 +490,74 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       viewport={{ once: true }}
       className="mb-8 lg:mb-16 max-w-7xl mx-auto"
     >
-      <h3 className="text-primary text-xl relative inline-block mt-4">
+      <h3 className="text-white text-xl relative inline-block mt-4 mb-2">
         <span className="font-light lg:text-4xl">
           {homePage?.whyUs?.title.split("||")[0]}
         </span>
         <br />
         <span className="font-bold lg:text-5xl">
           {homePage?.whyUs?.title.split("||")[1]}
+           <span className="absolute right-0 -bottom-1.5  w-25 h-[2px] lg:h-1 bg-yellow-400"></span>
         </span>
 
        
       </h3>
+
+      <p className=" text-gray-100">{homePage?.whyUs.subTitle}</p>
     </motion.div>
 
    
 
-    {/* ================= CARDS ================= */}
-    <div className="space-y-4 lg:space-y-10">
+    <div className="space-y-8 lg:space-y-12">
 
-      {/* TOP 3 CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 lg:gap-1">
+ <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
 
-        {[0, 1, 2,3,4].map((index, i) => (
-          <motion.div
-            key={index}
-            initial={{ y: 50, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: i * 0.15 }}
-            viewport={{ once: true }}
-            className="bg-white rounded-3xl px-4 py-6 lg:py-4 lg:px-4 flex items-center gap-6 w-70"
-          >
-            {index === 0 && <NutOffIcon className="w-12 h-8 lg:w-12 lg:h-16 text-primary" />}
-            {index === 1 && <BadgeIcon className="w-12 h-8 lg:w-12 lg:h-16 text-primary" />}
-            {index === 2 && <TargetIcon className="w-12 h-8 lg:w-12 lg:h-16 text-primary" />}
-            {index === 3 &&  <PanelsTopLeftIcon className="w-12 h-8 lg:w-12 lg:h-16 text-primary" />}
-            {index === 4 && <PanelsTopLeftIcon className="w-12 h-8 lg:w-12 lg:h-16 text-primary" />}
+  {[0,1,2,3,4].map((index,i)=>(
+    
+    <motion.div
+      key={index}
+      initial={{ y: 50, opacity: 0 }}
+      whileInView={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, delay: i * 0.15 }}
+      viewport={{ once: true }}
 
-            <div className="">
-              <h4 className="text-sm lg:text-base font-semibold text-black">
-                {homePage?.whyUs?.items?.[index]?.title}
-              </h4>
-              <p className="text-[#1f3a5f] mt-2 text-sm lg:text-sm">
-                {homePage?.whyUs?.items?.[index]?.description}
-              </p>
-            </div>
-          </motion.div>
-        ))}
+      className={`bg-white rounded-3xl py-6 px-2 flex items-center gap-5 shadow-sm
+      ${index === 3 ? "md:col-start-1 md:col-span-1 md:col-start-1 md:translate-x-1/2" : ""}
+      ${index === 4 ? "md:col-start-3 md:-translate-x-1/2" : ""}
+      `}
+    >
 
+      {index === 0 && <NutOffIcon className="w-50 h-35 text-primary stroke-1" />}
+      {index === 1 && <BadgeIcon className="w-50 h-35 text-primary stroke-1" />}
+      {index === 2 && <TargetIcon className="w-50 h-35 text-primary stroke-1" />}
+      {index === 3 && <PanelsTopLeftIcon className="w-50 h-35 text-primary stroke-1" />}
+      {index === 4 && <PanelsTopLeftIcon className="w-50 h-35 text-primary stroke-1" />}
+
+      <div>
+        <h4 className="text-lg font-semibold text-black">
+          {homePage?.whyUs?.items?.[index]?.title}
+        </h4>
+        <p className="text-[#1f3a5f] mt-2 text-sm">
+          {homePage?.whyUs?.items?.[index]?.description}
+        </p>
       </div>
 
-   
+    </motion.div>
 
-    </div>
+  ))}
+
+</div>
+
+
+
+
+</div>
   </div>
-</motion.section>
+</motion.section> */}
 
 
 
-<section className="w-full py-20 bg-white">
-  <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-10 items-start">
 
-    {/* LEFT CONTENT */}
-    <div className="space-y-6">
-      <h2 className="text-4xl font-semibold text-gray-900 leading-snug">
-        Your <span className="relative font-bold">
-          Trusted Partner
-          <span className="absolute left-0 -bottom-2 w-full h-[4px] bg-orange-500 rounded"></span>
-        </span>
-        <br />
-        In Global Education
-      </h2>
-
-      <p className="text-gray-500 leading-relaxed">
-        Edwise, study abroad consultants, have been the architects of dreams
-        and shapers of destinies for aspiring students for over three decades.
-      </p>
-
-      <button className="border border-primary text-primary px-6 py-3 rounded-lg hover:bg-orange-500 hover:text-white transition">
-        Free Expert Consultation
-      </button>
-    </div>
-
-    {/* CARD 1 */}
-    <div className="relative border border-blue-300 rounded-[28px] p-8 h-[300px] overflow-hidden">
-
-      <h3 className="text-2xl font-semibold text-gray-900">
-        34 Years of
-        <br />
-        Excellence
-      </h3>
-
-      <img
-        src="https://www.clipartmax.com/png/full/326-3262862_talent-management-our-erm-relationship-manager-helps-employer-and-employee-relationship-clip.png"
-        className="absolute bottom-0 right-0 w-[220px]"
-      />
-
-    </div>
-
-    {/* CARD 2 */}
-    <div className="relative border border-blue-300 rounded-[28px] p-8 h-[300px] overflow-hidden">
-
-      <h3 className="text-2xl font-semibold text-gray-900">
-        950+ Partner
-        <br />
-        Universities
-      </h3>
-
-      <img
-        src="https://png.pngtree.com/png-clipart/20210905/original/pngtree-international-student-education-study-abroad-study-abroad-png-image_6697728.jpg"
-        className="absolute top-14 left-6 inset-0 w-full h-full"
-      />
-
-    </div>
-
-  </div>
-</section>
 
 
 
@@ -708,7 +665,12 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 </motion.section>
 
 
+  <ImageTestimonial
+        title={homePage?.imageTestimonials?.title}
 
+        subtitle={homePage?.imageTestimonials?.subtitle}
+        items={imageData}
+      />
 
       <VideoTestimonialsSlider
         title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
@@ -718,12 +680,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       />
 
 
-      <ImageTestimonial
-        title={homePage?.imageTestimonials?.title}
-
-        subtitle={homePage?.imageTestimonials?.subtitle}
-        items={imageData}
-      />
+    
       <section className="lg:py-18 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden ">
           <div className=" mb-12 ">
@@ -788,6 +745,155 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       </section>
 
       <UniversitySliderClient universities={homePage.universities} />
+
+      <section className="max-w-7xl mx-auto px-6 py-6">
+
+  {/* Heading */}
+  <div className="mb-10">
+    <h2 className="text-5xl font-bold text-primary">
+      <span className="text-[#C10007] font-light block text-4xl">Study</span>
+      Destination
+    </h2>
+  </div>
+
+  {/* Grid */}
+  <div className="flex gap-2 justify-center">
+
+  {/* LEFT COLUMN */}
+  <div className="flex flex-col gap-2">
+
+    <Link href={"/destination/study-in-usa"}>
+
+    <div className="h-45 w-92 border-2 border-orange-500 rounded-2xl overflow-hidden relative">
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/50"></div>
+      <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+        United States
+      </p>
+    </div>
+    </Link>
+
+    
+
+    <div className="flex gap-2">
+      <Link href={"/destination/study-in-germany"} >
+      <div className="w-45 h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+        <img
+          src="https://t3.ftcdn.net/jpg/08/46/08/14/360_F_846081410_Bpyzy1kMxtWtN27vDttJyfDbb6kyBjUX.jpg"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/50"></div>
+        <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+          Germany
+        </p>
+      </div>
+
+      </Link>
+
+      <Link href={"/destination/study-in-uk"}>
+
+      <div className="w-45 h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+        <img
+          src="https://media.istockphoto.com/id/616242056/photo/british-flag-big-ben-and-houses-of-parliament-london.jpg?s=612x612&w=0&k=20&c=3c5ZpafAsXAevRDs0dlTwn8wuErDjlYVqw1Cj0oRwMc="
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/50"></div>
+        <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+          UK
+        </p>
+      </div>
+    </Link>
+
+    </div>
+
+  </div>
+
+
+  {/* MIDDLE COLUMN */}
+  <div className="flex flex-col gap-2">
+
+    <div className="w-92 h-25 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+      <img
+        src="https://t3.ftcdn.net/jpg/08/46/08/14/360_F_846081410_Bpyzy1kMxtWtN27vDttJyfDbb6kyBjUX.jpg"
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/50"></div>
+      <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+       Canada
+      </p>
+    </div>
+
+    <div className="w-92 h-45 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/50"></div>
+      <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+        New Zealand
+      </p>
+    </div>
+
+    <div className="w-92 h-25 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+      <img
+        src="https://t3.ftcdn.net/jpg/08/46/08/14/360_F_846081410_Bpyzy1kMxtWtN27vDttJyfDbb6kyBjUX.jpg"
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/50"></div>
+      <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+        Ireland
+      </p>
+    </div>
+
+  </div>
+
+
+  {/* RIGHT COLUMN (FIXED REVERSE) */}
+  <div className="flex flex-col gap-2">
+
+    <div className="flex gap-2">
+      <div className="w-45 h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/50"></div>
+        <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+          Australia
+        </p>
+      </div>
+
+      <div className="w-45 h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+        <img
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/50"></div>
+        <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+          Dubai
+        </p>
+      </div>
+    </div>
+
+    <div className="h-45 w-92 border-2 border-orange-500 rounded-2xl overflow-hidden relative">
+      <img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/50"></div>
+      <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+       Italy
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+</section>
 
 
 

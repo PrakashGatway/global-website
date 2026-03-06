@@ -47,6 +47,7 @@ export default async function Home() {
   const { data } = await getHomePageData();
   const homePage = data.sections;
 
+
   
  
 
@@ -57,6 +58,8 @@ export default async function Home() {
     serverInstance.get("/testimonials?type=image&limit=6"),
     serverInstance.get("/faqs/public/list?type=General&limit=8"),
     serverInstance.get("/testimonials?type=video&limit=6"),
+
+
 
 
   ]);
@@ -71,6 +74,7 @@ export default async function Home() {
       imageData={imageRes.data.data}
       Faqres = {Faqres.data.data}
       videoRes={videoRes.data.data}
+   
     />
   );
 }

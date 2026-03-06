@@ -599,8 +599,8 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
       {/* Image Testimonial - Keep as is */}
       <ImageTestimonial
-        title={Pageres?.imageTestimonials?.title}
-        subtitle={Pageres?.imageTestimonials?.subtitle}
+        title={pageData?.imageTestimonials?.title}
+        subtitle={pageData?.imageTestimonials?.subtitle}
         items={imageData}
       />
 
@@ -746,7 +746,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
       </section>
 
-      <FAQSection Faqres={Faqres?.data?.data} />
+      <FAQSection Faqres={Faqres} />
     </>
   )
 }

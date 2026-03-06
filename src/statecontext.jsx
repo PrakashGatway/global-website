@@ -6,6 +6,7 @@ const Globalcontext = createContext()
 export function GlobalProvider({ children }) {
     const [loading, setLoading] = useState(true)
     const [profile, setProfile] = useState(null)
+    const [allProfile, setallProfile] = useState(null)
   
     const [authToken, setauthToken] = useState(null)
 
@@ -13,6 +14,9 @@ export function GlobalProvider({ children }) {
         try {
             const res = await axiosInstance.get("/auth/me")
             setProfile(res.data.data)
+            setallProfile(res.data)
+          
+          
        
         } catch (err) {
             console.log("Not authorized")
@@ -20,6 +24,8 @@ export function GlobalProvider({ children }) {
             setLoading(false)
         }
     }
+
+   
 
     const updateProfile = async () => {
         try {
@@ -55,7 +61,7 @@ export function GlobalProvider({ children }) {
 
     return (
         <Globalcontext.Provider value={{
-            profile, loading, Logout,updateProfile
+            profile, loading, Logout,updateProfile,allProfile
         }}>
             {children}
 

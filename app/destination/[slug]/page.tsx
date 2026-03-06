@@ -44,8 +44,7 @@ export default async function Page({params}){
 
 
 
-
     return(
-        <CountryDetails Universityres = {Universityres?.data?.result} Faqres = {Faqres} pageData={Pageres?.data?.data} imageData= {imageRes.data.data}  />
+        <CountryDetails Universityres = {Universityres?.data?.result} Faqres = {Faqres.data.data} pageData={Pageres?.data?.data} imageData= {imageRes.data.data}  />
     )
 }
