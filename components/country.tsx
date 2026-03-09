@@ -11,8 +11,8 @@ import Balloon from './balloon'
 import { useState } from 'react'
 
 export default function CountryDetails({ Universityres, Faqres, pageData, imageData }) {
-  
 
+  const [expanded, setExpanded] = useState(false);
 
 
 
@@ -57,6 +57,18 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
   ];
 
 
+  const handleToggle = () => {
+  const scrollPosition = window.scrollY;
+
+  setExpanded(!expanded);
+
+  setTimeout(() => {
+    window.scrollTo({
+      top: scrollPosition,
+      behavior: "auto",
+    });
+  }, 0);
+};
 
 
 
@@ -87,7 +99,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
               lg:left-15 lg:-top-0
             "
             >
-              <Balloon Pageres= {pageData} />
+              <Balloon Pageres={pageData} />
             </div>
 
             {/* TEXT BLOCK */}
@@ -108,14 +120,14 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
               mb-6 max-w-xl lg:max-w-xl
             ">
                 {pageData?.sections?.hero?.title || "Study in Germany"}
-          <p className='text-white text-sm mt-5'
-          dangerouslySetInnerHTML={{
-            __html : pageData?.sections?.hero?.subtitle || ""
-          }}
-          />
+                <p className='text-white text-sm mt-5'
+                  dangerouslySetInnerHTML={{
+                    __html: pageData?.sections?.hero?.subtitle || ""
+                  }}
+                />
               </h1>
-              
-              
+
+
 
               {/* Button */}
               <div className='lg:flex gap-4'>
@@ -276,28 +288,31 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
           {/* Heading */}
           <h2 className="text-white text-lg sm:text-4xl md:text-5xl font-bold relative inline-block">
-           <span>{pageData?.sections?.whyChooseUs?.title?.split("||")[0] }</span> 
-           <span>{pageData?.sections?.whyChooseUs?.title?.split("||")[1] }</span> 
+            <span>{pageData?.sections?.whyChooseUs?.title?.split("||")[0]}</span>
+            <span>{pageData?.sections?.whyChooseUs?.title?.split("||")[1]}</span>
 
             <span className="block w-12 sm:w-16 h-1 bg-yellow-400 absolute left-0 mt-2 sm:mt-3"></span>
           </h2>
 
           {/* Paragraph */}
-         <div className="mt-6 sm:mt-8">
+          <div className="mt-6 sm:mt-8">
 
   <p
-    className={`text-white text-xs sm:text-lg md:text-xl leading-relaxed `}
+    className={`text-white text-xs sm:text-lg md:text-xl leading-relaxed transition-all duration-300 ${
+      expanded ? "" : "line-clamp-3"
+    }`}
     dangerouslySetInnerHTML={{
       __html: pageData?.sections?.whyChooseUs?.subtitle ?? "",
     }}
   />
 
-  {/* <button
-    onClick={() => setShowMore(!showMore)}
-    className="text-orange-400 text-sm mt-2"
-  >
-    {showMore ? "Read Less" : "Read More"}
-  </button> */}
+  <button
+  type="button"
+  onClick={handleToggle}
+  className="text-yellow-300 mt-3 font-semibold"
+>
+  {expanded ? "Read Less" : "Read More"}
+</button>
 
 </div>
 
@@ -320,8 +335,8 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           {/* Heading */}
           <div className="mb-6 sm:mb-8">
             <h2 className="text-lg sm:text-4xl md:text-5xl font-bold text-[#123b73] relative inline-block">
-             <span>{pageData?.sections?.whyStudy?.title.split("||")[0]}</span>
-             <span className='text-[#F46C44]'>{pageData?.sections?.whyStudy?.title.split("||")[1]}</span> 
+              <span>{pageData?.sections?.whyStudy?.title.split("||")[0]}</span>
+              <span className='text-[#F46C44]'>{pageData?.sections?.whyStudy?.title.split("||")[1]}</span>
 
               <span className="absolute right-0 -bottom-2 w-16 sm:w-20 h-1 bg-red-600"></span>
             </h2>
@@ -470,17 +485,17 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
                   <h2 className="text-primary text-lg sm:text-3xl md:text-4xl font-bold">
                     <span className='text-red-600 block'>{item.title.split("||")[0]}</span>
                     <div className='flex gap-2'>
-                      <span className=' mt-1 sm:mt-2'>{item.title.split("||")[1]}</span> 
-                    <span className=' mt-1 sm:mt-2 border-b-4 border-red-600 inline-block'>{item.title.split("||")[2]}</span>
+                      <span className=' mt-1 sm:mt-2'>{item.title.split("||")[1]}</span>
+                      <span className=' mt-1 sm:mt-2 border-b-4 border-red-600 inline-block'>{item.title.split("||")[2]}</span>
                     </div>
-                    
+
                   </h2>
                 </div>
 
                 <div>
-  {/* ===== Responsive Table CSS ===== */}
-  <style>
-    {`
+                  {/* ===== Responsive Table CSS ===== */}
+                  <style>
+                    {`
       /* Wrapper */
       .country-table {
         width: 100%;
@@ -523,16 +538,16 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         }
       }
     `}
-  </style>
+                  </style>
 
-  {/* ===== API HTML Render ===== */}
-  <div
-    className="max-w-none country-table overflow-x-auto"
-    dangerouslySetInnerHTML={{
-      __html: item.description,
-    }}
-  />
-</div>
+                  {/* ===== API HTML Render ===== */}
+                  <div
+                    className="max-w-none country-table overflow-x-auto"
+                    dangerouslySetInnerHTML={{
+                      __html: item.description,
+                    }}
+                  />
+                </div>
               </div>
             ))}
           </div>

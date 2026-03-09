@@ -11,17 +11,21 @@ import VideoTestimonialsSlider from "@/components/PageComponent/VideoTestimonial
 import ImageTestimonial from "@/components/ImageTestimonial"
 import VideoInSvgShape from "@/components/PageComponent/VideoShape"
 
-import { baseUrl, serverInstance } from "@/app/axiosInstance"
+import axiosInstance, { baseUrl, serverInstance } from "@/app/axiosInstance"
 import Blogs from "./blog"
 import BlogGrid from "./blogGrid"
 import { useKeenSlider } from "keen-slider/react"
 import MultiStepForm from "./PopupForm"
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import FAQSection from "./faqPage"
 import { useGlobal } from "@/src/statecontext"
 import { usePathname } from "next/navigation"
 import { HowGawayHelps } from "./PageComponent/DistinationSliders"
 import { Destinationhome } from "./dummydestination"
+import { useForm } from "react-hook-form"
+import toast from "react-hot-toast"
+import { DynamicLucideIcon } from "./DynamicLucideIcon"
+import { ModernSelect } from "./ui/select"
 
 
 
@@ -34,10 +38,12 @@ import { Destinationhome } from "./dummydestination"
 export default function Homepage({ homePage, destinationData, imageData, Faqres, videoRes }) {
 
   const [openForm, setOpenForm] = useState(false);
+  const [countries, setCountries] = useState([])
 
 
 
- 
+
+
 
 
 
@@ -126,7 +132,50 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
   const currentYear = new Date().getFullYear();
   const experienceYears = currentYear - startYear;
 
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm()
 
+
+  const onSubmit = async (data) => {
+    try {
+
+      const payload = {
+        fullName: `${data.firstName} ${data.lastName}`,
+        email: data.email,
+        phone: data.phone,
+        destination: data.destination,
+        subject: "Study Abroad Enquiry",
+        type: "website-form",
+        source: "website",
+        description: `Course: ${data.course}, Intake: ${data.month} ${data.year}`
+      };
+
+      const res = await axiosInstance.post("/contactus", payload);
+
+      if (res.status === 200) {
+        toast.success("Form submitted successfully");
+        reset();
+      }
+
+    } catch (error) {
+      toast.error("Submit Error:", error);
+    }
+  };
+
+
+  const fetchCountries = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get('/countries?limit=300')
+      const data = response.data.data
+      let formatData = data.map(country => ({ label: country.name, value: country.code }))
+      setCountries(formatData)
+    } catch (error) {
+      console.error('Error fetching countries:', error)
+    }
+  })
+
+  useEffect(() => {
+    fetchCountries()
+  }, [])
 
 
 
@@ -138,341 +187,297 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
   return (
     <main className="bg-white">
-     <motion.section
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  transition={{ duration: 0.6 }}
-  className="
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="
     relative overflow-hidden
     bg-white
     bg-no-repeat bg-cover bg-bottom
     pt-12 lg:pt-26 min-h-[90vh] 
   "
-  style={{
-    backgroundImage: `url("/images/hero.jpg")`
-  }}
->
-  <div></div>
 
-  {/* mobile overlay only */}
-  <div className="absolute inset-0 bg-white/50 md:bg-transparent pointer-events-none" />
-
-  <div className="relative z-10 max-w-7xl mx-auto px-4  sm:px-6">
-    <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-2">
-
-      {/* LEFT CONTENT */}
-      <motion.div
-        initial={{ x: -60, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.7, delay: 0.2 }}
-        className="text-justify lg:text-left"
       >
-        <motion.h1
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-xl sm:text-4xl lg:text-4xl leading-tight"
-        >
-          {homePage?.hero?.title ? (
-            <span className="block text-primary">
-              {homePage.hero.title.split('||')[0]?.trim()}
-              <br />
-              <span className="relative inline-block mt-3 font-bold text-[#ea6c46]">
-                {homePage.hero.title.split('||')[1]?.trim()}
-                <span className="absolute left-0 -bottom-2 w-full h-[2px] bg-[#f46c44]">
+        <div></div>
+
+        {/* mobile overlay only */}
+        <div className="absolute inset-0 bg-white/50 md:bg-transparent pointer-events-none" />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4  sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-2">
+
+            {/* LEFT CONTENT */}
+            <motion.div
+              initial={{ x: -60, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-justify lg:text-left"
+            >
+              <motion.h1
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-xl sm:text-4xl lg:text-4xl leading-tight"
+              >
+                {homePage?.hero?.title ? (
+                  <span className="block text-[#ea6c46]">
+                    {homePage.hero.title.split('||')[0]?.trim()}
+
+                    <span className="relative inline-block mt-3 font-bold text-primary">
+                      {homePage.hero.title.split('||')[1]?.trim()}
+                      {/* <span className="absolute left-0 -bottom-0 w-full h-[2px] bg-[#f46c44]">
                   <span className="absolute right-0 -top-[3px] w-2 h-2 rounded-full bg-[#f46c44]" />
-                </span>
-              </span>
-            </span>
-          ) : null}
-        </motion.h1>
+                </span> */}
+                    </span>
+                  </span>
+                ) : null}
+              </motion.h1>
 
-        <motion.p
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0 lg:mb-20"
-        >
-          {homePage?.hero?.subtitle ? (
-            <>
-              {homePage.hero.subtitle.split('||')[0]?.trim()}{" "}
-              <span className="font-semibold text-[#f46c44]">
-                {homePage.hero.subtitle.split('||')[1]?.trim()}
-              </span>
-            </>
-          ) : null}
-        </motion.p>
+              <motion.p
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0 lg:mb-20"
+              >
+                {homePage?.hero?.subtitle ? (
+                  <>
+                    {homePage.hero.subtitle.split('||')[0]?.trim()}{" "}
+                    <span className="font-semibold text-[#f46c44]">
+                      {homePage.hero.subtitle.split('||')[1]?.trim()}
+                    </span>
+                  </>
+                ) : null}
+              </motion.p>
 
-        {/* CTA BUTTONS */}
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-        >
-          <a
-            onClick={() => setOpenForm(true)}
-            className="
+              {/* CTA BUTTONS */}
+              <motion.div
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              >
+                <a
+                  onClick={() => setOpenForm(true)}
+                  className="
               text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#f46c44] rounded-full shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
               text-sm lg:text-base font-semibold
               hover:bg-primary hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
               flex items-center justify-center gap-2
               transition-all hover:opacity-90 cursor-pointer
             "
-            rel="noopener noreferrer"
-          >
-            {homePage?.hero?.ctaText1 || "Get Free Counselling"}
-          </a>
+                  rel="noopener noreferrer"
+                >
+                  {homePage?.hero?.ctaText1 || "Get Free Counselling"}
+                </a>
 
-          <a
-            href={homePage?.hero?.ctaLink2}
-            className="
+                <a
+                  href={homePage?.hero?.ctaLink2}
+                  className="
               text-primary px-6 sm:px-8 py-2.5 sm:py-3 border border-primary rounded-full 
               lg:text-base text-sm font-semibold
               transition-all hover:bg-[#f46c44] hover:border-none hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
               inline-flex items-center justify-center
             "
-            rel="noopener noreferrer"
+                  rel="noopener noreferrer"
+                >
+                  {homePage?.hero?.ctaText2 || "Check Your Eligibility"}
+                </a>
+              </motion.div>
+            </motion.div>
+
+            {/* RIGHT IMAGE */}
+            <motion.div
+              initial={{ x: 60, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="flex justify-center lg:justify-end"
+            >
+              <div className="relative flex items-center justify-center">
+
+                {/* Animated Circle */}
+                <div className="absolute -right-[130px] top-51 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
+                  <img
+                    src="/images/hero-bg-2.png"
+                    alt="circle"
+                    className="w-[720px] max-w-none"
+                  />
+                </div>
+
+                {/* Hero Image */}
+                {homePage?.hero?.heroImage && (
+                  <motion.div
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    className="relative z-1  -bottom-10"
+                  >
+                    <Image
+                      src={homePage.hero.heroImage.trim()}
+                      width={450}
+                      height={900}
+                      alt="cap"
+                      className="lg:w-[420px] w-[200px]"
+                    />
+                  </motion.div>
+                )}
+
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </motion.section>
+
+      <section className="bg-[#F46C44] overflow-hidden relative">
+
+
+
+        <div className="px-4 sm:px-8 lg:px-20 flex flex-col lg:flex-row gap-10 lg:gap-2 justify-around items-center">
+
+          {/* LEFT IMAGE (Hidden on Mobile) */}
+          <motion.div className="relative z-10 -bottom-0 lg:-bottom-8 -left-24 hidden lg:block">
+            <img src="/images/home-enquiry.png" alt="" className="w-[320px] lg:w-175" />
+          </motion.div>
+
+          {/* RIGHT FORM */}
+          <motion.div
+            initial={{ opacity: 0, x: 60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className=" p-6 sm:p-8 lg:p- rounded-2xl w-full lg:w-auto "
           >
-            {homePage?.hero?.ctaText2 || "Check Your Eligibility"}
-          </a>
-        </motion.div>
-      </motion.div>
 
-      {/* RIGHT IMAGE */}
-     <motion.div
-  initial={{ x: 60, opacity: 0 }}
-  animate={{ x: 0, opacity: 1 }}
-  transition={{ duration: 0.8, delay: 0.3 }}
-  className="flex justify-center lg:justify-end"
->
-  <div className="relative flex items-center justify-center">
+            <h2 className="text-2xl lg:text-3xl font-semibold mb-8 text-white">
+              Let <span className="text-white">Our Team</span> Reach Out To You
+            </h2>
 
-    {/* Animated Circle */}
-    <div className="absolute -right-[130px] top-51 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
-  <img
-    src="/images/hero-bg-2.png"
-    alt="circle"
-    className="w-[720px] max-w-none"
-  />
-</div>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="grid grid-cols-2 md:grid-cols-2 gap-5 lg:w-180"
+            >
 
-    {/* Hero Image */}
-    {homePage?.hero?.heroImage && (
-      <motion.div
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-        className="relative z-1  -bottom-10"
-      >
-        <Image
-          src={homePage.hero.heroImage.trim()}
-          width={450}
-          height={900}
-          alt="cap"
-          className="lg:w-[420px] w-[200px]"
-        />
-      </motion.div>
-    )}
+              {/* First Name */}
+              <motion.div className="">
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Full Name
+                </label>
+                <input
+                  {...register("firstName")}
+                  type="text"
+                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm "
+                />
+              </motion.div>
 
-  </div>
-</motion.div>
+              {/* Email */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Email ID
+                </label>
+                <input
+                  {...register("email")}
+                  type="email"
+                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm "
+                />
+              </motion.div>
 
-    </div>
-  </div>
-</motion.section>
+              {/* Phone */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Mobile Number
+                </label>
+                <input
+                  {...register("phone")}
+                  type="tel"
+                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm "
+                />
+              </motion.div>
 
-         <section className="bg-white pt-10  overflow-hidden relative">
-          <div className="absolute w-200 h-full left-0 z-1"><img src="/images/home-enquiry-2.png" alt="" /></div>
+              {/* Destination */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Country
+                </label>
+         
 
-      <div className="px-20 flex gap-22 py-10 justify-around items-center">
+                <ModernSelect
+                  options={countries}
+                  
+                  value={watch("country")}
+                  onChange={(value) =>
+                    setValue("country", value, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
+                  className="w-full [&>button]:focus:outline-none border border-white rounded-lg [&>button]:text-xs lg:text-sm  [&>button]:text-white  [&>button]:hover:bg-transparent "
+                />
+              </motion.div>
 
-      
-        <motion.div className="relative z-10 -bottom-21 ">
-          <img src="/images/home-enquiry.png" alt="" className="w-145" />
-        </motion.div>
-        {/* RIGHT FORM */}
+              {/* Course */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  City
+                </label>
+                <input
+                  {...register("course")}
+                  type="text"
 
-        <motion.div
-  initial={{ opacity: 0, x: 60 }}
-  whileInView={{ opacity: 1, x: 0 }}
-  transition={{ duration: 0.6 }}
-  viewport={{ once: true }}
-  className="bg-white shadow-xl border border-gray-100 p-8 lg:p-10 rounded-2xl ml-20"
->
-  <h2 className="text-3xl font-semibold mb-8 text-gray-900">
-    Let <span className="text-[#00306A]">Our Team</span> Reach Out To You
-  </h2>
+                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none "
+                />
+              </motion.div>
 
-  <form className="grid grid-cols-1 md:grid-cols-2 gap-5">
+               <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Program
+                </label>
+                <input
+                  {...register("course")}
+                  type="text"
 
-    {/* First Name */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      viewport={{ once: true }}
-    >
-      <label className="text-sm font-medium text-gray-600 mb-1 block">
-        First Name
-      </label>
-      <input
-        type="text"
-        placeholder="Enter your first name"
-        className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
-      />
-    </motion.div>
+                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none "
+                />
+              </motion.div>
 
-    {/* Last Name */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.05 }}
-      viewport={{ once: true }}
-    >
-      <label className="text-sm font-medium text-gray-600 mb-1 block">
-        Last Name
-      </label>
-      <input
-        type="text"
-        placeholder="Enter your last name"
-        className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
-      />
-    </motion.div>
+              {/* Month */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Intake
+                </label>
+                <select
+                  {...register("month")}
+                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white bg-[#F46C44] focus:outline-none"
+                >
+                  <option>Month</option>
+                  <option>January</option>
+                  <option>May</option>
+                  <option>September</option>
+                </select>
+              </motion.div>
 
-    {/* Email */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.1 }}
-      viewport={{ once: true }}
-    >
-      <label className="text-sm font-medium text-gray-600 mb-1 block">
-        Email ID
-      </label>
-      <input
-        type="email"
-        placeholder="example@email.com"
-        className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
-      />
-    </motion.div>
 
-    {/* Phone */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.15 }}
-      viewport={{ once: true }}
-    >
-      <label className="text-sm font-medium text-gray-600 mb-1 block">
-        Mobile Number
-      </label>
-      <input
-        type="tel"
-        placeholder="+91 9876543210"
-        className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
-      />
-    </motion.div>
 
-    {/* Destination */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.2 }}
-      viewport={{ once: true }}
-    >
-      <label className="text-sm font-medium text-gray-600 mb-1 block">
-        Preferred Destination
-      </label>
-      <select className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all">
-        <option>Select Destination</option>
-        <option>USA</option>
-        <option>UK</option>
-        <option>Canada</option>
-      </select>
-    </motion.div>
+              {/* Submit */}
+              <motion.div className="md:col-span-2 mt-4">
+                <button
+                  type="submit"
+                  className="w-full md:w-auto text-xs lg:text-lg bg-secondary hover:bg-primary text-white font-semibold p-2 lg:px-4 lg:py-2.5 rounded-lg"
+                >
+                  Submit
+                </button>
+              </motion.div>
 
-    {/* Course */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.25 }}
-      viewport={{ once: true }}
-    >
-      <label className="text-sm font-medium text-gray-600 mb-1 block">
-        Course
-      </label>
-      <input
-        type="text"
-        placeholder="e.g. MBA, Computer Science"
-        className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all"
-      />
-    </motion.div>
+            </form>
+          </motion.div>
 
-    {/* Month */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.3 }}
-      viewport={{ once: true }}
-    >
-      <label className="text-sm font-medium text-gray-600 mb-1 block">
-        When do you plan to study
-      </label>
-      <select className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all">
-        <option>Select Month</option>
-        <option>January</option>
-        <option>May</option>
-        <option>September</option>
-      </select>
-    </motion.div>
+        </div>
+      </section>
 
-    {/* Year */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.35 }}
-      viewport={{ once: true }}
-    >
-      <label className="text-sm font-medium text-gray-600 mb-1 block">
-        Your Preferred Year
-      </label>
-      <select className="w-full border border-orange-500 rounded-lg px-4 py-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-[#F46C44] focus:ring-2 focus:ring-[#F46C44]/20 transition-all">
-        <option>Select Year</option>
-        <option>2025</option>
-        <option>2026</option>
-        <option>2027</option>
-      </select>
-    </motion.div>
+      <Destinationhome />
 
-    {/* Submit */}
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.4 }}
-      viewport={{ once: true }}
-      className="md:col-span-2 mt-4"
-    >
-      <button
-        type="submit"
-        className="w-full md:w-auto bg-[#F46C44] hover:bg-[#e65f38] text-white font-semibold px-10 py-3 rounded-lg transition duration-300 shadow-md hover:shadow-lg"
-      >
-        Submit
-      </button>
-    </motion.div>
 
-  </form>
-</motion.div>
 
-        
-
-      </div>
-    </section>
-
-<Destinationhome/>
-    
-
-   
 
 
       {/* <motion.section
@@ -563,39 +568,39 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
       <motion.section
-  initial={{ opacity: 0 }}
-  whileInView={{ opacity: 1 }}
-  transition={{ duration: 0.6 }}
-  viewport={{ once: true }}
-  className="bg-white relative overflow-hidden w-full py-12 sm:py-16 lg:py-18"
->
-  <div className="absolute -right-20 top-[0%] opacity-30 pointer-events-none hidden lg:block"></div>
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="bg-white relative overflow-hidden w-full py-12 sm:py-16 lg:py-18"
+      >
+        <div className="absolute -right-20 top-[0%] opacity-30 pointer-events-none hidden lg:block"></div>
 
-  <div className="max-w-7xl mx-auto">
-    <div className="w-full px-4 sm:px-6 lg:px-8 relative z-10">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-2 items-center w-full min-h-[500px]">
+        <div className="max-w-7xl mx-auto">
+          <div className="w-full px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-2 items-center w-full min-h-[500px]">
 
-        {/* LEFT – IMAGE STACK */}
-        <motion.div
-          initial={{ x: -80, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.7 }}
-          viewport={{ once: true }}
-          className="relative w-full h-full min-h-[420px] sm:min-h-[500px] lg:min-h-[550px] flex justify-center lg:justify-start hidden lg:block"
-        >
-          <img
-            src="/images/trust-img.png"
-            alt=""
-            className="w-[450px] h-[540px]"
-          />
+              {/* LEFT – IMAGE STACK */}
+              <motion.div
+                initial={{ x: -80, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.7 }}
+                viewport={{ once: true }}
+                className="relative w-full h-full min-h-[420px] sm:min-h-[500px] lg:min-h-[550px] flex justify-center lg:justify-start hidden lg:block"
+              >
+                <img
+                  src="/images/trust-img.png"
+                  alt=""
+                  className="w-[450px] h-[540px]"
+                />
 
-          {/* EXPERIENCE BADGE */}
-          <motion.div
-            initial={{ scale: 0.7, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-            className="
+                {/* EXPERIENCE BADGE */}
+                <motion.div
+                  initial={{ scale: 0.7, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  viewport={{ once: true }}
+                  className="
               absolute -left-8 sm:left-25 bottom-25
               w-24 h-24 sm:w-28 sm:h-28 lg:w-28 lg:h-28
               rounded-full bg-white
@@ -603,69 +608,69 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               shadow-2xl z-40
               flex flex-col items-center justify-center
             "
-          >
-            <span className="text-3xl sm:text-4xl font-bold text-red-700">
-              {experienceYears}
-            </span>
+                >
+                  <span className="text-3xl sm:text-4xl font-bold text-red-700">
+                    {experienceYears}
+                  </span>
 
-            <span className="text-[10px] sm:text-xs text-gray-500 text-center font-semibold leading-tight">
-              Years of<br />Experience
-            </span>
-          </motion.div>
-        </motion.div>
+                  <span className="text-[10px] sm:text-xs text-gray-500 text-center font-semibold leading-tight">
+                    Years of<br />Experience
+                  </span>
+                </motion.div>
+              </motion.div>
 
-        {/* RIGHT CONTENT */}
-        <motion.div
-          initial={{ x: 80, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.7 }}
-          viewport={{ once: true }}
-          className="text-center lg:text-left"
-        >
-          <motion.h2
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="text-lg sm:text-3xl lg:text-5xl font-bold leading-tight mb-3"
-          >
-            <span className="text-primary">
-              {homePage?.trustedPartners?.title?.split('||')[0]?.trim()}
-            </span>
-            <br />
-            <span className="text-primary">
-              {homePage?.trustedPartners?.title?.split('||')[1]?.trim()}
-            </span>
-          </motion.h2>
+              {/* RIGHT CONTENT */}
+              <motion.div
+                initial={{ x: 80, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.7 }}
+                viewport={{ once: true }}
+                className="text-left lg:text-left"
+              >
+                <motion.h2
+                  initial={{ y: 30, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  viewport={{ once: true }}
+                  className="text-lg sm:text-3xl lg:text-5xl font-bold leading-tight mb-3"
+                >
+                  <span className="text-primary">
+                    {homePage?.trustedPartners?.title?.split('||')[0]?.trim()}
+                  </span>
+                  <br />
+                  <span className="text-primary">
+                    {homePage?.trustedPartners?.title?.split('||')[1]?.trim()}
+                  </span>
+                </motion.h2>
 
-          <motion.p
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            viewport={{ once: true }}
-            className="text-sm font-medium sm:text-base text-gray-600 mb-6 leading-relaxed max-w-xl mx-auto lg:mx-0"
-          >
-            {homePage?.trustedPartners?.subtitle}
-          </motion.p>
+                <motion.p
+                  initial={{ y: 30, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  viewport={{ once: true }}
+                  className="text-sm font-medium sm:text-base text-gray-600 mb-6 leading-relaxed max-w-xl mx-auto lg:mx-0"
+                >
+                  {homePage?.trustedPartners?.subtitle}
+                </motion.p>
 
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <AboutTabsSection tabs={homePage?.trustedPartners?.items || []} />
-          </motion.div>
+                <motion.div
+                  initial={{ y: 30, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  viewport={{ once: true }}
+                >
+                  <AboutTabsSection tabs={homePage?.trustedPartners?.items || []} />
+                </motion.div>
 
-        </motion.div>
+              </motion.div>
 
-      </div>
-    </div>
-  </div>
-</motion.section>
+            </div>
+          </div>
+        </div>
+      </motion.section>
 
 
-  <ImageTestimonial
+      <ImageTestimonial
         title={homePage?.imageTestimonials?.title}
 
         subtitle={homePage?.imageTestimonials?.subtitle}
@@ -680,7 +685,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       />
 
 
-    
+
       <section className="lg:py-18 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden ">
           <div className=" mb-12 ">
@@ -703,209 +708,340 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
           </div>
 
           <div
-  ref={sliderRefD}
-  className="keen-slider items-start"
->
-  {destinationData.map((item) => (
-    <div key={item._id} className="keen-slider__slide p-4">
+            ref={sliderRefD}
+            className="keen-slider items-start"
+          >
+            {destinationData.map((item) => (
+              <div key={item._id} className="keen-slider__slide p-4">
 
-      <Link href={`/universities/group/${item.slug}`}>
-        <div className="border border-gray-300 bg-white overflow-hidden hover:shadow-lg transition duration-300">
+                <Link href={`/universities/group/${item.slug}`}>
+                  <div className="border border-gray-300 bg-white overflow-hidden hover:shadow-lg transition duration-300">
 
-          {/* Image */}
-          <img
-            src={
-              item.cardImage ||
-              "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop"
-            }
-            className="w-full h-[160px] sm:h-[180px] md:h-[200px] object-cover"
-          />
+                    {/* Image */}
+                    <img
+                      src={
+                        item.cardImage ||
+                        "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop"
+                      }
+                      className="w-full h-[160px] sm:h-[180px] md:h-[200px] object-cover"
+                    />
 
-          {/* Content */}
-          <div className="p-6 text-center">
+                    {/* Content */}
+                    <div className="p-6 text-center">
 
-            <h3 className="text-xl font-bold text-[#1c3f73] mb-2">
-              {item.title}
-            </h3>
+                      <h3 className="lg:text-xl text-base  font-bold text-[#1c3f73] mb-2">
+                        {item.title}
+                      </h3>
 
-            <p className="text-gray-500 text-sm">
-              {item.subTitle}
-            </p>
+                      <p className="text-gray-500 text-xs lg:text-sm">
+                        {item.subTitle}
+                      </p>
 
+                    </div>
+
+                  </div>
+                </Link>
+
+              </div>
+            ))}
           </div>
-
-        </div>
-      </Link>
-
-    </div>
-  ))}
-</div>
 
         </div>
       </section>
 
       <UniversitySliderClient universities={homePage.universities} />
 
-      <section className="max-w-7xl mx-auto px-6 py-6">
+      <section className="max-w-7xl mx-auto  py-6 px-4 lg:px-0">
 
-  {/* Heading */}
-  <div className="mb-10">
-    <h2 className="text-5xl font-bold text-primary">
-      <span className="text-[#C10007] font-light block text-4xl">Study</span>
-      Destination
-    </h2>
-  </div>
+        {/* Heading */}
+        <div className="mb-10">
+          <h2 className="  font-bold text-primary">
+            <span className="text-[#C10007] font-light block text-xl lg:text-4xl">Study</span>
+            <span className=" text-xl lg:text-5xl"> Destination</span>
+          </h2>
+        </div>
 
-  {/* Grid */}
-  <div className="flex gap-2 justify-center">
+        {/* Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-4 justify-center">
 
-  {/* LEFT COLUMN */}
-  <div className="flex flex-col gap-2">
+          {/* LEFT COLUMN */}
+          <div className="flex flex-col gap-4">
 
-    <Link href={"/destination/study-in-usa"}>
+            <Link href={"/destination/study-in-usa"}>
+              <div className="h-40 sm:h-44 lg:h-45 w-full lg:w-92 border-2 border-orange-500 rounded-2xl overflow-hidden relative">
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 "></div>
+                <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+    United States
+  </span>
+</p>
+              </div>
+            </Link>
 
-    <div className="h-45 w-92 border-2 border-orange-500 rounded-2xl overflow-hidden relative">
-      <img
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-black/50"></div>
-      <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-        United States
-      </p>
-    </div>
-    </Link>
+            <div className="flex gap-4">
+              <Link href={"/destination/study-in-germany"}>
+                <div className="w-full lg:w-45 h-40 sm:h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+                  <img
+                    src="https://t3.ftcdn.net/jpg/08/46/08/14/360_F_846081410_Bpyzy1kMxtWtN27vDttJyfDbb6kyBjUX.jpg"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 "></div>
+                  <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+    Germany
+  </span>
+</p>
+                </div>
+              </Link>
 
-    
+              <Link href={"/destination/study-in-uk"}>
+                <div className="w-full lg:w-45 h-40 sm:h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+                  <img
+                    src="https://media.istockphoto.com/id/616242056/photo/british-flag-big-ben-and-houses-of-parliament-london.jpg?s=612x612&w=0&k=20&c=3c5ZpafAsXAevRDs0dlTwn8wuErDjlYVqw1Cj0oRwMc="
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0"></div>
+                  <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+    UK
+  </span>
+</p>
+                </div>
+              </Link>
+            </div>
 
-    <div className="flex gap-2">
-      <Link href={"/destination/study-in-germany"} >
-      <div className="w-45 h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
-        <img
-          src="https://t3.ftcdn.net/jpg/08/46/08/14/360_F_846081410_Bpyzy1kMxtWtN27vDttJyfDbb6kyBjUX.jpg"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/50"></div>
-        <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-          Germany
-        </p>
-      </div>
-
-      </Link>
-
-      <Link href={"/destination/study-in-uk"}>
-
-      <div className="w-45 h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
-        <img
-          src="https://media.istockphoto.com/id/616242056/photo/british-flag-big-ben-and-houses-of-parliament-london.jpg?s=612x612&w=0&k=20&c=3c5ZpafAsXAevRDs0dlTwn8wuErDjlYVqw1Cj0oRwMc="
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/50"></div>
-        <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-          UK
-        </p>
-      </div>
-    </Link>
-
-    </div>
-
-  </div>
-
-
-  {/* MIDDLE COLUMN */}
-  <div className="flex flex-col gap-2">
-
-    <div className="w-92 h-25 rounded-2xl overflow-hidden relative border-2 border-orange-500">
-      <img
-        src="https://t3.ftcdn.net/jpg/08/46/08/14/360_F_846081410_Bpyzy1kMxtWtN27vDttJyfDbb6kyBjUX.jpg"
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-black/50"></div>
-      <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-       Canada
-      </p>
-    </div>
-
-    <div className="w-92 h-45 rounded-2xl overflow-hidden relative border-2 border-orange-500">
-      <img
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-black/50"></div>
-      <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-        New Zealand
-      </p>
-    </div>
-
-    <div className="w-92 h-25 rounded-2xl overflow-hidden relative border-2 border-orange-500">
-      <img
-        src="https://t3.ftcdn.net/jpg/08/46/08/14/360_F_846081410_Bpyzy1kMxtWtN27vDttJyfDbb6kyBjUX.jpg"
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-black/50"></div>
-      <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-        Ireland
-      </p>
-    </div>
-
-  </div>
+          </div>
 
 
-  {/* RIGHT COLUMN (FIXED REVERSE) */}
-  <div className="flex flex-col gap-2">
+          {/* MIDDLE COLUMN */}
+          <div className="flex flex-col gap-4">
 
-    <div className="flex gap-2">
-      <div className="w-45 h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/50"></div>
-        <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-          Australia
-        </p>
-      </div>
+            <div className="w-full lg:w-92 h-24 lg:h-25 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+              <img
+                src="https://img.freepik.com/premium-photo/ferry-boat-docked-along-vancouver-canada_67340-61.jpg?semt=ais_rp_50_assets&w=740&q=80"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 "></div>
+              <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+    Canada
+  </span>
+</p>
+            </div>
 
-      <div className="w-45 h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
-        <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/50"></div>
-        <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-          Dubai
-        </p>
-      </div>
-    </div>
+            <div className="w-full lg:w-92 h-40 lg:h-45 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+              <img
+                src="https://www.thoughtco.com/thmb/4F27YhigMVRDW6iLBig5RfkJ8sA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-695249926-0975932adac24c079cbb252e1aa8f122.jpg"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 "></div>
+              <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+    New Zealand
+  </span>
+</p>
+            </div>
 
-    <div className="h-45 w-92 border-2 border-orange-500 rounded-2xl overflow-hidden relative">
-      <img
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
-        className="w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-black/50"></div>
-      <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-       Italy
-      </p>
-    </div>
+            <div className="w-full lg:w-92 h-24 lg:h-25 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+              <img
+                src="https://i.redd.it/ireland-flag-redesign-v0-7ygkbozb9ijb1.jpg?width=2340&format=pjpg&auto=webp&s=2b74022723fa3e516424b050e55bc845a9f00c56"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 "></div>
+              <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+    Ireland
+  </span>
+</p>
+            </div>
 
-  </div>
+          </div>
 
-</div>
 
-</section>
+          {/* RIGHT COLUMN */}
+          <div className="flex flex-col gap-4">
+
+            <div className="flex gap-4">
+              <div className="w-full lg:w-45 h-40 sm:h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+                <img
+                  src="https://image.made-in-china.com/2f0j00wauBvDflsgpr/Country-National-Flag-of-Australia-3X5FT-Digital-Printing-100d-Polyester-Australian-Flag.webp"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 "></div>
+                <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+    Australia
+  </span>
+</p>
+              </div>
+
+              <div className="w-full lg:w-45 h-40 sm:h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+                <img
+                  src="https://images.unsplash.com/photo-1603798994946-5ea9dbacf20e?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZHViYWklMjBmbGFnfGVufDB8fDB8fHww"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 "></div>
+                <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+    Dubai
+  </span>
+</p>
+              </div>
+            </div>
+
+            <div className="h-40 lg:h-45 w-full lg:w-92 border-2 border-orange-500 rounded-2xl overflow-hidden relative">
+              <img
+                src="https://t4.ftcdn.net/jpg/19/10/05/75/360_F_1910057533_eg7g1trT07bvBHccH9DTOEwY7kXnG95Y.jpg"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 "></div>
+              <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+    Italy
+  </span>
+</p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+
+      <section className="py-20 px-4 lg:px-0" style={{ left: "-4px" }}>
+
+        <div className="mb-10 max-w-7xl  mx-auto">
+          <h2 className="  font-bold text-primary">
+            <span className="text-[#C10007] font-light block text-xl lg:text-4xl">Our</span>
+            <span className=" text-xl lg:text-5xl"> Services</span>
+          </h2>
+        </div>
+        <div className="max-w-7xl mx-auto px-2">
+
+
+
+          <div className="bg-white border border-[#626362] overflow-hidden mx-auto">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0">
+
+              {/* Service 1 */}
+              <div className="p-8 min-h-[200px] bg-[#f1f1f1] lg:border-r border-b border-[#626362] hover:bg-primary text-gray-700 hover:text-white ">
+                <div className="text-orange-500 mb-2 flex justify-center">
+                  <DynamicLucideIcon name="GraduationCap" className="w-10 h-10 lg:w-16 lg:h-16" />
+                </div>
+
+                <h3 className=" text-base lg:text-xl font-bold  mb-3 text-center ">
+                  Education Counselling
+                </h3>
+
+                <p className=" text-xs lg:text-base font-medium text-center ">
+                  Expert guidance for choosing the right course and university abroad.
+                </p>
+              </div>
+
+
+              {/* Service 2 */}
+              <div className="p-8 min-h-[200px] bg-[#f1f1f1] lg:border-r border-b border-[#626362] hover:bg-primary text-gray-700 hover:text-white">
+                <div className="text-orange-500 mb-2 flex justify-center">
+                  <DynamicLucideIcon name="FileText" className="w-10 h-10 lg:w-16 lg:h-16" />
+                </div>
+
+                <h3 className="text-base lg:text-xl font-bold mb-3 text-center">
+                  University Applications
+                </h3>
+
+                <p className=" text-xs lg:text-base font-medium text-center">
+                  Assistance with application process, documentation and submissions.
+                </p>
+              </div>
+
+
+              {/* Service 3 */}
+              <div className="p-8 min-h-[200px] bg-[#f1f1f1] border-b border-[#626362] hover:bg-primary text-gray-700 hover:text-white">
+                <div className="text-orange-500 mb-2 flex justify-center">
+                  <DynamicLucideIcon name="Award" className="w-10 h-10 lg:w-16 lg:h-16" />
+                </div>
+
+                <h3 className="text-base lg:text-xl font-bold  mb-3 text-center">
+                  Scholarships & Loans
+                </h3>
+
+                <p className=" text-xs lg:text-base font-medium text-center">
+                  Guidance for scholarships and education loans to support your studies.
+                </p>
+              </div>
+
+
+              {/* Service 4 */}
+              <div className="p-8 min-h-[200px] bg-[#f1f1f1] lg:border-r border-[#626362] hover:bg-primary text-gray-700 hover:text-white">
+                <div className="text-orange-500 mb-2 flex justify-center">
+                  <DynamicLucideIcon name="Plane" className="w-10 h-10 lg:w-16 lg:h-16" />
+                </div>
+
+                <h3 className="text-base lg:text-xl font-bold  mb-3 text-center">
+                  Visa Processing
+                </h3>
+
+                <p className=" text-xs lg:text-base font-medium text-center">
+                  End-to-end visa assistance for a smooth study abroad journey.
+                </p>
+              </div>
+
+
+              {/* Service 5 */}
+              <div className="p-8 min-h-[200px] bg-[#f1f1f1] lg:border-r border-[#626362] hover:bg-primary text-gray-700 hover:text-white">
+                <div className="text-orange-500 mb-2 flex justify-center">
+                  <DynamicLucideIcon name="BookOpen" className="w-10 h-10 lg:w-16 lg:h-16" />
+                </div>
+
+                <h3 className="text-base lg:text-xl font-bold mb-3 text-center">
+                  Test Preparation
+                </h3>
+
+                <p className="text-xs lg:text-base font-medium text-center">
+                  IELTS, TOEFL, PTE and other exam preparation support.
+                </p>
+              </div>
+
+
+              {/* Service 6 */}
+              <div className="p-8 min-h-[200px] bg-[#f1f1f1] hover:bg-primary text-gray-700 hover:text-white">
+                <div className="text-orange-500 mb-2 flex justify-center">
+                  <DynamicLucideIcon name="Users" className="w-10 h-10 lg:w-16 lg:h-16" />
+                </div>
+
+                <h3 className="text-base lg:text-xl font-bold  mb-3 text-center">
+                  Post Arrival Support
+                </h3>
+
+                <p className=" text-xs lg:text-base font-medium text-center">
+                  Assistance with accommodation, airport pickup and settling abroad.
+                </p>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
 
 
 
 
       <FAQSection Faqres={Faqres} />
       <AnimatePresence>
-                {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
+        {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
 
 
-              </AnimatePresence>
+      </AnimatePresence>
     </main>
 
-    
+
   )
 }

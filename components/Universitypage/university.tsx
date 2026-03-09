@@ -6,7 +6,7 @@ import IvyLeagueUniversitySlider from "@/components/IvyLeagueUniversitySlider";
 import { Footer } from "@/components/Footer";
 import VideoBackground from "@/components/VideoBackground";
 import StatisticsSlider from "@/components/StatisticsSlider";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import OffersSlider, {
   AdmissionRequirementsUK,
   HowGawayHelps,
@@ -27,16 +27,111 @@ const images = [
   "https://as2.ftcdn.net/jpg/05/29/12/57/1000_F_529125762_omW1yTehDLLFJKwLJjRET0G3sXiQnK5g.jpg",
 ];
 
-export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unires, Unicategory }) {
+export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unires, Unicategory, flatres }) {
   const [index, setIndex] = useState(0);
+  const [activeHeading, setActiveHeading] = useState("hero");
+
+  // Create refs for all sections
+  const heroRef = useRef(null);
+  const universityNetworkRef = useRef(null);
+  const trackRecordRef = useRef(null);
+  const universityCardsRef = useRef(null);
+  const ivyCoachDailyRef = useRef(null);
+  const offersSliderRef = useRef(null);
+  const whySpecialRef = useRef(null);
+  const admissionRequirementsRef = useRef(null);
+  const howWeHelpRef = useRef(null);
+  const roadmapRef = useRef(null);
+  const scholarshipsRef = useRef(null);
+  const testimonialsRef = useRef(null);
+  const caseStudiesRef = useRef(null);
+  const faqRef = useRef(null);
+
+
+
+  const [animateBars, setAnimateBars] = useState(false);
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setAnimateBars(true);
+  }, 200);
+
+  return () => clearTimeout(timer);
+}, []);
 
   // AUTO SLIDE
   useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length);
+      setIndex((prev) => (prev + 1) % imageRes.length);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  // Scroll spy to update active heading
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = [
+        { id: "hero", ref: heroRef },
+        { id: "university-network", ref: universityNetworkRef },
+        { id: "track-record", ref: trackRecordRef },
+        { id: "university-cards", ref: universityCardsRef },
+        { id: "ivy-coach-daily", ref: ivyCoachDailyRef },
+        { id: "offers-slider", ref: offersSliderRef },
+        { id: "why-special", ref: whySpecialRef },
+        { id: "admission-requirements", ref: admissionRequirementsRef },
+        { id: "how-we-help", ref: howWeHelpRef },
+        { id: "roadmap", ref: roadmapRef },
+        { id: "scholarships", ref: scholarshipsRef },
+        { id: "testimonials", ref: testimonialsRef },
+        { id: "case-studies", ref: caseStudiesRef },
+        { id: "faq", ref: faqRef }
+      ];
+
+      const scrollPosition = window.scrollY + 150; // Offset for better UX
+
+      for (const section of sections) {
+        if (section.ref.current) {
+          const element = section.ref.current;
+          const offsetTop = element.offsetTop;
+          const offsetBottom = offsetTop + element.offsetHeight;
+
+          if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+            setActiveHeading(section.id);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    // Call once to set initial active heading
+    setTimeout(handleScroll, 100);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Function to scroll to section
+  const scrollToSection = (sectionId) => {
+    const refs = {
+      "university-network": universityNetworkRef,
+      "track-record": trackRecordRef,
+      "university-cards": universityCardsRef,
+      "ivy-coach-daily": ivyCoachDailyRef,
+      "offers-slider": offersSliderRef,
+      "why-special": whySpecialRef,
+      "admission-requirements": admissionRequirementsRef,
+      "how-we-help": howWeHelpRef,
+      roadmap: roadmapRef,
+      scholarships: scholarshipsRef,
+      testimonials: testimonialsRef,
+      "case-studies": caseStudiesRef,
+      faq: faqRef
+    };
+
+    if (refs[sectionId]?.current) {
+      refs[sectionId].current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   // Extract sections for cleaner access
   const sections = data?.sections || {};
@@ -52,14 +147,87 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
     sections.imageTestimonials?.bottomText
   );
 
+  // Navigation items
+  const navItems = [
+    { id: "university-network", label: "University Network" },
+    { id: "track-record", label: "Track Record" },
+    { id: "university-cards", label: "Universities" },
+    { id: "ivy-coach-daily", label: "Ivy Coach Daily" },
+    { id: "offers-slider", label: "Offers" },
+    { id: "why-special", label: "Why Special" },
+    { id: "admission-requirements", label: "Requirements" },
+    { id: "how-we-help", label: "How We Help" },
+    { id: "roadmap", label: "Roadmap" },
+    { id: "scholarships", label: "Scholarships" },
+    { id: "testimonials", label: "Testimonials" },
+    { id: "case-studies", label: "Case Studies" },
+    { id: "faq", label: "FAQ" }
+  ];
 
 
+  const getShortUniversityName = (name) => {
+  if (!name) return "";
 
+  // Remove brackets like (ANU)
+  name = name.replace(/\(.*?\)/g, "");
 
+  // Remove common words
+  const cleaned = name
+    .replace(/\b(The|University|of|at|in)\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const words = cleaned.split(" ");
+
+  // Create acronym if many words
+  if (words.length > 2) {
+    return words.map(w => w[0]).join("").toUpperCase();
+  }
+
+  return cleaned;
+};
+
+  console.log(data)
   return (
     <div className="min-h-screen bg-white overflow-x-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
+      {/* Sticky Navigation Bar */}
+      <div className="fixed top-20 left-0 right-0 z-50 bg-white shadow-md">
+        <div className=" mx-auto px-10">
+          <div className="flex items-center h-14">
+
+            <div className="flex-1 overflow-x-auto hide-scrollbar">
+              <div className="flex space-x-1">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollToSection(item.id)}
+                    className={`px-3 py-2 text-xs font-medium whitespace-nowrap rounded-md transition-all ${activeHeading === item.id
+                        ? "bg-orange-500 text-white"
+                        : "text-gray-600 hover:bg-orange-100 hover:text-orange-600"
+                      }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Add CSS for hide-scrollbar */}
+      <style jsx>{`
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+
       {/* Hero Section */}
-      <section className="relative h-[600px] overflow-hidden px-5 ">
+      <section ref={heroRef} id="hero" className="relative h-[600px] overflow-hidden px-5">
         <div className="absolute inset-0">
           <VideoBackground
             videos={[
@@ -83,7 +251,7 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
       </section>
 
       {/* Our Global University Network */}
-      <section className="py-12 bg-white">
+      <section ref={universityNetworkRef} id="university-network" className="py-12 bg-white">
         <div className="mx-auto px-5">
           <h2 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }} className="text-[2.6rem] font-bold text-center mb-6 text-gray-600">
             {sections.universities?.title}
@@ -93,7 +261,7 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
       </section>
 
       {/* Ivy Coach's College Admissions Track Record */}
-      <section className="py-5 bg-gray-50" style={{ overflow: 'visible' }}>
+      <section ref={trackRecordRef} id="track-record" className="py-5 bg-gray-50" style={{ overflow: 'visible' }}>
         <div className="mb-8 mx-auto" style={{ borderTop: '3px solid rgb(94, 77, 77)', width: '70%' }}></div>
 
         <div className="text-center py-6 mb-12 bg-[#f5f1f0]">
@@ -128,20 +296,15 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
                 <span className="block text-gray-600">{sections.imageTestimonials?.subTitle?.split('\n')[1] || "Unmatched Results."}</span>
               </h3>
 
-              <div className="w-full hidden
-      lg:block">
+              <div className="w-full hidden lg:block">
                 <div className="relative w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] lg:w-[450px] lg:h-[450px]">
                   <div className="lg:relative lg:w-[92%] lg:h-[91%]">
                     <div
-                      className="lg:absolute inset-0 z-10 lg:top-[41px] lg:left-[38px] "
+                      className="lg:absolute inset-0 z-10 lg:top-[41px] lg:left-[38px]"
                       style={{
-                        backgroundImage: `url(${images[index]})`,
+                        backgroundImage: `url(${imageRes?.[index]?.image})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
-                        WebkitMaskRepeat: "no-repeat",
-                        WebkitMaskSize: "100% 100%",
-                        maskRepeat: "no-repeat",
-                        maskSize: "100% 100%",
                         width: "335px",
                         height: "335px",
                         borderRadius: "100px",
@@ -179,25 +342,15 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
                 </h4>
                 <div className="flex items-center gap-6 pb-2">
                   <div><span className="text-sm font-semibold text-gray-600">General Admit Rate</span></div>
-                  <div className="w-[px] h-full min-h-[4px] bg-gray-300 self-stretch"></div>
+                  <div className="w-[11px] h-full min-h-[4px] bg-gray-300 self-stretch"></div>
                   <div><span className="text-sm font-semibold" style={{ color: '#f46c44' }}>Ooshas Student Admit Rate</span></div>
                 </div>
-                <div className="space-y-0 pr-12">
-                  {[
-                    { name: 'Harvard', generalRate: 3.2, gawayRate: 20.0, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'Harvard' },
-                    { name: 'Stanford', generalRate: 4.3, gawayRate: 80.0, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'Stanford' },
-                    { name: 'Yale', generalRate: 4.6, gawayRate: 70.2, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'Yale' },
-                    { name: 'Columbia', generalRate: 3.9, gawayRate: 78.1, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'Columbia' },
-                    { name: 'UPenn', generalRate: 5.9, gawayRate: 83.3, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'UPenn' },
-                    { name: 'Dartmouth', generalRate: 6.2, gawayRate: 77.0, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'Dartmouth' },
-                    { name: 'Princeton', generalRate: 5.7, gawayRate: 60.6, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'Princeton' },
-                    { name: 'Cornell', generalRate: 7.3, gawayRate: 80.6, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'Cornell' },
-                    { name: 'MIT', generalRate: 6.5, gawayRate: 85.0, logo: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'MIT' }
-                  ].map((uni, i) => (
-                    <div key={i} className="flex items-center">
+                <div className="space-y-0 ">
+                  {flatres.map((uni, i) => (
+                    <div key={i} className="flex items-center gap-2">
                       <div className="w-16 h-10 rounded-full flex items-center justify-center flex-shrink-0">
                         <Image
-                          src={uni.logo}
+                          src={uni.uni_logo}
                           alt={uni.alt}
                           width={60}
                           height={60}
@@ -205,8 +358,10 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
                           unoptimized
                         />
                       </div>
-                      <div className="w-19 flex-shrink-0">
-                        <span className="text-base font-semibold text-gray-800">{uni.name}</span>
+                      <div className="w-39 ">
+                        <span className="text-base font-semibold text-gray-800">
+                          {getShortUniversityName(uni.name)}
+                        </span>
                       </div>
                       <div className="flex-1"></div>
                       <div className="h-10 mr-3 w-0.5 bg-gray-300"></div>
@@ -216,7 +371,7 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
                             <div
                               className="h-full rounded-full transition-all duration-500"
                               style={{
-                                width: `${(uni.gawayRate / 85.0) * 100}%`,
+                                width: animateBars ? `${(uni.acceptanceRate / 85.0) * 100}%` : "0%",
                                 background: `linear-gradient(to right, #f46c44 50%,rgba(231, 218, 214, 0.78) 100%)`
                               }}
                             ></div>
@@ -225,10 +380,10 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
                             className="text-sm font-bold absolute top-1/2 -translate-y-1/2 whitespace-nowrap"
                             style={{
                               color: '#1f1d1dbd',
-                              left: `calc(${(uni.gawayRate / 85.0) * 100}% + 8px)`
+                              left: `calc(${(uni.acceptanceRate / 85.0) * 100}% + 8px)`
                             }}
                           >
-                            {uni.gawayRate}%
+                            {uni.acceptanceRate}%
                           </span>
                         </div>
                       </div>
@@ -246,16 +401,13 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
         </div>
       </section>
 
-      <div className="w-full px-8 pb-10 mx-auto">
-
-
+      {/* University Cards Section */}
+      <div ref={universityCardsRef} id="university-cards" className="w-full px-8 pb-10 mx-auto">
         <UniversityCard university={Unires} />
-
       </div>
 
-
       {/* The Ivy Coach Daily */}
-      <section className="py-12 bg-[#f5f1f0] overflow-visible">
+      <section ref={ivyCoachDailyRef} id="ivy-coach-daily" className="py-12 bg-[#f5f1f0] overflow-visible">
         <div className="max-w-7xl mx-auto px-4 overflow-visible">
           <div className="text-center mb-8">
             <h2 className="text-[2.6rem] font-bold uppercase" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }}>
@@ -295,35 +447,42 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
         </div>
       </section>
 
-      {/* Reusable Sections — These likely already use `data` internally */}
-      <OffersSlider />
+      {/* Offers Slider */}
+      <div ref={offersSliderRef} id="offers-slider">
+        <OffersSlider />
+      </div>
 
-      <section className="mx-auto bg-[#fff9f4] py-20 px-5">
+      {/* Why Special Section */}
+      <section ref={whySpecialRef} id="why-special" className="mx-auto bg-[#fff9f4] py-20 px-5">
         <div className="max-w-7xl mx-auto mb-8 mx-auto">
           <h2 className="text-[2.6rem] font-bold text-center" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
-            <span className="text-[#f46c44]">{sections.whySpecial.title.split('||')[0]}</span> {""}
-            <span className="text-gray-600">{sections.whySpecial.title.split('||')[1]}</span>
+            <span className="text-[#f46c44]">{sections.whySpecial?.title?.split('||')[0]}</span> {""}
+            <span className="text-gray-600">{sections.whySpecial?.title?.split('||')[1]}</span>
           </h2>
-          <p className="text-lg font-semibold text-gray-700">{sections.roadMap.subtitle}</p>
+          <p className="text-lg font-semibold text-gray-700">{sections?.whySpecial?.subtitle}</p>
 
           <StickyPaymentSection sections={data.sections.whySpecial.items} />
-
-
-
         </div>
       </section>
 
-      <AdmissionRequirementsUK admissionData={data.sections.admissionRequirements} />
-      <HowGawayHelps howWeHelpData={data.sections.howWeHelp} />
+      {/* Admission Requirements */}
+      <div ref={admissionRequirementsRef} id="admission-requirements">
+        <AdmissionRequirementsUK admissionData={data.sections.admissionRequirements} />
+      </div>
+
+      {/* How We Help */}
+      <div ref={howWeHelpRef} id="how-we-help">
+        <HowGawayHelps howWeHelpData={data.sections.howWeHelp} />
+      </div>
 
       {/* Admission Process Roadmap */}
-      <section className="mx-auto bg-[#fff9f4] py-20 px-5">
+      <section ref={roadmapRef} id="roadmap" className="mx-auto bg-[#fff9f4] py-20 px-5">
         <div className="max-w-7xl mx-auto mb-8 mx-auto">
           <h2 className="text-[2.6rem] font-bold text-center" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}>
-            <span className="text-[#f46c44]">{sections.roadMap.title.split('||')[0].trim()}</span> {""}
-            <span className="text-gray-600">{sections.roadMap.title.split('||')[1].trim()}</span>
+            <span className="text-[#f46c44]">{sections.roadMap?.title?.split('||')[0]?.trim()}</span> {""}
+            <span className="text-gray-600">{sections.roadMap?.title?.split('||')[1]?.trim()}</span>
           </h2>
-          <p className="text-lg font-semibold text-gray-700">{sections.roadMap.subtitle}</p>
+          <p className="text-lg font-semibold text-gray-700">{sections.roadMap?.subtitle}</p>
 
           <div className="max-w-5xl mx-auto flex justify-center">
             <Image src="/images/00123.png" alt="ivy-admission-process" width={1000} height={800} className="w-full h-full" />
@@ -331,17 +490,25 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
         </div>
       </section>
 
+      {/* Scholarships */}
+      <div ref={scholarshipsRef} id="scholarships">
+        <ScholarshipRequirements scholarshipData={data.sections.scholarships} />
+      </div>
 
-      <ScholarshipRequirements scholarshipData={data.sections.scholarships} />
+      {/* Testimonials */}
+      <div ref={testimonialsRef} id="testimonials">
+        <ImageTestimonial
+          title={sections?.bottomTestimonial?.title}
+          subtitle={sections?.bottomTestimonial?.subtitle}
+          font={true}
+          items={imageRes}
+        />
+      </div>
 
-
-      <ImageTestimonial
-        title={sections?.bottomTestimonial?.title}
-        subtitle={sections?.bottomTestimonial?.subtitle}
-        font={true}
-        items={imageRes}
-      />
-      <CaseStudy font={true} caseStudydata={sections.caseStudies} caseStudy={caseStudy} />
+      {/* Case Studies */}
+      <div ref={caseStudiesRef} id="case-studies">
+        <CaseStudy font={true} caseStudydata={sections.caseStudies} caseStudy={caseStudy} />
+      </div>
 
       {/* Final CTA */}
       <section className="py-24" style={{ backgroundColor: '#f46c44' }}>
@@ -358,7 +525,10 @@ export default function UniversityPage({ data, caseStudy, imageRes, Faqres, Unir
         </div>
       </section>
 
-      <FAQSection Faqres={Faqres} />
+      {/* FAQ Section */}
+      <div ref={faqRef} id="faq">
+        <FAQSection Faqres={Faqres} />
+      </div>
     </div>
   );
 }

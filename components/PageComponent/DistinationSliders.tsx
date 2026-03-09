@@ -182,104 +182,70 @@ const StickyPaymentSection = ({ sections }) => {
   }, []);
 
   useLayoutEffect(() => {
-    if (!sectionRef.current || !cards.length) return;
+  if (!sectionRef.current || !cards.length) return;
 
-    const mm = gsap.matchMedia();
-    let lastIndex = 0;
+  const mm = gsap.matchMedia();
 
-    mm.add("(min-width: 1024px)", () => {
-      const ctx = gsap.context(() => {
-        // INITIAL IMAGE STATE
-        gsap.set(".right-image-0", { opacity: 1, scale: 1 });
+  mm.add("(min-width: 1024px)", () => {
+    const ctx = gsap.context(() => {
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: `+=${cards.length * 70}%`,
-            scrub: 0.6,
-            pin: true,
-            anticipatePin: 1,
+      // INITIAL STATE
+      gsap.set(".right-image", { opacity: 0, y: 40, scale: 0.95 });
+      gsap.set(".payment-text", { autoAlpha: 0 });
 
-            onUpdate: (self) => {
-              const index = Math.min(
-                cards.length - 1,
-                Math.floor(self.progress * cards.length)
-              );
+      gsap.set(".payment-text-0", { autoAlpha: 1 });
+      gsap.set(".right-image-0", { opacity: 1, y: 0, scale: 1 });
 
-              if (index !== lastIndex) {
-                lastIndex = index;
-                setActiveIndex(index);
-              }
-            },
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: `+=${cards.length * 40}%`,
+          scrub: 0.6,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: false,
+        },
+      });
 
-            onLeave: () => {
-              gsap.to(".pin-wrapper", {
-                autoAlpha: 0,
-                y: -40,
-                duration: 0.5,
-                ease: "power2.out",
-              });
-            },
+      cards.forEach((_, i) => {
+        if (i === 0) return;
 
-            onEnterBack: () => {
-              gsap.to(".pin-wrapper", {
-                autoAlpha: 1,
-                y: 0,
-                duration: 0.4,
-                ease: "power2.out",
-              });
-            },
-          },
+        // OLD IMAGE OUT
+        tl.to(`.right-image-${i - 1}`, {
+          opacity: 0,
+          y: -120,
+          scale: 0.95,
+          duration: 0.4,
+          ease: "power2.out",
         });
 
-        // IMAGE SEQUENCE
-        cards.forEach((_, i) => {
-          if (i === 0) return;
-
-          tl.to(
-            `.right-image-${i - 1}`,
-            {
-              opacity: 0,
-              yPercent: -30,
-              scale: 0.95,
-              duration: 0.4,
-              ease: "power2.out",
-            },
-            "+=0.5"
-          );
-
-          tl.fromTo(
-            `.right-image-${i}`,
-            { opacity: 0, yPercent: 30, scale: 0.95 },
-            {
-              opacity: 1,
-              yPercent: 0,
-              scale: 1,
-              duration: 0.6,
-              ease: "power2.out",
-            }
-          );
-        });
-
-        tl.to(
-          cards.map((_, i) => `.right-image-${i}`),
+        // NEW IMAGE IN
+        tl.fromTo(
+          `.right-image-${i}`,
+          { opacity: 0, y: 40, scale: 0.95 },
           {
-            opacity: 0,
-            scale: 0.92,
-            y: -40,
+            opacity: 1,
+            y: 0,
+            scale: 1,
             duration: 0.6,
             ease: "power2.out",
           },
-          "+=0.3"
+          "<"
         );
-      }, sectionRef);
 
-      return () => ctx.revert();
-    });
+        // TEXT SWITCH
+        tl.set(`.payment-text-${i - 1}`, { autoAlpha: 0 }, "<");
+        tl.set(`.payment-text-${i}`, { autoAlpha: 1 }, "<");
+      });
 
-    return () => mm.revert();
-  }, [cards]);
+    }, sectionRef);
+
+    return () => ctx.revert();
+  });
+
+  return () => mm.revert();
+}, [cards]);
 
 
   const rightContentRef = useRef(null);
@@ -320,21 +286,17 @@ const StickyPaymentSection = ({ sections }) => {
   return (
     <section ref={sectionRef} className="max-w-7xl mx-auto px-6">
       {/* pin-wrapper only pins on desktop */}
-      <div className="pin-wrapper lg:h-screen flex items-center">
+      <div className="pin-wrapper pt-20 flex items-center">
         <div className="w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
 
           {/* RIGHT: IMAGE AREA (DESKTOP ONLY GSAP) */}
-          <div className="relative w-full lg:h-[600px] flex items-center justify-center">
+          <div className="relative w-full lg:h-[400px] flex items-center justify-center">
 
             <div className="relative w-full">
               {sections.map((img, i) => (
                 <div
                   key={i}
-                  className={`
-                right-image-${i}
-                hidden lg:block
-                absolute -top-40
-              `}
+                  className={`right-image right-image-${i} hidden lg:block absolute -top-15`}
                 >
                   <Image
                     src={img.image}
@@ -351,19 +313,12 @@ const StickyPaymentSection = ({ sections }) => {
           {/* TEXT CONTENT */}
           <div
             ref={rightContentRef}
-            className="relative lg:h-[580px]"
+            className="relative lg:h-[380px]"
           >
             {cards.map((card, i) => (
               <div
                 key={card.id}
-                className={`
-              py-10 lg:py-20
-              lg:absolute lg:inset-0
-              ${i === activeIndex
-                    ? "opacity-100 lg:z-10"
-                    : "opacity-100 lg:opacity-0 lg:pointer-events-none"
-                  }
-            `}
+                className={`payment-text payment-text-${i} py-10 lg:pt-30 lg:absolute lg:inset-0`}
               >
                 <div className=" max-w-lg lg:w-2xl lg:h-[580px]">
 

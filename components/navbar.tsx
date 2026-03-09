@@ -194,13 +194,13 @@ export default function Navbar({
     sticky top-0 z-[999]
     bg-[#f46c44] shadow-sm 
     transition-transform duration-300 ease-in-out
-    ${isScrolled ? "-translate-y-1" : "translate-y-0"}
+    ${isScrolled ? "lg:-translate-y-1" : "lg:translate-y-0"}
   `}
       >
 
 
         <div
-          className={`mx-auto  flex justify-between relative transition-all duration-500  ease-in-out ${isScrolled ? "h-full " : ""
+          className={`mx-auto  flex justify-between relative transition-all duration-500  lg:ease-in-out ${isScrolled ? "h-full " : ""
             }`}
         >
 
@@ -219,7 +219,7 @@ export default function Navbar({
                 alt="Logo"
                 width={800}
                 height={100}
-                className={`object-contain w-20 lg:w-28 lg:ml-10 ${isScrolled ? "py-3" : ""}`}
+                className={`object-contain w-20 lg:w-28 lg:ml-10 ${isScrolled ? "lg:py-3 " : ""}`}
                 priority
               />
             </Link>

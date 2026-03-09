@@ -26,7 +26,7 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
     <>
       {/* Footer */}
       
-      <footer className="bg-secondary  pt-32 pb-10 overflow-visible">
+      <footer className="bg-secondary  pt-3  overflow-visible relative">
 
         
 
@@ -37,68 +37,26 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
           {/* ================= MAIN FOOTER CARD with Orange Border ================= */}
           <div className="rounded-[50px] px-6 md:px-12 pt-8 pb-12 relative ">
 
-            {/* ================= TOP IMAGE STRIP with Orange Border - Positioned Upward ================= */}
-           <div className="w-full mb-16 -mt-20">
-           
 
-  {/* OUTER ORANGE FRAME */}
-  <div
-  className="
-    relative
-    h-[160px] sm:h-[180px] md:h-[220px]
-    rounded-[50px] sm:rounded-[60px] lg:rounded-[70px]
-    bg-[#f46c44]
-    shadow-xl
-    p-[6px] sm:p-[10px] lg:p-0
-  "
->
-
-
-    {/* INNER IMAGE HOLDER */}
-   <div
-  className="
-    absolute
-    top-[6px] bottom-[6px] left-[16px] right-[16px]
-    sm:top-[10px] sm:bottom-[10px] sm:left-[28px] sm:right-[28px]
-    lg:top-[14px] lg:bottom-[14px] lg:left-[40px] lg:right-[40px]
-    rounded-[35px] sm:rounded-[40px] lg:rounded-[45px]
-    overflow-hidden
-    bg-white
-  "
->
-
-      <img
-        src="/images/footer-image.png"
-        alt="European landmarks"
-        className="w-full h-full object-cover grayscale"
-      />
-    </div>
-    
-
-  </div>
-
-</div>
-
-          <div className="text-white pb-20 ">
-            <h1 className="font-bold pb-5">Choose Your Destination</h1>
-            <div className="flex flex-wrap gap-5">
- {countryres.map((item,i)=>
-
-          <Link key={i}  href={`/destination/${item?.slug}`} >
-          <div className="flex gap-4">
-            <span className="cursor-pointer hover:text-orange-500">{item?.navbarTitle}</span></div></Link> )} </div>  </div>
-          
+         
          
 
 
             <div className="flex flex-col lg:flex-row">
 
-              {/* BRAND */}
-              <div className="w-full lg:w-1/4 pr-0 lg:pr-8 mb-10 lg:mb-0">
+            
+
+
+
+              {/* CONTENT AREA WITH DIVIDERS */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+
+                  {/* BRAND */}
+              <div className="w-full lg:w-60 pr-0 lg:pr-8 mb-10 lg:mb-0 relative ">
                 <Image
                   src="/images/footer-logo.png"
                   alt="GAway Global"
-                  width={200}
+                  width={130}
                   height={50}
                   className="mb-4 text-white"
                 />
@@ -107,11 +65,11 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
                   Your trusted partner for global education, university admissions, and international study planning.
                 </p>
 
+    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
+
+
                
               </div>
-
-              {/* CONTENT AREA WITH DIVIDERS */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
   {/* STUDY DESTINATIONS */}
   <div className="px-0 sm:px-4 lg:px-6 relative">
@@ -142,7 +100,7 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
     </div>
 
     {/* Divider only on lg */}
-    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full" />
+    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
   </div>
 
   {/* SERVICES */}
@@ -174,7 +132,7 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
     </div>
 
     {/* Divider only on lg */}
-    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full" />
+    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
   </div>
 
   {/* RESOURCES */}
@@ -210,7 +168,7 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
     </div>
 
     {/* Divider only on lg */}
-    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-[#e87a4d] rounded-full" />
+    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
   </div>
 
   {/* CONNECT */}
@@ -260,6 +218,10 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
             </div>
           </div>
 
+        </div>
+
+        <div className="">
+          <img src="/images/footer-bg.png" alt="" />
         </div>
       </footer>
     

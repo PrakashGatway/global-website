@@ -1,5 +1,4 @@
 const Balloon = async ({ Pageres }) => {
-  console.log(Pageres)
   return (
     <div className="flex min-h-screen items-end justify-center pb-12 hidden
               lg:block">
@@ -20,7 +19,7 @@ const Balloon = async ({ Pageres }) => {
 
             {/* ✅ FLAG IMAGE COVERING ENTIRE BALLOON */}
             <image
-              href={Pageres?.data?.country?.flg}
+              href={Pageres?.country?.flg}
               x="-60"
               y="-40"
               width="360"

@@ -1,197 +1,291 @@
-"use client"
-
 import { useLayoutEffect, useRef } from "react";
-import gsap from 'gsap';
-import ScrollTrigger from 'gsap/ScrollTrigger';
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
 
+gsap.registerPlugin(ScrollTrigger);
 
+const stepsData = [
+  {
+    number: 1,
+    title: "Education Counseling",
+    description:
+      "One on One counseling with our country specialist. Shortlist your ideal destination, institution and program with their expert guidance.",
+  },
+  {
+    number: 2,
+    title: "University Applications",
+    description:
+      "Apply to your dream university. Our team will guide you through the application process.",
+  },
+  {
+    number: 3,
+    title: "Loans & Scholarships",
+    description:
+      "Explore financial options with our loan and scholarship expertise, making your dream education affordable.",
+  },
+  {
+    number: 4,
+    title: "Visa Processing",
+    description:
+      "Apply for your visa with the help of our Visa experts. Our team has a 99% visa success rate.",
+  },
+];
+
+const STACK_OFFSET = 24;
 
 export function Destinationhome() {
   const sectionRef = useRef<HTMLDivElement | null>(null);
-  gsap.registerPlugin(ScrollTrigger);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const dotsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  /* 🔹 STATIC DATA */
-  const staticData = {
-    title: "4 Steps to your || dream destination",
-    items: [
-      {
-        title: "Education Counselling",
-        subtitle: "Expert guidance||for your academic journey",
-        image: "/images/counselling.jpg",
-        content: "15+||Years Experience"
-      },
-      {
-        title: "University Applications",
-        subtitle: "IELTS, TOEFL, PTE||with proven track record",
-        image: "/images/test-prep.jpg",
-        content: "98%||Success Rate"
-      },
-      {
-        title: "Loan And Scholarships",
-        subtitle: "Find the perfect match||for your profile",
-        image: "/images/university.jpg",
-        content: "500+||Partner Universities"
-      },
-      {
-        title: "Visa Processing",
-        subtitle: "End-to-end support||for smooth processing",
-        image: "/images/visa.jpg",
-        content: "95%||Visa Success"
-      }
-    ]
-  };
-
-  const items = staticData.items;
-
-  /* 🔥 FIXED GSAP LOGIC */
   useLayoutEffect(() => {
-    if (!sectionRef.current || !items.length) return;
+    if (!sectionRef.current) return;
 
     const mm = gsap.matchMedia();
+    let ctx: gsap.Context | null = null;
+    let mainScrollTrigger: ScrollTrigger | null = null;
 
     mm.add("(min-width: 1024px)", () => {
-      const ctx = gsap.context(() => {
-        // Initially hide all right images except first
-        gsap.set(".help-right", { opacity: 0, y: 40, scale: 0.95 });
-        gsap.set(".help-left", { autoAlpha: 0 });
-        
-        // Show first items
-        gsap.set(".help-left-0", { autoAlpha: 1 });
-        gsap.set(".help-right-0", { opacity: 1, y: 0, scale: 1 });
+      ctx = gsap.context(() => {
+        const section = sectionRef.current!;
+        const cards = cardsRef.current.filter(Boolean) as HTMLElement[];
+        const dots = dotsRef.current.filter(Boolean) as HTMLElement[];
+        const totalCards = cards.length;
 
-        const tl = gsap.timeline({
+        const getVh = () => window.innerHeight;
+
+        cards.forEach((card, i) => {
+          gsap.set(card, {
+            zIndex: 10 + i,
+            y: i === 0 ? 0 : STACK_OFFSET * 3 + 400,
+            opacity: i === 0 ? 1 : 1,
+            scale: i === 0 ? 1 : 1,
+            willChange: "transform, opacity",
+          });
+        });
+
+        const masterTl = gsap.timeline({
           scrollTrigger: {
-            trigger: sectionRef.current,
+            trigger: section,
             start: "top top",
-            end: `+=${items.length * 40}%`,
-            scrub: 0.6,
+            end: () => `+=${totalCards * getVh() * 0.75}`,
             pin: true,
             anticipatePin: 1,
+            scrub: 0.5,
             invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const progress = self.progress;
+              const activeIndex = Math.min(
+                Math.floor(progress * totalCards),
+                totalCards - 1
+              );
+              dots.forEach((dot, i) => {
+                dot.classList.toggle("active-dot", i === activeIndex);
+              });
+            },
           },
         });
 
-        items.forEach((_, i) => {
-          if (i === 0) return;
+        for (let step = 1; step < totalCards; step++) {
+          const position = (step / totalCards) * masterTl.duration();
 
-          // Previous image out
-          tl.to(`.help-right-${i - 1}`, {
-            opacity: 0,
-            y: -120,
-            scale: 0.95,
-            duration: 0.4,
-            ease: "power2.out",
-          }, `>${i === 1 ? 0 : 0.2}`);
+          for (let i = 0; i < step; i++) {
+            const targetY = -(totalCards - i - 1) * STACK_OFFSET;
+            masterTl.to(
+              cards[i],
+              {
+                y: targetY,
+                scale: 1,
+                opacity: 1,
+                duration: 0.5,
+                ease: "power2.inOut",
+              },
+              position
+            );
+          }
 
-          // Current image in
-          tl.fromTo(
-            `.help-right-${i}`,
-            { opacity: 0, y: 40, scale: 0.95 },
+          masterTl.to(
+            cards[step],
             {
-              opacity: 1,
               y: 0,
               scale: 1,
-              duration: 0.6,
+              opacity: 1,
+              duration: 0.5,
               ease: "power2.out",
             },
-            "<+=0.1"
+            position
           );
+        }
 
-          // Hide previous text
-          tl.set(`.help-left-${i - 1}`, { autoAlpha: 0 }, "<");
-          
-          // Show current text
-          tl.set(`.help-left-${i}`, { autoAlpha: 1 }, "<");
-        });
+        mainScrollTrigger = masterTl.scrollTrigger;
+
       }, sectionRef);
 
-      return () => ctx.revert();
+      return () => {
+        mainScrollTrigger?.kill();
+        ctx?.revert();
+      };
     });
 
     return () => mm.revert();
-  }, [items]);
+  }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="bg-[#fff9f4] flex items-center min-h-screen lg:h-screen overflow-hidden"
+      className="relative overflow-hidden pt-8"
+      style={{ background: "#f8f9fa" }}
     >
-      <div className="max-w-7xl mx-auto w-full px-4 lg:px-0">
-        {/* TITLE */}
-        <h3 
-          className="text-center text-[2.6rem] font-semibold mb-12" 
-          style={{ 
-            color: '#f46c44'
-            
-          }}
-        >
-          <span className="text-[#f46c44]">{staticData.title.split("||")[0]}</span>{" "}
-          <span className="text-gray-600">{staticData.title.split("||")[1]}</span>
-        </h3>
+      {/* Desktop: Fixed height with h-screen */}
+      <div className="hidden lg:block w-full h-screen flex flex-col">
+        {/* Title */}
+        <div className="text-center pt-12 lg:py-16 pb-8 px-4">
+          <h2
+            className="text-xl sm:text-3xl lg:text-4xl font-bold text-primary"
+           
+          >
+            <span style={{ color: "#F46C44" }}>4 Steps</span> to Your Dream
+            Destination
+          </h2>
+        </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* LEFT TEXT STACK */}
-          <div className="relative h-[300px] lg:h-[350px]">
-  {items.map((item: any, i: number) => (
-    <div
-      key={i}
-      className={`help-left help-left-${i} absolute inset-0 transition-opacity duration-300`}
-      style={{
-        opacity: i === 0 ? 1 : 0,
-        visibility: i === 0 ? "visible" : "hidden",
-      }}
-    >
-      <h2
-        className="text-[2.2rem] lg:text-[3.6rem] font-semibold text-[#f46c44] leading-tight mb-4 w-3xl"
-        
-      >
-        {item.title}
-      </h2>
+        {/* Content */}
+        <div className="flex-1 flex items-center justify-center px-4 lg:px-10 xl:pl-12 pb-8 ">
+          <div className="hidden lg:flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full ">
+            {/* Left: Stacking cards container */}
+            <div className="relative w-full lg:w-1/2 h-[340px]">
+              {stepsData.map((step, i) => (
+                <div
+                  key={i}
+                  ref={(el) => (cardsRef.current[i] = el)}
+                  className="step-card absolute inset-0 rounded-2xl p-6 sm:p-8 flex flex-col justify-center shadow-xl"
+                  style={{
+                    background: "#fff",
+                    border: "1px solid #e8ecf1",
+                    zIndex: 10 + i,
+                  }}
+                >
+                  <div
+                    className=" lg:w-12 lg:h-12 rounded-full flex items-center justify-center text-lg font-bold mb-4 shrink-0"
+                    style={{
+                      background: "#1a3a6b",
+                      color: "#fff",
+                    }}
+                  >
+                    {step.number}
+                  </div>
 
-      <ul className="text-gray-700 text-base lg:text-lg space-y-3">
-        {item.subtitle.split("||").map((p: string, idx: number) => (
-          <li key={idx} className="flex items-start">
-            <span className="text-[#f46c44] mr-2">•</span>
-            <span>{p.trim()}</span>
-          </li>
-        ))}
-      </ul>
+                  <h3
+                    className="text-xl sm:text-2xl font-bold mb-3"
+                    style={{ color: "#1a1a2e" }}
+                  >
+                    {step.title}
+                  </h3>
 
-      {/* BUTTON */}
-      <div className="mt-6">
-        <button className="bg-[#f46c44] hover:bg-[#e85b32] text-white font-semibold px-6 py-3 rounded-full transition duration-300 shadow-md">
-          Free Expert Consultation
-        </button>
-      </div>
-    </div>
-  ))}
-</div>
+                  <p
+                    className="text-sm sm:text-base leading-relaxed mb-5"
+                    style={{ color: "#555" }}
+                  >
+                    {step.description}
+                  </p>
 
-          {/* RIGHT IMAGE STACK */}
-          <div className="relative h-[440px] hidden lg:block">
-            {items.map((item: any, i: number) => (
-              <div
-                key={i}
-                className={`help-right help-right-${i} absolute inset-0`}
-                style={{ 
-                  opacity: i === 0 ? 1 : 0,
-                  transform: i === 0 ? 'translateY(0) scale(1)' : 'translateY(40px) scale(0.95)'
-                }}
-              >
-                {/* Main Image Card */}
-                <div className="absolute top-6 right-12 w-[380px] h-[440px] shadow-2xl bg-white rounded-lg overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <button
+                    className="self-start text-sm font-semibold px-6 py-2.5 rounded-full border-2 transition-colors hover:bg-[#1a3a6b] hover:text-white"
+                    style={{
+                      borderColor: "#1a3a6b",
+                      color: "#1a3a6b",
+                      background: "transparent",
+                    }}
+                  >
+                    Free Expert Consultation
+                  </button>
                 </div>
+              ))}
+            </div>
 
+            {/* Right: Fixed image */}
+            <div className="hidden lg:block w-1/2">
+              <div className=" ">
+                <img
+                  src="/images/destination-pic.png"
+                  alt="Foreign Education Consultants"
+                  className="w-full h-[420px] object-contain"
+                  loading="lazy"
+                />
               </div>
-            ))}
+            </div>
           </div>
         </div>
+
+   
       </div>
+
+      {/* Mobile/Tablet: Auto height, scrollable */}
+      <div className="lg:hidden w-full flex flex-col min-h-screen">
+        {/* Title */}
+        <div className="text-center pt-12 pb-6 px-4">
+          <h2
+            className="text-lg sm:text-3xl font-bold"
+            style={{ color: "#1a1a2e" }}
+          >
+            <span style={{ color: "#1a3a6b" }}>4 Steps</span> to Your Dream
+            Destination
+          </h2>
+        </div>
+
+        {/* Cards - All 4 steps scrollable */}
+        <div className="flex-1 w-full max-w-2xl mx-auto px-4 pb-12 space-y-4">
+          {stepsData.map((step, i) => (
+            <div
+              key={i}
+              className="rounded-2xl p-6 bg-white border border-[#e8ecf1] shadow-lg"
+            >
+              <div
+                className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold mb-3"
+                style={{
+                  background: "#1a3a6b",
+                  color: "#fff",
+                }}
+              >
+                {step.number}
+              </div>
+
+              <h3
+                className="text-sm font-bold mb-2"
+                style={{ color: "#1a1a2e" }}
+              >
+                {step.title}
+              </h3>
+
+              <p
+                className="text-xs leading-relaxed mb-4"
+                style={{ color: "#555" }}
+              >
+                {step.description}
+              </p>
+
+              <button
+                className="text-xs font-semibold px-5 py-2 rounded-full border-2 transition-colors hover:bg-[#1a3a6b] hover:text-white"
+                style={{
+                  borderColor: "#1a3a6b",
+                  color: "#1a3a6b",
+                  background: "transparent",
+                }}
+              >
+                Free Expert Consultation
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <style>{`
+        .active-dot {
+          background: #1a3a6b !important;
+          transform: scale(1.4);
+          box-shadow: 0 0 0 4px rgba(26, 58, 107, 0.2);
+        }
+      `}</style>
     </section>
   );
 }
