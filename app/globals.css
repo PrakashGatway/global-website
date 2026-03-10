@@ -115,6 +115,14 @@
   scrollbar-width: none;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overscroll-behavior-y: none;
+}
+
 
 @custom-variant dark (&:is(.dark *));
 

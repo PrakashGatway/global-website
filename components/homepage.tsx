@@ -19,7 +19,7 @@ import MultiStepForm from "./PopupForm"
 import { useCallback, useEffect, useState } from "react"
 import FAQSection from "./faqPage"
 import { useGlobal } from "@/src/statecontext"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { HowGawayHelps } from "./PageComponent/DistinationSliders"
 import { Destinationhome } from "./dummydestination"
 import { Controller, useForm } from "react-hook-form"
@@ -126,6 +126,8 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
   )
 
+  const navigate = useRouter()
+
 
 
   const startYear = 2011; // 👈 apna starting year yaha daalo
@@ -151,11 +153,11 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       };
 
       const res = await axiosInstance.post("/contactus", payload);
+        toast.success("Form submitted successfully")
+        navigate.push("/thank-you")
 
-      if (res.status === 200) {
-        toast.success("Form submitted successfully");
         reset();
-      }
+      
 
     } catch (error) {
       toast.error("Submit Error:", error);
@@ -358,122 +360,178 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               <span>{homePage.formSection.title}</span>
             </h2>
 
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="grid grid-cols-2 md:grid-cols-2 gap-5 lg:w-180"
-            >
+             <form
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      className="grid grid-cols-2 md:grid-cols-2 gap-5 lg:w-180"
+    >
 
-              {/* First Name */}
-              <motion.div className="">
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-                  Full Name
-                </label>
-                <input
-                  {...register("fullname")}
-                  type="text"
-                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm "
-                />
-              </motion.div>
+      {/* Full Name */}
+      <motion.div>
+        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+          Full Name
+        </label>
 
-              {/* Email */}
-              <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-                  Email ID
-                </label>
-                <input
-                  {...register("email")}
-                  type="email"
-                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm "
-                />
-              </motion.div>
+        <input
+          {...register("fullname", {
+            required: "Full name is required",
+            minLength: {
+              value: 3,
+              message: "Name must be at least 3 characters",
+            },
+          })}
+          type="text"
+          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm"
+        />
 
-              {/* Phone */}
-              <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-                  Mobile Number
-                </label>
-                <input
-                  {...register("phone")}
-                  type="tel"
-                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm "
-                />
-              </motion.div>
+        {errors.fullname && (
+          <p className="text-red-200 text-xs mt-1">{errors.fullname.message}</p>
+        )}
+      </motion.div>
 
-              {/* Destination */}
-              <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-                  Country
-                </label>
+      {/* Email */}
+      <motion.div>
+        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+          Email ID
+        </label>
 
+        <input
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^\S+@\S+$/i,
+              message: "Enter a valid email",
+            },
+          })}
+          type="email"
+          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm"
+        />
 
-                <Controller
-                  name="country"
-                  control={control}
-                  render={({ field }) => (
-                    <ModernSelect
-                      options={countries}
-                      value={field.value}
-                      onChange={field.onChange}
-                      className="w-full [&>button]:focus:outline-none border border-white rounded-lg [&>button]:text-xs lg:text-sm [&>button]:text-white [&>button]:hover:bg-transparent"
-                    />
-                  )}
-                />
-              </motion.div>
+        {errors.email && (
+          <p className="text-red-200 text-xs mt-1">{errors.email.message}</p>
+        )}
+      </motion.div>
 
-              {/* Course */}
-              <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-                  City
-                </label>
-                <input
-                  {...register("city")}
-                  type="text"
+      {/* Phone */}
+      <motion.div>
+        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+          Mobile Number
+        </label>
 
-                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none "
-                />
-              </motion.div>
+        <input
+          {...register("phone", {
+            required: "Mobile number is required",
+            pattern: {
+              value: /^[0-9]{10}$/,
+              message: "Enter valid 10 digit number",
+            },
+          })}
+          type="tel"
+          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm"
+        />
 
-              <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-                  Program
-                </label>
-                <input
-                  {...register("course")}
-                  type="text"
+        {errors.phone && (
+          <p className="text-red-200 text-xs mt-1">{errors.phone.message}</p>
+        )}
+      </motion.div>
 
-                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none "
-                />
-              </motion.div>
+      {/* Country */}
+      <motion.div>
+        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+          Country
+        </label>
 
-              {/* Month */}
-              <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-                  Intake
-                </label>
-                <select
-                  {...register("month")}
-                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white bg-[#F46C44] focus:outline-none"
-                >
-                  <option>Month</option>
-                  <option>January</option>
-                  <option>May</option>
-                  <option>September</option>
-                </select>
-              </motion.div>
+        <Controller
+          name="country"
+          control={control}
+          rules={{ required: "Please select a country" }}
+          render={({ field }) => (
+            <ModernSelect
+              options={countries}
+              value={field.value}
+              onChange={field.onChange}
+              className="w-full border border-white rounded-lg [&>button]:hover:bg-gray-300 [&>button]:text-xs lg:text-sm [&>button]:text-white"
+            />
+          )}
+        />
 
+        {errors.country && (
+          <p className="text-red-200 text-xs mt-1">{errors.country.message}</p>
+        )}
+      </motion.div>
 
+      {/* City */}
+      <motion.div>
+        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+          City
+        </label>
 
-              {/* Submit */}
-              <motion.div className="md:col-span-2 mt-4">
-                <button
-                  type="submit"
-                  className="w-full md:w-auto text-xs lg:text-lg bg-secondary hover:bg-primary text-white font-semibold p-2 lg:px-4 lg:py-2.5 rounded-lg"
-                >
-                  Submit
-                </button>
-              </motion.div>
+        <input
+          {...register("city", {
+            required: "City is required",
+          })}
+          type="text"
+          className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none"
+        />
 
-            </form>
+        {errors.city && (
+          <p className="text-red-200 text-xs mt-1">{errors.city.message}</p>
+        )}
+      </motion.div>
+
+      {/* Program */}
+      <motion.div>
+        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+          Program
+        </label>
+
+        <input
+          {...register("course", {
+            required: "Program is required",
+          })}
+          type="text"
+          className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none"
+        />
+
+        {errors.course && (
+          <p className="text-red-200 text-xs mt-1">{errors.course.message}</p>
+        )}
+      </motion.div>
+
+      {/* Intake */}
+      <motion.div>
+        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+          Intake
+        </label>
+
+        <select
+          {...register("month", {
+            required: "Please select intake",
+          })}
+          className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white bg-[#F46C44] focus:outline-none"
+        >
+          <option value="">Select Intake</option>
+          <option value="January">January</option>
+          <option value="May">May</option>
+          <option value="September">September</option>
+        </select>
+
+        {errors.month && (
+          <p className="text-red-200 text-xs mt-1">{errors.month.message}</p>
+        )}
+      </motion.div>
+
+      {/* Submit */}
+      <motion.div className="md:col-span-2 mt-4">
+        <button
+          type="submit"
+          className="w-full md:w-auto text-xs lg:text-lg bg-secondary hover:bg-primary text-white font-semibold p-2 lg:px-4 lg:py-2.5 rounded-lg"
+        >
+          Submit
+        </button>
+      </motion.div>
+
+    </form>
           </motion.div>
 
         </div>
@@ -776,7 +834,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
           <div className="flex flex-col gap-4">
 
             <Link href={"/destination/study-in-usa"}>
-              <div className="h-40 sm:h-44 lg:h-45 w-full lg:w-92 border-2 border-orange-500 rounded-2xl overflow-hidden relative">
+              <div className="h-40 sm:h-40 lg:h-42 w-full lg:w-92  rounded-2xl overflow-hidden relative">
                 <img
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq9YEcbNP0_0y_IsCGgsJpR0TiUPSzmOrqOQ&s"
                   className="w-full h-full object-cover"
@@ -792,7 +850,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
             <div className="flex gap-4">
               <Link href={"/destination/study-in-germany"}>
-                <div className="w-full lg:w-45 h-40 sm:h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+                <div className="w-full lg:w-44 h-40 sm:h-52 rounded-2xl overflow-hidden relative ">
                   <img
                     src="https://t3.ftcdn.net/jpg/08/46/08/14/360_F_846081410_Bpyzy1kMxtWtN27vDttJyfDbb6kyBjUX.jpg"
                     className="w-full h-full object-cover"
@@ -807,7 +865,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               </Link>
 
               <Link href={"/destination/study-in-uk"}>
-                <div className="w-full lg:w-45 h-40 sm:h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+                <div className="w-full lg:w-44 h-40 sm:h-52 rounded-2xl overflow-hidden relative ">
                   <img
                     src="https://media.istockphoto.com/id/616242056/photo/british-flag-big-ben-and-houses-of-parliament-london.jpg?s=612x612&w=0&k=20&c=3c5ZpafAsXAevRDs0dlTwn8wuErDjlYVqw1Cj0oRwMc="
                     className="w-full h-full object-cover"
@@ -828,7 +886,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
           {/* MIDDLE COLUMN */}
           <div className="flex flex-col gap-4">
 
-            <div className="w-full lg:w-92 h-24 lg:h-25 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+            <div className="w-full lg:w-92 h-24 lg:h-25 rounded-2xl overflow-hidden relative ">
               <img
                 src="https://img.freepik.com/premium-photo/ferry-boat-docked-along-vancouver-canada_67340-61.jpg?semt=ais_rp_50_assets&w=740&q=80"
                 className="w-full h-full object-cover"
@@ -841,7 +899,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               </p>
             </div>
 
-            <div className="w-full lg:w-92 h-40 lg:h-45 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+            <div className="w-full lg:w-92 h-40 lg:h-40 rounded-2xl overflow-hidden relative ">
               <img
                 src="https://www.thoughtco.com/thmb/4F27YhigMVRDW6iLBig5RfkJ8sA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-695249926-0975932adac24c079cbb252e1aa8f122.jpg"
                 className="w-full h-full object-cover"
@@ -849,12 +907,12 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
                 <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
-                  New Zealand
+                  France
                 </span>
               </p>
             </div>
 
-            <div className="w-full lg:w-92 h-24 lg:h-25 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+            <div className="w-full lg:w-92 h-24 lg:h-25 rounded-2xl overflow-hidden relative ">
               <img
                 src="https://i.redd.it/ireland-flag-redesign-v0-7ygkbozb9ijb1.jpg?width=2340&format=pjpg&auto=webp&s=2b74022723fa3e516424b050e55bc845a9f00c56"
                 className="w-full h-full object-cover"
@@ -874,7 +932,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
           <div className="flex flex-col gap-4">
 
             <div className="flex gap-4">
-              <div className="w-full lg:w-45 h-40 sm:h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+              <div className="w-full lg:w-44 h-40 sm:h-52 rounded-2xl overflow-hidden relative ">
                 <img
                   src="https://image.made-in-china.com/2f0j00wauBvDflsgpr/Country-National-Flag-of-Australia-3X5FT-Digital-Printing-100d-Polyester-Australian-Flag.webp"
                   className="w-full h-full object-cover"
@@ -887,7 +945,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 </p>
               </div>
 
-              <div className="w-full lg:w-45 h-40 sm:h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
+              <div className="w-full lg:w-44 h-40 sm:h-52 rounded-2xl overflow-hidden relative ">
                 <img
                   src="https://images.unsplash.com/photo-1603798994946-5ea9dbacf20e?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZHViYWklMjBmbGFnfGVufDB8fDB8fHww"
                   className="w-full h-full object-cover"
@@ -901,7 +959,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               </div>
             </div>
 
-            <div className="h-40 lg:h-45 w-full lg:w-92 border-2 border-orange-500 rounded-2xl overflow-hidden relative">
+            <div className="h-40 lg:h-42 w-full lg:w-92  rounded-2xl overflow-hidden relative">
               <img
                 src="https://t4.ftcdn.net/jpg/19/10/05/75/360_F_1910057533_eg7g1trT07bvBHccH9DTOEwY7kXnG95Y.jpg"
                 className="w-full h-full object-cover"
@@ -922,50 +980,49 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
 
-      <section className="py-20 px-4 lg:px-0" style={{ left: "-4px" }}>
+        <section className="w-full py-16 px-4 md:px-8 ">
+      <div className="max-w-7xl mx-auto">
+        <div className="rounded-3xl  p-6 md:p-10 lg:p-12">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-0 relative">
+            {/* Left Panel */}
+            <div className="bg-[#F46C44] rounded-2xl p-8 md:p-10 flex flex-col justify-center lg:min-w-[280px] lg:max-w-[320px] h-[380px] z-10 mt-30">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                Our Services
+              </h2>
+              <p className="text-lg md:text-xl font-semibold text-white leading-snug">
+                Your Complete Support for Studying Abroad
+              </p>
+            </div>
 
-        <div className="mb-10 max-w-7xl  mx-auto">
-          <h2 className="   ">
-            <span className="text-[#F46C44] font-light block text-xl lg:text-4xl">{homePage.services.title.split("||")[0]}</span>
-          <br />  <span className="font-bold text-xl lg:text-5xl text-primary"> {homePage.services.title.split("||")[1]}
-        <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+            <div className="absolute h-[83%] w-[90%] border-2 shadow border-[#F46C44] left-40 -bottom-10 rounded-4xl z-0">
 
-          </span>
-          </h2>
-        </div>
-        <div className="max-w-7xl mx-auto px-2">
+            </div>
 
-
-
-          <div className="bg-white border border-[#626362] overflow-hidden mx-auto">
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0">
-  {homePage?.services?.services?.map((service, i) => (
-    <div
-      key={i}
-      className={`py-2 px-6 min-h-[200px] bg-[#f1f1f1] hover:bg-primary text-gray-700 hover:text-white 
-      border-[#626362]
-      ${i % 3 !== 2 ? "lg:border-r" : ""}
-      ${i < homePage.services.services.length - 3 ? "border-b" : ""}`}
-    >
-      <div className="text-orange-500 mb-2 flex justify-center">
-        <img className="w-10 h-10 lg:w-18 lg:h-18" src={service.icon} />
-      </div>
- 
-      <h3 className="text-base lg:text-lg font-bold mb-3 text-center">
-        {service.title}
-      </h3>
-
-      <p className="text-xs lg:text-sm font-medium text-justify">
-        {service.subTitle}
-      </p>
-    </div>
-  ))}
-</div>
-
+            {/* Services Grid */}
+            <div className="flex-1 pl-6  !bg-white relative z-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6  bg-white">
+              {homePage?.services?.services.map((service) => (
+                <div
+                  key={service.title}
+                  className="group rounded-2xl  bg-gray-100 p-6 hover:shadow-lg transition-all duration-300 z-10 text-center"
+                >
+                  <div className="w-14 h-14 rounded-xl  flex items-center justify-center mb-4 mx-auto">
+                    <img src={service.icon} alt="" className="" />
+                  </div>
+                  <h3 className="text-lg font-bold text-primary mb-2">
+                    {service.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-5">
+                    {service.subTitle}
+                  </p>
+                </div>
+              ))}
+            </div>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
 
 

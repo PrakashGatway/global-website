@@ -144,6 +144,7 @@ export default function VideoTestimonialsSlider({
                     src={`https://www.youtube.com/embed/${videoId}?autoplay=${isPlaying ? 1 : 0}&rel=0`}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
+                    loading='lazy'
                     title={`${currentItem.name} testimonial`}
                   />
                 ) : (

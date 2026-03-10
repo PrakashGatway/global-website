@@ -153,10 +153,10 @@ export function Destinationhome({ homePage }) {
                 <div
                   key={i}
                   ref={(el) => (cardsRef.current[i] = el)}
-                  className="step-card absolute inset-0 rounded-2xl p-6 sm:p-8 flex flex-col justify-center shadow-xl"
+                  className="step-card absolute inset-0 rounded-2xl p-6 sm:p-8 flex flex-col justify-center shadow-lg"
                   style={{
                     background: "#fff",
-                    border: "1px solid #e8ecf1",
+      
                     zIndex: 10 + i,
                   }}
                 >
@@ -205,7 +205,7 @@ export function Destinationhome({ homePage }) {
                 <img
                   src={homePage.dreamDestination.Image||"/images/destination-pic.png"}
                   alt="Foreign Education Consultants"
-                  className="w-full h-[420px] object-contain"
+                  className="w-full h-[450px] object-contain"
                   loading="lazy"
                 />
               </div>

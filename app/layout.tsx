@@ -10,6 +10,7 @@ import { GlobalProvider } from "@/src/statecontext"
 import { Toaster } from "react-hot-toast";
 import Script from "next/script"
 import BreadcrumbSchema from "@/components/BreadcrumbSchema"
+import SmoothScroll from "@/components/Smoothscroll"
 
 
 const notoSans = Noto_Sans({
@@ -49,7 +50,7 @@ export default async function RootLayout({
   ])
 
 
-  
+
 
 
 
@@ -73,6 +74,7 @@ export default async function RootLayout({
       <head>
         <link rel="icon" href="/images/fevi-icon.png" className="w-20 " />
         <meta name="google-site-verification" content="VU_q7Dhlnq-bXvbs2_KwmafQK7MCZMSeu_dHgPEiCtE" />
+        <meta name="google-site-verification" content="Z8XRz0UFtpmpZDjgpctrR8PbQLRZ5-08g7R6PsZj_Yw" />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-Z5PEF3NSXZ"
           strategy="afterInteractive"
@@ -86,19 +88,36 @@ export default async function RootLayout({
             gtag('config', 'G-Z5PEF3NSXZ');
           `}
         </Script>
-        <BreadcrumbSchema  params={params}/>
-    
+
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-RHBS4GW2Z0"
+          strategy="afterInteractive"
+        />
+
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-RHBS4GW2Z0');
+  `}
+        </Script>
+
+        <BreadcrumbSchema params={params} />
+
       </head>
 
 
       <body className={`${notoSans.className} antialiased`}>
         <GlobalProvider>
-        
-          
-        <Navbar Featureitem={featureRes || []} Serviceitem={serviceres || [] }
-        countryres = {countryres.data.data}
-        />
-        
+
+
+          <Navbar Featureitem={featureRes || []} Serviceitem={serviceres || []}
+            countryres={countryres.data.data}
+          />
+
+          <SmoothScroll/>
+
           {children}
           <Toaster
             position="bottom-right"
