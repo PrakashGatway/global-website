@@ -22,7 +22,7 @@ import { useGlobal } from "@/src/statecontext"
 import { usePathname } from "next/navigation"
 import { HowGawayHelps } from "./PageComponent/DistinationSliders"
 import { Destinationhome } from "./dummydestination"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { DynamicLucideIcon } from "./DynamicLucideIcon"
 import { ModernSelect } from "./ui/select"
@@ -132,21 +132,22 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
   const currentYear = new Date().getFullYear();
   const experienceYears = currentYear - startYear;
 
-  const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm()
+  const { register, handleSubmit, reset, watch, setValue, control, formState: { errors, isSubmitting } } = useForm()
 
 
   const onSubmit = async (data) => {
     try {
 
       const payload = {
-        fullName: `${data.firstName} ${data.lastName}`,
+        fullName: `${data.fullname}`,
         email: data.email,
         phone: data.phone,
-        destination: data.destination,
+        destination: data.country,
         subject: "Study Abroad Enquiry",
         type: "website-form",
         source: "website",
-        description: `Course: ${data.course}, Intake: ${data.month} ${data.year}`
+        city: data.city,
+        description: `Course: ${data.course}, Intake: ${data.month}`
       };
 
       const res = await axiosInstance.post("/contactus", payload);
@@ -161,10 +162,14 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
     }
   };
 
+  useEffect(() => {
+    register("country");
+  }, [register]);
+
 
   const fetchCountries = useCallback(async () => {
     try {
-      const response = await axiosInstance.get('/countries?limit=300')
+      const response = await axiosInstance.get('/countries?isFeatured=Yes&limit=300')
       const data = response.data.data
       let formatData = data.map(country => ({ label: country.name, value: country.code }))
       setCountries(formatData)
@@ -180,7 +185,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
 
-  console.log(homePage?.whyUs)
+
 
 
 
@@ -212,7 +217,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               initial={{ x: -60, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-justify lg:text-left"
+              className="text-left lg:text-left"
             >
               <motion.h1
                 initial={{ y: 30, opacity: 0 }}
@@ -350,7 +355,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
           >
 
             <h2 className="text-2xl lg:text-3xl font-semibold mb-8 text-white">
-              Let <span className="text-white">Our Team</span> Reach Out To You
+              <span>{homePage.formSection.title}</span>
             </h2>
 
             <form
@@ -364,7 +369,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   Full Name
                 </label>
                 <input
-                  {...register("firstName")}
+                  {...register("fullname")}
                   type="text"
                   className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm "
                 />
@@ -399,19 +404,19 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
                   Country
                 </label>
-         
 
-                <ModernSelect
-                  options={countries}
-                  
-                  value={watch("country")}
-                  onChange={(value) =>
-                    setValue("country", value, {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    })
-                  }
-                  className="w-full [&>button]:focus:outline-none border border-white rounded-lg [&>button]:text-xs lg:text-sm  [&>button]:text-white  [&>button]:hover:bg-transparent "
+
+                <Controller
+                  name="country"
+                  control={control}
+                  render={({ field }) => (
+                    <ModernSelect
+                      options={countries}
+                      value={field.value}
+                      onChange={field.onChange}
+                      className="w-full [&>button]:focus:outline-none border border-white rounded-lg [&>button]:text-xs lg:text-sm [&>button]:text-white [&>button]:hover:bg-transparent"
+                    />
+                  )}
                 />
               </motion.div>
 
@@ -421,14 +426,14 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   City
                 </label>
                 <input
-                  {...register("course")}
+                  {...register("city")}
                   type="text"
 
                   className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none "
                 />
               </motion.div>
 
-               <motion.div>
+              <motion.div>
                 <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
                   Program
                 </label>
@@ -474,7 +479,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         </div>
       </section>
 
-      <Destinationhome />
+      <Destinationhome homePage = {homePage} />
 
 
 
@@ -572,7 +577,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
-        className="bg-white relative overflow-hidden w-full py-12 sm:py-16 lg:py-18"
+        className="bg-white relative overflow-hidden w-full py-12 sm:py-16 lg:pb-18"
       >
         <div className="absolute -right-20 top-[0%] opacity-30 pointer-events-none hidden lg:block"></div>
 
@@ -690,12 +695,12 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         <div className="max-w-7xl mx-auto px-4 overflow-hidden ">
           <div className=" mb-12 ">
             <h2 className=" text-xl   mb-2 ">
-              <span className="text-red-700 lg:text-4xl font-light" >
+              <span className="text-[#F46C44] lg:text-4xl font-light" >
                 {homePage?.topUniversities?.title?.split('||')[0]?.trim()}
               </span>{" "} <br />
               <span className="text-primary font-bold relative lg:text-5xl" >
                 {homePage?.topUniversities?.title?.split('||')[1]?.trim()}
-                <span className="absolute right-0 bottom-0  w-25 h-[2px] lg:h-1 bg-red-700"></span>
+                <span className="absolute right-0 bottom-0  w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
 
 
               </span>
@@ -755,9 +760,12 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
         {/* Heading */}
         <div className="mb-10">
-          <h2 className="  font-bold text-primary">
-            <span className="text-[#C10007] font-light block text-xl lg:text-4xl">Study</span>
-            <span className=" text-xl lg:text-5xl"> Destination</span>
+          <h2 className="   text-primary">
+            <span className="text-[#F46C44] font-light block text-xl lg:text-4xl">{homePage.studyDestinations.title.split("||")[0]}</span>
+          <br />  <span className="font-bold text-xl lg:text-5xl"> {homePage.studyDestinations.title.split("||")[1]}
+        <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+
+          </span>
           </h2>
         </div>
 
@@ -775,10 +783,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
-    United States
-  </span>
-</p>
+                  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                    United States
+                  </span>
+                </p>
               </div>
             </Link>
 
@@ -791,10 +799,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   />
                   <div className="absolute inset-0 "></div>
                   <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
-    Germany
-  </span>
-</p>
+                    <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                      Germany
+                    </span>
+                  </p>
                 </div>
               </Link>
 
@@ -806,10 +814,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   />
                   <div className="absolute inset-0"></div>
                   <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
-    UK
-  </span>
-</p>
+                    <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                      UK
+                    </span>
+                  </p>
                 </div>
               </Link>
             </div>
@@ -827,10 +835,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
-    Canada
-  </span>
-</p>
+                <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                  Canada
+                </span>
+              </p>
             </div>
 
             <div className="w-full lg:w-92 h-40 lg:h-45 rounded-2xl overflow-hidden relative border-2 border-orange-500">
@@ -840,10 +848,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
-    New Zealand
-  </span>
-</p>
+                <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                  New Zealand
+                </span>
+              </p>
             </div>
 
             <div className="w-full lg:w-92 h-24 lg:h-25 rounded-2xl overflow-hidden relative border-2 border-orange-500">
@@ -853,10 +861,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
-    Ireland
-  </span>
-</p>
+                <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                  Ireland
+                </span>
+              </p>
             </div>
 
           </div>
@@ -873,10 +881,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
-    Australia
-  </span>
-</p>
+                  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                    Australia
+                  </span>
+                </p>
               </div>
 
               <div className="w-full lg:w-45 h-40 sm:h-52 rounded-2xl overflow-hidden relative border-2 border-orange-500">
@@ -886,10 +894,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
-    Dubai
-  </span>
-</p>
+                  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                    Dubai
+                  </span>
+                </p>
               </div>
             </div>
 
@@ -900,10 +908,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
-    Italy
-  </span>
-</p>
+                <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                  Italy
+                </span>
+              </p>
             </div>
 
           </div>
@@ -917,9 +925,12 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       <section className="py-20 px-4 lg:px-0" style={{ left: "-4px" }}>
 
         <div className="mb-10 max-w-7xl  mx-auto">
-          <h2 className="  font-bold text-primary">
-            <span className="text-[#C10007] font-light block text-xl lg:text-4xl">Our</span>
-            <span className=" text-xl lg:text-5xl"> Services</span>
+          <h2 className="   ">
+            <span className="text-[#F46C44] font-light block text-xl lg:text-4xl">{homePage.services.title.split("||")[0]}</span>
+          <br />  <span className="font-bold text-xl lg:text-5xl text-primary"> {homePage.services.title.split("||")[1]}
+        <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+
+          </span>
           </h2>
         </div>
         <div className="max-w-7xl mx-auto px-2">
@@ -929,103 +940,28 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
           <div className="bg-white border border-[#626362] overflow-hidden mx-auto">
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0">
+  {homePage?.services?.services?.map((service, i) => (
+    <div
+      key={i}
+      className={`py-2 px-6 min-h-[200px] bg-[#f1f1f1] hover:bg-primary text-gray-700 hover:text-white 
+      border-[#626362]
+      ${i % 3 !== 2 ? "lg:border-r" : ""}
+      ${i < homePage.services.services.length - 3 ? "border-b" : ""}`}
+    >
+      <div className="text-orange-500 mb-2 flex justify-center">
+        <img className="w-10 h-10 lg:w-18 lg:h-18" src={service.icon} />
+      </div>
+ 
+      <h3 className="text-base lg:text-lg font-bold mb-3 text-center">
+        {service.title}
+      </h3>
 
-              {/* Service 1 */}
-              <div className="p-8 min-h-[200px] bg-[#f1f1f1] lg:border-r border-b border-[#626362] hover:bg-primary text-gray-700 hover:text-white ">
-                <div className="text-orange-500 mb-2 flex justify-center">
-                  <DynamicLucideIcon name="GraduationCap" className="w-10 h-10 lg:w-16 lg:h-16" />
-                </div>
-
-                <h3 className=" text-base lg:text-xl font-bold  mb-3 text-center ">
-                  Education Counselling
-                </h3>
-
-                <p className=" text-xs lg:text-base font-medium text-center ">
-                  Expert guidance for choosing the right course and university abroad.
-                </p>
-              </div>
-
-
-              {/* Service 2 */}
-              <div className="p-8 min-h-[200px] bg-[#f1f1f1] lg:border-r border-b border-[#626362] hover:bg-primary text-gray-700 hover:text-white">
-                <div className="text-orange-500 mb-2 flex justify-center">
-                  <DynamicLucideIcon name="FileText" className="w-10 h-10 lg:w-16 lg:h-16" />
-                </div>
-
-                <h3 className="text-base lg:text-xl font-bold mb-3 text-center">
-                  University Applications
-                </h3>
-
-                <p className=" text-xs lg:text-base font-medium text-center">
-                  Assistance with application process, documentation and submissions.
-                </p>
-              </div>
-
-
-              {/* Service 3 */}
-              <div className="p-8 min-h-[200px] bg-[#f1f1f1] border-b border-[#626362] hover:bg-primary text-gray-700 hover:text-white">
-                <div className="text-orange-500 mb-2 flex justify-center">
-                  <DynamicLucideIcon name="Award" className="w-10 h-10 lg:w-16 lg:h-16" />
-                </div>
-
-                <h3 className="text-base lg:text-xl font-bold  mb-3 text-center">
-                  Scholarships & Loans
-                </h3>
-
-                <p className=" text-xs lg:text-base font-medium text-center">
-                  Guidance for scholarships and education loans to support your studies.
-                </p>
-              </div>
-
-
-              {/* Service 4 */}
-              <div className="p-8 min-h-[200px] bg-[#f1f1f1] lg:border-r border-[#626362] hover:bg-primary text-gray-700 hover:text-white">
-                <div className="text-orange-500 mb-2 flex justify-center">
-                  <DynamicLucideIcon name="Plane" className="w-10 h-10 lg:w-16 lg:h-16" />
-                </div>
-
-                <h3 className="text-base lg:text-xl font-bold  mb-3 text-center">
-                  Visa Processing
-                </h3>
-
-                <p className=" text-xs lg:text-base font-medium text-center">
-                  End-to-end visa assistance for a smooth study abroad journey.
-                </p>
-              </div>
-
-
-              {/* Service 5 */}
-              <div className="p-8 min-h-[200px] bg-[#f1f1f1] lg:border-r border-[#626362] hover:bg-primary text-gray-700 hover:text-white">
-                <div className="text-orange-500 mb-2 flex justify-center">
-                  <DynamicLucideIcon name="BookOpen" className="w-10 h-10 lg:w-16 lg:h-16" />
-                </div>
-
-                <h3 className="text-base lg:text-xl font-bold mb-3 text-center">
-                  Test Preparation
-                </h3>
-
-                <p className="text-xs lg:text-base font-medium text-center">
-                  IELTS, TOEFL, PTE and other exam preparation support.
-                </p>
-              </div>
-
-
-              {/* Service 6 */}
-              <div className="p-8 min-h-[200px] bg-[#f1f1f1] hover:bg-primary text-gray-700 hover:text-white">
-                <div className="text-orange-500 mb-2 flex justify-center">
-                  <DynamicLucideIcon name="Users" className="w-10 h-10 lg:w-16 lg:h-16" />
-                </div>
-
-                <h3 className="text-base lg:text-xl font-bold  mb-3 text-center">
-                  Post Arrival Support
-                </h3>
-
-                <p className=" text-xs lg:text-base font-medium text-center">
-                  Assistance with accommodation, airport pickup and settling abroad.
-                </p>
-              </div>
-
-            </div>
+      <p className="text-xs lg:text-sm font-medium text-justify">
+        {service.subTitle}
+      </p>
+    </div>
+  ))}
+</div>
 
           </div>
         </div>

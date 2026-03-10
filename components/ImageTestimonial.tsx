@@ -101,13 +101,13 @@ export default function ImageTestimonial({
         {/* Heading */}
         <div className="max-w-7xl mx-auto px-4 mb-12">
           <h2 className="text-xl  mb-2">
-            <span className="text-red-700 lg:text-4xl font-light">
+            <span className="text-[#F46C44] lg:text-4xl font-light">
               {title?.split("||")[0]?.trim() || "Image"}
             </span>{" "}
             <br />
             <span className="text-primary font-bold relative inline-block lg:text-5xl">
               {title?.split("||")[1]?.trim() || "Testimonials"}
-              <span className="absolute right-0 bottom-0 w-25 h-[2px] lg:h-1 bg-red-700"></span>
+              <span className="absolute right-0 bottom-0 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
             </span>
           </h2>
         </div>

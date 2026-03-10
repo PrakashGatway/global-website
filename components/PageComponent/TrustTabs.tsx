@@ -52,6 +52,8 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
 
   const activeData = mappedTabs.find((t) => t.key === activeTab) || mappedTabs[0];
 
+ 
+
   if (mappedTabs.length === 0) return null;
 
   return (
@@ -60,7 +62,7 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
       <div className="relative mb-8">
         <div className="absolute -bottom-3 z-11 left-0 right-0 h-[2px] bg-primary" />
 
-        <div className="flex flex-wrap justify-start gap-3 sm:gap-4 ">
+        <div className="flex flex-wrap justify-start gap-3 sm:gap-2 ">
           {mappedTabs.map((tab) => (
             <button
               key={tab.key}
@@ -111,18 +113,21 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
 
         {/* RIGHT CONTENT */}
         <div className="text-center sm:text-left">
-          <ul className="space-y-2">
-            {activeData?.points.map((point, i) => (
-              <li
-                key={i}
-                className="flex items-center justify-start sm:justify-start gap-3 text-gray-600 font-medium"
-              >
-                <span className="text-[#f46c44] text-lg">✓</span>
-                {point}
-              </li>
-            ))}
-          </ul>
-        </div>
+  <ul className="">
+    {activeData?.points?.[0]
+      ?.split("•")
+      ?.filter(Boolean)
+      ?.map((point, i) => (
+        <li
+          key={i}
+          className="flex items-start gap-3 text-gray-600 font-medium"
+        >
+          <span className="text-[#f46c44] text-lg mt-1 shrink-0">✓</span>
+          <span>{point.trim()}</span>
+        </li>
+      ))}
+  </ul>
+</div>
       </div>
     </section>
   );

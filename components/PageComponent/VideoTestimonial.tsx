@@ -107,12 +107,12 @@ export default function VideoTestimonialsSlider({
           viewport={{ once: true }}
           className="mb-10"
         >
-          <h2 className="text-lg lg:text-4xl font-light text-red-700">
+          <h2 className="text-lg lg:text-4xl font-light text-[#F46C44]">
             {title.includes("||") ? title.split("||")[0].trim() : ""}
           </h2>
           <h3 className="text-xl lg:text-5xl font-bold text-primary relative inline-block lg:mt-2">
             {title.includes("||") ? title.split("||")[1].trim() : "Testimonials"}
-            <span className="absolute right-0 -bottom-1 w-32 h-[2px] lg:h-1 bg-red-600"></span>
+            <span className="absolute right-0 -bottom-1 w-32 h-[2px] lg:h-1 bg-[#F46C44]"></span>
           </h3>
           <p className="text-gray-600 mt-2">{subtitle}</p>
         </motion.div>

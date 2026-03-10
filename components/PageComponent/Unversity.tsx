@@ -82,12 +82,12 @@ export default function UniversitySliderClient({universities}) {
     <section className="  lg:pt-12 overflow-hidden">
       <div className="  relative max-w-7xl px-4 mx-auto">
             <h2 className="text-xl   mb-2 ">
-              <span  className="text-red-700 lg:text-4xl font-light" >
+              <span  className="text-[#F46C44] lg:text-4xl font-light" >
                 {universities.title?.split('||')[0]}
               </span>{" "} <br />
               <span className="text-primary font-bold relative lg:text-5xl">
                 {universities.title?.split('||')[1]}
-        <span className="absolute right-0 -bottom-1 lg:bottom-0  w-25 h-[2px] lg:h-1 bg-red-700"></span>
+        <span className="absolute right-0 -bottom-1 lg:bottom-0  w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
 
 
                 

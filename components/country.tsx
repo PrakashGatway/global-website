@@ -9,6 +9,7 @@ import { DynamicLucideIcon } from '@/components/DynamicLucideIcon'
 import ImageTestimonial from './ImageTestimonial'
 import Balloon from './balloon'
 import { useState } from 'react'
+import EligibilitySection from './Eligibility'
 
 export default function CountryDetails({ Universityres, Faqres, pageData, imageData }) {
 
@@ -58,16 +59,11 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
 
   const handleToggle = () => {
-  const scrollPosition = window.scrollY;
+  
 
   setExpanded(!expanded);
 
-  setTimeout(() => {
-    window.scrollTo({
-      top: scrollPosition,
-      behavior: "auto",
-    });
-  }, 0);
+
 };
 
 
@@ -373,6 +369,100 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         </div>
       </section>
 
+
+      <section className="w-full bg-white py-1 px-4">
+  <div className="max-w-7xl mx-auto">
+
+    {/* Heading */}
+    <div className="text-left mb-12">
+      <h2 className="text-xl lg:text-4xl font-semibold text-gray-900">
+        Popular Courses
+      </h2>
+      <p className="text-gray-500 mt-3 text-sm lg:text-base">
+        Explore our most popular courses trusted by thousands of students
+      </p>
+    </div>
+
+    {/* Cards Grid */}
+    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+
+      {/* Card 1 */}
+     <div className="bg-[#f6f7f9] rounded-[28px] border border-[#F46C44]  hover:shadow-md transition duration-300">
+  
+  {/* Image */}
+  <div className="overflow-hidden w-full rounded-[28px]">
+    <img
+      src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
+      alt="Data Science"
+      className="w-full h-[150px] lg:h-[210px] object-cover"
+    />
+  </div>
+
+  <div className=' px-2 lg:px-4 py-3 lg:py-8'>
+    {/* Title */}
+  <h3 className=" text-base lg:text-[18px] font-semibold text-gray-800 ">
+    Web Development
+  </h3>
+
+  </div>
+
+  
+
+</div>
+
+      {/* Card 2 */}
+      <div className="bg-[#f6f7f9] rounded-[28px] border border-[#F46C44]  hover:shadow-md transition duration-300">
+  
+  {/* Image */}
+  <div className="overflow-hidden rounded-[28px]">
+    <img
+      src="https://images.unsplash.com/photo-1551288049-bebda4e38f71"
+      alt="Data Science"
+      className="w-full h-[150px] lg:h-[210px] object-cover"
+    />
+  </div>
+
+  <div className='px-2 lg:px-4 py-3 lg:py-8'>
+    {/* Title */}
+  <h3 className="text-sm lg:text-[18px] font-semibold text-gray-800 ">
+    Data Science
+  </h3>
+
+  </div>
+
+  
+
+</div>
+
+      {/* Card 3 */}
+      <div className="bg-[#f6f7f9] rounded-[28px] border-2 border-[#F46C44]  hover:shadow-md transition duration-300">
+  
+  {/* Image */}
+  <div className="overflow-hidden rounded-[28px]">
+    <img
+      src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
+      alt="Data Science"
+      className="w-full h-[150px] lg:h-[210px] object-cover"
+    />
+  </div>
+
+  <div className='px-2 lg:px-4 py-3 lg:py-8'>
+    {/* Title */}
+  <h3 className="text-sm lg:text-[18px] font-semibold text-gray-800 ">
+    Computer Science
+  </h3>
+
+  </div>
+
+  
+
+</div>
+
+    </div>
+  </div>
+</section>
+
+
       {/* Life in Germany Section - RESPONSIVE */}
       <section className="w-full min-h-auto lg:min-h-screen px-4 sm:px-6 lg:px-30 bg-white lg:pt-20 lg:pb-62 relative py-12 lg:py-20">
         <div className='max-w-7xl mx-auto'>
@@ -471,6 +561,13 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
       <div className='w-full bg-[#ef6a42] px-4 sm:px-6 lg:px-8 pb-10 mx-auto'>
         <UniversityCard university={Universityres} />
       </div>
+
+      <EligibilitySection/>
+
+
+      
+
+
 
       {/* ================= TABLE/CONTENT SECTION - RESPONSIVE ================= */}
       <section className="w-full bg-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6">

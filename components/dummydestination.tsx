@@ -1,42 +1,26 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const stepsData = [
-  {
-    number: 1,
-    title: "Education Counseling",
-    description:
-      "One on One counseling with our country specialist. Shortlist your ideal destination, institution and program with their expert guidance.",
-  },
-  {
-    number: 2,
-    title: "University Applications",
-    description:
-      "Apply to your dream university. Our team will guide you through the application process.",
-  },
-  {
-    number: 3,
-    title: "Loans & Scholarships",
-    description:
-      "Explore financial options with our loan and scholarship expertise, making your dream education affordable.",
-  },
-  {
-    number: 4,
-    title: "Visa Processing",
-    description:
-      "Apply for your visa with the help of our Visa experts. Our team has a 99% visa success rate.",
-  },
-];
 
-const STACK_OFFSET = 24;
+const STACK_OFFSET = 18;
 
-export function Destinationhome() {
+export function Destinationhome({ homePage }) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const dotsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  const stepsData =
+    homePage?.dreamDestination?.steps?.map((step, index) => ({
+      number: Number(step.order) || index + 1,
+      title: step.title,
+      description: step.subtitle,
+      cta: step.ctabutton,
+      route: step.ctaRoute,
+    })) || [];
 
   useLayoutEffect(() => {
     if (!sectionRef.current) return;
@@ -130,27 +114,38 @@ export function Destinationhome() {
     return () => mm.revert();
   }, []);
 
+  console.log(homePage)
+
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden pt-8"
-      style={{ background: "#f8f9fa" }}
+      className="relative bg-white overflow-hidden pt-8"
+
     >
       {/* Desktop: Fixed height with h-screen */}
-      <div className="hidden lg:block w-full h-screen flex flex-col">
+      <div className="hidden lg:block w-full h-[600px] flex flex-col">
         {/* Title */}
         <div className="text-center pt-12 lg:py-16 pb-8 px-4">
-          <h2
-            className="text-xl sm:text-3xl lg:text-4xl font-bold text-primary"
-           
-          >
-            <span style={{ color: "#F46C44" }}>4 Steps</span> to Your Dream
-            Destination
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-primary">
+            {homePage?.dreamDestination?.title ? (
+              <>
+                <span className="text-primary">
+                  {homePage.dreamDestination.title.split("||")[0]}
+                </span>
+                <span className="text-[#F46C44]">
+                  {homePage.dreamDestination.title.split("||")[1]}
+                </span>
+              </>
+            ) : (
+              <>
+                <span style={{ color: "#F46C44" }}>4 Steps</span> to Your Dream Destination
+              </>
+            )}
           </h2>
         </div>
 
         {/* Content */}
-        <div className="flex-1 flex items-center justify-center px-4 lg:px-10 xl:pl-12 pb-8 ">
+        <div className="flex-1 flex items-center justify-center px-4 lg:px-10 xl:pl-12 ">
           <div className="hidden lg:flex flex-col lg:flex-row items-center gap-8 lg:gap-12 w-full ">
             {/* Left: Stacking cards container */}
             <div className="relative w-full lg:w-1/2 h-[340px]">
@@ -189,16 +184,17 @@ export function Destinationhome() {
                     {step.description}
                   </p>
 
+                 <Link href={step?.ctaRoute || "/contact"}>
                   <button
-                    className="self-start text-sm font-semibold px-6 py-2.5 rounded-full border-2 transition-colors hover:bg-[#1a3a6b] hover:text-white"
+                    className="self-start cursor-pointer text-sm font-semibold px-6 py-2.5 rounded-full border-2 transition-colors hover:bg-[#1a3a6b] hover:text-white"
                     style={{
                       borderColor: "#1a3a6b",
                       color: "#1a3a6b",
                       background: "transparent",
                     }}
                   >
-                    Free Expert Consultation
-                  </button>
+                  {step?.ctabutton || "Free Expert Consultation"}
+                  </button></Link>
                 </div>
               ))}
             </div>
@@ -207,7 +203,7 @@ export function Destinationhome() {
             <div className="hidden lg:block w-1/2">
               <div className=" ">
                 <img
-                  src="/images/destination-pic.png"
+                  src={homePage.dreamDestination.Image||"/images/destination-pic.png"}
                   alt="Foreign Education Consultants"
                   className="w-full h-[420px] object-contain"
                   loading="lazy"
@@ -217,7 +213,7 @@ export function Destinationhome() {
           </div>
         </div>
 
-   
+
       </div>
 
       {/* Mobile/Tablet: Auto height, scrollable */}
@@ -228,8 +224,22 @@ export function Destinationhome() {
             className="text-lg sm:text-3xl font-bold"
             style={{ color: "#1a1a2e" }}
           >
-            <span style={{ color: "#1a3a6b" }}>4 Steps</span> to Your Dream
-            Destination
+      
+            {homePage?.dreamDestination?.title ? (
+              <>
+                <span className="text-primary">
+                  {homePage.dreamDestination.title.split("||")[0]}
+                </span>
+                <span className="text-[#F46C44]">
+                  {homePage.dreamDestination.title.split("||")[1]}
+                </span>
+              </>
+            ) : (
+              <>
+                <span style={{ color: "#F46C44" }}>4 Steps</span> to Your Dream Destination
+              </>
+            )}
+        
           </h2>
         </div>
 
@@ -264,6 +274,7 @@ export function Destinationhome() {
                 {step.description}
               </p>
 
+                <Link href={step?.ctaRoute || "/contact"}>
               <button
                 className="text-xs font-semibold px-5 py-2 rounded-full border-2 transition-colors hover:bg-[#1a3a6b] hover:text-white"
                 style={{
@@ -274,6 +285,7 @@ export function Destinationhome() {
               >
                 Free Expert Consultation
               </button>
+              </Link>
             </div>
           ))}
         </div>

@@ -14,11 +14,11 @@ const FAQSection = ({ Faqres }) => {
         {/* Header */}
         <div className="text-justify mb-12 lg:mb-16    ">
           <h2 className="text-3xl   text-gray-900 mb-4 ">
-            <span className=' text-xl lg:text-4xl font-light text-secondary '>Frequently</span>{" "}
+            <span className=' text-xl lg:text-4xl font-light text-[#F46C44] '>Frequently</span>{" "}
             
             <br /><span className=' text-xl lg:text-5xl text-primary font-bold relative'>Asked Questions
               
-        <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-red-600"></span>
+        <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
               </span> 
 
           </h2>
