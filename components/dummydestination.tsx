@@ -153,7 +153,7 @@ export function Destinationhome({ homePage }) {
                 <div
                   key={i}
                   ref={(el) => (cardsRef.current[i] = el)}
-                  className="step-card absolute inset-0 rounded-2xl p-6 sm:p-8 flex flex-col justify-center shadow-lg"
+                  className="step-card absolute inset-0 rounded-2xl p-6 sm:p-8 flex flex-col justify-center shadow-lg border border-gray-300"
                   style={{
                     background: "#fff",
       

@@ -220,9 +220,44 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
 
         </div>
 
-        <div className="">
-          <img src="/images/footer-bg.png" alt="" />
-        </div>
+     <div className="relative overflow-hidden w-full">
+  <style>
+    {`
+      @keyframes marquee {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+    `}
+  </style>
+  
+  <div 
+    className="flex w-max"
+    style={{
+      animation: 'marquee 100s linear infinite',
+    }}
+    onMouseEnter={(e) => e.currentTarget.style.animationPlayState = 'paused'}
+    onMouseLeave={(e) => e.currentTarget.style.animationPlayState = 'running'}
+  >
+    {/* block 1 */}
+    <div className="flex-shrink-0">
+      <img src="/images/footer-bg.png" className="h-[300px] w-auto" alt="footer background" />
+    </div>
+
+    {/* block 2 duplicate */}
+    <div className="flex-shrink-0">
+      <img src="/images/footer-bg.png" className="h-[300px] w-auto" alt="footer background" />
+    </div>
+    
+    {/* Optional: Add a third block for extra smoothness */}
+    <div className="flex-shrink-0">
+      <img src="/images/footer-bg.png" className="h-[300px] w-auto" alt="footer background" />
+    </div>
+  </div>
+</div>
       </footer>
     
     </>

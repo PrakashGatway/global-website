@@ -5,8 +5,9 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
-  safelist: [
+ safelist: [
   "animate-balloon",
+  "animate-marquee",
 ],
 
 
@@ -24,6 +25,7 @@ module.exports = {
 
         /* ✅ Balloon rise + float (single animation) */
         balloon: "balloon 6s ease-in-out infinite",
+        marquee: "marquee 30s linear infinite",
       },
 
       /* ================= KEYFRAMES ================= */
@@ -63,6 +65,10 @@ module.exports = {
           "100%": {
             transform: "translate(0px,0px) rotate(0deg)",
           },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
         },
       },
     },

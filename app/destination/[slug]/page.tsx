@@ -28,15 +28,18 @@ export async function generateMetadata({params}) {
 
 
 export default async function Page({params}){
+  const {slug} = await params
+
 
       const Universityres = await serverInstance.get("/universities?location_alias=ivy-league")
 
-  const Faqres = await  serverInstance.get("/faqs/public/list?type=General")
+  const Faqres = await  serverInstance.get(`/faqs/public/list?type=${slug}`)
   const imageRes = await serverInstance.get("/testimonials?type=image&limit=6")
 
-  const {slug} = await params
 
   const Pageres =   await serverInstance.get(`/page-information/slug/${slug}`)
+
+  const videoRes = await serverInstance.get("/testimonials?type=video&limit=6")
   
 
 
@@ -45,6 +48,6 @@ export default async function Page({params}){
 
 
     return(
-        <CountryDetails Universityres = {Universityres?.data?.result} Faqres = {Faqres.data.data} pageData={Pageres?.data?.data} imageData= {imageRes.data.data}  />
+        <CountryDetails Universityres = {Universityres?.data?.result} Faqres = {Faqres.data.data} pageData={Pageres?.data?.data} imageData= {imageRes.data.data} videoRes = {videoRes.data}  />
     )
 }

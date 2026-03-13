@@ -304,7 +304,7 @@ export const ModernSelect = ({
       )}
       
       <Select.Root 
-        value={value && value} 
+        value={value || ""} 
         onValueChange={onChange}
         open={open}
         onOpenChange={setOpen}

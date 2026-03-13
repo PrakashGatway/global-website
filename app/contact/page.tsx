@@ -4,7 +4,7 @@ import { serverInstance } from "../axiosInstance";
 export default async function page(){
 
   const res = await serverInstance.get("page-information/slug/contact")
-    const Faqres= await  serverInstance.get("/faqs/public/list?type=General")
+    const Faqres= await  serverInstance.get("/faqs/public/list?type=contact")
 
 
 

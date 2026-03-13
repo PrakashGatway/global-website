@@ -35,7 +35,7 @@ export default async function Page({ params }) {
     serverInstance.get(`/page-information/slug/${slug}`),
     serverInstance.get("/testimonials?type=caseStudy"),
      serverInstance.get("/testimonials?type=image"),
-         serverInstance.get("/faqs/public/list?type=General"),
+         serverInstance.get(`/faqs/public/list?type=${slug}`),
          serverInstance.get(`/universities?location_alias=${slug}`),
          serverInstance.get(`/blogs?catslug=${slug}`),
          serverInstance.get(`/universities/flat?${slug}&limit=10`),

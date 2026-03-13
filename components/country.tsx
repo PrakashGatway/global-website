@@ -11,13 +11,49 @@ import Balloon from './balloon'
 import { useState } from 'react'
 import EligibilitySection from './Eligibility'
 
-export default function CountryDetails({ Universityres, Faqres, pageData, imageData }) {
+export default function CountryDetails({ Universityres, Faqres, pageData, imageData,videoRes }) {
 
   const [expanded, setExpanded] = useState(false);
 
 
+  const [playingIndex, setPlayingIndex] = useState(null);
+
+  const getYoutubeId = (url) => {
+  const regExp = /v=([^&]+)/;
+  const match = url.match(regExp);
+  return match ? match[1] : "";
+};
 
 
+console.log(videoRes)
+
+  const services = [
+    {
+      title: "FREE Profile Evaluation",
+      description: "Assess your eligibility for German universities",
+      icon: "/icons/evaluation.svg"
+    },
+    {
+      title: "Course & University Selection",
+      description: "Find programs matching your goals and budget",
+      icon: "/icons/university.svg"
+    },
+    {
+      title: "Application Assistance",
+      description: "Complete support for Uni-Assist and direct applications",
+      icon: "/icons/application.svg"
+    },
+    {
+      title: "SOP & LOR Preparation",
+      description: "Expert editing and guidance for strong applications",
+      icon: "/icons/document.svg"
+    },
+    {
+      title: "Scholarship Guidance",
+      description: "Identify and apply for DAAD and other scholarships",
+      icon: "/icons/scholarship.svg"
+    },
+  ];
 
 
   // Split scholarships into left and right columns
@@ -59,79 +95,80 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
 
   const handleToggle = () => {
-  
-
-  setExpanded(!expanded);
 
 
-};
+    setExpanded(!expanded);
+
+
+  };
+
+  console.log(pageData?.sections?.whyStudy)
 
 
 
   return (
     <>
       <section>
-        {/* Hero Section - ORIGINAL (UNCHANGED) */}
-        <div
-          className="w-full min-h-screen sm:h-[80vh] relative flex items-center justify-start"
-          style={{
-            backgroundImage: `url(${pageData?.sections?.hero?.heroImagee || "/images/country-bg.jpeg"})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/50 lg:h-106 lg:top-40"></div>
+  <div
+    className="w-full min-h-[70vh] sm:h-[88vh] relative flex items-center justify-start"
+    style={{
+      backgroundImage: `url(${pageData?.sections?.hero?.heroImagee || "/images/country-bg.jpeg"})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}
+  >
+    {/* Content Wrapper */}
+    <div className="z-10 w-full h-full flex flex-col justify-center">
 
-          {/* Content */}
-          <div className="relative z-10 w-full h-full flex flex-col justify-center px-4 md:px-8 lg:px-16">
+      {/* Overlay */}
+      <div className="bg-black/50 w-full flex items-center">
 
-            {/* 🎈 Balloon */}
-            <div
+        <div className="relative w-full px-6 sm:px-10 lg:px-10 py-10">
+
+          {/* Balloon */}
+          <div
+            className="
+            absolute
+            left-2 top-6
+            sm:left-6 sm:top-10
+            lg:left-15 lg:-top-25
+            z-10
+          "
+          >
+            <Balloon Pageres={pageData} />
+          </div>
+
+          {/* Text Content */}
+          <div className="max-w-xl lg:max-w-2xl lg:ml-20">
+
+            {/* Heading */}
+            <h1
               className="
-              absolute
-              left-6 -top-80
-              sm:left-12 sm:top-24
-              lg:left-15 lg:-top-0
-            "
-            >
-              <Balloon Pageres={pageData} />
-            </div>
-
-            {/* TEXT BLOCK */}
-            <div
-              className="
-              absolute
-              
-              sm:left-12 sm:top-40
-              lg:top-43 lg:left-40
-              
-            "
-            >
-              {/* Heading */}
-              <h1 className="
-              text-lg sm:text-4xl md:text-5xl lg:text-5xl
+              text-2xl sm:text-4xl md:text-5xl lg:text-4xl
               font-bold text-white
               text-left
-              mb-6 max-w-xl lg:max-w-xl
-            ">
-                {pageData?.sections?.hero?.title || "Study in Germany"}
-                <p className='text-white text-sm mt-5'
-                  dangerouslySetInnerHTML={{
-                    __html: pageData?.sections?.hero?.subtitle || ""
-                  }}
-                />
-              </h1>
+              mb-6
+            "
+            >
+              {pageData?.sections?.hero?.title || "Study in Germany"}
+            </h1>
 
+            {/* Subtitle */}
+            <p
+              className="text-white text-sm sm:text-base mt-3 max-w-full sm:max-w-[79%]"
+              dangerouslySetInnerHTML={{
+                __html: pageData?.sections?.hero?.subtitle || "",
+              }}
+            />
 
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 mt-6">
 
-              {/* Button */}
-              <div className='lg:flex gap-4'>
-                <a href={pageData?.sections?.hero?.ctaLink1 || "/contact"}>
-                  <button className="
+              <a href={pageData?.sections?.hero?.ctaLink1 || "/contact"}>
+                <button
+                  className="
                   bg-yellow-400 hover:bg-[#f46c44]
-                  hover:text-white
-                  hover:scale-105
+                  hover:text-white hover:scale-105
                   transition duration-300
                   rounded-full
                   px-5 sm:px-6 md:px-4
@@ -140,20 +177,22 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
                   font-bold text-gray-900
                   text-xs md:text-base lg:text-sm
                   shadow-lg
-                  mb-2
                   cursor-pointer
-                ">
-                    <PhoneIcon size={20} />
-                    <span>{pageData?.sections?.hero?.ctaText1 || "Talk to an Expert Counsellor for FREE"}</span>
-                  </button>
-                </a>
+                "
+                >
+                  <PhoneIcon size={20} />
+                  <span>
+                    {pageData?.sections?.hero?.ctaText1 ||
+                      "Talk to an Expert Counsellor for FREE"}
+                  </span>
+                </button>
+              </a>
 
-                <a href={pageData?.sections?.hero?.ctaLink2 || "/contact"}>
-                  <button className="
+              <a href={pageData?.sections?.hero?.ctaLink2 || "/contact"}>
+                <button
+                  className="
                   bg-[#f46c44] hover:bg-yellow-400
-                  hover:text-black
-                  hover:scale-105
-                  cursor-pointer
+                  hover:text-black hover:scale-105
                   transition duration-300
                   rounded-full
                   px-5 sm:px-6 md:px-8
@@ -162,33 +201,40 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
                   font-bold text-white
                   text-xs md:text-base lg:text-sm
                   shadow-lg
-                ">
-                    <PhoneIcon size={20} />
-                    <span>{pageData?.sections?.hero?.ctaText2 || "Talk to an Expert Counsellor for FREE"}</span>
-                  </button>
-                </a>
-
-              </div>
+                  cursor-pointer
+                "
+                >
+                  <PhoneIcon size={20} />
+                  <span>
+                    {pageData?.sections?.hero?.ctaText2 ||
+                      "Talk to an Expert Counsellor for FREE"}
+                  </span>
+                </button>
+              </a>
 
             </div>
           </div>
-
-          {/* RIGHT IMAGE */}
-          <div
-            className="hidden lg:block
-            absolute bottom-0 right-0
-            w-[260px] sm:w-[420px] md:w-[600px]
-            lg:w-[900px]
-          "
-          >
-            <img
-              src={pageData?.sections?.hero?.heroImage || "/images/country-hero.png"}
-              className="w-full h-full object-contain"
-              alt=""
-            />
-          </div>
         </div>
-      </section>
+      </div>
+    </div>
+
+    {/* Right Image */}
+    <div
+      className="
+      hidden lg:block
+      absolute bottom-0 right-0
+      w-[260px] sm:w-[420px] md:w-[600px]
+      lg:w-[900px] z-10
+      "
+    >
+      <img
+        src={pageData?.sections?.hero?.heroImage || "/images/country-hero.png"}
+        className="w-full h-full object-contain"
+        alt=""
+      />
+    </div>
+  </div>
+</section>
 
       {/* Form Section - RESPONSIVE */}
       <section className="px-4 sm:px-6 lg:pr-10 py-12 sm:py-16 lg:py-20 relative overflow-hidden">
@@ -243,13 +289,13 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
           {/* ================= RIGHT CONTENT ================= */}
           <div className="relative z-10">
-            <h4 className="text-red-600 text-2xl sm:text-3xl font-medium mb-2">
+            <h4 className="text-[#F46C44] text-2xl sm:text-3xl font-medium mb-2">
               {pageData?.sections?.formSection?.title?.split('||')[0]?.trim() || "Overview of"}
             </h4>
 
             <h2 className="text-[#123b73] text-lg sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 relative inline-block">
               {pageData?.sections?.formSection?.title?.split('||')[1]?.trim() || "Study in Germany"}
-              <span className="absolute right-0 -bottom-2 w-12 sm:w-16 h-1 bg-red-600"></span>
+              <span className="absolute right-0 -bottom-2 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
             </h2>
 
             <p
@@ -285,32 +331,33 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           {/* Heading */}
           <h2 className="text-white text-lg sm:text-4xl md:text-5xl font-bold relative inline-block">
             <span>{pageData?.sections?.whyChooseUs?.title?.split("||")[0]}</span>
-            <span>{pageData?.sections?.whyChooseUs?.title?.split("||")[1]}</span>
-
+            <span>{pageData?.sections?.whyChooseUs?.title?.split("||")[1]}
             <span className="block w-12 sm:w-16 h-1 bg-yellow-400 absolute left-0 mt-2 sm:mt-3"></span>
+
+            </span>
+
           </h2>
 
           {/* Paragraph */}
           <div className="mt-6 sm:mt-8">
 
-  <p
-    className={`text-white text-xs sm:text-lg md:text-xl leading-relaxed transition-all duration-300 ${
-      expanded ? "" : "line-clamp-3"
-    }`}
-    dangerouslySetInnerHTML={{
-      __html: pageData?.sections?.whyChooseUs?.subtitle ?? "",
-    }}
-  />
+            <p
+              className={`text-white text-xs sm:text-lg md:text-xl leading-relaxed transition-all duration-300 ${expanded ? "" : "line-clamp-3"
+                }`}
+              dangerouslySetInnerHTML={{
+                __html: pageData?.sections?.whyChooseUs?.subtitle ?? "",
+              }}
+            />
 
-  <button
-  type="button"
-  onClick={handleToggle}
-  className="text-yellow-300 mt-3 font-semibold"
->
-  {expanded ? "Read Less" : "Read More"}
-</button>
+            <button
+              type="button"
+              onClick={handleToggle}
+              className="text-yellow-300 mt-3 font-semibold"
+            >
+              {expanded ? "Read Less" : "Read More"}
+            </button>
 
-</div>
+          </div>
 
           {/* Button */}
           <div className="mt-8 sm:mt-10 text-center">
@@ -332,9 +379,11 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           <div className="mb-6 sm:mb-8">
             <h2 className="text-lg sm:text-4xl md:text-5xl font-bold text-[#123b73] relative inline-block">
               <span>{pageData?.sections?.whyStudy?.title.split("||")[0]}</span>
-              <span className='text-[#F46C44]'>{pageData?.sections?.whyStudy?.title.split("||")[1]}</span>
+              <span className='text-[#F46C44]'>{pageData?.sections?.whyStudy?.title.split("||")[1]}
+              <span className="absolute left-0 -bottom-2 w-16 sm:w-20 h-1 bg-[#F46C44]"></span>
 
-              <span className="absolute right-0 -bottom-2 w-16 sm:w-20 h-1 bg-red-600"></span>
+              </span>
+
             </h2>
           </div>
 
@@ -357,7 +406,17 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
                         {item.title}
                       </h4>
                       <p className="text-[#123b73] text-xs sm:text-base">
-                        {item.description}
+                        <ul className="text-[#123b73] text-xs sm:text-base list-disc pl-5 space-y-1">
+  {item.description
+    .split("\n")
+    .filter((line) => line.trim() !== "")
+    .map((line, index) => (
+      <li key={index}>
+        {line.replace("•", "").trim()}
+      </li>
+  ))}
+</ul>
+                       
                       </p>
                     </div>
                   </div>
@@ -371,96 +430,96 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
 
       <section className="w-full bg-white py-1 px-4">
-  <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto">
 
-    {/* Heading */}
-    <div className="text-left mb-12">
-      <h2 className="text-xl lg:text-4xl font-semibold text-gray-900">
-        Popular Courses
-      </h2>
-      <p className="text-gray-500 mt-3 text-sm lg:text-base">
-        Explore our most popular courses trusted by thousands of students
-      </p>
-    </div>
+          {/* Heading */}
+          <div className="text-left mb-12">
+            <h2 className="text-xl lg:text-4xl font-semibold text-gray-900">
+              Popular Courses
+            </h2>
+            <p className="text-gray-500 mt-3 text-sm lg:text-base">
+              Explore our most popular courses trusted by thousands of students
+            </p>
+          </div>
 
-    {/* Cards Grid */}
-    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Cards Grid */}
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
 
-      {/* Card 1 */}
-     <div className="bg-[#f6f7f9] rounded-[28px] border border-[#F46C44]  hover:shadow-md transition duration-300">
-  
-  {/* Image */}
-  <div className="overflow-hidden w-full rounded-[28px]">
-    <img
-      src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
-      alt="Data Science"
-      className="w-full h-[150px] lg:h-[210px] object-cover"
-    />
-  </div>
+            {/* Card 1 */}
+            <div className="bg-[#f6f7f9] rounded-[28px] border border-[#F46C44]  hover:shadow-md transition duration-300">
 
-  <div className=' px-2 lg:px-4 py-3 lg:py-8'>
-    {/* Title */}
-  <h3 className=" text-base lg:text-[18px] font-semibold text-gray-800 ">
-    Web Development
-  </h3>
+              {/* Image */}
+              <div className="overflow-hidden w-full rounded-[28px]">
+                <img
+                  src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
+                  alt="Data Science"
+                  className="w-full h-[150px] lg:h-[210px] object-cover"
+                />
+              </div>
 
-  </div>
+              <div className=' px-2 lg:px-4 py-3 lg:py-8'>
+                {/* Title */}
+                <h3 className=" text-base lg:text-[18px] font-semibold text-gray-800 ">
+                  Web Development
+                </h3>
 
-  
+              </div>
 
-</div>
 
-      {/* Card 2 */}
-      <div className="bg-[#f6f7f9] rounded-[28px] border border-[#F46C44]  hover:shadow-md transition duration-300">
-  
-  {/* Image */}
-  <div className="overflow-hidden rounded-[28px]">
-    <img
-      src="https://images.unsplash.com/photo-1551288049-bebda4e38f71"
-      alt="Data Science"
-      className="w-full h-[150px] lg:h-[210px] object-cover"
-    />
-  </div>
 
-  <div className='px-2 lg:px-4 py-3 lg:py-8'>
-    {/* Title */}
-  <h3 className="text-sm lg:text-[18px] font-semibold text-gray-800 ">
-    Data Science
-  </h3>
+            </div>
 
-  </div>
+            {/* Card 2 */}
+            <div className="bg-[#f6f7f9] rounded-[28px] border border-[#F46C44]  hover:shadow-md transition duration-300">
 
-  
+              {/* Image */}
+              <div className="overflow-hidden rounded-[28px]">
+                <img
+                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71"
+                  alt="Data Science"
+                  className="w-full h-[150px] lg:h-[210px] object-cover"
+                />
+              </div>
 
-</div>
+              <div className='px-2 lg:px-4 py-3 lg:py-8'>
+                {/* Title */}
+                <h3 className="text-sm lg:text-[18px] font-semibold text-gray-800 ">
+                  Data Science
+                </h3>
 
-      {/* Card 3 */}
-      <div className="bg-[#f6f7f9] rounded-[28px] border-2 border-[#F46C44]  hover:shadow-md transition duration-300">
-  
-  {/* Image */}
-  <div className="overflow-hidden rounded-[28px]">
-    <img
-      src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
-      alt="Data Science"
-      className="w-full h-[150px] lg:h-[210px] object-cover"
-    />
-  </div>
+              </div>
 
-  <div className='px-2 lg:px-4 py-3 lg:py-8'>
-    {/* Title */}
-  <h3 className="text-sm lg:text-[18px] font-semibold text-gray-800 ">
-    Computer Science
-  </h3>
 
-  </div>
 
-  
+            </div>
 
-</div>
+            {/* Card 3 */}
+            <div className="bg-[#f6f7f9] rounded-[28px] border-2 border-[#F46C44]  hover:shadow-md transition duration-300">
 
-    </div>
-  </div>
-</section>
+              {/* Image */}
+              <div className="overflow-hidden rounded-[28px]">
+                <img
+                  src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
+                  alt="Data Science"
+                  className="w-full h-[150px] lg:h-[210px] object-cover"
+                />
+              </div>
+
+              <div className='px-2 lg:px-4 py-3 lg:py-8'>
+                {/* Title */}
+                <h3 className="text-sm lg:text-[18px] font-semibold text-gray-800 ">
+                  Computer Science
+                </h3>
+
+              </div>
+
+
+
+            </div>
+
+          </div>
+        </div>
+      </section>
 
 
       {/* Life in Germany Section - RESPONSIVE */}
@@ -470,7 +529,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           <div className="mb-8 md:mb-12">
             <h1 className="text-lg sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-4 relative">
               {pageData?.sections?.lifeIn?.title || "Life in Germany"}
-              <span className="w-20 sm:w-25 h-1.5 absolute right-1/4 sm:right-80 -bottom-2 sm:-bottom-4 bg-red-600 rounded-full"></span>
+              <span className="w-20 sm:w-25 h-1.5 absolute right-1/4 sm:left-0 -bottom-2 sm:-bottom-4 bg-[#F46C44] rounded-full"></span>
             </h1>
           </div>
 
@@ -562,10 +621,10 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         <UniversityCard university={Universityres} />
       </div>
 
-      <EligibilitySection/>
+      <EligibilitySection />
 
 
-      
+
 
 
 
@@ -580,10 +639,10 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
                 {/* Heading */}
                 <div className="mb-6 sm:mb-8">
                   <h2 className="text-primary text-lg sm:text-3xl md:text-4xl font-bold">
-                    <span className='text-red-600 block'>{item.title.split("||")[0]}</span>
+                    <span className='text-[#F46C44] block'>{item.title.split("||")[0]}</span>
                     <div className='flex gap-2'>
                       <span className=' mt-1 sm:mt-2'>{item.title.split("||")[1]}</span>
-                      <span className=' mt-1 sm:mt-2 border-b-4 border-red-600 inline-block'>{item.title.split("||")[2]}</span>
+                      <span className=' mt-1 sm:mt-2 border-b-4 border-[#F46C44] inline-block'>{item.title.split("||")[2]}</span>
                     </div>
 
                   </h2>
@@ -650,6 +709,53 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           </div>
         </div>
       </section>
+
+      <section className='bg-white'>
+         <div className="max-w-7xl mx-auto  py-10">
+
+        {/* Heading */}
+        <h2 className="text-4xl font-bold text-primary mb-10">
+          <span></span>
+          Germany Study Abroad Services
+          <span></span>
+        </h2>
+
+        {/* Services Grid */}
+        <div className="grid md:grid-cols-2 gap-8">
+
+          {services.map((service, index) => (
+            <div
+              key={index}
+              className="bg-gray-200 rounded-xl p-6 flex gap-4 hover:shadow-md transition"
+            >
+
+              {/* Icon */}
+              <div className="w-10 h-10 flex items-center justify-center text-orange-500">
+                <img src={service.icon} alt="" />
+              </div>
+
+              {/* Content */}
+              <div>
+                <h3 className="font-semibold text-lg text-gray-900">
+                  {service.title}
+                </h3>
+
+                <p className="text-gray-600 text-sm mt-1">
+                  {service.description}
+                </p>
+              </div>
+
+            </div>
+          ))}
+
+        </div>
+
+      </div>
+
+      </section>
+
+
+     
 
       {/* Scholarships Section - RESPONSIVE */}
       <section className="w-full bg-[#ef6a42] py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
@@ -723,43 +829,54 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           {/* ===== HEADING ===== */}
           <div className="mb-10 sm:mb-12 lg:mb-16">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl mb-2">
-              <span className="text-red-700">
+              <span className="text-[#F46C44]">
                 {pageData?.sections?.videoTestimonials?.title?.split('||')[0]?.trim() || "Video"}
               </span>{" "} <br />
               <span className="text-primary font-bold relative inline-block">
                 {pageData?.sections?.videoTestimonials?.title?.split('||')[1]?.trim() || "Testimonials"}
-                <span className="absolute right-0 bottom-0 w-20 sm:w-25 h-[2px] lg:h-1 bg-red-700"></span>
+                <span className="absolute right-0 bottom-0 w-20 sm:w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
               </span>
             </h2>
           </div>
 
           {/* ===== CARDS ===== */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-            {videos.map((item, index) => (
-              <div key={index} className="relative">
+            {videoRes.data.map((item, index) => (
+  <a
+    key={index}
+    href={item.videoUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="relative block"
+  >
+    {/* IMAGE */}
+    <div className="overflow-hidden rounded-2xl sm:rounded-3xl">
+      <img
+        src={item.image}
+        alt={item.name}
+        className="w-full h-[400px] sm:h-[480px] lg:h-[520px] object-cover object-top rounded-2xl sm:rounded-3xl"
+      />
+      <div className="absolute inset-0 flex items-center justify-center">
+  <div className="bg-white/80 rounded-full p-4 text-xl">
+    ▶
+  </div>
+</div>
+    </div>
 
-                {/* IMAGE */}
-                <div className="overflow-hidden rounded-2xl sm:rounded-3xl">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-[400px] sm:h-[480px] lg:h-[520px] object-cover object-top rounded-2xl sm:rounded-3xl"
-                  />
-                </div>
+    {/* INFO CARD */}
+    <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[90%] sm:w-[85%] lg:w-full lg:left-[213.5px] lg:translate-x-[-50%] bg-white rounded-xl sm:rounded-2xl border border-gray-500 shadow-md px-3 sm:px-4 py-3 sm:py-5 text-left">
+      
+      <h3 className="font-bold text-primary mb-1 sm:mb-2 text-sm sm:text-base">
+        {item.name}
+      </h3>
 
-                {/* INFO CARD */}
-                <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[90%] sm:w-[85%] lg:w-full lg:left-[213.5px] lg:translate-x-[-50%] bg-white rounded-xl sm:rounded-2xl border border-gray-500 shadow-md px-3 sm:px-4 py-3 sm:py-5 text-left">
-                  <h3 className="font-bold text-primary mb-1 sm:mb-2 text-sm sm:text-base">
-                    {item.name}
-                  </h3>
+      <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+        "{item.message}"
+      </p>
 
-                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                    "{item.text}"
-                  </p>
-                </div>
-
-              </div>
-            ))}
+    </div>
+  </a>
+))}
           </div>
 
         </div>

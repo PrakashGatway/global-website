@@ -356,7 +356,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
             className=" p-6 sm:p-8 lg:p- rounded-2xl w-full lg:w-auto "
           >
 
-            <h2 className="text-2xl lg:text-3xl font-semibold mb-8 text-white">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 text-white">
               <span>{homePage.formSection.title}</span>
             </h2>
 
@@ -381,11 +381,11 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
             },
           })}
           type="text"
-          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm"
+          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
         />
 
         {errors.fullname && (
-          <p className="text-red-200 text-xs mt-1">{errors.fullname.message}</p>
+          <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.fullname.message}</p>
         )}
       </motion.div>
 
@@ -404,11 +404,11 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
             },
           })}
           type="email"
-          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm"
+          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
         />
 
         {errors.email && (
-          <p className="text-red-200 text-xs mt-1">{errors.email.message}</p>
+          <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.email.message}</p>
         )}
       </motion.div>
 
@@ -427,11 +427,11 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
             },
           })}
           type="tel"
-          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm"
+          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
         />
 
         {errors.phone && (
-          <p className="text-red-200 text-xs mt-1">{errors.phone.message}</p>
+          <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.phone.message}</p>
         )}
       </motion.div>
 
@@ -444,7 +444,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         <Controller
           name="country"
           control={control}
-          rules={{ required: "Please select a country" }}
           render={({ field }) => (
             <ModernSelect
               options={countries}
@@ -454,10 +453,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
             />
           )}
         />
-
-        {errors.country && (
-          <p className="text-red-200 text-xs mt-1">{errors.country.message}</p>
-        )}
       </motion.div>
 
       {/* City */}
@@ -467,16 +462,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         </label>
 
         <input
-          {...register("city", {
-            required: "City is required",
-          })}
+          {...register("city")}
           type="text"
-          className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none"
+          className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
         />
-
-        {errors.city && (
-          <p className="text-red-200 text-xs mt-1">{errors.city.message}</p>
-        )}
       </motion.div>
 
       {/* Program */}
@@ -486,16 +475,11 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         </label>
 
         <input
-          {...register("course", {
-            required: "Program is required",
-          })}
+          {...register("course")}
           type="text"
-          className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none"
+          className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
         />
 
-        {errors.course && (
-          <p className="text-red-200 text-xs mt-1">{errors.course.message}</p>
-        )}
       </motion.div>
 
       {/* Intake */}
@@ -505,9 +489,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         </label>
 
         <select
-          {...register("month", {
-            required: "Please select intake",
-          })}
+          {...register("month")}
           className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white bg-[#F46C44] focus:outline-none"
         >
           <option value="">Select Intake</option>
@@ -516,9 +498,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
           <option value="September">September</option>
         </select>
 
-        {errors.month && (
-          <p className="text-red-200 text-xs mt-1">{errors.month.message}</p>
-        )}
       </motion.div>
 
       {/* Submit */}
