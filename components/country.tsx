@@ -75,23 +75,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
 
 
-  const videos = [
-    {
-      name: "Dev Malhotra – Germany",
-      text: "Accurate advice and quick responses kept the entire admission process perfectly streamlined.",
-      image: "https://media.istockphoto.com/id/1444077739/photo/college-study-and-education-student-man-portrait-with-back-to-school-backpack-and-portfolio.jpg?s=612x612&w=0&k=20&c=PAQmqKzYd3OiKhlfrT1DVMQNkGu-drX4rtJ5p6y7D8c=",
-    },
-    {
-      name: "Dev Malhotra – Germany",
-      text: "Accurate advice and quick responses kept the entire admission process perfectly streamlined.",
-      image: "https://media.istockphoto.com/id/534428407/photo/education-is-the-movement-from-darkness-to-light.jpg?s=612x612&w=0&k=20&c=ngvofAm0Rmdsvob5eedpoMrT0PWy5A3jsBbGIBfmkkA=",
-    },
-    {
-      name: "Dev Malhotra – Germany",
-      text: "Accurate advice and quick responses kept the entire admission process perfectly streamlined.",
-      image: "https://media.istockphoto.com/id/1175415593/photo/excited-student-having-break-between-classes-near-university.jpg?s=612x612&w=0&k=20&c=0o6CvDpEcUP2B95SqltvFOCmZqB-joI1TxEmX900ADo=",
-    },
-  ];
+
 
 
   const handleToggle = () => {
@@ -102,7 +86,6 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
   };
 
-  console.log(pageData?.sections?.whyStudy)
 
 
 
@@ -435,11 +418,11 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           {/* Heading */}
           <div className="text-left mb-12">
             <h2 className="text-xl lg:text-4xl font-semibold text-gray-900">
-                            {pageData.sections.PopularCourses.title}
+                            {pageData?.sections?.PopularCourses?.title}
 
             </h2>
             <p className="text-gray-500 mt-3 text-sm lg:text-base">
-              {pageData.sections.PopularCourses.subtitle}
+              {pageData?.sections?.PopularCourses?.subtitle}
             </p>
           </div>
 
@@ -448,13 +431,13 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
             {/* Card 1 */}
             {
-              pageData.sections.PopularCourses.coursesitem.map((item,i)=>(
+             pageData?.sections?.PopularCourses?.coursesitem && pageData?.sections?.PopularCourses?.coursesitem?.map((item,i)=>(
                   <div className="bg-[#f6f7f9] rounded-[28px] border border-[#F46C44]  hover:shadow-md transition duration-300">
 
               {/* Image */}
               <div className="overflow-hidden w-full rounded-[28px]">
                 <img
-                  src={item.image||"https://images.unsplash.com/photo-1516321318423-f06f85e504b3"}
+                  src={item?.image||"https://images.unsplash.com/photo-1516321318423-f06f85e504b3"}
                   alt="Data Science"
                   className="w-full h-[150px] lg:h-[210px] object-cover"
                 />
@@ -463,7 +446,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
               <div className=' px-2 lg:px-4 py-3 lg:py-8'>
                 {/* Title */}
                 <h3 className=" text-base lg:text-[18px] font-semibold text-gray-800 ">
-                 {item.coursesname}
+                 {item?.coursesname}
                 </h3>
 
               </div>
@@ -688,7 +671,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           {/* Services Grid */}
           <div className="grid md:grid-cols-2 gap-8">
 
-            {pageData.sections.servicesection.serviceitem.map((service, index) => (
+            {pageData?.sections?.servicesection?.serviceitem && pageData?.sections?.servicesection?.serviceitem?.map((service, index) => (
               <div
                 key={index}
                 className="bg-gray-200 rounded-xl p-6 flex gap-4 hover:shadow-md transition"
@@ -696,17 +679,17 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
                 {/* Icon */}
                 <div className="w-10 h-10 flex items-center justify-center text-orange-500">
-                  <img src={service.icon} alt="" />
+                  <img src={service?.icon} alt="" />
                 </div>
 
                 {/* Content */}
                 <div>
                   <h3 className="font-semibold text-lg text-gray-900">
-                    {service.itemtitle}
+                    {service?.itemtitle}
                   </h3>
 
                   <p className="text-gray-600 text-sm mt-1">
-                    {service.itemsubtitle}
+                    {service?.itemsubtitle}
                   </p>
                 </div>
 
