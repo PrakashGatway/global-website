@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-export default function EligibilitySection() {
+export default function EligibilitySection({pageData}) {
 
   const [open, setOpen] = useState(0);
 
@@ -44,28 +44,22 @@ export default function EligibilitySection() {
         {/* LEFT CONTENT */}
         <div>
           <h2 className="text-lg lg:text-3xl font-semibold text-gray-900 mb-4">
-            Eligibility Criteria for Students to Study in Germany
+            {pageData.sections.eligibilityCriteria.title}
           </h2>
 
           <div className="w-16 h-[3px] bg-orange-500 mb-6"></div>
 
           <p className=" text-sm lg:text-base text-gray-600 mb-4">
-            Attention aspiring scholars! Immerse yourself in academic excellence
-            and rich cultural heritage by choosing Germany as your study destination.
-            Home to renowned institutions such as Heidelberg and Technical
-            University of Munich, Germany offers a top-tier education.
+            {pageData.sections.eligibilityCriteria.subtitle}
+            
           </p>
 
-          <p className="text-sm lg:text-base text-gray-600">
-            Whether you seek to delve deep into a specific field or create a
-            bespoke interdisciplinary program, Germany empowers you to tailor
-            your academic journey and excel as a leader in your chosen field.
-          </p>
+       
         </div>
 
         {/* RIGHT ACCORDION */}
        <div className="space-y-4">
-  {items.map((item, i) => (
+  {pageData.sections.eligibilityCriteria.eligibilityItem.map((item, i) => (
     <div
       key={i}
       className={`border transition-all duration-300 overflow-hidden
@@ -80,7 +74,7 @@ export default function EligibilitySection() {
         className="w-full flex justify-between items-center px-4 py-3 lg:px-6 lg:py-4 text-left"
       >
         <span className="text-sm lg:text-base font-medium text-gray-800">
-          {item.title}
+          {item.itemname}
         </span>
 
         <span className="text-orange-500 text-lg lg:text-xl">
@@ -88,12 +82,16 @@ export default function EligibilitySection() {
         </span>
       </button>
 
-      {/* Content */}
-      {open === i && (
-        <div className="px-4 pb-4 lg:px-6 lg:pb-6 text-xs lg:text-sm text-gray-600">
-          {item.content}
-        </div>
-      )}
+     {/* Content */}
+{open === i && (
+  <div className="px-4 pb-4 lg:px-6 lg:pb-6 text-xs lg:text-sm text-gray-600">
+    <ul className="list-disc pl-5 space-y-1">
+      {item.subItems.split(",").map((sub, idx) => (
+        <li key={idx}>{sub.trim()}</li>
+      ))}
+    </ul>
+  </div>
+)}
     </div>
   ))}
 </div>
