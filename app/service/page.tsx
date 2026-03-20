@@ -29,7 +29,7 @@ export default async function Page() {
     serverInstance.get("/page-information/slug/service"),
     serverInstance.get("/testimonials?type=image"),
     serverInstance.get(`/galleries/public/list?type=visa`),
-    serverInstance.get("/faqs/public/list?type=General"),
+    serverInstance.get("/faqs/public/list?type=General&limit=15"),
 
 
   ]);

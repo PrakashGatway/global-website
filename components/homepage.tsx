@@ -229,10 +229,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               >
                 {homePage?.hero?.title ? (
                   <span className="block text-[#ea6c46]">
-                    {homePage.hero.title.split('||')[0]?.trim()}
+                    {homePage?.hero?.title.split('||')[0]?.trim()}
 
                     <span className="relative inline-block mt-3 font-bold text-primary">
-                      {homePage.hero.title.split('||')[1]?.trim()}
+                      {homePage?.hero?.title.split('||')[1]?.trim()}
                       {/* <span className="absolute left-0 -bottom-0 w-full h-[2px] bg-[#f46c44]">
                   <span className="absolute right-0 -top-[3px] w-2 h-2 rounded-full bg-[#f46c44]" />
                 </span> */}
@@ -249,9 +249,9 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               >
                 {homePage?.hero?.subtitle ? (
                   <>
-                    {homePage.hero.subtitle.split('||')[0]?.trim()}{" "}
+                    {homePage?.hero?.subtitle.split('||')[0]?.trim()}{" "}
                     <span className="font-semibold text-[#f46c44]">
-                      {homePage.hero.subtitle.split('||')[1]?.trim()}
+                      {homePage?.hero?.subtitle.split('||')[1]?.trim()}
                     </span>
                   </>
                 ) : null}
@@ -320,7 +320,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                     className="relative z-1  -bottom-10"
                   >
                     <Image
-                      src={homePage.hero.heroImage.trim()}
+                      src={homePage?.hero?.heroImage.trim()}
                       width={450}
                       height={900}
                       alt="cap"
@@ -357,7 +357,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
           >
 
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 text-white">
-              <span>{homePage.formSection.title}</span>
+              <span>{homePage?.formSection?.title}</span>
             </h2>
 
              <form

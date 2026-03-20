@@ -108,12 +108,14 @@ import {
   File,
   Loader2,
   UploadCloud,
-  XCircle
+  XCircle,
+  Linkedin
 } from "lucide-react"
 import Link from "next/link"
 import { format, set } from "date-fns"
 import { useParams } from "next/navigation"
 import axiosInstance from "@/app/axiosInstance"
+import { useNotification } from "@/components/dashboard/Notification"
 
 // Types based on your schema
 interface Document {
@@ -210,6 +212,16 @@ export default function ApplicationDetailPage() {
   const [activeNoteTab, setActiveNoteTab] = useState<'all' | 'student' | 'ooshas' | 'admin'>('all')
   const [loading, setLoading] = useState(true)
   const [application, setApplication] = useState()
+  const [openShare,setOpenShare] = useState(false)
+  const [copied, setCopied] = useState(false);
+
+  const [showIntakeModal, setShowIntakeModal] = useState(false);
+const [selectedIntake, setSelectedIntake] = useState("");
+
+
+const [activeFilter, setActiveFilter] = useState<'all' | 'pending' | 'approved' | 'rejected' | 'review'>('all');
+
+
 
 
   useEffect(() => {
@@ -221,6 +233,7 @@ export default function ApplicationDetailPage() {
       setLoading(true)
       const response = await axiosInstance.get(`/applications/${params.id}`)
       const data = response.data?.data
+      console.log(data)
       setApplication(data)
     } catch (error) {
       console.error('Error fetching course details:', error)
@@ -440,6 +453,16 @@ export default function ApplicationDetailPage() {
     }
   ]
 
+
+  const filteredRequirements =
+  activeFilter === "all"
+    ? requirements
+    : requirements.filter((r) => {
+        if (activeFilter === "review") return r.status === "in_review";
+        return r.status === activeFilter;
+      });
+
+
   // Helper functions
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -581,10 +604,12 @@ export default function ApplicationDetailPage() {
 
   const filteredActivity = activityLogs
 
+  const url = window.location.href;
+  const notification = useNotification()
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8">
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8 ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="animate-pulse space-y-6">
             {/* Breadcrumb skeleton */}
@@ -618,14 +643,277 @@ export default function ApplicationDetailPage() {
   }
 
   return (
-    <main className="min-h-screen">
+    
+    <main className="min-h-screen overflow-y-auto">
+      
+      {showIntakeModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    
+    {/* Modal */}
+    <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-4">
+      
+      {/* Header */}
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-lg font-semibold">Change Intake</h2>
+        <button onClick={() => setShowIntakeModal(false)}>✖</button>
+      </div>
+
+      {/* Intake Options */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[400px] overflow-y-auto">
+        
+        {[
+          "Sep 2026",
+          "Jan 2027",
+          "May 2027",
+          "Sep 2027",
+          "Jan 2028",
+        ].map((item) => (
+          <div
+            key={item}
+            onClick={() => setSelectedIntake(item)}
+            className={`
+              border rounded-lg p-3 cursor-pointer transition
+              ${selectedIntake === item
+                ? "border-blue-500 bg-blue-50"
+                : "border-gray-200 hover:border-gray-400"}
+            `}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <input
+                type="radio"
+                checked={selectedIntake === item}
+                readOnly
+              />
+              <p className="font-medium text-sm">{item}</p>
+            </div>
+
+            <p className="text-xs text-gray-500">Success: High (75%)</p>
+            <p className="text-xs text-gray-500">Status: Open</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Footer */}
+      <div className="flex justify-end gap-2 mt-4">
+        <button
+          onClick={() => setShowIntakeModal(false)}
+          className="px-3 py-1 text-sm border rounded-md"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={() => {
+            console.log("Selected Intake:", selectedIntake);
+            // 👉 API call here
+            setShowIntakeModal(false);
+          }}
+          className="px-4 py-1 text-sm bg-blue-600 text-white rounded-md"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+      {openShare && (
+  <AnimatePresence>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={() => setOpenShare(false)}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.95, opacity: 0, y: 20 }}
+        transition={{ type: "spring", duration: 0.5 }}
+        className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-orange-50 to-white">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-orange-100 rounded-xl">
+              <Share2 className="w-5 h-5 text-orange-600" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Share Application</h2>
+              <p className="text-xs text-slate-500">Share this application with others</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setOpenShare(false)}
+            className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-slate-600"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          
+          {/* URL Input Group */}
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+              <LinkIcon className="w-3.5 h-3.5" />
+              Application Link
+            </label>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  value={url}
+                  readOnly
+                  className="w-full bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all font-mono truncate pr-10"
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <LinkIcon className="w-4 h-4 text-slate-400" />
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(url)
+                  setCopied(true)
+                  // Show notification with sound
+                  notification.success(
+                    "Link Copied!",
+                    "Application link has been copied to clipboard"
+                  )
+                  setTimeout(() => setCopied(false), 2000)
+                }}
+                className={`
+                  px-5 py-3.5 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 min-w-[120px] justify-center shadow-lg
+                  ${copied 
+                    ? 'bg-green-500 text-white shadow-green-200' 
+                    : 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 shadow-orange-200'}
+                `}
+              >
+                <AnimatePresence mode="wait">
+                  {copied ? (
+                    <motion.div
+                      key="copied"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="flex items-center gap-2"
+                    >
+                      <Check className="w-4 h-4" />
+                      <span>Copied!</span>
+                    </motion.div>
+                 
+                  ) : (
+                    <motion.div
+                      key="copy"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="flex items-center gap-2"
+                    >
+                      <Copy className="w-4 h-4" />
+                      <span>Copy</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </button>
+            </div>
+          </div>
+
+          {/* Social Actions */}
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+              <Share2 className="w-3.5 h-3.5" />
+              Share Via
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              <button 
+                onClick={() => {
+                  window.location.href = `mailto:?subject=Application Share&body=${url}`
+                  notification.info("Opening Email", "Your email client will open shortly")
+                }}
+                className="flex flex-col items-center gap-2.5 p-4 rounded-xl border border-slate-200 hover:bg-blue-50 hover:border-blue-200 transition-all group"
+              >
+                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                  <Mail className="w-5 h-5 text-blue-600" />
+                </div>
+                <span className="text-xs font-medium text-slate-600">Email</span>
+              </button>
+              
+              <button 
+                onClick={() => {
+                  window.open(`https://wa.me/?text=${encodeURIComponent(url)}`, '_blank')
+                  notification.success("WhatsApp", "Opening WhatsApp...")
+                }}
+                className="flex flex-col items-center gap-2.5 p-4 rounded-xl border border-slate-200 hover:bg-green-50 hover:border-green-200 transition-all group"
+              >
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                  <MessageCircle className="w-5 h-5 text-green-600" />
+                </div>
+                <span className="text-xs font-medium text-slate-600">WhatsApp</span>
+              </button>
+
+              <button 
+                onClick={() => {
+                  window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank')
+                  notification.info("LinkedIn", "Opening LinkedIn...")
+                }}
+                className="flex flex-col items-center gap-2.5 p-4 rounded-xl border border-slate-200 hover:bg-indigo-50 hover:border-indigo-200 transition-all group"
+              >
+                <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+                  <Linkedin className="w-5 h-5 text-indigo-600" />
+                </div>
+                <span className="text-xs font-medium text-slate-600">LinkedIn</span>
+              </button>
+            </div>
+          </div>
+
+          {/* QR Code Section */}
+          <div className="pt-4 border-t border-slate-100">
+            <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+              <div className="p-2 bg-white border border-slate-200 rounded-lg shadow-sm">
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent(url)}`} 
+                  alt="QR Code" 
+                  className="w-20 h-20 opacity-90"
+                />
+              </div>
+              <div className="text-sm text-slate-600">
+                <p className="font-semibold text-slate-900">Scan to Open</p>
+                <p className="text-xs text-slate-500 mt-1">Scan this code to open application directly on mobile</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+          <p className="text-xs text-slate-500">Link expires in 30 days</p>
+          <button 
+            onClick={() => {
+              navigator.clipboard.writeText(url)
+              notification.success("Link Copied!", "Application link has been copied to clipboard")
+            }}
+            className="text-xs text-orange-600 hover:text-orange-700 font-medium flex items-center gap-1"
+          >
+            <Copy className="w-3.5 h-3.5" />
+            Copy Again
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  </AnimatePresence>
+)}
       {/* Header */}
       <div className="sticky top-2 z-10">
         <div className="container mx-auto px-2 py-1">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Link
-                href="/application"
+                href="/dashboard/application"
                 className="p-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
@@ -637,9 +925,7 @@ export default function ApplicationDetailPage() {
                   <div>
 
                   </div>
-                  <span className="px-3  py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-mono border border-gray-200">
-                    ID: {application?.applicationNumber}
-                  </span>
+               
                   {/* <span className={`px-3 py-1 rounded-lg text-xs font-medium border flex items-center gap-1 ${application?.paymentStatus === 'Completed' ? 'bg-green-100 text-green-700 border-green-200' :
                     application?.paymentStatus === 'Failed' ? 'bg-red-100 text-red-700 border-red-200' :
                       'bg-yellow-100 text-yellow-700 border-yellow-200'
@@ -648,7 +934,7 @@ export default function ApplicationDetailPage() {
                     Payment: {application?.paymentStatus}
                   </span> */}
                 </div>
-                <p className="text-sm text-gray-500 mt-1">{application?.program}</p>
+                <p className="text-base text-gray-500 mt-1">{application?.program}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -659,7 +945,7 @@ export default function ApplicationDetailPage() {
               <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <Printer className="w-5 h-5 text-gray-600" />
               </button>
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <button onClick={()=> setOpenShare(true)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <Share2 className="w-5 h-5 text-gray-600" />
               </button>
               <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
@@ -668,38 +954,251 @@ export default function ApplicationDetailPage() {
             </div>
           </div>
 
+         
+
           {/* Status Timeline */}
+
+            {/* University Info Card */}
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 hover:shadow-md transition-all duration-300">
+  <div className="flex gap-3">
+    
+    
+
+    {/* Content */}
+    <div className="flex-1 min-w-0">
+      
+  
+
+      {/* Subtitle */}
+      <p className="text-base text-gray-500 truncate">
+        {application?.program}
+      </p>
+
+      {/* Info Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 text-sm">
+        
+        <div className="bg-gray-50 px-2 py-2 rounded-md">
+          <p className="text-gray-400">App ID</p>
+          <p className="font-medium text-gray-800 truncate">
+            {application?.applicationNumber}
+          </p>
+        </div>
+
+       <div className="bg-gray-50 px-2 py-2 rounded-md group">
+  <p className="text-gray-400 text-xs mb-1">Intake</p>
+
+  <div className="flex items-center justify-between">
+    <p className="font-medium text-gray-800 flex items-center gap-1 text-sm">
+      <Calendar className="w-3 h-3" />
+      {application?.intake || "N/A"}
+    </p>
+
+   <button
+  onClick={() => setShowIntakeModal(true)}
+  className="opacity-100 transition cursor-pointer"
+>
+  <Pencil className="w-4 h-4 text-gray-400 hover:text-orange-500" />
+</button>
+  </div>
+</div>
+
+        <div className="bg-gray-50 px-2 py-2 rounded-md">
+          <p className="text-gray-400">School</p>
+          <p className="font-medium text-gray-800 truncate">
+            {application?.school}
+          </p>
+        </div>
+
+        <div className="bg-gray-50 px-2 py-2 rounded-md">
+          <p className="text-gray-400">Country</p>
+          <p className="font-medium text-gray-800 flex items-center gap-1">
+            <MapPin className="w-3 h-3" />
+            {application?.country}
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+              
+            <div className="mt-8 w-full">
+  {/* Desktop View: Horizontal Stepper */}
+  <div className="hidden md:block relative ">
+    {/* Background Track Line (Optional subtle guide) */}
+
+    
+    <div className="relative flex justify-between items-start ">
+  {PRIMARY_STATUS_STEPS.map((step, index) => {
+    const StepIcon = step.icon;
+    const isCompleted = isStepCompleted(index);
+    const isCurrent = isStepCurrent(index);
+
+    const nextStepCompleted =
+      index < PRIMARY_STATUS_STEPS.length - 1 &&
+      isStepCompleted(index + 1);
+
+    const connectorColor = nextStepCompleted
+      ? "bg-emerald-500"
+      : "bg-slate-400";
+
+    return (
+      <div key={step.key} className="flex flex-col items-center relative flex-1">
+
+        {/* Step Node */}
+        <div className="relative flex items-center justify-center mb-2">
+          
+          {/* Pulse */}
+          {isCurrent && (
+            <div className="absolute w-8 h-8 rounded-full bg-orange-400 animate-ping opacity-20" />
+          )}
+
+          <div
+            className={`
+              relative w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-300
+              ${isCompleted
+                ? "bg-emerald-500 border-emerald-100 text-white"
+                : isCurrent
+                  ? "bg-white border-orange-500 text-orange-600 scale-105"
+                  : "bg-white border-slate-200 text-slate-400"}
+            `}
+          >
+            <StepIcon className="w-4 h-4" />
+
+            {isCompleted && (
+              <svg
+                className="absolute w-4 h-4 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={3}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+          </div>
+        </div>
+
+        {/* Label */}
+        <p
+          className={`
+            text-[13px] font-semibold text-center leading-tight
+            ${isCurrent
+              ? "text-orange-600"
+              : isCompleted
+                ? "text-emerald-600"
+                : "text-slate-400"}
+          `}
+        >
+          {step.label}
+        </p>
+
+        {/* Connector */}
+        {index < PRIMARY_STATUS_STEPS.length - 1 && (
+          <div className="absolute top-4 left-1/2 w-full h-[2px] -z-10">
+            <div
+              className={`h-full w-full ${connectorColor}`}
+              style={{ transform: "translateX(0%)" }}
+            />
+          </div>
+        )}
+      </div>
+    );
+  })}
+</div>
+  </div>
+
+  {/* Mobile View: Vertical Timeline */}
+  <div className="md:hidden relative pl-8 space-y-8 before:absolute before:left-[11px] before:top-2 before:h-full before:w-0.5 before:bg-slate-200">
+    {PRIMARY_STATUS_STEPS.map((step, index) => {
+      const StepIcon = step.icon;
+      const isCompleted = isStepCompleted(index);
+      const isCurrent = isStepCurrent(index);
+
+      return (
+        <div key={step.key} className="relative flex items-start gap-4">
+          {/* Dot */}
+          <div className={`
+            absolute -left-[29px] top-1 w-6 h-6 rounded-full border-4 flex items-center justify-center bg-white z-10
+            ${isCompleted ? "border-emerald-500 text-emerald-500" : isCurrent ? "border-orange-500 text-orange-500" : "border-slate-300 text-slate-300"}
+          `}>
+            {isCompleted ? (
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              <div className={`w-2 h-2 rounded-full ${isCurrent ? "bg-orange-500 animate-pulse" : "bg-slate-300"}`} />
+            )}
+          </div>
+
+          {/* Content Card */}
+          <div className={`
+            flex-1 p-4 rounded-xl border transition-all
+            ${isCurrent 
+              ? "bg-orange-50/50 border-orange-200 shadow-sm" 
+              : isCompleted 
+                ? "bg-emerald-50/30 border-emerald-100" 
+                : "bg-white border-slate-100 opacity-70"}
+          `}>
+            <div className="flex items-center gap-2 mb-1">
+              <StepIcon className={`w-4 h-4 ${isCurrent ? "text-orange-600" : isCompleted ? "text-emerald-600" : "text-slate-400"}`} />
+              <span className={`text-sm font-bold ${isCurrent ? "text-orange-900" : "text-slate-700"}`}>
+                {step.label}
+              </span>
+            </div>
+            {isCurrent && (
+              <p className="text-xs text-orange-700 mt-1 font-medium">In Progress</p>
+            )}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</div>
 
 
           {/* Tab Navigation */}
-          <div className="flex gap-1 mt-4 border-t border-gray-200 pt-2">
-            {[
-              { id: 'overview', label: 'Overview', icon: Eye },
-              { id: 'requirements', label: 'Requirements', icon: ClipboardList },
-              { id: 'documents', label: 'Documents', icon: FileText },
-              { id: 'backups', label: 'Backup Programs', icon: Layers },
-              { id: 'activity', label: 'Activity Log', icon: Activity },
-              { id: 'notes', label: 'Notes', icon: MessageSquare }
-            ].map(tab => {
-              const TabIcon = tab.icon
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`
-                    px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all
-                    ${activeTab === tab.id
-                      ? 'bg-orange-500 text-white shadow-md'
-                      : 'text-gray-600 hover:bg-gray-100'
-                    }
-                  `}
-                >
-                  <TabIcon className="w-4 h-4" />
-                  {tab.label}
-                </button>
-              )
-            })}
-          </div>
+        <div className="mt-4 border-t border-gray-200 pt-2">
+  <div className="flex gap-1 overflow-x-auto no-scrollbar">
+
+    {[
+      { id: 'overview', label: 'Overview', icon: Eye },
+      { id: 'requirements', label: 'Requirements', icon: ClipboardList },
+      { id: 'documents', label: 'Documents', icon: FileText },
+      { id: 'backups', label: 'Backup Programs', icon: Layers },
+      { id: 'activity', label: 'Activity Log', icon: Activity },
+      { id: 'notes', label: 'Notes', icon: MessageSquare }
+    ].map(tab => {
+      const TabIcon = tab.icon;
+      const isActive = activeTab === tab.id;
+
+      return (
+        <button
+          key={tab.id}
+          onClick={() => setActiveTab(tab.id as any)}
+          className={`
+            relative flex items-center gap-1.5 px-3 py-1.5 rounded-md text-base font-medium whitespace-nowrap
+            transition-all duration-200
+            ${isActive
+              ? 'text-orange-600 bg-orange-50'
+              : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+            }
+          `}
+        >
+          <TabIcon className={`w-3.5 h-3.5 ${isActive ? 'text-orange-500' : ''}`} />
+          {tab.label}
+
+          {/* Active underline indicator */}
+          {isActive && (
+            <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-orange-500 rounded-full" />
+          )}
+        </button>
+      );
+    })}
+    
+  </div>
+</div>
         </div>
       </div>
 
@@ -714,184 +1213,51 @@ export default function ApplicationDetailPage() {
               className="space-y-6"
             >
 
-              <div className="mt-8 overflow-x-auto pb-4">
-                <div className="relative flex items-center min-w-[600px]">
-
-                  {/* Background Line */}
-                  {/* <div className="absolute top-5 left-0 right-0 h-[2px] bg-gray-200 rounded-full"></div> */}
-
-                  <div className="flex w-full p-0 sm:px-8 justify-between">
-                    {PRIMARY_STATUS_STEPS.map((step, index) => {
-                      const StepIcon = step.icon
-                      const isCompleted = isStepCompleted(index)
-                      const isCurrent = isStepCurrent(index)
-
-                      return (
-                        <div key={step.key} className="flex flex-col items-center relative">
-
-                          {/* Step Circle */}
-                          <div
-                            className={`
-                w-11 h-11 rounded-full flex items-center justify-center
-                border-2 transition-all duration-300 z-10
-                ${isCompleted
-                                ? "bg-green-500 border-green-500 text-white"
-                                : isCurrent
-                                  ? "bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-200"
-                                  : "bg-white border-gray-300 text-gray-400"}
-              `}
-                          >
-                            <StepIcon className="w-5 h-5" />
-                          </div>
-
-                          {/* Step Label */}
-                          <span
-                            className={`
-                text-xs mt-3 font-medium text-center max-w-[200px]
-                ${isCompleted
-                                ? "text-green-600"
-                                : isCurrent
-                                  ? "text-orange-500"
-                                  : "text-gray-500"}
-              `}
-                          >
-                            {step.label}
-                          </span>
-
-                          {/* Connector Line */}
-                          {index < PRIMARY_STATUS_STEPS.length - 1 && (
-                            <div
-                              className={`
-                  absolute top-5 left-1/2 w-[220%] h-[3px]
-                  ${isCompleted ? "bg-green-600" : "bg-gray-400"}
-                `}
-                            />
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              </div>
-              {/* University Info Card */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-orange-500/10 to-gray-500/10 border border-gray-200 p-3 flex items-center justify-center">
-                    <Building2 className="w-10 h-10 text-orange-500" />
-                  </div>
-                  <div className="flex-1">
-                    <h2 className="text-xl font-bold text-gray-900">{application?.course.name}</h2>
-                    <p className="text-gray-600 mt-1">{application?.program}</p>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <p className="text-xs text-gray-500 mb-1">App ID</p>
-                        <p className="font-medium text-gray-900 font-mono">{application?.applicationNumber}</p>
-                      </div>
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <p className="text-xs text-gray-500 mb-1">Intake</p>
-                        <p className="font-medium text-gray-900 flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {application?.intake}
-                        </p>
-                      </div>
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <p className="text-xs text-gray-500 mb-1">School</p>
-                        <p className="font-medium text-gray-900">{application?.school}</p>
-                      </div>
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <p className="text-xs text-gray-500 mb-1">Country</p>
-                        <p className="font-medium text-gray-900 flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
-                          {application?.university?.name}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-white rounded-xl border border-gray-200 p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 bg-blue-100 rounded-lg">
-                      <FileText className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Documents</p>
-                      <p className="text-2xl font-bold text-gray-900">{documents.length + ooshasDocuments.length}</p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {[...documents, ...ooshasDocuments].filter(d => d.status === 'Approved').length} approved
-                      </p>
-                    </div>
-                  </div>
-                </div>
+             <div className="flex flex-wrap items-center gap-2 mt-4">
 
-                <div className="bg-white rounded-xl border border-gray-200 p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 bg-green-100 rounded-lg">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Requirements</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        {requirements.filter(r => r.status === 'approved').length}/{requirements.length}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">Completed</p>
-                    </div>
-                  </div>
-                </div>
+  {[
+    { key: "all", label: "All", count: requirements.length },
+    { key: "pending", label: "Pending", count: requirements.filter(r => r.status === "pending").length },
+    { key: "approved", label: "Approved", count: requirements.filter(r => r.status === "approved").length },
+    { key: "rejected", label: "Rejected", count: requirements.filter(r => r.status === "rejected").length },
+    { key: "review", label: "In Review", count: requirements.filter(r => r.status === "review").length },
+  ].map((tab) => {
+    const isActive = activeFilter === tab.key;
 
-                <div className="bg-white rounded-xl border border-gray-200 p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 bg-purple-100 rounded-lg">
-                      <Layers className="w-5 h-5 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Backup Programs</p>
-                      <p className="text-2xl font-bold text-gray-900">{backups.length}</p>
-                      <p className="text-xs text-gray-500 mt-1">Selected</p>
-                    </div>
-                  </div>
-                </div>
+    return (
+      <button
+        key={tab.key}
+        onClick={() => setActiveFilter(tab.key)}
+        className={`
+          px-3 py-1 rounded-md text-xs font-medium transition-all
+          border flex items-center gap-1
+          ${isActive
+            ? "bg-blue-50 text-blue-600 border-blue-200"
+            : "bg-white text-gray-600 border-gray-200 hover:bg-gray-100"
+          }
+        `}
+      >
+        {tab.label}
+        <span className="text-[15px] bg-gray-100 px-1.5 py-0.5 rounded">
+          {tab.count}
+        </span>
+      </button>
+    );
+  })}
 
-                <div className="bg-white rounded-xl border border-gray-200 p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 bg-amber-100 rounded-lg">
-                      <CreditCard className="w-5 h-5 text-amber-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Payment</p>
-                      <p className="text-2xl font-bold text-gray-900">${application?.course.applicationFee}</p>
-                      <p className="text-xs text-gray-500 mt-1">Application Fee</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+  {/* Right side filter button */}
+  <div className="ml-auto">
+    <button className="flex items-center gap-1 px-3 py-1 text-base border rounded-md text-gray-600 hover:bg-gray-100">
+      Filters ⏷
+    </button>
+  </div>
 
-              {/* Payment Alert */}
-              {application?.paymentStatus !== 'Completed' && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 bg-amber-100 rounded-lg">
-                      <AlertTriangle className="w-5 h-5 text-amber-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-amber-800">Application will not be processed until payment received.</h3>
-                      <p className="text-amber-700 text-sm mt-1">
-                        Your application is pending payment. Please complete the payment to proceed with the review process.
-                      </p>
-                      <button
-                        onClick={() => setShowPaymentModal(true)}
-                        className="mt-3 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors text-sm font-medium"
-                      >
-                        Complete Payment Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
+</div>
+
+        
             </motion.div>
           )}
 
@@ -1482,76 +1848,7 @@ export default function ApplicationDetailPage() {
         </AnimatePresence>
       </div>
 
-      {/* Payment Modal */}
-      <AnimatePresence>
-        {showPaymentModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setShowPaymentModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl w-full max-w-md p-6"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold">Complete Payment</h3>
-                <button
-                  onClick={() => setShowPaymentModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {/* Payment Methods */}
-                <div className="grid grid-cols-3 gap-2">
-                  <button className="p-3 border-2 border-orange-500 bg-orange-50 rounded-lg flex flex-col items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-orange-500" />
-                    <span className="text-xs">Card</span>
-                  </button>
-                  <button className="p-3 border-2 border-gray-200 rounded-lg flex flex-col items-center gap-2 hover:bg-gray-50">
-                    <Landmark className="w-5 h-5 text-gray-600" />
-                    <span className="text-xs">Bank Transfer</span>
-                  </button>
-                  <button className="p-3 border-2 border-gray-200 rounded-lg flex flex-col items-center gap-2 hover:bg-gray-50">
-                    <img src="/api/placeholder/20/20" alt="PayPal" className="w-5 h-5" />
-                    <span className="text-xs">PayPal</span>
-                  </button>
-                </div>
-
-                {/* Payment Details */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-gray-600">Application Fee</span>
-                    <span className="font-medium">${application?.course.applicationFee} CAD</span>
-                  </div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-gray-600">Service Fee</span>
-                    <span className="font-medium">$25 CAD</span>
-                  </div>
-                  <div className="border-t border-gray-200 my-2 pt-2">
-                    <div className="flex justify-between font-bold">
-                      <span>Total</span>
-                      <span className="text-orange-500">${application?.course.applicationFee + 25} CAD</span>
-                    </div>
-                  </div>
-                </div>
-
-                <button className="w-full py-3 bg-gradient-to-r from-orange-500 to-gray-600 text-white rounded-lg hover:from-orange-600 hover:to-gray-700 transition-all font-medium">
-                  Pay ${application?.course.applicationFee + 25} CAD
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    
     </main>
   )
 }

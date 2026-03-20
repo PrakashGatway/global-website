@@ -40,7 +40,7 @@ export default async function Page({params}) {
   const [serviceRes, testimonialImgRes , Faqres] = await Promise.all([
     serverInstance.get(`/page-information/slug/${slug}`),
     serverInstance.get("/testimonials?type=image"),
-        serverInstance.get(`/faqs/public/list?type=${slug}`),
+        serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`),
 
   ]);
 

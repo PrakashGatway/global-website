@@ -668,7 +668,7 @@ preferences: {
 
   return (
     <FormProvider {...methods}>
-      <main className="flex-1 sm:px-6 min-h-0">
+      <main className="flex-1 sm:px-6 min-h-screen">
         {/* Profile Header */}
         <div className="container mx-auto mt-6">
           <div className="bg-card border border-border rounded-2xl p-6">

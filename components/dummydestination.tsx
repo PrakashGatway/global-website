@@ -130,10 +130,10 @@ export function Destinationhome({ homePage }) {
             {homePage?.dreamDestination?.title ? (
               <>
                 <span className="text-primary">
-                  {homePage.dreamDestination.title.split("||")[0]}
+                  {homePage?.dreamDestination?.title.split("||")[0]}
                 </span>
                 <span className="text-[#F46C44]">
-                  {homePage.dreamDestination.title.split("||")[1]}
+                  {homePage?.dreamDestination?.title.split("||")[1]}
                 </span>
               </>
             ) : (
@@ -203,7 +203,7 @@ export function Destinationhome({ homePage }) {
             <div className="hidden lg:block w-1/2">
               <div className=" ">
                 <img
-                  src={homePage.dreamDestination.Image||"/images/destination-pic.png"}
+                  src={homePage?.dreamDestination?.Image||"/images/destination-pic.png"}
                   alt="Foreign Education Consultants"
                   className="w-full h-[450px] object-contain"
                   loading="lazy"
@@ -228,10 +228,10 @@ export function Destinationhome({ homePage }) {
             {homePage?.dreamDestination?.title ? (
               <>
                 <span className="text-primary">
-                  {homePage.dreamDestination.title.split("||")[0]}
+                  {homePage?.dreamDestination?.title.split("||")[0]}
                 </span>
                 <span className="text-[#F46C44]">
-                  {homePage.dreamDestination.title.split("||")[1]}
+                  {homePage?.dreamDestination?.title.split("||")[1]}
                 </span>
               </>
             ) : (

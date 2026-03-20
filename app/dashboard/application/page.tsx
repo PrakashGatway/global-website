@@ -206,6 +206,7 @@ export default function ApplicationHistoryPage() {
 
       const response = await axiosInstance.get(`/applications?${params}`)
       const data = response.data
+   
 
       setApplications(prev =>
         append ? [...prev, ...data.data] : data.data

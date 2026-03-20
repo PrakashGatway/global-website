@@ -11,6 +11,7 @@ import { Toaster } from "react-hot-toast";
 import Script from "next/script"
 import BreadcrumbSchema from "@/components/BreadcrumbSchema"
 import SmoothScroll from "@/components/Smoothscroll"
+import ScrollToTop from "@/components/ScrolltoTop"
 
 
 const notoSans = Noto_Sans({
@@ -89,19 +90,30 @@ export default async function RootLayout({
           `}
         </Script>
 
-        <Script
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-70R8MGMXBN"></Script>
+        <Script>{
+          `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-70R8MGMXBN');
+          `}
+        </Script>
+
+        {/* <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-RHBS4GW2Z0"
           strategy="afterInteractive"
-        />
+        /> */}
 
-        <Script id="google-analytics" strategy="afterInteractive">
+        {/* <Script id="google-analytics" strategy="afterInteractive">
           {`
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-RHBS4GW2Z0');
   `}
-        </Script>
+        </Script> */}
 
         <BreadcrumbSchema params={params} />
 
@@ -116,13 +128,14 @@ export default async function RootLayout({
             countryres={countryres.data.data}
           />
 
-          <SmoothScroll/>
+          <SmoothScroll />
 
           {children}
           <Toaster
             position="bottom-right"
             reverseOrder={false}
           />
+          <ScrollToTop />
 
 
           <Footer Featureitem={featureRes || []} Serviceitem={serviceres || []} countryres={countryres.data.data} />

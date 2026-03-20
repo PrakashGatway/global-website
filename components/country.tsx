@@ -25,35 +25,9 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
   };
 
 
-  console.log(pageData)
 
-  const services = [
-    {
-      title: "FREE Profile Evaluation",
-      description: "Assess your eligibility for German universities",
-      icon: "/icons/evaluation.svg"
-    },
-    {
-      title: "Course & University Selection",
-      description: "Find programs matching your goals and budget",
-      icon: "/icons/university.svg"
-    },
-    {
-      title: "Application Assistance",
-      description: "Complete support for Uni-Assist and direct applications",
-      icon: "/icons/application.svg"
-    },
-    {
-      title: "SOP & LOR Preparation",
-      description: "Expert editing and guidance for strong applications",
-      icon: "/icons/document.svg"
-    },
-    {
-      title: "Scholarship Guidance",
-      description: "Identify and apply for DAAD and other scholarships",
-      icon: "/icons/scholarship.svg"
-    },
-  ];
+
+
 
 
   // Split scholarships into left and right columns
