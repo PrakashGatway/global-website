@@ -107,7 +107,7 @@ export default function ImageTestimonial({
             <br />
             <span className="text-primary font-bold relative inline-block lg:text-5xl">
               {title?.split("||")[1]?.trim() || "Testimonials"}
-              <span className="absolute right-0 bottom-0 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+              <span className="absolute right-0 -bottom-2 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
             </span>
           </h2>
         </div>

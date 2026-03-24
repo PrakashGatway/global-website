@@ -781,7 +781,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
       <UniversitySliderClient universities={homePage.universities} />
 
-      <section className="max-w-7xl mx-auto  py-6 px-4 lg:px-0">
+      <section className="max-w-7xl mx-auto  py-6 px-4 lg:px-4">
 
         {/* Heading */}
         <div className="mb-10">

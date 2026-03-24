@@ -10,6 +10,7 @@ import ImageTestimonial from './ImageTestimonial'
 import Balloon from './balloon'
 import { useState } from 'react'
 import EligibilitySection from './Eligibility'
+import ExpandableText from './Expandline'
 
 export default function CountryDetails({ Universityres, Faqres, pageData, imageData, videoRes }) {
 
@@ -271,14 +272,14 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         </div>
 
         {/* ================= RIGHT SIDE TOWER IMAGE ================= */}
-        <div className="hidden lg:block absolute right-10 -bottom-50 h-full w-[300px]">
+        {/* <div className="hidden lg:block absolute -right-2 -bottom-50 h-full w-[300px]">
           <Image
             src="/images/tower.png"
             alt="Germany Tower"
             fill
             className="object-contain object-right w-30 h-50"
           />
-        </div>
+        </div> */}
       </section>
 
       {/* Why Choose Germany Section - RESPONSIVE */}
@@ -298,21 +299,12 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           {/* Paragraph */}
           <div className="mt-6 sm:mt-8">
 
-            <p
-              className={`text-white [&_*]:text-base leading-relaxed transition-all duration-300 ${expanded ? "" : "line-clamp-3"
-                }`}
-              dangerouslySetInnerHTML={{
-                __html: pageData?.sections?.whyChooseUs?.subtitle ?? "",
-              }}
+
+            <ExpandableText
+              htmlContent={pageData?.sections?.whyChooseUs?.subtitle}
             />
 
-            <button
-              type="button"
-              onClick={handleToggle}
-              className="text-yellow-300 mt-3 font-semibold"
-            >
-              {expanded ? "Read Less" : "Read More"}
-            </button>
+
 
           </div>
 
@@ -392,7 +384,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           {/* Heading */}
           <div className="text-left mb-12">
             <h2 className="text-xl lg:text-4xl font-semibold text-gray-900">
-                            {pageData?.sections?.PopularCourses?.title}
+              {pageData?.sections?.PopularCourses?.title}
 
             </h2>
             <p className="text-gray-500 mt-3 text-sm lg:text-base">
@@ -405,33 +397,33 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
             {/* Card 1 */}
             {
-             pageData?.sections?.PopularCourses?.coursesitem && pageData?.sections?.PopularCourses?.coursesitem?.map((item,i)=>(
-                  <div className="bg-[#f6f7f9] rounded-[28px] border border-[#F46C44]  hover:shadow-md transition duration-300">
+              pageData?.sections?.PopularCourses?.coursesitem && pageData?.sections?.PopularCourses?.coursesitem?.map((item, i) => (
+                <div className="bg-[#f6f7f9] rounded-[28px] border border-[#F46C44]  hover:shadow-md transition duration-300">
 
-              {/* Image */}
-              <div className="overflow-hidden w-full rounded-[28px]">
-                <img
-                  src={item?.image||"https://images.unsplash.com/photo-1516321318423-f06f85e504b3"}
-                  alt="Data Science"
-                  className="w-full h-[150px] lg:h-[210px] object-cover"
-                />
-              </div>
+                  {/* Image */}
+                  <div className="overflow-hidden w-full rounded-[28px]">
+                    <img
+                      src={item?.image || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3"}
+                      alt="Data Science"
+                      className="w-full h-[150px] lg:h-[210px] object-cover"
+                    />
+                  </div>
 
-              <div className=' px-2 lg:px-4 py-3 lg:py-8'>
-                {/* Title */}
-                <h3 className=" text-base lg:text-[18px] font-semibold text-gray-800 ">
-                 {item?.coursesname}
-                </h3>
+                  <div className=' px-2 lg:px-4 py-3 lg:py-8'>
+                    {/* Title */}
+                    <h3 className=" text-base lg:text-[18px] font-semibold text-gray-800 ">
+                      {item?.coursesname}
+                    </h3>
 
-              </div>
+                  </div>
 
 
 
-            </div>
+                </div>
 
               ))
             }
-          
+
 
           </div>
         </div>
@@ -537,7 +529,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         <UniversityCard university={Universityres} />
       </div>
 
-      <EligibilitySection pageData = {pageData} />
+      <EligibilitySection pageData={pageData} />
 
 
 
@@ -630,14 +622,14 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         <div className="max-w-7xl mx-auto  py-10">
 
           {/* Heading */}
-           <div className="mb-10 sm:mb-12 lg:mb-16">
+          <div className="mb-10 sm:mb-12 lg:mb-16">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl mb-2">
               <span className="text-[#F46C44]">
                 {pageData?.sections?.servicesection?.servicetitle?.split('||')[0]?.trim() || "Video"}
               </span>{" "} <br />
               <span className="text-primary font-bold relative inline-block">
                 {pageData?.sections?.servicesection?.servicetitle?.split('||')[1]?.trim() || "Testimonials"}
-                <span className="absolute right-0 bottom-0 w-20 sm:w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+                <span className="absolute right-0 -bottom-2 w-20 sm:w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
               </span>
             </h2>
           </div>
@@ -691,7 +683,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
             <h2 className="text-lg sm:text-4xl md:text-5xl lg:text-6xl font-bold relative inline-block">
               {pageData?.sections?.scholarships?.title?.split('||')[1]?.trim() || "Study in germany"}
-              <span className="absolute right-0 -bottom-2 w-12 sm:w-16 h-1 bg-yellow-400"></span>
+              <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-yellow-400"></span>
             </h2>
 
             {/* Description */}
@@ -756,7 +748,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
               </span>{" "} <br />
               <span className="text-primary font-bold relative inline-block">
                 {pageData?.sections?.videoTestimonials?.title?.split('||')[1]?.trim() || "Testimonials"}
-                <span className="absolute right-0 bottom-0 w-20 sm:w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+                <span className="absolute right-0 -bottom-2 w-20 sm:w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
               </span>
             </h2>
           </div>
