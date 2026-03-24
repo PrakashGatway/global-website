@@ -153,11 +153,11 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       };
 
       const res = await axiosInstance.post("/contactus", payload);
-        toast.success("Form submitted successfully")
-        navigate.push("/thank-you")
+      toast.success("Form submitted successfully")
+      navigate.push("/thank-you")
 
-        reset();
-      
+      reset();
+
 
     } catch (error) {
       toast.error("Submit Error:", error);
@@ -360,163 +360,151 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               <span>{homePage?.formSection?.title}</span>
             </h2>
 
-             <form
-      onSubmit={handleSubmit(onSubmit)}
-      noValidate
-      className="grid grid-cols-2 md:grid-cols-2 gap-5 lg:w-180"
-    >
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              noValidate
+              className="grid grid-cols-2 md:grid-cols-2 gap-5 lg:w-180"
+            >
 
-      {/* Full Name */}
-      <motion.div>
-        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-          Full Name
-        </label>
+              {/* Full Name */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Full Name
+                </label>
 
-        <input
-          {...register("fullname", {
-            required: "Full name is required",
-            minLength: {
-              value: 3,
-              message: "Name must be at least 3 characters",
-            },
-          })}
-          type="text"
-          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
-        />
+                <input
+                  {...register("fullname", {
+                    required: "Full name is required",
+                    minLength: {
+                      value: 3,
+                      message: "Name must be at least 3 characters",
+                    },
+                  })}
+                  type="text"
+                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
+                />
 
-        {errors.fullname && (
-          <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.fullname.message}</p>
-        )}
-      </motion.div>
+                {errors.fullname && (
+                  <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.fullname.message}</p>
+                )}
+              </motion.div>
 
-      {/* Email */}
-      <motion.div>
-        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-          Email ID
-        </label>
+              {/* Email */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Email ID
+                </label>
 
-        <input
-          {...register("email", {
-            required: "Email is required",
-            pattern: {
-              value: /^\S+@\S+$/i,
-              message: "Enter a valid email",
-            },
-          })}
-          type="email"
-          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
-        />
+                <input
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "Enter a valid email",
+                    },
+                  })}
+                  type="email"
+                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
+                />
 
-        {errors.email && (
-          <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.email.message}</p>
-        )}
-      </motion.div>
+                {errors.email && (
+                  <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.email.message}</p>
+                )}
+              </motion.div>
 
-      {/* Phone */}
-      <motion.div>
-        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-          Mobile Number
-        </label>
+              {/* Phone */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Mobile Number
+                </label>
 
-        <input
-          {...register("phone", {
-            required: "Mobile number is required",
-            pattern: {
-              value: /^[0-9]{10}$/,
-              message: "Enter valid 10 digit number",
-            },
-          })}
-          type="tel"
-          className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
-        />
+                <input
+                  {...register("phone", {
+                    required: "Mobile number is required",
+                    pattern: {
+                      value: /^[0-9]{10}$/,
+                      message: "Enter valid 10 digit number",
+                    },
+                  })}
+                  type="tel"
+                  maxLength={10}
+                  inputMode="numeric"
+                  onInput={(e) => {
+                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                  }}
+                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
+                />
 
-        {errors.phone && (
-          <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.phone.message}</p>
-        )}
-      </motion.div>
+                {errors.phone && (
+                  <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.phone.message}</p>
+                )}
+              </motion.div>
 
-      {/* Country */}
-      <motion.div>
-        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-          Country
-        </label>
+              {/* Country */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Country
+                </label>
 
-        <Controller
-          name="country"
-          control={control}
-          render={({ field }) => (
-            <ModernSelect
-              options={countries}
-              value={field.value}
-              onChange={field.onChange}
-              className="w-full border border-white rounded-lg [&>button]:hover:bg-gray-300 [&>button]:text-xs lg:text-sm [&>button]:text-white"
-            />
-          )}
-        />
-      </motion.div>
+                <Controller
+                  name="country"
+                  control={control}
+                  render={({ field }) => (
+                    <ModernSelect
+                      options={countries}
+                      value={field.value}
+                      onChange={field.onChange}
+                      className="w-full border border-white rounded-lg [&>button]:hover:bg-gray-300 [&>button]:text-xs lg:text-sm [&>button]:text-white"
+                    />
+                  )}
+                />
+              </motion.div>
 
-      {/* City */}
-      <motion.div>
-        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-          City
-        </label>
+              {/* City */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  City
+                </label>
 
-        <input
-          {...register("city")}
-          type="text"
-          className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
-        />
-      </motion.div>
+                <input
+                  {...register("city")}
+                  type="text"
+                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
+                />
+              </motion.div>
 
-      {/* Program */}
-      <motion.div>
-        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-          Program
-        </label>
+              {/* Program */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Program
+                </label>
 
-        <input
-          {...register("course")}
-          type="text"
-          className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
-        />
+                <input
+                  {...register("course")}
+                  type="text"
+                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
+                />
 
-      </motion.div>
+              </motion.div>
 
-      {/* Intake */}
-      <motion.div>
-        <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-          Intake
-        </label>
 
-        <select
-          {...register("month")}
-          className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white bg-[#F46C44] focus:outline-none"
-        >
-          <option value="">Select Intake</option>
-          <option value="January">January</option>
-          <option value="May">May</option>
-          <option value="September">September</option>
-        </select>
+              {/* Submit */}
+              <motion.div className="md:col-span-2 mt-4">
+                <button
+                  type="submit"
+                  className="w-full md:w-auto text-xs lg:text-lg bg-secondary hover:bg-primary text-white font-semibold p-2 lg:px-4 lg:py-2.5 rounded-lg"
+                >
+                  Submit
+                </button>
+              </motion.div>
 
-      </motion.div>
-
-      {/* Submit */}
-      <motion.div className="md:col-span-2 mt-4">
-        <button
-          type="submit"
-          className="w-full md:w-auto text-xs lg:text-lg bg-secondary hover:bg-primary text-white font-semibold p-2 lg:px-4 lg:py-2.5 rounded-lg"
-        >
-          Submit
-        </button>
-      </motion.div>
-
-    </form>
+            </form>
           </motion.div>
 
         </div>
       </section>
 
-      <Destinationhome homePage = {homePage} />
+      <Destinationhome homePage={homePage} />
 
 
 
@@ -799,15 +787,15 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         <div className="mb-10">
           <h2 className="   text-primary">
             <span className="text-[#F46C44] font-light block text-xl lg:text-4xl">{homePage.studyDestinations.title.split("||")[0]}</span>
-          <br />  <span className="font-bold text-xl lg:text-5xl"> {homePage.studyDestinations.title.split("||")[1]}
-        <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+            <br />  <span className="font-bold text-xl lg:text-5xl"> {homePage.studyDestinations.title.split("||")[1]}
+              <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
 
-          </span>
+            </span>
           </h2>
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-4 justify-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-4  justify-center">
 
           {/* LEFT COLUMN */}
           <div className="flex flex-col gap-4">
@@ -820,7 +808,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                  <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
                     United States
                   </span>
                 </p>
@@ -836,7 +824,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   />
                   <div className="absolute inset-0 "></div>
                   <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                    <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                    <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
                       Germany
                     </span>
                   </p>
@@ -851,7 +839,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   />
                   <div className="absolute inset-0"></div>
                   <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                    <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                    <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
                       UK
                     </span>
                   </p>
@@ -872,7 +860,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
                   Canada
                 </span>
               </p>
@@ -885,7 +873,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
                   France
                 </span>
               </p>
@@ -898,7 +886,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
                   Ireland
                 </span>
               </p>
@@ -918,7 +906,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                  <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
                     Australia
                   </span>
                 </p>
@@ -931,7 +919,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                  <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                  <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
                     Dubai
                   </span>
                 </p>
@@ -945,7 +933,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/50 px-3 py-1 rounded-lg">
+                <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
                   Italy
                 </span>
               </p>
@@ -959,49 +947,49 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
 
-        <section className="w-full py-16 px-4 md:px-8 ">
-      <div className="max-w-7xl mx-auto">
-        <div className="rounded-3xl  p-6 md:p-10 lg:p-12">
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-0 relative">
-            {/* Left Panel */}
-            <div className="bg-[#F46C44] rounded-2xl p-8 md:p-10 flex flex-col justify-center lg:min-w-[280px] lg:max-w-[320px] h-[380px] z-10 mt-30">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Our Services
-              </h2>
-              <p className="text-lg md:text-xl font-semibold text-white leading-snug">
-                Your Complete Support for Studying Abroad
-              </p>
-            </div>
+      <section className="w-full py-16 px-4 md:px-8 ">
+        <div className="max-w-7xl mx-auto">
+          <div className="rounded-3xl  p-6 md:p-10 lg:p-12">
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-0 relative">
+              {/* Left Panel */}
+              <div className="bg-[#F46C44] rounded-2xl p-8 md:p-10 flex flex-col justify-center lg:min-w-[280px] lg:max-w-[320px] h-[380px] z-10 mt-30">
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                  Our Services
+                </h2>
+                <p className="text-lg md:text-xl font-semibold text-white leading-snug">
+                  Your Complete Support for Studying Abroad
+                </p>
+              </div>
 
-            <div className="absolute h-[83%] w-[90%] border-2 shadow border-[#F46C44] left-40 -bottom-10 rounded-4xl z-0">
+              <div className="absolute h-[83%] w-[90%] border-2 shadow border-[#F46C44] left-40 -bottom-10 rounded-4xl z-0">
 
-            </div>
+              </div>
 
-            {/* Services Grid */}
-            <div className="flex-1 pl-6  !bg-white relative z-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6  bg-white">
-              {homePage?.services?.services.map((service) => (
-                <div
-                  key={service.title}
-                  className="group rounded-2xl  bg-gray-100 p-6 hover:shadow-lg transition-all duration-300 z-10 text-center"
-                >
-                  <div className="w-14 h-14 rounded-xl  flex items-center justify-center mb-4 mx-auto">
-                    <img src={service.icon} alt="" className="" />
-                  </div>
-                  <h3 className="text-lg font-bold text-primary mb-2">
-                    {service.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-5">
-                    {service.subTitle}
-                  </p>
+              {/* Services Grid */}
+              <div className="flex-1 pl-6  !bg-white relative z-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6  bg-white">
+                  {homePage?.services?.services.map((service) => (
+                    <div
+                      key={service.title}
+                      className="group rounded-2xl  bg-gray-100 p-6 hover:shadow-lg transition-all duration-300 z-10 text-center"
+                    >
+                      <div className="w-14 h-14 rounded-xl  flex items-center justify-center mb-4 mx-auto">
+                        <img src={service.icon} alt="" className="" />
+                      </div>
+                      <h3 className="text-lg font-bold text-primary mb-2">
+                        {service.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-5">
+                        {service.subTitle}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
 
 
