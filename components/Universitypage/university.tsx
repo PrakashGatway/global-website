@@ -191,7 +191,7 @@ useEffect(() => {
   return (
     <div className="min-h-screen bg-white overflow-x-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
       {/* Sticky Navigation Bar */}
-      <div className="fixed top-20 left-0 right-0 z-50 bg-white shadow-md">
+      <div className="fixed top-20 left-0 right-0 z-50 bg-white shadow-md hidden lg:block">
         <div className=" mx-auto px-10">
           <div className="flex items-center h-14">
 

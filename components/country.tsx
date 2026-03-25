@@ -13,6 +13,15 @@ import EligibilitySection from './Eligibility'
 import ExpandableText from './Expandline'
 
 export default function CountryDetails({ Universityres, Faqres, pageData, imageData, videoRes }) {
+
+
+
+const [expandedIndex, setExpandedIndex] = useState(null);
+
+
+
+
+
   // Split scholarships into left and right columns
   const scholarshipItems = pageData?.sections?.scholarships?.items || [];
   const midPoint = Math.ceil(scholarshipItems.length / 2);
@@ -42,7 +51,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
   return (
     <>
-      <section>
+      <section className={`${pageData?.sections?.hero?.isHidden === "yes" ? "hidden" : "block"}`}>
         <div
           className="w-full min-h-[70vh] sm:h-[88vh] relative flex items-center justify-start"
           style={{
@@ -171,7 +180,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
       </section>
 
       {/* Form Section - RESPONSIVE */}
-      <section className="px-4 sm:px-6 lg:pr-10 py-12 sm:py-16 lg:py-20 relative overflow-hidden">
+      <section className={`px-4 sm:px-6 lg:pr-10 py-12 sm:py-16 lg:py-20 relative overflow-hidden ${pageData?.sections?.formSection?.isHidden === "yes" ? "hidden" : "block"}`}>
         <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
           {/* ================= LEFT FORM ================= */}
@@ -259,7 +268,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
       </section>
 
       {/* Why Choose Germany Section - RESPONSIVE */}
-      <section className="w-full bg-[#ef6a42] py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
+      <section className={`w-full bg-[#ef6a42] py-12 sm:py-16 lg:py-20 px-4 sm:px-6 ${pageData?.sections?.whyChooseUs?.isHidden === "yes" ? "hidden" : "block"}`}>
         <div className="max-w-5xl mx-auto text-left">
 
           {/* Heading */}
@@ -297,7 +306,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
       </section>
 
       {/* Why Study Section - RESPONSIVE */}
-      <section className="w-full py-12 sm:py-16 lg:py-20 px-4 sm:px-6 bg-white">
+      <section className={`w-full py-12 sm:py-16 lg:py-20 px-4 sm:px-6 bg-white ${pageData?.sections?.whyStudy?.isHidden === "yes" ? "hidden" : "block"}`}>
         <div className="max-w-7xl mx-auto">
 
           {/* Heading */}
@@ -330,19 +339,20 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
                       <h4 className="text-base sm:text-xl font-semibold text-gray-900">
                         {item.title}
                       </h4>
-                      <p className="text-[#123b73] text-xs sm:text-base">
-                        <ul className="text-[#123b73] text-xs sm:text-base list-disc pl-5 space-y-1">
-                          {item.description
-                            .split("\n")
-                            .filter((line) => line.trim() !== "")
-                            .map((line, index) => (
-                              <li key={index}>
-                                {line.replace("•", "").trim()}
-                              </li>
-                            ))}
-                        </ul>
+                     <ExpandableText
+  htmlContent={`
+    <ul class="list-disc pl-5 space-y-1 text-[#123b73] text-xs sm:text-base">
+      ${item.description
+        .split("\n")
+        .filter((line) => line.trim() !== "")
+        .map((line) => `<li>${line.replace("•", "").trim()}</li>`)
+        .join("")}
+    </ul>
+  `}
+  lines={4}
+/>
 
-                      </p>
+                     
                     </div>
                   </div>
                 ))}
@@ -354,7 +364,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
       </section>
 
 
-      <section className="w-full bg-white py-1 px-4">
+      <section className={`w-full bg-white py-1 px-4 ${pageData?.sections?.PopularCourses?.isHidden === "yes" ? "hidden" : "block"}`}>
         <div className="max-w-7xl mx-auto">
 
           {/* Heading */}
@@ -407,7 +417,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
 
       {/* Life in Germany Section - RESPONSIVE */}
-      <section className="w-full min-h-auto lg:min-h-screen px-4 sm:px-6 lg:px-30 bg-white lg:pt-20 lg:pb-62 relative py-12 lg:py-20">
+      <section className={`w-full min-h-auto lg:min-h-screen px-4 sm:px-6 lg:px-30 bg-white lg:pt-20 lg:pb-62 relative py-12 lg:py-20 ${pageData?.sections?.lifeIn?.isHidden === "yes" ? "hidden" : "block"}`}>
         <div className='max-w-7xl mx-auto'>
           {/* Title Section */}
           <div className="mb-8 md:mb-12">
@@ -461,7 +471,9 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
       </section>
 
       {/* Choosing University Section - RESPONSIVE */}
-      <section className="relative w-full bg-[#ef6a42]  sm:py-12 lg:py-16">
+      <section className={`relative w-full bg-[#ef6a42]  sm:py-12 lg:py-16 ${pageData?.sections?.choosingUs?.isHidden === "yes" ? "hidden" : "block"}`}>
+        {/* Main Content */}
+        {/* <div className="grid grid-cols-1 lg:grid-cols-2 items-center"> */}
 
         <div className="mb-8 sm:mb-10 max-w-7xl mx-auto text-white">
           <p className="text-lg sm:text-4xl md:text-5xl font-light mb-2">
@@ -491,7 +503,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
 
       {/* ================= TABLE/CONTENT SECTION - RESPONSIVE ================= */}
-      <section className="w-full bg-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
+      <section className={`w-full bg-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6 ${pageData?.sections?.contentSection?.isHidden === "yes" ? "hidden" : "block"}`}>
         <div className="max-w-7xl mx-auto">
 
           {/* Table Wrapper */}
@@ -604,7 +616,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
 
       {/* Scholarships Section - RESPONSIVE */}
-      <section className="w-full bg-[#ef6a42] py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
+      <section className={`w-full bg-[#ef6a42] py-12 sm:py-16 lg:py-20 px-4 sm:px-6 ${pageData?.sections?.scholarships?.isHidden === "yes" ? "hidden" : "block"}`}>
         <div className="max-w-6xl mx-auto text-white">
 
           {/* Heading */}
@@ -728,7 +740,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
       </section>
 
       {/* CTA Section - RESPONSIVE */}
-      <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
+      <section className={`relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20 ${pageData?.sections?.cta?.isHidden === "yes" ? "hidden" : "block"}`}>
 
         {/* ===== MAIN CONTENT ===== */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 grid grid-cols-1 lg:grid-cols-2 items-center">

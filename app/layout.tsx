@@ -10,8 +10,9 @@ import { GlobalProvider } from "@/src/statecontext"
 import { Toaster } from "react-hot-toast";
 import Script from "next/script"
 import BreadcrumbSchema from "@/components/BreadcrumbSchema"
-import SmoothScroll from "@/components/Smoothscroll"
+
 import ScrollToTop from "@/components/ScrolltoTop"
+import WhatsAppButton from "@/components/whatsappbtn"
 
 
 const notoSans = Noto_Sans({
@@ -59,7 +60,7 @@ export default async function RootLayout({
     item.pageType === "destinations"
   )
 
-  console.log(featureRes)
+ 
 
   const servicedata = feature.data.data.filter((item) =>
     item.pageType === "service"
@@ -128,7 +129,7 @@ export default async function RootLayout({
             countryres={countryres.data.data}
           />
 
-          <SmoothScroll />
+      
 
           {children}
           <Toaster
@@ -136,6 +137,7 @@ export default async function RootLayout({
             reverseOrder={false}
           />
           <ScrollToTop />
+          <WhatsAppButton/>
 
 
           <Footer Featureitem={featureRes || []} Serviceitem={serviceres || []} countryres={countryres.data.data} />

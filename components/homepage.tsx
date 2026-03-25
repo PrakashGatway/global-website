@@ -446,24 +446,44 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               </motion.div>
 
               {/* Country */}
-              <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-                  Country
-                </label>
+             <motion.div>
+  <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+    Country
+  </label>
 
-                <Controller
-                  name="country"
-                  control={control}
-                  render={({ field }) => (
-                    <ModernSelect
-                      options={countries}
-                      value={field.value}
-                      onChange={field.onChange}
-                      className="w-full border border-white rounded-lg [&>button]:hover:bg-gray-300 [&>button]:text-xs lg:text-sm [&>button]:text-white"
-                    />
-                  )}
-                />
-              </motion.div>
+  <Controller
+    name="country"
+    control={control}
+    render={({ field }) => (
+      <select
+        {...field}
+        className="w-full border border-white rounded-lg px-3 py-2 text-xs lg:text-sm bg-transparent text-white focus:outline-none"
+      >
+        <option value="" className="text-black">
+          Select Country
+        </option>
+        <option value="usa" className="text-black">
+          Study In USA
+        </option>
+        <option value="uk" className="text-black">
+          Study In UK
+        </option>
+        <option value="france" className="text-black">
+          Study In France
+        </option>
+        <option value="germany" className="text-black">
+          Study In Germany
+        </option>
+        <option value="italy" className="text-black">
+          Study In Italy
+        </option>
+        <option value="dubai" className="text-black">
+          Study In Dubai
+        </option>
+      </select>
+    )}
+  />
+</motion.div>
 
               {/* City */}
               <motion.div>

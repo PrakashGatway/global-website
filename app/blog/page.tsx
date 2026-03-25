@@ -55,11 +55,11 @@ export default async function BlogPage({
     },
   })
 
-  console.log(blogres)
+  
 
   const blogcategory = await serverInstance.get("/blogs/categories")
 
-  console.log("SERVER PARAM:", searchParams.catslug);
+  
 
   return (
     <>

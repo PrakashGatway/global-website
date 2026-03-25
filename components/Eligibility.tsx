@@ -8,7 +8,7 @@ export default function EligibilitySection({pageData}) {
 
 
   return (
-    <section className="w-full py-16 bg-white">
+    <section className={`w-full py-16 bg-white ${pageData?.sections?.eligibilityCriteria?.isHidden === "yes" ? "hidden" : "block"}`}>
       <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-start">
 
         {/* LEFT CONTENT */}
