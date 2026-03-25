@@ -227,7 +227,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
           {/* ================= LEFT CONTENT ================= */}
           <div className="text-center lg:text-left">
-            <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold leading-tight">
+            <h1 className="text-xl sm:text-3xl lg:text-5xl font-bold leading-tight">
               <span className="text-[#f26b3a]">{hero.title.split("||")[0]}</span>
               <span className="text-gray-800 block mt-1">{hero.title.split("||")[1]}</span>
             </h1>
@@ -239,7 +239,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
             {/* FEATURES */}
             <div className="bg-white mt-6 sm:mt-8 rounded-tl-xl shadow-[-5px_1px_5px_rgba(0,0,0,0.25)] p-5 sm:p-6 space-y-3 sm:space-y-4 w-full sm:w-fit mx-auto lg:mx-0">
               <div className="flex items-center gap-3 text-gray-700 text-sm sm:text-base">
-                <ul className="text-gray-600 text-lg space-y-3">
+                <ul className="text-gray-600 text-sm lg:text-lg space-y-3">
                   {hero.features
                     .split("\n")
                     .filter(Boolean)
@@ -252,7 +252,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
 
             {/* BUTTON */}
             <Link href={hero.ctaLink1}>
-              <button className="mt-6 cursor-pointer sm:mt-8 bg-[#f26b3a] hover:bg-[#e25c2c] transition text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold flex items-center justify-center gap-2 mx-auto lg:mx-0">
+              <button className="mt-6 cursor-pointer sm:mt-8 bg-[#f26b3a] hover:bg-[#e25c2c] transition text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold flex items-center justify-center gap-2 mx-auto lg:mx-0 text-sm lg:text-base">
                 {hero.ctaText1}
                 <span className="text-xl">›</span>
               </button>
@@ -278,7 +278,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
 
 
             {/* FLOATING FORM CARD */}
-            <div className="mt-6 lg:absolute lg:-left-5 lg:top-5 bg-gradient-to-br from-[#3f3f3f] to-[#5b5b5b] text-white p-8 sm:p-6 sm:py-15 rounded-br-[50px] w-full max-w-xs lg:h-[350px] shadow-xl">
+            <div className="lg:mt-6 lg:absolute lg:-left-5 lg:top-5 bg-gradient-to-br from-[#3f3f3f] to-[#5b5b5b] text-white p-8 sm:p-6 sm:py-15 rounded-br-[50px] w-full max-w-xs lg:h-[350px] shadow-xl">
               <h4 className="font-semibold text-sm sm:text-lg lg:absolute lg:top-5">
                 {hero.slideBar}
               </h4>
@@ -298,7 +298,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
         </div>
 
         {/* ================= BOTTOM TEXT ================= */}
-        <div className="lg:text-center mt-16 lg:mt-20 lg:px-20 px-10">
+        <div className="lg:text-center text-left mt-16 lg:mt-10 lg:px-20 px-10">
           <h2 className="text-xl sm:text-2xl lg:text-4xl font-semibold leading-snug">
             <span className="text-[#f26b3a]">{content.title.split("||")[0]}</span>
             <span className="text-gray-700">{content.title.split("||")[1]}</span>
@@ -314,9 +314,9 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
       <section className="bg-[#fffaf6] mb-16 lg:mb-20  md:py-10 overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           {/* ================= LEFT SIDE ================= */}
-          <div className="text-center lg:text-left">
+          <div className="text-left lg:text-left">
             <div className="lg:absolute lg:top-10 lg:left-40 lg:max-w-xl" >
-              <h2 className="text-2xl sm:text-3xl lg:text-[33px] font-bold leading-tight">
+              <h2 className="text-xl sm:text-3xl lg:text-[33px] font-bold leading-tight">
                 <span className="text-gray-500">{steps.title}</span>
                 <br />
                 <span className="text-gray-500">{steps.subtitle.split("\n")[0]}</span>{" "}
@@ -380,11 +380,11 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
                 </span>
 
                 {/* TEXT */}
-                <div className="flex-1 pr-20 pt-2 sm:pr-24 lg:pr-28">
-                  <h4 className="text-[#f26b3a] font-bold text-lg sm:text-xl leading-tight">
+                <div className="flex-1 pr-20 pt-4 lg:pt-2 sm:pr-24 lg:pr-28">
+                  <h4 className="text-[#f26b3a] font-bold text-base sm:text-xl leading-tight">
                     {item.title}
                   </h4>
-                  <p className="text-gray-500 text-sm mt-1">
+                  <p className="text-gray-500 text-xs lg:text-sm mt-1">
                     {item.subTitle}
                   </p>
                 </div>
@@ -406,451 +406,444 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
         </div>
       </section>
 
-      <section className="bg-[#fffaf6] py-12 lg:py-16 overflow-hidden">
-        <div className="relative mx-auto min-h-[380px] sm:min-h-[420px] lg:min-h-[460px] bg-[url('https://media.istockphoto.com/id/1094302626/photo/hand-raised-for-vote-and-asking-at-conference-seminar-meeting-room.jpg?s=612x612&w=0&k=20&c=r60nXw6xfHRoNPrTiyImBGsXNS5XjtoOQfKYPrIdKe8=')] bg-cover bg-right bg-no-repeat flex items-center px-4 sm:px-6">
-          <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/40 to-[#636363] z-0" />
+      <section className="bg-[#fffaf6] lg:py-16 overflow-hidden">
+  <div className="relative mx-auto min-h-[320px] sm:min-h-[420px] lg:min-h-[460px] 
+    bg-[url('https://media.istockphoto.com/id/1094302626/photo/hand-raised-for-vote-and-asking-at-conference-seminar-meeting-room.jpg?s=612x612&w=0&k=20&c=r60nXw6xfHRoNPrTiyImBGsXNS5XjtoOQfKYPrIdKe8=')] 
+    bg-cover bg-right bg-no-repeat flex items-center px-4 sm:px-6">
 
-          <div className="relative z-10 w-full flex justify-center lg:justify-end">
-            <div className="p-[2px] bg-gradient-to-r from-white/100 via-white/20 to-white/100 w-full max-w-full sm:max-w-[600px] lg:max-w-[720px]">
-              <div className="bg-[#f26b3a] p-6 sm:p-8 md:p-10 text-white">
-                <AnimatePresence mode="wait" custom={direction}>
-                  <motion.div
-                    key={step}
-                    custom={direction}
-                    variants={variants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                  >
-                    {step === 1 && (
-                      <>
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
-                          What Is Your Desired Academic Course?
-                        </h2>
+    {/* Overlay */}
+    <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/40 to-[#636363] z-0" />
 
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                          {["UG", "PG", "PHD", "MBBS"].map((item) => (
-                            <button
-                              key={item}
-                              type="button"
-                              onClick={() => setValue("course", item, { shouldValidate: true })}
-                              className={`border border-white rounded-xl rounded-tl-[0px] py-3 sm:py-4 text-base sm:text-lg transition ${course === item
-                                  ? "bg-white text-[#f26b3a]"
-                                  : "bg-[#b04f32] text-white hover:bg-white hover:text-[#f26b3a]"
-                                }`}
-                            >
-                              {item}
-                            </button>
-                          ))}
-                        </div>
+    <div className="relative z-10 w-full flex justify-center lg:justify-end">
+      <div className="p-[2px] bg-gradient-to-r from-white via-white/20 to-white w-full max-w-full sm:max-w-[600px] lg:max-w-[720px]">
+        
+        <div className="bg-[#f26b3a] p-4 sm:p-6 md:p-10 text-white">
 
-                        {errors.course && (
-                          <p className="text-red-300 mt-2">Please select a course</p>
-                        )}
-                      </>
-                    )}
-
-
-                    {step === 2 && (
-                      <>
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
-                          Which country do you want to go to?
-                        </h2>
-
-                        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                          {["UK", "USA", "Canada", "Australia"].map((item) => (
-                            <button
-                              key={item}
-                              type="button"
-                              onClick={() => setValue("country", item, { shouldValidate: true })}
-                              className={`border border-white rounded-xl py-3 sm:py-4 transition ${country === item
-                                  ? "bg-white text-[#f26b3a]"
-                                  : "bg-[#b04f32] text-white hover:bg-white hover:text-[#f26b3a]"
-                                }`}
-                            >
-                              {item}
-                            </button>
-                          ))}
-                        </div>
-
-                        {errors.country && (
-                          <p className="text-red-300 mt-2">Please select a country</p>
-                        )}
-                      </>
-                    )}
-
-
-                    {step === 3 && (
-                      <>
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6">
-                          Basic Details
-                        </h2>
-
-                        <div className="space-y-4">
-                          <input
-                            placeholder="Full Name"
-                            {...register("fullName", { required: "Name is required" })}
-                            className="w-full px-4 py-3 bg-[#b04f32] rounded-lg text-white border border-white"
-                          />
-                          {errors.name && <p className="text-red-300">{errors.name.message}</p>}
-
-                          <input
-                            placeholder="City"
-                            {...register("city", { required: "City is required" })}
-                            className="w-full bg-[#b04f32] border border-white px-4 py-3 rounded-lg text-white"
-                          />
-
-                          <input
-                            placeholder="Mobile"
-                            {...register("mobile", {
-                              required: "Mobile is required",
-                              pattern: {
-                                value: /^[0-9]{10}$/,
-                                message: "Enter valid 10-digit mobile number",
-                              },
-                            })}
-                            className="w-full bg-[#b04f32] border border-white px-4 py-3 rounded-lg text-white"
-                          />
-                          {errors.mobile && <p className="text-red-300">{errors.mobile.message}</p>}
-                        </div>
-                      </>
-                    )}
-
-                  </motion.div>
-                </AnimatePresence>
-
-                {/* ================= BUTTONS ================= */}
-                <div className="flex justify-between mt-8 sm:mt-10">
-                  {step > 1 && (
-                    <button
-                      onClick={() => {
-                        setDirection(-1);
-                        setStep(step - 1);
-                      }}
-                      className="bg-[#b5542e] px-5 sm:px-6 py-3 rounded-lg text-sm sm:text-base"
-                    >
-                      ← Back
-                    </button>
-                  )}
-
-                  {step < 3 ? (
-                    <button
-                      onClick={() => {
-                        setDirection(1);
-                        setStep(step + 1);
-                      }}
-                      disabled={(step === 1 && !course) || (step === 2 && !country)}
-                      className={`px-6 sm:px-8 py-3 rounded-lg font-semibold mx-auto transition ${(step === 1 && !course) || (step === 2 && !country)
-                        ? "bg-[#b04f32] cursor-not-allowed"
-                        : "bg-[#b04f32] text-white hover:bg-[#9a3f28]"
-                        }`}
-                    >
-                      Save & Go Next →
-                    </button>
-                  ) : (
-                    <button
-                      onClick={handleSubmit(onSubmit)}
-                      disabled={isSubmitting}
-                      className="mt-6 px-6 py-3 bg-white text-[#f26b3a] rounded-xl"
-                    >
-                      {isSubmitting ? "Submitting..." : "Submit"}
-                    </button>
-
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#fffaf6] py-16 lg:py-35 px-4 relative overflow-hidden">
-       
-
-        <div className="max-w-7xl mx-auto relative">
-          <div className="bg-[#f26b3a] rounded-bl-[120px] px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-15 relative">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full hidden sm:block" />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div className="relative overflow-hidden rounded-bl-[70px] left-0 top-0 lg:-top-30 lg:left-10">
-                <iframe
-                  className="w-full h-[220px] sm:h-[260px] md:h-[320px] lg:h-[430px] rounded-bl-[70px] object-cover"
-                  src={embedUrl}
-                  title="YouTube video"
-                  frameBorder="0"
-                  allow="autoplay; encrypted-media"
-                  allowFullScreen
-                />
-              </div>
-              <div className="text-white text-center lg:text-center">
-                <h2 className="text-2xl sm:text-3xl lg:text-3xl font-bold leading-snug mb-3 lg:mb-4 ml-0 lg:ml-10">
-                  {requestCallback.title}
-                </h2>
-                <p className="text-lg sm:text-xl lg:text-lg ml-0 lg:ml-5 text-white/90">
-                  {requestCallback.subtitle}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#fffaf6] py-12 lg:py-20">
-        <div className="mx-auto">
-          <h2 className="text-center text-2xl sm:text-3xl md:text-4xl font-medium mb-8 lg:mb-10 px-4">
-            <span className="text-gray-700">{images.title.split("||")[0]}</span>{" "}
-            <span className="text-[#f26b3a]">{images.title.split("||")[1]}</span>
-          </h2>
-          <p className="text-center text-gray-500 mb-6 max-w-4xl mx-auto">{images.subTitle}</p>
-
-         <div className="flex justify-center mt-8 py-6 lg:py-10 px-2">
-  <div
-    className="
-      flex items-center gap-1
-      rounded-full border border-orange-200 bg-white p-1
-      max-w-full
-      overflow-x-auto
-      sm:flex-wrap sm:justify-center
-    "
-  >
-    {tabs.map((tab) => {
-      const isActive = activeTab === tab.value;
-
-      return (
-        <button
-          key={tab.value}
-          onClick={() => handleTabClick(tab.value)}
-          className="
-            relative
-            px-3 py-2
-            sm:px-4
-            lg:px-5 lg:py-2
-            text-xs sm:text-sm lg:text-sm
-            font-medium
-            rounded-full
-            whitespace-nowrap
-            flex-shrink-0
-          "
-        >
-          {/* Sliding Active Pill */}
-          {isActive && (
-            <motion.span
-              layoutId="activeTabPill"
-              transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 35,
-              }}
-              className="absolute inset-0 rounded-full bg-orange-600"
-            />
-          )}
-
-          {/* Label */}
-          <span
-            className={`relative z-10 transition-colors ${
-              isActive ? "text-white" : "text-orange-600"
-            }`}
-          >
-            {tab.label}
-          </span>
-        </button>
-      );
-    })}
-  </div>
-</div>
-
-
-
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" custom={direction}>
             <motion.div
-              key={activeTab} // 🔥 THIS IS THE MAGIC
-              initial={{ x: 60, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -60, opacity: 0 }}
-              transition={{ duration: 0.45, ease: "easeInOut" }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 px-4 sm:px-8 lg:px-10 mx-auto max-w-7xl"
+              key={step}
+              custom={direction}
+              variants={variants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
             >
 
-              {loading ? (
-                <p className="col-span-full text-center text-gray-500">
-                  Loading images...
-                </p>
-              ) : Array.isArray(galleryType) && galleryType.length > 0 ? (
+              {/* STEP 1 */}
+              {step === 1 && (
                 <>
-                  {/* LEFT: 2 SMALL IMAGES */}
-                  <div className="grid grid-rows-2 gap-4">
-                    {galleryType[1] && (
-                      <div className="overflow-hidden rounded-bl-[60px]">
-                        <img
-                          src={galleryType[1].mediaUrl}
-                          alt={galleryType[1].title}
-                          loading="lazy"
-                          className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover"
-                        />
-                      </div>
-                    )}
+                  <h2 className="text-lg sm:text-xl md:text-3xl font-semibold mb-4 sm:mb-6">
+                    What Is Your Desired Academic Course?
+                  </h2>
 
-                    {galleryType[2] && (
-                      <div className="overflow-hidden rounded-tl-[60px]">
-                        <img
-                          src={galleryType[2].mediaUrl}
-                          alt={galleryType[2].title}
-                          className="w-full h-[180px] sm:h-[220px] lg:h-[240px] object-cover"
-                        />
-                      </div>
-                    )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
+                    {["UG", "PG", "PHD", "MBBS"].map((item) => (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => setValue("course", item, { shouldValidate: true })}
+                        className={`w-full border border-white rounded-xl py-2 sm:py-4 text-sm sm:text-lg transition ${
+                          course === item
+                            ? "bg-white text-[#f26b3a]"
+                            : "bg-[#b04f32] hover:bg-white hover:text-[#f26b3a]"
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    ))}
                   </div>
 
-                  {/* RIGHT: BIG IMAGE */}
-                  {galleryType[0] && (
-                    <div className="overflow-hidden rounded-br-[120px]">
-                      <img
-                        src={galleryType[0].mediaUrl}
-                        alt={galleryType[0].title}
-                        className="w-full h-[260px] sm:h-[360px] lg:h-[500px] object-cover"
-                      />
-                    </div>
+                  {errors.course && (
+                    <p className="text-red-300 text-sm mt-2">Please select a course</p>
                   )}
                 </>
-              ) : (
-                <p className="col-span-full text-center text-gray-500">
-                  No images found
-                </p>
               )}
+
+              {/* STEP 2 */}
+              {step === 2 && (
+                <>
+                  <h2 className="text-lg sm:text-xl md:text-3xl font-semibold mb-4 sm:mb-6">
+                    Which country do you want to go to?
+                  </h2>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+                    {["UK", "USA", "Canada", "Australia"].map((item) => (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => setValue("country", item, { shouldValidate: true })}
+                        className={`w-full border border-white rounded-xl py-2 sm:py-4 text-sm sm:text-base transition ${
+                          country === item
+                            ? "bg-white text-[#f26b3a]"
+                            : "bg-[#b04f32] hover:bg-white hover:text-[#f26b3a]"
+                        }`}
+                      >
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+
+                  {errors.country && (
+                    <p className="text-red-300 text-sm mt-2">Please select a country</p>
+                  )}
+                </>
+              )}
+
+              {/* STEP 3 */}
+              {step === 3 && (
+                <>
+                  <h2 className="text-lg sm:text-xl md:text-3xl font-semibold mb-4 sm:mb-6">
+                    Basic Details
+                  </h2>
+
+                  <div className="grid grid-cols-1 gap-3 sm:gap-4">
+                    
+                    <input
+                      placeholder="Full Name"
+                      {...register("fullName", { required: "Name is required" })}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base bg-[#b04f32] rounded-lg border border-white"
+                    />
+                    {errors.fullName && (
+                      <p className="text-red-300 text-sm">{errors.fullName.message}</p>
+                    )}
+
+                    <input
+                      placeholder="City"
+                      {...register("city", { required: "City is required" })}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base bg-[#b04f32] rounded-lg border border-white"
+                    />
+
+                    <input
+                      placeholder="Mobile"
+                      {...register("mobile", {
+                        required: "Mobile is required",
+                        pattern: {
+                          value: /^[0-9]{10}$/,
+                          message: "Enter valid 10-digit mobile number",
+                        },
+                      })}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base bg-[#b04f32] rounded-lg border border-white"
+                    />
+                    {errors.mobile && (
+                      <p className="text-red-300 text-sm">{errors.mobile.message}</p>
+                    )}
+                  </div>
+                </>
+              )}
+
             </motion.div>
           </AnimatePresence>
 
+          {/* BUTTONS */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mt-6 sm:mt-10">
 
-        </div>
-      </section>
+            {step > 1 && (
+              <button
+                onClick={() => {
+                  setDirection(-1);
+                  setStep(step - 1);
+                }}
+                className="w-full sm:w-auto bg-[#b5542e] px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-sm"
+              >
+                ← Back
+              </button>
+            )}
 
-      <section className="bg-[#fffaf6] py-20 px-4 relative overflow-hidden">
-       
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-medium text-gray-700">
-              <span className="text-gray-700">{popularCourses.title.split("||")[0]}</span>{" "}
-              <span className="text-[#f26b3a]">{popularCourses.title.split("||")[1]}</span>
-            </h2>
-            <p className="mt-4 text-gray-500 max-w-2xl mx-auto">{popularCourses.subtitle}</p>
+            {step < 3 ? (
+              <button
+                onClick={() => {
+                  setDirection(1);
+                  setStep(step + 1);
+                }}
+                disabled={(step === 1 && !course) || (step === 2 && !country)}
+                className={`w-full sm:w-auto px-5 sm:px-8 py-2 sm:py-3 rounded-lg text-sm sm:text-base font-semibold transition ${
+                  (step === 1 && !course) || (step === 2 && !country)
+                    ? "bg-[#b04f32] cursor-not-allowed"
+                    : "bg-[#b04f32] hover:bg-[#9a3f28]"
+                }`}
+              >
+                Save & Go Next →
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit(onSubmit)}
+                disabled={isSubmitting}
+                className="w-full sm:w-auto px-5 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-white text-[#f26b3a] rounded-xl"
+              >
+                {isSubmitting ? "Submitting..." : "Submit"}
+              </button>
+            )}
+
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {["BBA", "MBA", "MCA"].map((course) => (
-              <div key={course} className="relative">
-                <div className="absolute -bottom-4 -left-[2px] w-[101%] h-60 bg-[#f26b3a] rounded-bl-[40px] rounded-br-[40px] z-0" />
-                <div className="relative bg-white rounded-[40px] rounded-tr-[0px] border border-gray-400 p-6 z-10">
-                  <div>
-                    <div className="flex items-center gap-3 mb-4">
-                      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135679.png" alt="icon" className="w-7 h-7" />
-                      <h3 className="text-3xl font-bold text-gray-500">{course}</h3>
-                    </div>
-                    <p className="text-gray-500 text-base font-bold mb-2">Countries: UK, USA, Australia +5 more</p>
-                    <p className="text-gray-500 text-base font-bold mb-6">Universities: <span className="text-[#f26b3a] font-bold">1800+</span></p>
-                    <div className="space-y-3">
-                      <button className="w-full bg-gray-200 text-gray-600 py-2 rounded-lg">Check Eligibility</button>
-                      <button className="w-full bg-[#fde6dc] text-gray-600 py-2 rounded-lg font-medium">Explore Course</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#fffaf6] py-12 sm:py-16 lg:py-20 overflow-hidden">
-  <div className="text-center max-w-5xl mx-auto px-4">
-    <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-gray-700">
-      <span className="text-gray-700">{studyDestinations.title.split("||")[0]}</span>{" "}
-      <span className="text-[#f26b3a]">{studyDestinations.title.split("||")[1]}</span>
-    </h2>
-    <p className="text-gray-500 mt-3 sm:mt-4 text-sm md:text-base px-2">
-      {studyDestinations.subtitle}
-    </p>
-  </div>
-
-  {/* Tabs */}
-  <div className="bg-[#f26b3a] mt-6 sm:mt-8 lg:mt-10">
-    <div className="max-w-7xl mx-auto flex flex-wrap justify-center gap-2 sm:gap-4 lg:gap-8 text-white py-3 sm:py-4 text-xs sm:text-sm md:text-base px-4">
-      {["Medical", "Engineering", "Business", "MBA", "Others"].map((tab) => (
-        <button key={tab} className="hover:underline whitespace-nowrap py-1">{tab}</button>
-      ))}
-    </div>
-  </div>
-
-  {/* Main Content */}
-  <div className="relative mx-auto mt-8 sm:mt-10 lg:mt-16 px-4 overflow-hidden">
-    
-
-
-    {/* Background Image Area */}
-    <div className="absolute left-0 top-0 w-full h-[200px] sm:h-[280px] md:h-[360px] lg:h-[450px] bg-[#f2f2f2] rounded-tr-[80px] sm:rounded-tr-[100px] lg:rounded-tr-[120px] overflow-hidden z-0 lg:-left-31 lg:w-[55%] lg:h-[620px] lg:rounded-tr-[160px]">
-      <img 
-        src="https://www.hdwallpapers.in/download/black_and_white_image_of_colosseum_piazza_del_colosseo_rome_italy_hd_travel-HD.jpg" 
-        alt="Italy" 
-        className="absolute inset-0 w-full h-full object-cover grayscale" 
-      />
-      
-      {/* Logo Grid - Desktop Only */}
-      <div className="hidden lg:grid absolute top-8 right-40 grid-cols-2 gap-3 p-3">
-        {[1, 2, 3, 4].map((i) => (
-          <img 
-            key={i} 
-            src="https://www.shutterstock.com/shutterstock/photos/2098674772/display_1500/stock-vector-university-logo-college-school-logo-crests-and-emblems-2098674772.jpg" 
-            className="w-46 h-20 border border-gray-500 rounded" 
-            alt={`Logo ${i}`}
-          />
-        ))}
-      </div>
-    </div>
-
-    {/* Content Grid */}
-    <div className="relative z-10 grid lg:grid-cols-2 gap-6 lg:gap-10 items-start pt-4 sm:pt-8">
-      {/* Left Spacer - Mobile Hidden */}
-      <div className="hidden lg:block" />
-
-      {/* Italy Card */}
-      <div className="relative flex justify-center lg:block lg:absolute lg:top-40 lg:-right-150 w-full">
-        <div className="bg-white rounded-tr-[50px] sm:rounded-tr-[60px] lg:rounded-tr-[70px] py-4 sm:py-5 lg:py-25 px-6 sm:px-10 lg:px-8 shadow-[-12px_-1px_10px_rgba(0,0,0,0.25)] relative max-w-md mx-auto lg:mx-0 lg:max-w-lg">
-          {/* Corner Accent */}
-          <div className="absolute -top-1 right-0 w-20 sm:w-24 lg:w-30 h-20 sm:h-24 lg:h-30 border-t-4 sm:border-t-6 lg:border-t-7 border-r-4 sm:border-r-6 lg:border-r-8 border-[#f26b3a] rounded-tr-[50px] sm:rounded-tr-[60px] lg:rounded-tr-[70px]" />
-          
-          {/* Flag + Title */}
-          <div className="flex items-center gap-2 sm:gap-3 justify-center lg:justify-start">
-            <img src="https://flagcdn.com/w40/it.png" alt="Italy" className="w-8 sm:w-10 lg:w-15 rounded-sm" />
-            <h3 className="text-3xl sm:text-4xl lg:text-[70px] font-semibold text-gray-700 leading-none">ITALY</h3>
-          </div>
-          
-          {/* Subtitle */}
-          <p className="text-[#f26b3a] text-lg sm:text-xl lg:text-3xl mt-2 sm:mt-3 font-medium text-center lg:text-left lg:ml-24 lg:w-140">
-            100+ Universities
-          </p>
-          
-          {/* Arrow Button */}
-          <button className="mt-4 sm:mt-6 lg:mt-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-gray-300 flex items-center justify-center lg:absolute lg:right-5 lg:bottom-5 text-sm sm:text-base hover:bg-gray-50 transition">
-            ↑
-          </button>
         </div>
       </div>
-    </div>
-
-    {/* CTA Section */}
-    <div className="text-center mt-10 sm:mt-14 lg:mt-150 relative z-10 pb-4 ">
-      <p className="text-gray-500 text-sm sm:text-base lg:text-lg mb-4 px-2">
-        Check whether you are eligible for dream university
-      </p>
-      <button className="bg-[#f26b3a] text-white text-base sm:text-lg lg:text-2xl px-8 sm:px-10 lg:px-15 py-3 sm:py-4 lg:py-5 rounded-full hover:bg-[#e55a2b] transition shadow-md">
-        Check My Eligibility
-      </button>
     </div>
   </div>
 </section>
+
+      <section className="bg-[#fffaf6] py-8 lg:py-16 px-4 relative overflow-hidden">
+
+  <div className="max-w-7xl mx-auto relative">
+    
+    <div className="bg-[#f26b3a] rounded-bl-[80px] lg:rounded-bl-[120px] px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-14 relative">
+      
+      {/* Decorative circle */}
+      <div className="absolute top-0 right-0 w-24 h-24 sm:w-40 sm:h-40 bg-white/10 rounded-full hidden sm:block" />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center">
+
+        {/* Video */}
+        <div className="relative overflow-hidden rounded-bl-[40px] lg:rounded-bl-[70px] lg:-mt-20 lg:ml-10">
+          <iframe
+            className="w-full h-[180px] sm:h-[240px] md:h-[300px] lg:h-[430px] rounded-bl-[40px] lg:rounded-bl-[70px] object-cover"
+            src={embedUrl}
+            title="YouTube video"
+            frameBorder="0"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
+        </div>
+
+        {/* Content */}
+        <div className="text-white text-left lg:text-left">
+          
+          <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold leading-snug mb-2 sm:mb-3 lg:mb-4 lg:ml-10">
+            {requestCallback.title}
+          </h2>
+
+          <p className="text-sm sm:text-base lg:text-lg text-white/90 ml-2 lg:ml-5">
+            {requestCallback.subtitle}
+          </p>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+      <section className="bg-[#fffaf6] py-6 lg:py-20 px-3 sm:px-4">
+  <div className="mx-auto">
+
+    {/* Title */}
+    <h2 className="lg:text-center text-lg sm:text-2xl md:text-4xl font-medium mb-4 sm:mb-6 lg:mb-10">
+      <span className="text-gray-700">
+        {images.title.split("||")[0]}
+      </span>{" "}
+      <span className="text-[#f26b3a]">
+        {images.title.split("||")[1]}
+      </span>
+    </h2>
+
+    {/* Subtitle */}
+    <p className="lg:text-center text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6 max-w-4xl lg:mx-auto px-1">
+      {images.subTitle}
+    </p>
+
+    {/* Tabs */}
+    <div className="flex justify-start sm:justify-center mt-4 sm:mt-8 py-3 sm:py-6 lg:py-10 px-1 sm:px-2">
+      <div
+        className="
+          flex items-center gap-1
+          rounded-full border border-orange-200 bg-white p-1
+          max-w-full
+          overflow-x-auto whitespace-nowrap
+          scrollbar-hide scroll-smooth
+          sm:flex-wrap sm:justify-center
+        "
+      >
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.value;
+
+          return (
+            <button
+              key={tab.value}
+              onClick={() => handleTabClick(tab.value)}
+              className="
+                relative
+                px-2 py-1.5
+                sm:px-4
+                lg:px-5 lg:py-2
+                text-[11px] sm:text-sm
+                font-medium
+                rounded-full
+                whitespace-nowrap
+                flex-shrink-0
+              "
+            >
+              {/* Active pill */}
+              {isActive && (
+                <motion.span
+                  layoutId="activeTabPill"
+                  transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                  className="absolute inset-0 rounded-full bg-orange-600"
+                />
+              )}
+
+              <span
+                className={`relative z-10 ${
+                  isActive ? "text-white" : "text-orange-600"
+                }`}
+              >
+                {tab.label}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+
+    {/* Images */}
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={activeTab}
+        initial={{ x: 60, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: -60, opacity: 0 }}
+        transition={{ duration: 0.45, ease: "easeInOut" }}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-10 px-2 sm:px-6 lg:px-10 mx-auto max-w-7xl"
+      >
+
+        {loading ? (
+          <p className="col-span-full text-center text-gray-500 text-sm">
+            Loading images...
+          </p>
+        ) : Array.isArray(galleryType) && galleryType.length > 0 ? (
+          <>
+            {/* LEFT SMALL IMAGES */}
+            <div className="lg:grid lg:grid-rows-2 gap-3 sm:gap-4">
+              
+              {galleryType[1] && (
+                <div className="overflow-hidden rounded-bl-[40px] lg:rounded-bl-[60px]">
+                  <img
+                    src={galleryType[1].mediaUrl}
+                    alt={galleryType[1].title}
+                    loading="lazy"
+                    className="w-full h-[140px] sm:h-[200px] lg:h-[240px] object-cover"
+                  />
+                </div>
+              )}
+
+              {galleryType[2] && (
+                <div className="overflow-hidden rounded-tl-[40px] lg:rounded-tl-[60px]">
+                  <img
+                    src={galleryType[2].mediaUrl}
+                    alt={galleryType[2].title}
+                    className="w-full h-[140px] sm:h-[200px] lg:h-[240px] object-cover"
+                  />
+                </div>
+              )}
+
+            </div>
+
+            {/* RIGHT BIG IMAGE */}
+            {galleryType[0] && (
+              <div className="overflow-hidden rounded-br-[70px] lg:rounded-br-[120px]">
+                <img
+                  src={galleryType[0].mediaUrl}
+                  alt={galleryType[0].title}
+                  className="w-full h-[200px] sm:h-[300px] lg:h-[500px] object-cover"
+                />
+              </div>
+            )}
+
+          </>
+        ) : (
+          <p className="col-span-full text-center text-gray-500 text-sm">
+            No images found
+          </p>
+        )}
+      </motion.div>
+    </AnimatePresence>
+
+  </div>
+</section>
+      <section className="bg-[#fffaf6] py-8 lg:py-20 px-3 sm:px-4 relative overflow-hidden">
+       
+  <div className="max-w-7xl mx-auto">
+
+    {/* Heading */}
+    <div className="text-center mb-6 sm:mb-10 lg:mb-14">
+      <h2 className="text-xl sm:text-2xl md:text-4xl font-medium text-gray-700">
+        <span className="text-gray-700">
+          {popularCourses.title.split("||")[0]}
+        </span>{" "}
+        <span className="text-[#f26b3a]">
+          {popularCourses.title.split("||")[1]}
+        </span>
+      </h2>
+
+      <p className="mt-2 sm:mt-4 text-xs sm:text-sm md:text-base text-gray-500 max-w-2xl mx-auto px-1">
+        {popularCourses.subtitle}
+      </p>
+    </div>
+
+    {/* Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-6 lg:gap-10">
+      
+      {["BBA", "MBA", "MCA"].map((course) => (
+        <div key={course} className="relative">
+
+          {/* Orange Background */}
+          <div className="absolute -bottom-3 -left-[2px] w-[101%] h-40 sm:h-48 lg:h-60 bg-[#f26b3a] rounded-bl-[25px] sm:rounded-bl-[40px] rounded-br-[25px] sm:rounded-br-[40px] z-0" />
+
+          {/* Card */}
+          <div className="relative bg-white rounded-[25px] sm:rounded-[40px] rounded-tr-[0px] border border-gray-400 p-4 sm:p-5 lg:p-6 z-10">
+
+            <div>
+
+              {/* Title */}
+              <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/3135/3135679.png"
+                  alt="icon"
+                  className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7"
+                />
+                <h3 className="text-lg sm:text-2xl lg:text-3xl font-bold text-gray-500">
+                  {course}
+                </h3>
+              </div>
+
+              {/* Info */}
+              <p className="text-gray-500 text-xs sm:text-sm lg:text-base font-bold mb-1 sm:mb-2">
+                Countries: UK, USA, Australia +5 more
+              </p>
+
+              <p className="text-gray-500 text-xs sm:text-sm lg:text-base font-bold mb-4 sm:mb-6">
+                Universities:{" "}
+                <span className="text-[#f26b3a] font-bold">1800+</span>
+              </p>
+
+              {/* Buttons */}
+              <div className="space-y-2 sm:space-y-3">
+                <button className="w-full bg-gray-200 text-gray-600 py-2 text-xs sm:text-sm rounded-lg">
+                  Check Eligibility
+                </button>
+
+                <button className="w-full bg-[#fde6dc] text-gray-600 py-2 text-xs sm:text-sm rounded-lg font-medium">
+                  Explore Course
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+  </div>
+</section>
+
+     
 
       <section className="bg-[#fffaf6] py-12 lg:py-20 px-4 lg:overflow-hidden overflow-visible relative">
        
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-          <div className="w-full lg:w-auto text-center lg:text-left px-2 sm:px-4 lg:px-0">
+          <div className="w-full lg:w-auto text-left lg:text-left px-2 sm:px-4 lg:px-0">
   <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-gray-700 leading-snug break-words">
     {stories.title.split("||")[0]}
     <br />
@@ -877,7 +870,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
 </div>
 
           {/* SLIDER SECTION - UPDATED */}
-          <div className="relative w-full py-4 ">
+          <div className="relative w-full py-0 lg:py-4 ">
             <div
               ref={sliderRef}
               className="keen-slider"
@@ -921,51 +914,120 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-[#fffaf6]">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-2xl md:text-4xl font-semibold text-gray-700">
-            <span className="text-gray-700">{discountOffers.title.split("||")[0]}</span>{" "}
-            <span className="text-orange-500">{discountOffers.title.split("||")[1]}</span>{" "}
-            <span className="text-gray-700">{discountOffers.title.split("||")[2]}</span>
-          </h2>
-          <p className="mt-4 text-gray-500 max-w-3xl mx-auto text-sm md:text-base">{discountOffers.subtitle}</p>
+     <section className="py-6 lg:py-16 px-3 sm:px-4 bg-[#fffaf6]">
+  <div className="max-w-7xl mx-auto text-left lg:text-center">
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="relative rounded-[28px] bg-gradient-to-r from-orange-400 to-orange-300 p-6 text-white overflow-hidden">
-              <h3 className="text-lg font-semibold">Plan Your</h3>
-              <h2 className="text-2xl font-bold text-yellow-300">Study Abroad Journey</h2>
-              <p className="mt-2 text-sm">with <span className="font-semibold">US</span> & Get Flat</p>
-              <div className="mt-4 bg-white text-red-500 inline-block px-4 py-2 rounded-lg font-bold text-xl">₹ 20,000</div>
-              <p className="mt-2 font-semibold text-yellow-200">CASHBACK</p>
-              <img src="/images/travel.png" alt="" className="absolute bottom-0 right-0 w-40" />
-            </div>
+    {/* Heading */}
+    <h2 className="text-lg sm:text-2xl md:text-4xl font-semibold text-gray-700">
+      <span>{discountOffers.title.split("||")[0]}</span>{" "}
+      <span className="text-orange-500">
+        {discountOffers.title.split("||")[1]}
+      </span>{" "}
+      <span>{discountOffers.title.split("||")[2]}</span>
+    </h2>
 
-            <div className="relative rounded-[28px] bg-gray-200 p-6 overflow-hidden">
-              <span className="bg-red-600 text-white px-4 py-1 rounded-full text-sm font-semibold">Get FREE</span>
-              <h2 className="mt-4 text-3xl font-bold text-red-600">IELTS <span className="text-black">CLASSES</span></h2>
-              <p className="mt-2 text-sm text-gray-600 line-through">Starting From ₹18,000</p>
-              <h1 className="text-5xl font-extrabold text-red-600 mt-2">₹ 0*</h1>
-              <img src="https://png.pngtree.com/png-vector/20250305/ourmid/pngtree-a-happy-male-student-sporting-backpack-and-clutching-book-is-looking-png-image_15721728.png" alt="" className="absolute -right-14 bottom-0 w-50" />
-              <p className="absolute bottom-2 left-0 w-full text-center text-[11px] text-gray-600">*Terms & Conditions Applied</p>
-            </div>
+    <p className="mt-2 sm:mt-4 text-xs sm:text-sm md:text-base text-gray-500 max-w-3xl mx-auto">
+      {discountOffers.subtitle}
+    </p>
 
-            <div className="relative rounded-[28px] bg-gray-400 p-6 text-white overflow-hidden">
-              <h2 className="text-3xl font-bold">Avail <span className="text-yellow-300">FREE*</span></h2>
-              <p className="text-2xl font-semibold mt-2">FLIGHT <br /> Tickets!!</p>
-              <img src="https://static.vecteezy.com/system/resources/thumbnails/022/180/863/small/air-plane-ticket-travel-kit-3d-illustration-png.png" alt="" className="absolute top-10 -right-10 w-52" />
-              <img src="/images/books.png" alt="" className="absolute bottom-4 right-6 w-28" />
-              <p className="absolute bottom-2 left-0 w-full text-center text-[11px] text-gray-200">*Terms & Condition Apply</p>
-            </div>
-          </div>
+    {/* Cards */}
+    <div className="mt-6 sm:mt-10 lg:mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+
+      {/* CARD 1 */}
+      <div className="relative rounded-[20px] sm:rounded-[28px] bg-gradient-to-r from-orange-400 to-orange-300 p-4 sm:p-6 text-white overflow-hidden">
+        <h3 className="text-sm sm:text-base font-semibold">Plan Your</h3>
+
+        <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-yellow-300">
+          Study Abroad Journey
+        </h2>
+
+        <p className="mt-1 sm:mt-2 text-xs sm:text-sm">
+          with <span className="font-semibold">US</span> & Get Flat
+        </p>
+
+        <div className="mt-3 sm:mt-4 bg-white text-red-500 inline-block px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-bold text-base sm:text-xl">
+          ₹ 20,000
         </div>
-      </section>
+
+        <p className="mt-1 sm:mt-2 font-semibold text-yellow-200 text-sm">
+          CASHBACK
+        </p>
+
+        <img
+          src="/images/travel.png"
+          alt=""
+          className="absolute bottom-0 right-0 w-24 sm:w-32 lg:w-40"
+        />
+      </div>
+
+      {/* CARD 2 */}
+      <div className="relative rounded-[20px] sm:rounded-[28px] bg-gray-200 p-4 sm:p-6 overflow-hidden">
+
+        <span className="bg-red-600 text-white px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-semibold">
+          Get FREE
+        </span>
+
+        <h2 className="mt-3 sm:mt-4 text-xl sm:text-2xl md:text-3xl font-bold text-red-600">
+          IELTS <span className="text-black">CLASSES</span>
+        </h2>
+
+        <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-gray-600 line-through">
+          Starting From ₹18,000
+        </p>
+
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-red-600 mt-1 sm:mt-2">
+          ₹ 0*
+        </h1>
+
+        <img
+          src="https://png.pngtree.com/png-vector/20250305/ourmid/pngtree-a-happy-male-student-sporting-backpack-and-clutching-book-is-looking-png-image_15721728.png"
+          alt=""
+          className="absolute right-0 sm:-right-10 lg:-right-14 bottom-0 w-28 sm:w-36 lg:w-50  "
+        />
+
+        <p className="absolute bottom-1 sm:bottom-2 left-0 w-full text-center text-[10px] sm:text-[11px] text-gray-600 hidden lg:block">
+          *Terms & Conditions Applied
+        </p>
+      </div>
+
+      {/* CARD 3 */}
+      <div className="relative rounded-[20px] sm:rounded-[28px] bg-gray-400 p-4 sm:p-6 text-white overflow-hidden">
+
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
+          Avail <span className="text-yellow-300">FREE*</span>
+        </h2>
+
+        <p className="text-lg sm:text-xl md:text-2xl font-semibold mt-1 sm:mt-2">
+          FLIGHT <br /> Tickets!!
+        </p>
+
+        <img
+          src="https://static.vecteezy.com/system/resources/thumbnails/022/180/863/small/air-plane-ticket-travel-kit-3d-illustration-png.png"
+          alt=""
+          className="absolute top-6 sm:top-10 -right-0 sm:-right-10 w-32 sm:w-40 lg:w-52  "
+        />
+
+        <img
+          src="/images/books.png"
+          alt=""
+          className="absolute bottom-2 sm:bottom-4 right-4 sm:right-6 w-20 sm:w-24 lg:w-28"
+        />
+
+        <p className="absolute bottom-1 sm:bottom-2 left-0 w-full text-center text-[10px] sm:text-[11px] text-gray-200 hidden lg:block">
+          *Terms & Condition Apply
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
 
       <section className="bg-[#fffaf6] py-12 lg:py-20 relative overflow-hidden">
         
 
         <div className="mx-auto max-w-7xl px-4 lg:px-0">
-          <div className="text-center mb-10 lg:mb-14">
-            <h2 className="text-2xl md:text-4xl font-semibold text-gray-700">
+          <div className="text-left lg:text-center mb-10 lg:mb-14">
+            <h2 className="text-xl md:text-4xl font-semibold text-gray-700">
               <span className="text-gray-700">{exams.title.split("||")[0]}</span>{" "}
               <span className="text-[#F46C44]">{exams.title.split("||")[1]}</span>
 
@@ -997,7 +1059,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
                         <div key={i} className="flex items-center gap-4 lg:gap-6">
                           {/* LEFT BOX */}
                           <div
-                            className={`h-16 w-24 sm:h-18 sm:w-28 lg:h-20 lg:w-30 flex items-center justify-center pt-4 lg:pt-1 rounded-tr-4xl text-3xl lg:text-4xl text-white ${bgColor}`}
+                            className={`h-16 w-24 sm:h-18 sm:w-28 lg:h-20 lg:w-30 flex items-center justify-center pt-4 lg:pt-1 rounded-tr-4xl text-sm lg:text-4xl text-white ${bgColor}`}
                           >
                             {item.image ? (
                               <img
@@ -1013,7 +1075,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
                           {/* TEXT */}
 
                           <div className="flex-block" >
-                            <p className="text-lg lg:text-xl font-medium text-gray-700 ml-0 lg:ml-10">
+                            <p className="text-base lg:text-xl font-medium text-gray-700 ml-0 lg:ml-10">
                               {title}
                             </p>
                             <p className="pl-10 text-gray-500" >{item.subtitle}</p>
@@ -1032,26 +1094,58 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
         </div>
       </section>
 
-      <section className="py-10 bg-[#FF6B35] relative overflow-visible">
+      <section className="py-6 sm:py-8 lg:py-10 bg-[#FF6B35] relative overflow-visible">
       
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl lg:text-5xl font-bold text-white mb-4">Join Our Exclusive Study Abroad Network</h2>
-            <p className="text-white text-lg mb-8 opacity-90">Get updates on what&apos;s happening around in the study abroad space, important notifications on events and journeys of other students</p>
-            <div className="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
-              <input type="email" placeholder="Email" className="w-full sm:w-[500px] px-6 py-3 rounded-none outline-none text-gray-800 bg-white border border-gray-300" />
-              <button className="bg-white text-[#FF6B35] w-full sm:w-[200px] px-6 py-3 rounded-none font-bold hover:bg-gray-100 transition-all whitespace-nowrap">I AM IN</button>
-            </div>
-            <div className="flex justify-center gap-4 mt-6">
-              {[Facebook, Instagram, Twitter, Youtube, Send, Linkedin].map((Icon, i) => (
-                <button key={i} className="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center text-white hover:bg-black transition-all cursor-pointer" aria-label={Icon.name}>
-                  <Icon size={24} />
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+  <div className="container mx-auto px-3 sm:px-6">
+    
+    <div className="max-w-4xl mx-auto text-left lg:text-center">
+
+      {/* Heading */}
+      <h2 className="text-lg sm:text-2xl lg:text-5xl font-bold text-white mb-2 sm:mb-4">
+        Join Our Exclusive Study Abroad Network
+      </h2>
+
+      {/* Subtext */}
+      <p className="text-white text-xs sm:text-sm lg:text-lg mb-4 sm:mb-6 lg:mb-8 opacity-90">
+        Get updates on what's happening around in the study abroad space,
+        important notifications on events and journeys of other students
+      </p>
+
+      {/* Input + Button */}
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-6 sm:mb-8 justify-start lg:justify-center">
+        
+        <input
+          type="email"
+          placeholder="Email"
+          className="w-full sm:w-[500px] px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base rounded-none outline-none text-gray-800 bg-white border border-gray-300"
+        />
+
+        <button
+          className="w-full sm:w-[200px] px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base bg-white text-[#FF6B35] rounded-none font-bold hover:bg-gray-100 transition-all whitespace-nowrap"
+        >
+          I AM IN
+        </button>
+
+      </div>
+
+      {/* Social Icons */}
+      <div className="flex justify-start lg:justify-center gap-2 sm:gap-4 mt-4 sm:mt-6">
+        {[Facebook, Instagram, Twitter, Youtube, Send, Linkedin].map((Icon, i) => (
+          <button
+            key={i}
+            className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-gray-900 flex items-center justify-center text-white hover:bg-black transition-all cursor-pointer"
+            aria-label={Icon.name}
+          >
+            <Icon size={18} className="sm:hidden" />
+            <Icon size={20} className="hidden sm:block lg:hidden" />
+            <Icon size={24} className="hidden lg:block" />
+          </button>
+        ))}
+      </div>
+
+    </div>
+  </div>
+</section>
 
       <FAQSection Faqres={Faqres} />
     </>

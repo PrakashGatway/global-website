@@ -114,7 +114,7 @@ export default function CareerPage({ careerData }) {
 
         }
     }
-    console.log(resumeUrl)
+   
 
 
 
@@ -128,44 +128,44 @@ export default function CareerPage({ careerData }) {
 
     return (
         <main className="bg-[#fffaf6] overflow-hidden">
-            <section className="bg-[#f46c44] py-32 text-center text-white relative overflow-hidden">
+            <section className="bg-[#f46c44] py-10 lg:py-32 lg:text-center px-4 lg:px-0 text-white relative overflow-hidden">
                 {/* Decorative Arrow on Left Side */}
          
-                <h1 className="text-3xl md:text-6xl font-bold">{heroTitle}</h1>
+                <h1 className="text-xl md:text-6xl font-bold">{heroTitle}</h1>
                 <p className="mt-4 max-w-5xl mx-auto text-sm md:text-lg font-medium">
                     {pageDescription}
                 </p>
             </section>
 
-            <section className="max-w-7xl mx-auto  py-20 grid md:grid-cols-2 gap-14 items-center relative">
+            <section className="max-w-7xl mx-auto py-4 lg:py-20 grid md:grid-cols-2 gap-14 items-center relative">
             
                 <Image
                     src="https://t4.ftcdn.net/jpg/00/35/30/85/360_F_35308534_WGRVXlymcjQqoRXzeWEfVCOfBHBq9YdW.jpg"
                     width={750}
                     height={480}
-                    className="rounded-tr-[100px] object-cover px-2"
+                    className="rounded-tr-[100px] object-cover px-2 hidden lg:block"
                     alt=""
                 />
 
                 <div>
-                    <h2 className="text-[50px] font-semibold text-orange-500 px-6">
+                    <h2 className="lg:text-[50px] text-xl font-semibold text-orange-500 px-6">
                         {cultureTitleParts.first} <span className="text-gray-700">{cultureTitleParts.second}</span>
                     </h2>
 
-                    <p className="mt-4 text-lg text-gray-600 leading-relaxed px-6">
+                    <p className="mt-4 text-sm lg:text-lg text-gray-600 leading-relaxed px-6">
                         {cultureSubtitle}
                     </p>
                 </div>
             </section>
 
             {/* ================= SECTION 2 ================= */}
-            <section className="max-w-7xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-14 items-center">
+            <section className="max-w-7xl mx-auto px-4 lg:py-20 grid md:grid-cols-2 gap-14 items-center">
                 <div>
-                    <h2 className="text-[50px] font-semibold text-orange-500">
+                    <h2 className="lg:text-[50px] text-xl font-semibold text-orange-500">
                         {workingTitleParts.first} <span className="text-gray-700">{workingTitleParts.second}</span>
                     </h2>
 
-                    <p className="mt-4 text-lg text-gray-600 leading-relaxed">
+                    <p className="mt-4 text-sm lg:text-lg text-gray-600 leading-relaxed">
                         {workingSubtitle}
                     </p>
                 </div>
@@ -180,9 +180,9 @@ export default function CareerPage({ careerData }) {
             </section>
 
             {/* ================= VACANCIES ================= */}
-            <section className="py-20 text-center relative overflow-hidden">
+            <section className="lg:py-20 py-10 lg:text-center relative overflow-hidden">
               
-                <h2 className="text-3xl font-semibold text-gray-700 mb-12">
+                <h2 className="lg:text-3xl text-xl font-semibold text-gray-700 mb-12 px-4 lg:px-0">
                     {vacanciesTitle}
                 </h2>
 
@@ -201,13 +201,13 @@ export default function CareerPage({ careerData }) {
                                     className="bg-[#f46c44] text-white rounded-tr-[100px] pb-25 pt-10 shadow-[0_3px_5px_rgba(0,0,0,0.45)] relative"
                                 >
                                     {/* TITLE */}
-                                    <h3 className="text-3xl font-semibold mb-4 px-4">
+                                    <h3 className="lg:text-3xl text-lg font-semibold mb-4 px-4">
                                         {vacancy.title}
                                     </h3>
 
                                     {/* DESCRIPTION LIST */}
                                     <div className="px-6">
-                                        <ul className="list-disc list-inside space-y-2 text-lg opacity-90 text-left line-clamp-3">
+                                        <ul className="list-disc list-inside space-y-2 text-sm lg:text-lg opacity-90 text-left line-clamp-3">
                                             {descriptionLines.map((line, i) => (
                                                 <li key={i}>{line}</li>
                                             ))}
@@ -238,59 +238,72 @@ export default function CareerPage({ careerData }) {
             </section>
 
             <AnimatePresence>
-                {selectedVacancy && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.25 }}
-                        className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.85, y: 60, opacity: 0 }}
-                            animate={{ scale: 1, y: 0, opacity: 1 }}
-                            exit={{ scale: 0.9, y: 40, opacity: 0 }}
-                            transition={{ duration: 0.35, ease: "easeOut" }}
-                            className="bg-white max-w-2xl w-full rounded-lg shadow-xl relative p-6"
-                        >
-                            {/* CLOSE */}
-                            <button
-                                onClick={() => setSelectedVacancy(null)}
-                                className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
-                            >
-                                ✕
-                            </button>
+  {selectedVacancy && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-3 sm:px-4"
+    >
+      <motion.div
+        initial={{ scale: 0.85, y: 60, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
+        exit={{ scale: 0.9, y: 40, opacity: 0 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        className="
+          bg-white w-full max-w-2xl
+          max-h-[90vh] overflow-y-auto
+          rounded-lg shadow-xl relative
+          p-4 sm:p-6
+        "
+      >
+        {/* CLOSE */}
+        <button
+          onClick={() => setSelectedVacancy(null)}
+          className="absolute top-2 sm:top-3 right-2 sm:right-3 text-gray-500 hover:text-black text-lg sm:text-xl"
+        >
+          ✕
+        </button>
 
-                            {/* TITLE */}
-                            <h3 className="text-2xl font-semibold text-[#f46c44] mb-4">
-                                {selectedVacancy.title}
-                            </h3>
+        {/* TITLE */}
+        <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[#f46c44] mb-3 sm:mb-4 pr-6">
+          {selectedVacancy.title}
+        </h3>
 
-                            {/* DESCRIPTION */}
-                            <ul className="list-disc list-inside space-y-2 text-gray-700 text-base mb-6">
-                                {selectedVacancy.description
-                                    .split("||")
-                                    .map((line, i) => (
-                                        <li key={i}>{line.trim()}</li>
-                                    ))}
-                            </ul>
+        {/* DESCRIPTION */}
+        <ul className="list-disc list-inside space-y-1 sm:space-y-2 text-gray-700 text-sm sm:text-base mb-4 sm:mb-6">
+          {selectedVacancy.description
+            .split("||")
+            .map((line, i) => (
+              <li key={i}>{line.trim()}</li>
+            ))}
+        </ul>
 
-                            {/* ACTION */}
-                            <button
-                                onClick={() => {
-                                    setSelectedVacancy(null);
-                                    document
-                                        .querySelector("#application-form")
-                                        ?.scrollIntoView({ behavior: "smooth" });
-                                }}
-                                className="bg-[#f46c44] text-white px-6 py-2 rounded hover:opacity-90"
-                            >
-                                Proceed to Apply
-                            </button>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+        {/* ACTION */}
+        <button
+          onClick={() => {
+            setSelectedVacancy(null);
+            document
+              .querySelector("#application-form")
+              ?.scrollIntoView({ behavior: "smooth" });
+          }}
+          className="
+            w-full sm:w-auto
+            bg-[#f46c44] text-white
+            px-5 sm:px-6 py-2.5
+            text-sm sm:text-base
+            rounded
+            hover:opacity-90
+            transition active:scale-95
+          "
+        >
+          Proceed to Apply
+        </button>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
 
 
 

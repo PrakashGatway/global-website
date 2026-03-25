@@ -14,16 +14,7 @@ import ExpandableText from './Expandline'
 
 export default function CountryDetails({ Universityres, Faqres, pageData, imageData, videoRes }) {
 
-  const [expanded, setExpanded] = useState(false);
 
-
-  const [playingIndex, setPlayingIndex] = useState(null);
-
-  const getYoutubeId = (url) => {
-    const regExp = /v=([^&]+)/;
-    const match = url.match(regExp);
-    return match ? match[1] : "";
-  };
 
 
 
@@ -53,13 +44,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
 
 
-  const handleToggle = () => {
 
-
-    setExpanded(!expanded);
-
-
-  };
 
 
 
@@ -537,136 +522,114 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
 
       {/* ================= TABLE/CONTENT SECTION - RESPONSIVE ================= */}
-      <section className="w-full bg-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto">
+     <section className="w-full bg-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
+  <div className="max-w-7xl mx-auto">
 
-          {/* Table Wrapper */}
-          <div className="overflow-x-auto">
-            {pageData?.sections?.contentSection?.items?.map((item, i) => (
-              <div key={i} className="min-w-full mb-8 lg:mb-10">
-                {/* Heading */}
-                <div className="mb-6 sm:mb-8">
-                  <h2 className="text-primary text-lg sm:text-3xl md:text-4xl font-bold">
-                    <span className='text-[#F46C44] block'>{item.title.split("||")[0]}</span>
-                    <div className='flex gap-2'>
-                      <span className=' mt-1 sm:mt-2'>{item.title.split("||")[1]}</span>
-                      <span className=' mt-1 sm:mt-2 border-b-4 border-[#F46C44] inline-block'>{item.title.split("||")[2]}</span>
-                    </div>
-
-                  </h2>
-                </div>
-
-                <div>
-                  {/* ===== Responsive Table CSS ===== */}
-                  <style>
-                    {`
-      /* Wrapper */
-      .country-table {
-        width: 100%;
-        overflow-x: auto;
-      }
-
-      /* Target API table */
-      .country-table * table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      /* ===== Desktop (default) ===== */
-      .country-table * {
-        font-size: 14px!important;
-        line-height: 1.5;
-        padding:0!important;
-       
-      }
-
-      /* ===== Tablet ===== */
-      @media (max-width: 1024px) {
-        .country-table * table th,
-        .country-table table td {
-          font-size: 14px;
-        }
-      }
-
-      /* ===== Mobile ===== */
-      @media (max-width: 640px) {
-        .country-table * table th,
-        .country-table * table td {
-          font-size: 12px !important;
-          padding: 6px 8px;
-        }
-
-        /* keep columns readable */
-        .country-table * table {
-          min-width: 520px;
-        }
-      }
-    `}
-                  </style>
-
-                  {/* ===== API HTML Render ===== */}
-                  <div
-                    className="max-w-none country-table overflow-x-auto"
-                    dangerouslySetInnerHTML={{
-                      __html: item.description,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className='bg-white'>
-        <div className="max-w-7xl mx-auto  py-10">
-
+    {/* Table Wrapper */}
+    <div className="">
+      {pageData?.sections?.contentSection?.items?.map((item, i) => (
+        <div key={i} className="min-w-full mb-8 lg:mb-10">
           {/* Heading */}
-          <div className="mb-10 sm:mb-12 lg:mb-16">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-5xl mb-2">
-              <span className="text-[#F46C44]">
-                {pageData?.sections?.servicesection?.servicetitle?.split('||')[0]?.trim() || "Video"}
-              </span>{" "} <br />
-              <span className="text-primary font-bold relative inline-block">
-                {pageData?.sections?.servicesection?.servicetitle?.split('||')[1]?.trim() || "Testimonials"}
-                <span className="absolute right-0 -bottom-2 w-20 sm:w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
-              </span>
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-primary text-lg sm:text-3xl md:text-4xl font-bold">
+              <span className='text-[#F46C44] block'>{item.title.split("||")[0]}</span>
+              <div className='flex gap-2'>
+                <span className=' mt-1 sm:mt-2'>{item.title.split("||")[1]}</span>
+                <span className=' mt-1 sm:mt-2 border-b-4 border-[#F46C44] inline-block'>{item.title.split("||")[2]}</span>
+              </div>
+
             </h2>
           </div>
 
-          {/* Services Grid */}
-          <div className="grid md:grid-cols-2 gap-8">
+          <div>
+            {/* ===== Responsive Table CSS - FIXED ===== */}
+           
 
-            {pageData?.sections?.servicesection?.serviceitem && pageData?.sections?.servicesection?.serviceitem?.map((service, index) => (
-              <div
-                key={index}
-                className="bg-gray-200 rounded-xl p-6 flex gap-4 hover:shadow-md transition"
-              >
+            {/* ===== API HTML Render ===== */}
+            <div
+              className=" country-table "
+              dangerouslySetInnerHTML={{
+                __html: item.description,
+              }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
 
-                {/* Icon */}
-                <div className="w-10 h-10 flex items-center justify-center text-orange-500">
-                  <img src={service?.icon} alt="" />
-                </div>
+      <section className="bg-white">
+  <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6 sm:py-10">
 
-                {/* Content */}
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-900">
-                    {service?.itemtitle}
-                  </h3>
+    {/* Heading */}
+    <div className="mb-6 sm:mb-10 lg:mb-16 text-left lg:text-left">
+      
+      <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-5xl leading-snug">
+        
+        <span className="text-[#F46C44] block">
+          {pageData?.sections?.servicesection?.servicetitle
+            ?.split("||")[0]
+            ?.trim() || "Video"}
+        </span>
 
-                  <p className="text-gray-600 text-sm mt-1">
-                    {service?.itemsubtitle}
-                  </p>
-                </div>
+        <span className="text-primary font-bold relative inline-block mt-1 sm:mt-2">
+          {pageData?.sections?.servicesection?.servicetitle
+            ?.split("||")[1]
+            ?.trim() || "Testimonials"}
 
-              </div>
-            ))}
+          <span className="absolute right-0 -bottom-1 sm:-bottom-2 w-12 sm:w-20 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+        </span>
+
+      </h2>
+
+    </div>
+
+    {/* Services Grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+
+      {pageData?.sections?.servicesection?.serviceitem?.map((service, index) => (
+        
+        <div
+          key={index}
+          className="
+            bg-gray-200 rounded-lg sm:rounded-xl
+            p-3 sm:p-5 lg:p-6
+            flex items-start gap-3 sm:gap-4
+            hover:shadow-md transition
+          "
+        >
+
+          {/* Icon */}
+          <div className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 flex items-center justify-center text-orange-500">
+            <img
+              src={service?.icon}
+              alt=""
+              className="w-full h-full object-contain"
+            />
+          </div>
+
+          {/* Content */}
+          <div className="flex-1">
+
+            <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 leading-snug">
+              {service?.itemtitle}
+            </h3>
+
+            <p className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed">
+              {service?.itemsubtitle}
+            </p>
 
           </div>
 
         </div>
 
-      </section>
+      ))}
+
+    </div>
+
+  </div>
+</section>
 
 
 

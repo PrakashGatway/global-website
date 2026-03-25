@@ -363,9 +363,8 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
             <form
               onSubmit={handleSubmit(onSubmit)}
               noValidate
-              className="grid grid-cols-2 md:grid-cols-2 gap-5 lg:w-180"
+              className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 lg:w-180"
             >
-
               {/* Full Name */}
               <motion.div>
                 <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
@@ -385,7 +384,9 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
 
                 {errors.fullname && (
-                  <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.fullname.message}</p>
+                  <p className="text-red-200 text-xs sm:text-sm mt-1">
+                    {errors.fullname.message}
+                  </p>
                 )}
               </motion.div>
 
@@ -408,7 +409,9 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
 
                 {errors.email && (
-                  <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.email.message}</p>
+                  <p className="text-red-200 text-xs sm:text-sm mt-1">
+                    {errors.email.message}
+                  </p>
                 )}
               </motion.div>
 
@@ -436,7 +439,9 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
 
                 {errors.phone && (
-                  <p className="text-red-200 text-xs sm:text-sm mt-1">{errors.phone.message}</p>
+                  <p className="text-red-200 text-xs sm:text-sm mt-1">
+                    {errors.phone.message}
+                  </p>
                 )}
               </motion.div>
 
@@ -484,9 +489,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   type="text"
                   className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
                 />
-
               </motion.div>
-
 
               {/* Submit */}
               <motion.div className="md:col-span-2 mt-4">
@@ -497,7 +500,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   Submit
                 </button>
               </motion.div>
-
             </form>
           </motion.div>
 
@@ -808,7 +810,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                  <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
+                  <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
                     United States
                   </span>
                 </p>
@@ -824,7 +826,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   />
                   <div className="absolute inset-0 "></div>
                   <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                    <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
+                    <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
                       Germany
                     </span>
                   </p>
@@ -839,7 +841,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   />
                   <div className="absolute inset-0"></div>
                   <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                    <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
+                    <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
                       UK
                     </span>
                   </p>
@@ -860,7 +862,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
+                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
                   Canada
                 </span>
               </p>
@@ -873,7 +875,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
+                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
                   France
                 </span>
               </p>
@@ -886,7 +888,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
+                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
                   Ireland
                 </span>
               </p>
@@ -906,7 +908,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                  <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
+                  <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
                     Australia
                   </span>
                 </p>
@@ -919,7 +921,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                  <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
+                  <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
                     Dubai
                   </span>
                 </p>
@@ -933,7 +935,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/90 px-8 font-bold text-base py-2 rounded-lg">
+                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
                   Italy
                 </span>
               </p>
@@ -947,49 +949,62 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
 
-      <section className="w-full py-16 px-4 md:px-8 ">
-        <div className="max-w-7xl mx-auto">
-          <div className="rounded-3xl  p-6 md:p-10 lg:p-12">
-            <div className="flex flex-col lg:flex-row gap-8 lg:gap-0 relative">
-              {/* Left Panel */}
-              <div className="bg-[#F46C44] rounded-2xl p-8 md:p-10 flex flex-col justify-center lg:min-w-[280px] lg:max-w-[320px] h-[380px] z-10 mt-30">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  Our Services
-                </h2>
-                <p className="text-lg md:text-xl font-semibold text-white leading-snug">
-                  Your Complete Support for Studying Abroad
+      <section className="w-full py-6 lg:py-16 px-4 md:px-8">
+  <div className="max-w-7xl mx-auto">
+    <div className="rounded-3xl p-4 md:p-8 lg:p-12">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-0 relative">
+
+        {/* Left Panel */}
+        <div className="bg-[#F46C44] rounded-2xl p-5 md:p-8 flex flex-col justify-center 
+        lg:min-w-[280px] lg:max-w-[320px] 
+        h-auto lg:h-[380px] 
+        z-10 lg:mt-24">
+          
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3">
+            Our Services
+          </h2>
+
+          <p className="text-base md:text-lg lg:text-xl font-semibold text-white leading-snug">
+            Your Complete Support for Studying Abroad
+          </p>
+        </div>
+
+        {/* Border Box (Desktop only) */}
+        <div className="hidden lg:block absolute h-[83%] w-[90%] border-2 shadow border-[#F46C44] left-40 -bottom-10 rounded-4xl z-0"></div>
+
+        {/* Services Grid */}
+        <div className="flex-1 lg:pl-6 bg-white relative z-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 bg-white">
+
+            {homePage?.services?.services.map((service) => (
+              <div
+                key={service.title}
+                className="group rounded-2xl bg-gray-100 p-4 md:p-6 hover:shadow-lg transition-all duration-300 text-center"
+              >
+                {/* Icon */}
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center mb-3 md:mb-4 mx-auto">
+                  <img src={service.icon} alt="" />
+                </div>
+
+                {/* Title */}
+                <h3 className="text-base md:text-lg font-bold text-primary mb-1 md:mb-2">
+                  {service.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-4 md:line-clamp-5">
+                  {service.subTitle}
                 </p>
               </div>
+            ))}
 
-              <div className="absolute h-[83%] w-[90%] border-2 shadow border-[#F46C44] left-40 -bottom-10 rounded-4xl z-0">
-
-              </div>
-
-              {/* Services Grid */}
-              <div className="flex-1 pl-6  !bg-white relative z-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6  bg-white">
-                  {homePage?.services?.services.map((service) => (
-                    <div
-                      key={service.title}
-                      className="group rounded-2xl  bg-gray-100 p-6 hover:shadow-lg transition-all duration-300 z-10 text-center"
-                    >
-                      <div className="w-14 h-14 rounded-xl  flex items-center justify-center mb-4 mx-auto">
-                        <img src={service.icon} alt="" className="" />
-                      </div>
-                      <h3 className="text-lg font-bold text-primary mb-2">
-                        {service.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-5">
-                        {service.subTitle}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-      </section>
+
+      </div>
+    </div>
+  </div>
+</section>
 
 
 
