@@ -19,8 +19,6 @@ export default function UniversityCard({ university }) {
     return null;
   }
 
-console.log(university)
-
   // If array, setup slider
   useEffect(() => {
     if (sliderRef.current) {
@@ -28,7 +26,7 @@ console.log(university)
         loop: true,
         mode: "snap",
         slides: {
-          perView: 4,
+          perView: 3,
           spacing: 4,
         },
         breakpoints: {
@@ -66,7 +64,7 @@ console.log(university)
 
   // Render slider with multiple cards
   return (
-    <div ref={sliderRef} className="keen-slider pt-16">
+    <div ref={sliderRef} className="keen-slider pt-6 max-w-7xl mx-auto">
       {universities.map((uni, index) => (
         <div key={uni._id || index} className="keen-slider__slide !overflow-visible pl-4 pr-1">
           <div className="bg-white rounded-3xl border borser-gray-300 shadow-sm hover:shadow-md transition-shadow  h-[370px] lg:h-full ml-1 relative  ">

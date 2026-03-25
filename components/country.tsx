@@ -13,15 +13,6 @@ import EligibilitySection from './Eligibility'
 import ExpandableText from './Expandline'
 
 export default function CountryDetails({ Universityres, Faqres, pageData, imageData, videoRes }) {
-
-
-
-
-
-
-
-
-
   // Split scholarships into left and right columns
   const scholarshipItems = pageData?.sections?.scholarships?.items || [];
   const midPoint = Math.ceil(scholarshipItems.length / 2);
@@ -378,25 +369,25 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           </div>
 
           {/* Cards Grid */}
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
 
             {/* Card 1 */}
             {
               pageData?.sections?.PopularCourses?.coursesitem && pageData?.sections?.PopularCourses?.coursesitem?.map((item, i) => (
-                <div className="bg-[#f6f7f9] rounded-[28px] border border-[#F46C44]  hover:shadow-md transition duration-300">
+                <div className="bg-[#f6f7f9] rounded-[28px] overflow-hidden border border-[#F46C44]  hover:shadow-md transition duration-300">
 
                   {/* Image */}
-                  <div className="overflow-hidden w-full rounded-[28px]">
+                  <div className="overflow-hidden w-full rounded-[28px] relative">
                     <img
                       src={item?.image || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3"}
                       alt="Data Science"
-                      className="w-full h-[150px] lg:h-[210px] object-cover"
+                      className="w-full h-[150px] lg:h-[180px] object-cover"
                     />
                   </div>
 
-                  <div className=' px-2 lg:px-4 py-3 lg:py-8'>
+                  <div className=' px-4 py-4 mb-2'>
                     {/* Title */}
-                    <h3 className=" text-base lg:text-[18px] font-semibold text-gray-800 ">
+                    <h3 className=" text-base lg:text-lg m-0 p-0 font-semibold text-gray-800 ">
                       {item?.coursesname}
                     </h3>
 
@@ -471,48 +462,26 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
       {/* Choosing University Section - RESPONSIVE */}
       <section className="relative w-full bg-[#ef6a42]  sm:py-12 lg:py-16">
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
 
-          {/* ================= LEFT IMAGE ================= */}
-          <div className="relative w-full h-[250px] sm:h-[350px] lg:h-[500px] lg:-left-50">
-            <Image
-              src={pageData?.sections?.choosingUs?.image || "/images/country-university-img.png"}
-              alt="Germany University"
-              fill
-              className="object-contain "
-              priority
-            />
-          </div>
+        <div className="mb-8 sm:mb-10 max-w-7xl mx-auto text-white">
+          <p className="text-lg sm:text-4xl md:text-5xl font-light mb-2">
+            {pageData?.sections?.choosingUs?.title?.split('||')[0]?.trim() || "Choosing the Right"}
+          </p>
 
-          {/* ================= RIGHT CONTENT ================= */}
-          <div className="px-6 sm:px-8 lg:px-4 py-8 lg:py-16 text-white">
+          <h2 className="text-lg sm:text-4xl md:text-5xl lg:text-6xl font-bold relative inline-block">
+           {pageData?.sections?.choosingUs?.title?.split('||')[1]?.trim() || "University in Germany"}
+            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-yellow-400"></span>
+          </h2>
 
-            <h4 className="text-lg sm:text-3xl md:text-4xl lg:text-5xl font-light mb-2">
-              {pageData?.sections?.choosingUs?.title?.split('||')[0]?.trim() || "Choosing the Right"}
-            </h4>
-
-            <h2 className="text-lg sm:text-4xl md:text-5xl lg:text-6xl font-bold relative inline-block mb-4 sm:mb-6">
-              {pageData?.sections?.choosingUs?.title?.split('||')[1]?.trim() || "University in Germany"}
-              <span className="absolute left-0 -bottom-2 w-16 sm:w-20 h-1 bg-yellow-400"></span>
-            </h2>
-
-            <p className="text-xs sm:text-lg md:text-xl leading-relaxed">
-              {pageData?.sections?.choosingUs?.subtitle || "Germany offers exceptional educational opportunities, but choosing the right university requires more than just rankings."}
-            </p>
-
-          </div>
-
+          <p className="mt-4 max-w-6xl text-xs sm:text-base leading-relaxed">
+            {pageData?.sections?.choosingUs?.subtitle || "Germany offers exceptional educational opportunities, but choosing the right university requires more than just rankings."}
+             </p>
         </div>
+        <UniversityCard university={Universityres} />
 
-        {/* ================= BOTTOM YELLOW ACCENT ================= */}
-        <div className="hidden sm:block absolute bottom-8 left-20 w-74 h-6 bg-yellow-300"></div>
       </section>
 
-      {/* University Card Section - RESPONSIVE */}
-      <div className='w-full bg-[#ef6a42] px-4 sm:px-6 lg:px-8 pb-10 mx-auto'>
-        <UniversityCard university={Universityres} />
-      </div>
+
 
       <EligibilitySection pageData={pageData} />
 
@@ -522,114 +491,114 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
 
       {/* ================= TABLE/CONTENT SECTION - RESPONSIVE ================= */}
-     <section className="w-full bg-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
-  <div className="max-w-7xl mx-auto">
+      <section className="w-full bg-white py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto">
 
-    {/* Table Wrapper */}
-    <div className="">
-      {pageData?.sections?.contentSection?.items?.map((item, i) => (
-        <div key={i} className="min-w-full mb-8 lg:mb-10">
-          {/* Heading */}
-          <div className="mb-6 sm:mb-8">
-            <h2 className="text-primary text-lg sm:text-3xl md:text-4xl font-bold">
-              <span className='text-[#F46C44] block'>{item.title.split("||")[0]}</span>
-              <div className='flex gap-2'>
-                <span className=' mt-1 sm:mt-2'>{item.title.split("||")[1]}</span>
-                <span className=' mt-1 sm:mt-2 border-b-4 border-[#F46C44] inline-block'>{item.title.split("||")[2]}</span>
+          {/* Table Wrapper */}
+          <div className="">
+            {pageData?.sections?.contentSection?.items?.map((item, i) => (
+              <div key={i} className="min-w-full mb-8 lg:mb-10">
+                {/* Heading */}
+                <div className="mb-6 sm:mb-8">
+                  <h2 className="text-primary text-lg sm:text-3xl md:text-4xl font-bold">
+                    <span className='text-[#F46C44] block'>{item.title.split("||")[0]}</span>
+                    <div className='flex gap-2'>
+                      <span className=' mt-1 sm:mt-2'>{item.title.split("||")[1]}</span>
+                      <span className=' mt-1 sm:mt-2 border-b-4 border-[#F46C44] inline-block'>{item.title.split("||")[2]}</span>
+                    </div>
+
+                  </h2>
+                </div>
+
+                <div>
+                  {/* ===== Responsive Table CSS - FIXED ===== */}
+
+
+                  {/* ===== API HTML Render ===== */}
+                  <div
+                    className=" country-table "
+                    dangerouslySetInnerHTML={{
+                      __html: item.description,
+                    }}
+                  />
+                </div>
               </div>
-
-            </h2>
-          </div>
-
-          <div>
-            {/* ===== Responsive Table CSS - FIXED ===== */}
-           
-
-            {/* ===== API HTML Render ===== */}
-            <div
-              className=" country-table "
-              dangerouslySetInnerHTML={{
-                __html: item.description,
-              }}
-            />
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
       <section className="bg-white">
-  <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6 sm:py-10">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6 sm:py-10">
 
-    {/* Heading */}
-    <div className="mb-6 sm:mb-10 lg:mb-16 text-left lg:text-left">
-      
-      <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-5xl leading-snug">
-        
-        <span className="text-[#F46C44] block">
-          {pageData?.sections?.servicesection?.servicetitle
-            ?.split("||")[0]
-            ?.trim() || "Video"}
-        </span>
+          {/* Heading */}
+          <div className="mb-6 sm:mb-10 lg:mb-16 text-left lg:text-left">
 
-        <span className="text-primary font-bold relative inline-block mt-1 sm:mt-2">
-          {pageData?.sections?.servicesection?.servicetitle
-            ?.split("||")[1]
-            ?.trim() || "Testimonials"}
+            <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-5xl leading-snug">
 
-          <span className="absolute right-0 -bottom-1 sm:-bottom-2 w-12 sm:w-20 h-[2px] lg:h-1 bg-[#F46C44]"></span>
-        </span>
+              <span className="text-[#F46C44] block">
+                {pageData?.sections?.servicesection?.servicetitle
+                  ?.split("||")[0]
+                  ?.trim() || "Video"}
+              </span>
 
-      </h2>
+              <span className="text-primary font-bold relative inline-block mt-1 sm:mt-2">
+                {pageData?.sections?.servicesection?.servicetitle
+                  ?.split("||")[1]
+                  ?.trim() || "Testimonials"}
 
-    </div>
+                <span className="absolute right-0 -bottom-1 sm:-bottom-2 w-12 sm:w-20 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+              </span>
 
-    {/* Services Grid */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+            </h2>
 
-      {pageData?.sections?.servicesection?.serviceitem?.map((service, index) => (
-        
-        <div
-          key={index}
-          className="
+          </div>
+
+          {/* Services Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+
+            {pageData?.sections?.servicesection?.serviceitem?.map((service, index) => (
+
+              <div
+                key={index}
+                className="
             bg-gray-200 rounded-lg sm:rounded-xl
             p-3 sm:p-5 lg:p-6
             flex items-start gap-3 sm:gap-4
             hover:shadow-md transition
           "
-        >
+              >
 
-          {/* Icon */}
-          <div className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 flex items-center justify-center text-orange-500">
-            <img
-              src={service?.icon}
-              alt=""
-              className="w-full h-full object-contain"
-            />
-          </div>
+                {/* Icon */}
+                <div className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 flex items-center justify-center text-orange-500">
+                  <img
+                    src={service?.icon}
+                    alt=""
+                    className="w-full h-full object-contain"
+                  />
+                </div>
 
-          {/* Content */}
-          <div className="flex-1">
+                {/* Content */}
+                <div className="flex-1">
 
-            <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 leading-snug">
-              {service?.itemtitle}
-            </h3>
+                  <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 leading-snug">
+                    {service?.itemtitle}
+                  </h3>
 
-            <p className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed">
-              {service?.itemsubtitle}
-            </p>
+                  <p className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed">
+                    {service?.itemsubtitle}
+                  </p>
+
+                </div>
+
+              </div>
+
+            ))}
 
           </div>
 
         </div>
-
-      ))}
-
-    </div>
-
-  </div>
-</section>
+      </section>
 
 
 
@@ -649,7 +618,6 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
               <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-yellow-400"></span>
             </h2>
 
-            {/* Description */}
             <p className="mt-4 sm:mt-6 max-w-3xl text-xs sm:text-lg leading-relaxed">
               {pageData?.sections?.scholarships?.subTitle || "Germany provides various scholarships for international students, including DAAD and university-funded options."}
             </p>
