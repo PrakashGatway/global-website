@@ -19,10 +19,12 @@ export default function EligibilitySection({pageData}) {
 
           <div className="w-16 h-[3px] bg-orange-500 mb-6"></div>
 
-          <p className=" text-sm lg:text-base text-gray-600 mb-4">
-            {pageData?.sections?.eligibilityCriteria?.subtitle}
-            
-          </p>
+         <p
+  className="text-sm lg:text-base text-gray-600 mb-4"
+  dangerouslySetInnerHTML={{
+    __html: pageData?.sections?.eligibilityCriteria?.subtitle || "",
+  }}
+></p>
 
        
         </div>

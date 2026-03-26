@@ -684,7 +684,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
                   viewport={{ once: true }}
-                  className="text-lg sm:text-3xl lg:text-5xl font-bold leading-tight mb-3"
+                  className="text-lg sm:text-3xl lg:text-4xl font-bold leading-tight mb-3"
                 >
                   <span className="text-primary">
                     {homePage?.trustedPartners?.title?.split('||')[0]?.trim()}
@@ -809,7 +809,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         <div className="mb-10">
           <h2 className="   text-primary">
             <span className="text-[#F46C44] font-light block text-xl lg:text-4xl">{homePage.studyDestinations.title.split("||")[0]}</span>
-            <br />  <span className="font-bold text-xl lg:text-5xl"> {homePage.studyDestinations.title.split("||")[1]}
+            <br />  <span className="font-bold text-xl lg:text-5xl relative"> {homePage.studyDestinations.title.split("||")[1]}
               <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
 
             </span>
