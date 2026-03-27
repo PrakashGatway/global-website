@@ -138,13 +138,13 @@ export default function UniversityCard({ university }) {
             {/* Button */}
             <div className="px-6 pb-4 text-center flex gap-2">
               <Link href={`/universities/${uni.slug}`}>
-                <button className="bg-amber-900 hover:bg-amber-950 text-white px-2 lg:px-6 py-2 rounded-full text-xs  lg:text-sm font-bold transition-colors">
+                <button className="bg-secondary hover:bg-primary text-white px-2 lg:px-6 py-2 rounded-full text-xs  lg:text-sm font-bold transition-colors">
                   View Details &gt;
                 </button>
               </Link>
 
               <Link href={`/universities/${uni.slug}`}>
-                <button className="bg-amber-900 hover:bg-amber-950 text-white px-2 lg:px-6 py-2 rounded-full text-xs lg:text-sm font-bold transition-colors">
+                <button className="bg-secondary hover:bg-primary text-white px-2 lg:px-6 py-2 rounded-full text-xs lg:text-sm font-bold transition-colors">
                   Apply &gt;
                 </button>
               </Link>

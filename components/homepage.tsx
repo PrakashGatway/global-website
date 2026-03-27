@@ -149,7 +149,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         type: "website-form",
         source: "website",
         city: data.city,
-        description: `Course: ${data.course}, Intake: ${data.month}`
+        description: `State: ${data.state}, Intake: ${data.month}`
       };
 
       const res = await axiosInstance.post("/contactus", payload);
@@ -167,6 +167,8 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
   useEffect(() => {
     register("country");
   }, [register]);
+
+
 
 
   const fetchCountries = useCallback(async () => {
@@ -190,7 +192,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
 
-
+const { openPopup } = useGlobal()
 
   return (
     <main className="bg-white">
@@ -241,21 +243,24 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 ) : null}
               </motion.h1>
 
-              <motion.p
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0 lg:mb-20"
-              >
-                {homePage?.hero?.subtitle ? (
-                  <>
-                    {homePage?.hero?.subtitle.split('||')[0]?.trim()}{" "}
-                    <span className="font-semibold text-[#f46c44]">
-                      {homePage?.hero?.subtitle.split('||')[1]?.trim()}
-                    </span>
-                  </>
-                ) : null}
-              </motion.p>
+             <motion.p
+  initial={{ y: 30, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.6, delay: 0.6 }}
+  className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0 lg:mb-20"
+  dangerouslySetInnerHTML={{
+    __html: homePage?.hero?.subtitle
+      ? homePage.hero.subtitle
+          .split("||")
+          .map((text, index) =>
+            index === 1
+              ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
+              : text.trim()
+          )
+          .join(" ")
+      : ""
+  }}
+/>
 
               {/* CTA BUTTONS */}
               <motion.div
@@ -279,7 +284,8 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 </a>
 
                 <a
-                  href={homePage?.hero?.ctaLink2}
+                onClick={openPopup}
+                  // href={homePage?.hero?.ctaLink2}
                   className="
               text-primary px-6 sm:px-8 py-2.5 sm:py-3 border border-primary rounded-full 
               lg:text-base text-sm font-semibold
@@ -446,44 +452,44 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               </motion.div>
 
               {/* Country */}
-             <motion.div>
-  <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-    Country
-  </label>
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  Country
+                </label>
 
-  <Controller
-    name="country"
-    control={control}
-    render={({ field }) => (
-      <select
-        {...field}
-        className="w-full border border-white rounded-lg px-3 py-2 text-xs lg:text-sm bg-transparent text-white focus:outline-none"
-      >
-        <option value="" className="text-black">
-          Select Country
-        </option>
-        <option value="usa" className="text-black">
-          Study In USA
-        </option>
-        <option value="uk" className="text-black">
-          Study In UK
-        </option>
-        <option value="france" className="text-black">
-          Study In France
-        </option>
-        <option value="germany" className="text-black">
-          Study In Germany
-        </option>
-        <option value="italy" className="text-black">
-          Study In Italy
-        </option>
-        <option value="dubai" className="text-black">
-          Study In Dubai
-        </option>
-      </select>
-    )}
-  />
-</motion.div>
+                <Controller
+                  name="country"
+                  control={control}
+                  render={({ field }) => (
+                    <select
+                      {...field}
+                      className="w-full border border-white rounded-lg px-3 py-2 text-xs lg:text-sm bg-transparent text-white focus:outline-none"
+                    >
+                      <option value="" className="text-black">
+                        Select Country
+                      </option>
+                      <option value="usa" className="text-black">
+                        Study In USA
+                      </option>
+                      <option value="uk" className="text-black">
+                        Study In UK
+                      </option>
+                      <option value="france" className="text-black">
+                        Study In France
+                      </option>
+                      <option value="germany" className="text-black">
+                        Study In Germany
+                      </option>
+                      <option value="italy" className="text-black">
+                        Study In Italy
+                      </option>
+                      <option value="dubai" className="text-black">
+                        Study In Dubai
+                      </option>
+                    </select>
+                  )}
+                />
+              </motion.div>
 
               {/* City */}
               <motion.div>
@@ -501,11 +507,11 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               {/* Program */}
               <motion.div>
                 <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-                  Program
+                  State
                 </label>
 
                 <input
-                  {...register("course")}
+                  {...register("state")}
                   type="text"
                   className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
                 />
@@ -701,9 +707,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   transition={{ duration: 0.6, delay: 0.4 }}
                   viewport={{ once: true }}
                   className="text-sm font-medium sm:text-base text-gray-600 mb-6 leading-relaxed max-w-xl mx-auto lg:mx-0"
-                >
-                  {homePage?.trustedPartners?.subtitle}
-                </motion.p>
+                  dangerouslySetInnerHTML={{
+                    __html: homePage?.trustedPartners?.subtitle || "",
+                  }}
+                />
 
                 <motion.div
                   initial={{ y: 30, opacity: 0 }}
@@ -754,9 +761,12 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
             </h2>
-            <p className="text-gray-800 text-sm lg:text-base font-medium max-w-3xl  leading-relaxed">
-              {homePage?.topUniversities?.subtitle}
-            </p>
+            <p
+              className="text-gray-800 text-sm lg:text-base font-medium max-w-3xl leading-relaxed"
+              dangerouslySetInnerHTML={{
+                __html: homePage?.topUniversities?.subtitle || "",
+              }}
+            ></p>
           </div>
 
           <div
@@ -809,7 +819,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         <div className="mb-10">
           <h2 className="   text-primary">
             <span className="text-[#F46C44] font-light block text-xl lg:text-4xl">{homePage.studyDestinations.title.split("||")[0]}</span>
-            <br />  <span className="font-bold text-xl lg:text-5xl relative"> {homePage.studyDestinations.title.split("||")[1]}
+              <span className="font-bold text-xl lg:text-5xl relative"> {homePage.studyDestinations.title.split("||")[1]}
               <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
 
             </span>
@@ -970,61 +980,61 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
       <section className="w-full py-6 lg:py-16 px-4 md:px-8">
-  <div className="max-w-7xl mx-auto">
-    <div className="rounded-3xl p-4 md:p-8 lg:p-12">
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-0 relative">
+        <div className="max-w-7xl mx-auto">
+          <div className="rounded-3xl p-4 md:p-8 lg:p-12">
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-0 relative">
 
-        {/* Left Panel */}
-        <div className="bg-[#F46C44] rounded-2xl p-5 md:p-8 flex flex-col justify-center 
+              {/* Left Panel */}
+              <div className="bg-[#F46C44] rounded-2xl p-5 md:p-8 flex flex-col justify-center 
         lg:min-w-[280px] lg:max-w-[320px] 
         h-auto lg:h-[380px] 
         z-10 lg:mt-24">
-          
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3">
-            Our Services
-          </h2>
 
-          <p className="text-base md:text-lg lg:text-xl font-semibold text-white leading-snug">
-            Your Complete Support for Studying Abroad
-          </p>
-        </div>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3">
+                  Our Services
+                </h2>
 
-        {/* Border Box (Desktop only) */}
-        <div className="hidden lg:block absolute h-[83%] w-[90%] border-2 shadow border-[#F46C44] left-40 -bottom-10 rounded-4xl z-0"></div>
-
-        {/* Services Grid */}
-        <div className="flex-1 lg:pl-6 bg-white relative z-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 bg-white">
-
-            {homePage?.services?.services.map((service) => (
-              <div
-                key={service.title}
-                className="group rounded-2xl bg-gray-100 p-4 md:p-6 hover:shadow-lg transition-all duration-300 text-center"
-              >
-                {/* Icon */}
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center mb-3 md:mb-4 mx-auto">
-                  <img src={service.icon} alt="" />
-                </div>
-
-                {/* Title */}
-                <h3 className="text-base md:text-lg font-bold text-primary mb-1 md:mb-2">
-                  {service.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-4 md:line-clamp-5">
-                  {service.subTitle}
+                <p className="text-base md:text-lg lg:text-xl font-semibold text-white leading-snug">
+                  Your Complete Support for Studying Abroad
                 </p>
               </div>
-            ))}
 
+              {/* Border Box (Desktop only) */}
+              <div className="hidden lg:block absolute h-[83%] w-[90%] border-2 shadow border-[#F46C44] left-40 -bottom-10 rounded-4xl z-0"></div>
+
+              {/* Services Grid */}
+              <div className="flex-1 lg:pl-6 bg-white relative z-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 bg-white">
+
+                  {homePage?.services?.services.map((service) => (
+                    <div
+                      key={service.title}
+                      className="group rounded-2xl bg-gray-100 p-4 md:p-6 hover:shadow-lg transition-all duration-300 text-center"
+                    >
+                      {/* Icon */}
+                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center mb-3 md:mb-4 mx-auto">
+                        <img src={service.icon} alt="" />
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-base md:text-lg font-bold text-primary mb-1 md:mb-2">
+                        {service.title}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-4 md:line-clamp-5">
+                        {service.subTitle}
+                      </p>
+                    </div>
+                  ))}
+
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
-
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
 
 

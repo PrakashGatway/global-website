@@ -9,14 +9,14 @@ const FAQSection = ({ Faqres }) => {
   };
 
   return (
-    <section className="py-12 lg:py-20 px-6  bg-white    ">
+    <section className="py-12 lg:py-10 px-6  bg-white    ">
       <div className="container  max-w-7xl mx-auto ">
         {/* Header */}
         <div className="text-justify mb-12 lg:mb-16    ">
           <h2 className="text-3xl   text-gray-900 mb-4 ">
             <span className=' text-xl lg:text-4xl font-light text-[#F46C44] '>Frequently</span>{" "}
             
-            <br /><span className=' text-xl lg:text-5xl text-primary font-bold relative'>Asked Questions
+            <br /><span className=' text-xl lg:text-4xl text-primary font-bold relative'>Asked Questions
               
         <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
               </span> 
@@ -35,7 +35,7 @@ const FAQSection = ({ Faqres }) => {
               >
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full px-4 lg:px-6 py-3 lg:py-5 text-left flex justify-between items-center focus:outline-none  focus:ring-opacity-50 rounded-xl"
+                  className="w-full px-4 lg:px-6 py-3 lg:py-2 text-left flex justify-between items-center focus:outline-none  focus:ring-opacity-50 rounded-xl"
                 >
                   <span className=" text-sm lg:text-lg font-semibold text-gray-900 pr-4">
                     {faq.question}
@@ -63,7 +63,7 @@ const FAQSection = ({ Faqres }) => {
                   }`}
                 >
                   <div className="px-6 pb-5 pt-2 border-t border-gray-100">
-                    <p className="text-gray-700 text-xs lg:text-sm leading-relaxed">
+                    <p className="text-black text-xs lg:text-base leading-relaxed">
                       {faq.answer}
                     </p>
                     

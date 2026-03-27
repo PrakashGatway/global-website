@@ -136,7 +136,7 @@ export default async function RootLayout({
             position="bottom-right"
             reverseOrder={false}
           />
-          <ScrollToTop />
+        
           <WhatsAppButton/>
 
 

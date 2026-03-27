@@ -35,11 +35,14 @@ export default async function Page({params}){
 
   const Faqres = await  serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`)
   const imageRes = await serverInstance.get("/testimonials?type=image&limit=6")
+  
 
 
   const Pageres =   await serverInstance.get(`/page-information/slug/${slug}`)
 
   const videoRes = await serverInstance.get("/testimonials?type=video&limit=6")
+
+  console.log(imageRes)
   
 
 

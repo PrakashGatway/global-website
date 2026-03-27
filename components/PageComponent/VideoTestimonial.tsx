@@ -110,11 +110,25 @@ export default function VideoTestimonialsSlider({
           <h2 className="text-lg lg:text-4xl font-light text-[#F46C44]">
             {title.includes("||") ? title.split("||")[0].trim() : ""}
           </h2>
-          <h3 className="text-xl lg:text-5xl font-bold text-primary relative inline-block lg:mt-2">
+          <h3 className="text-xl lg:text-4xl font-bold text-primary relative inline-block lg:mt-2">
             {title.includes("||") ? title.split("||")[1].trim() : "Testimonials"}
             <span className="absolute right-0 -bottom-1 w-32 h-[2px] lg:h-1 bg-[#F46C44]"></span>
           </h3>
-          <p className="text-gray-600 mt-2">{subtitle}</p>
+          <p
+  className="text-gray-600 mt-2"
+  dangerouslySetInnerHTML={{
+    __html: subtitle
+      ? subtitle
+          .split("||")
+          .map((text, index) =>
+            index === 1
+              ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
+              : text.trim()
+          )
+          .join(" ")
+      : ""
+  }}
+/>
         </motion.div>
 
         {/* Main Video Section */}
@@ -155,13 +169,7 @@ export default function VideoTestimonialsSlider({
               </div>
 
               {/* Testimonial Quote Overlay */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
-                <p className="text-lg font-medium line-clamp-2">{currentItem.message}</p>
-                <p className="font-bold mt-2">{currentItem.name}</p>
-                {currentItem.designation && (
-                  <p className="text-sm text-gray-300">{currentItem.designation}</p>
-                )}
-              </div>
+            
             </motion.div>
           </div>
 
