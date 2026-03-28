@@ -459,11 +459,11 @@ const { openPopup } = useGlobal()
     {/* Card */}
     <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-3 flex items-center gap-3 hover:bg-[#F46C44] transition">
       <Percent className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
-      <div>
+      <div className="">
         <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
           Offers
         </p>
-        <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
+        <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition text-center">
           50+
         </h3>
       </div>

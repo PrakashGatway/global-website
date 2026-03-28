@@ -143,10 +143,28 @@ const FormSection = ({ data }) => {
         Country
       </label>
       <select className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm">
-        <option>Select Country</option>
-        <option>Delhi</option>
-        <option>Mumbai</option>
-        <option>Chandigarh</option>
+       
+         <option value="" className="text-black">
+                        Select Country
+                      </option>
+                      <option value="usa" className="text-black">
+                        Study In USA
+                      </option>
+                      <option value="uk" className="text-black">
+                        Study In UK
+                      </option>
+                      <option value="france" className="text-black">
+                        Study In France
+                      </option>
+                      <option value="germany" className="text-black">
+                        Study In Germany
+                      </option>
+                      <option value="italy" className="text-black">
+                        Study In Italy
+                      </option>
+                      <option value="dubai" className="text-black">
+                        Study In Dubai
+                      </option>
       </select>
     </div>
 

@@ -143,7 +143,7 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
                     >
                         <button
                             onClick={()=>onClose(false)}
-                            className="absolute top-4 right-4 z-10 p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
+                            className="absolute top-4 right-4 z-10 p-2 text-primary hover:text-gray-600 transition-colors rounded-full bg-gray-100 cursor-pointer"
                         >
                             <X size={20} />
                         </button>
