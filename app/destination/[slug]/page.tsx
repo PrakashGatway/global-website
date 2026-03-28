@@ -42,7 +42,7 @@ export default async function Page({params}){
 
   const videoRes = await serverInstance.get("/testimonials?type=video&limit=6")
 
-  console.log(imageRes)
+  
   
 
 

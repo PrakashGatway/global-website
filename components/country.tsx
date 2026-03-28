@@ -1,7 +1,7 @@
 "use client"
 
 import UniversityCard from '@/components/UniversityCard'
-import { Facebook, Instagram, Linkedin, PhoneIcon, Send, Twitter, Youtube } from 'lucide-react'
+import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone, PhoneIcon, Send, Twitter, User, Youtube } from 'lucide-react'
 import Image from 'next/image'
 import FAQSection from '@/components/faqPage'
 import { DynamicLucideIcon } from '@/components/DynamicLucideIcon'
@@ -68,50 +68,126 @@ const HeroSection = ({ data,alldata }) => {
 const FormSection = ({ data }) => {
   if (data?.isHidden === "yes") return null
   return (
-    <section className="px-4 sm:px-6 lg:pr-10 py-12 sm:py-16 lg:py-10 relative overflow-hidden">
-      <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-        <div className="bg-white border border-gray-300 p-6 sm:p-8 lg:px-4 shadow-sm rounded-lg">
-          <h2 className="text-orange-500 text-base sm:text-2xl font-semibold mb-6 sm:mb-8 pl-6 sm:pl-8 lg:pl-12 tracking-wide">
-            GET IN TOUCH
-          </h2>
-          <div className="space-y-6 pl-6 sm:pl-8 lg:pl-10">
-            <input type="text" placeholder="Name" className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent text-sm" />
-            <input type="email" placeholder="Email" className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent text-sm" />
-            <input type="text" placeholder="Mobile" className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent text-sm" />
-            <select className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent text-sm">
-              <option>Nearest Center</option>
-              <option>Delhi</option>
-              <option>Mumbai</option>
-              <option>Chandigarh</option>
-            </select>
-            <textarea placeholder="Queries" rows={3} className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-2 bg-transparent resize-none text-sm" />
-            <a href={data?.ctaLink1 || "/contact"}>
-              <button className="bg-secondary hover:bg-primary text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold transition mb-4 text-xs sm:text-base">
-                CONTACT US
-              </button>
-            </a>
-            <div className='w-full border-b-2 border-gray-400'></div>
-          </div>
-        </div>
-        <div className="relative z-10">
-          <h4 className="text-[#F46C44] text-2xl sm:text-3xl font-medium mb-2">
-            {data?.title?.split('||')[0]?.trim() || "Overview of"}
-          </h4>
-          <h2 className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold mb-4 sm:mb-6 relative inline-block">
-            {data?.title?.split('||')[1]?.trim() || "Study in Germany"}
-            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
-          </h2>
-          <p className="text-gray-700 leading-relaxed text-xs sm:text-lg mb-6"
-            dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
-          />
-          <a href={data?.ctaLink1 || "/contact"}>
-            <button className="bg-secondary hover:bg-primary text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold transition text-xs sm:text-base">
-              {data?.ctaText1 || "Read More >>"}
-            </button>
-          </a>
-        </div>
-      </div>
-    </section>
+   <section className="px-4 sm:px-6 lg:pr-10 py-12 sm:py-16 lg:py-10 relative overflow-hidden">
+  <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+
+    {/* LEFT FORM */}
+    <div className="bg-white border border-gray-300 p-4 sm:p-6 lg:px-4 shadow-sm rounded-lg">
+  
+  {/* Heading */}
+  <h2 className="text-orange-500 text-sm sm:text-xl font-semibold mb-4 sm:mb-6 pl-2 sm:pl-4 lg:pl-6 tracking-wide">
+    GET IN TOUCH
+  </h2>
+
+  {/* Form Fields */}
+  <div className="space-y-4 pl-2 sm:pl-4 lg:pl-6">
+
+    {/* Name */}
+    <div>
+      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+        Full Name
+      </label>
+      <input
+        type="text"
+        className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
+      />
+    </div>
+
+    {/* Email */}
+    <div>
+      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+        Email ID
+      </label>
+      <input
+        type="email"
+        className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
+      />
+    </div>
+
+    {/* Mobile */}
+    <div>
+      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+        Mobile Number
+      </label>
+      <input
+        type="text"
+        className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
+      />
+    </div>
+
+    {/* State */}
+    <div>
+      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+        State
+      </label>
+      <input
+        type="text"
+        className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
+      />
+    </div>
+
+    {/* City */}
+    <div>
+      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+        City
+      </label>
+      <input
+        type="text"
+        className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
+      />
+    </div>
+
+    {/* Country */}
+    <div>
+      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+        Country
+      </label>
+      <select className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm">
+        <option>Select Country</option>
+        <option>Delhi</option>
+        <option>Mumbai</option>
+        <option>Chandigarh</option>
+      </select>
+    </div>
+
+  </div>
+
+  {/* Center Button */}
+  <div className="flex justify-center mt-5">
+    <a href={data?.ctaLink1 || "/contact"}>
+      <button className="bg-secondary hover:bg-primary text-white px-5 sm:px-7 py-2 sm:py-2.5 rounded-full font-semibold transition text-xs sm:text-sm">
+        CONTACT US
+      </button>
+    </a>
+  </div>
+
+</div>
+
+    {/* RIGHT CONTENT (UNCHANGED) */}
+    <div className="relative z-10">
+      <h4 className="text-[#F46C44] text-2xl sm:text-3xl font-medium mb-2">
+        {data?.title?.split('||')[0]?.trim() || "Overview of"}
+      </h4>
+
+      <h2 className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold mb-4 sm:mb-6 relative inline-block">
+        {data?.title?.split('||')[1]?.trim() || "Study in Germany"}
+        <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
+      </h2>
+
+      <p
+        className="text-gray-700 leading-relaxed text-xs sm:text-lg mb-6"
+        dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
+      />
+
+      <a href={data?.ctaLink1 || "/contact"}>
+        <button className="bg-secondary hover:bg-primary text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold transition text-xs sm:text-base">
+          {data?.ctaText1 || "Read More >>"}
+        </button>
+      </a>
+    </div>
+
+  </div>
+</section>
   )
 }
 
@@ -325,6 +401,7 @@ const ContentSection = ({ data }) => {
 
 const ServiceSection = ({ data }) => {
   if (data?.isHidden === "yes") return null
+  console.log(data?.serviceitem)
   return (
     <section className="bg-white">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-5">
@@ -342,8 +419,9 @@ const ServiceSection = ({ data }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
           {(data?.serviceitem || []).map((service, index) => (
             <div key={index} className="bg-gray-200 rounded-lg sm:rounded-xl p-3 sm:p-5 lg:p-6 flex items-start gap-3 sm:gap-4 hover:shadow-md transition">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0 flex items-center justify-center text-orange-500">
-                <img src={service?.icon} alt="" className="w-full h-full object-contain" />
+              <div className="w-8 h-8 sm:w-15 sm:h-22 flex-shrink-0 flex items-center justify-center text-orange-500">
+                                  <DynamicLucideIcon name={`${service?.itemicon}`} size={66} className="sm:w-12 sm:h-12" />
+
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 leading-snug">
@@ -425,10 +503,8 @@ const CTASection = ({ data }) => {
     <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 grid grid-cols-1 lg:grid-cols-2 items-center">
         <div className="text-white relative z-10">
-          <img src="/images/country-cap.png" alt="" className="hidden sm:block w-20 sm:w-24 lg:w-28 mb-4 absolute -top-12 sm:-top-15 -left-10 sm:-left-13 z-1" />
           <h2 className="text-lg sm:text-4xl md:text-4xl font-semibold leading-tight relative mb-4">
             {data?.title || "Start Your Global Education Journey"}
-            <div className="w-40 sm:w-48 lg:w-56 h-2 bg-yellow-400 mt-2 rounded-full absolute right-1/4 sm:right-50"></div>
           </h2>
           <p
             className="mt-4 sm:mt-6 text-xs sm:text-base lg:text-lg max-w-xl text-white/90"
@@ -550,6 +626,8 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
     }
     return true
   }
+  
+ 
 
   return (
     <>
@@ -623,12 +701,12 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         }
 
         // Visa Stories - Using StudentVisaStories component
-        if (originalName === 'visaStories' || name === 'visaStories') {
+        if (originalName === 'visastories' || name === 'visaStories') {
           return visaStories?.length > 0 && (
             <StudentVisaStories
               key={`${name}-${order}`}
-              title={data?.title || "Our Student Visa Success Stories"}
-              subtitle={data?.subtitle || "Real stories from students who achieved their dream of studying abroad"}
+              title={data?.title }
+              subtitle={data?.subtitle}
               stories={visaStories}
               autoSlideInterval={5000}
             />

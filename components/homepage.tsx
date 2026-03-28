@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { AnimatePresence, motion } from "framer-motion"
-import { ArrowRight, BadgeIcon, Globe, NutOffIcon, PanelsTopLeftIcon, TargetIcon, Users, VideoIcon, Zap } from "lucide-react"
+import { ArrowRight, BadgeIcon, BarChart3, FileText, Globe, GraduationCap, IndianRupee, NutOffIcon, PanelsTopLeftIcon, Percent, TargetIcon, Users, VideoIcon, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import UniversitySliderClient from "@/components/PageComponent/Unversity"
@@ -27,6 +27,8 @@ import toast from "react-hot-toast"
 import { DynamicLucideIcon } from "./DynamicLucideIcon"
 import { ModernSelect } from "./ui/select"
 
+import "keen-slider/keen-slider.min.css"
+import StudentVisaStories from "./Studentvisa"
 
 
 
@@ -35,7 +37,8 @@ import { ModernSelect } from "./ui/select"
 
 
 
-export default function Homepage({ homePage, destinationData, imageData, Faqres, videoRes }) {
+
+export default function Homepage({ homePage, destinationData, imageData, Faqres, videoRes ,blogres}) {
 
   const [openForm, setOpenForm] = useState(false);
   const [countries, setCountries] = useState([])
@@ -44,8 +47,64 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
 
+ function AutoSlidePlugin(slider) {
+  let timeout
+  let mouseOver = false
+
+  function clearNextTimeout() {
+    clearTimeout(timeout)
+  }
+
+  function nextTimeout() {
+    clearTimeout(timeout)
+    if (mouseOver) return
+
+    timeout = setTimeout(() => {
+      slider.next()
+    }, 2500)
+  }
+
+  slider.on("created", () => {
+    slider.container.addEventListener("mouseover", () => {
+      mouseOver = true
+      clearNextTimeout()
+    })
+
+    slider.container.addEventListener("mouseout", () => {
+      mouseOver = false
+      nextTimeout()
+    })
+
+    nextTimeout()
+  })
+
+  slider.on("dragStarted", clearNextTimeout)
+  slider.on("animationEnded", nextTimeout)
+  slider.on("updated", nextTimeout)
+}
+
+const [sliderRefblog] = useKeenSlider(
+  {
+    loop: true,
+    mode: "snap",
+    slides: {
+      perView: 1,
+      spacing: 10,
+    },
+    breakpoints: {
+      "(min-width: 768px)": {
+        slides: { perView: 2, spacing: 15 },
+      },
+      "(min-width: 1024px)": {
+        slides: { perView: 3, spacing: 20 },
+      },
+    },
+  },
+  [AutoSlidePlugin] // ✅ updated name here
+)
 
 
+const filtervisa = imageData.filter((item)=> item.target === "visa")
 
 
 
@@ -342,6 +401,77 @@ const { openPopup } = useGlobal()
         </div>
       </motion.section>
 
+     <section className="py-6 px-4 bg-white -mt-6">
+  <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+
+    {/* Card */}
+    <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] transition duration-300">
+      <GraduationCap className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
+      <div>
+        <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
+          Total Students
+        </p>
+        <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
+          1000+
+        </h3>
+      </div>
+    </div>
+
+    {/* Card */}
+    <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-3 flex items-center gap-3 hover:bg-[#F46C44] transition">
+      <Globe className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
+      <div>
+        <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
+          International
+        </p>
+        <h3 className="font-bold text-sm sm:text-lg text-primary group-hover:text-white transition">
+          1000+
+        </h3>
+      </div>
+    </div>
+
+    {/* Card */}
+    <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-3 flex items-center gap-3 hover:bg-[#F46C44] transition">
+      <GraduationCap className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
+      <div>
+        <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
+          Acceptance Rate
+        </p>
+        <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
+          11%
+        </h3>
+      </div>
+    </div>
+
+    {/* Card */}
+    <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-3 flex items-center gap-3 hover:bg-[#F46C44] transition">
+      <BarChart3 className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
+      <div>
+        <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
+          Rank
+        </p>
+        <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
+          #5
+        </h3>
+      </div>
+    </div>
+
+    {/* Card */}
+    <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-3 flex items-center gap-3 hover:bg-[#F46C44] transition">
+      <Percent className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
+      <div>
+        <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
+          Offers
+        </p>
+        <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
+          50+
+        </h3>
+      </div>
+    </div>
+
+  </div>
+</section>
+
       <section className="bg-[#F46C44] overflow-hidden relative">
 
 
@@ -491,6 +621,19 @@ const { openPopup } = useGlobal()
                 />
               </motion.div>
 
+                {/* Program */}
+              <motion.div>
+                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                  State
+                </label>
+
+                <input
+                  {...register("state")}
+                  type="text"
+                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
+                />
+              </motion.div>
+
               {/* City */}
               <motion.div>
                 <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
@@ -504,21 +647,10 @@ const { openPopup } = useGlobal()
                 />
               </motion.div>
 
-              {/* Program */}
-              <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-                  State
-                </label>
-
-                <input
-                  {...register("state")}
-                  type="text"
-                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
-                />
-              </motion.div>
+            
 
               {/* Submit */}
-              <motion.div className="md:col-span-2 mt-4">
+              <motion.div className="md:col-span-2 mt-4 flex justify-center">
                 <button
                   type="submit"
                   className="w-full md:w-auto text-xs lg:text-lg bg-secondary hover:bg-primary text-white font-semibold p-2 lg:px-4 lg:py-2.5 rounded-lg"
@@ -630,7 +762,7 @@ const { openPopup } = useGlobal()
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
-        className="bg-white relative overflow-hidden w-full py-12 sm:py-16 lg:pb-18"
+        className="bg-white relative overflow-hidden w-full py-12 sm:py-10 "
       >
         <div className="absolute -right-20 top-[0%] opacity-30 pointer-events-none hidden lg:block"></div>
 
@@ -638,7 +770,6 @@ const { openPopup } = useGlobal()
           <div className="w-full px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-2 items-center w-full min-h-[500px]">
 
-              {/* LEFT – IMAGE STACK */}
               <motion.div
                 initial={{ x: -80, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
@@ -652,7 +783,6 @@ const { openPopup } = useGlobal()
                   className="w-[450px] h-[540px]"
                 />
 
-                {/* EXPERIENCE BADGE */}
                 <motion.div
                   initial={{ scale: 0.7, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 1 }}
@@ -677,7 +807,6 @@ const { openPopup } = useGlobal()
                 </motion.div>
               </motion.div>
 
-              {/* RIGHT CONTENT */}
               <motion.div
                 initial={{ x: 80, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
@@ -729,23 +858,11 @@ const { openPopup } = useGlobal()
       </motion.section>
 
 
-      <ImageTestimonial
-        title={homePage?.imageTestimonials?.title}
-
-        subtitle={homePage?.imageTestimonials?.subtitle}
-        items={imageData}
-      />
-
-      <VideoTestimonialsSlider
-        title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
-        subtitle={homePage?.videoTestimonials?.subtitle}
-        items={videoRes}
-      // Auto-play is enabled by default
-      />
+    
 
 
 
-      <section className="lg:py-18 overflow-hidden">
+      <section className="lg:py-5 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden ">
           <div className=" mb-12 ">
             <h2 className=" text-xl   mb-2 ">
@@ -813,7 +930,7 @@ const { openPopup } = useGlobal()
 
       <UniversitySliderClient universities={homePage.universities} />
 
-      <section className="max-w-7xl mx-auto  py-6 px-4 lg:px-4">
+      <section className="max-w-7xl mx-auto  py-5 px-4 lg:px-4">
 
         {/* Heading */}
         <div className="mb-10">
@@ -1035,6 +1152,130 @@ const { openPopup } = useGlobal()
           </div>
         </div>
       </section>
+
+
+        <section className="py-12 sm:py-2 lg:py-10 px-2 relative overflow-hidden">
+      
+     
+
+      <div className="max-w-7xl mx-auto px-4">
+         <h2 className=" text-xl   mb-6 ">
+              <span className="text-[#F46C44] lg:text-4xl font-light" >
+                Trending
+              </span>{" "} <br />
+              <span className="text-primary font-bold relative lg:text-4xl" >
+                Features
+                <span className="absolute right-0 bottom-0  w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+
+
+              </span>
+
+
+            </h2>
+
+        {/* 🔥 SLIDER (replaces grid) */}
+        <div ref={sliderRefblog} className="keen-slider relative z-[10]">
+
+          {blogres.length > 0 ? (
+            blogres.map((post) => (
+
+              <div key={post._id} className="keen-slider__slide p-2">
+
+                {/* 🔴 SAME CARD UI */}
+                <div
+                  className="
+                  relative bg-white border border-[#FF6B35]
+                  rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]
+                  transition-all duration-300 hover:shadow-xl
+                "
+                >
+
+                  {/* ORANGE SHAPE */}
+                  <div
+                    className="
+                    absolute -top-2 -left-[6.5px]
+                    w-28 h-28 sm:w-36 sm:h-36 lg:w-35 lg:h-35
+                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-[20px] lg:rounded-tl-[70px]
+                    bg-[#FF6B35] -z-10
+                  "
+                  />
+
+                  {/* IMAGE */}
+                  <div
+                    className="
+                    relative overflow-hidden bg-gray-300
+                    h-[200px] sm:h-[220px] lg:h-[220px]
+                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[65px]
+                  "
+                  >
+                    <img
+                      src={
+                        post.coverImage ||
+                        "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
+                      }
+                      alt={post.title}
+                      className="w-full h-[220px] object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
+                      }}
+                    />
+                  </div>
+
+                  {/* CONTENT */}
+                  <div className="p-3 text-center">
+                    <p className="text-gray-800 text-xs sm:text-base font-medium mb-3 line-clamp-2">
+                      {post.shortDescription}
+                    </p>
+
+                    <button
+                      onClick={() => goToBlog(post.slug)}
+                      className="
+                        text-white px-6 lg:w-50 py-2 mx-auto
+                        bg-[#1f2937]
+                        rounded-tr-4xl
+                        shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
+                        text-xs sm:text-sm font-semibold
+                        hover:bg-[#FF6B35]
+                        hover:shadow-[-6px_6px_5px_0px_rgba(0,0,0,0.60)]
+                        flex items-center justify-center gap-2
+                        transition-all
+                      "
+                    >
+                      Read More »
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-500 text-lg w-full">
+              No blogs found
+            </p>
+          )}
+
+        </div>
+      </div>
+    </section>
+
+
+        <ImageTestimonial
+        title={homePage?.imageTestimonials?.title}
+
+        subtitle={homePage?.imageTestimonials?.subtitle}
+        items={imageData}
+      />
+
+      <VideoTestimonialsSlider
+        title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
+        subtitle={homePage?.videoTestimonials?.subtitle}
+        items={videoRes}
+      // Auto-play is enabled by default
+      />
+
+      <StudentVisaStories stories={filtervisa}/>
 
 
 
