@@ -7,17 +7,26 @@ import FAQSection from '@/components/faqPage'
 import { DynamicLucideIcon } from '@/components/DynamicLucideIcon'
 import ImageTestimonial from './ImageTestimonial'
 import Balloon from './balloon'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import EligibilitySection from './Eligibility'
 import ExpandableText from './Expandline'
 import VideoTestimonialsSlider from './PageComponent/VideoTestimonial'
 import StudentVisaStories from '@/components/Studentvisa'
+import { useForm } from 'react-hook-form'
+import axiosInstance from '@/app/axiosInstance'
+import toast from 'react-hot-toast'
+import { usePathname, useRouter } from 'next/navigation'
 
+
+ 
+
+
+  
 // Section Components
 const HeroSection = ({ data,alldata }) => {
   if (data?.isHidden === "yes") return null
   return (
-    <section className="block">
+    <section className="block overflow-hidden">
       <div
         className="w-full min-h-[70vh] sm:h-[88vh] relative flex items-center justify-start"
         style={{
@@ -27,16 +36,17 @@ const HeroSection = ({ data,alldata }) => {
         }}
       >
         <div className="z-10 w-full h-full flex flex-col justify-center">
-          <div className="bg-black/50 w-full flex items-center">
-            <div className="relative w-full px-6 sm:px-10 lg:px-10 py-10">
-              <div className="absolute left-2 top-6 sm:left-6 sm:top-10 lg:left-15 lg:-top-25 z-10">
+          
+            <div className="relative w-full px-6 sm:px-10 lg:px-10 py-10 ">
+              <div className="absolute left-2 top-6 sm:left-6 sm:top-10 lg:-right-335 lg:-top-25 z-10">
                 <Balloon Pageres={ alldata } />
               </div>
-              <div className="max-w-xl lg:max-w-2xl lg:ml-20">
+              <div className="bg-black/40 w-[48%] flex items-center py-4 rounded-2xl  ">
+              <div className="max-w-xl lg:max-w-2xl lg:ml-6">
                 <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-4xl font-bold text-white text-left mb-6">
                   {data?.title || "Study in Germany"}
                 </h1>
-                <p className="text-white text-sm sm:text-base mt-3 max-w-full sm:max-w-[79%]"
+                <p className="text-white text-sm sm:text-base mt-3 max-w-full "
                   dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
                 />
                 <div className="flex flex-col sm:flex-row gap-4 mt-6">
@@ -54,10 +64,11 @@ const HeroSection = ({ data,alldata }) => {
                   </a>
                 </div>
               </div>
+              </div>
             </div>
-          </div>
+        
         </div>
-        <div className="hidden lg:block absolute bottom-0 right-0 w-[260px] sm:w-[420px] md:w-[600px] lg:w-[900px] z-10">
+        <div className="hidden lg:block absolute bottom-0 right-0 w-[260px] sm:w-[420px] md:w-[600px] lg:w-[800px] z-10">
           <img src={data?.heroImage || "/images/country-hero.png"} className="w-full h-full object-contain" alt="" />
         </div>
       </div>
@@ -67,119 +78,147 @@ const HeroSection = ({ data,alldata }) => {
 
 const FormSection = ({ data }) => {
   if (data?.isHidden === "yes") return null
+    const { register, handleSubmit, reset, watch, setValue, control, formState: { errors, isSubmitting } } = useForm()
+  
+    const navigate = useRouter()
+  
+    const onSubmit = async (data) => {
+      try {
+  
+        const payload = {
+          fullName: `${data.fullname}`,
+          email: data.email,
+          phone: data.phone,
+          destination: data.country,
+          subject: "Study Abroad Enquiry",
+          type: "website-form",
+          source: "website",
+          city: data.city,
+          description: `State: ${data.state}`
+        };
+  
+        const res = await axiosInstance.post("/contactus", payload);
+        toast.success("Form submitted successfully")
+        navigate.push("/thank-you")
+  
+        reset();
+  
+  
+      } catch (error) {
+        toast.error("Submit Error:", error);
+      }
+    };
   return (
    <section className="px-4 sm:px-6 lg:pr-10 py-12 sm:py-16 lg:py-10 relative overflow-hidden">
   <div className="mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
     {/* LEFT FORM */}
-    <div className="bg-white border border-gray-300 p-4 sm:p-6 lg:px-4 shadow-sm rounded-lg">
-  
-  {/* Heading */}
-  <h2 className="text-orange-500 text-sm sm:text-xl font-semibold mb-4 sm:mb-6 pl-2 sm:pl-4 lg:pl-6 tracking-wide">
-    GET IN TOUCH
-  </h2>
+      <div className="bg-white border border-gray-300 p-4 sm:p-6 lg:px-4 shadow-sm rounded-lg">
 
-  {/* Form Fields */}
-  <div className="space-y-4 pl-2 sm:pl-4 lg:pl-6">
+      <h2 className="text-orange-500 text-sm sm:text-xl font-semibold mb-4 sm:mb-6 pl-2 sm:pl-4 lg:pl-6 tracking-wide">
+        GET IN TOUCH
+      </h2>
 
-    {/* Name */}
-    <div>
-      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
-        Full Name
-      </label>
-      <input
-        type="text"
-        className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
-      />
+      {/* FORM START */}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-4 pl-2 sm:pl-4 lg:pl-6">
+
+          {/* Name */}
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+              Full Name
+            </label>
+            <input
+              type="text"
+              {...register("fullname", { required: true })}
+              className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+              Email ID
+            </label>
+            <input
+              type="email"
+              {...register("email", { required: true })}
+              className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
+            />
+          </div>
+
+          {/* Mobile */}
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+              Mobile Number
+            </label>
+            <input
+              type="text"
+              maxLength={10}
+              {...register("phone", {
+                required: true,
+                pattern: /^[0-9]{10}$/,
+              })}
+              className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
+            />
+          </div>
+
+          {/* State */}
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+              State
+            </label>
+            <input
+              type="text"
+              {...register("state")}
+              className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
+            />
+          </div>
+
+          {/* City */}
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+              City
+            </label>
+            <input
+              type="text"
+              {...register("city")}
+              className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
+            />
+          </div>
+
+          {/* Country */}
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
+              Country
+            </label>
+            <select
+              {...register("country")}
+              className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
+            >
+              <option value="">Country to Study</option>
+              <option value="usa">Study In USA</option>
+              <option value="uk">Study In UK</option>
+              <option value="france">Study In France</option>
+              <option value="germany">Study In Germany</option>
+              <option value="italy">Study In Italy</option>
+              <option value="dubai">Study In Dubai</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Button */}
+        <div className="flex justify-center mt-5">
+          <button
+            type="submit"
+            className="bg-secondary hover:bg-primary text-white px-5 sm:px-7 py-2 sm:py-2.5 rounded-full font-semibold transition text-xs sm:text-sm"
+          >
+            CONTACT US
+          </button>
+        </div>
+      </form>
+      {/* FORM END */}
     </div>
-
-    {/* Email */}
-    <div>
-      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
-        Email ID
-      </label>
-      <input
-        type="email"
-        className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
-      />
-    </div>
-
-    {/* Mobile */}
-    <div>
-      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
-        Mobile Number
-      </label>
-      <input
-        type="text"
-        className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
-      />
-    </div>
-
-    {/* State */}
-    <div>
-      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
-        State
-      </label>
-      <input
-        type="text"
-        className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
-      />
-    </div>
-
-    {/* City */}
-    <div>
-      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
-        City
-      </label>
-      <input
-        type="text"
-        className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm"
-      />
-    </div>
-
-    {/* Country */}
-    <div>
-      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-0.5">
-        Country
-      </label>
-      <select className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 bg-transparent text-xs sm:text-sm">
-       
-         <option value="" className="text-black">
-                        Select Country
-                      </option>
-                      <option value="usa" className="text-black">
-                        Study In USA
-                      </option>
-                      <option value="uk" className="text-black">
-                        Study In UK
-                      </option>
-                      <option value="france" className="text-black">
-                        Study In France
-                      </option>
-                      <option value="germany" className="text-black">
-                        Study In Germany
-                      </option>
-                      <option value="italy" className="text-black">
-                        Study In Italy
-                      </option>
-                      <option value="dubai" className="text-black">
-                        Study In Dubai
-                      </option>
-      </select>
-    </div>
-
-  </div>
-
-  {/* Center Button */}
-  <div className="flex justify-center mt-5">
-    <a href={data?.ctaLink1 || "/contact"}>
-      <button className="bg-secondary hover:bg-primary text-white px-5 sm:px-7 py-2 sm:py-2.5 rounded-full font-semibold transition text-xs sm:text-sm">
-        CONTACT US
-      </button>
-    </a>
-  </div>
-
-</div>
 
     {/* RIGHT CONTENT (UNCHANGED) */}
     <div className="relative z-10">
@@ -556,6 +595,20 @@ const CTASection = ({ data }) => {
 export default function CountryDetails({ Universityres, Faqres, pageData, imageData, videoRes }) {
   const [expandedIndex, setExpandedIndex] = useState(null);
 
+     const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname.startsWith("/destination/")) {
+      const slug = pathname.split("/destination/")[1];
+
+      if (slug) {
+        router.replace(`/${slug}`);
+      }
+    }
+  }, [pathname, router]);
+
+
   // Define section mapping with their components
   const sectionMapping = {
     'hero': HeroSection,
@@ -644,6 +697,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
     }
     return true
   }
+
   
  
 

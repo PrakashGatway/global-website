@@ -6,7 +6,7 @@ import Link from "next/link";
 import { MapPin } from "lucide-react";
 import KeenSlider from "keen-slider";
 
-export default function UniversityCard({ university }) {
+export default function UniversityCard({ university,bgcolor="bg-white" }) {
   const sliderRef = useRef(null);
   const sliderInstanceRef = useRef(null);
   
@@ -67,7 +67,7 @@ export default function UniversityCard({ university }) {
     <div ref={sliderRef} className="keen-slider pt-6 max-w-7xl mx-auto">
       {universities.map((uni, index) => (
         <div key={uni._id || index} className="keen-slider__slide !overflow-visible pl-4 pr-1">
-          <div className="bg-white rounded-3xl border borser-gray-300 shadow-sm hover:shadow-md transition-shadow  h-[370px] lg:h-full ml-1 relative  ">
+          <div className={`${bgcolor} rounded-3xl border borser-gray-300 shadow-sm hover:shadow-md transition-shadow  h-[370px] lg:h-full ml-1 relative  `}>
             {/* Top Section - Logo and Name */}
             <div className="grid grid-cols-1 gap-4 px-4 py-2 items-start ">
               

@@ -3,9 +3,18 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-   images: {
+  images: {
     unoptimized: true,
   },
-}
 
-module.exports = nextConfig
+  async rewrites() {
+    return [
+      {
+        source: "/:slug",
+        destination: "/destination/:slug",
+      },
+    ];
+  },
+};
+
+module.exports = nextConfig;

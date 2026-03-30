@@ -29,6 +29,7 @@ import { ModernSelect } from "./ui/select"
 
 import "keen-slider/keen-slider.min.css"
 import StudentVisaStories from "./Studentvisa"
+import UniversityCard from "./UniversityCard"
 
 
 
@@ -38,7 +39,7 @@ import StudentVisaStories from "./Studentvisa"
 
 
 
-export default function Homepage({ homePage, destinationData, imageData, Faqres, videoRes ,blogres}) {
+export default function Homepage({ homePage, destinationData, imageData, Faqres, videoRes ,blogres,unires}) {
 
   const [openForm, setOpenForm] = useState(false);
   const [countries, setCountries] = useState([])
@@ -1151,7 +1152,12 @@ const { openPopup } = useGlobal()
             </div>
           </div>
         </div>
+       
       </section>
+
+       <div className="bg-[#F46C44] py-10">
+          <UniversityCard university = {unires} />
+        </div>
 
 
         <section className="py-12 sm:py-2 lg:py-10 px-2 relative overflow-hidden">

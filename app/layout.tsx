@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import { Geist, Geist_Mono, Noto_Sans } from "next/font/google"
+import { Geist, Geist_Mono, Noto_Sans, Poppins, PT_Sans, Raleway } from "next/font/google"
 import Navbar from "@/components/navbar"
 import "./globals.css"
 import 'keen-slider/keen-slider.min.css';
@@ -15,11 +15,11 @@ import ScrollToTop from "@/components/ScrolltoTop"
 import WhatsAppButton from "@/components/whatsappbtn"
 
 
-const notoSans = Noto_Sans({
+const ptSans = PT_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "700"], // PT Sans supports mainly 400 & 700
   display: "swap",
-})
+});
 
 
 export const metadata: Metadata = {
@@ -121,7 +121,7 @@ export default async function RootLayout({
       </head>
 
 
-      <body className={`${notoSans.className} antialiased`}>
+      <body className={`${ptSans.className} antialiased`}>
         <GlobalProvider>
 
 

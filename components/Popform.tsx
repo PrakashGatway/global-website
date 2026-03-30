@@ -216,6 +216,7 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
             <input
               type="tel"
+              maxLength={10}
               {...register("mobile", {
                 required: "Mobile number is required",
                 pattern: {

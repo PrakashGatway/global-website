@@ -91,13 +91,7 @@ export default function Navbar({
 
 
     },
-    {
-      title: "Blogs",
-      route: "/blog"
-      , id: 6
 
-
-    },
 
     {
       title: "Career",
@@ -306,7 +300,7 @@ export default function Navbar({
                   {item.hasDropdown && (
                     <div
                       className="
-                absolute left-1/2 top-full mt-6 -translate-x-1/2
+                absolute -left-[0px] top-full mt-6 -translate-x-1/2
                 opacity-0 invisible scale-95
                 group-hover:opacity-100 group-hover:visible group-hover:scale-100
                 transition-all duration-300 ease-out
@@ -337,7 +331,7 @@ export default function Navbar({
                               item.type === "service"
                                 ? `/service/${uni.slug}`
                                 : item.type === "country"
-                                  ? `/destination/${uni.slug}`
+                                  ? `/${uni.slug}`
                                   : `/universities/group/${uni.slug}`;
 
                             return (
@@ -577,7 +571,7 @@ export default function Navbar({
                                   item.type === "service"
                                     ? `/service/${uni.slug}`
                                     : item.type === "country"
-                                      ? `/destination/${uni.slug}`
+                                      ? `/${uni.slug}`
                                       : `/universities/group/${uni.slug}`;
 
                                 return (
