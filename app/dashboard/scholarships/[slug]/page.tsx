@@ -48,7 +48,7 @@ import {
     CircleDot,
     Building2Icon
 } from "lucide-react";
-import Loading from "@/app/loading";
+
 import axiosInstance from "@/app/axiosInstance";
 import { CreateApplicationModal } from "@/components/dashboard/applicationModel";
 
@@ -297,9 +297,7 @@ export default function ScholarshipDetailPage() {
         return new Date(scholarship.deadline) < new Date();
     };
 
-    if (loading) {
-        return <Loading />;
-    }
+  
 
     if (error || !scholarship) {
         return (

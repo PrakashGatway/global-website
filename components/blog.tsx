@@ -7,7 +7,7 @@ import { useEffect, useState, useTransition } from 'react';
 import Link from 'next/link';
 import BlogGrid from './blogGrid';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import Loading from '@/app/loading';
+
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import axiosInstance from '@/app/axiosInstance';
@@ -97,7 +97,7 @@ export default function Blogs({ Blogdata,
 
     return (
         <>
-            {isPending && <Loading />}
+           
             <section className="relative py-8 sm:py-12 lg:py-20 bg-[#fffaf7] overflow-hidden">
 
   <div className="max-w-7xl mx-auto px-3 sm:px-6">

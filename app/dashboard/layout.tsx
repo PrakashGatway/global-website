@@ -9,7 +9,7 @@ import { Sidebar } from "@/components/sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { GlobalProvider, useGlobal } from "../../src/statecontext"
-import Loading from "../loading"
+
 import { usePathname } from "next/navigation"
 import { NotificationProvider } from "@/components/dashboard/Notification"
 
@@ -41,9 +41,7 @@ export default function DashboardLayout({
     return () => window.removeEventListener('keydown', handleEscape)
   }, [sidebarOpen, isMobile])
 
-  if (loading) {
-    <Loading />
-  }
+
   if (!loading && !profile) {
     window.location.replace("/login")
     return null

@@ -1,7 +1,7 @@
 "use client"
 
 
-import Loading from "@/app/loading";
+
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ export default function BlogGrid({ filteredBlogs }) {
     return (
         <>
             <section className=" py-12 sm:py-14 lg:py-16 px-2 relative overflow-hidden">
-                {isPending && <Loading/>}
+                
                 <div className="max-w-7xl mx-auto">
                
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-12 relative z-[10]">

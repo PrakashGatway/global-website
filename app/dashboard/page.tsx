@@ -3,7 +3,7 @@
 import { useGlobal } from "../../src/statecontext"
 import MultiStepForm from "../../components/dashboard/stepForm/multiform"
 import RewardSlider, { StepProgress } from "../../components/dashboard/sliderbanner/bannerslider"
-import Loading from "../loading"
+
 import axiosInstance from "../axiosInstance"
 import { useEffect, useState } from "react"
 import OfferSlider from "@/components/dashboard/sliderbanner/offerSlider"
@@ -42,9 +42,7 @@ export default function DashboardPage() {
     fetchOffer();
   }, [])
 
-  if (loading) {
-    return <Loading />;
-  }
+ 
   if (!loading && !profile) {
     window.location.replace("/login")
   }
