@@ -1,5 +1,5 @@
 import { serverInstance } from "@/app/axiosInstance"
-import Loading from "@/app/loading"
+
 import BlogDetailsPage from "@/components/blogDetails"
 import { notFound } from "next/navigation"
 
