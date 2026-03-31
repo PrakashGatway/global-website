@@ -112,7 +112,7 @@ export default function VideoTestimonialsSlider({
           </h2>
           <h3 className="text-xl lg:text-4xl font-bold text-primary relative inline-block lg:mt-2">
             {title.includes("||") ? title.split("||")[1].trim() : "Testimonials"}
-            <span className="absolute right-0 -bottom-1 w-32 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+            <span className="absolute right-0 -bottom-1 w-20 lg:w-32 h-[2px] lg:h-1 bg-[#F46C44]"></span>
           </h3>
           <p
   className="text-gray-600 mt-2"

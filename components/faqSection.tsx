@@ -39,7 +39,7 @@ export default function FAQAccordion() {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white max-w-7xl mx-auto rounded-xl shadow-sm border border-gray-200 p-6">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
         More information
       </h2>

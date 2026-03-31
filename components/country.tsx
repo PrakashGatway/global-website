@@ -322,7 +322,7 @@ const WhyStudySection = ({ data }) => {
 const PopularCoursesSection = ({ data }) => {
   if (data?.isHidden === "yes") return null
   return (
-    <section className="w-full bg-white py-1 px-4">
+    <section className="w-full bg-white py-10 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-left mb-12">
            <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl leading-snug">
@@ -343,18 +343,49 @@ const PopularCoursesSection = ({ data }) => {
   }}
 />
         </div>
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {(data?.coursesitem || []).map((item, i) => (
-            <div key={i} className="bg-[#f6f7f9] rounded-[28px] overflow-hidden border border-[#F46C44] hover:shadow-md transition duration-300">
-              <div className="overflow-hidden w-full rounded-[28px] relative">
-                <img src={item?.image || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3"} alt={item?.coursesname} className="w-full h-[150px] lg:h-[180px] object-cover" />
-              </div>
-              <div className='px-4 py-4 mb-2'>
-                <h3 className="text-base lg:text-lg m-0 p-0 font-semibold text-gray-800">{item?.coursesname}</h3>
-              </div>
-            </div>
-          ))}
+       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+  {(data?.coursesitem || []).map((item, i) => (
+    
+    <div key={i} className="relative bg-[#F46C44] rounded-[28px] hover:-translate-y-[8px] transition-all duration-300 pb-2 p-0.5">
+      
+    
+      {/* 🟡 Main Card */}
+      <div className="relative bg-[#f6f7f9] rounded-[28px] overflow-hidden transition duration-300 hover:shadow-md  flex flex-col h-full">
+        
+        {/* Image */}
+        <div className="overflow-hidden w-full rounded-[28px] relative">
+          <img
+            src={
+              item?.image ||
+              "https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
+            }
+            alt={item?.coursesname}
+            className="w-full h-[150px] lg:h-[180px] object-cover"
+          />
         </div>
+
+        {/* Content */}
+        <div className="px-4 py-4 flex flex-col flex-grow">
+          
+          <h3 className="text-base lg:text-xl font-bold text-[#F46C44]">
+            {item?.coursesname}
+          </h3>
+           <p className="text-base lg:text-base text-gray-800 mt-2 line-clamp-2">
+            {item?.description || "No description available"}
+          </p>
+
+          {/* Button (push to bottom) */}
+          <div className="mt-auto pt-0 flex justify-end">
+            <button className="bg-[#F46C44] text-white text-base px-4 py-1 rounded-full flex items-center gap-2 hover:bg-primary transition">
+              Explore →
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
       </div>
     </section>
   )

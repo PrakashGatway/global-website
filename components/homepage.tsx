@@ -111,6 +111,8 @@ const filtervisa = imageData.filter((item)=> item.target === "visa")
 
 
 
+
+
   let destination = [
     (slider) => {
       let timeout
@@ -406,69 +408,25 @@ const { openPopup } = useGlobal()
   <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
 
     {/* Card */}
-    <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] transition duration-300">
-      <GraduationCap className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
+    {homePage?.stats?.item?.map((stat,index)=>(
+         <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] transition duration-300">
+      <DynamicLucideIcon name={stat?.icon} className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
       <div>
         <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
-          Total Students
+          {stat?.title}
         </p>
         <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
-          1000+
+          {stat?.stats}
         </h3>
       </div>
     </div>
 
-    {/* Card */}
-    <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-3 flex items-center gap-3 hover:bg-[#F46C44] transition">
-      <Globe className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
-      <div>
-        <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
-          International
-        </p>
-        <h3 className="font-bold text-sm sm:text-lg text-primary group-hover:text-white transition">
-          1000+
-        </h3>
-      </div>
-    </div>
+    ))}
+ 
 
-    {/* Card */}
-    <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-3 flex items-center gap-3 hover:bg-[#F46C44] transition">
-      <GraduationCap className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
-      <div>
-        <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
-          Acceptance Rate
-        </p>
-        <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
-          11%
-        </h3>
-      </div>
-    </div>
+    
 
-    {/* Card */}
-    <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-3 flex items-center gap-3 hover:bg-[#F46C44] transition">
-      <BarChart3 className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
-      <div>
-        <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
-          Rank
-        </p>
-        <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
-          #5
-        </h3>
-      </div>
-    </div>
-
-    {/* Card */}
-    <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-3 flex items-center gap-3 hover:bg-[#F46C44] transition">
-      <Percent className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
-      <div className="">
-        <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
-          Offers
-        </p>
-        <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition text-center">
-          50+
-        </h3>
-      </div>
-    </div>
+   
 
   </div>
 </section>
@@ -597,7 +555,7 @@ const { openPopup } = useGlobal()
                       className="w-full border border-white rounded-lg px-3 py-2 text-xs lg:text-sm bg-transparent text-white focus:outline-none"
                     >
                       <option value="" className="text-black">
-                        Select Country
+                        Country to Study
                       </option>
                       <option value="usa" className="text-black">
                         Study In USA
@@ -1155,7 +1113,14 @@ const { openPopup } = useGlobal()
        
       </section>
 
-       <div className="bg-[#F46C44] py-10">
+       <div className="bg-[#F46C44] py-10 ">
+         <h2 className=" max-w-7xl mx-auto  text-primary text-white mb-10 px-4 lg:px-0">
+            <span className=" font-light block text-xl lg:text-4xl">{homePage?.topUniversity?.title.split("||")[0]}</span>
+              <span className="font-bold text-xl lg:text-5xl relative"> {homePage?.topUniversity?.title.split("||")[1]}
+              <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
+
+            </span>
+          </h2>
           <UniversityCard university = {unires} />
         </div>
 
@@ -1167,11 +1132,12 @@ const { openPopup } = useGlobal()
       <div className="max-w-7xl mx-auto px-4">
          <h2 className=" text-xl   mb-6 ">
               <span className="text-[#F46C44] lg:text-4xl font-light" >
-                Trending
+                {homePage?.blogs?.title.split("||")[0]}
               </span>{" "} <br />
               <span className="text-primary font-bold relative lg:text-4xl" >
-                Features
-                <span className="absolute right-0 bottom-0  w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+                                {homePage?.blogs?.title.split("||")[1]}
+
+                <span className="absolute right-0 bottom-0  w-full lg:w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
 
 
               </span>
@@ -1281,7 +1247,7 @@ const { openPopup } = useGlobal()
       // Auto-play is enabled by default
       />
 
-      <StudentVisaStories stories={filtervisa}/>
+      <StudentVisaStories stories={filtervisa} title={homePage?.visa?.title} subtitle={homePage?.visa?.subtitle} />
 
 
 
