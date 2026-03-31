@@ -39,7 +39,7 @@ import UniversityCard from "./UniversityCard"
 
 
 
-export default function Homepage({ homePage, destinationData, imageData, Faqres, videoRes ,blogres,unires}) {
+export default function Homepage({ homePage, destinationData, imageData, Faqres, videoRes, blogres, unires }) {
 
   const [openForm, setOpenForm] = useState(false);
   const [countries, setCountries] = useState([])
@@ -48,64 +48,64 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
 
- function AutoSlidePlugin(slider) {
-  let timeout
-  let mouseOver = false
+  function AutoSlidePlugin(slider) {
+    let timeout
+    let mouseOver = false
 
-  function clearNextTimeout() {
-    clearTimeout(timeout)
-  }
+    function clearNextTimeout() {
+      clearTimeout(timeout)
+    }
 
-  function nextTimeout() {
-    clearTimeout(timeout)
-    if (mouseOver) return
+    function nextTimeout() {
+      clearTimeout(timeout)
+      if (mouseOver) return
 
-    timeout = setTimeout(() => {
-      slider.next()
-    }, 2500)
-  }
+      timeout = setTimeout(() => {
+        slider.next()
+      }, 2500)
+    }
 
-  slider.on("created", () => {
-    slider.container.addEventListener("mouseover", () => {
-      mouseOver = true
-      clearNextTimeout()
-    })
+    slider.on("created", () => {
+      slider.container.addEventListener("mouseover", () => {
+        mouseOver = true
+        clearNextTimeout()
+      })
 
-    slider.container.addEventListener("mouseout", () => {
-      mouseOver = false
+      slider.container.addEventListener("mouseout", () => {
+        mouseOver = false
+        nextTimeout()
+      })
+
       nextTimeout()
     })
 
-    nextTimeout()
-  })
+    slider.on("dragStarted", clearNextTimeout)
+    slider.on("animationEnded", nextTimeout)
+    slider.on("updated", nextTimeout)
+  }
 
-  slider.on("dragStarted", clearNextTimeout)
-  slider.on("animationEnded", nextTimeout)
-  slider.on("updated", nextTimeout)
-}
-
-const [sliderRefblog] = useKeenSlider(
-  {
-    loop: true,
-    mode: "snap",
-    slides: {
-      perView: 1,
-      spacing: 10,
-    },
-    breakpoints: {
-      "(min-width: 768px)": {
-        slides: { perView: 2, spacing: 15 },
+  const [sliderRefblog] = useKeenSlider(
+    {
+      loop: true,
+      mode: "snap",
+      slides: {
+        perView: 1,
+        spacing: 10,
       },
-      "(min-width: 1024px)": {
-        slides: { perView: 3, spacing: 20 },
+      breakpoints: {
+        "(min-width: 768px)": {
+          slides: { perView: 2, spacing: 15 },
+        },
+        "(min-width: 1024px)": {
+          slides: { perView: 3, spacing: 20 },
+        },
       },
     },
-  },
-  [AutoSlidePlugin] // ✅ updated name here
-)
+    [AutoSlidePlugin] // ✅ updated name here
+  )
 
 
-const filtervisa = imageData.filter((item)=> item.target === "visa")
+  const filtervisa = imageData.filter((item) => item.target === "visa")
 
 
 
@@ -254,7 +254,7 @@ const filtervisa = imageData.filter((item)=> item.target === "visa")
 
 
 
-const { openPopup } = useGlobal()
+  const { openPopup } = useGlobal()
 
   return (
     <main className="bg-white">
@@ -305,24 +305,24 @@ const { openPopup } = useGlobal()
                 ) : null}
               </motion.h1>
 
-             <motion.p
-  initial={{ y: 30, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{ duration: 0.6, delay: 0.6 }}
-  className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0 lg:mb-20"
-  dangerouslySetInnerHTML={{
-    __html: homePage?.hero?.subtitle
-      ? homePage.hero.subtitle
-          .split("||")
-          .map((text, index) =>
-            index === 1
-              ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
-              : text.trim()
-          )
-          .join(" ")
-      : ""
-  }}
-/>
+              <motion.p
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0 lg:mb-20"
+                dangerouslySetInnerHTML={{
+                  __html: homePage?.hero?.subtitle
+                    ? homePage.hero.subtitle
+                      .split("||")
+                      .map((text, index) =>
+                        index === 1
+                          ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
+                          : text.trim()
+                      )
+                      .join(" ")
+                    : ""
+                }}
+              />
 
               {/* CTA BUTTONS */}
               <motion.div
@@ -346,7 +346,7 @@ const { openPopup } = useGlobal()
                 </a>
 
                 <a
-                onClick={openPopup}
+                  onClick={openPopup}
                   // href={homePage?.hero?.ctaLink2}
                   className="
               text-primary px-6 sm:px-8 py-2.5 sm:py-3 border border-primary rounded-full 
@@ -404,32 +404,32 @@ const { openPopup } = useGlobal()
         </div>
       </motion.section>
 
-     <section className="py-6 px-4 bg-white -mt-6">
-  <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <section className="py-6 px-4 bg-white -mt-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
 
-    {/* Card */}
-    {homePage?.stats?.item?.map((stat,index)=>(
-         <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] transition duration-300">
-      <DynamicLucideIcon name={stat?.icon} className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
-      <div>
-        <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
-          {stat?.title}
-        </p>
-        <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
-          {stat?.stats}
-        </h3>
-      </div>
-    </div>
+          {/* Card */}
+          {homePage?.stats?.item?.map((stat, index) => (
+            <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] transition duration-300">
+              <DynamicLucideIcon name={stat?.icon} className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
+              <div>
+                <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
+                  {stat?.title}
+                </p>
+                <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
+                  {stat?.stats}
+                </h3>
+              </div>
+            </div>
 
-    ))}
- 
+          ))}
 
-    
 
-   
 
-  </div>
-</section>
+
+
+
+        </div>
+      </section>
 
       <section className="bg-[#F46C44] overflow-hidden relative">
 
@@ -580,7 +580,7 @@ const { openPopup } = useGlobal()
                 />
               </motion.div>
 
-                {/* Program */}
+              {/* Program */}
               <motion.div>
                 <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
                   State
@@ -606,7 +606,7 @@ const { openPopup } = useGlobal()
                 />
               </motion.div>
 
-            
+
 
               {/* Submit */}
               <motion.div className="md:col-span-2 mt-4 flex justify-center">
@@ -817,7 +817,7 @@ const { openPopup } = useGlobal()
       </motion.section>
 
 
-    
+
 
 
 
@@ -895,7 +895,7 @@ const { openPopup } = useGlobal()
         <div className="mb-10">
           <h2 className="   text-primary">
             <span className="text-[#F46C44] font-light block text-xl lg:text-4xl">{homePage.studyDestinations.title.split("||")[0]}</span>
-              <span className="font-bold text-xl lg:text-5xl relative"> {homePage.studyDestinations.title.split("||")[1]}
+            <span className="font-bold text-xl lg:text-5xl relative"> {homePage.studyDestinations.title.split("||")[1]}
               <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
 
             </span>
@@ -1066,13 +1066,13 @@ const { openPopup } = useGlobal()
         h-auto lg:h-[380px] 
         z-10 lg:mt-24">
 
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3">
-                  Our Services
-                </h2>
+                 <h2 className="  text-white text-primary">
+            <span className=" font-light block text-xl lg:text-4xl">{homePage?.servicesection?.title.split("||")[0]}</span>
+            <span className="font-bold text-xl lg:text-2xl relative"> {homePage?.servicesection?.title.split("||")[1]}
+              <span className="absolute right-0 -bottom-2 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
 
-                <p className="text-base md:text-lg lg:text-xl font-semibold text-white leading-snug">
-                  Your Complete Support for Studying Abroad
-                </p>
+            </span>
+          </h2>
               </div>
 
               {/* Border Box (Desktop only) */}
@@ -1082,7 +1082,7 @@ const { openPopup } = useGlobal()
               <div className="flex-1 lg:pl-6 bg-white relative z-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 bg-white">
 
-                  {homePage?.services?.services.map((service) => (
+                  {homePage?.servicesection?.services?.map((service) => (
                     <div
                       key={service.title}
                       className="group rounded-2xl bg-gray-100 p-4 md:p-6 hover:shadow-lg transition-all duration-300 text-center"
@@ -1098,9 +1098,10 @@ const { openPopup } = useGlobal()
                       </h3>
 
                       {/* Description */}
-                      <p className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-4 md:line-clamp-5">
-                        {service.subTitle}
-                      </p>
+                      <p
+                        className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-4 md:line-clamp-5"
+                        dangerouslySetInnerHTML={{ __html: service.subTitle || "" }}
+                      />
                     </div>
                   ))}
 
@@ -1110,99 +1111,99 @@ const { openPopup } = useGlobal()
             </div>
           </div>
         </div>
-       
+
       </section>
 
-       <div className="bg-[#F46C44] py-10 ">
-         <h2 className=" max-w-7xl mx-auto  text-primary text-white mb-10 px-4 lg:px-0">
-            <span className=" font-light block text-xl lg:text-4xl">{homePage?.topUniversity?.title.split("||")[0]}</span>
-              <span className="font-bold text-xl lg:text-5xl relative"> {homePage?.topUniversity?.title.split("||")[1]}
-              <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
+      <div className="bg-[#F46C44] py-10 ">
+        <h2 className=" max-w-7xl mx-auto  text-primary text-white mb-10 px-4 lg:px-0">
+          <span className=" font-light block text-xl lg:text-4xl">{homePage?.topUniversity?.title.split("||")[0]}</span>
+          <span className="font-bold text-xl lg:text-5xl relative"> {homePage?.topUniversity?.title.split("||")[1]}
+            <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
+
+          </span>
+        </h2>
+        <UniversityCard university={unires} />
+      </div>
+
+
+      <section className="py-12 sm:py-2 lg:py-10 px-2 relative overflow-hidden">
+
+
+
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className=" text-xl   mb-6 ">
+            <span className="text-[#F46C44] lg:text-4xl font-light" >
+              {homePage?.blogs?.title.split("||")[0]}
+            </span>{" "} <br />
+            <span className="text-primary font-bold relative lg:text-4xl" >
+              {homePage?.blogs?.title.split("||")[1]}
+
+              <span className="absolute right-0 bottom-0  w-full lg:w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+
 
             </span>
+
+
           </h2>
-          <UniversityCard university = {unires} />
-        </div>
 
+          {/* 🔥 SLIDER (replaces grid) */}
+          <div ref={sliderRefblog} className="keen-slider relative z-[10]">
 
-        <section className="py-12 sm:py-2 lg:py-10 px-2 relative overflow-hidden">
-      
-     
+            {blogres.length > 0 ? (
+              blogres.map((post) => (
 
-      <div className="max-w-7xl mx-auto px-4">
-         <h2 className=" text-xl   mb-6 ">
-              <span className="text-[#F46C44] lg:text-4xl font-light" >
-                {homePage?.blogs?.title.split("||")[0]}
-              </span>{" "} <br />
-              <span className="text-primary font-bold relative lg:text-4xl" >
-                                {homePage?.blogs?.title.split("||")[1]}
+                <div key={post._id} className="keen-slider__slide p-2">
 
-                <span className="absolute right-0 bottom-0  w-full lg:w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
-
-
-              </span>
-
-
-            </h2>
-
-        {/* 🔥 SLIDER (replaces grid) */}
-        <div ref={sliderRefblog} className="keen-slider relative z-[10]">
-
-          {blogres.length > 0 ? (
-            blogres.map((post) => (
-
-              <div key={post._id} className="keen-slider__slide p-2">
-
-                {/* 🔴 SAME CARD UI */}
-                <div
-                  className="
+                  {/* 🔴 SAME CARD UI */}
+                  <div
+                    className="
                   relative bg-white border border-[#FF6B35]
                   rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]
                   transition-all duration-300 hover:shadow-xl
                 "
-                >
+                  >
 
-                  {/* ORANGE SHAPE */}
-                  <div
-                    className="
+                    {/* ORANGE SHAPE */}
+                    <div
+                      className="
                     absolute -top-2 -left-[6.5px]
                     w-28 h-28 sm:w-36 sm:h-36 lg:w-35 lg:h-35
                     rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-[20px] lg:rounded-tl-[70px]
                     bg-[#FF6B35] -z-10
                   "
-                  />
+                    />
 
-                  {/* IMAGE */}
-                  <div
-                    className="
+                    {/* IMAGE */}
+                    <div
+                      className="
                     relative overflow-hidden bg-gray-300
                     h-[200px] sm:h-[220px] lg:h-[220px]
                     rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[65px]
                   "
-                  >
-                    <img
-                      src={
-                        post.coverImage ||
-                        "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
-                      }
-                      alt={post.title}
-                      className="w-full h-[220px] object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src =
+                    >
+                      <img
+                        src={
+                          post.coverImage ||
                           "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
-                      }}
-                    />
-                  </div>
+                        }
+                        alt={post.title}
+                        className="w-full h-[220px] object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
+                        }}
+                      />
+                    </div>
 
-                  {/* CONTENT */}
-                  <div className="p-3 text-center">
-                    <p className="text-gray-800 text-xs sm:text-base font-medium mb-3 line-clamp-2">
-                      {post.shortDescription}
-                    </p>
+                    {/* CONTENT */}
+                    <div className="p-3 text-center">
+                      <p className="text-gray-800 text-xs sm:text-base font-medium mb-3 line-clamp-2">
+                        {post.shortDescription}
+                      </p>
 
-                    <button
-                      onClick={() => goToBlog(post.slug)}
-                      className="
+                      <button
+                        onClick={() => goToBlog(post.slug)}
+                        className="
                         text-white px-6 lg:w-50 py-2 mx-auto
                         bg-[#1f2937]
                         rounded-tr-4xl
@@ -1213,27 +1214,27 @@ const { openPopup } = useGlobal()
                         flex items-center justify-center gap-2
                         transition-all
                       "
-                    >
-                      Read More »
-                    </button>
+                      >
+                        Read More »
+                      </button>
+                    </div>
+
                   </div>
 
                 </div>
+              ))
+            ) : (
+              <p className="text-center text-gray-500 text-lg w-full">
+                No blogs found
+              </p>
+            )}
 
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500 text-lg w-full">
-              No blogs found
-            </p>
-          )}
-
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
 
-        <ImageTestimonial
+      <ImageTestimonial
         title={homePage?.imageTestimonials?.title}
 
         subtitle={homePage?.imageTestimonials?.subtitle}

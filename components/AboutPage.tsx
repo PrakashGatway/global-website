@@ -569,8 +569,10 @@ export default function AboutUsPage({ aboutData }) {
           <div>
             <input
               type="tel"
+              maxLength={10}
               placeholder="Mobile Number *"
               {...register("phone", {
+                
                 required: "Mobile number is required",
                 pattern: {
                   value: /^[0-9]{10}$/,
@@ -599,20 +601,25 @@ export default function AboutUsPage({ aboutData }) {
             className="w-full text-sm sm:text-base px-2 py-2 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
           />
 
-          {/* Destination */}
-          <input
-            type="text"
-            placeholder="Preferred Study Destination *"
-            className="w-full text-sm sm:text-base px-2 py-2 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-          />
+          <div>
+                  <label className="block text-gray-700 text-sm font-semibold mb-2">
+                    Country to Study
+                  </label>
+                  <select
+                    {...register("destination")}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+                  >
+                    <option value="">Select Destination</option>
+                    <option value="usa">Study in USA</option>
+                    <option value="uk">Study in UK</option>
+                    <option value="canada">Study in France</option>
+                    <option value="australia">Study in Italy</option>
+                    <option value="germany">Study in Germany</option>
+                    <option value="france">Study in Dubai</option>
+                  </select>
+                </div>
 
-          {/* Message */}
-          <input
-            type="text"
-            {...register("message", { required: true })}
-            placeholder="Message *"
-            className="w-full text-sm sm:text-base px-2 py-2 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-          />
+       
 
           {/* Checkbox */}
           <div className="flex items-start gap-2">

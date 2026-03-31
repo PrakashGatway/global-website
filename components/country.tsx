@@ -346,14 +346,14 @@ const PopularCoursesSection = ({ data }) => {
        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
   {(data?.coursesitem || []).map((item, i) => (
     
-    <div key={i} className="relative bg-[#F46C44] rounded-[28px] hover:-translate-y-[8px] transition-all duration-300 pb-2 p-0.5">
+    <div key={i} className=" bg-[#F46C44] rounded-[28px] hover:-translate-y-[8px] transition-all duration-300 pb-1 pl-[1.5px] pr-[0.5px] flex justify-center items-center h-full">
       
     
       {/* 🟡 Main Card */}
-      <div className="relative bg-[#f6f7f9] rounded-[28px] overflow-hidden transition duration-300 hover:shadow-md  flex flex-col h-full">
+      <div className=" bg-[#f6f7f9] rounded-[28px] overflow-hidden transition duration-300 hover:shadow-md !mx-auto !w-full  flex flex-col h-full">
         
         {/* Image */}
-        <div className="overflow-hidden w-full rounded-[28px] relative">
+        <div className="overflow-hidden w-full rounded-[28px] ">
           <img
             src={
               item?.image ||
@@ -405,30 +405,45 @@ const LifeInSection = ({ data }) => {
       </h1>
     </div>
 
-    {/* Cards */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 items-stretch">
-      {(data?.items || []).map((item, index) => (
-        <div key={index} className="relative h-full z-0">
+   {/* Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
+            {/* Left Section - Benefits List */}
+            <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:gap-6">
+              {(data.items || []).map((item, index) => (
+                <div key={index} className="flex items-center gap-4 w-full lg:w-120 relative z-1">
+                  {/* Left Border Accent - Hidden on mobile */}
+                  <div className="hidden sm:block w-60 h-20 bg-secondary absolute -z-1 -top-2 -left-2"></div>
 
-          {/* Brown Background */}
-          <div className="hidden sm:block w-60 h-20 bg-secondary absolute -z-1 -top-2 -left-2"></div>
+                  {/* Benefit Box */}
+                  <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[30px] sm:rounded-tr-[50px] px-4 sm:px-6 py-3 sm:py-4 lg:py-5 text-white text-sm sm:text-base lg:w-40 ">
+                    <h1 className='text-base sm:text-2xl lg:text-xl font-semibold'>{item.title}</h1>
+                    <p className='text-xs sm:text-sm text-white mt-1'>{item?.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-          {/* Card */}
-          <div className="bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[30px] sm:rounded-tr-[50px] px-4 sm:px-6 py-4 text-white h-full min-h-[120px] flex flex-col justify-between z-11">
+            {/* Right Section - Images */}
+            <div className="flex flex-col gap-4 relative ">
+              {/* Yellow Accent Bar - Hidden on mobile */}
+              <div className="hidden sm:block w-70 h-10 bg-yellow-400 absolute -top-5 right-20 -z-1"></div>
 
-            <h1 className="text-base sm:text-lg lg:text-xl font-semibold">
-              {item.title}
-            </h1>
-
-            <p className="text-xs sm:text-sm mt-2">
-              {item?.description}
-            </p>
-
+              {/* Top Image - Woman with Laptop */}
+              <div className=" w-full h-48 sm:h-56 lg:h-140 shadow-md z-1">
+                <img
+                  src={data?.image || ""}
+                  alt="Woman working on laptop"
+                  className="w-full h-full object-cover rounded-lg "
+                />
+              </div>
+            </div>
           </div>
-
-        </div>
-      ))}
-    </div>
+            {/* Bottom Image - Munich Cityscape */}
+        <img
+          src={data?.buttomImage || "/images/life-germany-img-1.png"}
+          alt="Munich cityscape"
+          className="w-full max-w-[400px] sm:max-w-[500px] lg:w-[400px] h-auto object-contain absolute left-1/2 -translate-x-1/2 lg:left-130 lg:translate-x-0 bottom-0 z-11 hidden lg:block"
+        />
 
   </div>
 </section>

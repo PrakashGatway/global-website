@@ -35,11 +35,11 @@ export default function ContactUsPage({ contactData ,Faqres }) {
       const res = await axiosInstance.post("/contactus", {
         subject: "Contact Form",
         type: "Website",
-        fullName: `${data.firstName} ${data.lastName}`,
+        fullName: data.Name,
         email: data.email,
         phone: data.phone,
         destination: data.destination,
-        description: data.message,
+        description: "form",
       });
 
       if (res.status === 200 || res.status === 201) {
@@ -232,13 +232,12 @@ export default function ContactUsPage({ contactData ,Faqres }) {
 
             <div className="bg-white p-8 rounded-lg shadow-lg">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                <div>
                     <label className="block text-gray-700 text-sm font-semibold mb-2">
-                      First Name *
+                      Name *
                     </label>
                     <input
-                      {...register("firstName", { required: "First name is required" })}
+                      {...register("Name", { required: "First name is required" })}
                       type="text"
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
                     />
@@ -246,20 +245,6 @@ export default function ContactUsPage({ contactData ,Faqres }) {
                       <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>
                     )}
                   </div>
-                  <div>
-                    <label className="block text-gray-700 text-sm font-semibold mb-2">
-                      Last Name *
-                    </label>
-                    <input
-                      {...register("lastName", { required: "Last name is required" })}
-                      type="text"
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.lastName ? 'border-red-500' : 'border-gray-300'}`}
-                    />
-                    {errors.lastName && (
-                      <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>
-                    )}
-                  </div>
-                </div>
 
                 <div>
                   <label className="block text-gray-700 text-sm font-semibold mb-2">
@@ -286,6 +271,7 @@ export default function ContactUsPage({ contactData ,Faqres }) {
                     Phone Number *
                   </label>
                   <input
+                  maxLength={10}
                     {...register("phone", {
                       required: "Phone number is required",
                       pattern: {
@@ -303,36 +289,23 @@ export default function ContactUsPage({ contactData ,Faqres }) {
 
                 <div>
                   <label className="block text-gray-700 text-sm font-semibold mb-2">
-                    Preferred Study Destination
+                    Country to Study
                   </label>
                   <select
                     {...register("destination")}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
                   >
                     <option value="">Select Destination</option>
-                    <option value="usa">United States</option>
-                    <option value="uk">United Kingdom</option>
-                    <option value="canada">Canada</option>
-                    <option value="australia">Australia</option>
-                    <option value="germany">Germany</option>
-                    <option value="france">France</option>
+                    <option value="usa">Study in USA</option>
+                    <option value="uk">Study in UK</option>
+                    <option value="canada">Study in France</option>
+                    <option value="australia">Study in Italy</option>
+                    <option value="germany">Study in Germany</option>
+                    <option value="france">Study in Dubai</option>
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-gray-700 text-sm font-semibold mb-2">
-                    How can we help you? *
-                  </label>
-                  <textarea
-                    {...register("message", { required: "Message is required" })}
-                    rows={4}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.message ? 'border-red-500' : 'border-gray-300'}`}
-                    placeholder="Tell us about your study abroad goals and questions..."
-                  ></textarea>
-                  {errors.message && (
-                    <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
-                  )}
-                </div>
+               
 
                 <div className="flex items-start">
                   <input
