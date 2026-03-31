@@ -13,6 +13,7 @@ import BreadcrumbSchema from "@/components/BreadcrumbSchema"
 
 import ScrollToTop from "@/components/ScrolltoTop"
 import WhatsAppButton from "@/components/whatsappbtn"
+export const dynamic = "force-dynamic";
 
 
 const ptSans = PT_Sans({

@@ -14,6 +14,9 @@ import Link from "next/link"
 import { CreateApplicationModal } from "@/components/dashboard/applicationModel"
   import { useSearchParams } from 'next/navigation';
 
+  
+  export const dynamic = "force-dynamic";
+
 interface Course {
   _id: string
   name: string
