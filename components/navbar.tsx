@@ -273,21 +273,19 @@ export default function Navbar({
   `}
       >
         <div
-          className={`mx-auto flex justify-between relative transition-all duration-500 lg:ease-in-out ${isScrolled ? "h-full " : ""
+          className={`mx-auto flex justify-between relative transition-all duration-500 ease-in-out lg:ease-in-out ${isScrolled ? "h-full " : ""
             }`}
         >
           {/* Left */}
           <div className={`items-center text-end px-8 gap-2 bg-white`}>
-            <span className={`font-medium ${isScrolled ? "hidden lg:hidden" : "hidden lg:block "}`}>
-              Contact Your Nearest Centre
-            </span>
+           
             <Link href="/">
               <Image
                 src="/images/newlogo3.png"
                 alt="Logo"
                 width={800}
                 height={100}
-                className={`object-contain w-20 lg:w-28 lg:ml-10 ${isScrolled ? "lg:py-3 " : ""}`}
+                className={`object-contain w-20 m-auto py-3 lg:w-28 lg:ml-10 ${isScrolled ? " " : ""}`}
                 priority
               />
             </Link>
@@ -319,7 +317,7 @@ export default function Navbar({
             )}
 
             {/* ================= DESKTOP MENU ================= */}
-            <div className={`hidden lg:flex items-center gap-2 ${isScrolled ? "justify-center " : "justify-center"} `}>
+            <div className={`hidden lg:flex items-center gap-2  ${isScrolled ? "justify-center" : "justify-center pb-4"} `}>
               {navbar?.map((item, i) => (
                 <div key={i} className="relative group">
                   <Link
