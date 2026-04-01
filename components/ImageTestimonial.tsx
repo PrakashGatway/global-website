@@ -96,7 +96,7 @@ export default function ImageTestimonial({
   }, [items]);
 
   return (
-    <section className="w-full lg:pt-4  lg:px-4 sm:px-8 bg-white overflow-hidden">
+    <section className="w-full max-w-[1540px] mx-auto lg:pt-4  lg:px-4 sm:px-8 bg-white overflow-hidden">
       <div className="mx-auto">
         {/* Heading */}
         <div className="max-w-7xl mx-auto px-4 mb-12">
@@ -150,7 +150,7 @@ export default function ImageTestimonial({
                     className={`bg-white rounded-3xl lg:rounded-4xl
                       py-4 lg:py-6 px-3 lg:px-6
                       shadow-lg border border-gray-200
-                      flex gap-3 lg:gap-4 relative z-10
+                      flex items-start gap-3 lg:gap-4 relative z-10
                       ${
                         isReverse
                           ? "-translate-y-0"
@@ -161,11 +161,11 @@ export default function ImageTestimonial({
                     <img
                       src={item?.universityLogo}
                       alt="Logo"
-                      className="w-10 h-10 lg:w-40 lg:h-18 object-contain mt-2 lg:mt-6 flex-shrink-0"
+                      className="w-10 h-10 lg:w-20 lg:h-18 object-contain mt-2 flex-shrink-0"
                     />
 
                     {/* TEXT */}
-                    <div className="flex flex-col justify-center">
+                    <div className="flex flex-col justify-center ">
                       <h3 className="text-sm lg:text-xl font-bold text-[hsl(0,70%,35%)] lg:line-clamp-1">
                         {item.name}
                       </h3>

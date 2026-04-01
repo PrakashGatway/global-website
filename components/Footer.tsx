@@ -30,7 +30,7 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
 
         
 
-        <div className=" mx-auto px-4 sm:px-6 lg:px-16 overflow-visible">
+        <div className=" max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-16 overflow-visible">
 
           
 

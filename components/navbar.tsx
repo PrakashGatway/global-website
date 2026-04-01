@@ -273,7 +273,7 @@ export default function Navbar({
   `}
       >
         <div
-          className={`mx-auto flex justify-between relative transition-all duration-500 ease-in-out lg:ease-in-out ${isScrolled ? "h-full " : ""
+          className={`mx-auto max-w-[1540px] flex justify-between relative transition-all duration-500 ease-in-out lg:ease-in-out ${isScrolled ? "h-full " : ""
             }`}
         >
           {/* Left */}

@@ -119,13 +119,13 @@ export function Destinationhome({ homePage }) {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-white overflow-hidden pt-8"
+      className="relative bg-white overflow-hidden pt-2 max-w-[1440px] pt-10 mx-auto "
 
     >
       {/* Desktop: Fixed height with h-screen */}
-      <div className="hidden lg:block w-full h-[600px] flex flex-col">
+      <div className="hidden lg:block w-full h-[700px] flex flex-col">
         {/* Title */}
-        <div className="text-center pt-12 lg:py-16 pb-8 px-4">
+        <div className="text-center pt-12 lg:py-10 px-4">
           <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-primary">
             {homePage?.dreamDestination?.title ? (
               <>
@@ -156,7 +156,7 @@ export function Destinationhome({ homePage }) {
                   className="step-card absolute inset-0 rounded-2xl p-6 sm:p-8 flex flex-col justify-center shadow-lg border border-gray-300"
                   style={{
                     background: "#fff",
-      
+
                     zIndex: 10 + i,
                   }}
                 >
@@ -178,22 +178,22 @@ export function Destinationhome({ homePage }) {
                   </h3>
 
                   <p
-  className="text-sm sm:text-base leading-relaxed mb-5"
-  style={{ color: "#555" }}
-  dangerouslySetInnerHTML={{ __html: step.description || "" }}
-/>
+                    className="text-sm sm:text-base leading-relaxed mb-5"
+                    style={{ color: "#555" }}
+                    dangerouslySetInnerHTML={{ __html: step.description || "" }}
+                  />
 
-                 <Link href={step?.ctaRoute || "/contact"}>
-                  <button
-                    className="self-start cursor-pointer text-sm font-semibold px-6 py-2.5 rounded-full border-2 transition-colors hover:bg-[#1a3a6b] hover:text-white"
-                    style={{
-                      borderColor: "#1a3a6b",
-                      color: "#1a3a6b",
-                      background: "transparent",
-                    }}
-                  >
-                  {step?.ctabutton || "Free Expert Consultation"}
-                  </button></Link>
+                  <Link href={step?.ctaRoute || "/contact"}>
+                    <button
+                      className="self-start cursor-pointer text-sm font-semibold px-6 py-2.5 rounded-full border-2 transition-colors hover:bg-[#1a3a6b] hover:text-white"
+                      style={{
+                        borderColor: "#1a3a6b",
+                        color: "#1a3a6b",
+                        background: "transparent",
+                      }}
+                    >
+                      {step?.ctabutton || "Free Expert Consultation"}
+                    </button></Link>
                 </div>
               ))}
             </div>
@@ -202,9 +202,9 @@ export function Destinationhome({ homePage }) {
             <div className="hidden lg:block w-1/2">
               <div className=" ">
                 <img
-                  src={homePage?.dreamDestination?.Image||"/images/destination-pic.png"}
+                  src={homePage?.dreamDestination?.Image || "/images/destination-pic.png"}
                   alt="Foreign Education Consultants"
-                  className="w-full h-[450px] object-contain"
+                  className="w-full h-[500px] object-contain"
                   loading="lazy"
                 />
               </div>
@@ -223,7 +223,7 @@ export function Destinationhome({ homePage }) {
             className="text-lg sm:text-3xl font-bold"
             style={{ color: "#1a1a2e" }}
           >
-      
+
             {homePage?.dreamDestination?.title ? (
               <>
                 <span className="text-primary">
@@ -238,7 +238,7 @@ export function Destinationhome({ homePage }) {
                 <span style={{ color: "#F46C44" }}>4 Steps</span> to Your Dream Destination
               </>
             )}
-        
+
           </h2>
         </div>
 
@@ -273,17 +273,17 @@ export function Destinationhome({ homePage }) {
                 {step.description}
               </p>
 
-                <Link href={step?.ctaRoute || "/contact"}>
-              <button
-                className="text-xs font-semibold px-5 py-2 rounded-full border-2 transition-colors hover:bg-[#1a3a6b] hover:text-white"
-                style={{
-                  borderColor: "#1a3a6b",
-                  color: "#1a3a6b",
-                  background: "transparent",
-                }}
-              >
-                Free Expert Consultation
-              </button>
+              <Link href={step?.ctaRoute || "/contact"}>
+                <button
+                  className="text-xs font-semibold px-5 py-2 rounded-full border-2 transition-colors hover:bg-[#1a3a6b] hover:text-white"
+                  style={{
+                    borderColor: "#1a3a6b",
+                    color: "#1a3a6b",
+                    background: "transparent",
+                  }}
+                >
+                  Free Expert Consultation
+                </button>
               </Link>
             </div>
           ))}

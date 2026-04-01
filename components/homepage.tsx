@@ -30,6 +30,7 @@ import { ModernSelect } from "./ui/select"
 import "keen-slider/keen-slider.min.css"
 import StudentVisaStories from "./Studentvisa"
 import UniversityCard from "./UniversityCard"
+import StudyDestinations from "./homepageCom/CountryCards"
 
 
 
@@ -43,10 +44,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
   const [openForm, setOpenForm] = useState(false);
   const [countries, setCountries] = useState([])
-
-
-
-
 
   function AutoSlidePlugin(slider) {
     let timeout
@@ -266,11 +263,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
     relative overflow-hidden
     bg-white
     bg-no-repeat bg-cover bg-bottom
-    pt-12 lg:pt-26 min-h-[90vh] 
+    pt-12 lg:pt-20 
   "
 
       >
-        <div></div>
 
         {/* mobile overlay only */}
         <div className="absolute inset-0 bg-white/50 md:bg-transparent pointer-events-none" />
@@ -309,7 +305,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0 lg:mb-20"
+                className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0 lg:mb-10"
                 dangerouslySetInnerHTML={{
                   __html: homePage?.hero?.subtitle
                     ? homePage.hero.subtitle
@@ -329,7 +325,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.8 }}
-                className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+                className="mt-2 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               >
                 <a
                   onClick={() => setOpenForm(true)}
@@ -404,7 +400,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         </div>
       </motion.section>
 
-      <section className="py-6 px-4 bg-white -mt-6">
+      <section className="py-6 px-4 bg-white mt-3">
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
 
           {/* Card */}
@@ -423,11 +419,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
           ))}
 
-
-
-
-
-
         </div>
       </section>
 
@@ -435,7 +426,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
 
-        <div className="px-4 sm:px-8 lg:px-20 flex flex-col lg:flex-row gap-10 lg:gap-2 justify-around items-center">
+        <div className="px-4 max-w-[1440px] mx-auto sm:px-8 lg:px-20 flex flex-col lg:flex-row gap-10 lg:gap-2 justify-around items-center">
 
           {/* LEFT IMAGE (Hidden on Mobile) */}
           <motion.div className="relative z-10 -bottom-0 lg:-bottom-8 -left-24 hidden lg:block">
@@ -543,7 +534,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               {/* Country */}
               <motion.div>
                 <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
-                  Country
+                  Country to Study
                 </label>
 
                 <Controller
@@ -871,8 +862,8 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                         {item.title}
                       </h3>
 
-                      <p className="text-gray-500 text-xs lg:text-sm">
-                        {item.subTitle}
+                      <p className="text-gray-500 text-xs lg:text-sm line-clamp-1">
+                        {item.subTitle || "Explore top universities for your study abroad journey."}
                       </p>
 
                     </div>
@@ -893,11 +884,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
         {/* Heading */}
         <div className="mb-10">
-          <h2 className="   text-primary">
+          <h2 className="text-primary">
             <span className="text-[#F46C44] font-light block text-xl lg:text-4xl">{homePage.studyDestinations.title.split("||")[0]}</span>
             <span className="font-bold text-xl lg:text-5xl relative"> {homePage.studyDestinations.title.split("||")[1]}
               <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
-
             </span>
           </h2>
         </div>
@@ -1234,12 +1224,12 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
       </section>
 
 
-      <ImageTestimonial
+      {/* <ImageTestimonial
         title={homePage?.imageTestimonials?.title}
 
         subtitle={homePage?.imageTestimonials?.subtitle}
         items={imageData}
-      />
+      /> */}
 
       <VideoTestimonialsSlider
         title={homePage?.videoTestimonials?.title || "Video || Testimonials"}

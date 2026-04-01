@@ -5,10 +5,7 @@ const getHomePageData = async () => {
   const res = await fetch(`${baseUrl}/page-information/slug/home`, {
   headers: {
     "Content-Type": "application/json",
-  },
-  next: {
-    revalidate: 3600, 
-  },
+  }
 });
 
 
