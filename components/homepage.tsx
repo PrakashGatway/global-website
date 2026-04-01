@@ -328,7 +328,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 className="mt-2 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               >
                 <a
-                  onClick={() => setOpenForm(true)}
+                  onClick={openPopup}
                   className="
               text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#f46c44] rounded-full shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
               text-sm lg:text-base font-semibold
