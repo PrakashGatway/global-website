@@ -255,7 +255,7 @@ export default function Navbar({
     if (selectedGroup?._id === groupId) return;
 
     setSelectedGroup({ _id: groupId, name: groupName });
-    
+
     // Get static data from GROUP_UNIVERSITIES_DATA
     const staticData = GROUP_UNIVERSITIES_DATA[groupId] || [];
     setGroupUniversities(staticData);
@@ -278,7 +278,7 @@ export default function Navbar({
         >
           {/* Left */}
           <div className={`items-center text-end px-8 gap-2 bg-white`}>
-           
+
             <Link href="/">
               <Image
                 src="/images/newlogo3.png"
@@ -291,7 +291,7 @@ export default function Navbar({
             </Link>
           </div>
 
-          <div className={`flex flex-col ${isScrolled ? "justify-center " : "item-center gap-6 px-15"} `}>
+          <div className={`flex flex-col ${isScrolled ? "justify-center " : "item-center gap-6 sm:px-15"} `}>
             {!isScrolled && (
               <>
                 <div className="w-full justify-end items-center gap-6 lg:flex hidden z-10 px-4 text-white">
@@ -340,7 +340,7 @@ export default function Navbar({
               "
                     >
                       <div className="bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.12)] w-[700px] p-5 border border-gray-100">
-                        
+
                         {/* LOGIC FOR UNIVERSITIES DROPDOWN */}
                         {item.type === "destination" ? (
                           <div className="flex gap-6 ">
@@ -353,7 +353,7 @@ export default function Navbar({
                                 {Featureitem?.map((group) => {
                                   const groupSlug = group.slug || group._id;
                                   const groupHref = `/universities/group/${groupSlug}`;
-                                  
+
                                   return (
                                     <div key={group._id} className="relative">
                                       {/* Make the entire row clickable as a link */}
@@ -364,18 +364,18 @@ export default function Navbar({
                                         className={`
                                           w-full text-left flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors text-sm
                                           ${selectedGroup?._id === groupSlug
-                                            ? "bg-[var(--primary)] text-white shadow-md" 
+                                            ? "bg-[var(--primary)] text-white shadow-md"
                                             : "hover:bg-gray-100 text-gray-700"}
                                         `}
                                       >
                                         <div className="flex items-center gap-2">
                                           <div className="w-6 h-6 rounded-full bg-white overflow-hidden flex-shrink-0">
-                                             <Image 
-                                                src={group?.navbarImage || "/placeholder.png"} 
-                                                alt={group.navbarTitle} 
-                                                width={24} height={24} 
-                                                className="object-cover w-full h-full"
-                                             />
+                                            <Image
+                                              src={group?.navbarImage || "/placeholder.png"}
+                                              alt={group.navbarTitle}
+                                              width={24} height={24}
+                                              className="object-cover w-full h-full"
+                                            />
                                           </div>
                                           <span className="font-medium truncate">{group.navbarTitle}</span>
                                         </div>
@@ -392,7 +392,7 @@ export default function Navbar({
                               <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
                                 {selectedGroup ? `Universities in ${selectedGroup.name}` : "Select a Group"}
                               </h3>
-                              
+
                               {selectedGroup ? (
                                 groupUniversities.length > 0 ? (
                                   <div className="grid grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-2">
@@ -408,7 +408,7 @@ export default function Navbar({
                                             alt={uni?.name}
                                             width={40}
                                             height={40}
-                                            className="object-cover w-full h-full"
+                                            className="object-cover w-full  h-full"
                                           />
                                         </div>
                                         <div className="overflow-hidden">
@@ -531,9 +531,27 @@ export default function Navbar({
           </div>
 
           {/* MOBILE TOGGLE */}
-          <button onClick={() => setIsOpen(true)} className="lg:hidden text-gray-800 px-4">
-            <Menu size={33} />
-          </button>
+          {/* MOBILE RIGHT ACTIONS */}
+          <div className="flex items-center gap-3 pr-3 lg:hidden">
+
+            {/* 📞 Call Button */}
+            <a
+              href="tel:+919887120429"
+              className="flex items-center gap-1 bg-white text-[#f46c44] px-3 py-2 rounded-full shadow-md active:scale-95 transition"
+            >
+              <Phone size={16} />
+              <span className="text-xs font-semibold">9887120429</span>
+            </a>
+
+            {/* ☰ Menu Button */}
+            <button
+              onClick={() => setIsOpen(true)}
+              className="text-white bg-[#6d1901] p-2 rounded-md"
+            >
+              <Menu size={22} />
+            </button>
+
+          </div>
         </div>
 
         {/* ================= MOBILE SIDEBAR ================= */}
@@ -594,7 +612,7 @@ export default function Navbar({
                                 {Featureitem?.map((group) => {
                                   const groupSlug = group.slug || group._id;
                                   const groupHref = `/universities/group/${groupSlug}`;
-                                  
+
                                   return (
                                     <div key={group._id} className="mb-2">
                                       {/* Make group title clickable */}
@@ -609,7 +627,7 @@ export default function Navbar({
                                         {group.navbarTitle}
                                         {selectedGroup?._id === groupSlug && <ChevronDown size={14} />}
                                       </Link>
-                                      
+
                                       {/* Show universities if this group is selected in mobile */}
                                       {selectedGroup?._id === groupSlug && (
                                         <div className="pl-2 space-y-1 mt-1">
