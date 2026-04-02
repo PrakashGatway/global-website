@@ -1,4 +1,4 @@
-const Balloon = async ({ Pageres  }) => {
+const Balloon = ({ Pageres  }) => {
  
   return (
     <div className="flex min-h-screen items-end justify-center pb-12 hidden

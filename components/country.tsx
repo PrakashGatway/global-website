@@ -39,9 +39,9 @@ const HeroSection = ({ data, alldata }) => {
 
             {/* Balloon — positioned absolutely only on lg+ */}
             <div className="absolute right-2 top-4 sm:right-6 sm:top-8 lg:left-auto lg:right-auto lg:top-auto z-20"
-            style={{
-              "right":"2rem"
-            }}
+              style={{
+                "right": "2rem"
+              }}
             >
               <Balloon Pageres={alldata} />
             </div>
@@ -360,12 +360,12 @@ const PopularCoursesSection = ({ data }) => {
           {(data?.coursesitem || []).map((item, i) => (
             // <div key={i} className="bg-[#F46C44] rounded-[28px] hover:-translate-y-2 transition-all duration-300 p-[2px]">
             //   <div className="bg-[#f6f7f9] rounded-[26px] overflow-hidden flex flex-col h-full">
-               <div key={i} className=" bg-[#F46C44] rounded-[28px] hover:-translate-y-[8px] transition-all duration-300 pb-1 pl-[1.5px] pr-[0.5px] flex justify-center items-center h-full">
-      
-    
-      {/* 🟡 Main Card */}
-      <div className=" bg-[#f6f7f9] rounded-[28px] overflow-hidden transition duration-300 hover:shadow-md !mx-auto !w-full  flex flex-col h-full">
-       
+            <div key={i} className=" bg-[#F46C44] rounded-[28px] hover:-translate-y-[8px] transition-all duration-300 pb-1 pl-[1.5px] pr-[0.5px] flex justify-center items-center h-full">
+
+
+              {/* 🟡 Main Card */}
+              <div className=" bg-[#f6f7f9] rounded-[28px] overflow-hidden transition duration-300 hover:shadow-md !mx-auto !w-full  flex flex-col h-full">
+
                 <div className="overflow-hidden w-full rounded-t-[26px]">
                   <img
                     src={item?.image || "https://res.cloudinary.com/dhzire2mc/image/upload/v1775022574/cway-admin/njlye3egxsqkcf1q6k9i.jpg"}
@@ -397,60 +397,60 @@ const PopularCoursesSection = ({ data }) => {
 const LifeInSection = ({ data }) => {
   if (data?.isHidden === "yes") return null
   return (
-    
+
     <section className="w-full h-full px-4 sm:px-6 lg:px-30 bg-white lg:pt-20 lg:pb-10 relative ">
-  <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto">
 
-    {/* Heading */}
-    <div className="mb-8 md:mb-12">
-      <h1 className="text-lg sm:text-4xl md:text-3xl lg:text-4xl font-bold text-primary mb-4 relative">
-        {data?.title || "Life in Germany"}
-        <span className="w-20 sm:w-25 h-1.5 absolute right-1/4 sm:left-0 -bottom-2 sm:-bottom-4 bg-[#F46C44] rounded-full"></span>
-      </h1>
-    </div>
+        {/* Heading */}
+        <div className="mb-8 md:mb-12">
+          <h1 className="text-lg sm:text-4xl md:text-3xl lg:text-4xl font-bold text-primary mb-4 relative">
+            {data?.title || "Life in Germany"}
+            <span className="w-20 sm:w-25 h-1.5 absolute right-1/4 sm:left-0 -bottom-2 sm:-bottom-4 bg-[#F46C44] rounded-full"></span>
+          </h1>
+        </div>
 
-   {/* Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
-            {/* Left Section - Benefits List */}
-            <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:gap-6">
-              {(data.items || []).map((item, index) => (
-                <div key={index} className="flex items-center gap-4 w-full lg:w-120 relative z-1">
-                  {/* Left Border Accent - Hidden on mobile */}
-                  <div className="hidden sm:block w-60 h-20 bg-secondary absolute -z-1 -top-2 -left-2"></div>
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
+          {/* Left Section - Benefits List */}
+          <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:gap-6">
+            {(data.items || []).map((item, index) => (
+              <div key={index} className="flex items-center gap-4 w-full lg:w-120 relative z-1">
+                {/* Left Border Accent - Hidden on mobile */}
+                <div className="hidden sm:block w-60 h-20 bg-secondary absolute -z-1 -top-2 -left-2"></div>
 
-                  {/* Benefit Box */}
-                  <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[30px] sm:rounded-tr-[50px] px-4 sm:px-6 py-3 sm:py-4 lg:py-5 text-white text-sm sm:text-base lg:w-40 ">
-                    <h1 className='text-base sm:text-2xl lg:text-xl font-semibold'>{item.title}</h1>
-                    <p className='text-xs sm:text-sm text-white mt-1'>{item?.description}</p>
-                  </div>
+                {/* Benefit Box */}
+                <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[30px] sm:rounded-tr-[50px] px-4 sm:px-6 py-3 sm:py-4 lg:py-5 text-white text-sm sm:text-base lg:w-40 ">
+                  <h1 className='text-base sm:text-2xl lg:text-xl font-semibold'>{item.title}</h1>
+                  <p className='text-xs sm:text-sm text-white mt-1'>{item?.description}</p>
                 </div>
-              ))}
-            </div>
-
-            {/* Right Section - Images */}
-            <div className="flex flex-col gap-4 relative ">
-              {/* Yellow Accent Bar - Hidden on mobile */}
-              <div className="hidden sm:block w-70 h-10 bg-yellow-400 absolute -top-5 right-20 -z-1"></div>
-
-              {/* Top Image - Woman with Laptop */}
-              <div className=" w-full h-48 sm:h-56 lg:h-140 shadow-md z-1">
-                <img
-                  src={data?.image || "https://res.cloudinary.com/dhzire2mc/image/upload/v1775022574/cway-admin/njlye3egxsqkcf1q6k9i.jpg"}
-                  alt="Woman working on laptop"
-                  className="w-full h-full object-cover rounded-lg "
-                />
               </div>
+            ))}
+          </div>
+
+          {/* Right Section - Images */}
+          <div className="flex flex-col gap-4 relative ">
+            {/* Yellow Accent Bar - Hidden on mobile */}
+            <div className="hidden sm:block w-70 h-10 bg-yellow-400 absolute -top-5 right-20 -z-1"></div>
+
+            {/* Top Image - Woman with Laptop */}
+            <div className=" w-full h-48 sm:h-56 lg:h-140 shadow-md z-1">
+              <img
+                src={data?.image || "https://res.cloudinary.com/dhzire2mc/image/upload/v1775022574/cway-admin/njlye3egxsqkcf1q6k9i.jpg"}
+                alt="Woman working on laptop"
+                className="w-full h-full object-cover rounded-lg "
+              />
             </div>
           </div>
-            {/* Bottom Image - Munich Cityscape */}
+        </div>
+        {/* Bottom Image - Munich Cityscape */}
         {/* <img
           src={data?.buttomImage || "/images/life-germany-img-1.png"}
           alt="Munich cityscape"
           className="w-full max-w-[400px] sm:max-w-[500px] lg:w-[400px] h-auto object-contain absolute left-1/2 -translate-x-1/2 lg:left-130 lg:translate-x-0 bottom-0 z-11 hidden lg:block"
         /> */}
 
-  </div>
-</section>
+      </div>
+    </section>
   )
 }
 
@@ -711,7 +711,9 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
   const regularImages = imageData?.filter((i) => i.target !== 'visa' && i.type === 'image') || []
 
   const shouldRenderSection = (name, data) => {
+
     if (!data) return false
+    if (name === 'visaStories') console.log("Visa Stories Count:", visaStories.length)
     if (name === 'videoTestimonials') return videoRes?.data?.length > 0
     if (name === 'imageTestimonials') return regularImages?.length > 0
     if (name === 'visaStories') return visaStories?.length > 0
@@ -757,18 +759,19 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         }
 
 
-        // if (originalName === 'imageTestimonials' || name === 'imageTestimonials') {
-        //   return regularImages?.length > 0 && (
-        //     <ImageTestimonial
-        //       key={`${name}-${order}`}
-        //       title={data?.title || "Our Student Success Stories"}
-        //       subtitle={data?.subtitle || "Real experiences from our students"}
-        //       items={regularImages}
-        //     />
-        //   )
-        // }
+        if (originalName === 'imageTestimonials' || name === 'imageTestimonials') {
+          return null
+          return regularImages?.length > 0 && (
+            <ImageTestimonial
+              key={`${name}-${order}`}
+              title={data?.title || "Our Student Success Stories"}
+              subtitle={data?.subtitle || "Real experiences from our students"}
+              items={regularImages}
+            />
+          )
+        }
 
-        if (originalName === 'visastories' || name === 'visaStories') {
+        if (originalName === 'visaStories' || name === 'visaStories') {
           return visaStories?.length > 0 && (
             <StudentVisaStories
               key={`${name}-${order}`}

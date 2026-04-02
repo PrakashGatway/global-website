@@ -27,12 +27,12 @@ export default function UniversityCard({ university, bgcolor = "bg-white" }) {
       mode: "snap",
       renderMode: "performance",
       slides: {
-        perView: 3,
+        perView: 3.5,
         spacing: 10,
       },
       breakpoints: {
         "(max-width: 1200px)": {
-          slides: { perView: 3, spacing: 8 },
+          slides: { perView: 3.5, spacing: 8 },
         },
         "(max-width: 900px)": {
           slides: { perView: 2, spacing: 8 },
@@ -91,12 +91,12 @@ export default function UniversityCard({ university, bgcolor = "bg-white" }) {
       className="keen-slider pt-6 max-w-7xl mx-auto overflow-hidden"
     >
       {universities.map((uni, index) => (
-        <div key={uni._id || index} className="keen-slider__slide">
-          
+        <div key={uni._id || index} className="keen-slider__slide pt-4">
+
           {/* 👉 ONLY THIS WRAPPER ADDED (UI SAME) */}
           <div className="pl-4 pr-1">
             <div className={`${bgcolor} rounded-3xl border borser-gray-300 shadow-sm hover:shadow-md transition-shadow h-[370px] lg:h-full ml-1 relative`}>
-              
+
               {/* Top Section */}
               <div className="grid grid-cols-1 gap-4 px-4 py-2 items-start">
                 <div className="lg:w-33 lg:h-23 w-20 h-20 flex-shrink-0 rounded-2xl border shadow-[-4px_-2px_3px_rgba(0,0,0,0.2)] border-gray bg-white flex items-center justify-center overflow-hidden absolute z-10 -top-3 -left-3">
