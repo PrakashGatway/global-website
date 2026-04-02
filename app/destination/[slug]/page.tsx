@@ -30,6 +30,7 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const { slug } = await params
 
+  
 
   const Universityres = await serverInstance.get("/universities?limit=5")
 

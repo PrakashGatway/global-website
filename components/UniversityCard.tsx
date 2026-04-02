@@ -27,12 +27,12 @@ export default function UniversityCard({ university, bgcolor = "bg-white" }) {
       mode: "snap",
       renderMode: "performance",
       slides: {
-        perView: 3.5,
+        perView: 3,
         spacing: 10,
       },
       breakpoints: {
         "(max-width: 1200px)": {
-          slides: { perView: 3.5, spacing: 8 },
+          slides: { perView: 3, spacing: 8 },
         },
         "(max-width: 900px)": {
           slides: { perView: 2, spacing: 8 },

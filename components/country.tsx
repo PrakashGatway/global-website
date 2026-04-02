@@ -770,7 +770,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           )
         }
 
-        if (originalName === 'visaStories' || name === 'visaStories') {
+        if (originalName === 'visastories' || name === 'visaStories') {
           return visaStories?.length > 0 && (
             <StudentVisaStories
               key={`${name}-${order}`}
