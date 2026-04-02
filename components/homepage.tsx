@@ -193,7 +193,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
   const currentYear = new Date().getFullYear();
   const experienceYears = currentYear - startYear;
 
-  const { register, handleSubmit, reset, watch, setValue, control, formState: { errors, isSubmitting } } = useForm()
+  const { register, handleSubmit, reset, watch, setValue, control, formState: { errors, isSubmitting } } = useForm({ mode: "onChange" })
 
 
   const onSubmit = async (data) => {
@@ -486,8 +486,8 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
-                      value: /^\S+@\S+$/i,
-                      message: "Enter a valid email",
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.(com|in|org|net|edu|gov|co|io)$/i,
+                      message: "Enter a valid email with proper domain (e.g. .com, .in)",
                     },
                   })}
                   type="email"
@@ -499,6 +499,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                     {errors.email.message}
                   </p>
                 )}
+
               </motion.div>
 
               {/* Phone */}
@@ -1056,13 +1057,13 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         h-auto lg:h-[380px] 
         z-10 lg:mt-24">
 
-                 <h2 className="  text-white text-primary">
-            <span className=" font-light block text-xl lg:text-4xl">{homePage?.servicesection?.title.split("||")[0]}</span>
-            <span className="font-bold text-xl lg:text-2xl relative"> {homePage?.servicesection?.title.split("||")[1]}
-              <span className="absolute right-0 -bottom-2 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
+                <h2 className="  text-white text-primary">
+                  <span className=" font-light block text-xl lg:text-4xl">{homePage?.servicesection?.title.split("||")[0]}</span>
+                  <span className="font-bold text-xl lg:text-2xl relative"> {homePage?.servicesection?.title.split("||")[1]}
+                    <span className="absolute right-0 -bottom-2 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
 
-            </span>
-          </h2>
+                  </span>
+                </h2>
               </div>
 
               {/* Border Box (Desktop only) */}

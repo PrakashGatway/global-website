@@ -17,7 +17,7 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
     reset,
     setValue,
     formState: { errors }
-  } = useForm()
+  } = useForm({mode: "onChange"})
 
   // Available countries list
   const countries = [
@@ -130,7 +130,7 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
           initial="hidden"
           animate="visible"
           exit="hidden"
-          className="fixed inset-0 z-999 flex items-center justify-center p-6 bg-black/10 backdrop-blur-[1px]"
+          className="fixed inset-0 z-[999] flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-sm overflow-y-auto"
           onClick={() => onClose(false)}
         >
           <motion.div
@@ -138,31 +138,33 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-white rounded-3xl shadow-2xl"
+            className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[85vh]"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={() => onClose(false)}
-              className="absolute top-4 right-4 z-10 p-2 text-primary hover:text-gray-600 transition-colors rounded-full bg-gray-100 cursor-pointer"
-            >
-              <X size={20} />
-            </button>
+            {/* Fixed Header */}
+            <div className="sticky top-0 z-10 bg-white rounded-t-3xl">
+              <button
+                onClick={() => onClose(false)}
+                className="absolute top-4 right-4 z-20 p-2 text-gray-600 hover:text-gray-900 transition-colors rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer"
+              >
+                <X size={20} />
+              </button>
 
-            <div className="relative bg-[#F46C44] p-5 rounded-t-2xl">
-              <h2 className="text-xl font-bold text-white">Book Your Free Consultation</h2>
-              <p className="text-white/90 text-xs mt-1">Get expert guidance for your study abroad journey</p>
+              <div className="relative bg-gradient-to-r from-[#F46C44] to-[#F46C44]/90 p-4 sm:p-5 rounded-t-3xl">
+                <h2 className="text-lg sm:text-xl font-bold text-white">Book Your Free Consultation</h2>
+                <p className="text-white/90 text-xs sm:text-sm mt-1">Get expert guidance for your study abroad journey</p>
+              </div>
             </div>
 
-            <div className="p-5">
+            {/* Scrollable Body */}
+            <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 sm:py-6">
               {!isSuccess ? (
-                <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4 p-4">
-
+                <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
                   {/* 2-Column Grid */}
-                  <div className="grid grid-cols-2 gap-4">
-
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Full Name */}
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
                         Full Name <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
@@ -173,7 +175,7 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
                             required: "Full name is required",
                             minLength: { value: 2, message: "Name must be at least 2 characters" }
                           })}
-                          className={`w-full pl-9 pr-3 py-2 text-xs sm:text-sm border ${errors.fullName ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                          className={`w-full pl-9 pr-3 py-2.5 text-sm border ${errors.fullName ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F46C44] transition-all`}
                           placeholder="Enter your full name"
                         />
                       </div>
@@ -184,7 +186,7 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
 
                     {/* Email */}
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
                         Email ID <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
@@ -194,11 +196,11 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
                           {...register("email", {
                             required: "Email is required",
                             pattern: {
-                              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                              message: "Invalid email address"
+                              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.(com|in|org|net|edu|gov|co|io)$/i,
+                              message: "Enter a valid email with proper domain (e.g. .com, .in)",
                             }
                           })}
-                          className={`w-full pl-9 pr-3 py-2 text-xs sm:text-sm border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                          className={`w-full pl-9 pr-3 py-2.5 text-sm border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F46C44] transition-all`}
                           placeholder="Enter your email"
                         />
                       </div>
@@ -209,7 +211,7 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
 
                     {/* Mobile */}
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
                         Mobile Number <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
@@ -224,7 +226,7 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
                               message: "Please enter a valid 10-digit mobile number"
                             }
                           })}
-                          className={`w-full pl-9 pr-3 py-2 text-xs sm:text-sm border ${errors.mobile ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                          className={`w-full pl-9 pr-3 py-2.5 text-sm border ${errors.mobile ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F46C44] transition-all`}
                           placeholder="Enter 10-digit mobile number"
                         />
                       </div>
@@ -235,29 +237,29 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
 
                     {/* State */}
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
                         State <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                         <input
                           type="text"
-                          {...register("extraDetails", {
+                          {...register("state", {
                             required: "State is required",
                             minLength: { value: 2, message: "Please enter a valid state name" }
                           })}
-                          className={`w-full pl-9 pr-3 py-2 text-xs sm:text-sm border ${errors.extraDetails ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                          className={`w-full pl-9 pr-3 py-2.5 text-sm border ${errors.state ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F46C44] transition-all`}
                           placeholder="Enter your state"
                         />
                       </div>
-                      {errors.extraDetails && (
-                        <p className="text-red-500 text-xs mt-1">{errors.extraDetails.message}</p>
+                      {errors.state && (
+                        <p className="text-red-500 text-xs mt-1">{errors.state.message}</p>
                       )}
                     </div>
 
                     {/* City */}
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
                         City <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
@@ -268,7 +270,7 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
                             required: "City is required",
                             minLength: { value: 2, message: "Please enter a valid city name" }
                           })}
-                          className={`w-full pl-9 pr-3 py-2 text-xs sm:text-sm border ${errors.city ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                          className={`w-full pl-9 pr-3 py-2.5 text-sm border ${errors.city ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F46C44] transition-all`}
                           placeholder="Enter your city"
                         />
                       </div>
@@ -277,17 +279,18 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
                       )}
                     </div>
 
-                    {/* Country */}
+                    {/* Country to Study */}
                     <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5">
                         Country to Study <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
                         <Globe className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                         <select
                           {...register("destination", { required: "Please select your preferred country" })}
-                          className={`w-full pl-9 pr-3 py-2 text-xs sm:text-sm border ${errors.destination ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white`}
+                          className={`w-full pl-9 pr-3 py-2.5 text-sm border ${errors.destination ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F46C44] bg-white appearance-none cursor-pointer transition-all`}
                         >
+                          <option value="">Select Country</option>
                           {countries.map((c) => (
                             <option key={c} value={c}>{c}</option>
                           ))}
@@ -303,54 +306,31 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
                   <div className="flex items-start gap-2">
                     <input
                       type="checkbox"
-                      {...register("description", { required: "You must agree to receive information" })}
-                      className="mt-0.5 w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                      {...register("consent", { required: "You must agree to receive information" })}
+                      className="mt-0.5 w-4 h-4 text-[#F46C44] border-gray-300 rounded focus:ring-[#F46C44] cursor-pointer"
                     />
                     <label className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                       I agree to receive information about study abroad programs, scholarships, and updates.
                     </label>
                   </div>
-
                   {errors.consent && (
                     <p className="text-red-500 text-xs mt-1">{errors.consent.message}</p>
                   )}
-
-                  {/* Button */}
-                  <motion.button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-[40%] bg-[#F46C44] text-white py-2.5 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-xs sm:text-sm mx-auto"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        <Send size={16} />
-                        Book Free Consultation
-                      </>
-                    )}
-                  </motion.button>
-
                 </form>
               ) : (
                 <motion.div
                   variants={successVariants}
                   initial="hidden"
                   animate="visible"
-                  className="text-center py-8"
+                  className="text-center py-8 sm:py-12"
                 >
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <CheckCircle className="w-8 h-8 text-green-500" />
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-8 h-8 sm:w-10 sm:h-10 text-green-500" />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
                     Thank You!
                   </h3>
-                  <p className="text-xs sm:text-sm text-gray-600">
+                  <p className="text-sm sm:text-base text-gray-600">
                     Your consultation request has been submitted successfully.
                     <br />
                     Our counselor will contact you shortly.
@@ -358,6 +338,32 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
                 </motion.div>
               )}
             </div>
+
+            {/* Fixed Footer */}
+            {!isSuccess && (
+              <div className="sticky bottom-0 z-10 bg-white border-t border-gray-100 p-4 sm:p-6 rounded-b-3xl">
+                <motion.button
+                  type="submit"
+                  onClick={handleSubmit(onFormSubmit)}
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-[#F46C44] to-[#F46C44]/90 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Send size={18} />
+                      Book Free Consultation
+                    </>
+                  )}
+                </motion.button>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

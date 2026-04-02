@@ -267,11 +267,10 @@ export function Destinationhome({ homePage }) {
               </h3>
 
               <p
-                className="text-xs leading-relaxed mb-4"
+                className="text-sm sm:text-base leading-relaxed mb-5"
                 style={{ color: "#555" }}
-              >
-                {step.description}
-              </p>
+                dangerouslySetInnerHTML={{ __html: step.description || "" }}
+              />
 
               <Link href={step?.ctaRoute || "/contact"}>
                 <button
