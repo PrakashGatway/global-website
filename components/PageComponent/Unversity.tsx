@@ -3,67 +3,67 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-export default function UniversitySliderClient({universities}) {
+export default function UniversitySliderClient({ universities }) {
   const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-  const initSlider = async () => {
-    const KeenSlider = (await import("keen-slider")).default;
+    const initSlider = async () => {
+      const KeenSlider = (await import("keen-slider")).default;
 
-    if (!sliderRef.current) return;
+      if (!sliderRef.current) return;
 
-    // ✅ MARQUEE PLUGIN
-    const marquee = (slider: any) => {
-      let raf: number;
-      const speed = 0.0008; // ⭐ control speed here
+      // ✅ MARQUEE PLUGIN
+      const marquee = (slider: any) => {
+        let raf: number;
+        const speed = 0.0008; // ⭐ control speed here
 
-      const move = () => {
-        if (!slider.track.details) return;
+        const move = () => {
+          if (!slider.track.details) return;
 
-        slider.track.add(speed);
-        raf = requestAnimationFrame(move);
+          slider.track.add(speed);
+          raf = requestAnimationFrame(move);
+        };
+
+        slider.on("created", () => {
+          raf = requestAnimationFrame(move);
+        });
+
+        slider.on("destroyed", () => {
+          cancelAnimationFrame(raf);
+        });
       };
 
-      slider.on("created", () => {
-        raf = requestAnimationFrame(move);
-      });
+      const slider = new KeenSlider(
+        sliderRef.current,
+        {
+          loop: true,
+          renderMode: "performance",
+          drag: false, // important for marquee feel
+          slides: {
+            origin: "center",
+            perView: 3,
+            spacing: 0,
+          },
+          breakpoints: {
+            "(min-width: 300px)": {
+              slides: { perView: 2, spacing: 0 },
+            },
+            "(min-width: 640px)": {
+              slides: { perView: 4.2, spacing: 0 },
+            },
+            "(min-width: 1024px)": {
+              slides: { perView: 6, spacing: 12 },
+            },
+          },
+        },
+        [marquee]
+      );
 
-      slider.on("destroyed", () => {
-        cancelAnimationFrame(raf);
-      });
+      return () => slider.destroy();
     };
 
-    const slider = new KeenSlider(
-      sliderRef.current,
-      {
-        loop: true,
-        renderMode: "performance",
-        drag: false, // important for marquee feel
-        slides: {
-          origin: "center",
-          perView: 3,
-          spacing: 0,
-        },
-        breakpoints: {
-          "(min-width: 300px)": {
-            slides: { perView: 2, spacing: 0 },
-          },
-          "(min-width: 640px)": {
-            slides: { perView: 4.2, spacing: 0 },
-          },
-          "(min-width: 1024px)": {
-            slides: { perView: 6, spacing: 12 },
-          },
-        },
-      },
-      [marquee]
-    );
-
-    return () => slider.destroy();
-  };
-
-  initSlider();
-}, []);
+    initSlider();
+  }, []);
 
   const universitie = [
     { id: 1, src: 'https://www.gatewayabroadeducations.com/anime/p1.svg', alt: 'University 1' },
@@ -79,44 +79,44 @@ export default function UniversitySliderClient({universities}) {
   ];
 
   return (
-    <section className="  lg:pt-12 overflow-hidden">
+    <section className="max-w-[1440px] mx-auto lg:pt-12 overflow-hidden">
       <div className="  relative max-w-7xl px-4 mx-auto">
-            <h2 className="text-xl   mb-2 ">
-              <span  className="text-[#F46C44] lg:text-4xl font-light" >
-                {universities.title?.split('||')[0]}
-              </span>{" "} <br />
-              <span className="text-primary font-bold relative lg:text-5xl">
-                {universities.title?.split('||')[1]}
-        <span className="absolute right-0 -bottom-1 lg:bottom-0  w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
-
-
-                
-              </span>
+        <h2 className="text-xl   mb-2 ">
+          <span className="text-[#F46C44] lg:text-4xl font-light" >
+            {universities.title?.split('||')[0]}
+          </span>{" "} <br />
+          <span className="text-primary font-bold relative lg:text-5xl">
+            {universities.title?.split('||')[1]}
+            <span className="absolute right-0 -bottom-1 lg:bottom-0  w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
 
 
 
-            </h2>
-          
-          </div>
+          </span>
+
+
+
+        </h2>
+
+      </div>
 
       {/* FULL WIDTH SLIDER */}
       <div ref={sliderRef} className="keen-slider w-full   ">
         {universitie.map((university) => (
           <div key={university.id} className="keen-slider__slide ">
             <div className=" rounded-xl ">
-              
-              
+
+
 
               {/* Logo */}
-            <div className="flex items-center justify-center h-[220px] sm:h-[260px] lg:h-[300px] w-full px-2">
-  <Image
-    src={university.src}
-    alt={university.alt}
-    width={800}
-    height={450}
-    className="object-contain w-[240px] sm:w-[280px] lg:w-[640px]"
-  />
-</div>
+              <div className="flex items-center justify-center h-[220px] sm:h-[260px] lg:h-[300px] w-full px-2">
+                <Image
+                  src={university.src}
+                  alt={university.alt}
+                  width={800}
+                  height={450}
+                  className="object-contain w-[240px] sm:w-[280px] lg:w-[240px]"
+                />
+              </div>
 
             </div>
           </div>

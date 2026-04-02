@@ -617,10 +617,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
       <Destinationhome homePage={homePage} />
 
-
-
-
-
       {/* <motion.section
   initial={{ opacity: 0 }}
   whileInView={{ opacity: 1 }}
@@ -1046,13 +1042,13 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
 
 
-      <section className="w-full py-6 lg:py-16 px-4 md:px-8">
+      <section className="w-full py-6 lg:py-16 px-1 md:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="rounded-3xl p-4 md:p-8 lg:p-12">
             <div className="flex flex-col lg:flex-row gap-6 lg:gap-0 relative">
 
               {/* Left Panel */}
-              <div className="bg-[#F46C44] rounded-2xl p-5 md:p-8 flex flex-col justify-center 
+              <div className="bg-[#F46C44] overflow-hidden rounded-2xl p-4 md:p-8 flex flex-col justify-center 
         lg:min-w-[280px] lg:max-w-[320px] 
         h-auto lg:h-[380px] 
         z-10 lg:mt-24">
@@ -1060,8 +1056,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 <h2 className="  text-white text-primary">
                   <span className=" font-light block text-xl lg:text-4xl">{homePage?.servicesection?.title.split("||")[0]}</span>
                   <span className="font-bold text-xl lg:text-2xl relative"> {homePage?.servicesection?.title.split("||")[1]}
-                    <span className="absolute right-0 -bottom-2 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
-
+                    <span className="absolute hidden sm:block sm:right-0 -bottom-2 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
                   </span>
                 </h2>
               </div>
@@ -1080,7 +1075,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                     >
                       {/* Icon */}
                       <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center mb-3 md:mb-4 mx-auto">
-                        <img src={service.icon} alt="" />
+                        <img src={service.icon } alt="" />
                       </div>
 
                       {/* Title */}
