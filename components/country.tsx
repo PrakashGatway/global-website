@@ -711,7 +711,6 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
   const regularImages = imageData?.filter((i) => i.target !== 'visa' && i.type === 'image') || []
 
   const shouldRenderSection = (name, data) => {
-
     if (!data) return false
     if (name === 'visaStories') console.log("Visa Stories Count:", visaStories.length)
     if (name === 'videoTestimonials') return videoRes?.data?.length > 0
