@@ -102,7 +102,7 @@ export default function AboutUsPage({ aboutData }) {
       {/* Hero Section */}
       <section className="relative flex items-center" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
     
-        <div className="w-full mx-auto grid lg:grid-cols-2 gap-12 items-center sm:pl-30">
+        <div className="w-full max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center ">
           <div className="text-white space-y-6 p-6 sm:pt-0 pt-12">
             <h1 className="text-xl lg:text-6xl font-bold text-white tracking-tight">
               {aboutData?.title || "About"}
@@ -149,7 +149,7 @@ export default function AboutUsPage({ aboutData }) {
 </div>
           </div>
           <div className="h-full w-full">
-            <div className='relative flex items-center justify-center h-[106%] w-full rounded-bl-[55%] overflow-hidden mr-10'>
+            <div className='relative flex items-center justify-center h-[100%] w-full rounded-bl-[55%] overflow-hidden mr-10'>
               <img className='h-full w-full object-cover' src="https://buffer.com/resources/content/images/2025/03/social-media-image-sizes.png" alt="" />
               <div className='absolute bottom-0 right-0 h-[5.7%] w-full bg-[#f46c44] z-11'>
               </div>

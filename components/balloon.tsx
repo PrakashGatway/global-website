@@ -1,8 +1,8 @@
-const Balloon = ({ Pageres  }) => {
+const Balloon = ({ Pageres }) => {
  
   return (
-    <div className="flex min-h-screen items-end justify-center pb-12 hidden
-              lg:block">
+    <div className="flex min-h-screen items-end justify-center pb-12 hidden lg:block">
+
       <div className="flex flex-col items-center">
 
         {/* BALLOON */}
