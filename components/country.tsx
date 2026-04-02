@@ -244,20 +244,27 @@ const FormSection = ({ data }) => {
         </div>
 
         {/* Right Content */}
-        <div>
-          <h4 className="text-[#F46C44] text-xl font-medium mb-2">
-            {data?.title?.split("||")[0]?.trim() || "Overview of"}
-          </h4>
+          <div className="relative z-10">
+      <h4 className="text-[#F46C44] text-2xl sm:text-3xl font-medium mb-2">
+        {data?.title?.split('||')[0]?.trim() || "Overview of"}
+      </h4>
 
-          <h2 className="text-[#123b73] text-3xl font-bold mb-4">
-            {data?.title?.split("||")[1]?.trim() || "Study in Germany"}
-          </h2>
+      <h2 className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold mb-4 sm:mb-6 relative inline-block">
+        {data?.title?.split('||')[1]?.trim() || "Study in Germany"}
+        <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
+      </h2>
 
-          <p
-            className="text-gray-700"
-            dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
-          />
-        </div>
+      <p
+        className="text-gray-700 leading-relaxed text-xs sm:text-lg mb-6"
+        dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
+      />
+
+      <a href={data?.ctaLink1 || "/contact"}>
+        <button className="bg-secondary hover:bg-primary text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold transition text-xs sm:text-base">
+          {data?.ctaText1 || "Read More >>"}
+        </button>
+      </a>
+    </div>
 
       </div>
     </section>
