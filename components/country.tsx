@@ -14,6 +14,7 @@ import StudentVisaStories from '@/components/Studentvisa'
 import { useForm } from 'react-hook-form'
 import axiosInstance from '@/app/axiosInstance'
 import toast from 'react-hot-toast'
+import { Tag } from './tag'
 import { usePathname, useRouter } from 'next/navigation'
 
 
@@ -21,6 +22,7 @@ import { usePathname, useRouter } from 'next/navigation'
 
 const HeroSection = ({ data, alldata }) => {
   if (data?.isHidden === "yes") return null
+  // console.log('hero d',data)
   return (
     <section className="block overflow-hidden">
       <div
@@ -50,9 +52,12 @@ const HeroSection = ({ data, alldata }) => {
             <div className=" max-w-7xl  bg-black/50 w-full sm:w-4/5 md:w-3/5 lg:w-[48%] flex items-center
              py-5 px-4 sm:px-6  rounded-2xl">
               <div className="w-full">
-                <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight">
+                <Tag data={data?.tag}
+                 css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight"}
+                text={data?.title} />
+                {/* <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight">
                   {data?.title || "Study in Germany"}
-                </h1>
+                </h1> */}
                 <p
                   className="text-white text-sm sm:text-base leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
@@ -245,14 +250,27 @@ const FormSection = ({ data }) => {
 
         {/* Right Content */}
           <div className="relative z-10">
-      <h4 className="text-[#F46C44] text-2xl sm:text-3xl font-medium mb-2">
-        {data?.title?.split('||')[0]?.trim() || "Overview of"}
-      </h4>
 
-      <h2 className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold mb-4 sm:mb-6 relative inline-block">
+            
+                <Tag data={data?.tag}
+                 css={"text-[#F46C44] text-2xl sm:text-3xl font-medium mb-2"}
+                text={data?.title?.split('||')[0]?.trim() || "Overview of"} />
+                
+      {/* <h4 className="text-[#F46C44] text-2xl sm:text-3xl font-medium mb-2">
+        {data?.title?.split('||')[0]?.trim() || "Overview of"}
+      </h4> */}
+
+  <div className='text-lg sm:text-4xl lg:text-4xl font-bold mb-4 sm:mb-6 relative inline-block'>
+                <Tag data={data?.tag}
+                 css={"text-[#123b73] "}
+                text={data?.title?.split('||')[1]?.trim() || "Overview of"} />
+                <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
+        </div>
+
+      {/* <h2 className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold mb-4 sm:mb-6 relative inline-block">
         {data?.title?.split('||')[1]?.trim() || "Study in Germany"}
         <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
-      </h2>
+      </h2> */}
 
       <p
         className="text-gray-700 leading-relaxed text-xs sm:text-lg mb-6"
@@ -278,8 +296,10 @@ const WhyChooseUsSection = ({ data }) => {
     <section className="w-full bg-[#ef6a42] py-10 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-white text-xl sm:text-3xl md:text-4xl mb-2 font-bold relative inline-block">
-          <span>{data?.title?.split("||")[0]}</span>
-          <span>{data?.title?.split("||")[1]}</span>
+          <Tag data={data?.tag} text={data?.title?.split("||")[0]} />
+          <Tag data={data?.tag} text={data?.title?.split("||")[1]} />
+          {/* <span>{data?.title?.split("||")[0]}</span>
+          <span>{data?.title?.split("||")[1]}</span> */}
           <span className="block w-12 sm:w-16 h-1 bg-yellow-400 mt-2 sm:mt-3"></span>
         </h2>
         <div className="mt-6 sm:mt-8">
@@ -304,11 +324,13 @@ const WhyStudySection = ({ data }) => {
     <section className="w-full py-10 sm:py-14 lg:py-20 px-4 sm:px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 sm:mb-10">
-          <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-[#123b73] relative inline-block">
-            <span>{data?.title?.split("||")[0]}</span>
-            <span className="text-[#F46C44]">{data?.title?.split("||")[1]}</span>
+          <span className="flex gap-2 text-xl sm:text-3xl md:text-4xl font-bold text-[#123b73] relative inline-block">
+            <Tag data={data?.tag} text={data?.title?.split("||")[0]?.trim()} />
+            <Tag data={data?.tag} css={"text-[#F46C44]"} text={data?.title?.split("||")[1]?.trim()} />
+            {/* <span>{data?.title?.split("||")[0]}</span>
+            <span className="text-[#F46C44]">{data?.title?.split("||")[1]}</span> */}
             <span className="absolute left-0 -bottom-3 sm:-bottom-4 w-16 sm:w-20 h-1 bg-[#F46C44]"></span>
-          </h2>
+          </span>
         </div>
         <p className="text-[#123b73] text-sm sm:text-base lg:text-lg mb-8 leading-relaxed">
           {data?.subTitle}
@@ -349,12 +371,22 @@ const PopularCoursesSection = ({ data }) => {
     <section className="w-full bg-white py-10 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-left mb-10 sm:mb-12">
+
+        {/* <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-snug">
+          <Tag data={data?.tag} text={data?.title.split("||")[0]?.trim() || "Popular"} css={"text-[#F46C44] block"}/>
+          <Tag data={data?.tag} text={data?.title?.split("||")[1]?.trim() || "Courses"} css={"text-primary font-bold relative inline-block"}/>
+          <span className="absolute right-0 -bottom-1 sm:-bottom-2 w-12 sm:w-20 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+        </h2> */}
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-snug">
-            <span className="text-[#F46C44] block">
+            {/* <span className="text-[#F46C44] block">
               {data?.title.split("||")[0]?.trim() || "Popular"}
-            </span>
+            </span> */}
+          <Tag data={data?.tag} text={data?.title.split("||")[0]?.trim() || "Popular"} css={"text-[#F46C44] block"}/>
+
             <span className="text-primary font-bold relative inline-block">
-              {data?.title.split("||")[1]?.trim() || "Courses"}
+          <Tag data={data?.tag} text={data?.title?.split("||")[1]?.trim() || "Courses"} />
+
+              {/* {data?.title.split("||")[1]?.trim() || "Courses"} */}
               <span className="absolute right-0 -bottom-1 sm:-bottom-2 w-12 sm:w-20 h-[2px] lg:h-1 bg-[#F46C44]"></span>
             </span>
           </h2>
@@ -410,10 +442,12 @@ const LifeInSection = ({ data }) => {
 
         {/* Heading */}
         <div className="mb-8 md:mb-12">
-          <h1 className="text-lg sm:text-4xl md:text-3xl lg:text-4xl font-bold text-primary mb-4 relative">
-            {data?.title || "Life in Germany"}
+          <span className="text-lg sm:text-4xl md:text-3xl lg:text-4xl font-bold text-primary mb-4 relative">
+            {/* {data?.title || "Life in Germany"} */}
+          <Tag data={data?.tag} text={data?.title || ""} />
+
             <span className="w-20 sm:w-25 h-1.5 absolute right-1/4 sm:left-0 -bottom-2 sm:-bottom-4 bg-[#F46C44] rounded-full"></span>
-          </h1>
+          </span>
         </div>
 
         {/* Content Grid */}
@@ -467,13 +501,23 @@ const ChoosingUsSection = ({ data, Universityres }) => {
   return (
     <section className="relative w-full bg-[#ef6a42] py-8 sm:py-10 px-4 sm:px-6">
       <div className="mb-6 sm:mb-10 max-w-7xl mx-auto text-white">
-        <p className="text-lg sm:text-3xl md:text-4xl font-light mb-1">
+        {/* <p className="text-lg sm:text-3xl md:text-4xl font-light mb-1">
           {data?.title?.split('||')[0]?.trim() || "Choosing the Right"}
-        </p>
-        <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold relative inline-block">
-          {data?.title?.split('||')[1]?.trim() || "University in Germany"}
+        </p> */}
+
+        <div className='flex gap-2'>
+          
+        <Tag data={data?.tag} text={data?.title?.split('||')[0]?.trim() || "Choosing the Right"}
+         css={"text-lg sm:text-3xl md:text-4xl font-light mb-1"}/>      
+         
+        <span className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold relative inline-block">
+          <Tag data={data?.tag} text={data?.title?.split('||')[1]?.trim() || "University in Germany"} />
+          {/* {data?.title?.split('||')[1]?.trim() || "University in Germany"} */}
           <span className="absolute right-0 -bottom-3 sm:-bottom-4 w-12 sm:w-16 h-1 bg-yellow-400"></span>
-        </h2>
+        </span>
+
+        </div>
+
         <p className="mt-4 max-w-6xl text-xs sm:text-base leading-relaxed">
           {data?.subtitle || "Germany offers exceptional educational opportunities, but choosing the right university requires more than just rankings."}
         </p>
@@ -560,11 +604,16 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }) => {
     <section className="w-full bg-[#ef6a42] py-10 sm:py-14 lg:py-10 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto text-white">
         <div className="mb-6 sm:mb-10">
-          <p className="text-lg sm:text-3xl md:text-4xl font-light mb-2">
+
+          <Tag data={data?.tag} text={data?.title?.split('||')[0]?.trim() || "Scholarships to"} 
+          css={"text-lg sm:text-3xl md:text-4xl font-light mb-2"}/>
+
+          {/* <p className="text-lg sm:text-3xl md:text-4xl font-light mb-2">
             {data?.title?.split('||')[0]?.trim() || "Scholarships to"}
-          </p>
+          </p> */}
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold relative inline-block">
-            {data?.title?.split('||')[1]?.trim() || "Study in Germany"}
+            {/* {data?.title?.split('||')[1]?.trim() || "Study in Germany"} */}
+            <Tag data={data?.tag} text={data?.title?.split('||')[1]?.trim() || "Study in Germany"} /> 
             <span className="absolute right-0 -bottom-3 sm:-bottom-4 w-12 sm:w-16 h-1 bg-yellow-400"></span>
           </h2>
           <p className="mt-4 sm:mt-6 text-xs sm:text-base lg:text-lg leading-relaxed">
@@ -610,9 +659,10 @@ const CTASection = ({ data }) => {
 
         {/* Text */}
         <div className="text-white relative z-10">
-          <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight">
+          <Tag data={data?.tag} text={data?.title} css={"text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"}/>
+          {/* <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight">
             {data?.title || "Start Your Global Education Journey"}
-          </h2>
+          </h2> */}
           <p
             className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
             dangerouslySetInnerHTML={{
@@ -760,6 +810,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
               items={videoRes?.data || []}
               title={data?.title}
               subtitle={data?.subtitle}
+              tag={data?.tag}
             />
           )
         }
@@ -785,6 +836,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
               subtitle={data?.subtitle}
               stories={visaStories}
               autoSlideInterval={5000}
+              tag={data?.tag}
             />
           )
         }

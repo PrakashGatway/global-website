@@ -2,7 +2,7 @@
 
 
 
-export const Tag = ({ data,css,text }: {data: any, css: any, text: any}) => {
+export const Tag = ({ data,css,text }: {data?: any, css?: any, text?: any}) => {
      const Tag = `h${data || 2}`;
   return (
       <Tag className={css}>
