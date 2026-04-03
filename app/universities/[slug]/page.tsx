@@ -202,7 +202,7 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
 
     {/* Info Section */}
     <div className="relative px-6 pb-8">
-      <div className="flex flex-col md:flex-row items-end -mt-16 md:-mt-20 gap-6">
+      <div className="flex flex-col md:flex-row items-end  -mt-16 md:-mt-20 gap-6">
         
         {/* Profile/Logo Box */}
         <div className="relative z-10 p-1 bg-white rounded-2xl shadow-lg border border-slate-100">
