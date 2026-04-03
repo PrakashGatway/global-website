@@ -1,20 +1,26 @@
-import type React from "react"
-import type { Metadata, Viewport } from "next"
-import { Geist, Geist_Mono, Noto_Sans, Poppins, PT_Sans, Raleway } from "next/font/google"
-import Navbar from "@/components/navbar"
-import "./globals.css"
-import 'keen-slider/keen-slider.min.css';
-import { Footer } from "@/components/Footer"
-import { serverInstance } from "./axiosInstance"
-import { GlobalProvider } from "@/src/statecontext"
+import type React from "react";
+import type { Metadata, Viewport } from "next";
+import {
+  Geist,
+  Geist_Mono,
+  Noto_Sans,
+  Poppins,
+  PT_Sans,
+  Raleway,
+} from "next/font/google";
+import Navbar from "@/components/navbar";
+import "./globals.css";
+import "keen-slider/keen-slider.min.css";
+import { Footer } from "@/components/Footer";
+import { serverInstance } from "./axiosInstance";
+import { GlobalProvider } from "@/src/statecontext";
 import { Toaster } from "react-hot-toast";
-import Script from "next/script"
-import BreadcrumbSchema from "@/components/BreadcrumbSchema"
+import Script from "next/script";
+import BreadcrumbSchema from "@/components/BreadcrumbSchema";
 
-import ScrollToTop from "@/components/ScrolltoTop"
-import WhatsAppButton from "@/components/whatsappbtn"
+import ScrollToTop from "@/components/ScrolltoTop";
+import WhatsAppButton from "@/components/whatsappbtn";
 export const dynamic = "force-dynamic";
-
 
 const ptSans = PT_Sans({
   subsets: ["latin"],
@@ -22,12 +28,14 @@ const ptSans = PT_Sans({
   display: "swap",
 });
 
-
 export const metadata: Metadata = {
-  title: "Ooshas Global – Study Abroad Consultants for UK, Germany, Italy & Australia",
-  description: "Connect with top universities worldwide and find the perfect program for your educational journey",
-  keywords: "education, universities, countries, study abroad, global education"
-}
+  title:
+    "Ooshas Global – Study Abroad Consultants for UK, Germany, Italy & Australia",
+  description:
+    "Connect with top universities worldwide and find the perfect program for your educational journey",
+  keywords:
+    "education, universities, countries, study abroad, global education",
+};
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -38,50 +46,43 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
-}
+};
 
 export default async function RootLayout({
   children,
-  params
+  params,
 }: Readonly<{
-  children: React.ReactNode,
+  children: React.ReactNode;
   params: any;
 }>) {
-  const [feature, countryres,unicat] = await Promise.all([
+  const [feature, countryres, unicat] = await Promise.all([
     serverInstance.get("/page-information/navbar?isNavbar=true"),
     serverInstance.get("/page-information/navbar?isFeatured=true&type=country"),
-    serverInstance.get("/universities?limit=5")
-    
-  ])
+    serverInstance.get("/universities?limit=5"),
+  ]);
 
+  const featureRes = feature.data.data.filter(
+    (item) => item.pageType === "destinations",
+  );
 
+  const servicedata = feature.data.data.filter(
+    (item) => item.pageType === "service",
+  );
 
-
-
-
-  const featureRes = feature.data.data.filter((item) =>
-    item.pageType === "destinations"
-  )
-
- 
-
-  const servicedata = feature.data.data.filter((item) =>
-    item.pageType === "service"
-  )
-
- 
-
-
-  const serviceres = servicedata.reverse()
-
+  const serviceres = servicedata.reverse();
 
   return (
     <html lang="en">
-
       <head>
         <link rel="icon" href="/images/fevi-icon.png" className="w-20 " />
-        <meta name="google-site-verification" content="VU_q7Dhlnq-bXvbs2_KwmafQK7MCZMSeu_dHgPEiCtE" />
-        <meta name="google-site-verification" content="Z8XRz0UFtpmpZDjgpctrR8PbQLRZ5-08g7R6PsZj_Yw" />
+        <meta
+          name="google-site-verification"
+          content="VU_q7Dhlnq-bXvbs2_KwmafQK7MCZMSeu_dHgPEiCtE"
+        />
+        <meta
+          name="google-site-verification"
+          content="Z8XRz0UFtpmpZDjgpctrR8PbQLRZ5-08g7R6PsZj_Yw"
+        />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-Z5PEF3NSXZ"
           strategy="afterInteractive"
@@ -96,9 +97,12 @@ export default async function RootLayout({
           `}
         </Script>
 
-        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-70R8MGMXBN"></Script>
-        <Script>{
-          `
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-70R8MGMXBN"
+        ></Script>
+        <Script>
+          {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
@@ -122,35 +126,31 @@ export default async function RootLayout({
         </Script> */}
 
         <BreadcrumbSchema params={params} />
-
       </head>
 
-
-      <body className={`${ptSans.className} antialiased`}>
+      <body
+        className={`${ptSans.className} antialiased`}
+        style={{ maxWidth: "1640px", margin: "0 auto" }}
+      >
         <GlobalProvider>
-
-
-          <Navbar Featureitem={featureRes || []} Serviceitem={serviceres || []}
+          <Navbar
+            Featureitem={featureRes || []}
+            Serviceitem={serviceres || []}
             countryres={countryres.data.data}
           />
 
-      
-
           {children}
-          <Toaster
-            position="bottom-right"
-            reverseOrder={false}
+          <Toaster position="bottom-right" reverseOrder={false} />
+
+          <WhatsAppButton />
+
+          <Footer
+            Featureitem={featureRes || []}
+            Serviceitem={serviceres || []}
+            countryres={countryres.data.data}
           />
-        
-          <WhatsAppButton/>
-
-
-          <Footer Featureitem={featureRes || []} Serviceitem={serviceres || []} countryres={countryres.data.data} />
-
         </GlobalProvider>
-
-
       </body>
     </html>
-  )
+  );
 }

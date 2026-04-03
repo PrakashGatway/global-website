@@ -131,7 +131,7 @@ const FormSection = ({ data }) => {
     <section className="px-4 sm:px-6 lg:pr-10 py-10 sm:py-14 lg:py-10 relative overflow-hidden">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
 
-        {/* Form */}
+        {/* Form  */}
         <div className="bg-white border border-gray-300 p-5 sm:p-8 shadow-sm rounded-lg w-full">
           <h2 className="text-orange-500 text-sm sm:text-xl font-semibold mb-5 tracking-wide">
             GET IN TOUCH
