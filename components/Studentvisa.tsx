@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
+import { Tag } from "./tag";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
 const StudentVisaStories = ({
@@ -10,6 +11,7 @@ const StudentVisaStories = ({
   subtitle,
   stories,
   autoSlideInterval = 3000,
+  tag = 1
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slidesPerView, setSlidesPerView] = useState(3);
@@ -60,16 +62,19 @@ const StudentVisaStories = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-left mb-12">
-          <h2 className="text-xl mb-2">
-            <span className="text-[#F46C44] lg:text-4xl font-light">
+          <span className="text-xl mb-2">
+            
+                  <Tag data={tag} css={"text-[#F46C44] lg:text-4xl font-light"} text={title?.split("||")[0]?.trim()} />
+            {/* <span className="text-[#F46C44] lg:text-4xl font-light">
               {title?.split("||")[0]?.trim()}
-            </span>
+            </span> */}
             <br />
-            <span className="text-primary font-bold relative inline-block lg:text-4xl">
-              {title?.split("||")[1]?.trim()}
+            <Tag data={tag} css={"text-primary lg:text-4xl font-bold"} text={title?.split("||")[1]?.trim()} />
+            {/* <span className="text-primary font-bold relative inline-block lg:text-4xl">
+              {title?.split("||")[1]?.trim()} */}
               <span className="absolute right-0 -bottom-2 w-25 h-[2px] lg:h-1 bg-[#F46C44]" />
-            </span>
-          </h2>
+            {/* </span> */}
+          </span>
 
           {subtitle && (
             <p className="text-lg text-gray-600 max-w-2xl">{subtitle}</p>

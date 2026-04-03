@@ -1,84 +1,82 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { AnimatePresence, motion } from "framer-motion"
-import { ArrowRight, BadgeIcon, BarChart3, FileText, Globe, GraduationCap, IndianRupee, NutOffIcon, PanelsTopLeftIcon, Percent, TargetIcon, Users, VideoIcon, Zap } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Image from "next/image"
-import UniversitySliderClient from "@/components/PageComponent/Unversity"
-import AboutTabsSection from "@/components/PageComponent/TrustTabs"
-import VideoTestimonialsSlider from "@/components/PageComponent/VideoTestimonial"
-import ImageTestimonial from "@/components/ImageTestimonial"
-import VideoInSvgShape from "@/components/PageComponent/VideoShape"
+import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { Tag } from "./tag";
+import Image from "next/image";
+import UniversitySliderClient from "@/components/PageComponent/Unversity";
+import AboutTabsSection from "@/components/PageComponent/TrustTabs";
+import VideoTestimonialsSlider from "@/components/PageComponent/VideoTestimonial";
+import ImageTestimonial from "@/components/ImageTestimonial";
+import VideoInSvgShape from "@/components/PageComponent/VideoShape";
 
-import axiosInstance, { baseUrl, serverInstance } from "@/app/axiosInstance"
-import Blogs from "./blog"
-import BlogGrid from "./blogGrid"
-import { useKeenSlider } from "keen-slider/react"
-import MultiStepForm from "./PopupForm"
-import { useCallback, useEffect, useState } from "react"
-import FAQSection from "./faqPage"
-import { useGlobal } from "@/src/statecontext"
-import { usePathname, useRouter } from "next/navigation"
-import { HowGawayHelps } from "./PageComponent/DistinationSliders"
-import { Destinationhome } from "./dummydestination"
-import { Controller, useForm } from "react-hook-form"
-import toast from "react-hot-toast"
-import { DynamicLucideIcon } from "./DynamicLucideIcon"
-import { ModernSelect } from "./ui/select"
+import axiosInstance, { baseUrl, serverInstance } from "@/app/axiosInstance";
+import Blogs from "./blog";
+import BlogGrid from "./blogGrid";
+import { useKeenSlider } from "keen-slider/react";
+import MultiStepForm from "./PopupForm";
+import { useCallback, useEffect, useState } from "react";
+import FAQSection from "./faqPage";
+import { useGlobal } from "@/src/statecontext";
+import { usePathname, useRouter } from "next/navigation";
+import { HowGawayHelps } from "./PageComponent/DistinationSliders";
+import { Destinationhome } from "./dummydestination";
+import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { DynamicLucideIcon } from "./DynamicLucideIcon";
+import { ModernSelect } from "./ui/select";
 
-import "keen-slider/keen-slider.min.css"
-import StudentVisaStories from "./Studentvisa"
-import UniversityCard from "./UniversityCard"
-import StudyDestinations from "./homepageCom/CountryCards"
+import "keen-slider/keen-slider.min.css";
+import StudentVisaStories from "./Studentvisa";
+import UniversityCard from "./UniversityCard";
+import StudyDestinations from "./homepageCom/CountryCards";
 
-
-
-
-
-
-
-
-
-export default function Homepage({ homePage, destinationData, imageData, Faqres, videoRes, blogres, unires }) {
-
+export default function Homepage({
+  homePage,
+  destinationData,
+  imageData,
+  Faqres,
+  videoRes,
+  blogres,
+  unires,
+}) {
   const [openForm, setOpenForm] = useState(false);
-  const [countries, setCountries] = useState([])
+  const [countries, setCountries] = useState([]);
 
   function AutoSlidePlugin(slider) {
-    let timeout
-    let mouseOver = false
+    let timeout;
+    let mouseOver = false;
 
     function clearNextTimeout() {
-      clearTimeout(timeout)
+      clearTimeout(timeout);
     }
 
     function nextTimeout() {
-      clearTimeout(timeout)
-      if (mouseOver) return
+      clearTimeout(timeout);
+      if (mouseOver) return;
 
       timeout = setTimeout(() => {
-        slider.next()
-      }, 2500)
+        slider.next();
+      }, 2500);
     }
 
     slider.on("created", () => {
       slider.container.addEventListener("mouseover", () => {
-        mouseOver = true
-        clearNextTimeout()
-      })
+        mouseOver = true;
+        clearNextTimeout();
+      });
 
       slider.container.addEventListener("mouseout", () => {
-        mouseOver = false
-        nextTimeout()
-      })
+        mouseOver = false;
+        nextTimeout();
+      });
 
-      nextTimeout()
-    })
+      nextTimeout();
+    });
 
-    slider.on("dragStarted", clearNextTimeout)
-    slider.on("animationEnded", nextTimeout)
-    slider.on("updated", nextTimeout)
+    slider.on("dragStarted", clearNextTimeout);
+    slider.on("animationEnded", nextTimeout);
+    slider.on("updated", nextTimeout);
   }
 
   const [sliderRefblog] = useKeenSlider(
@@ -98,53 +96,45 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         },
       },
     },
-    [AutoSlidePlugin] // ✅ updated name here
-  )
+    [AutoSlidePlugin], // ✅ updated name here
+  );
 
-
-  const filtervisa = imageData.filter((item) => item.target === "visa")
-
-
-
-
-
-
+  const filtervisa = imageData.filter((item) => item.target === "visa");
 
   let destination = [
     (slider) => {
-      let timeout
-      let mouseOver = false
+      let timeout;
+      let mouseOver = false;
 
       function clearNextTimeout() {
-        clearTimeout(timeout)
+        clearTimeout(timeout);
       }
 
       function nextTimeout() {
-        clearTimeout(timeout)
-        if (mouseOver) return
+        clearTimeout(timeout);
+        if (mouseOver) return;
         timeout = setTimeout(() => {
-          slider.next()
-        }, 3000) // ⏱️ auto slide every 3s
+          slider.next();
+        }, 3000); // ⏱️ auto slide every 3s
       }
 
       slider.on("created", () => {
         slider.container.addEventListener("mouseover", () => {
-          mouseOver = true
-          clearNextTimeout()
-        })
+          mouseOver = true;
+          clearNextTimeout();
+        });
         slider.container.addEventListener("mouseout", () => {
-          mouseOver = false
-          nextTimeout()
-        })
-        nextTimeout()
-      })
+          mouseOver = false;
+          nextTimeout();
+        });
+        nextTimeout();
+      });
 
-      slider.on("dragStarted", clearNextTimeout)
-      slider.on("animationEnded", nextTimeout)
-      slider.on("updated", nextTimeout)
+      slider.on("dragStarted", clearNextTimeout);
+      slider.on("animationEnded", nextTimeout);
+      slider.on("updated", nextTimeout);
     },
-  ]
-
+  ];
 
   const [sliderRef] = useKeenSlider(
     {
@@ -162,9 +152,9 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
           slides: { perView: 3.2, spacing: 24 },
         },
       },
-    }, destination
-
-  )
+    },
+    destination,
+  );
   const [sliderRefD] = useKeenSlider(
     {
       loop: true,
@@ -181,24 +171,28 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
           slides: { perView: 3, spacing: 0 },
         },
       },
-    }, destination
+    },
+    destination,
+  );
 
-  )
-
-  const navigate = useRouter()
-
-
+  const navigate = useRouter();
 
   const startYear = 2011; // 👈 apna starting year yaha daalo
   const currentYear = new Date().getFullYear();
   const experienceYears = currentYear - startYear;
 
-  const { register, handleSubmit, reset, watch, setValue, control, formState: { errors, isSubmitting } } = useForm({ mode: "onChange" })
-
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm({ mode: "onChange" });
 
   const onSubmit = async (data) => {
     try {
-
       const payload = {
         fullName: `${data.fullname}`,
         email: data.email,
@@ -208,16 +202,14 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         type: "website-form",
         source: "website",
         city: data.city,
-        description: `State: ${data.state}, Intake: ${data.month}`
+        description: `State: ${data.state}, Intake: ${data.month}`,
       };
 
       const res = await axiosInstance.post("/contactus", payload);
-      toast.success("Form submitted successfully")
-      navigate.push("/thank-you")
+      toast.success("Form submitted successfully");
+      navigate.push("/thank-you");
 
       reset();
-
-
     } catch (error) {
       toast.error("Submit Error:", error);
     }
@@ -227,32 +219,34 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
     register("country");
   }, [register]);
 
-
-
-
   const fetchCountries = useCallback(async () => {
     try {
-      const response = await axiosInstance.get('/countries?isFeatured=Yes&limit=300')
-      const data = response.data.data
-      let formatData = data.map(country => ({ label: country.name, value: country.code }))
-      setCountries(formatData)
+      const response = await axiosInstance.get(
+        "/countries?isFeatured=Yes&limit=300",
+      );
+      const data = response.data.data;
+      let formatData = data.map((country) => ({
+        label: country.name,
+        value: country.code,
+      }));
+      setCountries(formatData);
     } catch (error) {
-      console.error('Error fetching countries:', error)
+      console.error("Error fetching countries:", error);
     }
-  })
+  });
 
   useEffect(() => {
-    fetchCountries()
-  }, [])
+    fetchCountries();
+  }, []);
+
+  const { openPopup } = useGlobal();
 
 
+  // console.log("home page",homePage)
+  
+    // const Tag = `h${homePage?.hero?.tag || 1}`; // fallback to h1 if undefined
 
-
-
-
-
-  const { openPopup } = useGlobal()
-
+ 
   return (
     <main className="bg-white">
       <motion.section
@@ -265,15 +259,12 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
     bg-no-repeat bg-cover bg-bottom
     pt-12 lg:pt-20 
   "
-
       >
-
         {/* mobile overlay only */}
         <div className="absolute inset-0 bg-white/50 md:bg-transparent pointer-events-none" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4  sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-2">
-
             {/* LEFT CONTENT */}
             <motion.div
               initial={{ x: -60, opacity: 0 }}
@@ -281,25 +272,20 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               transition={{ duration: 0.7, delay: 0.2 }}
               className="text-left lg:text-left"
             >
-              <motion.h1
+              <motion.span
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="text-xl sm:text-4xl lg:text-4xl leading-tight"
               >
-                {homePage?.hero?.title ? (
-                  <span className="block text-[#ea6c46]">
-                    {homePage?.hero?.title.split('||')[0]?.trim()}
 
-                    <span className="relative inline-block mt-3 font-bold text-primary">
-                      {homePage?.hero?.title.split('||')[1]?.trim()}
-                      {/* <span className="absolute left-0 -bottom-0 w-full h-[2px] bg-[#f46c44]">
-                  <span className="absolute right-0 -top-[3px] w-2 h-2 rounded-full bg-[#f46c44]" />
-                </span> */}
-                    </span>
-                  </span>
+                {homePage?.hero?.title ? (
+                  <>
+                    <Tag data={homePage?.hero?.tag } css="block text-[#ea6c46]" text={homePage?.hero?.title.split("||")[0]?.trim()} />
+                    <Tag data={homePage?.hero?.tag } css="relative inline-block mt-3 font-bold text-primary" text={homePage?.hero?.title.split("||")[1]?.trim()} /  >
+                  </>
                 ) : null}
-              </motion.h1>
+              </motion.span>
 
               <motion.p
                 initial={{ y: 30, opacity: 0 }}
@@ -309,14 +295,14 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 dangerouslySetInnerHTML={{
                   __html: homePage?.hero?.subtitle
                     ? homePage.hero.subtitle
-                      .split("||")
-                      .map((text, index) =>
-                        index === 1
-                          ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
-                          : text.trim()
-                      )
-                      .join(" ")
-                    : ""
+                        .split("||")
+                        .map((text, index) =>
+                          index === 1
+                            ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
+                            : text.trim(),
+                        )
+                        .join(" ")
+                    : "",
                 }}
               />
 
@@ -365,7 +351,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               className="flex justify-center lg:justify-end"
             >
               <div className="relative flex items-center justify-center">
-
                 {/* Animated Circle */}
                 <div className="absolute -right-[130px] top-51 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
                   <img
@@ -392,21 +377,21 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                     />
                   </motion.div>
                 )}
-
               </div>
             </motion.div>
-
           </div>
         </div>
       </motion.section>
 
       <section className="py-6 px-4 bg-white mt-3">
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-
           {/* Card */}
           {homePage?.stats?.item?.map((stat, index) => (
             <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] transition duration-300">
-              <DynamicLucideIcon name={stat?.icon} className="w-10 h-10 text-[#8B4513] group-hover:text-white transition" />
+              <DynamicLucideIcon
+                name={stat?.icon}
+                className="w-10 h-10 text-[#8B4513] group-hover:text-white transition"
+              />
               <div>
                 <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
                   {stat?.title}
@@ -416,21 +401,19 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 </h3>
               </div>
             </div>
-
           ))}
-
         </div>
       </section>
 
       <section className="bg-[#F46C44] overflow-hidden relative">
-
-
-
         <div className="px-4 max-w-[1440px] mx-auto sm:px-8 lg:px-20 flex flex-col lg:flex-row gap-10 lg:gap-2 justify-around items-center">
-
           {/* LEFT IMAGE (Hidden on Mobile) */}
           <motion.div className="relative z-10 -bottom-0 lg:-bottom-8 -left-24 hidden lg:block">
-            <img src="/images/home-enquiry.png" alt="" className="w-[320px] lg:w-175" />
+            <img
+              src="/images/home-enquiry.png"
+              alt=""
+              className="w-[320px] lg:w-175"
+            />
           </motion.div>
 
           {/* RIGHT FORM */}
@@ -441,10 +424,11 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
             viewport={{ once: true }}
             className=" p-6 sm:p-8 lg:p- rounded-2xl w-full lg:w-auto "
           >
+            <Tag data={homePage?.formSection?.teg} text={homePage?.formSection?.title} css={"text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 text-white"} />
 
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 text-white">
+            {/* <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 text-white">
               <span>{homePage?.formSection?.title}</span>
-            </h2>
+            </h2> */}
 
             <form
               onSubmit={handleSubmit(onSubmit)}
@@ -486,8 +470,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.(com|in|org|net|edu|gov|co|io)$/i,
-                      message: "Enter a valid email with proper domain (e.g. .com, .in)",
+                      value:
+                        /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.(com|in|org|net|edu|gov|co|io)$/i,
+                      message:
+                        "Enter a valid email with proper domain (e.g. .com, .in)",
                     },
                   })}
                   type="email"
@@ -499,7 +485,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                     {errors.email.message}
                   </p>
                 )}
-
               </motion.div>
 
               {/* Phone */}
@@ -598,8 +583,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 />
               </motion.div>
 
-
-
               {/* Submit */}
               <motion.div className="md:col-span-2 mt-4 flex justify-center">
                 <button
@@ -611,7 +594,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               </motion.div>
             </form>
           </motion.div>
-
         </div>
       </section>
 
@@ -697,13 +679,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
   </div>
 </motion.section> */}
 
-
-
-
-
-
-
-
       <motion.section
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -716,7 +691,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         <div className="max-w-7xl mx-auto">
           <div className="w-full px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-2 items-center w-full min-h-[500px]">
-
               <motion.div
                 initial={{ x: -80, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
@@ -749,7 +723,9 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   </span>
 
                   <span className="text-[10px] sm:text-xs text-gray-500 text-center font-semibold leading-tight">
-                    Years of<br />Experience
+                    Years of
+                    <br />
+                    Experience
                   </span>
                 </motion.div>
               </motion.div>
@@ -761,21 +737,24 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 viewport={{ once: true }}
                 className="text-left lg:text-left"
               >
-                <motion.h2
+                <motion.span
                   initial={{ y: 30, opacity: 0 }}
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
                   viewport={{ once: true }}
                   className="text-lg sm:text-3xl lg:text-4xl font-bold leading-tight mb-3"
                 >
-                  <span className="text-primary">
-                    {homePage?.trustedPartners?.title?.split('||')[0]?.trim()}
-                  </span>
-                  <br />
-                  <span className="text-primary">
-                    {homePage?.trustedPartners?.title?.split('||')[1]?.trim()}
-                  </span>
-                </motion.h2>
+                  <Tag data={homePage?.trustedPartners?.tag} text={homePage?.trustedPartners?.title?.split("||")[0]?.trim()} css={"text-primary"} />
+                  {/* <span className="text-primary">
+                    {homePage?.trustedPartners?.title?.split("||")[0]?.trim()}
+                  </span> */}
+                    <br />
+                    <Tag data={homePage?.trustedPartners?.tag} 
+                    text={homePage?.trustedPartners?.title?.split("||")[1]?.trim()} css={"text-primary"} />
+                  {/* <span className="text-primary">
+                    {homePage?.trustedPartners?.title?.split("||")[1]?.trim()}
+                  </span> */}
+                </motion.span>
 
                 <motion.p
                   initial={{ y: 30, opacity: 0 }}
@@ -794,36 +773,28 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   transition={{ duration: 0.6, delay: 0.6 }}
                   viewport={{ once: true }}
                 >
-                  <AboutTabsSection tabs={homePage?.trustedPartners?.items || []} />
+                  <AboutTabsSection
+                    tabs={homePage?.trustedPartners?.items || []}
+                  />
                 </motion.div>
-
               </motion.div>
-
             </div>
           </div>
         </div>
       </motion.section>
 
-
-
-
-
-
       <section className="lg:py-5 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden ">
           <div className=" mb-12 ">
             <h2 className=" text-xl   mb-2 ">
-              <span className="text-[#F46C44] lg:text-4xl font-light" >
-                {homePage?.topUniversities?.title?.split('||')[0]?.trim()}
-              </span>{" "} <br />
-              <span className="text-primary font-bold relative lg:text-5xl" >
-                {homePage?.topUniversities?.title?.split('||')[1]?.trim()}
+              <span className="text-[#F46C44] lg:text-4xl font-light">
+                {homePage?.topUniversities?.title?.split("||")[0]?.trim()}
+              </span>{" "}
+              <br />
+              <span className="text-primary font-bold relative lg:text-5xl">
+                {homePage?.topUniversities?.title?.split("||")[1]?.trim()}
                 <span className="absolute right-0 bottom-0  w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
-
-
               </span>
-
-
             </h2>
             <p
               className="text-gray-800 text-sm lg:text-base font-medium max-w-3xl leading-relaxed"
@@ -833,16 +804,11 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
             ></p>
           </div>
 
-          <div
-            ref={sliderRefD}
-            className="keen-slider items-start"
-          >
+          <div ref={sliderRefD} className="keen-slider items-start">
             {destinationData.map((item) => (
               <div key={item._id} className="keen-slider__slide p-4">
-
                 <Link href={`/universities/group/${item.slug}`}>
                   <div className="border border-gray-300 bg-white overflow-hidden hover:shadow-lg transition duration-300">
-
                     {/* Image */}
                     <img
                       src={
@@ -854,36 +820,35 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
                     {/* Content */}
                     <div className="p-6 text-center">
-
                       <h3 className="lg:text-xl text-base  font-bold text-[#1c3f73] mb-2">
                         {item.title}
                       </h3>
 
                       <p className="text-gray-500 text-xs lg:text-sm line-clamp-1">
-                        {item.subTitle || "Explore top universities for your study abroad journey."}
+                        {item.subTitle ||
+                          "Explore top universities for your study abroad journey."}
                       </p>
-
                     </div>
-
                   </div>
                 </Link>
-
               </div>
             ))}
           </div>
-
         </div>
       </section>
 
       <UniversitySliderClient universities={homePage.universities} />
 
       <section className="max-w-7xl mx-auto  py-5 px-4 lg:px-4">
-
         {/* Heading */}
         <div className="mb-10">
           <h2 className="text-primary">
-            <span className="text-[#F46C44] font-light block text-xl lg:text-4xl">{homePage.studyDestinations.title.split("||")[0]}</span>
-            <span className="font-bold text-xl lg:text-5xl relative"> {homePage.studyDestinations.title.split("||")[1]}
+            <span className="text-[#F46C44] font-light block text-xl lg:text-4xl">
+              {homePage.studyDestinations.title.split("||")[0]}
+            </span>
+            <span className="font-bold text-xl lg:text-5xl relative">
+              {" "}
+              {homePage.studyDestinations.title.split("||")[1]}
               <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
             </span>
           </h2>
@@ -891,10 +856,8 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-4  justify-center">
-
           {/* LEFT COLUMN */}
           <div className="flex flex-col gap-4">
-
             <Link href={"/destination/study-in-usa"}>
               <div className="h-40 sm:h-40 lg:h-42 w-full lg:w-92  rounded-2xl overflow-hidden relative">
                 <img
@@ -941,13 +904,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 </div>
               </Link>
             </div>
-
           </div>
-
 
           {/* MIDDLE COLUMN */}
           <div className="flex flex-col gap-4">
-
             <div className="w-full lg:w-92 h-24 lg:h-25 rounded-2xl overflow-hidden relative ">
               <img
                 src="https://img.freepik.com/premium-photo/ferry-boat-docked-along-vancouver-canada_67340-61.jpg?semt=ais_rp_50_assets&w=740&q=80"
@@ -986,13 +946,10 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 </span>
               </p>
             </div>
-
           </div>
-
 
           {/* RIGHT COLUMN */}
           <div className="flex flex-col gap-4">
-
             <div className="flex gap-4">
               <div className="w-full lg:w-44 h-40 sm:h-52 rounded-2xl overflow-hidden relative ">
                 <img
@@ -1033,29 +990,28 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 </span>
               </p>
             </div>
-
           </div>
-
         </div>
-
       </section>
-
-
 
       <section className="w-full py-6 lg:py-16 px-1 md:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="rounded-3xl p-4 md:p-8 lg:p-12">
             <div className="flex flex-col lg:flex-row gap-6 lg:gap-0 relative">
-
               {/* Left Panel */}
-              <div className="bg-[#F46C44] overflow-hidden rounded-2xl p-4 md:p-8 flex flex-col justify-center 
+              <div
+                className="bg-[#F46C44] overflow-hidden rounded-2xl p-4 md:p-8 flex flex-col justify-center 
         lg:min-w-[280px] lg:max-w-[320px] 
         h-auto lg:h-[380px] 
-        z-10 lg:mt-24">
-
+        z-10 lg:mt-24"
+              >
                 <h2 className="  text-white text-primary">
-                  <span className=" font-light block text-xl lg:text-4xl">{homePage?.servicesection?.title.split("||")[0]}</span>
-                  <span className="font-bold text-xl lg:text-2xl relative"> {homePage?.servicesection?.title.split("||")[1]}
+                  <span className=" font-light block text-xl lg:text-4xl">
+                    {homePage?.servicesection?.title.split("||")[0]}
+                  </span>
+                  <span className="font-bold text-xl lg:text-2xl relative">
+                    {" "}
+                    {homePage?.servicesection?.title.split("||")[1]}
                     <span className="absolute hidden sm:block sm:right-0 -bottom-2 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
                   </span>
                 </h2>
@@ -1067,7 +1023,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
               {/* Services Grid */}
               <div className="flex-1 lg:pl-6 bg-white relative z-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 bg-white">
-
                   {homePage?.servicesection?.services?.map((service) => (
                     <div
                       key={service.title}
@@ -1075,7 +1030,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                     >
                       {/* Icon */}
                       <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center mb-3 md:mb-4 mx-auto">
-                        <img src={service.icon } alt="" />
+                        <img src={service.icon} alt="" />
                       </div>
 
                       {/* Title */}
@@ -1086,60 +1041,52 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                       {/* Description */}
                       <p
                         className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-4 md:line-clamp-5"
-                        dangerouslySetInnerHTML={{ __html: service.subTitle || "" }}
+                        dangerouslySetInnerHTML={{
+                          __html: service.subTitle || "",
+                        }}
                       />
                     </div>
                   ))}
-
                 </div>
               </div>
-
             </div>
           </div>
         </div>
-
       </section>
 
       <div className="bg-[#F46C44] py-10 ">
         <h2 className=" max-w-7xl mx-auto  text-primary text-white mb-10 px-4 lg:px-0">
-          <span className=" font-light block text-xl lg:text-4xl">{homePage?.topUniversity?.title.split("||")[0]}</span>
-          <span className="font-bold text-xl lg:text-5xl relative"> {homePage?.topUniversity?.title.split("||")[1]}
+          <span className=" font-light block text-xl lg:text-4xl">
+            {homePage?.topUniversity?.title.split("||")[0]}
+          </span>
+          <span className="font-bold text-xl lg:text-5xl relative">
+            {" "}
+            {homePage?.topUniversity?.title.split("||")[1]}
             <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
-
           </span>
         </h2>
         <UniversityCard university={unires} />
       </div>
 
-
       <section className="py-12 sm:py-2 lg:py-10 px-2 relative overflow-hidden">
-
-
-
         <div className="max-w-7xl mx-auto px-4">
           <h2 className=" text-xl   mb-6 ">
-            <span className="text-[#F46C44] lg:text-4xl font-light" >
+            <span className="text-[#F46C44] lg:text-4xl font-light">
               {homePage?.blogs?.title.split("||")[0]}
-            </span>{" "} <br />
-            <span className="text-primary font-bold relative lg:text-4xl" >
+            </span>{" "}
+            <br />
+            <span className="text-primary font-bold relative lg:text-4xl">
               {homePage?.blogs?.title.split("||")[1]}
 
               <span className="absolute right-0 bottom-0  w-full lg:w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
-
-
             </span>
-
-
           </h2>
 
           {/* 🔥 SLIDER (replaces grid) */}
           <div ref={sliderRefblog} className="keen-slider relative z-[10]">
-
             {blogres.length > 0 ? (
               blogres.map((post) => (
-
                 <div key={post._id} className="keen-slider__slide p-2">
-
                   {/* 🔴 SAME CARD UI */}
                   <div
                     className="
@@ -1148,7 +1095,6 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                   transition-all duration-300 hover:shadow-xl
                 "
                   >
-
                     {/* ORANGE SHAPE */}
                     <div
                       className="
@@ -1176,7 +1122,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                         className="w-full h-[220px] object-cover"
                         onError={(e) => {
                           e.currentTarget.src =
-                            "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
+                            "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg";
                         }}
                       />
                     </div>
@@ -1204,9 +1150,7 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                         Read More »
                       </button>
                     </div>
-
                   </div>
-
                 </div>
               ))
             ) : (
@@ -1214,11 +1158,9 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
                 No blogs found
               </p>
             )}
-
           </div>
         </div>
       </section>
-
 
       {/* <ImageTestimonial
         title={homePage?.imageTestimonials?.title}
@@ -1231,22 +1173,21 @@ export default function Homepage({ homePage, destinationData, imageData, Faqres,
         title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
         subtitle={homePage?.videoTestimonials?.subtitle}
         items={videoRes}
-      // Auto-play is enabled by default
+        tag={homePage?.videoTestimonials?.tag}
+        // Auto-play is enabled by default
       />
 
-      <StudentVisaStories stories={filtervisa} title={homePage?.visa?.title} subtitle={homePage?.visa?.subtitle} />
-
-
-
+      <StudentVisaStories
+        stories={filtervisa}
+        title={homePage?.visa?.title}
+        subtitle={homePage?.visa?.subtitle}
+        tag={homePage?.visa?.tag}
+      />
 
       <FAQSection Faqres={Faqres} />
       <AnimatePresence>
         {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
-
-
       </AnimatePresence>
     </main>
-
-
-  )
+  );
 }

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Tag } from '../tag';
 
 interface VideoTestimonialItem {
   _id: string;
@@ -19,6 +20,7 @@ interface VideoTestimonialsSliderProps {
   items: VideoTestimonialItem[];
   title?: string;
   subtitle?: string;
+  tag ?: any;
 }
 
 const getYouTubeId = (url: string): string | null => {
@@ -45,6 +47,7 @@ export default function VideoTestimonialsSlider({
   items = [],
   title = "More || Videos",
   subtitle = "What our students say",
+  tag = 1
 }: VideoTestimonialsSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -72,14 +75,16 @@ export default function VideoTestimonialsSlider({
     return (
       <section className="bg-white py-10 pb-20">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-lg lg:text-2xl font-bold mb-4">
+          <span className="text-lg lg:text-2xl font-bold mb-4">
             {title.includes('||') ? (
               <>
-                <span className="text-[#f46c44]">{title.split('||')[0].trim()}</span>{' '}
-                <span className="text-gray-600">{title.split('||')[1].trim()}</span>
+                
+                  <Tag data={tag} css={"text-[#f46c44]"} text={title.split('||')[0].trim()} /> {' '}
+                  <Tag data={tag} css={"text-gray-600"} text={title.split('||')[1].trim()} />
+                {/* <span className="text-gray-600">{title.split('||')[1].trim()}</span> */}
               </>
             ) : title}
-          </h2>
+          </span>
           <p className="text-gray-500">No video testimonials available</p>
         </div>
       </section>
