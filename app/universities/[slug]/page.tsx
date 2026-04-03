@@ -172,10 +172,11 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
   const galleryImages = universityData.uni_gallery?.images || [];
   const galleryVideos = universityData.uni_gallery?.videos || [];
 
+  console.log("universityData" , universityData)
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white ">
       {/* Hero Section with Slider */}
-      <div className="relative">
+      {/* <div className="relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <HeroSlider
             images={galleryImages}
@@ -183,25 +184,53 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
             universityName={universityData.name}
           />
         </div>
-      </div>
+      </div> */}
 
-      {/* Header Info */}
-      <div className="sticky top-28 z-40 border-b bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-[18px]">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900">{universityData.name}</h1>
-              <p className="text-slate-600 flex items-center mt-2">
-                <MapPin className="w-4 h-4 mr-1" />
-                {location}
-              </p>
-            </div>
+      
+<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div className="relative bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+    
+    <div className="h-64 md:h-80 w-full relative">
+      <img 
+        src={universityData?.cover_photo} 
+        alt={`${universityData.name} Banner`} 
+        className="w-full h-full object-cover"
+      />
+      {/* Subtle overlay to make text pop if needed */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+    </div>
 
-          </div>
-
-
+    {/* Info Section */}
+    <div className="relative px-6 pb-8">
+      <div className="flex flex-col md:flex-row items-end -mt-16 md:-mt-20 gap-6">
+        
+        {/* Profile/Logo Box */}
+        <div className="relative z-10 p-1 bg-white rounded-2xl shadow-lg border border-slate-100">
+          <img 
+            src={universityData?.uni_logo} 
+            alt={`${universityData.name} Logo`} 
+            className="w-32 h-32 md:w-40 md:h-40 rounded-xl object-contain bg-white"
+          />
         </div>
+
+        {/* Text Content */}
+        <div className="flex-1 mb-2">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+            {universityData.name}
+          </h1>
+          <div className="flex items-center mt-2 text-slate-500 font-medium">
+            <MapPin className="w-5 h-5 mr-1.5 text-blue-600" />
+            <span>{location}</span>
+          </div>
+        </div>
+
+       
       </div>
+    </div>
+  </div>
+</div>
+
+
 
       {/* Rankings Section */}
       <div className="bg-blue-50 border-b">
@@ -282,7 +311,7 @@ export default async function UniDetails({ params }: { params: Promise<{ slug: s
         <div className=" mx-auto px-4 sm:px-6">
 
           <Tabs defaultValue={defaultTab} className="w-full">
-            <div className='overflow-x-auto sticky top-54'>
+            <div className='overflow-x-auto sticky top-20 z-30 bg-white'>
             <TabsList className="w-max inline-flex justify-start rounded-none border-0 h-auto p-1 gap-8 bg-white">
               {/* Generate tabs dynamically from sections */}
               {activeSections.map((section) => (

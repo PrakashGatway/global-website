@@ -73,7 +73,6 @@ export default async function Home() {
       videoRes={videoRes.data.data}
       blogres={blogres.data.data}
       unires={unires.data.result}
-   
     />
   );
 }
