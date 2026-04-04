@@ -151,7 +151,7 @@ useEffect(() => {
         <div className="absolute bg-[#f46c44] w-full h-[35rem] left-0 -top-[100px]" 
         style={{"borderRadius":"0 0 50% 50%/0 0 100% 100%",   "transform": "scaleX(2.4)"}}></div>
 
-        <div className="flex flex-row-reverse bg-white rounded overflow-hidden shadow-md w-full h-[100%] z-50 mt-20">
+        <div className="flex md:flex-col lg:flex-row-reverse  bg-white rounded overflow-hidden shadow-md w-full h-[100%] z-50 mt-20">
           {data.cover_photo && (
             <img
               src={data.cover_photo}
@@ -160,7 +160,7 @@ useEffect(() => {
             />
           )}
 
-          <div className="p-6 flex items-start gap-10 flex-col w-1/3 ">
+          <div className="p-6 flex items-start gap-10 flex-col w-full lg:w-1/3 ">
             <img
               src={data.uni_logo}
               alt={`${data.name} logo`}
