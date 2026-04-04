@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import SocialLinksCard from "@/components/socialLinkCard";
 import DOMPurify from "isomorphic-dompurify";
+import FAQSection from "@/components/faqPage";
+
+import { usePathname, useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import axiosInstance from '@/app/axiosInstance'
+import toast from 'react-hot-toast'
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -81,9 +88,162 @@ interface UniversityData {
   };
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
 
-export default function UniDetailsClient({ data }: { data: UniversityData }) {
+const FormSection = () => {
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    mode: "onChange",          // ✅ validate on typing
+    reValidateMode: "onChange"
+  });
+
+  const navigate = useRouter();
+
+  const onSubmit = async (formData) => {
+    try {
+      const payload = {
+        fullName: formData.fullname,
+        email: formData.email,
+        phone: formData.phone,
+        destination: formData.country,
+        subject: "Study Abroad Enquiry",
+        type: "website-form",
+        source: "website",
+        city: formData.city,
+        description: `State: ${formData.state}`,
+      };
+
+      await axiosInstance.post("/contactus", payload);
+      toast.success("Form submitted successfully");
+      navigate.push("/thank-you");
+      reset();
+    } catch (error) {
+      toast.error("Submit Error");
+    }
+  };
+
+  return (
+    
+        <div className="bg-white border border-gray-300 p-5 sm:p-8 shadow-sm rounded-lg w-full">
+          <h2 className="text-orange-500 text-sm sm:text-xl font-semibold mb-5 tracking-wide">
+            GET IN TOUCH
+          </h2>
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-4">
+
+              {/* Full Name */}
+              <div>
+                <label className="text-sm text-gray-700">Full Name</label>
+                <input
+                  {...register("fullname", { required: "Name is required" })}
+                  className={`w-full border-b-2 pb-1 bg-transparent text-sm focus:outline-none 
+                  ${errors.fullname ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
+                />
+                {errors.fullname && (
+                  <p className="text-red-500 text-xs">{errors.fullname.message}</p>
+                )}
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="text-sm text-gray-700">Email ID</label>
+                <input
+                  type="email"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.(com|in)$/i,
+                      message: "Only .com and .in emails allowed",
+                    },
+                  })}
+                  className={`w-full border-b-2 pb-1 bg-transparent text-sm focus:outline-none 
+                  ${errors.email ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
+                />
+
+                {/* show only format error while typing */}
+                {errors.email && (
+                  <p className="text-red-500 text-xs">{errors.email.message}</p>
+                )}
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="text-sm text-gray-700">Mobile Number</label>
+                <input
+                  maxLength={10}
+                  {...register("phone", {
+                    required: "Phone is required",
+                    pattern: {
+                      value: /^[0-9]{10}$/,
+                      message: "Enter valid 10 digit number",
+                    },
+                  })}
+                  className={`w-full border-b-2 pb-1 bg-transparent text-sm focus:outline-none 
+                  ${errors.phone ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
+                />
+                {errors.phone && (
+                  <p className="text-red-500 text-xs">{errors.phone.message}</p>
+                )}
+              </div>
+
+              {/* State */}
+              <div>
+                <label className="text-sm text-gray-700">State</label>
+                <input
+                  {...register("state")}
+                  className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
+                />
+              </div>
+
+              {/* City */}
+              <div>
+                <label className="text-sm text-gray-700">City</label>
+                <input
+                  {...register("city")}
+                  className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
+                />
+              </div>
+
+              {/* Country */}
+              <div>
+                <label className="text-sm text-gray-700">Country</label>
+                <select
+                  {...register("country")}
+                  className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
+                >
+                  <option value="">Country to Study</option>
+                  {["USA", "UK", "France", "Germany", "Italy", "Dubai"].map((c) => (
+                    <option key={c} value={c.toLowerCase()}>
+                      Study In {c}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+            </div>
+
+            <div className="flex justify-center mt-6">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-secondary hover:bg-primary text-white px-6 py-2 rounded-full"
+              >
+                {isSubmitting ? "Submitting..." : "CONTACT US"}
+              </button>
+            </div>
+          </form>
+        </div>
+
+  );
+};
+
+
+export default function UniDetailsClient({ data, Faqres }: { data: UniversityData; Faqres?: any }) {
   const [activeSection, setActiveSection] = useState<string>("");
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -321,10 +481,12 @@ useEffect(() => {
         </div>
 
         {/* RIGHT SIDEBAR */}
-        <div className="space-y-6 sticky top-28 self-start">
+        <div className="space-y-6 sticky top-32 self-start">
+
+            <FormSection />
 
           {/* Financial Overview */}
-          <Card>
+          {/* <Card>
             <CardContent className="pt-6 space-y-4">
               <h3 className="font-bold text-slate-900">Financial Overview</h3>
 
@@ -340,32 +502,7 @@ useEffect(() => {
                 </div>
               ))}
             </CardContent>
-          </Card>
-
-          {/* CTA */}
-          <Card className="bg-gray-50">
-            <CardContent className="pt-6 space-y-3">
-              <h3 className="font-bold text-slate-900">Ready to Apply?</h3>
-
-              <Button className="w-full bg-orange-600 hover:bg-orange-700">
-                Get Brochure
-              </Button>
-              <Button variant="outline" className="w-full hover:bg-orange-50">
-                Talk to Expert
-              </Button>
-              {data.uni_web && (
-                <Button variant="outline" className="w-full hover:bg-orange-50" asChild>
-                  <a href={data.uni_web} target="_blank" rel="noopener noreferrer">
-                    Visit Official Website
-                  </a>
-                </Button>
-              )}
-
-              <p className="text-xs text-slate-500 text-center pt-1">
-                Contact us for admission assistance
-              </p>
-            </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Contact */}
           <Card>
@@ -399,8 +536,39 @@ useEffect(() => {
               )}
             </CardContent>
           </Card>
+          
+          {/* CTA */}
+          <Card className="bg-gray-50">
+            <CardContent className="pt-6 space-y-3">
+              <h3 className="font-bold text-slate-900">Ready to Apply?</h3>
+
+              <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                Get Brochure
+              </Button>
+              <Button variant="outline" className="w-full hover:bg-orange-50">
+                Talk to Expert
+              </Button>
+              {data.uni_web && (
+                <Button variant="outline" className="w-full hover:bg-orange-50" asChild>
+                  <a href={data.uni_web} target="_blank" rel="noopener noreferrer">
+                    Visit Official Website
+                  </a>
+                </Button>
+              )}
+
+              <p className="text-xs text-slate-500 text-center pt-1">
+                Contact us for admission assistance
+              </p>
+            </CardContent>
+          </Card>
+
         </div>
       </div>
+
+      
+            <FAQSection 
+              Faqres={Faqres} 
+            />
 
     </main>
   );

@@ -5,7 +5,7 @@ import CountryDetails from "@/components/country";
 
 
 /* ---------------- SEO ---------------- */
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params }: { params: any }) {
   const { slug } = await params
   const res = await serverInstance.get(`/page-information/slug/${slug}`);
   const seo = res.data.data.seoMeta;
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }) {
 }
 
 
-export default async function Page({ params }) {
+export default async function Page({ params }: {params : any}) {
   const { slug } = await params
 
   

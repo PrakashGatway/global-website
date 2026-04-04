@@ -1,7 +1,7 @@
 // app/universities/[slug]/page.tsx  — SERVER COMPONENT (no "use client")
 
 import { serverInstance } from "@/app/axiosInstance";
-import UniDetailsClient from "../new";
+import UniDetailsClient from "../../../components/new";
 
 interface UniversityData {
   _id: string;
@@ -76,6 +76,7 @@ interface ApiResponse {
   result: UniversityData;
 }
 
+
 export default async function UniDetailsPage({
   params,
 }: {
@@ -96,6 +97,9 @@ export default async function UniDetailsPage({
     console.error("Error fetching university data:", err);
   }
 
+  
+  const Faqres = await serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`)
+
   if (!universityData) {
     return (
       <main className="min-h-[80vh] flex justify-center items-center bg-gradient-to-b from-slate-50 to-white">
@@ -112,5 +116,6 @@ export default async function UniDetailsPage({
     );
   }
 
-  return <UniDetailsClient data={universityData} />;
+  console.log(Faqres.data.data)
+  return <UniDetailsClient data={universityData} Faqres={Faqres.data.data || []} />;
 }

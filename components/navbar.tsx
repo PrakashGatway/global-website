@@ -611,7 +611,14 @@ export default function Navbar({
                                 <p className="text-xs font-bold text-gray-400 uppercase mb-2">Select Group</p>
                                 {Featureitem?.map((group) => {
                                   const groupSlug = group.slug || group._id;
-                                  const groupHref = `/universities/group/${groupSlug}`;
+                                  // const groupHref = `/universities/group/${groupSlug}`;
+                                  
+                                const groupHref =
+                                  item.type === "service"
+                                    ? `/service/${group.slug}`
+                                    : item.type === "country"
+                                      ? `/${group.slug}`
+                                      : `/universities/group/${group.slug}`;
 
                                   return (
                                     <div key={group._id} className="mb-2">
