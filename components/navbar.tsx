@@ -317,12 +317,12 @@ export default function Navbar({
             )}
 
             {/* ================= DESKTOP MENU ================= */}
-            <div className={`hidden lg:flex items-center gap-2  ${isScrolled ? "justify-center" : "justify-center pb-4"} `}>
+            <div className={`hidden lg:flex items-center gap-2   ${isScrolled ? "justify-center" : "justify-center pb-4"} `}>
               {navbar?.map((item, i) => (
                 <div key={i} className="relative group">
                   <Link
                     href={item.route}
-                    className="flex items-center gap-1 px-4 text-[15px] font-medium text-white hover:text-[var(--primary)] transition"
+                    className="flex items-center gap-1 px-4 text-[15px] font-bold text-white hover:text-[var(--primary)] transition"
                   >
                     <span>{item.title}</span>
                     {item.hasDropdown && <ChevronDown size={14} className="mt-[2px]" />}
