@@ -146,7 +146,7 @@ useEffect(() => {
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
 
       {/* ── HEADER CARD ─────────────────────────────────────────────────── */}
-      <div className=" w-[95%] mx-auto h-[30rem] px-4 py-10 flex items-center justify-center ">
+      <div className="relative max-w-[100vw] overflow-hidden mx-auto h-[30rem] px-10 py-10 flex items-center justify-center ">
 
         <div className="absolute bg-[#f46c44] w-full h-[35rem] left-0 -top-[100px]" 
         style={{"borderRadius":"0 0 50% 50%/0 0 100% 100%",   "transform": "scaleX(2.4)"}}></div>
@@ -179,12 +179,12 @@ useEffect(() => {
       </div>
 
       {/* ── SOCIAL LINKS ────────────────────────────────────────────────── */}
-      <SocialLinksCard
+      {/* <SocialLinksCard
         facebook={data.social_links?.facebook}
         twitter={data.social_links?.twitter}
         instagram={data.social_links?.instagram}
         linkedin={data.social_links?.linkedin}
-      />
+      /> */}
 
       {/* ── STICKY SECTION NAVBAR ───────────────────────────────────────── */}
       {/* {activeSections.length > 0 && (
@@ -402,17 +402,6 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* ── FOOTER ──────────────────────────────────────────────────────── */}
-      <div className="bg-slate-900 text-white mt-16 p-6 text-center">
-        <p className="text-sm text-slate-400">
-          Last updated on{" "}
-          {new Date(data.updatedAt).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </p>
-      </div>
     </main>
   );
 }
