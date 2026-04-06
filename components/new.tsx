@@ -15,6 +15,7 @@ import { useForm } from 'react-hook-form'
 import axiosInstance from '@/app/axiosInstance'
 import toast from 'react-hot-toast'
 import UniversityCard from "./UniversityCard";
+import Link from "next/link";
 
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -429,6 +430,73 @@ useEffect(() => {
             </div>
           ))}
 
+          <div className="max-w-7xl mx-auto rounded-3xl p-6 bg-gradient-to-r from-[#f6f3f9] to-[#f1f5fb] shadow-sm border border-gray-200 backdrop-blur-md">
+  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+
+    {/* LEFT SECTION */}
+    <div className="flex-1 relative">
+      <p className="text-orange-500 font-semibold text-xs tracking-wider mb-2">
+        SCHOLARSHIP PREDICTOR
+      </p>
+
+      <h2 className="text-2xl md:text-3xl font-bold text-[#1f2a44] leading-snug mb-4">
+        Share your details and <br />
+        easily find scholarships <br />
+        that actually fit your <br />
+        profile
+      </h2>
+
+      {/* USERS */}
+      <div className="flex items-center gap-3 mt-4">
+       <div className="flex -space-x-2">
+  <img
+    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100"
+    className="w-8 h-8 rounded-full border-2 border-white object-cover"
+  />
+  <img
+    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100"
+    className="w-8 h-8 rounded-full border-2 border-white object-cover"
+  />
+  <img
+    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100"
+    className="w-8 h-8 rounded-full border-2 border-white object-cover"
+  />
+</div>
+        <span className="text-sm text-gray-600">
+          Helped 12K+ students
+        </span>
+      </div>
+
+      {/* BACKGROUND GRID EFFECT */}
+      <div className="absolute right-10 top-5 opacity-30 pointer-events-none">
+        <div className="w-32 h-32 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:10px_10px]" />
+      </div>
+    </div>
+
+    {/* RIGHT SECTION */}
+    <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-md border border-gray-200 min-w-[260px]">
+      <p className="text-sm text-gray-600 text-center mb-4">
+        Let's start! It will just take 2 mins
+      </p>
+
+      <div className="flex gap-3 justify-center">
+        <Link href={"/scholarship-predictor"} >
+        <button className="px-5 py-3 rounded-xl border border-blue-400 text-primary font-semibold hover:bg-primary hover:text-white transition">
+          I want to do <br />
+          <span className="font-bold">Masters →</span>
+        </button>
+        </Link>
+
+        <button className="px-5 py-3 rounded-xl border border-blue-400 text-primary font-semibold hover:bg-primary hover:text-white transition">
+          I want to do <br />
+          <span className="font-bold">Bachelors →</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
           {/* Location section */}
           <div id="location" ref={(el) => { sectionRefs.current["location"] = el; }} className="scroll-mt-28">
             <h2 className="text-2xl font-bold text-slate-900 mb-4">Location</h2>
@@ -573,6 +641,7 @@ useEffect(() => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-10">
+        <h2 className="font-bold text-3xl">Explore More Universities for Your Study Plans</h2>
 
            <UniversityCard
   university={Universityres
@@ -592,11 +661,11 @@ useEffect(() => {
               <div className="text-white relative z-10">
                 
                 <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight">
-                 Start Your Global Education Journey
+                 {data?.extra_content?.extra?.ctatitle}
                 </h2>
                 <p
                   className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
-                  >Explore top universities, expert guidance, and seamless admission support with Ooshas Global.</p>
+                  >{data?.extra_content?.extra?.ctadescription}</p>
                 
                 <div className="mt-6 sm:mt-8">
                   <a href="/contact">

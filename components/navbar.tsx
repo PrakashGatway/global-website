@@ -209,96 +209,112 @@ export default function Navbar({
                         {item.type === "destination" ? (
                           <div className="flex gap-6">
                             {/* LEFT COLUMN: Countries List */}
-                            <div className="w-1/3 border-r border-gray-100">
-                              <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
-                                Countries
-                              </h3>
-                              <div className="space-y-1">
-                                {uniqueCountries.map((country) => {
-                              
+                           <div className="w-1/3 border-r border-gray-100">
+  <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
+    Countries
+  </h3>
 
-                                  return (
-                                    <div key={country.code} className="relative">
-                                      <div
-                                       
-                                        onMouseEnter={() => loadCountryUniversities(country)}
-                                        onClick={() => loadCountryUniversities(country)}
-                                        className={`
-                                          w-full text-left flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors text-sm
-                                          ${selectedCountry?.code === country.code
-                                            ? "bg-[var(--primary)] text-white shadow-md"
-                                            : "hover:bg-gray-100 text-gray-700"}
-                                        `}
-                                      >
-                                        <div className="flex items-center gap-2">
-                                          {country.flag && (
-                                            <img 
-                                              src={country.flag} 
-                                              alt={country.name}
-                                              className="w-5 h-5 rounded-full object-cover"
-                                            />
-                                          )}
-                                          <span className="font-medium truncate">{country.name}</span>
-                                        </div>
-                                        {selectedCountry?.code === country.code && <ChevronRight size={14} />}
-                                      </div>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </div>
+  {/* 🔥 SCROLLABLE AREA */}
+  <div className="space-y-1 max-h-60 overflow-y-auto pr-2">
+    {uniqueCountries.map((country) => {
+      return (
+        <div key={country.code} className="relative">
+          <div
+            onMouseEnter={() => loadCountryUniversities(country)}
+            onClick={() => loadCountryUniversities(country)}
+            className={`
+              w-full text-left flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors text-sm
+              ${
+                selectedCountry?.code === country.code
+                  ? "bg-[var(--primary)] text-white shadow-md"
+                  : "hover:bg-gray-100 text-gray-700"
+              }
+            `}
+          >
+            <div className="flex items-center gap-2">
+              {country.flag && (
+                <img
+                  src={country.flag}
+                  alt={country.name}
+                  className="w-5 h-5 rounded-full object-cover"
+                />
+              )}
+              <span className="font-medium truncate">
+                {country.name}
+              </span>
+            </div>
+
+            {selectedCountry?.code === country.code && (
+              <ChevronRight size={14} />
+            )}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</div>
 
                             {/* RIGHT COLUMN: Universities List */}
-                            <div className="w-2/3 pl-2">
-                              <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
-                                {selectedCountry ? `Universities in ${selectedCountry.name}` : "Select a Country"}
-                              </h3>
+                           <div className="w-2/3 pl-2 flex flex-col">
+  <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
+    {selectedCountry
+      ? `Universities in ${selectedCountry.name}`
+      : "Select a Country"}
+  </h3>
 
-                              {selectedCountry ? (
-                                countryUniversities.length > 0 ? (
-                                  <div className="grid grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-2">
-                                    {countryUniversities.map((uni) => (
-                                      <Link
-                                        key={uni._id}
-                                        href={`/universities/${uni.slug}`}
-                                        className="flex items-center gap-3 bg-gray-50 p-2.5 rounded-xl hover:bg-[var(--primary)] hover:text-white transition group/item"
-                                      >
-                                        <div className="w-10 h-10 rounded-full bg-white shadow overflow-hidden flex-shrink-0">
-                                          {uni.uni_logo ? (
-                                            <Image
-                                              src={uni.uni_logo}
-                                              alt={uni.name}
-                                              width={40}
-                                              height={40}
-                                              className="object-cover w-full h-full"
-                                            />
-                                          ) : (
-                                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                              <GraduationCap size={20} className="text-gray-400" />
-                                            </div>
-                                          )}
-                                        </div>
-                                        <div className="overflow-hidden">
-                                          <p className="font-semibold text-sm truncate">{uni.name}</p>
-                                          <p className="text-xs opacity-70 truncate">
-                                            {uni.countryData?.[0]?.name || uni.country || "View Details"}
-                                          </p>
-                                        </div>
-                                      </Link>
-                                    ))}
-                                  </div>
-                                ) : (
-                                  <div className="text-center py-8 text-gray-400 text-sm">
-                                    No universities found in {selectedCountry.name}
-                                  </div>
-                                )
-                              ) : (
-                                <div className="flex flex-col items-center justify-center h-40 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                                  <GraduationCap size={32} className="mb-2 opacity-50" />
-                                  <span className="text-xs">Select a country to see universities</span>
-                                </div>
-                              )}
-                            </div>
+  {selectedCountry ? (
+    countryUniversities.length > 0 ? (
+      // 🔥 SCROLLABLE AREA
+      <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2">
+        {countryUniversities.map((uni) => (
+          <Link
+  key={uni._id}
+  href={`/universities/${uni.slug}`}
+  className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100 hover:bg-[var(--primary)] hover:text-white hover:shadow-md transition group/item"
+>
+  {/* ✅ Square Logo */}
+  <div className="w-12 h-12 rounded-lg bg-white border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0">
+    {uni.uni_logo ? (
+      <Image
+        src={uni.uni_logo}
+        alt={uni.name}
+        width={48}
+        height={48}
+        className="object-contain w-full h-full p-1"
+      />
+    ) : (
+      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+        <GraduationCap size={20} className="text-gray-400" />
+      </div>
+    )}
+  </div>
+
+  {/* Content */}
+  <div className="overflow-hidden">
+    <p className="font-semibold text-sm truncate group-hover/item:text-white">
+      {uni.name}
+    </p>
+    <p className="text-xs opacity-70 truncate group-hover/item:text-white/80">
+      {uni.countryData?.[0]?.name || uni.country || "View Details"}
+    </p>
+  </div>
+</Link>
+        ))}
+      </div>
+    ) : (
+      <div className="text-center py-8 text-gray-400 text-sm">
+        No universities found in {selectedCountry.name}
+      </div>
+    )
+  ) : (
+    <div className="flex flex-col items-center justify-center h-40 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+      <GraduationCap size={32} className="mb-2 opacity-50" />
+      <span className="text-xs">
+        Select a country to see universities
+      </span>
+    </div>
+  )}
+</div>
                           </div>
                         ) : (
                           // DEFAULT DROPDOWN FOR SERVICE & COUNTRY
@@ -314,7 +330,7 @@ export default function Navbar({
                                 ? `/service/${item.slug}`
                                 : item.type === "country"
                                   ? `/${item.slug}`
-                                  : `/destination/${item.slug}`;
+                                  : `/${item.slug}`;
 
                               const title = item.navbarTitle || item.name;
                               const image = item.navbarImage || item.flag;
@@ -337,7 +353,7 @@ export default function Navbar({
                                   </div>
                                   <div>
                                     <p className="font-semibold text-sm">{title}</p>
-                                    <p className="text-xs opacity-70">{subTitle}</p>
+                                   
                                   </div>
                                 </Link>
                               );
@@ -450,7 +466,7 @@ export default function Navbar({
                                 return (
                                   <Link key={item._id} href={href} onClick={() => { setIsOpen(false); setMobileDropdown(null); }} className="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-gray-50 transition">
                                     <div className="w-9 h-9 rounded-full bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0">
-                                      <Image src={item.navbarImage || "/placeholder.png"} alt={item.navbarTitle} width={36} height={36} className="object-cover w-20 h-full" />
+                                      <Image src={item.navbarImage || "/placeholder.png"} alt={item.navbarTitle} width={36} height={36} className="object-contain w-20 h-full" />
                                     </div>
                                     <div>
                                       <span className="text-xs font-medium text-gray-700">{item.navbarTitle}</span>
