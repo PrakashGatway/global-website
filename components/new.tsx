@@ -14,6 +14,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import axiosInstance from '@/app/axiosInstance'
 import toast from 'react-hot-toast'
+import UniversityCard from "./UniversityCard";
 
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -243,7 +244,7 @@ const FormSection = () => {
 };
 
 
-export default function UniDetailsClient({ data, Faqres }: { data: UniversityData; Faqres?: any }) {
+export default function UniDetailsClient({ data, Faqres, Universityres }: { data: UniversityData; Faqres?: any ,   Universityres?: any }) {
   const [activeSection, setActiveSection] = useState<string>("");
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -252,7 +253,7 @@ export default function UniDetailsClient({ data, Faqres }: { data: UniversityDat
   const longitude = data.google_location?.lng;
   const location = [data.city, data.country].filter(Boolean).join(", ");
 
-  console.log(data)
+ console.log(data)
   
   // Smooth scroll to a section
   const scrollToSection = (key: string) => {
@@ -413,12 +414,18 @@ useEffect(() => {
               <h2 className="text-2xl font-bold text-slate-900 mb-4">
                 {section.heading}
               </h2>
-              <div
-                className="prose max-w-none text-slate-700"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(section.content),
-                }}
-              />
+             <div
+  className="prose max-w-none text-slate-700 
+             prose-headings:text-slate-900
+             [&_ul]:list-disc 
+             [&_ol]:list-decimal 
+             [&_ul]:pl-5 
+             [&_ol]:pl-5 
+             [&_li]:mb-1"
+  dangerouslySetInnerHTML={{
+    __html: DOMPurify.sanitize(section.content),
+  }}
+/>
             </div>
           ))}
 
@@ -564,6 +571,65 @@ useEffect(() => {
 
         </div>
       </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-10">
+
+           <UniversityCard
+  university={Universityres
+    .map((uni) => (uni._id === data._id ? null : uni))
+    .filter(Boolean)}
+/>
+
+
+      </div>
+      
+
+
+       <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-0">
+      
+              {/* Text */}
+              <div className="text-white relative z-10">
+                
+                <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight">
+                 Start Your Global Education Journey
+                </h2>
+                <p
+                  className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
+                  >Explore top universities, expert guidance, and seamless admission support with Ooshas Global.</p>
+                
+                <div className="mt-6 sm:mt-8">
+                  <a href="/contact">
+                    <button className="bg-secondary hover:bg-primary px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md hover:scale-105 transition text-xs sm:text-base">
+                      Contact US
+                    </button>
+                  </a>
+                </div>
+              </div>
+      
+              {/* Decorative circle — only on lg */}
+              <div className="hidden lg:flex relative h-[380px] items-center justify-center">
+                <img
+                  src="/images/circle stand.png"
+                  alt=""
+                  className="absolute z-10 w-[90px] bottom-3"
+                  style={{ right: "calc(50% - 45px)" }}
+                />
+                <img
+                  src="/images/circle.png"
+                  alt=""
+                  className="w-80 xl:w-96 animate-spin [animation-duration:60s]"
+                />
+              </div>
+            </div>
+      
+            <img
+              src="/images/country-building-img.png"
+              alt=""
+              className="absolute bottom-0 right-0 w-2/3 sm:w-1/2 object-contain pointer-events-none"
+            />
+            <div className="absolute bottom-0 left-0 w-full sm:w-1/2 h-2 sm:h-3 bg-yellow-400" />
+          </section>
 
       
             <FAQSection 

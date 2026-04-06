@@ -7,189 +7,22 @@ import {
   Menu,
   X,
   GraduationCap,
-  MessageSquare,
-  Target,
-  FileText,
-  Briefcase,
   Phone,
-  Calendar,
   ChevronRight,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { usePathname } from "next/navigation"
-import axiosInstance from "@/app/axiosInstance"
 import { useGlobal } from "@/src/statecontext"
 import MultiStepForm from "./PopupForm"
 
-// ================= STATIC UNIVERSITIES DATA =================
-// Replace this data with your actual database later
-const GROUP_UNIVERSITIES_DATA = {
-  // Italy Universities Group
-  "italy": [
-    {
-      _id: "uni-1",
-      name: "University of Bologna",
-      slug: "university-of-bologna",
-      image: "/images/universities/bologna.png",
-      location: "Bologna, Italy",
-    },
-    {
-      _id: "uni-2",
-      name: "Sapienza University of Rome",
-      slug: "sapienza-university-rome",
-      image: "/images/universities/sapienza.png",
-      location: "Rome, Italy",
-    },
-    {
-      _id: "uni-3",
-      name: "University of Milan",
-      slug: "university-of-milan",
-      image: "/images/universities/milan.png",
-      location: "Milan, Italy",
-    },
-    {
-      _id: "uni-4",
-      name: "Politecnico di Milano",
-      slug: "politecnico-milano",
-      image: "/images/universities/polimi.png",
-      location: "Milan, Italy",
-    },
-  ],
-
-  // France Universities Group
-  "france": [
-    {
-      _id: "uni-5",
-      name: "Sorbonne University",
-      slug: "sorbonne-university",
-      image: "/images/universities/sorbonne.png",
-      location: "Paris, France",
-    },
-    {
-      _id: "uni-6",
-      name: "University of Paris",
-      slug: "university-of-paris",
-      image: "/images/universities/paris.png",
-      location: "Paris, France",
-    },
-    {
-      _id: "uni-7",
-      name: "Sciences Po",
-      slug: "sciences-po",
-      image: "/images/universities/sciencespo.png",
-      location: "Paris, France",
-    },
-  ],
-
-  // Dubai Universities Group
-  "dubai": [
-    {
-      _id: "uni-8",
-      name: "American University in Dubai",
-      slug: "american-university-dubai",
-      image: "/images/universities/aud.png",
-      location: "Dubai, UAE",
-    },
-    {
-      _id: "uni-9",
-      name: "University of Dubai",
-      slug: "university-of-dubai",
-      image: "/images/universities/ud.png",
-      location: "Dubai, UAE",
-    },
-    {
-      _id: "uni-10",
-      name: "Dubai Medical College",
-      slug: "dubai-medical-college",
-      image: "/images/universities/dmc.png",
-      location: "Dubai, UAE",
-    },
-  ],
-
-  // German Universities Group
-  "germany": [
-    {
-      _id: "uni-11",
-      name: "Technical University of Munich",
-      slug: "tum",
-      image: "/images/universities/tum.png",
-      location: "Munich, Germany",
-    },
-    {
-      _id: "uni-12",
-      name: "Heidelberg University",
-      slug: "heidelberg-university",
-      image: "/images/universities/heidelberg.png",
-      location: "Heidelberg, Germany",
-    },
-    {
-      _id: "uni-13",
-      name: "LMU Munich",
-      slug: "lmu-munich",
-      image: "/images/universities/lmu.png",
-      location: "Munich, Germany",
-    },
-  ],
-
-  // UK Universities Group
-  "uk": [
-    {
-      _id: "uni-14",
-      name: "University of Oxford",
-      slug: "oxford",
-      image: "/images/universities/oxford.png",
-      location: "Oxford, UK",
-    },
-    {
-      _id: "uni-15",
-      name: "University of Cambridge",
-      slug: "cambridge",
-      image: "/images/universities/cambridge.png",
-      location: "Cambridge, UK",
-    },
-    {
-      _id: "uni-16",
-      name: "Imperial College London",
-      slug: "imperial-college",
-      image: "/images/universities/imperial.png",
-      location: "London, UK",
-    },
-  ],
-
-  // USA Universities Group
-  "usa": [
-    {
-      _id: "uni-17",
-      name: "Harvard University",
-      slug: "harvard",
-      image: "/images/universities/harvard.png",
-      location: "Massachusetts, USA",
-    },
-    {
-      _id: "uni-18",
-      name: "Stanford University",
-      slug: "stanford",
-      image: "/images/universities/stanford.png",
-      location: "California, USA",
-    },
-    {
-      _id: "uni-19",
-      name: "MIT",
-      slug: "mit",
-      image: "/images/universities/mit.png",
-      location: "Massachusetts, USA",
-    },
-  ],
-}
-
 export default function Navbar({
-  Featureitem,
   Serviceitem,
-  countryres
+  countryres,
+  unicat
 }: {
-  Featureitem?: any[],
-  ServiceItem?: any[],
-  countryres?: any[]
+  Serviceitem?: any[],
+  countryres?: any[],
+  unicat?: any[]
 }) {
   const [isOpen, setIsOpen] = React.useState(false)
   const [mobileDropdown, setMobileDropdown] = React.useState(null)
@@ -197,10 +30,8 @@ export default function Navbar({
   const [isScrolled, setIsScrolled] = useState(false);
   const [Login, setLogin] = useState(false)
   const [openForm, setOpenForm] = useState(false)
-
-  // States for university groups
-  const [selectedGroup, setSelectedGroup] = useState<any>(null)
-  const [groupUniversities, setGroupUniversities] = useState<any[]>([])
+  const [selectedCountry, setSelectedCountry] = useState<any>(null)
+  const [countryUniversities, setCountryUniversities] = useState<any[]>([])
 
   const pathname = usePathname()
 
@@ -250,16 +81,50 @@ export default function Navbar({
     return null
   }
 
-  // Load static universities for a group
-  const loadGroupUniversities = (groupId: string, groupName: string) => {
-    if (selectedGroup?._id === groupId) return;
-
-    setSelectedGroup({ _id: groupId, name: groupName });
-
-    // Get static data from GROUP_UNIVERSITIES_DATA
-    const staticData = GROUP_UNIVERSITIES_DATA[groupId] || [];
-    setGroupUniversities(staticData);
+  // Get unique countries from universities data
+  const getUniqueCountries = () => {
+    if (!unicat || !Array.isArray(unicat)) return [];
+    
+    const countryMap = new Map();
+    
+    unicat.forEach((uni: any) => {
+      const countryCode = uni.country;
+      const countryName = uni.countryData?.[0]?.name;
+      const countryFlag = uni.countryData?.[0]?.flg;
+      
+      if (!countryMap.has(countryCode)) {
+        countryMap.set(countryCode, {
+          code: countryCode,
+          name: countryName,
+          flag: countryFlag,
+          slug: countryName?.toLowerCase().replace(/\s+/g, '-')
+        });
+      }
+    });
+    
+    return Array.from(countryMap.values());
   };
+
+  // Filter universities by country code
+  const filterUniversitiesByCountry = (countryCode: string) => {
+    if (!countryCode) return [];
+    if (!unicat || !Array.isArray(unicat) || unicat.length === 0) return [];
+    
+    const filtered = unicat.filter((uni: any) => uni.country === countryCode);
+    return filtered;
+  };
+
+  // Load universities for a specific country
+  const loadCountryUniversities = (country: any) => {
+    if (selectedCountry?.code === country.code) return;
+
+    setSelectedCountry(country);
+    
+    const filteredUniversities = filterUniversitiesByCountry(country.code);
+    setCountryUniversities(filteredUniversities);
+  };
+
+  const uniqueCountries = getUniqueCountries();
 
   return (
     <>
@@ -278,7 +143,6 @@ export default function Navbar({
         >
           {/* Left */}
           <div className={`items-center text-end px-8 gap-2 bg-white`}>
-
             <Link href="/">
               <Image
                 src="/images/newlogo3.png"
@@ -317,7 +181,7 @@ export default function Navbar({
             )}
 
             {/* ================= DESKTOP MENU ================= */}
-            <div className={`hidden lg:flex items-center gap-2   ${isScrolled ? "justify-center" : "justify-center pb-4"} `}>
+            <div className={`hidden lg:flex items-center gap-2 ${isScrolled ? "justify-center" : "justify-center pb-4"}`}>
               {navbar?.map((item, i) => (
                 <div key={i} className="relative group">
                   <Link
@@ -343,44 +207,41 @@ export default function Navbar({
 
                         {/* LOGIC FOR UNIVERSITIES DROPDOWN */}
                         {item.type === "destination" ? (
-                          <div className="flex gap-6 ">
-                            {/* LEFT COLUMN: Groups List */}
-                            <div className="w-1/3 border-r border-gray-100 ">
+                          <div className="flex gap-6">
+                            {/* LEFT COLUMN: Countries List */}
+                            <div className="w-1/3 border-r border-gray-100">
                               <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
-                                Top Groups
+                                Countries
                               </h3>
                               <div className="space-y-1">
-                                {Featureitem?.map((group) => {
-                                  const groupSlug = group.slug || group._id;
-                                  const groupHref = `/universities/group/${groupSlug}`;
+                                {uniqueCountries.map((country) => {
+                              
 
                                   return (
-                                    <div key={group._id} className="relative">
-                                      {/* Make the entire row clickable as a link */}
-                                      <Link
-                                        href={groupHref}
-                                        onMouseEnter={() => loadGroupUniversities(groupSlug, group.navbarTitle)}
-                                        onClick={() => loadGroupUniversities(groupSlug, group.navbarTitle)}
+                                    <div key={country.code} className="relative">
+                                      <div
+                                       
+                                        onMouseEnter={() => loadCountryUniversities(country)}
+                                        onClick={() => loadCountryUniversities(country)}
                                         className={`
                                           w-full text-left flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors text-sm
-                                          ${selectedGroup?._id === groupSlug
+                                          ${selectedCountry?.code === country.code
                                             ? "bg-[var(--primary)] text-white shadow-md"
                                             : "hover:bg-gray-100 text-gray-700"}
                                         `}
                                       >
                                         <div className="flex items-center gap-2">
-                                          <div className="w-6 h-6 rounded-full bg-white overflow-hidden flex-shrink-0">
-                                            <Image
-                                              src={group?.navbarImage || "/placeholder.png"}
-                                              alt={group.navbarTitle}
-                                              width={24} height={24}
-                                              className="object-cover w-full h-full"
+                                          {country.flag && (
+                                            <img 
+                                              src={country.flag} 
+                                              alt={country.name}
+                                              className="w-5 h-5 rounded-full object-cover"
                                             />
-                                          </div>
-                                          <span className="font-medium truncate">{group.navbarTitle}</span>
+                                          )}
+                                          <span className="font-medium truncate">{country.name}</span>
                                         </div>
-                                        {selectedGroup?._id === groupSlug && <ChevronRight size={14} />}
-                                      </Link>
+                                        {selectedCountry?.code === country.code && <ChevronRight size={14} />}
+                                      </div>
                                     </div>
                                   );
                                 })}
@@ -390,95 +251,98 @@ export default function Navbar({
                             {/* RIGHT COLUMN: Universities List */}
                             <div className="w-2/3 pl-2">
                               <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
-                                {selectedGroup ? `Universities in ${selectedGroup.name}` : "Select a Group"}
+                                {selectedCountry ? `Universities in ${selectedCountry.name}` : "Select a Country"}
                               </h3>
 
-                              {selectedGroup ? (
-                                groupUniversities.length > 0 ? (
+                              {selectedCountry ? (
+                                countryUniversities.length > 0 ? (
                                   <div className="grid grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-2">
-                                    {groupUniversities.map((uni) => (
+                                    {countryUniversities.map((uni) => (
                                       <Link
                                         key={uni._id}
                                         href={`/universities/${uni.slug}`}
                                         className="flex items-center gap-3 bg-gray-50 p-2.5 rounded-xl hover:bg-[var(--primary)] hover:text-white transition group/item"
                                       >
                                         <div className="w-10 h-10 rounded-full bg-white shadow overflow-hidden flex-shrink-0">
-                                          <Image
-                                            src={uni?.image || "/placeholder.png"}
-                                            alt={uni?.name}
-                                            width={40}
-                                            height={40}
-                                            className="object-cover w-full  h-full"
-                                          />
+                                          {uni.uni_logo ? (
+                                            <Image
+                                              src={uni.uni_logo}
+                                              alt={uni.name}
+                                              width={40}
+                                              height={40}
+                                              className="object-cover w-full h-full"
+                                            />
+                                          ) : (
+                                            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                                              <GraduationCap size={20} className="text-gray-400" />
+                                            </div>
+                                          )}
                                         </div>
                                         <div className="overflow-hidden">
                                           <p className="font-semibold text-sm truncate">{uni.name}</p>
-                                          <p className="text-xs opacity-70 truncate">{uni.location || "View Details"}</p>
+                                          <p className="text-xs opacity-70 truncate">
+                                            {uni.countryData?.[0]?.name || uni.country || "View Details"}
+                                          </p>
                                         </div>
                                       </Link>
                                     ))}
                                   </div>
                                 ) : (
                                   <div className="text-center py-8 text-gray-400 text-sm">
-                                    No universities found in this group.
+                                    No universities found in {selectedCountry.name}
                                   </div>
                                 )
                               ) : (
                                 <div className="flex flex-col items-center justify-center h-40 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
                                   <GraduationCap size={32} className="mb-2 opacity-50" />
-                                  <span className="text-xs">see universities</span>
+                                  <span className="text-xs">Select a country to see universities</span>
                                 </div>
                               )}
                             </div>
                           </div>
                         ) : (
                           // DEFAULT DROPDOWN FOR SERVICE & COUNTRY
-                          <>
-                            {item.type === "destination" && (
-                              <div className="mb-4 px-1">
-                                <h3 className="text-sm font-semibold text-gray-800">Top Group</h3>
-                                <div className="w-12 h-[2px] bg-[var(--primary)] mt-1 rounded-full"></div>
-                              </div>
-                            )}
-                            <div className="grid grid-cols-2 gap-3">
-                              {(
-                                item.type === "service"
-                                  ? Serviceitem
-                                  : item.type === "country"
-                                    ? countryres
-                                    : Featureitem
-                              )?.map((uni) => {
-                                const href =
-                                  item.type === "service"
-                                    ? `/service/${uni.slug}`
-                                    : item.type === "country"
-                                      ? `/${uni.slug}`
-                                      : `/universities/group/${uni.slug}`;
+                          <div className="grid grid-cols-2 gap-3">
+                            {(
+                              item.type === "service"
+                                ? Serviceitem
+                                : item.type === "country"
+                                  ? countryres
+                                  : uniqueCountries
+                            )?.map((item: any) => {
+                              const href = item.type === "service" 
+                                ? `/service/${item.slug}`
+                                : item.type === "country"
+                                  ? `/${item.slug}`
+                                  : `/destination/${item.slug}`;
 
-                                return (
-                                  <Link
-                                    key={uni._id}
-                                    href={href}
-                                    className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition"
-                                  >
-                                    <div className="w-10 h-10 rounded-full bg-white shadow overflow-hidden">
-                                      <Image
-                                        src={uni?.navbarImage || "/placeholder.png"}
-                                        alt={uni?.navbarTitle}
-                                        width={40}
-                                        height={40}
-                                        className="object-cover w-full h-full"
-                                      />
-                                    </div>
-                                    <div>
-                                      <p className="font-semibold text-sm">{uni.navbarTitle}</p>
-                                      <p className="text-xs opacity-70">{uni.subTitle}</p>
-                                    </div>
-                                  </Link>
-                                );
-                              })}
-                            </div>
-                          </>
+                              const title = item.navbarTitle || item.name;
+                              const image = item.navbarImage || item.flag;
+                              const subTitle = item.subTitle || `${item.code || ''} - ${item.universityCount || 0} universities`;
+
+                              return (
+                                <Link
+                                  key={item._id || item.code}
+                                  href={href}
+                                  className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition"
+                                >
+                                  <div className="w-10 h-10 rounded-full bg-white shadow overflow-hidden">
+                                    <Image
+                                      src={image || "/placeholder.png"}
+                                      alt={title}
+                                      width={40}
+                                      height={40}
+                                      className="object-cover w-full h-full"
+                                    />
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-sm">{title}</p>
+                                    <p className="text-xs opacity-70">{subTitle}</p>
+                                  </div>
+                                </Link>
+                              );
+                            })}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -495,62 +359,36 @@ export default function Navbar({
                           {profile?.name?.charAt(0).toUpperCase()}
                         </div>
                       </div>
-                      <div
-                        className="
-    absolute right-0 mt-3 w-56
-    bg-white rounded-xl shadow-xl border border-gray-100
-    opacity-0 invisible
-    translate-y-2
-    group-hover:opacity-100
-    group-hover:visible
-    group-hover:translate-y-0
-    transition-all duration-300
-    z-50
-  "
-                      >
+                      <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
                         <div className="p-4 border-b">
                           <p className="font-semibold text-gray-800">{profile?.name}</p>
                           <p className="text-sm text-gray-500">{profile?.email}</p>
                         </div>
-                        <div className="flex flex-col text-sm ">
+                        <div className="flex flex-col text-sm">
                           <Link href="/dashboard" className="px-4 py-3 hover:bg-gray-100 transition">Dashboard</Link>
                           <button onClick={Logout} className="text-left px-4 py-3 hover:bg-red-50 text-red-600 transition">Logout</button>
                         </div>
                       </div>
                     </>
                   ) : (
-                    <div className="">
-                      <Link href="/login" className="bg-secondary text-white px-5 py-3 hover:bg-primary rounded-full text-sm font-semibold">
-                        Login / Signup
-                      </Link>
-                    </div>
+                    <Link href="/login" className="bg-secondary text-white px-5 py-3 hover:bg-primary rounded-full text-sm font-semibold">
+                      Login / Signup
+                    </Link>
                   )}
                 </div>
               )}
             </div>
           </div>
 
-          {/* MOBILE TOGGLE */}
           {/* MOBILE RIGHT ACTIONS */}
           <div className="flex items-center gap-3 pr-3 lg:hidden">
-
-            {/* 📞 Call Button */}
-            <a
-              href="tel:+919887120429"
-              className="flex items-center gap-1 bg-white text-[#f46c44] px-3 py-2 rounded-full shadow-md active:scale-95 transition"
-            >
+            <a href="tel:+919887120429" className="flex items-center gap-1 bg-white text-[#f46c44] px-3 py-2 rounded-full shadow-md active:scale-95 transition">
               <Phone size={16} />
               <span className="text-xs font-semibold">9887120429</span>
             </a>
-
-            {/* ☰ Menu Button */}
-            <button
-              onClick={() => setIsOpen(true)}
-              className="text-white bg-[#6d1901] p-2 rounded-md"
-            >
+            <button onClick={() => setIsOpen(true)} className="text-white bg-[#6d1901] p-2 rounded-md">
               <Menu size={22} />
             </button>
-
           </div>
         </div>
 
@@ -558,7 +396,7 @@ export default function Navbar({
         <AnimatePresence>
           {isOpen && (
             <div className="fixed inset-0 z-[9999] bg-black/30 backdrop-blur-sm flex h-[100vh]">
-              <div className="absolute inset-0 " onClick={() => setIsOpen(false)} />
+              <div className="absolute inset-0" onClick={() => setIsOpen(false)} />
               <motion.aside
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
@@ -572,105 +410,51 @@ export default function Navbar({
                     <X size={22} />
                   </button>
                 </div>
-
                 <div className="flex-1 px-4">
                   {navbar.map((item) => (
                     <div key={item.title} className="rounded-xl px-2 py-1 hover:bg-gray-50 transition">
                       <div className="flex items-center justify-between py-2">
-                        <Link
-                          href={item.route}
-                          onClick={() => { if (!item.hasDropdown) setIsOpen(false); }}
-                          className="text-[15px] font-semibold text-gray-800 hover:text-[var(--primary)]"
-                        >
+                        <Link href={item.route} onClick={() => { if (!item.hasDropdown) setIsOpen(false); }} className="text-[15px] font-semibold text-gray-800 hover:text-[var(--primary)]">
                           {item.title}
                         </Link>
                         {item.hasDropdown && (
-                          <button
-                            onClick={() => setMobileDropdown(mobileDropdown === item.id ? null : item.id)}
-                            className="p-2"
-                          >
+                          <button onClick={() => setMobileDropdown(mobileDropdown === item.id ? null : item.id)} className="p-2">
                             <motion.div animate={{ rotate: mobileDropdown === item.id ? 180 : 0 }} transition={{ duration: 0.25 }}>
                               <ChevronDown size={18} />
                             </motion.div>
                           </button>
                         )}
                       </div>
-
                       <AnimatePresence>
                         {item.hasDropdown && mobileDropdown === item.id && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.25 }}
-                            className="overflow-hidden pl-4 border-l-2 border-gray-100"
-                          >
-                            {/* MOBILE LOGIC FOR UNIVERSITIES */}
+                          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden pl-4 border-l-2 border-gray-100">
                             {item.type === "destination" ? (
-                              <div className="space-y-2">
-                                <p className="text-xs font-bold text-gray-400 uppercase mb-2">Select Group</p>
-                                {Featureitem?.map((group) => {
-                                  const groupSlug = group.slug || group._id;
-                                  // const groupHref = `/universities/group/${groupSlug}`;
-                                  
-                                const groupHref =
-                                  item.type === "service"
-                                    ? `/service/${group.slug}`
-                                    : item.type === "country"
-                                      ? `/${group.slug}`
-                                      : `/universities/group/${group.slug}`;
-
-                                  return (
-                                    <div key={group._id} className="mb-2">
-                                      {/* Make group title clickable */}
-                                      <Link
-                                        href={groupHref}
-                                        onClick={() => {
-                                          loadGroupUniversities(groupSlug, group.navbarTitle);
-                                          setIsOpen(false);
-                                        }}
-                                        className="w-full text-left font-medium text-sm text-[var(--primary)] mb-1 flex justify-between hover:underline"
-                                      >
-                                        {group.navbarTitle}
-                                        {selectedGroup?._id === groupSlug && <ChevronDown size={14} />}
-                                      </Link>
-
-                                      {/* Show universities if this group is selected in mobile */}
-                                      {selectedGroup?._id === groupSlug && (
-                                        <div className="pl-2 space-y-1 mt-1">
-                                          {groupUniversities.map(uni => (
-                                            <Link
-                                              key={uni._id}
-                                              href={`/universities/${uni.slug}`}
-                                              onClick={() => setIsOpen(false)}
-                                              className="block text-xs text-gray-600 py-1 hover:text-[var(--primary)]"
-                                            >
-                                              • {uni.name}
-                                            </Link>
-                                          ))}
-                                        </div>
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            ) : (
-                              // Standard Mobile Dropdown
-                              (item.type === "service" ? Serviceitem : item.type === "country" ? countryres : Featureitem)?.map((uni) => {
-                                const href = item.type === "service" ? `/service/${uni.slug}` : item.type === "country" ? `/${uni.slug}` : `/universities/group/${uni.slug}`;
+  <div className="space-y-2">
+    <p className="text-xs font-bold text-gray-400 uppercase mb-2">Select Country</p>
+    {uniqueCountries.map((country) => (
+      <MobileCountryDropdown
+        key={country.code}
+        country={country}
+        selectedCountry={selectedCountry}
+        countryUniversities={countryUniversities}
+        loadCountryUniversities={loadCountryUniversities}
+        filterUniversitiesByCountry={filterUniversitiesByCountry}
+        setIsOpen={setIsOpen}
+        setMobileDropdown={setMobileDropdown}
+      />
+    ))}
+  </div>
+) : (
+                              (item.type === "service" ? Serviceitem : countryres)?.map((item: any) => {
+                                const href = item.type === "service" ? `/service/${item.slug}` : `/${item.slug}`;
                                 return (
-                                  <Link
-                                    key={uni._id}
-                                    href={href}
-                                    onClick={() => { setIsOpen(false); setMobileDropdown(null); }}
-                                    className="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-gray-50 transition"
-                                  >
+                                  <Link key={item._id} href={href} onClick={() => { setIsOpen(false); setMobileDropdown(null); }} className="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-gray-50 transition">
                                     <div className="w-9 h-9 rounded-full bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0">
-                                      <Image src={uni.navbarImage || "https://www.countryflags.com/wp-content/uploads/canada-flag-png-xl.png"} alt={uni.navbarTitle} width={36} height={36} className="object-cover w-20 h-full" />
+                                      <Image src={item.navbarImage || "/placeholder.png"} alt={item.navbarTitle} width={36} height={36} className="object-cover w-20 h-full" />
                                     </div>
                                     <div>
-                                      <span className="text-xs font-medium text-gray-700">{uni.navbarTitle}</span>
-                                      {uni.subTitle && <p className="text-[10px] text-gray-400">{uni.subTitle}</p>}
+                                      <span className="text-xs font-medium text-gray-700">{item.navbarTitle}</span>
+                                      {item.subTitle && <p className="text-[10px] text-gray-400">{item.subTitle}</p>}
                                     </div>
                                   </Link>
                                 );
@@ -682,7 +466,6 @@ export default function Navbar({
                     </div>
                   ))}
                 </div>
-
                 <div className="p-5 border-t bg-white">
                   {!Login && !profile ? (
                     <Link href="/dashboard" onClick={() => setIsOpen(false)} className="block text-center bg-[var(--primary)] text-white pb-3 rounded-xl font-semibold hover:opacity-90 transition">
@@ -706,3 +489,97 @@ export default function Navbar({
     </>
   )
 }
+
+
+// Add this component inside your Navbar component or in a separate file
+const MobileCountryDropdown = ({ 
+  country, 
+  selectedCountry, 
+  countryUniversities, 
+  loadCountryUniversities, 
+  filterUniversitiesByCountry,
+  
+  setMobileDropdown 
+}: any) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    // Close dropdown when selected country changes to a different country
+    if (selectedCountry?.code !== country.code) {
+      setIsOpen(false);
+    }
+  }, [selectedCountry?.code, country.code]);
+
+  const handleToggle = () => {
+    if (selectedCountry?.code === country.code && isOpen) {
+      setIsOpen(false);
+    } else {
+      loadCountryUniversities(country);
+      setIsOpen(true);
+    }
+  };
+
+  return (
+    <div className="mb-2">
+      <div 
+        onClick={handleToggle} 
+        className="w-full text-left font-medium text-sm text-[var(--primary)] mb-1 flex justify-between items-center hover:underline cursor-pointer"
+      >
+        <div className="flex items-center gap-2">
+          {country.flag && (
+            <img src={country.flag} alt={country.name} className="w-4 h-4 rounded-full" />
+          )}
+          <span>{country.name}</span>
+          <span className="text-xs text-gray-400">
+            ({filterUniversitiesByCountry(country.code).length})
+          </span>
+        </div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          <ChevronDown size={14} />
+        </motion.div>
+      </div>
+      
+      <AnimatePresence>
+        {isOpen && selectedCountry?.code === country.code && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="pl-2 space-y-1 mt-1 overflow-hidden"
+          >
+            {countryUniversities.map(uni => (
+              <Link 
+                key={uni._id} 
+                href={`/universities/${uni.slug}`} 
+                onClick={() => {
+                  setIsOpen(false);
+                  setMobileDropdown(null);
+                }} 
+                className="flex items-center gap-2 text-xs text-gray-600 py-2 px-2 hover:bg-gray-50 hover:text-[var(--primary)] rounded-lg transition"
+              >
+                <div className="w-6 h-6 rounded-full bg-gray-100 overflow-hidden flex-shrink-0">
+                  {uni.uni_logo ? (
+                    <Image
+                      src={uni.uni_logo}
+                      alt={uni.name}
+                      width={24}
+                      height={24}
+                      className="object-cover w-full h-full"
+                    />
+                  ) : (
+                    <GraduationCap size={14} className="text-gray-400 m-auto mt-1" />
+                  )}
+                </div>
+                <span className="flex-1">{uni.name}</span>
+              </Link>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};

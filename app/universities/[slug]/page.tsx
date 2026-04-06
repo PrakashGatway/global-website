@@ -97,6 +97,7 @@ export default async function UniDetailsPage({
     console.error("Error fetching university data:", err);
   }
 
+  const Universityres = await serverInstance.get("/universities?limit=5")
   
   const Faqres = await serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`)
 
@@ -116,6 +117,6 @@ export default async function UniDetailsPage({
     );
   }
 
-  console.log(Faqres.data.data)
-  return <UniDetailsClient data={universityData} Faqres={Faqres.data.data || []} />;
+
+  return <UniDetailsClient data={universityData} Faqres={Faqres.data.data || []} Universityres={Universityres.data.result || []} />;
 }
