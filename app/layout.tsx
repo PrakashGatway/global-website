@@ -58,7 +58,7 @@ export default async function RootLayout({
   const [feature, countryres, unicat] = await Promise.all([
     serverInstance.get("/page-information/navbar?isNavbar=true"),
     serverInstance.get("/page-information/navbar?isFeatured=true&type=country"),
-    serverInstance.get("/universities?limit=5"),
+    serverInstance.get("/universities/search"),
   ]);
 
   const featureRes = feature.data.data.filter(
@@ -137,6 +137,7 @@ export default async function RootLayout({
             Featureitem={featureRes || []}
             Serviceitem={serviceres || []}
             countryres={countryres.data.data}
+            unicat={unicat.data.data}
           />
 
           {children}
