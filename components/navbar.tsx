@@ -105,9 +105,7 @@ export default function Navbar({
     return Array.from(countryMap.values());
   };
 
-<<<<<<< HEAD
-  
-=======
+// <<<<<<< HEAD
   // Filter universities by country code
   const filterUniversitiesByCountry = (countryCode: string) => {
     if (!countryCode) return [];
@@ -128,7 +126,7 @@ export default function Navbar({
   };
 
   const uniqueCountries = getUniqueCountries();
->>>>>>> dbc4de64f697e561e6b4575774845dab574d990c
+// >>>>>>> dbc4de64f697e561e6b4575774845dab574d990c
 
   return (
     <>
