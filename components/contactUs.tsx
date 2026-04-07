@@ -7,17 +7,20 @@ import axiosInstance from "../app/axiosInstance";
 import {toast} from "react-hot-toast"
 import Link from "next/link";
 import FAQSection from "@/components/faqPage";
+import { DynamicLucideIcon } from "./DynamicLucideIcon";
 
 export default function ContactUsPage({ contactData ,Faqres }) {
   // Extract data from the response
   const heroTitle = contactData?.sections?.hero?.title || "";
   const heroSubtitle = contactData?.sections?.hero?.subtitle || "";
   const getInTouchTitle = contactData?.sections?.getInTouch?.title 
+  const getInTouchpoint = contactData?.sections?.getInTouch?.points || [];
+  const OfficeLocation = contactData?.sections?.OfficeLocation?.points || [];
   const getInTouchSubtitle = contactData?.sections?.getInTouch?.subtitle 
   const sendMessageTitle = contactData?.sections?.sendMessage?.title 
   const sendMessageSubtitle = contactData?.sections?.sendMessage?.subtitle 
   const sendMessagePoints = contactData?.sections?.sendMessage?.points || [];
-
+// console.log(getInTouchpoint)
   // Icon mapping for sendMessage points
   const pointIcons = {
     message: <MessageSquare className="h-6 w-6" style={{ color: '#FF6B35' }} />
@@ -105,7 +108,7 @@ export default function ContactUsPage({ contactData ,Faqres }) {
       </section>
 
       {/* Contact Information Section */}
-      <section className="py-20 mt-35 relative" style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
+      <section className="py-20 mt-5 relative" style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-4xl lg:text-[3.6rem] font-bold mb-2" style={{ color: '#FF6B35' }}>
@@ -121,6 +124,9 @@ export default function ContactUsPage({ contactData ,Faqres }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {/* Contact Card 1 */}
+
+            {getInTouchpoint.map((point,idx) => (
+                
             <motion.div
               className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
               initial={{ opacity: 0, y: 20 }}
@@ -129,78 +135,26 @@ export default function ContactUsPage({ contactData ,Faqres }) {
               viewport={{ once: true }}
             >
               <div className="bg-[#FF6B35] w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <Phone className="h-8 w-8 text-white" />
+                {/* <Phone className="h-8 w-8 text-white" /> */}
+                <DynamicLucideIcon name={`${point?.icon}`} size={40} className="sm:w-10 sm:h-10 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3 text-center">Phone Support</h3>
-              <p className="text-gray-600 text-center mb-4">Call us for immediate assistance</p>
+              <h3 className="text-xl font-bold text-gray-800 mb-3 text-center">{point?.title}</h3>
+              <p className="text-gray-600 text-center mb-4">{point?.subtitle}</p>
               <div className="space-y-2">
-                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>+1 (555) 123-4567</p>
-                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>+1 (555) 987-6543</p>
+                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>{point?.Number?.split("||")[0]}</p>
+                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>{point?.Number?.split("||")[1]}</p>
+                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>{point?.email?.split("||")[0]}</p>
+                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>{point?.email?.split("||")[1]}</p>
+                <p className="text-lg font-semibold text-center" >{point?.Location}</p>
+                <p className="text-lg font-semibold text-center" >{point?.timing?.split("||")[0]}</p>
+                <p className="text-lg font-semibold text-center" >{point?.timing?.split("||")[1]}</p>
+                <p className="text-lg font-semibold text-center" >{point?.timing?.split("||")[2]}</p>
+              
               </div>
-              <p className="text-sm text-gray-500 text-center mt-4">Mon-Sat: 9 AM - 8 PM</p>
+              <p className="text-sm text-gray-500 text-center mt-4">{point?.footertext}</p>
             </motion.div>
+            ))}
 
-            {/* Contact Card 2 */}
-            <motion.div
-              className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <div className="bg-[#FF6B35] w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <Mail className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3 text-center">Email Support</h3>
-              <p className="text-gray-600 text-center mb-4">Send us your queries</p>
-              <div className="space-y-2">
-                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>info@ooshasglobal.com</p>
-                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>support@ooshasglobal.com</p>
-              </div>
-              <p className="text-sm text-gray-500 text-center mt-4">Response within 24 hours</p>
-            </motion.div>
-
-            {/* Contact Card 3 */}
-            <motion.div
-              className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <div className="bg-[#FF6B35] w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <MapPin className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3 text-center">Visit Our Office</h3>
-              <p className="text-gray-600 text-center mb-4">Meet us in person</p>
-              <p className="text-center text-gray-700">
-                123 Education Street,<br />
-                New York, NY 10001<br />
-                United States
-              </p>
-              <p className="text-sm text-gray-500 text-center mt-4">By appointment only</p>
-            </motion.div>
-
-            {/* Contact Card 4 */}
-            <motion.div
-              className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <div className="bg-[#FF6B35] w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
-                <Clock className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3 text-center">Working Hours</h3>
-              <p className="text-gray-600 text-center mb-4">We're here for you</p>
-              <div className="space-y-1 text-center">
-                <p className="text-gray-700">Monday - Friday: 9 AM - 7 PM</p>
-                <p className="text-gray-700">Saturday: 10 AM - 5 PM</p>
-                <p className="text-gray-700">Sunday: 11 AM - 4 PM</p>
-              </div>
-              <p className="text-sm text-gray-500 text-center mt-4">Emergency support available</p>
-            </motion.div>
           </div>
         </div>
       </section>
@@ -337,7 +291,7 @@ export default function ContactUsPage({ contactData ,Faqres }) {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 max-w-7xl mx-auto px-2">
+      {/* <section className="py-20 max-w-7xl mx-auto px-2">
         <div className="text-center mb-12">
           <h2 className="text-4xl lg:text-[3.6rem] font-bold mb-4" style={{ color: '#FF6B35' }}>
             Frequently Asked Questions
@@ -402,7 +356,7 @@ export default function ContactUsPage({ contactData ,Faqres }) {
             </button>
           </Link>
         </div>
-      </section>
+      </section> */}
 
       {/* Map Section */}
       <section className="py-12 bg-gray-100">
@@ -426,18 +380,14 @@ export default function ContactUsPage({ contactData ,Faqres }) {
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">Office Locations</h3>
                 <div className="space-y-4">
-                  <div>
-                    <h4 className="font-bold text-gray-700">Head Office</h4>
-                    <p className="text-gray-600">123 Education Street, New York, NY 10001</p>
+                  {OfficeLocation.map((point,idx) => (
+                  <div key={idx}>
+                    <h4 className="font-bold text-gray-700">{point.title}</h4>
+                    <p className="text-gray-600">{point.subtitle}</p>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-gray-700">Branch Office</h4>
-                    <p className="text-gray-600">456 Learning Avenue, San Francisco, CA 94107</p>
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-700">International Office</h4>
-                    <p className="text-gray-600">789 Knowledge Road, London, UK EC1V 2NX</p>
-                  </div>
+
+                  ))}
+                  
                 </div>
               </div>
 
@@ -455,7 +405,7 @@ export default function ContactUsPage({ contactData ,Faqres }) {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20" style={{ backgroundColor: '#FF6B35' }}>
+      {/* <section className="py-20" style={{ backgroundColor: '#FF6B35' }}>
         <div className="max-w-7xl mx-auto px-2 text-center">
           <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
             Ready to Start Your Journey?
@@ -475,8 +425,66 @@ export default function ContactUsPage({ contactData ,Faqres }) {
             </button>
           </div>
         </div>
-      </section>
+      </section> */}
+
+        <CTASection />
+
       <FAQSection Faqres = {Faqres} />
     </div>
   );
+}
+
+
+
+const CTASection = ({ data }: { data?: any }) => {
+  if (data?.isHidden === "yes") return null
+  return (
+    <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-0">
+
+        {/* Text */}
+        <div className="text-white relative z-10">
+          {/* <Tag data={data?.tag} text={data?.title} css={"text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"}/> */}
+          <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight">
+            {data?.title || "Start Your Global Education Journey"}
+          </h2>
+          <p
+            className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
+            dangerouslySetInnerHTML={{
+              __html: data?.subtitle || "Explore top universities, expert guidance, and seamless admission support with Ooshas Global.",
+            }}
+          />
+          <div className="mt-6 sm:mt-8">
+            <Link href="#contact-form">
+              <button className="bg-white text-[#FF6B35] px-10 py-4 font-bold text-lg hover:bg-gray-100 transition-all" style={{ borderTopRightRadius: '25px' }}>
+                Schedule Free Consultation
+              </button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Decorative circle — only on lg */}
+        <div className="hidden lg:flex relative h-[380px] items-center justify-center">
+          <img
+            src="/images/circle stand.png"
+            alt=""
+            className="absolute z-10 w-[90px] bottom-3"
+            style={{ right: "calc(50% - 45px)" }}
+          />
+          <img
+            src="/images/circle.png"
+            alt=""
+            className="w-80 xl:w-96 animate-spin [animation-duration:60s]"
+          />
+        </div>
+      </div>
+
+      <img
+        src="/images/country-building-img.png"
+        alt=""
+        className="absolute bottom-0 right-0 w-2/3 sm:w-1/2 object-contain pointer-events-none"
+      />
+      <div className="absolute bottom-0 left-0 w-full sm:w-1/2 h-2 sm:h-3 bg-yellow-400" />
+    </section>
+  )
 }

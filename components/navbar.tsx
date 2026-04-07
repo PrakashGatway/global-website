@@ -261,6 +261,8 @@ export default function Navbar({
     setGroupUniversities(staticData);
   };
 
+  
+
   return (
     <>
       {/* ================= MAIN NAVBAR ================= */}

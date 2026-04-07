@@ -846,7 +846,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         )
       })}
 
-      <FAQSection Faqres={Faqres} />
+      {/* <FAQSection Faqres={Faqres} /> */}
     </>
   )
 }
