@@ -387,7 +387,8 @@ export default function Homepage({
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {/* Card */}
           {homePage?.stats?.item?.map((stat, index) => (
-            <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] transition duration-300">
+            <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] 
+            transition duration-300">
               <DynamicLucideIcon
                 name={stat?.icon}
                 className="w-10 h-10 text-[#8B4513] group-hover:text-white transition"

@@ -69,11 +69,11 @@ const StudentVisaStories = ({
               {title?.split("||")[0]?.trim()}
             </span> */}
             <br />
+            <span className="text-primary font-bold relative inline-block lg:text-4xl">
+              {/* {title?.split("||")[1]?.trim()} */}
             <Tag data={tag} css={"text-primary lg:text-4xl font-bold"} text={title?.split("||")[1]?.trim()} />
-            {/* <span className="text-primary font-bold relative inline-block lg:text-4xl">
-              {title?.split("||")[1]?.trim()} */}
               <span className="absolute right-0 -bottom-2 w-25 h-[2px] lg:h-1 bg-[#F46C44]" />
-            {/* </span> */}
+            </span>
           </span>
 
           {subtitle && (
