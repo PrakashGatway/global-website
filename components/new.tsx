@@ -254,7 +254,7 @@ export default function UniDetailsClient({
   const longitude = data.google_location?.lng;
   const location = [data.city, data.country].filter(Boolean).join(", ");
 
-  console.log(data);
+  
 
   // Smooth scroll to a section
   const scrollToSection = (key: string) => {
@@ -424,6 +424,7 @@ export default function UniDetailsClient({
              [&_ul]:pl-5 
              [&_ol]:pl-5 
              [&_li]:my-2
+             [&_p]:my-4
              "
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(section.content),
