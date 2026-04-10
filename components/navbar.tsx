@@ -84,14 +84,14 @@ export default function Navbar({
   // Get unique countries from universities data
   const getUniqueCountries = () => {
     if (!unicat || !Array.isArray(unicat)) return [];
-    
+
     const countryMap = new Map();
-    
+
     unicat.forEach((uni: any) => {
       const countryCode = uni.country;
       const countryName = uni.countryData?.[0]?.name;
       const countryFlag = uni.countryData?.[0]?.flg;
-      
+
       if (!countryMap.has(countryCode)) {
         countryMap.set(countryCode, {
           code: countryCode,
@@ -101,16 +101,16 @@ export default function Navbar({
         });
       }
     });
-    
+
     return Array.from(countryMap.values());
   };
 
-// <<<<<<< HEAD
+  // <<<<<<< HEAD
   // Filter universities by country code
   const filterUniversitiesByCountry = (countryCode: string) => {
     if (!countryCode) return [];
     if (!unicat || !Array.isArray(unicat) || unicat.length === 0) return [];
-    
+
     const filtered = unicat.filter((uni: any) => uni.country === countryCode);
     return filtered;
   };
@@ -120,13 +120,13 @@ export default function Navbar({
     if (selectedCountry?.code === country.code) return;
 
     setSelectedCountry(country);
-    
+
     const filteredUniversities = filterUniversitiesByCountry(country.code);
     setCountryUniversities(filteredUniversities);
   };
 
   const uniqueCountries = getUniqueCountries();
-// >>>>>>> dbc4de64f697e561e6b4575774845dab574d990c
+  // >>>>>>> dbc4de64f697e561e6b4575774845dab574d990c
 
   return (
     <>
@@ -211,112 +211,111 @@ export default function Navbar({
                         {item.type === "destination" ? (
                           <div className="flex gap-6">
                             {/* LEFT COLUMN: Countries List */}
-                           <div className="w-1/3 border-r border-gray-100">
-  <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
-    Countries
-  </h3>
+                            <div className="w-1/3 border-r border-gray-100">
+                              <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
+                                Countries
+                              </h3>
 
-  {/* 🔥 SCROLLABLE AREA */}
-  <div className="space-y-1 max-h-60 overflow-y-auto pr-2">
-    {uniqueCountries.map((country) => {
-      return (
-        <div key={country.code} className="relative">
-          <div
-            onMouseEnter={() => loadCountryUniversities(country)}
-            onClick={() => loadCountryUniversities(country)}
-            className={`
+                              {/* 🔥 SCROLLABLE AREA */}
+                              <div className="space-y-1 no-scrollbar max-h-[60vh] hide-scrollbar overflow-y-auto pr-2">
+                                {uniqueCountries.map((country) => {
+                                  return (
+                                    <div key={country.code} className="relative">
+                                      <div
+                                        onMouseEnter={() => loadCountryUniversities(country)}
+                                        onClick={() => loadCountryUniversities(country)}
+                                        className={`
               w-full text-left flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors text-sm
-              ${
-                selectedCountry?.code === country.code
-                  ? "bg-[var(--primary)] text-white shadow-md"
-                  : "hover:bg-gray-100 text-gray-700"
-              }
+              ${selectedCountry?.code === country.code
+                                            ? "bg-[var(--primary)] text-white shadow-md"
+                                            : "hover:bg-gray-100 text-gray-700"
+                                          }
             `}
-          >
-            <div className="flex items-center gap-2">
-              {country.flag && (
-                <img
-                  src={country.flag}
-                  alt={country.name}
-                  className="w-5 h-5 rounded-full object-cover"
-                />
-              )}
-              <span className="font-medium truncate">
-                {country.name}
-              </span>
-            </div>
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          {country.flag && (
+                                            <img
+                                              src={country.flag}
+                                              alt={country.name}
+                                              className="w-5 h-5 rounded-full object-cover"
+                                            />
+                                          )}
+                                          <span className="font-medium truncate">
+                                            {country.name}
+                                          </span>
+                                        </div>
 
-            {selectedCountry?.code === country.code && (
-              <ChevronRight size={14} />
-            )}
-          </div>
-        </div>
-      );
-    })}
-  </div>
-</div>
+                                        {selectedCountry?.code === country.code && (
+                                          <ChevronRight size={14} />
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
 
                             {/* RIGHT COLUMN: Universities List */}
-                           <div className="w-2/3 pl-2 flex flex-col">
-  <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
-    {selectedCountry
-      ? `Universities in ${selectedCountry.name}`
-      : "Select a Country"}
-  </h3>
+                            <div className="w-2/3 pl-2 flex flex-col">
+                              <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
+                                {selectedCountry
+                                  ? `Universities in ${selectedCountry.name}`
+                                  : "Select a Country"}
+                              </h3>
 
-  {selectedCountry ? (
-    countryUniversities.length > 0 ? (
-      // 🔥 SCROLLABLE AREA
-      <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2">
-        {countryUniversities.map((uni) => (
-          <Link
-  key={uni._id}
-  href={`/universities/${uni.slug}`}
-  className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100 hover:bg-[var(--primary)] hover:text-white hover:shadow-md transition group/item"
->
-  {/* ✅ Square Logo */}
-  <div className="w-12 h-12 rounded-lg bg-white border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0">
-    {uni.uni_logo ? (
-      <Image
-        src={uni.uni_logo}
-        alt={uni.name}
-        width={48}
-        height={48}
-        className="object-contain w-full h-full p-1"
-      />
-    ) : (
-      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-        <GraduationCap size={20} className="text-gray-400" />
-      </div>
-    )}
-  </div>
+                              {selectedCountry ? (
+                                countryUniversities.length > 0 ? (
+                                  // 🔥 SCROLLABLE AREA
+                                  <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2">
+                                    {countryUniversities.map((uni) => (
+                                      <Link
+                                        key={uni._id}
+                                        href={`/universities/${uni.slug}`}
+                                        className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100 hover:bg-[var(--primary)] hover:text-white hover:shadow-md transition group/item"
+                                      >
+                                        {/* ✅ Square Logo */}
+                                        <div className="w-12 h-12 rounded-lg bg-white border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0">
+                                          {uni.uni_logo ? (
+                                            <Image
+                                              src={uni.uni_logo}
+                                              alt={uni.name}
+                                              width={48}
+                                              height={48}
+                                              className="object-contain w-full h-full p-1"
+                                            />
+                                          ) : (
+                                            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                                              <GraduationCap size={20} className="text-gray-400" />
+                                            </div>
+                                          )}
+                                        </div>
 
-  {/* Content */}
-  <div className="overflow-hidden">
-    <p className="font-semibold text-sm truncate group-hover/item:text-white">
-      {uni.name}
-    </p>
-    <p className="text-xs opacity-70 truncate group-hover/item:text-white/80">
-      {uni.countryData?.[0]?.name || uni.country || "View Details"}
-    </p>
-  </div>
-</Link>
-        ))}
-      </div>
-    ) : (
-      <div className="text-center py-8 text-gray-400 text-sm">
-        No universities found in {selectedCountry.name}
-      </div>
-    )
-  ) : (
-    <div className="flex flex-col items-center justify-center h-40 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-      <GraduationCap size={32} className="mb-2 opacity-50" />
-      <span className="text-xs">
-        Select a country to see universities
-      </span>
-    </div>
-  )}
-</div>
+                                        {/* Content */}
+                                        <div className="overflow-hidden">
+                                          <p className="font-semibold text-sm truncate group-hover/item:text-white">
+                                            {uni.name}
+                                          </p>
+                                          <p className="text-xs opacity-70 truncate group-hover/item:text-white/80">
+                                            {uni.countryData?.[0]?.name || uni.country || "View Details"}
+                                          </p>
+                                        </div>
+                                      </Link>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <div className="text-center py-8 text-gray-400 text-sm">
+                                    No universities found in {selectedCountry.name}
+                                  </div>
+                                )
+                              ) : (
+                                <div className="flex flex-col items-center justify-center h-40 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                                  <GraduationCap size={32} className="mb-2 opacity-50" />
+                                  <span className="text-xs">
+                                    Select a country to see universities
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         ) : (
                           // DEFAULT DROPDOWN FOR SERVICE & COUNTRY
@@ -328,7 +327,7 @@ export default function Navbar({
                                   ? countryres
                                   : uniqueCountries
                             )?.map((item: any) => {
-                              const href = item.type === "service" 
+                              const href = item.type === "service"
                                 ? `/service/${item.slug}`
                                 : item.type === "country"
                                   ? `/${item.slug}`
@@ -355,7 +354,7 @@ export default function Navbar({
                                   </div>
                                   <div>
                                     <p className="font-semibold text-sm">{title}</p>
-                                   
+
                                   </div>
                                 </Link>
                               );
@@ -447,22 +446,22 @@ export default function Navbar({
                         {item.hasDropdown && mobileDropdown === item.id && (
                           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden pl-4 border-l-2 border-gray-100">
                             {item.type === "destination" ? (
-  <div className="space-y-2">
-    <p className="text-xs font-bold text-gray-400 uppercase mb-2">Select Country</p>
-    {uniqueCountries.map((country) => (
-      <MobileCountryDropdown
-        key={country.code}
-        country={country}
-        selectedCountry={selectedCountry}
-        countryUniversities={countryUniversities}
-        loadCountryUniversities={loadCountryUniversities}
-        filterUniversitiesByCountry={filterUniversitiesByCountry}
-        setIsOpen={setIsOpen}
-        setMobileDropdown={setMobileDropdown}
-      />
-    ))}
-  </div>
-) : (
+                              <div className="space-y-2">
+                                <p className="text-xs font-bold text-gray-400 uppercase mb-2">Select Country</p>
+                                {uniqueCountries.map((country) => (
+                                  <MobileCountryDropdown
+                                    key={country.code}
+                                    country={country}
+                                    selectedCountry={selectedCountry}
+                                    countryUniversities={countryUniversities}
+                                    loadCountryUniversities={loadCountryUniversities}
+                                    filterUniversitiesByCountry={filterUniversitiesByCountry}
+                                    setIsOpen={setIsOpen}
+                                    setMobileDropdown={setMobileDropdown}
+                                  />
+                                ))}
+                              </div>
+                            ) : (
                               (item.type === "service" ? Serviceitem : countryres)?.map((item: any) => {
                                 const href = item.type === "service" ? `/service/${item.slug}` : `/${item.slug}`;
                                 return (
@@ -510,14 +509,14 @@ export default function Navbar({
 
 
 // Add this component inside your Navbar component or in a separate file
-const MobileCountryDropdown = ({ 
-  country, 
-  selectedCountry, 
-  countryUniversities, 
-  loadCountryUniversities, 
+const MobileCountryDropdown = ({
+  country,
+  selectedCountry,
+  countryUniversities,
+  loadCountryUniversities,
   filterUniversitiesByCountry,
-  
-  setMobileDropdown 
+
+  setMobileDropdown
 }: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -539,8 +538,8 @@ const MobileCountryDropdown = ({
 
   return (
     <div className="mb-2">
-      <div 
-        onClick={handleToggle} 
+      <div
+        onClick={handleToggle}
         className="w-full text-left font-medium text-sm text-[var(--primary)] mb-1 flex justify-between items-center hover:underline cursor-pointer"
       >
         <div className="flex items-center gap-2">
@@ -559,10 +558,10 @@ const MobileCountryDropdown = ({
           <ChevronDown size={14} />
         </motion.div>
       </div>
-      
+
       <AnimatePresence>
         {isOpen && selectedCountry?.code === country.code && (
-          <motion.div 
+          <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -570,13 +569,13 @@ const MobileCountryDropdown = ({
             className="pl-2 space-y-1 mt-1 overflow-hidden"
           >
             {countryUniversities.map(uni => (
-              <Link 
-                key={uni._id} 
-                href={`/universities/${uni.slug}`} 
+              <Link
+                key={uni._id}
+                href={`/universities/${uni.slug}`}
                 onClick={() => {
                   setIsOpen(false);
                   setMobileDropdown(null);
-                }} 
+                }}
                 className="flex items-center gap-2 text-xs text-gray-600 py-2 px-2 hover:bg-gray-50 hover:text-[var(--primary)] rounded-lg transition"
               >
                 <div className="w-6 h-6 rounded-full bg-gray-100 overflow-hidden flex-shrink-0">

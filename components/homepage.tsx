@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Tag } from "./tag";
+import { NewTag } from "./tag";
 import Image from "next/image";
 import UniversitySliderClient from "@/components/PageComponent/Unversity";
 import AboutTabsSection from "@/components/PageComponent/TrustTabs";
@@ -243,10 +243,10 @@ export default function Homepage({
 
 
   // console.log("home page",homePage)
-  
-    // const Tag = `h${homePage?.hero?.tag || 1}`; // fallback to h1 if undefined
 
- 
+  // const Tag = `h${homePage?.hero?.tag || 1}`; // fallback to h1 if undefined
+
+
   return (
     <main className="bg-white">
       <motion.section
@@ -279,29 +279,36 @@ export default function Homepage({
                 className="text-xl sm:text-4xl lg:text-4xl leading-tight"
               >
 
-                {homePage?.hero?.title ? (
+                {homePage?.hero?.title ?
                   <>
-                    <Tag data={homePage?.hero?.tag } css="block text-[#ea6c46]" text={homePage?.hero?.title.split("||")[0]?.trim()} />
-                    <Tag data={homePage?.hero?.tag } css="relative inline-block mt-3 font-bold text-primary" text={homePage?.hero?.title.split("||")[1]?.trim()} /  >
+                    <NewTag
+                      data={homePage?.hero?.tag}
+                      css="block text-[#ea6c46]"
+                    >
+                      {homePage?.hero?.title.split("||")[0]?.trim()}{" "}
+                      <span className="relative inline-block mt-3 font-bold text-primary">
+                        {homePage?.hero?.title.split("||")[1]?.trim()}
+                      </span>
+                    </NewTag>
                   </>
-                ) : null}
+                  : null}
               </motion.span>
 
               <motion.p
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary max-w-2xl mx-auto lg:mx-0 lg:mb-10"
+                className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary mx-auto lg:mx-0 lg:mb-10"
                 dangerouslySetInnerHTML={{
                   __html: homePage?.hero?.subtitle
                     ? homePage.hero.subtitle
-                        .split("||")
-                        .map((text, index) =>
-                          index === 1
-                            ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
-                            : text.trim(),
-                        )
-                        .join(" ")
+                      .split("||")
+                      .map((text, index) =>
+                        index === 1
+                          ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
+                          : text.trim(),
+                      )
+                      .join(" ")
                     : "",
                 }}
               />
@@ -394,7 +401,7 @@ export default function Homepage({
                 className="w-10 h-10 text-[#8B4513] group-hover:text-white transition"
               />
               <div>
-                <p className="text-gray-600 text-xs sm:text-lg group-hover:text-white transition">
+                <p className="text-gray-600 text-sm sm:text-lg group-hover:text-white transition">
                   {stat?.title}
                 </p>
                 <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
@@ -412,7 +419,7 @@ export default function Homepage({
           <motion.div className="relative z-10 -bottom-0 lg:-bottom-8 -left-24 hidden lg:block">
             <img
               src="/images/home-enquiry.png"
-              alt=""
+              alt={homePage?.formSection?.title || "Enquiry Image"}
               className="w-[320px] lg:w-175"
             />
           </motion.div>
@@ -425,7 +432,15 @@ export default function Homepage({
             viewport={{ once: true }}
             className=" p-6 sm:p-8 lg:p- rounded-2xl w-full lg:w-auto "
           >
-            <Tag data={homePage?.formSection?.teg} text={homePage?.formSection?.title} css={"text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 text-white"} />
+            <NewTag
+              data={homePage?.formSection?.teg}
+              css="text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 text-white"
+            >
+              {homePage?.formSection?.title.split("||")[0]?.trim()}{" "}
+              <span className="relative inline-block mt-3 font-bold text-white">
+                {homePage?.formSection?.title.split("||")[1]?.trim()}
+              </span>
+            </NewTag>
 
             {/* <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 text-white">
               <span>{homePage?.formSection?.title}</span>
@@ -438,7 +453,7 @@ export default function Homepage({
             >
               {/* Full Name */}
               <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Full Name
                 </label>
 
@@ -451,11 +466,11 @@ export default function Homepage({
                     },
                   })}
                   type="text"
-                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
+                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-sm lg:text-sm text-white"
                 />
 
                 {errors.fullname && (
-                  <p className="text-red-200 text-xs sm:text-sm mt-1">
+                  <p className="text-red-200 text-sm sm:text-sm mt-1">
                     {errors.fullname.message}
                   </p>
                 )}
@@ -463,7 +478,7 @@ export default function Homepage({
 
               {/* Email */}
               <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Email ID
                 </label>
 
@@ -478,11 +493,11 @@ export default function Homepage({
                     },
                   })}
                   type="email"
-                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
+                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-sm lg:text-sm text-white"
                 />
 
                 {errors.email && (
-                  <p className="text-red-200 text-xs sm:text-sm mt-1">
+                  <p className="text-red-200 text-sm sm:text-sm mt-1">
                     {errors.email.message}
                   </p>
                 )}
@@ -490,7 +505,7 @@ export default function Homepage({
 
               {/* Phone */}
               <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Mobile Number
                 </label>
 
@@ -508,11 +523,11 @@ export default function Homepage({
                   onInput={(e) => {
                     e.target.value = e.target.value.replace(/[^0-9]/g, "");
                   }}
-                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm text-white"
+                  className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-sm lg:text-sm text-white"
                 />
 
                 {errors.phone && (
-                  <p className="text-red-200 text-xs sm:text-sm mt-1">
+                  <p className="text-red-200 text-sm sm:text-sm mt-1">
                     {errors.phone.message}
                   </p>
                 )}
@@ -520,7 +535,7 @@ export default function Homepage({
 
               {/* Country */}
               <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Country to Study
                 </label>
 
@@ -530,7 +545,7 @@ export default function Homepage({
                   render={({ field }) => (
                     <select
                       {...field}
-                      className="w-full border border-white rounded-lg px-3 py-2 text-xs lg:text-sm bg-transparent text-white focus:outline-none"
+                      className="w-full border border-white rounded-lg px-3 py-2 text-sm lg:text-sm bg-transparent text-white focus:outline-none"
                     >
                       <option value="" className="text-black">
                         Country to Study
@@ -560,27 +575,27 @@ export default function Homepage({
 
               {/* Program */}
               <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   State
                 </label>
 
                 <input
                   {...register("state")}
                   type="text"
-                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
+                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-sm lg:text-sm focus:outline-none text-white"
                 />
               </motion.div>
 
               {/* City */}
               <motion.div>
-                <label className="text-xs lg:text-sm font-medium text-white mb-1 block">
+                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   City
                 </label>
 
                 <input
                   {...register("city")}
                   type="text"
-                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-xs lg:text-sm focus:outline-none text-white"
+                  className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-sm lg:text-sm focus:outline-none text-white"
                 />
               </motion.div>
 
@@ -588,7 +603,7 @@ export default function Homepage({
               <motion.div className="md:col-span-2 mt-4 flex justify-center">
                 <button
                   type="submit"
-                  className="w-full md:w-auto text-xs lg:text-lg bg-secondary hover:bg-primary text-white font-semibold p-2 lg:px-4 lg:py-2.5 rounded-lg"
+                  className="w-full md:w-auto text-sm lg:text-lg bg-secondary hover:bg-primary text-white font-semibold p-2 lg:px-4 lg:py-2.5 rounded-lg"
                 >
                   Submit
                 </button>
@@ -723,7 +738,7 @@ export default function Homepage({
                     {experienceYears}
                   </span>
 
-                  <span className="text-[10px] sm:text-xs text-gray-500 text-center font-semibold leading-tight">
+                  <span className="text-[10px] sm:text-sm text-gray-500 text-center font-semibold leading-tight">
                     Years of
                     <br />
                     Experience
@@ -745,16 +760,17 @@ export default function Homepage({
                   viewport={{ once: true }}
                   className="text-lg sm:text-3xl lg:text-4xl font-bold leading-tight mb-3"
                 >
-                  <Tag data={homePage?.trustedPartners?.tag} text={homePage?.trustedPartners?.title?.split("||")[0]?.trim()} css={"text-primary"} />
-                  {/* <span className="text-primary">
-                    {homePage?.trustedPartners?.title?.split("||")[0]?.trim()}
-                  </span> */}
-                    <br />
-                    <Tag data={homePage?.trustedPartners?.tag} 
-                    text={homePage?.trustedPartners?.title?.split("||")[1]?.trim()} css={"text-primary"} />
-                  {/* <span className="text-primary">
-                    {homePage?.trustedPartners?.title?.split("||")[1]?.trim()}
-                  </span> */}
+
+                  <NewTag
+                    data={homePage?.trustedPartners?.tag}
+                    css="block text-[#ea6c46]"
+                  >
+                    {homePage?.trustedPartners?.title.split("||")[0]?.trim()}{" "}
+                    <span className="relative inline-block mt-3 font-bold text-primary">
+                      {homePage?.trustedPartners?.title.split("||")[1]?.trim()}
+                    </span>
+                  </NewTag>
+
                 </motion.span>
 
                 <motion.p
@@ -762,7 +778,7 @@ export default function Homepage({
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
                   viewport={{ once: true }}
-                  className="text-sm font-medium sm:text-base text-gray-600 mb-6 leading-relaxed max-w-xl mx-auto lg:mx-0"
+                  className="text-sm font-medium sm:text-base text-gray-600 mb-6 leading-relaxed mx-auto lg:mx-0"
                   dangerouslySetInnerHTML={{
                     __html: homePage?.trustedPartners?.subtitle || "",
                   }}
@@ -786,8 +802,8 @@ export default function Homepage({
 
       <section className="lg:py-5 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden ">
-          <div className=" mb-12 ">
-            <h2 className=" text-xl   mb-2 ">
+          <div className="mb-12">
+            <h2 className="text-xl mb-2">
               <span className="text-[#F46C44] lg:text-4xl font-light">
                 {homePage?.topUniversities?.title?.split("||")[0]?.trim()}
               </span>{" "}
@@ -825,7 +841,7 @@ export default function Homepage({
                         {item.title}
                       </h3>
 
-                      <p className="text-gray-500 text-xs lg:text-sm line-clamp-1">
+                      <p className="text-gray-500 text-sm lg:text-sm line-clamp-1">
                         {item.subTitle ||
                           "Explore top universities for your study abroad journey."}
                       </p>
@@ -867,7 +883,7 @@ export default function Homepage({
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                  <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
+                  <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-sm lg:text-base py-2 rounded-lg">
                     United States
                   </span>
                 </p>
@@ -883,7 +899,7 @@ export default function Homepage({
                   />
                   <div className="absolute inset-0 "></div>
                   <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                    <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
+                    <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-sm lg:text-base py-2 rounded-lg">
                       Germany
                     </span>
                   </p>
@@ -898,7 +914,7 @@ export default function Homepage({
                   />
                   <div className="absolute inset-0"></div>
                   <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                    <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
+                    <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-sm lg:text-base py-2 rounded-lg">
                       UK
                     </span>
                   </p>
@@ -916,7 +932,7 @@ export default function Homepage({
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
+                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-sm lg:text-base py-2 rounded-lg">
                   Canada
                 </span>
               </p>
@@ -929,7 +945,7 @@ export default function Homepage({
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
+                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-sm lg:text-base py-2 rounded-lg">
                   France
                 </span>
               </p>
@@ -942,7 +958,7 @@ export default function Homepage({
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
+                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-sm lg:text-base py-2 rounded-lg">
                   Ireland
                 </span>
               </p>
@@ -959,7 +975,7 @@ export default function Homepage({
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                  <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
+                  <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-sm lg:text-base py-2 rounded-lg">
                     Australia
                   </span>
                 </p>
@@ -972,7 +988,7 @@ export default function Homepage({
                 />
                 <div className="absolute inset-0 "></div>
                 <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                  <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
+                  <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-sm lg:text-base py-2 rounded-lg">
                     Dubai
                   </span>
                 </p>
@@ -986,7 +1002,7 @@ export default function Homepage({
               />
               <div className="absolute inset-0 "></div>
               <p className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
-                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-xs lg:text-base py-2 rounded-lg">
+                <span className="bg-gray-800/90 lg:px-8 px-4 font-bold text-sm lg:text-base py-2 rounded-lg">
                   Italy
                 </span>
               </p>
@@ -1041,7 +1057,7 @@ export default function Homepage({
 
                       {/* Description */}
                       <p
-                        className="text-xs md:text-sm text-muted-foreground leading-relaxed line-clamp-4 md:line-clamp-5"
+                        className="text-sm md:text-sm text-muted-foreground leading-relaxed line-clamp-4 md:line-clamp-5"
                         dangerouslySetInnerHTML={{
                           __html: service.subTitle || "",
                         }}
@@ -1130,7 +1146,7 @@ export default function Homepage({
 
                     {/* CONTENT */}
                     <div className="p-3 text-center">
-                      <p className="text-gray-800 text-xs sm:text-base font-medium mb-3 line-clamp-2">
+                      <p className="text-gray-800 text-sm sm:text-base font-medium mb-3 line-clamp-2">
                         {post.shortDescription}
                       </p>
 
@@ -1141,7 +1157,7 @@ export default function Homepage({
                         bg-[#1f2937]
                         rounded-tr-4xl
                         shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
-                        text-xs sm:text-sm font-semibold
+                        text-sm sm:text-sm font-semibold
                         hover:bg-[#FF6B35]
                         hover:shadow-[-6px_6px_5px_0px_rgba(0,0,0,0.60)]
                         flex items-center justify-center gap-2
@@ -1175,7 +1191,7 @@ export default function Homepage({
         subtitle={homePage?.videoTestimonials?.subtitle}
         items={videoRes}
         tag={homePage?.videoTestimonials?.tag}
-        // Auto-play is enabled by default
+      // Auto-play is enabled by default
       />
 
       <StudentVisaStories

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Tag } from '../tag';
+import { Tag, Tagging } from '../tag';
 
 interface VideoTestimonialItem {
   _id: string;
@@ -20,7 +20,7 @@ interface VideoTestimonialsSliderProps {
   items: VideoTestimonialItem[];
   title?: string;
   subtitle?: string;
-  tag ?: any;
+  tag?: any;
 }
 
 const getYouTubeId = (url: string): string | null => {
@@ -30,7 +30,7 @@ const getYouTubeId = (url: string): string | null => {
       /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
       /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/,
     ];
-    
+
     for (const pattern of patterns) {
       const match = url.match(pattern);
       if (match && (match[1]?.length === 11 || match[2]?.length === 11)) {
@@ -78,9 +78,9 @@ export default function VideoTestimonialsSlider({
           <span className="text-lg lg:text-2xl font-bold mb-4">
             {title.includes('||') ? (
               <>
-                
-                  <Tag data={tag} css={"text-[#f46c44]"} text={title.split('||')[0].trim()} /> {' '}
-                  <Tag data={tag} css={"text-gray-600"} text={title.split('||')[1].trim()} />
+
+                <Tag data={tag} css={"text-[#f46c44]"} text={title.split('||')[0].trim()} /> {' '}
+                <Tag data={tag} css={"text-gray-600"} text={title.split('||')[1].trim()} />
                 {/* <span className="text-gray-600">{title.split('||')[1].trim()}</span> */}
               </>
             ) : title}
@@ -112,28 +112,28 @@ export default function VideoTestimonialsSlider({
           viewport={{ once: true }}
           className="mb-10"
         >
-          <h2 className="text-lg lg:text-4xl font-light text-[#F46C44]">
+          <h2 className="text-2xl lg:text-4xl font-light text-[#F46C44]">
             {title.includes("||") ? title.split("||")[0].trim() : ""}
           </h2>
-          <h3 className="text-xl lg:text-4xl font-bold text-primary relative inline-block lg:mt-2">
+          <h3 className="text-2xl lg:text-4xl font-bold text-primary relative inline-block lg:mt-2">
             {title.includes("||") ? title.split("||")[1].trim() : "Testimonials"}
             <span className="absolute right-0 -bottom-1 w-20 lg:w-32 h-[2px] lg:h-1 bg-[#F46C44]"></span>
           </h3>
           <p
-  className="text-gray-600 mt-2"
-  dangerouslySetInnerHTML={{
-    __html: subtitle
-      ? subtitle
-          .split("||")
-          .map((text, index) =>
-            index === 1
-              ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
-              : text.trim()
-          )
-          .join(" ")
-      : ""
-  }}
-/>
+            className="text-gray-600 mt-2"
+            dangerouslySetInnerHTML={{
+              __html: subtitle
+                ? subtitle
+                  .split("||")
+                  .map((text, index) =>
+                    index === 1
+                      ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
+                      : text.trim()
+                  )
+                  .join(" ")
+                : ""
+            }}
+          />
         </motion.div>
 
         {/* Main Video Section */}
@@ -174,7 +174,7 @@ export default function VideoTestimonialsSlider({
               </div>
 
               {/* Testimonial Quote Overlay */}
-            
+
             </motion.div>
           </div>
 
@@ -201,9 +201,8 @@ export default function VideoTestimonialsSlider({
                     transition={{ duration: 0.4, delay: index * 0.1 }}
                     viewport={{ once: true }}
                     onClick={() => handleThumbnailClick(index)}
-                    className={`group cursor-pointer transition-all ${
-                      index === currentIndex ? 'scale-[1.02]' : ''
-                    }`}
+                    className={`group cursor-pointer transition-all ${index === currentIndex ? 'scale-[1.02]' : ''
+                      }`}
                   >
                     <div className="flex gap-3">
                       {/* Video Thumbnail */}
@@ -220,12 +219,10 @@ export default function VideoTestimonialsSlider({
                           </div>
                         )}
                         {/* Play Icon Overlay */}
-                        <div className={`absolute inset-0 bg-black/30 flex items-center justify-center transition-all ${
-                          index === currentIndex ? 'bg-black/50' : 'group-hover:bg-black/40'
-                        }`}>
-                          <Play className={`w-6 h-6 text-white ${
-                            index === currentIndex ? 'fill-white' : 'fill-white/80'
-                          }`} />
+                        <div className={`absolute inset-0 bg-black/30 flex items-center justify-center transition-all ${index === currentIndex ? 'bg-black/50' : 'group-hover:bg-black/40'
+                          }`}>
+                          <Play className={`w-6 h-6 text-white ${index === currentIndex ? 'fill-white' : 'fill-white/80'
+                            }`} />
                         </div>
                         {/* Active Indicator */}
                         {index === currentIndex && (
@@ -280,11 +277,10 @@ export default function VideoTestimonialsSlider({
             <button
               key={idx}
               onClick={() => handleThumbnailClick(idx)}
-              className={`h-2 rounded-full transition-all ${
-                idx === currentIndex
+              className={`h-2 rounded-full transition-all ${idx === currentIndex
                   ? 'w-8 bg-red-600'
                   : 'w-2 bg-gray-400 hover:bg-gray-600'
-              }`}
+                }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
           ))}

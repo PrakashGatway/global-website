@@ -14,7 +14,7 @@ import StudentVisaStories from '@/components/Studentvisa'
 import { useForm } from 'react-hook-form'
 import axiosInstance from '@/app/axiosInstance'
 import toast from 'react-hot-toast'
-import { Tag } from './tag'
+import { NewTag, Tag, Tagging } from './tag'
 import { usePathname, useRouter } from 'next/navigation'
 
 
@@ -53,8 +53,8 @@ const HeroSection = ({ data, alldata }) => {
              py-5 px-4 sm:px-6  rounded-2xl">
               <div className="w-full">
                 <Tag data={data?.tag}
-                 css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight"}
-                text={data?.title} />
+                  css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight"}
+                  text={data?.title} />
                 {/* <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight">
                   {data?.title || "Study in Germany"}
                 </h1> */}
@@ -144,8 +144,6 @@ const FormSection = ({ data }) => {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-4">
-
-              {/* Full Name */}
               <div>
                 <label className="text-sm text-gray-700">Full Name</label>
                 <input
@@ -249,40 +247,33 @@ const FormSection = ({ data }) => {
         </div>
 
         {/* Right Content */}
-          <div className="relative z-10">
+        <div className="relative z-10">
+          <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
+            <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
+              {data?.title?.split('||')[0]?.trim() || ""}
+            </span>
+            <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
+              {data?.title?.split('||')[1]?.trim() || ""}
+            </span>
+            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
+          </Tagging>
 
-            
-                <Tag data={data?.tag}
-                 css={"text-[#F46C44] text-2xl sm:text-3xl font-medium mb-2"}
-                text={data?.title?.split('||')[0]?.trim() || "Overview of"} />
-                
-      {/* <h4 className="text-[#F46C44] text-2xl sm:text-3xl font-medium mb-2">
-        {data?.title?.split('||')[0]?.trim() || "Overview of"}
-      </h4> */}
-
-  <div className='text-lg sm:text-4xl lg:text-4xl font-bold mb-4 sm:mb-6 relative inline-block'>
-                <Tag data={data?.tag}
-                 css={"text-[#123b73] "}
-                text={data?.title?.split('||')[1]?.trim() || "Overview of"} />
-                <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
-        </div>
-
-      {/* <h2 className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold mb-4 sm:mb-6 relative inline-block">
+          {/* <h2 className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold mb-4 sm:mb-6 relative inline-block">
         {data?.title?.split('||')[1]?.trim() || "Study in Germany"}
         <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
       </h2> */}
 
-      <p
-        className="text-gray-700 leading-relaxed text-xs sm:text-lg mb-6"
-        dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
-      />
+          <p
+            className="text-gray-700 leading-relaxed text-xs sm:text-lg mb-6"
+            dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
+          />
 
-      <a href={data?.ctaLink1 || "/contact"}>
-        <button className="bg-secondary hover:bg-primary text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold transition text-xs sm:text-base">
-          {data?.ctaText1 || "Read More >>"}
-        </button>
-      </a>
-    </div>
+          <a href={data?.ctaLink1 || "/contact"}>
+            <button className="bg-secondary hover:bg-primary text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold transition text-xs sm:text-base">
+              {data?.ctaText1 || "Read More >>"}
+            </button>
+          </a>
+        </div>
 
       </div>
     </section>
@@ -295,13 +286,8 @@ const WhyChooseUsSection = ({ data }) => {
   return (
     <section className="w-full bg-[#ef6a42] py-10 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
-        <h2 className="text-white text-xl sm:text-3xl md:text-4xl mb-2 font-bold relative inline-block">
-          <Tag data={data?.tag} text={data?.title?.split("||")[0]} />
-          <Tag data={data?.tag} text={data?.title?.split("||")[1]} />
-          {/* <span>{data?.title?.split("||")[0]}</span>
-          <span>{data?.title?.split("||")[1]}</span> */}
-          <span className="block w-12 sm:w-16 h-1 bg-yellow-400 mt-2 sm:mt-3"></span>
-        </h2>
+        <Tag data={data?.tag} css="text-white text-xl sm:text-3xl md:text-4xl mb-2 font-bold relative inline-block" text={data?.title?.split("||")[0]} />
+        <span className="block w-12 sm:w-16 h-1 bg-yellow-400 mt-2 sm:mt-3"></span>
         <div className="mt-6 sm:mt-8">
           <ExpandableText lines={5} htmlContent={data?.subtitle} />
         </div>
@@ -324,13 +310,15 @@ const WhyStudySection = ({ data }) => {
     <section className="w-full py-10 sm:py-14 lg:py-20 px-4 sm:px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 sm:mb-10">
-          <span className="flex gap-2 text-xl sm:text-3xl md:text-4xl font-bold text-[#123b73] relative inline-block">
-            <Tag data={data?.tag} text={data?.title?.split("||")[0]?.trim()} />
-            <Tag data={data?.tag} css={"text-[#F46C44]"} text={data?.title?.split("||")[1]?.trim()} />
-            {/* <span>{data?.title?.split("||")[0]}</span>
-            <span className="text-[#F46C44]">{data?.title?.split("||")[1]}</span> */}
-            <span className="absolute left-0 -bottom-3 sm:-bottom-4 w-16 sm:w-20 h-1 bg-[#F46C44]"></span>
-          </span>
+          <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
+            <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
+              {data?.title?.split('||')[0]?.trim() || ""}
+            </span>
+            <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
+              {data?.title?.split('||')[1]?.trim() || ""}
+            </span>
+            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
+          </Tagging>
         </div>
         <p className="text-[#123b73] text-sm sm:text-base lg:text-lg mb-8 leading-relaxed">
           {data?.subTitle}
@@ -342,7 +330,7 @@ const WhyStudySection = ({ data }) => {
                 <DynamicLucideIcon name={item.icon} size={28} className="sm:w-8 sm:h-8" />
               </div>
               <div>
-                <h4 className="text-base sm:text-xl font-semibold text-gray-900">{item.title}</h4>
+                <span className='text-base sm:text-2xl lg:text-xl text-gray-900 font-semibold' dangerouslySetInnerHTML={{ __html: item?.title }} />
                 <ExpandableText
                   htmlContent={`
                     <ul class="list-disc pl-5 space-y-1 text-[#123b73] text-xs sm:text-base">
@@ -372,24 +360,20 @@ const PopularCoursesSection = ({ data }) => {
       <div className="max-w-7xl mx-auto">
         <div className="text-left mb-10 sm:mb-12">
 
-        {/* <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-snug">
+          {/* <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-snug">
           <Tag data={data?.tag} text={data?.title.split("||")[0]?.trim() || "Popular"} css={"text-[#F46C44] block"}/>
           <Tag data={data?.tag} text={data?.title?.split("||")[1]?.trim() || "Courses"} css={"text-primary font-bold relative inline-block"}/>
           <span className="absolute right-0 -bottom-1 sm:-bottom-2 w-12 sm:w-20 h-[2px] lg:h-1 bg-[#F46C44]"></span>
         </h2> */}
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-snug">
-            {/* <span className="text-[#F46C44] block">
-              {data?.title.split("||")[0]?.trim() || "Popular"}
-            </span> */}
-          <Tag data={data?.tag} text={data?.title.split("||")[0]?.trim() || "Popular"} css={"text-[#F46C44] block"}/>
-
-            <span className="text-primary font-bold relative inline-block">
-          <Tag data={data?.tag} text={data?.title?.split("||")[1]?.trim() || "Courses"} />
-
-              {/* {data?.title.split("||")[1]?.trim() || "Courses"} */}
-              <span className="absolute right-0 -bottom-1 sm:-bottom-2 w-12 sm:w-20 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+          <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
+            <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
+              {data?.title?.split('||')[0]?.trim() || ""}
             </span>
-          </h2>
+            <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
+              {data?.title?.split('||')[1]?.trim() || ""}
+            </span>
+            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
+          </Tagging>
           <p
             className="text-gray-500 mt-3 text-sm lg:text-base"
             dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
@@ -443,10 +427,17 @@ const LifeInSection = ({ data }) => {
         {/* Heading */}
         <div className="mb-8 md:mb-12">
           <span className="text-lg sm:text-4xl md:text-3xl lg:text-4xl font-bold text-primary mb-4 relative">
-            {/* {data?.title || "Life in Germany"} */}
-          <Tag data={data?.tag} text={data?.title || ""} />
+            <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
+              <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
+                {data?.title?.split('||')[0]?.trim() || ""}
+              </span>
+              <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
+                {data?.title?.split('||')[1]?.trim() || ""}
+              </span>
+              <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
+            </Tagging>
 
-            <span className="w-20 sm:w-25 h-1.5 absolute right-1/4 sm:left-0 -bottom-2 sm:-bottom-4 bg-[#F46C44] rounded-full"></span>
+            {/* <span className="w-20 sm:w-25 h-1.5 absolute right-1/4 sm:left-0 -bottom-2 sm:-bottom-4 bg-[#F46C44] rounded-full"></span> */}
           </span>
         </div>
 
@@ -461,7 +452,7 @@ const LifeInSection = ({ data }) => {
 
                 {/* Benefit Box */}
                 <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[30px] sm:rounded-tr-[50px] px-4 sm:px-6 py-3 sm:py-4 lg:py-5 text-white text-sm sm:text-base lg:w-40 ">
-                  <h1 className='text-base sm:text-2xl lg:text-xl font-semibold'>{item.title}</h1>
+                  <span className='text-base sm:text-2xl lg:text-xl font-semibold' dangerouslySetInnerHTML={{ __html: item?.title }} />
                   <p className='text-xs sm:text-sm text-white mt-1'>{item?.description}</p>
                 </div>
               </div>
@@ -506,15 +497,15 @@ const ChoosingUsSection = ({ data, Universityres }) => {
         </p> */}
 
         <div className='flex gap-2'>
-          
-        <Tag data={data?.tag} text={data?.title?.split('||')[0]?.trim() || "Choosing the Right"}
-         css={"text-lg sm:text-3xl md:text-4xl font-light mb-1"}/>      
-         
-        <span className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold relative inline-block">
-          <Tag data={data?.tag} text={data?.title?.split('||')[1]?.trim() || "University in Germany"} />
-          {/* {data?.title?.split('||')[1]?.trim() || "University in Germany"} */}
-          <span className="absolute right-0 -bottom-3 sm:-bottom-4 w-12 sm:w-16 h-1 bg-yellow-400"></span>
-        </span>
+
+          <Tag data={data?.tag} text={data?.title?.split('||')[0]?.trim() || "Choosing the Right"}
+            css={"text-lg sm:text-3xl md:text-4xl font-light mb-1"} />
+
+          <span className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold relative inline-block">
+            <Tag data={data?.tag} text={data?.title?.split('||')[1]?.trim() || ""} />
+            {/* {data?.title?.split('||')[1]?.trim() || "University in Germany"} */}
+            <span className="absolute right-0 -bottom-3 sm:-bottom-4 w-12 sm:w-16 h-1 bg-yellow-400"></span>
+          </span>
 
         </div>
 
@@ -565,15 +556,15 @@ const ServiceSection = ({ data }) => {
     <section className="bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="mb-8 sm:mb-12">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-snug">
-            <span className="text-[#F46C44] block">
-              {data?.servicetitle?.split("||")[0]?.trim() || "Our"}
+          <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
+            <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
+              {data?.servicetitle?.split('||')[0]?.trim() || ""}
             </span>
-            <span className="text-primary font-bold relative inline-block">
-              {data?.servicetitle?.split("||")[1]?.trim() || "Services"}
-              <span className="absolute right-0 -bottom-1 sm:-bottom-2 w-12 sm:w-20 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+            <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
+              {data?.servicetitle?.split('||')[1]?.trim() || ""}
             </span>
-          </h2>
+            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
+          </Tagging>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
           {(data?.serviceitem || []).map((service, index) => (
@@ -598,24 +589,22 @@ const ServiceSection = ({ data }) => {
 }
 
 
-const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }) => {
+const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any) => {
   if (data?.isHidden === "yes") return null
   return (
     <section className="w-full bg-[#ef6a42] py-10 sm:py-14 lg:py-10 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto text-white">
         <div className="mb-6 sm:mb-10">
+          <Tagging data={data?.tag} css="text-lg sm:text-3xl md:text-4xl font-light mb-2">
+            <span className="text-lg sm:text-3xl md:text-4xl font-light mb-2 block">
+              {data?.title?.split('||')[0]?.trim() || ""}
+            </span>
+            <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold relative inline-block relative">
+              {data?.title?.split('||')[1]?.trim() || ""}
+              <span className="absolute right-0 -bottom-3 sm:-bottom-4 w-12 sm:w-16 h-1 bg-yellow-400"></span>
+            </span>
+          </Tagging>
 
-          <Tag data={data?.tag} text={data?.title?.split('||')[0]?.trim() || "Scholarships to"} 
-          css={"text-lg sm:text-3xl md:text-4xl font-light mb-2"}/>
-
-          {/* <p className="text-lg sm:text-3xl md:text-4xl font-light mb-2">
-            {data?.title?.split('||')[0]?.trim() || "Scholarships to"}
-          </p> */}
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold relative inline-block">
-            {/* {data?.title?.split('||')[1]?.trim() || "Study in Germany"} */}
-            <Tag data={data?.tag} text={data?.title?.split('||')[1]?.trim() || "Study in Germany"} /> 
-            <span className="absolute right-0 -bottom-3 sm:-bottom-4 w-12 sm:w-16 h-1 bg-yellow-400"></span>
-          </h2>
           <p className="mt-4 sm:mt-6 text-xs sm:text-base lg:text-lg leading-relaxed">
             {data?.subTitle || "Germany provides various scholarships for international students, including DAAD and university-funded options."}
           </p>
@@ -659,7 +648,7 @@ const CTASection = ({ data }) => {
 
         {/* Text */}
         <div className="text-white relative z-10">
-          <Tag data={data?.tag} text={data?.title} css={"text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"}/>
+          <Tag data={data?.tag} text={data?.title} css={"text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"} />
           {/* <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight">
             {data?.title || "Start Your Global Education Journey"}
           </h2> */}
