@@ -263,8 +263,8 @@ export default function Homepage({
         {/* mobile overlay only */}
         <div className="absolute inset-0 bg-white/50 md:bg-transparent pointer-events-none" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4  sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-2">
+        <div className="relative z-10 w-7xl max-w-screen mx-auto px-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-2">
             {/* LEFT CONTENT */}
             <motion.div
               initial={{ x: -60, opacity: 0 }}
@@ -286,7 +286,7 @@ export default function Homepage({
                       css="block text-[#ea6c46]"
                     >
                       {homePage?.hero?.title.split("||")[0]?.trim()}{" "}
-                      <span className="relative inline-block mt-3 font-bold text-primary">
+                      <span className="relative inline-block font-bold text-primary">
                         {homePage?.hero?.title.split("||")[1]?.trim()}
                       </span>
                     </NewTag>
@@ -298,7 +298,7 @@ export default function Homepage({
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="mt-6 text-sm sm:text-base font-medium lg:text-lg text-primary mx-auto lg:mx-0 lg:mb-10"
+                className="mt-6 text-base font-medium lg:text-lg text-primary mx-auto text-justify lg:mx-0 lg:mb-10"
                 dangerouslySetInnerHTML={{
                   __html: homePage?.hero?.subtitle
                     ? homePage.hero.subtitle
@@ -359,11 +359,11 @@ export default function Homepage({
             >
               <div className="relative flex items-center justify-center">
                 {/* Animated Circle */}
-                <div className="absolute -right-[130px] top-51 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
+                <div className="absolute -right top-51 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
                   <img
                     src="/images/hero-bg-2.png"
                     alt="circle"
-                    className="w-[720px] max-w-none"
+                    className="w-[540px] max-w-none"
                   />
                 </div>
 
@@ -398,7 +398,7 @@ export default function Homepage({
             transition duration-300">
               <DynamicLucideIcon
                 name={stat?.icon}
-                className="w-10 h-10 text-[#8B4513] group-hover:text-white transition"
+                className="w-12 h-12 text-[#8B4513] stroke-[1.2px] group-hover:text-white transition"
               />
               <div>
                 <p className="text-gray-600 text-sm sm:text-lg group-hover:text-white transition">

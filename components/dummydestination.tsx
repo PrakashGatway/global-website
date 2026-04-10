@@ -89,7 +89,8 @@ export function Destinationhome({ homePage }) {
             <div
               key={i}
               ref={(el) => (cardsRef.current[i] = el)}
-              className="rounded-2xl p-6 xl:p-8 bg-white shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300"
+              style={{top:80+(i+1)*40 + "px"}}
+              className={`sticky rounded-2xl p-6 xl:p-8 bg-white shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300`}
             >
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold mb-4"

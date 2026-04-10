@@ -22,9 +22,9 @@ import ScrollToTop from "@/components/ScrolltoTop";
 import WhatsAppButton from "@/components/whatsappbtn";
 export const dynamic = "force-dynamic";
 
-const ptSans = PT_Sans({
+const ptSans = Noto_Sans({
   subsets: ["latin"],
-  weight: ["400", "700"], // PT Sans supports mainly 400 & 700
+  weight: ["400","500","600","700"], // PT Sans supports mainly 400 & 700
   display: "swap",
 });
 

@@ -9,11 +9,39 @@ import {
   GraduationCap,
   Phone,
   ChevronRight,
+  ArrowLeft,
+  Globe,
+  Building2,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { usePathname } from "next/navigation"
 import { useGlobal } from "@/src/statecontext"
 import MultiStepForm from "./PopupForm"
+
+// Types for better TypeScript support
+type NavItem = {
+  title: string
+  route: string
+  id: number
+  hasDropdown?: boolean
+  type?: "service" | "country" | "destination"
+}
+
+type Country = {
+  code: string
+  name: string
+  flag?: string
+  slug?: string
+}
+
+type University = {
+  _id: string
+  name: string
+  slug: string
+  country: string
+  uni_logo?: string
+  countryData?: Array<{ name: string; flg?: string }>
+}
 
 export default function Navbar({
   Serviceitem,
@@ -22,20 +50,27 @@ export default function Navbar({
 }: {
   Serviceitem?: any[],
   countryres?: any[],
-  unicat?: any[]
+  unicat?: University[]
 }) {
-  const [isOpen, setIsOpen] = React.useState(false)
-  const [mobileDropdown, setMobileDropdown] = React.useState(null)
+  const [isOpen, setIsOpen] = useState(false)
   const { profile, loading, Logout } = useGlobal()
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false)
   const [Login, setLogin] = useState(false)
   const [openForm, setOpenForm] = useState(false)
-  const [selectedCountry, setSelectedCountry] = useState<any>(null)
-  const [countryUniversities, setCountryUniversities] = useState<any[]>([])
+
+  // Mobile navigation state
+  const [mobileNavStack, setMobileNavStack] = useState<Array<{
+    type: 'main' | 'countries' | 'universities' | 'services' | 'destinations'
+    data?: any
+    title?: string
+  }>>([{ type: 'main' }])
+
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null)
+  const [countryUniversities, setCountryUniversities] = useState<University[]>([])
 
   const pathname = usePathname()
 
-  const navbar = [
+  const navbar: NavItem[] = [
     { title: "Home", route: "/", id: 1 },
     { title: "About Us", route: "/about", id: 2 },
     { title: "Service", route: "/service", hasDropdown: true, type: "service", id: 3 },
@@ -60,15 +95,15 @@ export default function Navbar({
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.position = "fixed";
-      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.position = "";
-      document.body.style.width = "";
+      document.body.style.overflow = "";
+      // Reset nav stack when closing
+      setMobileNavStack([{ type: 'main' }]);
+      setSelectedCountry(null);
     }
     return () => {
-      document.body.style.position = "";
-      document.body.style.width = "";
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
@@ -82,279 +117,228 @@ export default function Navbar({
   }
 
   // Get unique countries from universities data
-  const getUniqueCountries = () => {
+  const getUniqueCountries = (): Country[] => {
     if (!unicat || !Array.isArray(unicat)) return [];
-
-    const countryMap = new Map();
-
-    unicat.forEach((uni: any) => {
+    const countryMap = new Map<string, Country>();
+    unicat.forEach((uni) => {
       const countryCode = uni.country;
       const countryName = uni.countryData?.[0]?.name;
       const countryFlag = uni.countryData?.[0]?.flg;
-
       if (!countryMap.has(countryCode)) {
         countryMap.set(countryCode, {
           code: countryCode,
-          name: countryName,
+          name: countryName || countryCode,
           flag: countryFlag,
           slug: countryName?.toLowerCase().replace(/\s+/g, '-')
         });
       }
     });
-
-    return Array.from(countryMap.values());
+    return Array.from(countryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
   };
 
-  // <<<<<<< HEAD
-  // Filter universities by country code
-  const filterUniversitiesByCountry = (countryCode: string) => {
-    if (!countryCode) return [];
-    if (!unicat || !Array.isArray(unicat) || unicat.length === 0) return [];
-
-    const filtered = unicat.filter((uni: any) => uni.country === countryCode);
-    return filtered;
+  const filterUniversitiesByCountry = (countryCode: string): University[] => {
+    if (!countryCode || !unicat) return [];
+    return unicat.filter((uni) => uni.country === countryCode);
   };
 
-  // Load universities for a specific country
-  const loadCountryUniversities = (country: any) => {
-    if (selectedCountry?.code === country.code) return;
-
+  const loadCountryUniversities = (country: Country) => {
     setSelectedCountry(country);
+    const filtered = filterUniversitiesByCountry(country.code);
+    setCountryUniversities(filtered);
+  };
 
-    const filteredUniversities = filterUniversitiesByCountry(country.code);
-    setCountryUniversities(filteredUniversities);
+  // Navigation handlers
+  const pushNav = (screen: { type: any; data?: any; title?: string }) => {
+    setMobileNavStack(prev => [...prev, screen]);
+  };
+
+  const popNav = () => {
+    setMobileNavStack(prev => prev.length > 1 ? prev.slice(0, -1) : prev);
+  };
+
+  const handleCountrySelect = (country: Country) => {
+    loadCountryUniversities(country);
+    pushNav({ type: 'universities', data: country, title: country.name });
+  };
+
+  const handleNavClick = (item: NavItem) => {
+    if (!item.hasDropdown) {
+      setIsOpen(false);
+      return;
+    }
+
+    if (item.type === 'destination') {
+      pushNav({ type: 'countries', title: 'Select Country' });
+    } else if (item.type === 'service') {
+      pushNav({ type: 'services', data: Serviceitem, title: 'Our Services' });
+    } else if (item.type === 'country') {
+      pushNav({ type: 'destinations', data: countryres, title: 'Destinations' });
+    }
   };
 
   const uniqueCountries = getUniqueCountries();
-  // >>>>>>> dbc4de64f697e561e6b4575774845dab574d990c
+
+  // Animation variants
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? '100%' : '-100%',
+      opacity: 0,
+      scale: 0.98
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      transition: { type: "spring", stiffness: 300, damping: 30 }
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? '100%' : '-100%',
+      opacity: 0,
+      scale: 0.98,
+      transition: { duration: 0.2 }
+    })
+  };
 
   return (
     <>
       {/* ================= MAIN NAVBAR ================= */}
       <nav
         className={`
-    sticky top-0 z-[999]
-    bg-[#f46c44] shadow-sm 
-    transition-transform duration-300 ease-in-out
-    ${isScrolled ? "lg:-translate-y-1" : "lg:translate-y-0"}
-  `}
+          sticky top-0 z-[999]
+          bg-[#f46c44] shadow-sm 
+          transition-transform duration-300 ease-in-out
+          ${isScrolled ? "lg:-translate-y-1" : "lg:translate-y-0"}
+        `}
       >
-        <div
-          className={`mx-auto max-w-[1540px] flex justify-between relative transition-all duration-500 ease-in-out lg:ease-in-out ${isScrolled ? "h-full " : ""
-            }`}
-        >
-          {/* Left */}
-          <div className={`items-center text-end px-8 gap-2 bg-white`}>
+        <div className={`mx-auto max-w-[1540px] flex justify-between relative transition-all duration-500 ease-in-out ${isScrolled ? "h-full" : ""}`}>
+          {/* Logo */}
+          <div className="items-center text-end px-8 gap-2 bg-white">
             <Link href="/">
               <Image
                 src="/images/newlogo3.png"
                 alt="Logo"
                 width={800}
                 height={100}
-                className={`object-contain w-20 m-auto py-3 lg:w-28 lg:ml-10 ${isScrolled ? " " : ""}`}
+                className={`object-contain w-20 m-auto py-2.5 lg:w-28 lg:ml-10 ${isScrolled ? "" : ""}`}
                 priority
               />
             </Link>
           </div>
 
-          <div className={`flex flex-col ${isScrolled ? "justify-center " : "item-center gap-6 sm:px-15"} `}>
+          <div className={`flex flex-col ${isScrolled ? "justify-center" : "item-center gap-3 sm:px-15"}`}>
+            {/* Top Bar - Only show when not scrolled */}
             {!isScrolled && (
-              <>
-                <div className="w-full justify-end items-center gap-6 lg:flex hidden z-10 px-4 text-white">
-                  <div className="bg-[#6d1901] flex justify-center items-center gap-2 px-4 py-0.5 text-sm font-medium gap-8">
-                    <a href="tel:+919876543210" className="flex items-center gap-2 hover:opacity-80 transition font-medium">
-                      <span>Consult With Expert:</span>
-                      <span className="font-semibold text-yellow-300">+91 9887120429</span>
+              <div className="w-full justify-end items-center gap-6 lg:flex hidden z-10 px-4 text-white">
+                <div className="bg-[#6d1901] shadow-xl flex justify-center items-center gap-2 px-4 py-1.5 rounded-b-2xl text-sm font-medium gap-8">
+                  <a href="tel:+919887120429" className="flex items-center gap-2 hover:opacity-80 transition font-medium">
+                    <span>Consult With Expert:</span>
+                    <span className="font-semibold text-yellow-300">+91 9887120429</span>
+                  </a>
+                  {Login ? (
+                    <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition">
+                      <span className="w-3 h-3 bg-yellow-300 rounded-full"></span>
+                      Dashboard
+                    </Link>
+                  ) : (
+                    <a href="/login" className="flex items-center gap-2 hover:opacity-80 transition">
+                      <span className="w-3 h-3 bg-yellow-300 rounded-full"></span>
+                      Student Login
                     </a>
-                    {Login ? (
-                      <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition">
-                        <span className={`w-3 h-3 bg-yellow-300 rounded-full`}></span>
-                        Dashboard
-                      </Link>
-                    ) : (
-                      <a href="/login" className={`flex items-center gap-2 hover:opacity-80 transition ${Login ? "hidden" : "block"} `}>
-                        <span className={`w-3 h-3 bg-yellow-300 rounded-full`}></span>
-                        Student Login
-                      </a>
-                    )}
-                  </div>
+                  )}
                 </div>
-              </>
+              </div>
             )}
 
             {/* ================= DESKTOP MENU ================= */}
             <div className={`hidden lg:flex items-center gap-2 ${isScrolled ? "justify-center" : "justify-center pb-4"}`}>
-              {navbar?.map((item, i) => (
-                <div key={i} className="relative group">
+              {navbar?.map((item) => (
+                <div key={item.id} className="relative group">
                   <Link
                     href={item.route}
-                    className="flex items-center gap-1 px-4 text-[15px] font-bold text-white hover:text-[var(--primary)] transition"
+                    className="flex items-center gap-1 px-3 text-[15px] font-[500] text-white hover:text-[var(--primary)] transition"
                   >
                     <span>{item.title}</span>
                     {item.hasDropdown && <ChevronDown size={14} className="mt-[2px]" />}
                   </Link>
 
-                  {/* ================= DESKTOP DROPDOWN ================= */}
+                  {/* Desktop Dropdown */}
                   {item.hasDropdown && (
-                    <div
-                      className="
-                absolute -left-[10px] top-full mt-6 -translate-x-1/2
-                opacity-0 invisible scale-95
-                group-hover:opacity-100 group-hover:visible group-hover:scale-100
-                transition-all duration-300 ease-out
-                z-50
-              "
-                    >
+                    <div className="absolute -left-[10px] top-full mt-4 -translate-x-1/2 opacity-0 invisible scale-95 group-hover:opacity-100 group-hover:visible group-hover:scale-100 transition-all duration-300 ease-out z-50">
                       <div className="bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.12)] w-[700px] p-5 border border-gray-100">
-
-                        {/* LOGIC FOR UNIVERSITIES DROPDOWN */}
                         {item.type === "destination" ? (
                           <div className="flex gap-6">
-                            {/* LEFT COLUMN: Countries List */}
+                            {/* Countries Column */}
                             <div className="w-1/3 border-r border-gray-100">
-                              <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
-                                Countries
-                              </h3>
-
-                              {/* 🔥 SCROLLABLE AREA */}
-                              <div className="space-y-1 no-scrollbar max-h-[60vh] hide-scrollbar overflow-y-auto pr-2">
-                                {uniqueCountries.map((country) => {
-                                  return (
-                                    <div key={country.code} className="relative">
-                                      <div
-                                        onMouseEnter={() => loadCountryUniversities(country)}
-                                        onClick={() => loadCountryUniversities(country)}
-                                        className={`
-              w-full text-left flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors text-sm
-              ${selectedCountry?.code === country.code
-                                            ? "bg-[var(--primary)] text-white shadow-md"
-                                            : "hover:bg-gray-100 text-gray-700"
-                                          }
-            `}
-                                      >
-                                        <div className="flex items-center gap-2">
-                                          {country.flag && (
-                                            <img
-                                              src={country.flag}
-                                              alt={country.name}
-                                              className="w-5 h-5 rounded-full object-cover"
-                                            />
-                                          )}
-                                          <span className="font-medium truncate">
-                                            {country.name}
-                                          </span>
-                                        </div>
-
-                                        {selectedCountry?.code === country.code && (
-                                          <ChevronRight size={14} />
-                                        )}
+                              <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">Countries</h3>
+                              <div className="space-y-1 max-h-[60vh] overflow-y-auto pr-2">
+                                {uniqueCountries.map((country) => (
+                                  <div key={country.code}>
+                                    <div
+                                      onMouseEnter={() => loadCountryUniversities(country)}
+                                      onClick={() => loadCountryUniversities(country)}
+                                      className={`w-full text-left flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors text-sm ${selectedCountry?.code === country.code ? "bg-[var(--primary)] text-white shadow-md" : "hover:bg-gray-100 text-gray-700"}`}
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        {country.flag && <img src={country.flag} alt={country.name} className="w-5 h-5 rounded-full object-cover" />}
+                                        <span className="font-medium truncate">{country.name}</span>
                                       </div>
+                                      {selectedCountry?.code === country.code && <ChevronRight size={14} />}
                                     </div>
-                                  );
-                                })}
+                                  </div>
+                                ))}
                               </div>
                             </div>
 
-                            {/* RIGHT COLUMN: Universities List */}
+                            {/* Universities Column */}
                             <div className="w-2/3 pl-2 flex flex-col">
                               <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
-                                {selectedCountry
-                                  ? `Universities in ${selectedCountry.name}`
-                                  : "Select a Country"}
+                                {selectedCountry ? `Universities in ${selectedCountry.name}` : "Select a Country"}
                               </h3>
-
                               {selectedCountry ? (
                                 countryUniversities.length > 0 ? (
-                                  // 🔥 SCROLLABLE AREA
                                   <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2">
                                     {countryUniversities.map((uni) => (
-                                      <Link
-                                        key={uni._id}
-                                        href={`/universities/${uni.slug}`}
-                                        className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100 hover:bg-[var(--primary)] hover:text-white hover:shadow-md transition group/item"
-                                      >
-                                        {/* ✅ Square Logo */}
+                                      <Link key={uni._id} href={`/universities/${uni.slug}`} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100 hover:bg-[var(--primary)] hover:text-white hover:shadow-md transition group/item">
                                         <div className="w-12 h-12 rounded-lg bg-white border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0">
                                           {uni.uni_logo ? (
-                                            <Image
-                                              src={uni.uni_logo}
-                                              alt={uni.name}
-                                              width={48}
-                                              height={48}
-                                              className="object-contain w-full h-full p-1"
-                                            />
+                                            <Image src={uni.uni_logo} alt={uni.name} width={48} height={48} className="object-contain w-full h-full p-1" />
                                           ) : (
                                             <div className="w-full h-full bg-gray-100 flex items-center justify-center">
                                               <GraduationCap size={20} className="text-gray-400" />
                                             </div>
                                           )}
                                         </div>
-
-                                        {/* Content */}
                                         <div className="overflow-hidden">
-                                          <p className="font-semibold text-sm truncate group-hover/item:text-white">
-                                            {uni.name}
-                                          </p>
-                                          <p className="text-xs opacity-70 truncate group-hover/item:text-white/80">
-                                            {uni.countryData?.[0]?.name || uni.country || "View Details"}
-                                          </p>
+                                          <p className="font-semibold text-sm truncate group-hover/item:text-white">{uni.name}</p>
+                                          <p className="text-xs opacity-70 truncate group-hover/item:text-white/80">{uni.countryData?.[0]?.name || uni.country}</p>
                                         </div>
                                       </Link>
                                     ))}
                                   </div>
                                 ) : (
-                                  <div className="text-center py-8 text-gray-400 text-sm">
-                                    No universities found in {selectedCountry.name}
-                                  </div>
+                                  <div className="text-center py-8 text-gray-400 text-sm">No universities found</div>
                                 )
                               ) : (
                                 <div className="flex flex-col items-center justify-center h-40 text-gray-400 bg-gray-50 rounded-xl border border-dashed border-gray-200">
                                   <GraduationCap size={32} className="mb-2 opacity-50" />
-                                  <span className="text-xs">
-                                    Select a country to see universities
-                                  </span>
+                                  <span className="text-xs">Select a country to see universities</span>
                                 </div>
                               )}
                             </div>
                           </div>
                         ) : (
-                          // DEFAULT DROPDOWN FOR SERVICE & COUNTRY
                           <div className="grid grid-cols-2 gap-3">
-                            {(
-                              item.type === "service"
-                                ? Serviceitem
-                                : item.type === "country"
-                                  ? countryres
-                                  : uniqueCountries
-                            )?.map((item: any) => {
-                              const href = item.type === "service"
-                                ? `/service/${item.slug}`
-                                : item.type === "country"
-                                  ? `/${item.slug}`
-                                  : `/${item.slug}`;
-
+                            {(item.type === "service" ? Serviceitem : item.type === "country" ? countryres : uniqueCountries)?.map((item: any) => {
+                              const href = item.type === "service" ? `/service/${item.slug}` : `/${item.slug}`;
                               const title = item.navbarTitle || item.name;
                               const image = item.navbarImage || item.flag;
-                              const subTitle = item.subTitle || `${item.code || ''} - ${item.universityCount || 0} universities`;
-
                               return (
-                                <Link
-                                  key={item._id || item.code}
-                                  href={href}
-                                  className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition"
-                                >
+                                <Link key={item._id || item.code} href={href} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition">
                                   <div className="w-10 h-10 rounded-full bg-white shadow overflow-hidden">
-                                    <Image
-                                      src={image || "/placeholder.png"}
-                                      alt={title}
-                                      width={40}
-                                      height={40}
-                                      className="object-cover w-full h-full"
-                                    />
+                                    <Image src={image || "/placeholder.png"} alt={title} width={40} height={40} className="object-cover w-full h-full" />
                                   </div>
                                   <div>
                                     <p className="font-semibold text-sm">{title}</p>
-
                                   </div>
                                 </Link>
                               );
@@ -367,37 +351,38 @@ export default function Navbar({
                 </div>
               ))}
 
-              {isScrolled && (
-                <div className="relative group mr-4">
-                  {Login && profile ? (
-                    <>
-                      <div className="flex items-center cursor-pointer">
-                        <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold">
-                          {profile?.name?.charAt(0).toUpperCase()}
-                        </div>
-                      </div>
-                      <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
-                        <div className="p-4 border-b">
-                          <p className="font-semibold text-gray-800">{profile?.name}</p>
-                          <p className="text-sm text-gray-500">{profile?.email}</p>
-                        </div>
-                        <div className="flex flex-col text-sm">
-                          <Link href="/dashboard" className="px-4 py-3 hover:bg-gray-100 transition">Dashboard</Link>
-                          <button onClick={Logout} className="text-left px-4 py-3 hover:bg-red-50 text-red-600 transition">Logout</button>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <Link href="/login" className="bg-secondary text-white px-5 py-3 hover:bg-primary rounded-full text-sm font-semibold">
-                      Login / Signup
-                    </Link>
-                  )}
-                </div>
-              )}
+
             </div>
           </div>
+          {isScrolled && (
+            <div className="lg:flex items-center mr-4  hidden">
+              {Login && profile ? (
+                <>
+                  <div className="flex items-center cursor-pointer">
+                    <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold">
+                      {profile?.name?.charAt(0).toUpperCase()}
+                    </div>
+                  </div>
+                  <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
+                    <div className="p-4 border-b">
+                      <p className="font-semibold text-gray-800">{profile?.name}</p>
+                      <p className="text-sm text-gray-500">{profile?.email}</p>
+                    </div>
+                    <div className="flex flex-col text-sm">
+                      <Link href="/dashboard" className="px-4 py-3 hover:bg-gray-100 transition">Dashboard</Link>
+                      <button onClick={Logout} className="text-left px-4 py-3 hover:bg-red-50 text-red-600 transition">Logout</button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <Link href="/login" className="bg-secondary text-white px-4 py-2 hover:bg-primary rounded-full text-sm font-semibold">
+                  Login/Signup
+                </Link>
+              )}
+            </div>
+          )}
 
-          {/* MOBILE RIGHT ACTIONS */}
+          {/* Mobile Actions */}
           <div className="flex items-center gap-3 pr-3 lg:hidden">
             <a href="tel:+919887120429" className="flex items-center gap-1 bg-white text-[#f46c44] px-3 py-2 rounded-full shadow-md active:scale-95 transition">
               <Phone size={16} />
@@ -409,93 +394,286 @@ export default function Navbar({
           </div>
         </div>
 
-        {/* ================= MOBILE SIDEBAR ================= */}
+        {/* ================= MOBILE DRAWER ================= */}
         <AnimatePresence>
           {isOpen && (
-            <div className="fixed inset-0 z-[9999] bg-black/30 backdrop-blur-sm flex h-[100vh]">
-              <div className="absolute inset-0" onClick={() => setIsOpen(false)} />
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[9998] bg-black/20 backdrop-blur-[1px] transition"
+                onClick={() => setIsOpen(false)}
+              />
+
+              {/* Drawer */}
               <motion.aside
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
-                transition={{ type: "spring", stiffness: 260, damping: 30 }}
-                className="relative w-full max-w-[300px] h-full bg-white shadow-2xl flex flex-col overflow-y-auto"
+                transition={{ type: "spring", stiffness: 300, damping: 35 }}
+                className="fixed left-0 top-0 z-[9999] w-full max-w-[380px] h-full bg-white shadow-2xl flex flex-col overflow-hidden"
               >
-                <div className="flex items-center justify-between px-5 border-b bg-gray-50">
-                  <Image src="/images/newlogo3.png" alt="Logo" width={110} height={36} />
-                  <button onClick={() => setIsOpen(false)} className="p-2 rounded-lg hover:bg-gray-200 transition">
-                    <X size={22} />
+                {/* Header */}
+                <div className="flex items-center justify-between px-5 py-2.5 border-b border-gray-100 bg-white/80 backdrop-blur-[1px] sticky top-0 z-10">
+                  {mobileNavStack.length > 1 ? (
+                    <button
+                      onClick={popNav}
+                      className="flex items-center gap-1.5 py-3 text-[#f46c44] font-medium hover:opacity-80 transition -ml-1"
+                    >
+                      <ArrowLeft size={22} />
+                      <span>Back</span>
+                    </button>
+                  ) : (
+                    <Image src="/images/newlogo3.png" alt="Logo" width={85} height={20} className="object-contain" />
+                  )}
+                  <button onClick={() => setIsOpen(false)} className="p-2 rounded-full bg-gray-50 hover:bg-gray-300 transition">
+                    <X size={22} className="text-gray-600" />
                   </button>
                 </div>
-                <div className="flex-1 px-4">
-                  {navbar.map((item) => (
-                    <div key={item.title} className="rounded-xl px-2 py-1 hover:bg-gray-50 transition">
-                      <div className="flex items-center justify-between py-2">
-                        <Link href={item.route} onClick={() => { if (!item.hasDropdown) setIsOpen(false); }} className="text-[15px] font-semibold text-gray-800 hover:text-[var(--primary)]">
-                          {item.title}
-                        </Link>
-                        {item.hasDropdown && (
-                          <button onClick={() => setMobileDropdown(mobileDropdown === item.id ? null : item.id)} className="p-2">
-                            <motion.div animate={{ rotate: mobileDropdown === item.id ? 180 : 0 }} transition={{ duration: 0.25 }}>
-                              <ChevronDown size={18} />
-                            </motion.div>
-                          </button>
-                        )}
-                      </div>
-                      <AnimatePresence>
-                        {item.hasDropdown && mobileDropdown === item.id && (
-                          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden pl-4 border-l-2 border-gray-100">
-                            {item.type === "destination" ? (
+                <div className="flex-1 overflow-hidden relative">
+                  <AnimatePresence mode="wait" custom={mobileNavStack.length}>
+                    {mobileNavStack.map((screen, index) => {
+                      if (index !== mobileNavStack.length - 1) return null;
+                      return (
+                        <motion.div
+                          key={`${screen.type}-${index}`}
+                          custom={mobileNavStack.length - (mobileNavStack.findIndex(s => s.type === screen.type) || 0)}
+                          variants={slideVariants}
+                          initial="enter"
+                          animate="center"
+                          exit="exit"
+                          className="absolute inset-0 overflow-y-auto"
+                        >
+                          {/* MAIN MENU */}
+                          {screen.type === 'main' && (
+                            <div className="px-4 py-2 space-y-1">
+                              {[...navbar, { title: "Blogs", route: "/blog", id: 23 }, { title: "Events & Webinars", route: "/events", id: 13 }].map((item) => (
+                                <div key={item.id} className="rounded-xl overflow-hidden">
+                                  <button
+                                    onClick={() => item.hasDropdown ? handleNavClick(item) : setIsOpen(false)}
+                                    className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-white/60 active:bg-white/80 transition rounded-xl group"
+                                  >
+                                    <span className="text-base font-medium text-gray-800 group-hover:text-[#f46c44] transition">
+                                      {item.title}
+                                    </span>
+                                    {item.hasDropdown ? (
+                                      <ChevronRight size={18} className="text-gray-400 group-hover:text-[#f46c44] transition" />
+                                    ) : (
+                                      <ChevronRight size={18} className="text-gray-200" />
+                                    )}
+                                  </button>
+                                </div>
+                              ))}
+
+                              {/* Auth Section */}
+                              <div className="pt-4 mt-4 border-t border-gray-100">
+                                {!Login ? (
+                                  <Link
+                                    href="/login"
+                                    onClick={() => setIsOpen(false)}
+                                    className="block w-full bg-gradient-to-r from-[#f46c44] to-[#e55a34] text-white py-3 rounded-full font-semibold text-center hover:opacity-95 transition shadow-lg shadow-orange-200"
+                                  >
+                                    Login / Signup
+                                  </Link>
+                                ) : (
+                                  <div className="space-y-2">
+                                    <Link
+                                      href="/dashboard"
+                                      onClick={() => setIsOpen(false)}
+                                      className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl border border-gray-100 hover:border-[#f46c44] transition"
+                                    >
+                                      <div className="w-10 h-10 rounded-full bg-[#f46c44] text-white flex items-center justify-center font-semibold">
+                                        {profile?.name?.charAt(0).toUpperCase()}
+                                      </div>
+                                      <div className="flex-1 text-left">
+                                        <p className="font-semibold text-gray-800 text-sm">{profile?.name}</p>
+                                        <p className="text-xs text-gray-500">View Dashboard</p>
+                                      </div>
+                                      <ChevronRight size={16} className="text-gray-400" />
+                                    </Link>
+                                    <button
+                                      onClick={() => { Logout(); setIsOpen(false); }}
+                                      className="w-full text-left px-4 py-3 text-red-600 font-medium hover:bg-red-50 rounded-xl transition"
+                                    >
+                                      Logout
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* COUNTRIES LIST */}
+                          {screen.type === 'countries' && (
+                            <div className="px-4 py-2">
+                              <div className="mb-4">
+                                <h2 className="text-base font-bold text-gray-800">{screen.title}</h2>
+                                <p className="text-xs text-gray-500">Choose your study destination</p>
+                              </div>
+
                               <div className="space-y-2">
-                                <p className="text-xs font-bold text-gray-400 uppercase mb-2">Select Country</p>
                                 {uniqueCountries.map((country) => (
-                                  <MobileCountryDropdown
+                                  <motion.button
                                     key={country.code}
-                                    country={country}
-                                    selectedCountry={selectedCountry}
-                                    countryUniversities={countryUniversities}
-                                    loadCountryUniversities={loadCountryUniversities}
-                                    filterUniversitiesByCountry={filterUniversitiesByCountry}
-                                    setIsOpen={setIsOpen}
-                                    setMobileDropdown={setMobileDropdown}
-                                  />
+                                    whileTap={{ scale: 0.99 }}
+                                    onClick={() => handleCountrySelect(country)}
+                                    className="w-full flex items-center gap-4 p-4 py-2.5 bg-orange-50 rounded-2xl hover:border-[#f46c44]/30 hover:shadow-md transition group text-left"
+                                  >
+                                    {country.flag ? (
+                                      <div className="w-10 h-10 flex-shrink-0">
+                                        <img src={country.flag} alt={country.name} className="w-full h-full object-cover" />
+                                      </div>
+                                    ) : (
+                                      <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                        <Globe size={20} className="text-gray-400" />
+                                      </div>
+                                    )}
+                                    <div className="flex-1 min-w-0">
+                                      <p className="font-medium text-sm text-gray-800 group-hover:text-[#f46c44] transition">
+                                        {country.name}
+                                      </p>
+                                      <p className="text-xs text-gray-500">
+                                        {filterUniversitiesByCountry(country.code).length} universities
+                                      </p>
+                                    </div>
+                                    <ChevronRight size={18} className="text-gray-300 group-hover:text-[#f46c44] transition flex-shrink-0" />
+                                  </motion.button>
                                 ))}
                               </div>
-                            ) : (
-                              (item.type === "service" ? Serviceitem : countryres)?.map((item: any) => {
-                                const href = item.type === "service" ? `/service/${item.slug}` : `/${item.slug}`;
-                                return (
-                                  <Link key={item._id} href={href} onClick={() => { setIsOpen(false); setMobileDropdown(null); }} className="flex items-center gap-3 px-2 py-2.5 rounded-lg hover:bg-gray-50 transition">
-                                    <div className="w-9 h-9 rounded-full bg-gray-50 border border-gray-100 overflow-hidden flex-shrink-0">
-                                      <Image src={item.navbarImage || "/placeholder.png"} alt={item.navbarTitle} width={36} height={36} className="object-contain w-20 h-full" />
-                                    </div>
-                                    <div>
-                                      <span className="text-xs font-medium text-gray-700">{item.navbarTitle}</span>
-                                      {item.subTitle && <p className="text-[10px] text-gray-400">{item.subTitle}</p>}
-                                    </div>
-                                  </Link>
-                                );
-                              })
-                            )}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  ))}
+                            </div>
+                          )}
+
+                          {/* UNIVERSITIES LIST */}
+                          {screen.type === 'universities' && selectedCountry && (
+                            <div className="px-4 py-3">
+                              <div className="mb-1 sticky top-0 bg-gradient-to-b from-white to-transparent pb-3 z-10">
+                                <div className="flex items-center gap-3 mb-2">
+                                  {selectedCountry.flag && (
+                                    <img src={selectedCountry.flag} alt={selectedCountry.name} className="w-10 h-10 object-cover" />
+                                  )}
+                                  <h2 className="text-base font-bold text-gray-800">{selectedCountry.name}<p className="text-xs text-gray-500 font-medium block">{countryUniversities.length} universities available</p></h2>
+                                </div>
+
+                              </div>
+
+                              {countryUniversities.length > 0 ? (
+                                <div className="space-y-3 pb-4">
+                                  {countryUniversities.map((uni) => (
+                                    <Link
+                                      key={uni._id}
+                                      href={`/universities/${uni.slug}`}
+                                      onClick={() => setIsOpen(false)}
+                                      className="block"
+                                    >
+                                      <motion.div
+                                        whileTap={{ scale: 0.99 }}
+                                        className="flex items-center gap-4 p-4 py-2 rounded-2xl bg-orange-50 hover:border-[#f46c44]/30 hover:shadow-lg transition group"
+                                      >
+                                        <div className="w-16 h-16 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                          {uni.uni_logo ? (
+                                            <Image
+                                              src={uni.uni_logo}
+                                              alt={uni.name}
+                                              width={64}
+                                              height={64}
+                                              className="object-contain p-2"
+                                            />
+                                          ) : (
+                                            <Building2 size={28} className="text-gray-300" />
+                                          )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <p className="font-medium text-gray-800 group-hover:text-[#f46c44] transition truncate">
+                                            {uni.name}
+                                          </p>
+                                          <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                                            <Globe size={12} />
+                                            {uni.countryData?.[0]?.name || uni.country}
+                                          </p>
+                                        </div>
+                                        <ChevronRight size={18} className="text-gray-300 group-hover:text-[#f46c44] transition flex-shrink-0" />
+                                      </motion.div>
+                                    </Link>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center justify-center py-16 text-center">
+                                  <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                                    <GraduationCap size={32} className="text-gray-400" />
+                                  </div>
+                                  <p className="text-gray-600 font-medium">No universities found</p>
+                                  <p className="text-sm text-gray-400 mt-1">Try selecting another country</p>
+                                  <button
+                                    onClick={popNav}
+                                    className="mt-6 text-[#f46c44] font-medium hover:underline"
+                                  >
+                                    ← Choose different country
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* SERVICES / DESTINATIONS LIST */}
+                          {(screen.type === 'services' || screen.type === 'destinations') && (
+                            <div className="px-4 py-3">
+                              <div className="mb-4">
+                                <h2 className="text-lg font-bold text-gray-800">{screen.title}</h2>
+                              </div>
+
+                              <div className="space-y-2">
+                                {(screen.data || []).map((item: any) => {
+                                  const href = screen.type === 'services' ? `/service/${item.slug}` : `/${item.slug}`;
+                                  const title = item.navbarTitle || item.name;
+                                  const image = item.flag;
+
+                                  return (
+                                    <Link
+                                      key={item._id || item.code}
+                                      href={href}
+                                      onClick={() => setIsOpen(false)}
+                                      className="block"
+                                    >
+                                      <motion.div
+                                        whileTap={{ scale: 0.99 }}
+                                        className="flex items-center gap-4 p-4 bg-orange-50 rounded-2xl hover:border-[#f46c44]/30 hover:shadow-md transition group"
+                                      >
+                                        <div className="w-16 rounded-lg shadow h-12 overflow-hidden flex-shrink-0">
+                                          <Image
+                                            src={image || "https://t4.ftcdn.net/jpg/00/65/77/21/360_F_65772192_jm8MYL39Bp5pp90KlyGWrRgErYa70lZZ.jpg"}
+                                            alt={title}
+                                            width={48}
+                                            height={48}
+                                            className="object-cover w-full object-center h-full"
+                                          />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <p className="font-medium text-gray-800 group-hover:text-[#f46c44] transition">
+                                            {title}
+                                          </p>
+                                          {item.subTitle && (
+                                            <p className="text-xs text-gray-500 mt-0.5 truncate">{item.subTitle}</p>
+                                          )}
+                                        </div>
+                                        <ChevronRight size={18} className="text-gray-300 group-hover:text-[#f46c44] transition flex-shrink-0" />
+                                      </motion.div>
+                                    </Link>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
                 </div>
-                <div className="p-5 border-t bg-white">
-                  {!Login && !profile ? (
-                    <Link href="/dashboard" onClick={() => setIsOpen(false)} className="block text-center bg-[var(--primary)] text-white pb-3 rounded-xl font-semibold hover:opacity-90 transition">
-                      Login/Signup
-                    </Link>
-                  ) : (
-                    <Link href="/login" onClick={() => setIsOpen(false)} className="block text-center bg-[var(--primary)] text-white py-3 rounded-xl font-semibold hover:opacity-90 transition">
-                      Dashboard
-                    </Link>
-                  )}
-                </div>
+
+                {/* Bottom Safe Area */}
+                <div className="h-6 bg-gradient-to-t from-gray-50 to-transparent flex-shrink-0" />
               </motion.aside>
-            </div>
+            </>
           )}
         </AnimatePresence>
       </nav>
@@ -506,97 +684,3 @@ export default function Navbar({
     </>
   )
 }
-
-
-// Add this component inside your Navbar component or in a separate file
-const MobileCountryDropdown = ({
-  country,
-  selectedCountry,
-  countryUniversities,
-  loadCountryUniversities,
-  filterUniversitiesByCountry,
-
-  setMobileDropdown
-}: any) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    // Close dropdown when selected country changes to a different country
-    if (selectedCountry?.code !== country.code) {
-      setIsOpen(false);
-    }
-  }, [selectedCountry?.code, country.code]);
-
-  const handleToggle = () => {
-    if (selectedCountry?.code === country.code && isOpen) {
-      setIsOpen(false);
-    } else {
-      loadCountryUniversities(country);
-      setIsOpen(true);
-    }
-  };
-
-  return (
-    <div className="mb-2">
-      <div
-        onClick={handleToggle}
-        className="w-full text-left font-medium text-sm text-[var(--primary)] mb-1 flex justify-between items-center hover:underline cursor-pointer"
-      >
-        <div className="flex items-center gap-2">
-          {country.flag && (
-            <img src={country.flag} alt={country.name} className="w-4 h-4 rounded-full" />
-          )}
-          <span>{country.name}</span>
-          <span className="text-xs text-gray-400">
-            ({filterUniversitiesByCountry(country.code).length})
-          </span>
-        </div>
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.25 }}
-        >
-          <ChevronDown size={14} />
-        </motion.div>
-      </div>
-
-      <AnimatePresence>
-        {isOpen && selectedCountry?.code === country.code && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="pl-2 space-y-1 mt-1 overflow-hidden"
-          >
-            {countryUniversities.map(uni => (
-              <Link
-                key={uni._id}
-                href={`/universities/${uni.slug}`}
-                onClick={() => {
-                  setIsOpen(false);
-                  setMobileDropdown(null);
-                }}
-                className="flex items-center gap-2 text-xs text-gray-600 py-2 px-2 hover:bg-gray-50 hover:text-[var(--primary)] rounded-lg transition"
-              >
-                <div className="w-6 h-6 rounded-full bg-gray-100 overflow-hidden flex-shrink-0">
-                  {uni.uni_logo ? (
-                    <Image
-                      src={uni.uni_logo}
-                      alt={uni.name}
-                      width={24}
-                      height={24}
-                      className="object-cover w-full h-full"
-                    />
-                  ) : (
-                    <GraduationCap size={14} className="text-gray-400 m-auto mt-1" />
-                  )}
-                </div>
-                <span className="flex-1">{uni.name}</span>
-              </Link>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};

@@ -27,17 +27,17 @@ const FAQSection = ({ Faqres }) => {
 
         {/* FAQ Grid */}
         <div className="max-w-7xl mx-auto">
-          <div className="space-y-4">
+          <div className="space-y-3">
             {(Faqres || []).map((faq, index) => (
               <div
                 key={faq._id || index}
-                className="bg-white rounded-xl shadow-sm border border-orange-500 overflow-hidden transition-all duration-300 hover:shadow-md"
+                className="bg-white rounded-xl py-2 border border-orange-200 overflow-hidden transition-all duration-300"
               >
                 <button
                   onClick={() => toggleFAQ(index)}
                   className="w-full px-4 lg:px-6 py-3 lg:py-2 text-left flex justify-between items-center focus:outline-none  focus:ring-opacity-50 rounded-xl"
                 >
-                  <span className=" text-sm lg:text-lg font-semibold text-gray-900 pr-4">
+                  <span className=" text-sm lg:text-lg font-medium text-gray-900 pr-4">
                     {faq.question}
                   </span>
                   <svg
@@ -62,7 +62,7 @@ const FAQSection = ({ Faqres }) => {
                     openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                   }`}
                 >
-                  <div className="px-6 pb-5 pt-2 border-t border-gray-100">
+                  <div className="px-6 pb-5 pt-3">
                     <p className="text-black text-xs lg:text-base leading-relaxed">
                       {faq.answer}
                     </p>
