@@ -317,7 +317,6 @@ const WhyStudySection = ({ data }) => {
             <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
               {data?.title?.split('||')[1]?.trim() || ""}
             </span>
-            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
           </Tagging>
         </div>
         <p className="text-[#123b73] text-sm sm:text-base lg:text-lg mb-8 leading-relaxed">
@@ -434,7 +433,6 @@ const LifeInSection = ({ data }) => {
               <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
                 {data?.title?.split('||')[1]?.trim() || ""}
               </span>
-              <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
             </Tagging>
 
             {/* <span className="w-20 sm:w-25 h-1.5 absolute right-1/4 sm:left-0 -bottom-2 sm:-bottom-4 bg-[#F46C44] rounded-full"></span> */}
@@ -453,7 +451,9 @@ const LifeInSection = ({ data }) => {
                 {/* Benefit Box */}
                 <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[30px] sm:rounded-tr-[50px] px-4 sm:px-6 py-3 sm:py-4 lg:py-5 text-white text-sm sm:text-base lg:w-40 ">
                   <span className='text-base sm:text-2xl lg:text-xl font-semibold' dangerouslySetInnerHTML={{ __html: item?.title }} />
-                  <p className='text-xs sm:text-sm text-white mt-1'>{item?.description}</p>
+                  <p className='text-xs sm:text-sm text-white mt-1' dangerouslySetInnerHTML={{
+                    __html : item?.description
+                  }}></p>
                 </div>
               </div>
             ))}

@@ -62,7 +62,7 @@ const StudentVisaStories = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-left mb-12">
-          <Tagging type={"visa"} data={tag} css="relative inline-block mb-4 sm:mb-6 block">
+          <Tagging data={tag} css="relative inline-block mb-4 sm:mb-6 block">
             <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
               {title?.split('||')[0]?.trim() || ""}
             </span>

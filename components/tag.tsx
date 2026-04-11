@@ -25,6 +25,6 @@ export const Tagging = ({ data, css, text, children }: {
   text?: string;
   children?: React.ReactNode
 }) => {
-  const Heading = `h${data ?? 2}`;
+  const Heading = `h${data || 2}`;
   return <Heading className={css}>{children || text}</Heading>;
 };

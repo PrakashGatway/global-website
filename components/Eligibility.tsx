@@ -20,7 +20,6 @@ export default function EligibilitySection({ pageData }) {
             </span>
             <span className="text-primary font-bold relative inline-block ">
               {pageData?.sections?.eligibilityCriteria?.title.split("||")[1]?.trim() }
-              <span className="absolute right-0 -bottom-1 sm:-bottom-2 w-12 sm:w-20 h-[2px] lg:h-1 bg-[#F46C44]"></span>
             </span>
           </h2>
 
