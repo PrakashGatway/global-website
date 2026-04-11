@@ -2,12 +2,12 @@
 
 
 
-export const Tag = ({ data,css,text }: {data?: any, css?: any, text?: any}) => {
-     const Tag = `h${data || 2}`;
+export const Tag = ({ data, css, text }: { data?: any, css?: any, text?: any }) => {
+  const Tag = `h${data || 2}`;
   return (
-      <Tag className={css}>
-        {text}
-      </Tag>
+    <Tag className={css}>
+      {text}
+    </Tag>
   )
 }
 
@@ -19,11 +19,11 @@ export const NewTag = ({ data, css, children }: any) => {
 };
 
 
-export const Tagging = ({ data, css, text, children }: { 
-  data?: number | string; 
-  css?: string; 
-  text?: string; 
-  children?: React.ReactNode 
+export const Tagging = ({ data, css, text, children }: {
+  data?: number | string;
+  css?: string;
+  text?: string;
+  children?: React.ReactNode
 }) => {
   const Heading = `h${data ?? 2}`;
   return <Heading className={css}>{children || text}</Heading>;

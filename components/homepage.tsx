@@ -361,7 +361,7 @@ export default function Homepage({
                 {/* Animated Circle */}
                 <div className="absolute -right top-51 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
                   <img
-                    src="/images/hero-bg-2.png"
+                    src="/images/hero-bg-round.png"
                     alt="circle"
                     className="w-[540px] max-w-none"
                   />

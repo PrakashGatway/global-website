@@ -758,7 +758,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
   const shouldRenderSection = (name, data) => {
     if (!data) return false
-    if (name === 'visaStories') console.log("Visa Stories Count:", visaStories.length)
+    // if (name === 'visaStories') console.log("Visa Stories Count:", visaStories.length)
     if (name === 'videoTestimonials') return videoRes?.data?.length > 0
     if (name === 'imageTestimonials') return regularImages?.length > 0
     if (name === 'visaStories') return visaStories?.length > 0
@@ -835,7 +835,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         )
       })}
 
-      {/* <FAQSection Faqres={Faqres} /> */}
+      <FAQSection Faqres={Faqres} />
     </>
   )
 }
