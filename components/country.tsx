@@ -492,26 +492,22 @@ const ChoosingUsSection = ({ data, Universityres }) => {
   return (
     <section className="relative w-full bg-[#ef6a42] py-8 sm:py-10 px-4 sm:px-6">
       <div className="mb-6 sm:mb-10 max-w-7xl mx-auto text-white">
-        {/* <p className="text-lg sm:text-3xl md:text-4xl font-light mb-1">
-          {data?.title?.split('||')[0]?.trim() || "Choosing the Right"}
-        </p> */}
+        <Tagging
+          data={data?.tag}
+          css="text-lg sm:text-3xl md:text-4xl"
+        >
+          <span className="font-light" dangerouslySetInnerHTML={{
+            __html : data?.title?.split("||")[0]?.trim() || "Choosing the Right"
+          }}>
+            
+          </span>{" "}
 
-        <div className='flex gap-2'>
-
-          <Tag data={data?.tag} text={data?.title?.split('||')[0]?.trim() || "Choosing the Right"}
-            css={"text-lg sm:text-3xl md:text-4xl font-light mb-1"} />
-
-          <span className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold relative inline-block">
-            <Tag data={data?.tag} text={data?.title?.split('||')[1]?.trim() || ""} />
-            {/* {data?.title?.split('||')[1]?.trim() || "University in Germany"} */}
-            <span className="absolute right-0 -bottom-3 sm:-bottom-4 w-12 sm:w-16 h-1 bg-yellow-400"></span>
+          <span className="font-bold relative inline-block" dangerouslySetInnerHTML={{
+            __html : data?.title?.split("||")[1]?.trim() || "University in Germany"
+          }}>
+            
           </span>
-
-        </div>
-
-        <p className="mt-4 max-w-6xl text-xs sm:text-base leading-relaxed">
-          {data?.subtitle || "Germany offers exceptional educational opportunities, but choosing the right university requires more than just rankings."}
-        </p>
+        </Tagging>
       </div>
       <UniversityCard university={Universityres} />
     </section>
@@ -534,10 +530,12 @@ const ContentSection = ({ data }) => {
           <div key={i} className="mb-8 lg:mb-10">
             <div className="mb-5 sm:mb-8">
               <h2 className="text-primary text-xl sm:text-3xl md:text-4xl font-bold">
-                <span className="text-[#F46C44] block">{item.title?.split("||")[0]}</span>
+                <span className="text-[#F46C44] block" dangerouslySetInnerHTML={{
+                  __html: item.title?.split("||")[0]
+                }}></span>
                 <div className="flex flex-wrap gap-2 mt-1">
-                  <span>{item.title?.split("||")[1]}</span>
-                  <span className="border-b-4 border-[#F46C44] inline-block">{item.title?.split("||")[2]}</span>
+                  <span dangerouslySetInnerHTML={{ __html: item.title?.split("||")[1] }}></span>
+                
                 </div>
               </h2>
             </div>
@@ -557,14 +555,20 @@ const ServiceSection = ({ data }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="mb-8 sm:mb-12">
           <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
-            <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
-              {data?.servicetitle?.split('||')[0]?.trim() || ""}
-            </span>
-            <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
-              {data?.servicetitle?.split('||')[1]?.trim() || ""}
+            <span
+              className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2"
+              dangerouslySetInnerHTML={{
+                __html: data?.servicetitle?.split("||")[0]?.trim() || "",
+              }}
+            ></span>
+            <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold" dangerouslySetInnerHTML={{
+              __html: data?.servicetitle?.split('||')[1]?.trim() || ""
+            }}>
+
             </span>
             <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
           </Tagging>
+
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
           {(data?.serviceitem || []).map((service, index) => (
@@ -573,8 +577,10 @@ const ServiceSection = ({ data }) => {
                 <DynamicLucideIcon name={`${service?.itemicon}`} size={40} className="sm:w-10 sm:h-10" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 leading-snug">
-                  {service?.itemtitle}
+                <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 leading-snug" dangerouslySetInnerHTML={{
+                  __html: service?.itemtitle
+                }}>
+
                 </h3>
                 <p className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed">
                   {service?.itemsubtitle}
@@ -596,17 +602,19 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
       <div className="max-w-6xl mx-auto text-white">
         <div className="mb-6 sm:mb-10">
           <Tagging data={data?.tag} css="text-lg sm:text-3xl md:text-4xl font-light mb-2">
-            <span className="text-lg sm:text-3xl md:text-4xl font-light mb-2 block">
-              {data?.title?.split('||')[0]?.trim() || ""}
+            <span className="text-lg sm:text-3xl md:text-4xl font-light mb-2 block" dangerouslySetInnerHTML={{
+              __html: data?.title?.split('||')[0]?.trim() || ""
+            }}>
             </span>
-            <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold relative inline-block relative">
-              {data?.title?.split('||')[1]?.trim() || ""}
-              <span className="absolute right-0 -bottom-3 sm:-bottom-4 w-12 sm:w-16 h-1 bg-yellow-400"></span>
+            <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold relative inline-block relative" dangerouslySetInnerHTML={{
+              __html: data?.title?.split('||')[1]?.trim() || ""
+            }}>
             </span>
           </Tagging>
 
-          <p className="mt-4 sm:mt-6 text-xs sm:text-base lg:text-lg leading-relaxed">
-            {data?.subTitle || "Germany provides various scholarships for international students, including DAAD and university-funded options."}
+          <p className="mt-4 sm:mt-6 text-xs sm:text-base lg:text-lg leading-relaxed" dangerouslySetInnerHTML={{
+            __html: data?.subTitle || "Germany provides various scholarships for international students, including DAAD and university-funded options."
+          }}>
           </p>
         </div>
 
@@ -618,8 +626,10 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
                   <div className="bg-yellow-400 text-black rounded-full p-1.5 sm:p-2 flex-shrink-0">
                     <DynamicLucideIcon name="CircleDollarSign" size={16} className="sm:w-5 sm:h-5" />
                   </div>
-                  <p className="border-b border-white pb-1 hover:opacity-80 cursor-pointer text-xs sm:text-base">
-                    {item}
+                  <p className="border-b border-white pb-1 hover:opacity-80 cursor-pointer text-xs sm:text-base" dangerouslySetInnerHTML={{
+                    __html : item
+                  }}>
+                    
                   </p>
                 </div>
               ))}
@@ -649,9 +659,7 @@ const CTASection = ({ data }) => {
         {/* Text */}
         <div className="text-white relative z-10">
           <Tag data={data?.tag} text={data?.title} css={"text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"} />
-          {/* <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight">
-            {data?.title || "Start Your Global Education Journey"}
-          </h2> */}
+        
           <p
             className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
             dangerouslySetInnerHTML={{

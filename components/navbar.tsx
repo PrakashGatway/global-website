@@ -269,7 +269,7 @@ export default function Navbar({
                           <div className="flex gap-6">
                             {/* Countries Column */}
                             <div className="w-1/3 border-r border-gray-100">
-                              <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">Countries</h3>
+                              <p className="text-sm font-semibold text-gray-800 mb-3 px-1">Countries</p>
                               <div className="space-y-1 max-h-[60vh] overflow-y-auto pr-2">
                                 {uniqueCountries.map((country) => (
                                   <div key={country.code}>
@@ -291,9 +291,9 @@ export default function Navbar({
 
                             {/* Universities Column */}
                             <div className="w-2/3 pl-2 flex flex-col">
-                              <h3 className="text-sm font-semibold text-gray-800 mb-3 px-1">
+                              <p className="text-sm font-semibold text-gray-800 mb-3 px-1">
                                 {selectedCountry ? `Universities in ${selectedCountry.name}` : "Select a Country"}
-                              </h3>
+                              </p>
                               {selectedCountry ? (
                                 countryUniversities.length > 0 ? (
                                   <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2">
