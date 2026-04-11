@@ -582,8 +582,10 @@ const ServiceSection = ({ data }) => {
                 }}>
 
                 </h3>
-                <p className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed">
-                  {service?.itemsubtitle}
+                <p className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed" dangerouslySetInnerHTML={{
+                  __html : service?.itemsubtitle
+                }}>
+                  
                 </p>
               </div>
             </div>
