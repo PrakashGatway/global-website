@@ -319,8 +319,10 @@ const WhyStudySection = ({ data }) => {
             </span>
           </Tagging>
         </div>
-        <p className="text-[#123b73] text-sm sm:text-base lg:text-lg mb-8 leading-relaxed">
-          {data?.subTitle}
+        <p className="text-[#123b73] text-sm sm:text-base lg:text-lg mb-8 leading-relaxed" dangerouslySetInnerHTML={{
+          __html : data?.subTitle
+        }}>
+          
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
           {(data?.items || []).map((item, index) => (

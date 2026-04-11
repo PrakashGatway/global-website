@@ -180,17 +180,27 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
 
       <ul className="space-y-2 text-gray-100 text-base">
         <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
-          Instagram
+          <a href="https://www.instagram.com/ooshasglobal?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">
+            Instagram
+          </a>
         </li>
         <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
-          Facebook
+          <a href="https://www.facebook.com/share/18vb1scYJk/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">
+            Facebook
+          </a>
         </li>
         <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
           LinkedIn
         </li>
-        <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
-          YouTube
-        </li>
+      <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
+  <a
+    href="https://youtube.com/@ooshasglobal?si=sGQj1cPrHl6bOKfc"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    YouTube
+  </a>
+</li>
         <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
           <Link href="/contact">Contact Us</Link>
         </li>
