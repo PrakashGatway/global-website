@@ -82,7 +82,7 @@ export function Destinationhome({ homePage }) {
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden lg:flex items-stretch gap-8 xl:gap-12">
+      <div className="flex items-stretch gap-8 xl:gap-12">
         {/* LEFT - Cards */}
         <div className="w-full lg:w-1/2 space-y-6">
           {stepsData.map((step, i) => (
@@ -125,7 +125,7 @@ export function Destinationhome({ homePage }) {
         </div>
 
         {/* RIGHT - Sticky Image (FIXED) */}
-        <div className="w-full lg:w-1/2 flex justify-center self-stretch">
+        <div className="w-full hidden lg:block lg:w-1/2 flex justify-center self-stretch">
           <div className="sticky top-24 h-fit w-full max-w-[550px]">
             <img
               src={imageSrc}
@@ -138,7 +138,7 @@ export function Destinationhome({ homePage }) {
       </div>
 
       {/* Mobile Layout */}
-      <div className="lg:hidden space-y-5">
+      {/* <div className="lg:hidden space-y-5">
         {stepsData.map((step, i) => (
           <div
             key={i}
@@ -175,7 +175,7 @@ export function Destinationhome({ homePage }) {
             </Link>
           </div>
         ))}
-      </div>
+      </div> */}
     </section>
   );
 }

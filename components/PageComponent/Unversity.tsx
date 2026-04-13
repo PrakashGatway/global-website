@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function UniversitySliderClient({ universities }) {
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -125,3 +126,44 @@ export default function UniversitySliderClient({ universities }) {
     </section>
   );
 }
+
+
+export const CountryCardGrid = ({ countries }) => {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+      {countries.map((country) => (
+        <Link
+          key={country._id}
+          href={`/${country.slug}`}
+          className="group relative block h-48 sm:h-56 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          aria-label={`Learn about studying in ${country.navbarTitle || country.title}`}
+        >
+          {/* Background Image */}
+          <img
+            src={country.navbarImage || country.cardImage || '/placeholder-country.jpg'}
+            alt={`${country.navbarTitle || country.title} flag or landmark`}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
+
+          {/* Content Badge */}
+          <div className="absolute inset-0 flex items-end justify-center pb-4 px-3">
+            <span className="bg-black/50 backdrop-blur-sm border border-white/20 text-white font-semibold text-sm sm:text-base py-2.5 px-5 rounded-xl shadow-lg transform transition-transform group-hover:scale-[1.02]">
+              {country.navbarTitle || country.title}
+            </span>
+          </div>
+
+          {/* Optional: Subtitle or CTA hint on hover */}
+          <div className="absolute inset-0 flex items-start justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="text-white/90 text-xs bg-black/30 px-2.5 py-1 rounded-full backdrop-blur-sm">
+              Explore →
+            </span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+};

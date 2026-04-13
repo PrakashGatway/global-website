@@ -13,16 +13,12 @@ const FAQSection = ({ Faqres }) => {
       <div className="container   ">
         {/* Header */}
         <div className="text-justify mb-12 lg:mb-16    ">
-          <h2 className="text-3xl   text-gray-900 mb-4 ">
-            <span className=' text-xl lg:text-4xl font-light text-[#F46C44] '>Frequently</span>{" "}
-            
+          <h3 className="text-3xl text-gray-900 mb-4 ">
+            <span className='text-xl lg:text-4xl font-light text-[#F46C44] '>Frequently</span>{" "}
             <br /><span className=' text-xl lg:text-4xl text-primary font-bold relative'>Asked Questions
-              
-        <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
-              </span> 
-
-          </h2>
-         
+              <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
+            </span>
+          </h3>
         </div>
 
         {/* FAQ Grid */}
@@ -41,9 +37,8 @@ const FAQSection = ({ Faqres }) => {
                     {faq.question}
                   </span>
                   <svg
-                    className={`w-6 h-6 text-primary-600 flex-shrink-0 transform transition-transform duration-300 ${
-                      openIndex === index ? 'rotate-180' : ''
-                    }`}
+                    className={`w-6 h-6 text-primary-600 flex-shrink-0 transform transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''
+                      }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -56,25 +51,23 @@ const FAQSection = ({ Faqres }) => {
                     />
                   </svg>
                 </button>
-                
+
                 <div
-                  className={`overflow-hidden transition-all duration-300 ${
-                    openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                  }`}
+                  className={`overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
                 >
                   <div className="px-6 pb-5 pt-3">
-                    <p className="text-black text-xs lg:text-base leading-relaxed">
-                      {faq.answer}
-                    </p>
-                    
+                    <p className="text-black text-xs lg:text-base leading-relaxed" dangerouslySetInnerHTML={{__html :faq.answer}}/>
                    
+
+
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-      
+
         </div>
       </div>
     </section>

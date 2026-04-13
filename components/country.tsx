@@ -320,9 +320,9 @@ const WhyStudySection = ({ data }) => {
           </Tagging>
         </div>
         <p className="text-[#123b73] text-sm sm:text-base lg:text-lg mb-8 leading-relaxed" dangerouslySetInnerHTML={{
-          __html : data?.subTitle
+          __html: data?.subTitle
         }}>
-          
+
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
           {(data?.items || []).map((item, index) => (
@@ -398,10 +398,8 @@ const PopularCoursesSection = ({ data }) => {
                   />
                 </div>
                 <div className="px-4 py-4 flex flex-col flex-grow">
-                  <h3 className="text-base lg:text-xl font-bold text-[#F46C44]">{item?.coursesname}</h3>
-                  <p className="text-sm text-gray-800 mt-2 line-clamp-2">
-                    {item?.description || "No description available"}
-                  </p>
+                  <div className="text-base lg:text-xl font-bold text-[#F46C44]" dangerouslySetInnerHTML={{ __html: item?.coursesname }} />
+                  <p className="text-sm text-gray-800 mt-2 line-clamp-2" dangerouslySetInnerHTML={{ __html: item?.description || "" }} />
                   <div className="mt-auto pt-3 flex justify-end">
                     <button className="bg-[#F46C44] text-white text-sm px-4 py-1.5 rounded-full flex items-center gap-2 hover:bg-primary transition">
                       Explore →
@@ -454,7 +452,7 @@ const LifeInSection = ({ data }) => {
                 <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[30px] sm:rounded-tr-[50px] px-4 sm:px-6 py-3 sm:py-4 lg:py-5 text-white text-sm sm:text-base lg:w-40 ">
                   <span className='text-base sm:text-2xl lg:text-xl font-semibold' dangerouslySetInnerHTML={{ __html: item?.title }} />
                   <p className='text-xs sm:text-sm text-white mt-1' dangerouslySetInnerHTML={{
-                    __html : item?.description
+                    __html: item?.description
                   }}></p>
                 </div>
               </div>
@@ -499,15 +497,15 @@ const ChoosingUsSection = ({ data, Universityres }) => {
           css="text-lg sm:text-3xl md:text-4xl"
         >
           <span className="font-light" dangerouslySetInnerHTML={{
-            __html : data?.title?.split("||")[0]?.trim() || "Choosing the Right"
+            __html: data?.title?.split("||")[0]?.trim() || "Choosing the Right"
           }}>
-            
+
           </span>{" "}
 
           <span className="font-bold relative inline-block" dangerouslySetInnerHTML={{
-            __html : data?.title?.split("||")[1]?.trim() || "University in Germany"
+            __html: data?.title?.split("||")[1]?.trim() || "University in Germany"
           }}>
-            
+
           </span>
         </Tagging>
       </div>
@@ -537,7 +535,7 @@ const ContentSection = ({ data }) => {
                 }}></span>
                 <div className="flex flex-wrap gap-2 mt-1">
                   <span dangerouslySetInnerHTML={{ __html: item.title?.split("||")[1] }}></span>
-                
+
                 </div>
               </h2>
             </div>
@@ -585,9 +583,9 @@ const ServiceSection = ({ data }) => {
 
                 </h3>
                 <p className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed" dangerouslySetInnerHTML={{
-                  __html : service?.itemsubtitle
+                  __html: service?.itemsubtitle
                 }}>
-                  
+
                 </p>
               </div>
             </div>
@@ -631,9 +629,9 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
                     <DynamicLucideIcon name="CircleDollarSign" size={16} className="sm:w-5 sm:h-5" />
                   </div>
                   <p className="border-b border-white pb-1 hover:opacity-80 cursor-pointer text-xs sm:text-base" dangerouslySetInnerHTML={{
-                    __html : item
+                    __html: item
                   }}>
-                    
+
                   </p>
                 </div>
               ))}
@@ -663,14 +661,14 @@ const CTASection = ({ data }) => {
         {/* Text */}
         <div className="text-white relative z-10">
           <Tag data={data?.tag} text={data?.title} css={"text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"} />
-        
+
           <p
             className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
             dangerouslySetInnerHTML={{
               __html: data?.subtitle || "Explore top universities, expert guidance, and seamless admission support with Ooshas Global.",
             }}
           />
-          <div className="mt-6 sm:mt-8">
+          <div className="mt-4">
             <a href="/contact">
               <button className="bg-secondary hover:bg-primary px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md hover:scale-105 transition text-xs sm:text-base">
                 Contact US
@@ -680,11 +678,11 @@ const CTASection = ({ data }) => {
         </div>
 
         {/* Decorative circle — only on lg */}
-        <div className="hidden lg:flex relative h-[380px] items-center justify-center">
+        <div className="hidden lg:flex relative h-[325px] items-center justify-center">
           <img
             src="/images/circle stand.png"
             alt=""
-            className="absolute z-10 w-[90px] bottom-3"
+            className="absolute z-10 w-[90px] bottom-0"
             style={{ right: "calc(50% - 45px)" }}
           />
           <img

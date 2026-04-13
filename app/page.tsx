@@ -48,17 +48,17 @@ export default async function Home() {
   
  
 
-  const [destinationRes, imageRes  , Faqres, videoRes,blogres,unires] = await Promise.all([
+  const [destinationRes,countryRes, imageRes  , Faqres, videoRes,blogres,unires] = await Promise.all([
     serverInstance.get(
       "/page-information/navbar?isFeatured=true&type=destinations&limit=6"
     ),
+
+    serverInstance.get("/page-information/navbar?isFeatured=true&type=country&limit=6"),
     serverInstance.get("/testimonials?type=image&limit=15"),
     serverInstance.get("/faqs/public/list?type=General&limit=15"),
     serverInstance.get("/testimonials?type=video&limit=6"),
     serverInstance.get("/blogs?type=blog&limit=5"),
     serverInstance.get("/universities?limit=10")
-
-
   ]);
 
     
@@ -68,6 +68,7 @@ export default async function Home() {
     <Homepage
       homePage={homePage}
       destinationData={destinationRes.data.data}
+      countryData={countryRes.data.data}
       imageData={imageRes.data.data}
       Faqres = {Faqres.data.data}
       videoRes={videoRes.data.data}

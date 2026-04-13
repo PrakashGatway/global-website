@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { NewTag } from "./tag";
 import Image from "next/image";
-import UniversitySliderClient from "@/components/PageComponent/Unversity";
+import UniversitySliderClient, { CountryCardGrid } from "@/components/PageComponent/Unversity";
 import AboutTabsSection from "@/components/PageComponent/TrustTabs";
 import VideoTestimonialsSlider from "@/components/PageComponent/VideoTestimonial";
 import ImageTestimonial from "@/components/ImageTestimonial";
@@ -34,14 +34,16 @@ import StudyDestinations from "./homepageCom/CountryCards";
 export default function Homepage({
   homePage,
   destinationData,
+  countryData,
   imageData,
   Faqres,
   videoRes,
   blogres,
   unires,
-}) {
+}: any) {
   const [openForm, setOpenForm] = useState(false);
   const [countries, setCountries] = useState([]);
+  console.log(countryData, "country data")
 
   function AutoSlidePlugin(slider) {
     let timeout;
@@ -871,9 +873,9 @@ export default function Homepage({
           </h2>
         </div>
 
+        <CountryCardGrid countries={countryData} />
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-4  justify-center">
-          {/* LEFT COLUMN */}
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-4  justify-center">
           <div className="flex flex-col gap-4">
             <Link href={"/destination/study-in-usa"}>
               <div className="h-40 sm:h-40 lg:h-42 w-full lg:w-92  rounded-2xl overflow-hidden relative">
@@ -923,7 +925,6 @@ export default function Homepage({
             </div>
           </div>
 
-          {/* MIDDLE COLUMN */}
           <div className="flex flex-col gap-4">
             <div className="w-full lg:w-92 h-24 lg:h-25 rounded-2xl overflow-hidden relative ">
               <img
@@ -965,7 +966,6 @@ export default function Homepage({
             </div>
           </div>
 
-          {/* RIGHT COLUMN */}
           <div className="flex flex-col gap-4">
             <div className="flex gap-4">
               <div className="w-full lg:w-44 h-40 sm:h-52 rounded-2xl overflow-hidden relative ">
@@ -1008,7 +1008,7 @@ export default function Homepage({
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
       </section>
 
       <section className="w-full py-6 lg:py-16 px-1 md:px-8">

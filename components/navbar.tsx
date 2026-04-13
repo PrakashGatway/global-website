@@ -230,9 +230,9 @@ export default function Navbar({
             {!isScrolled && (
               <div className="w-full justify-end items-center gap-6 lg:flex hidden z-10 px-4 text-white">
                 <div className="bg-[#6d1901] shadow-xl flex justify-center items-center gap-2 px-4 py-1.5 rounded-b-2xl text-sm font-medium gap-8">
-                  <a href="tel:+919887120429" className="flex items-center gap-2 hover:opacity-80 transition font-medium">
+                  <a href="tel:+919875863347" className="flex items-center gap-2 hover:opacity-80 transition font-medium">
                     <span>Consult With Expert:</span>
-                    <span className="font-semibold text-yellow-300">+91 9887120429</span>
+                    <span className="font-semibold text-yellow-300">+91 9875863347</span>
                   </a>
                   {Login ? (
                     <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition">
@@ -328,12 +328,12 @@ export default function Navbar({
                           </div>
                         ) : (
                           <div className="grid grid-cols-2 gap-3">
-                            {(item.type === "service" ? Serviceitem : item.type === "country" ? countryres : uniqueCountries)?.map((item: any) => {
-                              const href = item.type === "service" ? `/service/${item.slug}` : `/${item.slug}`;
-                              const title = item.navbarTitle || item.name;
-                              const image = item.navbarImage || item.flag;
+                            {(item.type === "service" ? Serviceitem : item.type === "country" ? countryres : uniqueCountries)?.map((items: any) => {
+                              const href = item.type == "service" ? `/service/${items.slug}` : `/${items.slug}`;
+                              const title = items.navbarTitle || items.name;
+                              const image = items.navbarImage || items.flag;
                               return (
-                                <Link key={item._id || item.code} href={href} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition">
+                                <Link key={items._id || items.code} href={href} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition">
                                   <div className="w-10 h-10 rounded-full bg-white shadow overflow-hidden">
                                     <Image src={image || "/placeholder.png"} alt={title} width={40} height={40} className="object-cover w-full h-full" />
                                   </div>
@@ -384,9 +384,9 @@ export default function Navbar({
 
           {/* Mobile Actions */}
           <div className="flex items-center gap-3 pr-3 lg:hidden">
-            <a href="tel:+919887120429" className="flex items-center gap-1 bg-white text-[#f46c44] px-3 py-2 rounded-full shadow-md active:scale-95 transition">
+            <a href="tel:+919875863347" className="flex items-center gap-1 bg-white text-[#f46c44] px-3 py-2 rounded-full shadow-md active:scale-95 transition">
               <Phone size={16} />
-              <span className="text-xs font-semibold">9887120429</span>
+              <span className="text-xs font-semibold">9875863347</span>
             </a>
             <button onClick={() => setIsOpen(true)} className="text-white bg-[#6d1901] p-2 rounded-md">
               <Menu size={22} />
@@ -445,7 +445,6 @@ export default function Navbar({
                           exit="exit"
                           className="absolute inset-0 overflow-y-auto"
                         >
-                          {/* MAIN MENU */}
                           {screen.type === 'main' && (
                             <div className="px-4 py-2 space-y-1">
                               {[...navbar, { title: "Blogs", route: "/blog", id: 23 }, { title: "Events & Webinars", route: "/events", id: 13 }].map((item) => (
@@ -504,7 +503,6 @@ export default function Navbar({
                             </div>
                           )}
 
-                          {/* COUNTRIES LIST */}
                           {screen.type === 'countries' && (
                             <div className="px-4 py-2">
                               <div className="mb-4">
@@ -544,7 +542,6 @@ export default function Navbar({
                             </div>
                           )}
 
-                          {/* UNIVERSITIES LIST */}
                           {screen.type === 'universities' && selectedCountry && (
                             <div className="px-4 py-3">
                               <div className="mb-1 sticky top-0 bg-gradient-to-b from-white to-transparent pb-3 z-10">
@@ -615,7 +612,6 @@ export default function Navbar({
                             </div>
                           )}
 
-                          {/* SERVICES / DESTINATIONS LIST */}
                           {(screen.type === 'services' || screen.type === 'destinations') && (
                             <div className="px-4 py-3">
                               <div className="mb-4">
@@ -626,7 +622,7 @@ export default function Navbar({
                                 {(screen.data || []).map((item: any) => {
                                   const href = screen.type === 'services' ? `/service/${item.slug}` : `/${item.slug}`;
                                   const title = item.navbarTitle || item.name;
-                                  const image = item.flag;
+                                  const image = item.flag || item.navbarImage;
 
                                   return (
                                     <Link
@@ -637,19 +633,19 @@ export default function Navbar({
                                     >
                                       <motion.div
                                         whileTap={{ scale: 0.99 }}
-                                        className="flex items-center gap-4 p-4 bg-orange-50 rounded-2xl hover:border-[#f46c44]/30 hover:shadow-md transition group"
+                                        className="flex items-center gap-2 p-4 bg-orange-50 rounded-2xl hover:border-[#f46c44]/30 hover:shadow-md transition group"
                                       >
-                                        <div className="w-16 rounded-lg shadow h-12 overflow-hidden flex-shrink-0">
+                                        <div className="w-14 rounded-lg shadow h-10 overflow-hidden flex-shrink-0">
                                           <Image
                                             src={image || "https://t4.ftcdn.net/jpg/00/65/77/21/360_F_65772192_jm8MYL39Bp5pp90KlyGWrRgErYa70lZZ.jpg"}
                                             alt={title}
-                                            width={48}
-                                            height={48}
+                                            width={40}
+                                            height={40}
                                             className="object-cover w-full object-center h-full"
                                           />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                          <p className="font-medium text-gray-800 group-hover:text-[#f46c44] transition">
+                                          <p className="font-medium text-sm text-gray-800 group-hover:text-[#f46c44] transition">
                                             {title}
                                           </p>
                                           {item.subTitle && (
@@ -669,8 +665,6 @@ export default function Navbar({
                     })}
                   </AnimatePresence>
                 </div>
-
-                {/* Bottom Safe Area */}
                 <div className="h-6 bg-gradient-to-t from-gray-50 to-transparent flex-shrink-0" />
               </motion.aside>
             </>

@@ -5,14 +5,15 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 // import ThreeDButton from "./3dbutton"
 
-export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
-  
+export function Footer({ Featureitem = [], Serviceitem = [], countryres
+
 }: {
-  Featureitem?: any[]}) {
+  Featureitem?: any[]
+}) {
 
-   const pathname = usePathname()
+  const pathname = usePathname()
 
-   
+
 
   // hide footer on auth pages
   if (
@@ -25,195 +26,195 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
   return (
     <>
       {/* Footer */}
-      
+
       <footer className="bg-secondary  pt-3  overflow-visible relative">
 
-        
+
 
         <div className=" max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-16 overflow-visible">
 
-          
+
 
           {/* ================= MAIN FOOTER CARD with Orange Border ================= */}
           <div className="rounded-[50px] px-6 md:px-12 pt-8 pb-12 relative ">
 
 
-         
-         
+
+
 
 
             <div className="flex flex-col lg:flex-row">
 
-            
+
 
 
 
               {/* CONTENT AREA WITH DIVIDERS */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
 
-                  {/* BRAND */}
-              <div className="w-full lg:w-60 pr-0 lg:pr-8 mb-10 lg:mb-0 relative ">
-                <Image
-                  src="/images/footer-logo.png"
-                  alt="GAway Global"
-                  width={130}
-                  height={50}
-                  className="mb-4 text-white"
-                />
-                <h3 className="text-xl font-bold text-gray-100 mb-3">Ooshas Global</h3>
-                <p className="text-gray-100 text-base leading-relaxed mb-6">
-                  Your trusted partner for global education, university admissions, and international study planning.
-                </p>
+                {/* BRAND */}
+                <div className="w-full lg:w-60 pr-0 lg:pr-8 mb-10 lg:mb-0 relative ">
+                  <Image
+                    src="/images/footer-logo.png"
+                    alt="GAway Global"
+                    width={130}
+                    height={50}
+                    className="mb-4 text-white"
+                  />
+                  <h3 className="text-xl font-bold text-gray-100 mb-3">Ooshas Global</h3>
+                  <p className="text-gray-100 text-base leading-relaxed mb-6">
+                    Your trusted partner for global education, university admissions, and international study planning.
+                  </p>
 
-    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
+                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
 
 
-               
+
+                </div>
+
+                {/* STUDY DESTINATIONS */}
+                <div className="px-0 sm:px-4 lg:px-6 relative">
+                  <div className="h-full flex flex-col">
+                    <h4 className="text-gray-100 font-bold text-lg mb-4">
+                      Top Group of Universities
+                    </h4>
+
+                    {Featureitem.map((item) => (
+                      <ul
+                        key={item._id}
+                        className="space-y-2 text-gray-100 text-base"
+                      >
+                        <li
+                          className="
+              cursor-pointer
+              transition-all duration-300
+              hover:text-[#f46c44]
+              hover:translate-x-2
+            "
+                        >
+                          <Link href={`/universities/group/${item.slug}`}>
+                            {item?.navbarTitle}
+                          </Link>
+                        </li>
+                      </ul>
+                    ))}
+                  </div>
+
+                  {/* Divider only on lg */}
+                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
+                </div>
+
+                {/* SERVICES */}
+                <div className="px-0 sm:px-4 lg:px-6 relative">
+                  <div className="h-full flex flex-col">
+                    <h4 className="text-gray-100 font-bold text-lg mb-4">
+                      Our Services
+                    </h4>
+
+                    {Serviceitem.map((item) => (
+                      <ul
+                        key={item._id}
+                        className="space-y-2 text-gray-100 text-base"
+                      >
+                        <li
+                          className="
+              cursor-pointer
+              transition-all duration-300
+              hover:text-[#f46c44]
+              hover:translate-x-2
+            "
+                        >
+                          <Link href={`/service/${item.slug}`}>
+                            {item?.navbarTitle}
+                          </Link>
+                        </li>
+                      </ul>
+                    ))}
+                  </div>
+
+                  {/* Divider only on lg */}
+                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
+                </div>
+
+                {/* RESOURCES */}
+                <div className="px-0 sm:px-4 lg:px-6 relative">
+                  <div className="h-full flex flex-col">
+                    <h4 className="text-gray-100 font-bold text-lg mb-4">
+                      Resources
+                    </h4>
+
+                    <ul className="space-y-2 text-gray-100 text-base">
+                      <li
+                        className="
+            cursor-pointer
+            transition-all duration-300
+            hover:text-[#f46c44]
+            hover:translate-x-2
+          "
+                      >
+                        <Link href="/blog">Blogs</Link>
+                      </li>
+
+                      <li
+                        className="
+            cursor-pointer
+            transition-all duration-300
+            hover:text-[#f46c44]
+            hover:translate-x-2
+          "
+                      >
+                        <Link href="/events">Events & Webinars</Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Divider only on lg */}
+                  <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
+                </div>
+
+                {/* CONNECT */}
+                <div className="px-0 sm:px-4 lg:px-6">
+                  <div className="h-full flex flex-col">
+                    <h4 className="text-gray-100 font-bold text-lg mb-4">
+                      Connect
+                    </h4>
+
+                    <ul className="space-y-2 text-gray-100 text-base">
+                      <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
+                        <a href="https://www.instagram.com/ooshasglobal?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">
+                          Instagram
+                        </a>
+                      </li>
+                      <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
+                        <a href="https://www.facebook.com/share/18vb1scYJk/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">
+                          Facebook
+                        </a>
+                      </li>
+                      <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
+                        LinkedIn
+                      </li>
+                      <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
+                        <a
+                          href="https://youtube.com/@ooshasglobal?si=sGQj1cPrHl6bOKfc"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          YouTube
+                        </a>
+                      </li>
+                      <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
+                        <Link href="/contact">Contact Us</Link>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
               </div>
-
-  {/* STUDY DESTINATIONS */}
-  <div className="px-0 sm:px-4 lg:px-6 relative">
-    <div className="h-full flex flex-col">
-      <h4 className="text-gray-100 font-bold text-lg mb-4">
-        Top Group of Universities
-      </h4>
-
-      {Featureitem.map((item) => (
-        <ul
-          key={item._id}
-          className="space-y-2 text-gray-100 text-base"
-        >
-          <li
-            className="
-              cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            "
-          >
-            <Link href={`/universities/group/${item.slug}`}>
-              {item?.navbarTitle}
-            </Link>
-          </li>
-        </ul>
-      ))}
-    </div>
-
-    {/* Divider only on lg */}
-    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
-  </div>
-
-  {/* SERVICES */}
-  <div className="px-0 sm:px-4 lg:px-6 relative">
-    <div className="h-full flex flex-col">
-      <h4 className="text-gray-100 font-bold text-lg mb-4">
-        Our Services
-      </h4>
-
-      {Serviceitem.map((item) => (
-        <ul
-          key={item._id}
-          className="space-y-2 text-gray-100 text-base"
-        >
-          <li
-            className="
-              cursor-pointer
-              transition-all duration-300
-              hover:text-[#f46c44]
-              hover:translate-x-2
-            "
-          >
-            <Link href={`/service/${item.slug}`}>
-              {item?.navbarTitle}
-            </Link>
-          </li>
-        </ul>
-      ))}
-    </div>
-
-    {/* Divider only on lg */}
-    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
-  </div>
-
-  {/* RESOURCES */}
-  <div className="px-0 sm:px-4 lg:px-6 relative">
-    <div className="h-full flex flex-col">
-      <h4 className="text-gray-100 font-bold text-lg mb-4">
-        Resources
-      </h4>
-
-      <ul className="space-y-2 text-gray-100 text-base">
-        <li
-          className="
-            cursor-pointer
-            transition-all duration-300
-            hover:text-[#f46c44]
-            hover:translate-x-2
-          "
-        >
-          <Link href="/blog">Blogs</Link>
-        </li>
-
-        <li
-          className="
-            cursor-pointer
-            transition-all duration-300
-            hover:text-[#f46c44]
-            hover:translate-x-2
-          "
-        >
-          <Link href="/events">Events & Webinars</Link>
-        </li>
-      </ul>
-    </div>
-
-    {/* Divider only on lg */}
-    <div className="hidden lg:block absolute right-0 top-0 w-[2px] h-full bg-white rounded-full" />
-  </div>
-
-  {/* CONNECT */}
-  <div className="px-0 sm:px-4 lg:px-6">
-    <div className="h-full flex flex-col">
-      <h4 className="text-gray-100 font-bold text-lg mb-4">
-        Connect
-      </h4>
-
-      <ul className="space-y-2 text-gray-100 text-base">
-        <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
-          <a href="https://www.instagram.com/ooshasglobal?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">
-            Instagram
-          </a>
-        </li>
-        <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
-          <a href="https://www.facebook.com/share/18vb1scYJk/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">
-            Facebook
-          </a>
-        </li>
-        <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
-          LinkedIn
-        </li>
-      <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
-  <a
-    href="https://youtube.com/@ooshasglobal?si=sGQj1cPrHl6bOKfc"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    YouTube
-  </a>
-</li>
-        <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
-          <Link href="/contact">Contact Us</Link>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-</div>
 
 
             </div>
 
-            
+
 
           </div>
 
@@ -224,15 +225,15 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
             <div className="flex gap-4 md:gap-6 flex-wrap justify-center">
               <a href="privacy-policy" className="hover:text-orange-500">Privacy Policy</a>
               <a href="terms-condition" className="hover:text-orange-500">Terms of Service</a>
-            
+
             </div>
           </div>
 
         </div>
 
-     <div className="relative overflow-hidden w-full">
-  <style>
-    {`
+        <div className="relative overflow-hidden w-full">
+          <style>
+            {`
       @keyframes marquee {
         from {
           transform: translateX(0);
@@ -242,34 +243,34 @@ export function Footer({ Featureitem = [],Serviceitem =[] ,countryres
         }
       }
     `}
-  </style>
-  
-  <div 
-    className="flex w-max"
-    style={{
-      animation: 'marquee 100s linear infinite',
-    }}
-    onMouseEnter={(e) => e.currentTarget.style.animationPlayState = 'paused'}
-    onMouseLeave={(e) => e.currentTarget.style.animationPlayState = 'running'}
-  >
-    {/* block 1 */}
-    <div className="flex-shrink-0">
-      <img src="/images/footer-bg.png" className="h-[300px] w-auto" alt="footer background" />
-    </div>
+          </style>
 
-    {/* block 2 duplicate */}
-    <div className="flex-shrink-0">
-      <img src="/images/footer-bg.png" className="h-[300px] w-auto" alt="footer background" />
-    </div>
-    
-    {/* Optional: Add a third block for extra smoothness */}
-    <div className="flex-shrink-0">
-      <img src="/images/footer-bg.png" className="h-[300px] w-auto" alt="footer background" />
-    </div>
-  </div>
-</div>
+          <div
+            className="flex w-max"
+            style={{
+              animation: 'marquee 100s linear infinite',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.animationPlayState = 'paused'}
+            onMouseLeave={(e) => e.currentTarget.style.animationPlayState = 'running'}
+          >
+            {/* block 1 */}
+            <div className="flex-shrink-0">
+              <img src="/images/footer-bg.png" className="h-[300px] w-auto" alt="footer background" />
+            </div>
+
+            {/* block 2 duplicate */}
+            <div className="flex-shrink-0">
+              <img src="/images/footer-bg.png" className="h-[300px] w-auto" alt="footer background" />
+            </div>
+
+            {/* Optional: Add a third block for extra smoothness */}
+            <div className="flex-shrink-0">
+              <img src="/images/footer-bg.png" className="h-[300px] w-auto" alt="footer background" />
+            </div>
+          </div>
+        </div>
       </footer>
-    
+
     </>
   )
 }
