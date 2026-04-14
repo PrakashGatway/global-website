@@ -126,7 +126,7 @@ const FormSection = () => {
   };
 
   return (
-    <div className="bg-white border border-gray-300 p-5 sm:p-8 shadow-sm rounded-lg w-full">
+    <div className="bg-white border p-5 sm:p-8 rounded-lg w-full">
       <h2 className="text-orange-500 text-sm sm:text-xl font-semibold mb-5 tracking-wide">
         GET IN TOUCH
       </h2>
@@ -189,6 +189,7 @@ const FormSection = () => {
           </div>
 
           {/* State */}
+          <div className="flex gap-2">
           <div>
             <label className="text-sm text-gray-700">State</label>
             <input
@@ -204,6 +205,8 @@ const FormSection = () => {
               {...register("city")}
               className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
             />
+          </div>
+
           </div>
 
           {/* Country */}
@@ -223,13 +226,13 @@ const FormSection = () => {
           </div>
         </div>
 
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-end mt-6">
           <button
             type="submit"
             disabled={isSubmitting}
             className="bg-secondary hover:bg-primary text-white px-6 py-2 rounded-full"
           >
-            {isSubmitting ? "Submitting..." : "CONTACT US"}
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </div>
       </form>
@@ -436,9 +439,8 @@ export default function UniDetailsClient({
             </div>
           ))}
 
-          <div className="max-w-7xl mx-auto rounded-3xl p-6 bg-gradient-to-r from-[#f6f3f9] to-[#f1f5fb] shadow-sm border border-gray-200 backdrop-blur-md">
+          {/* <div className="max-w-7xl mx-auto rounded-3xl p-6 bg-gradient-to-r from-[#f6f3f9] to-[#f1f5fb] shadow-sm border border-gray-200 backdrop-blur-md">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              {/* LEFT SECTION */}
               <div className="flex-1 relative">
                 <p className="text-orange-500 font-semibold text-xs tracking-wider mb-2">
                   SCHOLARSHIP PREDICTOR
@@ -451,7 +453,6 @@ export default function UniDetailsClient({
                   profile
                 </h2>
 
-                {/* USERS */}
                 <div className="flex items-center gap-3 mt-4">
                   <div className="flex -space-x-2">
                     <img
@@ -472,13 +473,11 @@ export default function UniDetailsClient({
                   </span>
                 </div>
 
-                {/* BACKGROUND GRID EFFECT */}
                 <div className="absolute right-10 top-5 opacity-30 pointer-events-none">
                   <div className="w-32 h-32 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:10px_10px]" />
                 </div>
               </div>
 
-              {/* RIGHT SECTION */}
               <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-md border border-gray-200 min-w-[260px]">
                 <p className="text-sm text-gray-600 text-center mb-4">
                   Let's start! It will just take 2 mins
@@ -499,7 +498,7 @@ export default function UniDetailsClient({
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Location section */}
           {latitude && (
