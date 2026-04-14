@@ -71,10 +71,6 @@ export default async function BlogPage({
       total={blogres.data.total}
       categoryData={blogcategory.data.data}
     />
-
-    
-
-
     </>
   )
 }
