@@ -13,12 +13,12 @@ const FAQSection = ({ Faqres }) => {
       <div className="container   ">
         {/* Header */}
         <div className="text-justify mb-12 lg:mb-16    ">
-          <h3 className="text-3xl text-gray-900 mb-4 ">
+          <h2 className="text-3xl text-gray-900 mb-4 ">
             <span className='text-xl lg:text-4xl font-light text-[#F46C44] '>Frequently</span>{" "}
             <br /><span className=' text-xl lg:text-4xl text-primary font-bold relative'>Asked Questions
               <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
             </span>
-          </h3>
+          </h2>
         </div>
 
         {/* FAQ Grid */}
@@ -33,9 +33,8 @@ const FAQSection = ({ Faqres }) => {
                   onClick={() => toggleFAQ(index)}
                   className="w-full px-4 lg:px-6 py-3 lg:py-2 text-left flex justify-between items-center focus:outline-none  focus:ring-opacity-50 rounded-xl"
                 >
-                  <span className=" text-sm lg:text-lg font-medium text-gray-900 pr-4">
-                    {faq.question}
-                  </span>
+                  <div className=" text-sm lg:text-lg font-medium text-gray-900 pr-4" dangerouslySetInnerHTML={{__html :faq.question}}/>
+                 
                   <svg
                     className={`w-6 h-6 text-primary-600 flex-shrink-0 transform transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''
                       }`}
@@ -58,9 +57,6 @@ const FAQSection = ({ Faqres }) => {
                 >
                   <div className="px-6 pb-5 pt-3">
                     <p className="text-black text-xs lg:text-base leading-relaxed" dangerouslySetInnerHTML={{__html :faq.answer}}/>
-                   
-
-
                   </div>
                 </div>
               </div>
