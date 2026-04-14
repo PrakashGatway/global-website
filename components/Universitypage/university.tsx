@@ -187,7 +187,6 @@ useEffect(() => {
   return cleaned;
 };
 
-  console.log(data)
   return (
     <div className="min-h-screen bg-white overflow-x-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
       {/* Sticky Navigation Bar */}

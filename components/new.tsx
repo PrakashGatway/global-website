@@ -254,7 +254,7 @@ export default function UniDetailsClient({
   const longitude = data.google_location?.lng;
   const location = [data.city, data.country].filter(Boolean).join(", ");
 
-  
+
 
   // Smooth scroll to a section
   const scrollToSection = (key: string) => {
@@ -303,7 +303,7 @@ export default function UniDetailsClient({
   }, [activeSection]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <main className="min-h-screen bg-white">
       {/* ── HEADER CARD ─────────────────────────────────────────────────── */}
       <div className="relative max-w-[100vw] overflow-hidden mx-auto h-[30rem] px-10 py-10 flex items-center justify-center ">
         <div
@@ -314,7 +314,7 @@ export default function UniDetailsClient({
           }}
         ></div>
 
-        <div className="flex md:flex-col lg:flex-row-reverse  bg-white rounded overflow-hidden shadow-md w-full h-[100%] z-50 mt-20">
+        <div className="flex md:flex-col lg:flex-row-reverse bg-white rounded overflow-hidden w-full h-[100%] z-50 mt-20">
           {data.cover_photo && (
             <img
               src={data.cover_photo}
@@ -323,11 +323,11 @@ export default function UniDetailsClient({
             />
           )}
 
-          <div className="p-6 flex items-start gap-10 flex-col w-full lg:w-1/3 ">
+          <div className="p-6 flex items-start gap-4 flex-col w-full lg:w-1/3 ">
             <img
               src={data.uni_logo}
               alt={`${data.name} logo`}
-              className="w-full h-28 object-contain bg-white rounded-xl border border-slate-100"
+              className="h-24 max-w-full  object-contain bg-white rounded-xl"
             />
 
             <div>
@@ -373,12 +373,12 @@ export default function UniDetailsClient({
       )} */}
 
       {activeSections.length > 0 && (
-        <div className="bg-white border-b sticky top-20 z-30">
+        <div className="bg-white border-b sticky top-[4.8rem] z-30">
           <div
             ref={navRef} // 👈 ref on the scrollable container
             className="overflow-x-auto scrollbar-hide"
           >
-            <div className="flex gap-8 px-4">
+            <div className="flex gap-4 px-4">
               {activeSections.map((section) => (
                 <button
                   key={section._id}
@@ -386,15 +386,14 @@ export default function UniDetailsClient({
                     buttonRefs.current[section.section_key] = el;
                   }} // 👈 ref each button
                   onClick={() => scrollToSection(section.section_key)}
-                  className={`px-2 py-4 font-bold border-0 border-b-4 whitespace-nowrap transition-colors ${
-                    activeSection === section.section_key
-                      ? "border-orange-600 text-orange-600"
-                      : "border-transparent text-gray-500 hover:text-black"
-                  }`}
+                  className={`px-2 py-3 font-semibold text-sm border-0 border-b-2 whitespace-nowrap transition-colors ${activeSection === section.section_key
+                    ? "border-orange-600 text-orange-600"
+                    : "border-transparent text-gray-500 hover:text-black"
+                    }`}
                 >
                   <span dangerouslySetInnerHTML={{
-                    __html : section.heading
-                  }}/>
+                    __html: section.heading
+                  }} />
                 </button>
               ))}
             </div>
@@ -405,7 +404,7 @@ export default function UniDetailsClient({
       {/* ── MAIN CONTENT ────────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 py-10 grid lg:grid-cols-3 gap-8">
         {/* LEFT — sections + map */}
-        <div className="lg:col-span-2 space-y-16">
+        <div className="lg:col-span-2 space-y-10">
           {activeSections.map((section) => (
             <div
               key={section._id}
@@ -416,9 +415,9 @@ export default function UniDetailsClient({
               className="scroll-mt-28"
             >
               <h2 className="text-2xl font-bold text-slate-900 mb-4"
-              dangerouslySetInnerHTML={{
-              __html :  section.heading
-            }}  
+                dangerouslySetInnerHTML={{
+                  __html: section.heading
+                }}
               />
               <div
                 className="prose max-w-none text-slate-700 
