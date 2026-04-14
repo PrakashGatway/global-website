@@ -1,17 +1,17 @@
+"use client"
 import { FaWhatsapp } from "react-icons/fa";
 
 export default function WhatsAppButton() {
   const phoneNumber = "9875863347"; // 👉 your number (with country code)
   const message = "Hello, I want to know more!";
 
-  const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-    message
-  )}`;
+
+  const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
   return (
-    <a
-      href={whatsappLink}
-      target="_blank"
+    <button
+      onClick={() => window.open(whatsappLink, "_blank")}
+     
       rel="noopener noreferrer"
       className="
         fixed right-3 bottom-6 z-50
@@ -24,6 +24,6 @@ export default function WhatsAppButton() {
       "
     >
       <FaWhatsapp className="text-xl sm:text-2xl" />
-    </a>
+    </button>
   );
 }

@@ -4,23 +4,23 @@ import { Mail, Phone, MapPin, Clock, MessageSquare } from 'lucide-react';
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import axiosInstance from "../app/axiosInstance";
-import {toast} from "react-hot-toast"
+import { toast } from "react-hot-toast"
 import Link from "next/link";
 import FAQSection from "@/components/faqPage";
 import { DynamicLucideIcon } from "./DynamicLucideIcon";
 
-export default function ContactUsPage({ contactData ,Faqres }) {
+export default function ContactUsPage({ contactData, Faqres }) {
   // Extract data from the response
   const heroTitle = contactData?.sections?.hero?.title || "";
   const heroSubtitle = contactData?.sections?.hero?.subtitle || "";
-  const getInTouchTitle = contactData?.sections?.getInTouch?.title 
+  const getInTouchTitle = contactData?.sections?.getInTouch?.title
   const getInTouchpoint = contactData?.sections?.getInTouch?.points || [];
   const OfficeLocation = contactData?.sections?.OfficeLocation?.points || [];
-  const getInTouchSubtitle = contactData?.sections?.getInTouch?.subtitle 
-  const sendMessageTitle = contactData?.sections?.sendMessage?.title 
-  const sendMessageSubtitle = contactData?.sections?.sendMessage?.subtitle 
+  const getInTouchSubtitle = contactData?.sections?.getInTouch?.subtitle
+  const sendMessageTitle = contactData?.sections?.sendMessage?.title
+  const sendMessageSubtitle = contactData?.sections?.sendMessage?.subtitle
   const sendMessagePoints = contactData?.sections?.sendMessage?.points || [];
-// console.log(getInTouchpoint)
+  // console.log(getInTouchpoint)
   // Icon mapping for sendMessage points
   const pointIcons = {
     message: <MessageSquare className="h-6 w-6" style={{ color: '#FF6B35' }} />
@@ -58,9 +58,9 @@ export default function ContactUsPage({ contactData ,Faqres }) {
 
   return (
     <div className='bg-[#fffaf7]'>
-     
+
       <section className="relative flex items-center" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
-     
+
         <div className="w-full max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center sm:pl-30">
           <div className="text-white space-y-6 p-6 sm:pt-0 pt-12">
             <h1 className="text-4xl lg:text-6xl font-bold text-white tracking-tight">
@@ -125,34 +125,62 @@ export default function ContactUsPage({ contactData ,Faqres }) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {/* Contact Card 1 */}
 
-            {getInTouchpoint.map((point,idx) => (
-                
-            <motion.div
-              className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-            >
-              <div className="bg-[#FF6B35] w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
-                {/* <Phone className="h-8 w-8 text-white" /> */}
-                <DynamicLucideIcon name={`${point?.icon}`} size={40} className="sm:w-10 sm:h-10 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-3 text-center">{point?.title}</h3>
-              <p className="text-gray-600 text-center mb-4">{point?.subtitle}</p>
-              <div className="space-y-2">
-                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>{point?.Number?.split("||")[0]}</p>
-                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>{point?.Number?.split("||")[1]}</p>
-                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>{point?.email?.split("||")[0]}</p>
-                <p className="text-lg font-semibold text-center" style={{ color: '#FF6B35' }}>{point?.email?.split("||")[1]}</p>
-                <p className="text-lg font-semibold text-center" >{point?.Location}</p>
-                <p className="text-lg font-semibold text-center" >{point?.timing?.split("||")[0]}</p>
-                <p className="text-lg font-semibold text-center" >{point?.timing?.split("||")[1]}</p>
-                <p className="text-lg font-semibold text-center" >{point?.timing?.split("||")[2]}</p>
-              
-              </div>
-              <p className="text-sm text-gray-500 text-center mt-4">{point?.footertext}</p>
-            </motion.div>
+            {getInTouchpoint.map((point, idx) => (
+
+              <motion.div
+                className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <div className="bg-[#FF6B35] w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
+                  {/* <Phone className="h-8 w-8 text-white" /> */}
+                  <DynamicLucideIcon name={`${point?.icon}`} size={40} className="sm:w-10 sm:h-10 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-3 text-center">{point?.title}</h3>
+                <p className="text-gray-600 text-center mb-4">{point?.subtitle}</p>
+                <div className="space-y-2">
+                  {point?.Number?.split("||").map((num, i) => (
+                    <a
+                      key={i}
+                      href={`tel:${num.trim()}`}
+                      className="block text-lg font-semibold text-center"
+                      style={{ color: '#FF6B35' }}
+                    >
+                      {num}
+                    </a>
+                  ))}
+
+                  {point?.email?.split("||").map((mail, i) => (
+                    <a
+                      key={i}
+                       href={`https://mail.google.com/mail/?view=cm&to=${mail}`}
+                      className="block text-lg font-semibold text-center"
+                      style={{ color: '#FF6B35' }}
+                    >
+                      {mail}
+                    </a>
+                  ))}
+
+                  <a
+                    href={`https://www.google.com/maps?q=${encodeURIComponent(point?.Location)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-lg font-semibold text-center"
+                    style={{ color: '#FF6B35' }}
+                  >
+                    {point?.Location}
+                  </a>
+
+                  {point?.timing?.split("||").map((time, i) => (
+                    <p key={i} className="text-lg font-semibold text-center">
+                      {time}
+                    </p>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-500 text-center mt-4">{point?.footertext}</p>
+              </motion.div>
             ))}
 
           </div>
@@ -187,18 +215,18 @@ export default function ContactUsPage({ contactData ,Faqres }) {
             <div className="bg-white p-8 rounded-lg shadow-lg">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div>
-                    <label className="block text-gray-700 text-sm font-semibold mb-2">
-                      Name *
-                    </label>
-                    <input
-                      {...register("Name", { required: "First name is required" })}
-                      type="text"
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
-                    />
-                    {errors.firstName && (
-                      <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>
-                    )}
-                  </div>
+                  <label className="block text-gray-700 text-sm font-semibold mb-2">
+                    Name *
+                  </label>
+                  <input
+                    {...register("Name", { required: "First name is required" })}
+                    type="text"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
+                  />
+                  {errors.firstName && (
+                    <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>
+                  )}
+                </div>
 
                 <div>
                   <label className="block text-gray-700 text-sm font-semibold mb-2">
@@ -225,7 +253,7 @@ export default function ContactUsPage({ contactData ,Faqres }) {
                     Phone Number *
                   </label>
                   <input
-                  maxLength={10}
+                    maxLength={10}
                     {...register("phone", {
                       required: "Phone number is required",
                       pattern: {
@@ -259,7 +287,7 @@ export default function ContactUsPage({ contactData ,Faqres }) {
                   </select>
                 </div>
 
-               
+
 
                 <div className="flex items-start">
                   <input
@@ -380,25 +408,18 @@ export default function ContactUsPage({ contactData ,Faqres }) {
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">Office Locations</h3>
                 <div className="space-y-4">
-                  {OfficeLocation.map((point,idx) => (
-                  <div key={idx}>
-                    <h4 className="font-bold text-gray-700">{point.title}</h4>
-                    <p className="text-gray-600">{point.subtitle}</p>
-                  </div>
+                  {OfficeLocation.map((point, idx) => (
+                    <div key={idx}>
+                      <h4 className="font-bold text-gray-700">{point.title}</h4>
+                      <p className="text-gray-600">{point.subtitle}</p>
+                    </div>
 
                   ))}
-                  
+
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-lg">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Emergency Contact</h3>
-                <p className="text-gray-600 mb-4">For urgent matters outside business hours:</p>
-                <div className="space-y-2">
-                  <p className="font-semibold" style={{ color: '#FF6B35' }}>Emergency: +1 (555) 999-8888</p>
-                  <p className="text-sm text-gray-500">Available 24/7 for enrolled students</p>
-                </div>
-              </div>
+          
             </div>
           </div>
         </div>
@@ -427,9 +448,9 @@ export default function ContactUsPage({ contactData ,Faqres }) {
         </div>
       </section> */}
 
-        <CTASection />
+      <CTASection />
 
-      <FAQSection Faqres = {Faqres} />
+      <FAQSection Faqres={Faqres} />
     </div>
   );
 }
@@ -464,19 +485,19 @@ const CTASection = ({ data }: { data?: any }) => {
         </div>
 
         {/* Decorative circle — only on lg */}
-        <div className="hidden lg:flex relative h-[380px] items-center justify-center">
-          <img
-            src="/images/circle stand.png"
-            alt=""
-            className="absolute z-10 w-[90px] bottom-3"
-            style={{ right: "calc(50% - 45px)" }}
-          />
-          <img
-            src="/images/circle.png"
-            alt=""
-            className="w-80 xl:w-96 animate-spin [animation-duration:60s]"
-          />
-        </div>
+           <div className="hidden lg:flex relative h-[380px] items-center justify-center">
+            <img
+              src="/images/circle stand.png"
+              alt=""
+              className="absolute z-10 w-[90px] -bottom-[2%]"
+              
+            />
+            <img
+              src="/images/circle.png"
+              alt=""
+              className="w-80 xl:w-96 animate-spin [animation-duration:60s] absolute -bottom-[10%]"
+            />
+          </div>
       </div>
 
       <img

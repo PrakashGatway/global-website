@@ -711,13 +711,13 @@ export default function UniDetailsClient({
             <img
               src="/images/circle stand.png"
               alt=""
-              className="absolute z-10 w-[90px] bottom-3"
-              style={{ right: "calc(50% - 45px)" }}
+              className="absolute z-10 w-[90px] -bottom-[2%]"
+              
             />
             <img
               src="/images/circle.png"
               alt=""
-              className="w-80 xl:w-96 animate-spin [animation-duration:60s]"
+              className="w-80 xl:w-96 animate-spin [animation-duration:60s] absolute -bottom-[10%]"
             />
           </div>
         </div>

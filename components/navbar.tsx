@@ -98,9 +98,9 @@ export default function Navbar({
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
-      // Reset nav stack when closing
       setMobileNavStack([{ type: 'main' }]);
       setSelectedCountry(null);
+      setCountryUniversities([]);
     }
     return () => {
       document.body.style.overflow = "";
@@ -112,9 +112,6 @@ export default function Navbar({
     setLogin(!!token)
   }, [])
 
-  if (pathname === "/login" || pathname === "/signup" || pathname.startsWith("/dashboard") || pathname.startsWith("/api") || pathname.startsWith("/onboarding")) {
-    return null
-  }
 
   // Get unique countries from universities data
   const getUniqueCountries = (): Country[] => {
@@ -136,12 +133,32 @@ export default function Navbar({
     return Array.from(countryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
   };
 
+  const uniqueCountries = getUniqueCountries();
+
+
+  // ✅ KEY FIX: Auto-select first country when uniqueCountries loads
+  useEffect(() => {
+    if (uniqueCountries.length > 0 && !selectedCountry) {
+      const firstCountry = uniqueCountries[0];
+      setSelectedCountry(firstCountry);
+      const filtered = filterUniversitiesByCountry(firstCountry.code);
+      setCountryUniversities(filtered);
+    }
+  }, [uniqueCountries]);
+
+  if (pathname === "/login" || pathname === "/signup" || pathname.startsWith("/dashboard") || pathname.startsWith("/api") || pathname.startsWith("/onboarding")) {
+    return null
+  }
+
+  
+
   const filterUniversitiesByCountry = (countryCode: string): University[] => {
     if (!countryCode || !unicat) return [];
     return unicat.filter((uni) => uni.country === countryCode);
   };
 
   const loadCountryUniversities = (country: Country) => {
+    if (!country?.code) return;
     setSelectedCountry(country);
     const filtered = filterUniversitiesByCountry(country.code);
     setCountryUniversities(filtered);
@@ -176,7 +193,6 @@ export default function Navbar({
     }
   };
 
-  const uniqueCountries = getUniqueCountries();
 
   // Animation variants
   const slideVariants = {
@@ -263,7 +279,16 @@ export default function Navbar({
 
                   {/* Desktop Dropdown */}
                   {item.hasDropdown && (
-                    <div className="absolute -left-[10px] top-full mt-4 -translate-x-1/2 opacity-0 invisible scale-95 group-hover:opacity-100 group-hover:visible group-hover:scale-100 transition-all duration-300 ease-out z-50">
+                    <div 
+                      className="absolute -left-[10px] top-full mt-4 -translate-x-1/2 opacity-0 invisible scale-95 group-hover:opacity-100 group-hover:visible group-hover:scale-100 transition-all duration-300 ease-out z-50"
+                      onMouseEnter={() => {
+                        // ✅ Ensure first country is selected when dropdown is hovered
+                        if (item.type === "destination" && uniqueCountries.length > 0 && !selectedCountry) {
+                          const firstCountry = uniqueCountries[0];
+                          loadCountryUniversities(firstCountry);
+                        }
+                      }}
+                    >
                       <div className="bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.12)] w-[700px] p-5 border border-gray-100">
                         {item.type === "destination" ? (
                           <div className="flex gap-6">
@@ -276,7 +301,7 @@ export default function Navbar({
                                     <div
                                       onMouseEnter={() => loadCountryUniversities(country)}
                                       onClick={() => loadCountryUniversities(country)}
-                                      className={`w-full text-left flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors text-sm ${selectedCountry?.code === country.code ? "bg-[var(--primary)] text-white shadow-md" : "hover:bg-gray-100 text-gray-700"}`}
+                                      className={`w-full text-left flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors text-sm cursor-pointer ${selectedCountry?.code === country.code ? "bg-[var(--primary)] text-white shadow-md" : "hover:bg-gray-100 text-gray-700"}`}
                                     >
                                       <div className="flex items-center gap-2">
                                         {country.flag && <img src={country.flag} alt={country.name} className="w-5 h-5 rounded-full object-cover" />}
@@ -350,12 +375,11 @@ export default function Navbar({
                   )}
                 </div>
               ))}
-
-
             </div>
           </div>
+
           {isScrolled && (
-            <div className="lg:flex items-center mr-4  hidden">
+            <div className="lg:flex items-center mr-4 hidden">
               {Login && profile ? (
                 <>
                   <div className="flex items-center cursor-pointer">
@@ -516,7 +540,7 @@ export default function Navbar({
                                     key={country.code}
                                     whileTap={{ scale: 0.99 }}
                                     onClick={() => handleCountrySelect(country)}
-                                    className="w-full flex items-center gap-4 p-4 py-2.5 bg-orange-50 rounded-2xl hover:border-[#f46c44]/30 hover:shadow-md transition group text-left"
+                                    className="w-full flex items-center gap-4 p-4 py-2.5 bg-orange-50 rounded-2xl hover:border-[#f46c44]/30 hover:shadow-md transition group text-left cursor-pointer"
                                   >
                                     {country.flag ? (
                                       <div className="w-10 h-10 flex-shrink-0">
@@ -551,7 +575,6 @@ export default function Navbar({
                                   )}
                                   <h2 className="text-base font-bold text-gray-800">{selectedCountry.name}<p className="text-xs text-gray-500 font-medium block">{countryUniversities.length} universities available</p></h2>
                                 </div>
-
                               </div>
 
                               {countryUniversities.length > 0 ? (
@@ -603,7 +626,7 @@ export default function Navbar({
                                   <p className="text-sm text-gray-400 mt-1">Try selecting another country</p>
                                   <button
                                     onClick={popNav}
-                                    className="mt-6 text-[#f46c44] font-medium hover:underline"
+                                    className="mt-6 text-[#f46c44] font-medium hover:underline cursor-pointer"
                                   >
                                     ← Choose different country
                                   </button>
