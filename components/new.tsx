@@ -417,7 +417,7 @@ export default function UniDetailsClient({
               }}
               className="scroll-mt-28"
             >
-              <h2 className="text-2xl font-bold text-slate-900 mb-4"
+              <div className="text-2xl font-bold text-slate-900 mb-4"
                 dangerouslySetInnerHTML={{
                   __html: section.heading
                 }}
