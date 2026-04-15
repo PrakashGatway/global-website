@@ -10,12 +10,12 @@ export function GlobalProvider({ children }) {
     const [profile, setProfile] = useState(null)
     const [allProfile, setallProfile] = useState(null)
     const [authToken, setauthToken] = useState(null)
-    
+
     // Popup states
     const [isPopupOpen, setIsPopupOpen] = useState(false)
     const [popupCount, setPopupCount] = useState(0)
     const [hasInteracted, setHasInteracted] = useState(false)
-    
+
     // ✨ NEW: Track if form was submitted (not just closed)
     const [hasSubmittedForm, setHasSubmittedForm] = useState(false)
 
@@ -69,14 +69,14 @@ export function GlobalProvider({ children }) {
 
     // ✨ NEW: Called when user clicks CANCEL/X button
     const closePopup = (wasSubmitted = false) => {
-      
+
         setIsPopupOpen(false)
-        
+
         if (wasSubmitted) {
             // ✨ User submitted form - mark as submitted, no more popups
             setHasSubmittedForm(true)
             sessionStorage.setItem('formSubmitted', 'true')
-           
+
         } else {
             // ✨ User cancelled - allow second popup, but mark general interaction
             setHasInteracted(true)
@@ -102,45 +102,44 @@ export function GlobalProvider({ children }) {
     const checkAndShowPopup = () => {
         // Never show if: popup open, form already submitted, or user heavily interacted
         if (isPopupOpen || hasSubmittedForm) {
-       
+
             return;
         }
 
         // First popup: at 15s, only if count is 0 and no interaction
         if (popupCount === 0 && !hasInteracted) {
-        
+
             showPopup();
             return;
         }
-        
+
         // Second popup: at 30s, only if count is 1 (first was shown/cancelled)
         // Note: hasInteracted can be true here (from cancelling first popup)
         if (popupCount === 1) {
-       
+
             showPopup();
             return;
         }
-        
+
     };
 
-    // Initialize timers ONCE on mount
-    useEffect(() => {
-        if (hasInitializedTimers.current) return;
-        hasInitializedTimers.current = true;
+    // useEffect(() => {
+    //     if (hasInitializedTimers.current) return;
+    //     hasInitializedTimers.current = true;
 
-        timer1Ref.current = setTimeout(() => {
-            checkAndShowPopup();
-        }, 15000);
+    //     timer1Ref.current = setTimeout(() => {
+    //         checkAndShowPopup();
+    //     }, 15000);
 
-        timer2Ref.current = setTimeout(() => {
-            checkAndShowPopup();
-        }, 60000);
+    //     timer2Ref.current = setTimeout(() => {
+    //         checkAndShowPopup();
+    //     }, 60000);
 
-        return () => {
-            if (timer1Ref.current) clearTimeout(timer1Ref.current);
-            if (timer2Ref.current) clearTimeout(timer2Ref.current);
-        };
-    }, []);
+    //     return () => {
+    //         if (timer1Ref.current) clearTimeout(timer1Ref.current);
+    //         if (timer2Ref.current) clearTimeout(timer2Ref.current);
+    //     };
+    // }, []);
 
     useEffect(() => {
         const submitted = sessionStorage.getItem('formSubmitted') === 'true';
@@ -153,7 +152,7 @@ export function GlobalProvider({ children }) {
         const shownCount = sessionStorage.getItem('popupShownCount')
         const lastPopupDate = sessionStorage.getItem('lastPopupDate')
         const currentDate = new Date().toDateString()
-        
+
         if (lastPopupDate !== currentDate) {
             console.log('🔄 New day! Resetting all popup states')
             sessionStorage.removeItem('popupShownCount')
@@ -202,7 +201,7 @@ export function GlobalProvider({ children }) {
         if (token) {
             getProfile()
         } else {
-            if(window.location.pathname === "/dashboard"){
+            if (window.location.pathname === "/dashboard") {
                 window.location.replace("/")
             }
             setLoading(false)
@@ -211,10 +210,10 @@ export function GlobalProvider({ children }) {
 
     return (
         <Globalcontext.Provider value={{
-            profile, 
-            loading, 
-            Logout, 
-            updateProfile, 
+            profile,
+            loading,
+            Logout,
+            updateProfile,
             allProfile,
             openPopup: showPopup,
             closePopup

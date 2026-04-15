@@ -190,22 +190,22 @@ const FormSection = () => {
 
           {/* State */}
           <div className="flex gap-2">
-          <div>
-            <label className="text-sm text-gray-700">State</label>
-            <input
-              {...register("state")}
-              className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
-            />
-          </div>
+            <div>
+              <label className="text-sm text-gray-700">State</label>
+              <input
+                {...register("state")}
+                className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
+              />
+            </div>
 
-          {/* City */}
-          <div>
-            <label className="text-sm text-gray-700">City</label>
-            <input
-              {...register("city")}
-              className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
-            />
-          </div>
+            {/* City */}
+            <div>
+              <label className="text-sm text-gray-700">City</label>
+              <input
+                {...register("city")}
+                className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
+              />
+            </div>
 
           </div>
 
@@ -308,7 +308,7 @@ export default function UniDetailsClient({
   return (
     <main className="min-h-screen bg-white">
       {/* ── HEADER CARD ─────────────────────────────────────────────────── */}
-      <div className="relative max-w-[100vw] overflow-hidden mx-auto h-[30rem] px-10 py-10 flex items-center justify-center ">
+      <div className="relative max-w-[100vw] overflow-hidden mx-auto h-[30rem] px-2 sm:px-10 py-10 flex items-center justify-center ">
         <div
           className="absolute bg-[#f46c44] w-full h-[35rem] left-0 -top-[100px]"
           style={{
@@ -417,7 +417,7 @@ export default function UniDetailsClient({
               }}
               className="scroll-mt-28"
             >
-              <div className="text-2xl font-bold text-slate-900 mb-4"
+              <h2 className="text-2xl font-bold text-slate-900 mb-4"
                 dangerouslySetInnerHTML={{
                   __html: section.heading
                 }}
@@ -712,7 +712,7 @@ export default function UniDetailsClient({
               src="/images/circle stand.png"
               alt=""
               className="absolute z-10 w-[90px] -bottom-[2%]"
-              
+
             />
             <img
               src="/images/circle.png"
