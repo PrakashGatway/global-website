@@ -135,12 +135,24 @@ export default function Navbar({
 
   const uniqueCountries = getUniqueCountries();
 
+  useEffect(() => {
+    if (uniqueCountries.length > 0 && !selectedCountry) {
+      const firstCountry = uniqueCountries[0];
+      setSelectedCountry(firstCountry);
+      const filtered = filterUniversitiesByCountry(firstCountry.code);
+      setCountryUniversities(filtered);
+    }
+  }, [uniqueCountries]);
 
-  // ✅ KEY FIX: Auto-select first country when uniqueCountries loads
-
-
-  if (pathname === "/login" || pathname === "/signup" || pathname.startsWith("/dashboard") || pathname.startsWith("/api") || pathname.startsWith("/onboarding")) {
-    return null
+  // ✅ AFTER all hooks
+  if (
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/onboarding")
+  ) {
+    return null;
   }
 
 
@@ -185,15 +197,6 @@ export default function Navbar({
       pushNav({ type: 'destinations', data: countryres, title: 'Destinations' });
     }
   };
-
-    useEffect(() => {
-    if (uniqueCountries.length > 0 && !selectedCountry) {
-      const firstCountry = uniqueCountries[0];
-      setSelectedCountry(firstCountry);
-      const filtered = filterUniversitiesByCountry(firstCountry.code);
-      setCountryUniversities(filtered);
-    }
-  }, [uniqueCountries]);
 
 
   // Animation variants
