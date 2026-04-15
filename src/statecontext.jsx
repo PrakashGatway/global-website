@@ -128,25 +128,20 @@ export function GlobalProvider({ children }) {
         if (hasInitializedTimers.current) return;
         hasInitializedTimers.current = true;
 
-
-        // Timer 1: 15 seconds for first popup
         timer1Ref.current = setTimeout(() => {
             checkAndShowPopup();
         }, 15000);
 
-        // Timer 2: 30 seconds for second popup (only if first was cancelled)
         timer2Ref.current = setTimeout(() => {
             checkAndShowPopup();
         }, 60000);
 
-        // Cleanup on unmount
         return () => {
             if (timer1Ref.current) clearTimeout(timer1Ref.current);
             if (timer2Ref.current) clearTimeout(timer2Ref.current);
         };
-    }, []); // Empty deps = runs once
+    }, []);
 
-    // Load submission state from sessionStorage on mount
     useEffect(() => {
         const submitted = sessionStorage.getItem('formSubmitted') === 'true';
         if (submitted) {
@@ -154,7 +149,6 @@ export function GlobalProvider({ children }) {
         }
     }, []);
 
-    // Session storage: Reset popup count if new day
     useEffect(() => {
         const shownCount = sessionStorage.getItem('popupShownCount')
         const lastPopupDate = sessionStorage.getItem('lastPopupDate')
@@ -184,7 +178,6 @@ export function GlobalProvider({ children }) {
             if (e.target?.closest('.popup-close-button') || e.target?.closest('.popup-overlay')) {
                 return;
             }
-            
             if (!hasInteracted) {
                 console.log('👆 User interacted with page content')
                 setHasInteracted(true)

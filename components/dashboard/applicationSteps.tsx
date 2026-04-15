@@ -7,7 +7,8 @@ import {
   Download, Upload, GraduationCap, Plus, ChevronUp,
   ChevronDown, DollarSign, BookOpen, Users,
   IndianRupee, Eye, MapPin, Building2, Award,
-  Globe, ChevronRight, ChevronLeft, ChevronFirst, ChevronLast
+  Globe, ChevronRight, ChevronLeft, ChevronFirst, ChevronLast,
+  PlusIcon
 } from 'lucide-react'
 import axiosInstance from '@/app/axiosInstance'
 import toast from 'react-hot-toast'
@@ -68,8 +69,6 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
         }
       })
     }
-
-    // Fallback intakes
     return [
       { id: 'fall2024', month: 'Fall', year: '2024', deadline: 'Jul 30, 2024', status: 'available', fullIntake: 'Fall 2024' },
       { id: 'spring2025', month: 'Spring', year: '2025', deadline: 'Nov 15, 2024', status: 'available', fullIntake: 'Spring 2025' },
@@ -91,20 +90,18 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
           Choose your preferred intake date for this program.
         </p>
 
-        <div className="grid gap-3">
+        <div className="grid grid-cols-2 gap-4">
           {intakes.map((intake, index) => (
             <motion.label
               key={intake.id}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 + index * 0.1 }}
-              className={`relative flex items-center p-4 py-2.5 rounded-lg border-2 cursor-pointer transition-all ${
-                formData.selectedIntake === intake.fullIntake
-                  ? 'border-[#F26D44] bg-orange-50'
-                  : 'border-gray-200 hover:border-gray-300'
-              } ${
-                intake.status === 'coming-soon' ? 'opacity-60 cursor-not-allowed' : ''
-              }`}
+              className={`relative flex items-center p-4 py-2.5 rounded-lg border-2 cursor-pointer transition-all ${formData.selectedIntake === intake.fullIntake
+                ? 'border-[#F26D44] bg-orange-50'
+                : 'border-gray-300 hover:border-gray-300'
+                } ${intake.status === 'coming-soon' ? 'opacity-60 cursor-not-allowed' : ''
+                }`}
             >
               <input
                 type="radio"
@@ -118,9 +115,8 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
               <div className="flex-1 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className={formData.selectedIntake === intake.fullIntake ? '' : ''}>
-                    <Calendar className={`w-7 h-7 stroke-[1.5px] ${
-                      formData.selectedIntake === intake.fullIntake ? 'text-[#F26D44]' : 'text-gray-500'
-                    }`} />
+                    <Calendar className={`w-7 h-7 stroke-[1.5px] ${formData.selectedIntake === intake.fullIntake ? 'text-[#F26D44]' : 'text-gray-700'
+                      }`} />
                   </div>
                   <div>
                     <p className="font-medium text-sm text-gray-900">
@@ -136,11 +132,10 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
                     Coming Soon
                   </span>
                 ) : (
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    formData.selectedIntake === intake.fullIntake
-                      ? 'border-[#F26D44] bg-[#F26D44]'
-                      : 'border-gray-300'
-                  }`}>
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.selectedIntake === intake.fullIntake
+                    ? 'border-[#F26D44] bg-[#F26D44]'
+                    : 'border-gray-300'
+                    }`}>
                     {formData.selectedIntake === intake.fullIntake && (
                       <div className="w-2 h-2 bg-white rounded-full" />
                     )}
@@ -539,7 +534,7 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
       ...formData,
       backups: [...formData.backups, newBackup]
     })
-    
+
     toast.success('Backup program added successfully')
   }
 
@@ -607,7 +602,7 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
         </div>
 
         {formData.backups.length === 0 ? (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed"
@@ -648,18 +643,16 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
                         <button
                           onClick={() => moveUp(index)}
                           disabled={index === 0}
-                          className={`p-1 rounded hover:bg-white transition-colors ${
-                            index === 0 ? 'opacity-30 cursor-not-allowed' : ''
-                          }`}
+                          className={`p-1 rounded hover:bg-white transition-colors ${index === 0 ? 'opacity-30 cursor-not-allowed' : ''
+                            }`}
                         >
                           <ChevronUp className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => moveDown(index)}
                           disabled={index === formData.backups.length - 1}
-                          className={`p-1 rounded hover:bg-white transition-colors ${
-                            index === formData.backups.length - 1 ? 'opacity-30 cursor-not-allowed' : ''
-                          }`}
+                          className={`p-1 rounded hover:bg-white transition-colors ${index === formData.backups.length - 1 ? 'opacity-30 cursor-not-allowed' : ''
+                            }`}
                         >
                           <ChevronDown className="w-4 h-4" />
                         </button>
@@ -752,11 +745,10 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
               whileTap={{ scale: 0.98 }}
               onClick={() => setShowProgramSelector(true)}
               disabled={formData.backups.length >= 10}
-              className={`mt-4 w-full py-4 rounded-xl border-2 border-dashed transition-all flex items-center justify-center gap-2 ${
-                formData.backups.length >= 10
-                  ? 'border-gray-200 bg-gray-50 cursor-not-allowed text-gray-400'
-                  : 'border-[#F26D44] border-opacity-30 hover:border-[#F26D44] hover:bg-orange-50 text-[#F26D44]'
-              }`}
+              className={`mt-4 w-full py-4 rounded-xl border-2 border-dashed transition-all flex items-center justify-center gap-2 ${formData.backups.length >= 10
+                ? 'border-gray-200 bg-gray-50 cursor-not-allowed text-gray-400'
+                : 'border-[#F26D44] border-opacity-30 hover:border-[#F26D44] hover:bg-orange-50 text-[#F26D44]'
+                }`}
             >
               <Plus className="w-5 h-5" />
               <span className="font-medium">Add Backup Program</span>
@@ -782,11 +774,11 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
               onClick={(e) => e.stopPropagation()}
               className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden"
             >
-              <div className="p-6 border-b sticky top-0 bg-white z-10">
+              <div className="p-6 py-4 border-b sticky top-0 bg-white z-10">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-xl font-bold">Select Backup Program</h3>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <h3 className="text-lg font-medium">Select Backup Program</h3>
+                    <p className="text-xs text-gray-500">
                       Choose from available programs at {program.university?.name}
                     </p>
                   </div>
@@ -799,7 +791,7 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
                 </div>
               </div>
 
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+              <div className="p-6 overflow-y-auto min-h-[50vh] max-h-[calc(90vh-200px)]">
                 {isLoading ? (
                   <div className="flex items-center justify-center py-12">
                     <div className="w-8 h-8 border-4 border-[#F26D44] border-t-transparent rounded-full animate-spin" />
@@ -818,7 +810,7 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
                         animate={{ opacity: 1, y: 0 }}
                         className="group"
                       >
-                        <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl hover:bg-orange-50 transition-colors border-2 border-transparent hover:border-[#F26D44]">
+                        <div className="flex items-center gap-4 p-4 py-3 bg-gray-100 rounded-xl hover:bg-orange-50 transition-colors border-2 border-transparent hover:border-[#F26D44]">
                           <div className="w-16 h-16 flex-shrink-0 bg-white rounded-lg p-2 flex items-center justify-center">
                             {prog.university?.uni_logo ? (
                               <Image
@@ -833,8 +825,8 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
                             )}
                           </div>
                           <div className="flex-1">
-                            <h4 className="font-medium text-gray-900">{prog.name}</h4>
-                            <p className="text-sm text-gray-600">{prog.university?.name}</p>
+                            <h4 className="font-medium  text-gray-900">{prog.name}</h4>
+                            <p className="text-xs text-gray-600">{prog.university?.name}</p>
                             <div className="flex items-center gap-3 mt-2">
                               <span className="text-xs bg-gray-200 px-2 py-1 rounded">
                                 {prog.level || 'Graduate'}
@@ -844,23 +836,23 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
                               </span>
                             </div>
                           </div>
-                          <div className="flex gap-2">
-                            <button
+                          <div className="flex gap-2 items-center h-full">
+                            {/* <button
                               onClick={() => setSelectedProgramForDetails(prog)}
                               className="p-2 bg-white rounded-lg hover:bg-gray-100 transition-colors"
                               title="View Details"
                             >
                               <Eye className="w-5 h-5 text-gray-600" />
-                            </button>
+                            </button> */}
                             <button
                               onClick={() => {
                                 const defaultIntake = prog.university?.intakes?.[0] || prog.intake || 'Fall 2024'
                                 addBackup(prog, defaultIntake)
                                 setShowProgramSelector(false)
                               }}
-                              className="px-4 py-2 bg-gradient-to-r from-[#F26D44] to-[#626363] text-white rounded-lg hover:from-[#d55a3a] hover:to-[#4a4a4a] transition-colors text-sm font-medium"
+                              className="p-3 rounded-full bg-white hover:bg-gray-300 transition-colors text-sm font-medium"
                             >
-                              Add
+                              <PlusIcon className="w-7 h-7" />
                             </button>
                           </div>
                         </div>

@@ -88,7 +88,7 @@ interface Application {
 
 const errorMessage = (msg, className) => {
   return (
-    <div className={`w-full rounded-xl border mb-3 border-red-300 bg-red-50 p-5 flex items-center gap-4 ${className || ''}`}>
+    <div className={`w-full rounded-xl border mb-3 border-red-300 bg-red-50 p-5 py-2 flex items-center gap-4 ${className || ''}`}>
       {/* Icon */}
       <div className="flex-shrink-0">
         <div className="">
@@ -169,8 +169,6 @@ export default function ApplicationHistoryPage() {
   const [applications, setApplications] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
-  const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'under_review' | 'offer_received' | 'refused'>('all')
-  const [showApplicationDetails, setShowApplicationDetails] = useState<Application | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<string[]>([])
   const [filterCountry, setFilterCountry] = useState<string>('')
@@ -206,7 +204,7 @@ export default function ApplicationHistoryPage() {
 
       const response = await axiosInstance.get(`/applications?${params}`)
       const data = response.data
-   
+
 
       setApplications(prev =>
         append ? [...prev, ...data.data] : data.data
@@ -276,32 +274,36 @@ export default function ApplicationHistoryPage() {
                 <Image
                   src={university.uni_logo}
                   alt={university.name}
-                  width={120}
-                  height={80}
-                  className="object-contain mt-2"
+                  width={60}
+                  height={60}
+                  className="object-contain mt-1"
                 />
               ) : (
                 <Building2 className="w-14 h-14 stroke-[1px] text-gray-500" />
               )}
             </div>
-
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-bold text-lg text-gray-900">{application.course?.name || 'University'}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-medium text-base text-gray-900">{application.course?.name || 'University'}</h3>
                 <span className="text-base bg-gray-100 font-medium text-gray-800 px-2 py-0.5 rounded-full">
                   {application.applicationNumber}
                 </span>
+                <span className={`px-3 py-1 rounded-full text-sm font-medium border ${statusInfo.color}`}>
+                  <span className="flex items-center gap-1">
+                    {statusInfo.icon}
+                    {statusInfo.label}
+                  </span>
+                </span>
               </div>
-              <p className="text-base text-gray-700 font-medium mb-1">{university.name}</p>
+              <p className="text-sm text-gray-700 font-medium mb-1">{university.name}</p>
               <p className="text-sm text-gray-700 font-medium">Academic Intake: {application.intake}</p>
             </div>
-
           </div>
 
 
           {/* Status Badges */}
           <div className="flex flex-col items-start justify-between h-full gap-2">
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <span>
                 Status :
               </span>
@@ -311,26 +313,25 @@ export default function ApplicationHistoryPage() {
                   {statusInfo.label}
                 </span>
               </span>
-            </div>
+            </div> */}
             {application.course.applicationFee && statusInfo.label == "Pending" && (
               <span className="text-sm font-medium text-gray-900">
                 Application Fee: {application.course.currency || 'USD'} {application.course.applicationFee.toLocaleString()}
               </span>
             )}
-            <div className="flex items-end justify-end gap-1">
-
-              <button className="text-sm hover:ring-1 shadow-md transition-colors hover:shadow-xl font-medium border border-gray-300 px-3 py-1 rounded-full text-gray-800">
-                View
-              </button>
+            <div className="flex w-full justify-end gap-1">
               {paymentInfo.label == "Pending" && (
                 <button onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
                   router.push(`/dashboard/checkout?application=${application.applicationNumber}`);
-                }} className="text-sm z-50 shadow-md transition-colors hover:shadow-xl font-medium border border-gray-300 px-3 py-1 rounded-full bg-[#1C3058] hover:bg-[#1C3058]/80 text-gray-100">
+                }} className="text-sm z-50 shadow-md transition-colors hover:shadow-xl font-medium border border-gray-300 px-3 py-2 rounded-lg bg-[#1C3058] hover:bg-[#1C3058]/80 text-gray-100">
                   Pay Now
                 </button>
               )}
+              <button className="text-sm hover:ring-1 shadow-md transition-colors hover:shadow-xl font-medium border border-gray-300 px-3 py-2 rounded-lg text-gray-800">
+                View
+              </button>
             </div>
 
           </div>
@@ -338,9 +339,9 @@ export default function ApplicationHistoryPage() {
         {paymentInfo.label == "Pending" && errorMessage('Without payment confirmation, the application process cannot proceed. Please complete the payment to move forward with your application.', 'py-2')}
 
         {/* Footer Info */}
-        <div className="flex items-center justify-between pt-2 border-t border-gray-300">
+        <div className="flex items-center justify-between pt-1.5 border-t border-gray-300">
           <div className="flex items-center gap-4 text-xs text-gray-500">
-            <div className="flex flex-wrap items-center gap-3 !text-sm !text-gray-600">
+            <div className="flex flex-wrap items-center gap-3 !text-xs !text-gray-600">
               {application.course.level && (
                 <span className="flex items-center gap-1">
                   <Award className="w-5 h-5 stroke-[1.5px]" />
@@ -360,12 +361,12 @@ export default function ApplicationHistoryPage() {
 
             </div>
             {application.backups?.length > 0 && (
-              <span className="flex items-center gap-1 text-sm text-gray-600">
+              <span className="flex items-center gap-1 text-xs text-gray-600">
                 <GraduationCap className="w-5 h-5 stroke-[1.5px]" />
                 {application.backups.length} Backup{application.backups.length !== 1 ? 's' : ''}
               </span>
             )}
-            <span className="flex items-center gap-1 text-sm text-gray-600">
+            <span className="flex items-center gap-1 text-xs text-gray-600">
               <Clock className="w-5 h-5 stroke-[1.5px] " />
               {formatDistanceToNow(new Date(application.createdAt), { addSuffix: true })}
             </span>
@@ -373,12 +374,12 @@ export default function ApplicationHistoryPage() {
 
           <div className="flex items-center gap-2">
 
-            <div className="flex items-center text-sm gap-2">
+            <div className="flex items-center text-xs gap-1">
               <span>
                 Payment Status :
               </span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium border ${paymentInfo.color}`}>
-                <span className="flex items-center gap-1">
+              <span className={`px-3 py-1 rounded-full font-medium border ${paymentInfo.color}`}>
+                <span className="flex items-center text-xs gap-1">
                   {paymentInfo.icon}
                   {paymentInfo.label == "Pending" ? "Unpaid" : paymentInfo.label}
                 </span>
@@ -393,7 +394,7 @@ export default function ApplicationHistoryPage() {
 
   return (
     <main className="flex-1 overflow-y-auto">
-      <div className="container mx-auto p-4">
+      <div className="max-w-7xl mx-auto p-4">
         {/* Header */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">

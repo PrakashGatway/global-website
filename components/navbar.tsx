@@ -137,20 +137,13 @@ export default function Navbar({
 
 
   // ✅ KEY FIX: Auto-select first country when uniqueCountries loads
-  useEffect(() => {
-    if (uniqueCountries.length > 0 && !selectedCountry) {
-      const firstCountry = uniqueCountries[0];
-      setSelectedCountry(firstCountry);
-      const filtered = filterUniversitiesByCountry(firstCountry.code);
-      setCountryUniversities(filtered);
-    }
-  }, [uniqueCountries]);
+
 
   if (pathname === "/login" || pathname === "/signup" || pathname.startsWith("/dashboard") || pathname.startsWith("/api") || pathname.startsWith("/onboarding")) {
     return null
   }
 
-  
+
 
   const filterUniversitiesByCountry = (countryCode: string): University[] => {
     if (!countryCode || !unicat) return [];
@@ -192,6 +185,15 @@ export default function Navbar({
       pushNav({ type: 'destinations', data: countryres, title: 'Destinations' });
     }
   };
+
+    useEffect(() => {
+    if (uniqueCountries.length > 0 && !selectedCountry) {
+      const firstCountry = uniqueCountries[0];
+      setSelectedCountry(firstCountry);
+      const filtered = filterUniversitiesByCountry(firstCountry.code);
+      setCountryUniversities(filtered);
+    }
+  }, [uniqueCountries]);
 
 
   // Animation variants
@@ -279,7 +281,7 @@ export default function Navbar({
 
                   {/* Desktop Dropdown */}
                   {item.hasDropdown && (
-                    <div 
+                    <div
                       className="absolute -left-[10px] top-full mt-4 -translate-x-1/2 opacity-0 invisible scale-95 group-hover:opacity-100 group-hover:visible group-hover:scale-100 transition-all duration-300 ease-out z-50"
                       onMouseEnter={() => {
                         // ✅ Ensure first country is selected when dropdown is hovered
@@ -382,19 +384,29 @@ export default function Navbar({
             <div className="lg:flex items-center mr-4 hidden">
               {Login && profile ? (
                 <>
-                  <div className="flex items-center cursor-pointer">
-                    <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold">
-                      {profile?.name?.charAt(0).toUpperCase()}
+                  <div className="relative group">
+
+                    <div className="flex items-center cursor-pointer">
+                      <div className="w-10 h-10 rounded-full bg-gray-200 text-gray-700 border-2 border-gray-600 flex items-center justify-center text-sm font-bold">
+                        {profile?.name?.charAt(0).toUpperCase()}
+                      </div>
                     </div>
-                  </div>
-                  <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
-                    <div className="p-4 border-b">
-                      <p className="font-semibold text-gray-800">{profile?.name}</p>
-                      <p className="text-sm text-gray-500">{profile?.email}</p>
-                    </div>
-                    <div className="flex flex-col text-sm">
-                      <Link href="/dashboard" className="px-4 py-3 hover:bg-gray-100 transition">Dashboard</Link>
-                      <button onClick={Logout} className="text-left px-4 py-3 hover:bg-red-50 text-red-600 transition">Logout</button>
+                    <div className="absolute right-0 mt-3 w-60 p-4 border-2 border-gray-200 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
+                      <div className="flex gap-4">
+                        <div>
+                          <div className="w-10 h-10 rounded-full bg-gray-200 text-gray-700 border-2 border-gray-600 flex items-center justify-center text-sm font-bold">
+                            {profile?.name?.charAt(0).toUpperCase()}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="font-semibold capitalize text-gray-800">{profile?.name}</p>
+                          <p className="text-xs text-gray-500">{profile?.email}</p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col mt-2 text-sm">
+                        <Link href="/dashboard" className="px-4  py-3 hover:bg-gray-100 transition">Dashboard</Link>
+                        <button onClick={Logout} className="text-left px-4 py-3 hover:bg-red-50 text-red-600 transition">Logout</button>
+                      </div>
                     </div>
                   </div>
                 </>

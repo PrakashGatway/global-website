@@ -42,7 +42,7 @@ export function Sidebar() {
 
   return (
     <motion.aside
-      animate={{ width: collapsed ? 110 : 260 }}
+      animate={{ width: collapsed ? 120 : 240 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className="hidden relative lg:flex flex-col h-screen sticky top-0 bg-[#f26d44] text-sidebar-foreground overflow-hidden z-40"
     >
@@ -77,12 +77,11 @@ export function Sidebar() {
       </div>
 
       {/* Menu Items */}
-      <nav className={`flex-1 ${collapsed ? "px-2 py-0 space-y-1" : "px-4 py-2 space-y-2"}  overflow-y-auto mt-6 no-scrollbar scollbar-none`}>
+      <nav className={`flex-1 ${collapsed ? "px-2 py-0 space-y-1" : "px-2 py-2 space-y-2"}  overflow-y-auto mt-4 no-scrollbar scrollbar-hide scollbar-none`}>
         {menuItems.map((item) => {
           const isActive =
             location === item.href ||
             (item.href !== "/dashboard" && location.startsWith(item.href));
-
           return (
             <Link
               key={item.href}
@@ -95,7 +94,7 @@ export function Sidebar() {
                   ? "bg-[#6d1901] font-semibold"
                   : "hover:bg-[#6d1901]/30"
 
-                  } ${collapsed ? "flex-col gap-1 px-2 py-2" : "gap-3 px-3 py-2.5"}`}
+                  } ${collapsed ? "flex-col gap-1 px-2 py-2" : "gap-2 px-4 py-2.5"}`}
               >
                 {isActive && (
                   <motion.div
@@ -105,14 +104,14 @@ export function Sidebar() {
                   />
                 )}
 
-                <item.icon className="w-5 h-5 flex-shrink-0 mb-0 pb-0" />
+                <item.icon className="w-6 h-6 flex-shrink-0 stroke-[1.8px] mb-0 pb-0" />
                 <AnimatePresence>
                   {collapsed && (
                     <motion.span
                       initial={{ opacity: 0, width: 0 }}
                       animate={{ opacity: 1, width: "auto" }}
                       exit={{ opacity: 0, width: 0 }}
-                      className="text-center overflow-hidden text-[10px] font-medium"
+                      className="text-center overflow-hidden text-[11px] font-medium"
                     >
                       {item.label}
                     </motion.span>
@@ -125,7 +124,7 @@ export function Sidebar() {
                       initial={{ opacity: 0, width: 0 }}
                       animate={{ opacity: 1, width: "auto" }}
                       exit={{ opacity: 0, width: 0 }}
-                      className="whitespace-nowrap overflow-hidden text-base font-medium"
+                      className="whitespace-nowrap overflow-hidden text-[15px] font-medium"
                     >
                       {item.label}
                     </motion.span>

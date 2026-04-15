@@ -25,7 +25,7 @@ export default function DashboardPage() {
     }
   };
 
-    const fetchOffer = async () => {
+  const fetchOffer = async () => {
     try {
       const response = await axiosInstance.get('/coupons/available/list');
       setOffers(response.data?.data);
@@ -42,7 +42,7 @@ export default function DashboardPage() {
     fetchOffer();
   }, [])
 
- 
+
   if (!loading && !profile) {
     window.location.replace("/login")
   }
@@ -50,20 +50,18 @@ export default function DashboardPage() {
 
 
   return (
-    <main className="flex-1 px-6  max-w-7xl mx-auto space-y-4 overflow-y-auto">
+    <main className="flex-1 px-4 max-w-7xl mx-auto space-y-4 overflow-y-auto">
       <div className="flex gap-2">
         <div className="w-[75%]">
           {universities && universities.length > 0 &&
-          <RewardSlider universities={universities && universities} />}
+            <RewardSlider universities={universities && universities} />}
         </div>
         <div className="w-[25%]">
           {offers && offers.length > 0 &&
-          <OfferSlider offers={offers} />}
+            <OfferSlider offers={offers} />}
         </div>
-
       </div>
-
-      <StepProgress currentStep={4} />
+      <StepProgress currentStep={1} />
       <div className="p-4 md:p-8 space-y-6">
         {/* <MultiStepForm /> */}
       </div>

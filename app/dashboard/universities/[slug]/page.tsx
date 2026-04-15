@@ -427,7 +427,7 @@ export default function UniversityDetailPage() {
     }
 
     return (
-        <main className="flex-1 overflow-y-auto relative">
+        <main className="flex-1 overflow-y-auto max-w-7xl mx-auto px-4 relative">
             {/* Back Navigation */}
             <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -537,25 +537,25 @@ export default function UniversityDetailPage() {
             </div>
 
             {/* Stats Bar */}
-            <div className="sticky top-[57px]">
-                <div className=" mx-auto px-6 py-4">
+            <div className="">
+                <div className=" mx-auto py-4">
                     <div className="grid grid-cols-5 gap-4">
                         <StatCard icon={Users} label="Total Students" value={university.totalStudents?.toLocaleString() || '1000+'} />
                         <StatCard icon={Globe} label="International" value={university.internationalStudents?.toLocaleString() || '1000+'} />
                         <StatCard icon={GraduationCap} label="Acceptance Rate" value={`${university.acceptanceRate || 'N/A'}%`} />
-                        <StatCard icon={School} label="Rank" value={`#${university?.uni_rank?.[0]?.rank} (${university?.uni_rank?.[0]?.type})`} />
-                        <StatCard icon={Building} label="Offers" value={university.offers + "+" || 'N/A'} />
+                        <StatCard icon={School} label="Rank" value={`#${university?.uni_rank?.[0]?.rank || 'N/A'} (${university?.uni_rank?.[0]?.type || 'N/A'})`} />
+                        <StatCard icon={Building} label="Offers" value={university.offers || 'N/A'} />
                     </div>
                 </div>
             </div>
 
-            <div className=" mx-auto px-6 py-1 ">
+            <div className=" mx-auto py-1 ">
                 <div className="flex gap-8">
                     <div className="w-[70%] ">
-                        <div className="flex border-b border-border mb-8 overflow-x-auto no-scrollbar scrollbar-hide ">
+                        <div className="flex border-b border-border mb-8 overflow-x-auto no-scrollbar scrollbar-hide">
                             {university?.extra_content?.sections.map((section, index) => (
                                 <TabButton key={index} active={activeTab === section.section_key} onClick={() => setActiveTab(section?.section_key)}>
-                                    {section.heading}
+                                    <div dangerouslySetInnerHTML={{__html:section.heading}}/>
                                 </TabButton>
                             ))}
                             <TabButton active={activeTab === "courses"} onClick={() => setActiveTab("courses")}>
@@ -575,7 +575,7 @@ export default function UniversityDetailPage() {
                                 >
                                     {/* Description */}
                                     <div className="prose max-w-none">
-                                        <h2 className="text-xl font-bold mb-4 capitalize"> {university.name}</h2>
+                                        <h2 className="text-xl font-bold mb-4 capitalize"> {activeTab}</h2>
                                         <div
                                             className="text-gray-700 leading-relaxed"
                                             dangerouslySetInnerHTML={{

@@ -240,12 +240,12 @@ export function CreateApplicationModal({
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="fixed inset-0 z-40 flex items-center justify-center p-2 overflow-hidden"
           >
-            <div className="relative rounded-3xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col bg-white">
+            <div className="relative rounded-3xl shadow-xl w-full max-w-4xl max-h-[90vh] min-h-[90vh] overflow-hidden flex flex-col bg-white">
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1, duration: 0.3 }}
-                className="bg-pink-100 p-6"
+                className="bg-white px-6 pt-4 pb-2 "
               >
                 <div className="flex items-start justify-between !text-gray-800">
                   <div>
@@ -308,7 +308,6 @@ export function CreateApplicationModal({
                     const StepIcon = step.icon
                     const isActive = index === currentStep
                     const isCompleted = index < currentStep
-
                     return (
                       <React.Fragment key={step.id}>
                         <div key={step.id} className="flex gap-1 items-center">
@@ -316,7 +315,7 @@ export function CreateApplicationModal({
                             initial={false}
                             animate={{
                               scale: isActive ? 1.1 : 0.9,
-                              backgroundColor: isActive ? '#ffffff' : isCompleted ? '#30ff7c' : 'rgb(231, 223, 223)'
+                              backgroundColor: isActive ? '#cef979' : isCompleted ? '#30ff7c' : 'rgb(231, 223, 223)'
                             }}
                             className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${isActive ? 'text-gray-600' : isCompleted ? 'text-gray-800' : 'text-gray-600'
                               }`}
@@ -327,7 +326,7 @@ export function CreateApplicationModal({
                               <StepIcon className="w-5 h-5" strokeWidth={1.7} />
                             )}
                           </motion.div>
-                          <div className="ml-2 flex-1">
+                          <div className="ml-1 flex-1">
                             <p className={`text-xs font-medium ${isActive ? 'text-gray-800' : 'text-gray-500'
                               }`}>
                               {step.title}
@@ -336,7 +335,7 @@ export function CreateApplicationModal({
 
                         </div>
                         {index < steps.length - 1 && (
-                          <ChevronRight className="w-6 h-6 text-gray-400 mx-2" />
+                          <ChevronRight className="w-6 h-6 text-gray-400 mx-1" />
                         )}
                       </React.Fragment>
                     )
@@ -344,7 +343,6 @@ export function CreateApplicationModal({
                 </div>
               </motion.div>
 
-              {/* Content Area */}
               <div className="flex-1 overflow-y-auto p-4 px-6 bg-gray-50">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -354,13 +352,13 @@ export function CreateApplicationModal({
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <motion.div
+                   {currentStep == 0 && <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 }}
                       className="rounded-xl p-4 bg-pink-100"
                     >
-                      <h3 className=" font-bold text-gray-900 mb-2">Program Information</h3>
+                      <h3 className="font-medium text-lg text-gray-900 mb-2">Program Information</h3>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 font-semibold text-sm">
                         <div className="space-y-1">
                           <p className="text-xs text-gray-500">Program</p>
@@ -389,7 +387,7 @@ export function CreateApplicationModal({
                           <p className="font-medium text-gray-800">{program?.university?.address || 'Rolling Admission'}</p>
                         </div>
                       </div>
-                    </motion.div>
+                    </motion.div>}
                     {renderStepContent()}
                   </motion.div>
                 </AnimatePresence>
@@ -414,8 +412,8 @@ export function CreateApplicationModal({
                     onClick={handlePrevious}
                     disabled={currentStep === 0}
                     className={`px-4 py-2 text-sm font-medium rounded-lg flex items-center gap-2 transition-all ${currentStep === 0
-                        ? 'text-gray-400 cursor-not-allowed'
-                        : 'text-gray-700 hover:bg-gray-100'
+                      ? 'text-gray-400 cursor-not-allowed'
+                      : 'text-gray-700 hover:bg-gray-100'
                       }`}
                   >
                     <ChevronLeft className="w-4 h-4" />
