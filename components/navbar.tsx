@@ -112,6 +112,11 @@ export default function Navbar({
     setLogin(!!token)
   }, [])
 
+    const filterUniversitiesByCountry = (countryCode: string): University[] => {
+    if (!countryCode || !unicat) return [];
+    return unicat.filter((uni) => uni.country === countryCode);
+  };
+
 
   // Get unique countries from universities data
   const getUniqueCountries = (): Country[] => {
@@ -154,13 +159,6 @@ export default function Navbar({
   ) {
     return null;
   }
-
-
-
-  const filterUniversitiesByCountry = (countryCode: string): University[] => {
-    if (!countryCode || !unicat) return [];
-    return unicat.filter((uni) => uni.country === countryCode);
-  };
 
   const loadCountryUniversities = (country: Country) => {
     if (!country?.code) return;
