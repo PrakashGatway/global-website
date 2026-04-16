@@ -8,9 +8,9 @@ import { toast } from "react-hot-toast"
 import Link from "next/link";
 import FAQSection from "@/components/faqPage";
 import { DynamicLucideIcon } from "./DynamicLucideIcon";
+import { NewTag } from "./tag";
 
 export default function ContactUsPage({ contactData, Faqres }) {
-  // Extract data from the response
   const heroTitle = contactData?.sections?.hero?.title || "";
   const heroSubtitle = contactData?.sections?.hero?.subtitle || "";
   const getInTouchTitle = contactData?.sections?.getInTouch?.title
@@ -61,7 +61,7 @@ export default function ContactUsPage({ contactData, Faqres }) {
 
       <section className="relative flex items-center" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
 
-        <div className="w-full max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center sm:pl-30">
+        <div className="w-full sm:pl-22 mx-auto grid lg:grid-cols-2 gap-12 items-center justify-between">
           <div className="text-white space-y-6 p-6 sm:pt-0 pt-12">
             <h1 className="text-4xl lg:text-6xl font-bold text-white tracking-tight">
               {contactData?.title || "Contact Us"}
@@ -98,10 +98,10 @@ export default function ContactUsPage({ contactData, Faqres }) {
             </div>
           </div>
           <div className="h-full w-full">
-            <div className='relative flex items-center justify-center h-[100%] w-full rounded-bl-[55%] overflow-hidden mr-10'>
-              <img className='h-full w-full object-cover' src="https://buffer.com/resources/content/images/2025/03/social-media-image-sizes.png" alt="" />
-              <div className='absolute bottom-0 right-0 h-[5.7%] w-full bg-[#f46c44] z-11'>
-              </div>
+            <div className='relative h-[100%] w-full rounded-bl-[40%] overflow-hidden mr-10'>
+              <img className='h-full w-full object-cover' src={contactData?.sections?.hero?.heroImage} alt={contactData?.sections?.hero?.title} />
+              {/* <div className='absolute bottom-0 right-0 h-[5.7%] w-full bg-[#f46c44] z-11'>
+              </div> */}
             </div>
           </div>
         </div>
@@ -109,90 +109,126 @@ export default function ContactUsPage({ contactData, Faqres }) {
 
       {/* Contact Information Section */}
       <section className="py-20 mt-5 relative" style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl lg:text-[3.6rem] font-bold mb-2" style={{ color: '#FF6B35' }}>
-              {getInTouchTitle.split("||")[0]}
-            </h2>
-            <h2 className="text-4xl lg:text-[3.6rem] font-bold" style={{ color: '#FF6B35' }}>
-              {getInTouchTitle.split("||")[1]}
-            </h2>
-            <p className="text-gray-600 text-lg mt-4 max-w-3xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className=" mb-12">
+            
+            <NewTag
+              data={contactData?.sections?.getInTouch?.tag || 2}
+              css="block text-[#ea6c46] text-2xl sm:text-3xl md:text-4xl font-semibold inline-block"
+            >
+              {getInTouchTitle?.split("||")[0]?.trim()}{" "}
+              <span className="relative block font-bold text-primary">
+                {getInTouchTitle?.split("||")[1]?.trim()}
+              </span>
+            </NewTag>
+            <p className="text-gray-600 text-lg mt-2 max-w-3xl">
               {getInTouchSubtitle}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-            {/* Contact Card 1 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+  {getInTouchpoint.map((point, idx) => (
+    <motion.div
+      key={idx}
+      className="group relative bg-white/80 backdrop-blur-lg p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: idx * 0.1 }}
+      viewport={{ once: true }}
+    >
+      {/* Gradient Hover Border */}
+      {/* <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-300 bg-gradient-to-r from-[#FF6B35]/20 to-orange-400/20 blur-xl"></div> */}
 
-            {getInTouchpoint.map((point, idx) => (
+      {/* Icon */}
+      <div className="relative z-10 flex justify-center mb-4">
+        <div className="w-16 h-16 flex items-center justify-center rounded-full border border-gray-300 bg-white shadow-md group-hover:bg-[#FF6B35] group-hover:text-white transition-all duration-300">
+          <DynamicLucideIcon
+            name={`${point?.icon}`}
+            size={32}
+            className="stroke-[1.8px]"
+          />
+        </div>
+      </div>
 
-              <motion.div
-                className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-              >
-                <div className="bg-[#FF6B35] w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto">
-                  {/* <Phone className="h-8 w-8 text-white" /> */}
-                  <DynamicLucideIcon name={`${point?.icon}`} size={40} className="sm:w-10 sm:h-10 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-3 text-center">{point?.title}</h3>
-                <p className="text-gray-600 text-center mb-4">{point?.subtitle}</p>
-                <div className="space-y-2">
-                  {point?.Number?.split("||").map((num, i) => (
-                    <a
-                      key={i}
-                      href={`tel:${num.trim()}`}
-                      className="block text-lg font-semibold text-center"
-                      style={{ color: '#FF6B35' }}
-                    >
-                      {num}
-                    </a>
-                  ))}
+      {/* Title */}
+      <h3 className="text-lg font-semibold text-gray-800 text-center mb-1">
+        {point?.title}
+      </h3>
 
-                  {point?.email?.split("||").map((mail, i) => (
-                    <a
-                      key={i}
-                       href={`https://mail.google.com/mail/?view=cm&to=${mail}`}
-                      className="block text-lg font-semibold text-center"
-                      style={{ color: '#FF6B35' }}
-                    >
-                      {mail}
-                    </a>
-                  ))}
+      {/* Subtitle */}
+      <p className="text-sm text-gray-500 text-center mb-4">
+        {point?.subtitle}
+      </p>
 
-                  <a
-                    href={`https://www.google.com/maps?q=${encodeURIComponent(point?.Location)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-lg font-semibold text-center"
-                    style={{ color: '#FF6B35' }}
-                  >
-                    {point?.Location}
-                  </a>
+      {/* Content */}
+      <div className="space-y-2 text-center">
+        {/* Phone */}
+        {point?.Number?.split("||").map((num, i) => (
+          <a
+            key={i}
+            href={`tel:${num.trim()}`}
+            className="block text-base font-medium text-[#FF6B35] hover:underline"
+          >
+            {num}
+          </a>
+        ))}
 
-                  {point?.timing?.split("||").map((time, i) => (
-                    <p key={i} className="text-lg font-semibold text-center">
-                      {time}
-                    </p>
-                  ))}
-                </div>
-                <p className="text-sm text-gray-500 text-center mt-4">{point?.footertext}</p>
-              </motion.div>
-            ))}
+        {/* Email */}
+        {point?.email?.split("||").map((mail, i) => (
+          <a
+            key={i}
+            href={`mailto:${mail}`}
+            className="block text-base font-medium text-[#FF6B35] hover:underline"
+          >
+            {mail}
+          </a>
+        ))}
 
-          </div>
+        {/* Location */}
+        {point?.Location && (
+          <a
+            href={`https://www.google.com/maps?q=${encodeURIComponent(
+              point.Location
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-base font-medium text-[#FF6B35] hover:underline"
+          >
+            {point.Location}
+          </a>
+        )}
+        {idx == 3 && (
+          <button>
+            <Link
+              href="#contact-form"
+              rel="noopener noreferrer"
+              className="block text-base font-medium text-[#FF6B35] hover:underline"
+            >
+              Book Now
+            </Link>
+          </button>
+        )}
+
+
+        {/* Timing */}
+        {point?.timing?.split("||").map((time, i) => (
+          <p key={i} className="text-sm text-gray-600">
+            {time}
+          </p>
+        ))}
+      </div>
+    </motion.div>
+  ))}
+</div>
         </div>
       </section>
 
       {/* Contact Form Section */}
       <section id="contact-form" className="py-20 bg-[#f9f5f2]">
         <div className="max-w-7xl mx-auto px-2">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
                 {sendMessageTitle}
               </h2>
               <p className="text-gray-600 text-lg leading-relaxed mb-8">
@@ -419,7 +455,7 @@ export default function ContactUsPage({ contactData, Faqres }) {
                 </div>
               </div>
 
-          
+
             </div>
           </div>
         </div>
@@ -485,19 +521,19 @@ const CTASection = ({ data }: { data?: any }) => {
         </div>
 
         {/* Decorative circle — only on lg */}
-           <div className="hidden lg:flex relative h-[380px] items-center justify-center">
-            <img
-              src="/images/circle stand.png"
-              alt=""
-              className="absolute z-10 w-[90px] -bottom-[2%]"
-              
-            />
-            <img
-              src="/images/circle.png"
-              alt=""
-              className="w-80 xl:w-96 animate-spin [animation-duration:60s] absolute -bottom-[10%]"
-            />
-          </div>
+        <div className="hidden lg:flex relative h-[380px] items-center justify-center">
+          <img
+            src="/images/circle stand.png"
+            alt=""
+            className="absolute z-10 w-[90px] -bottom-[2%]"
+
+          />
+          <img
+            src="/images/circle.png"
+            alt=""
+            className="w-80 xl:w-96 animate-spin [animation-duration:60s] absolute -bottom-[10%]"
+          />
+        </div>
       </div>
 
       <img

@@ -15,35 +15,34 @@ export async function generateMetadata({ params }: { params: any }) {
     description: seo?.metaDescription,
     keywords: seo?.metaKeywords,
     alternates: {
-      canonical: `${seo?.canonicalUrl || "service"}`
+      canonical: `${seo?.canonicalUrl}`
     },
     openGraph: {
       title: seo?.metaTitle,
       description: seo?.metaDescription,
-      url: `/${seo?.canonicalUrl || "service"}`,
+      url: `/${seo?.canonicalUrl || ""}`,
       type: "website"
     }
   };
 }
 
 
-export default async function Page({ params }: {params : any}) {
+export default async function Page({ params }: { params: any }) {
   const { slug } = await params
 
-  
-
-  const Universityres = await serverInstance.get("/universities?limit=5")
-
-  const Faqres = await serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`)
-  const imageRes = await serverInstance.get("/testimonials?type=image&limit=15")
-
-
-
-  const Pageres = await serverInstance.get(`/page-information/slug/${slug}`)
-
-  const videoRes = await serverInstance.get("/testimonials?type=video&limit=6")
-
-  // console.log(imageRes.data, videoRes.data)
+  const [
+    Universityres,
+    Faqres,
+    imageRes,
+    Pageres,
+    videoRes
+  ] = await Promise.all([
+    serverInstance.get("/universities?limit=5"),
+    serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`),
+    serverInstance.get("/testimonials?type=image&limit=15"),
+    serverInstance.get(`/page-information/slug/${slug}`),
+    serverInstance.get("/testimonials?type=video&limit=6"),
+  ]);
 
   return (
     <CountryDetails Universityres={Universityres?.data?.result} Faqres={Faqres.data.data} pageData={Pageres?.data?.data} imageData={imageRes.data.data} videoRes={videoRes.data} />

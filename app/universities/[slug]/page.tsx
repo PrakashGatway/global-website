@@ -1,81 +1,70 @@
-// app/universities/[slug]/page.tsx  — SERVER COMPONENT (no "use client")
-
 import { serverInstance } from "@/app/axiosInstance";
 import UniDetailsClient from "../../../components/new";
 
-interface UniversityData {
-  _id: string;
-  name: string;
-  slug: string;
-  uni_type: string;
-  short_description: string;
-  code: string;
-  address: string;
-  country: string;
-  city: string;
-  cover_photo?: string;
-  social_links?: {
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-    linkedin?: string;
-  };
-  uni_logo: string;
-  uni_web: string;
-  uni_rank: Array<{
-    type: string;
-    rank: string;
-    year?: string;
-  }>;
-  google_location: {
-    lat: string;
-    lng: string;
-  };
-  uni_contact: string;
-  established_year: number;
-  on_compus_accommodation: boolean;
-  off_campus_accommodation: boolean;
-  status: string;
-  financials: {
-    cost_of_living: string;
-    ug_fees: string;
-    pg_fees: string;
-    other_fees: string;
-  };
-  location_alias: string;
-  extra_content?: {
-    _id: string;
-    sections: Array<{
-      section_key: string;
-      heading: string;
-      content: string;
-      order: number;
-      _id: string;
-    }>;
-    isPublished: boolean;
-    status: string;
-    createdAt: string;
-    updatedAt: string;
-  };
-  seo_metadata?: {
-    meta_title: string;
-    meta_description: string;
-    canonical_tag: string;
-    meta_keywords: string;
-  };
-  createdAt: string;
-  updatedAt: string;
-  uni_gallery?: {
-    images: string[];
-    videos: string[];
-  };
-}
+export async function generateMetadata({
+  params
+}:any){
 
-interface ApiResponse {
-  success: boolean;
-  result: UniversityData;
-}
+  const { slug } = await params;
+  try {
+    const res = await serverInstance.get(`/universities/${slug}`);
 
+    const uni = res?.data?.result;
+
+    if (!uni) {
+      return {
+        title: "University Not Found",
+        description: "No university data available",
+      };
+    }
+    const seo = uni?.seo_metadata || {};
+    return {
+      title:
+        seo.meta_title ||
+        `${uni.name} | Study in ${uni.country} | Admission 2026`,
+      description:
+        seo.meta_description ||
+        uni.short_description ||
+        `Explore ${uni.name}, located in ${uni.city}, ${uni.country}.Check courses, fees, rankings, and admission details.`,
+      keywords:
+        seo.meta_keywords ||
+        `${uni.name}, ${uni.city} university, study in ${uni.country}, ${uni.name} fees, ${uni.name} ranking`,
+      alternates: {
+        canonical:
+          seo.canonical_tag ||
+          `https://ooshasglobal.com/universities/${uni.slug}`,
+      },
+      openGraph: {
+        title: seo.meta_title || uni.name,
+        description:
+          seo.meta_description || uni.short_description || "",
+        url: `https://yourdomain.com/universities/${uni.slug}`,
+        siteName: "Oosha's Global",
+        images: [
+          {
+            url: uni.cover_photo || uni.uni_logo,
+            width: 1200,
+            height: 630,
+            alt: uni.name,
+          },
+        ],
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: seo.meta_title || uni.name,
+        description:
+          seo.meta_description || uni.short_description || "",
+        images: [uni.cover_photo || uni.uni_logo],
+      },
+    };
+  } catch (error) {
+    return {
+      title: "University",
+      description: "University details page",
+    };
+  }
+}
 
 export default async function UniDetailsPage({
   params,
@@ -84,11 +73,11 @@ export default async function UniDetailsPage({
 }) {
   const { slug } = await params;
 
-  let universityData: UniversityData | null = null;
+  let universityData: any | null = null;
   let error: string | null = null;
 
   try {
-    const res = await serverInstance.get<ApiResponse>(`/universities/${slug}`);
+    const res = await serverInstance.get<any>(`/universities/${slug}`);
     if (res?.data?.success) {
       universityData = res.data.result;
     }
@@ -98,7 +87,7 @@ export default async function UniDetailsPage({
   }
 
   const Universityres = await serverInstance.get("/universities?limit=5")
-  
+
   const Faqres = await serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`)
 
   if (!universityData) {
