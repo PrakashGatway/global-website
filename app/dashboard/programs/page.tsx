@@ -13,7 +13,6 @@ import axiosInstance from "@/app/axiosInstance"
 import { ModernSelect } from "@/components/ui/select"
 import Link from "next/link"
 import { CreateApplicationModal } from "@/components/dashboard/applicationModel"
-import { useSearchParams } from 'next/navigation';
 
 export const dynamic = "force-dynamic";
 
@@ -115,8 +114,7 @@ export default function CoursesPage() {
   const [categories, setCategories] = useState([])
   const [universities, setUniversities] = useState([])
 
-  const searchParams = useSearchParams();
-  const university = searchParams.get('university');
+const university = new URLSearchParams(window.location.search).get('university');
 
   // Filters state
   const [filters, setFilters] = useState({
