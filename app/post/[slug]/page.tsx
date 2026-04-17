@@ -223,7 +223,7 @@ export default async function CaseDetailsPage({
                     {/* SHORT DESCRIPTION SECTION */}
                     {blog?.content && (
                         <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
-                            <p className="text-gray-700 leading-relaxed text-lg"
+                            <span className="text-gray-700 leading-relaxed text-lg"
                                 dangerouslySetInnerHTML={{
                                     __html: DOMPurify.sanitize(blog?.content),
                                 }} />

@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import KeenSlider from "keen-slider";
-import "keen-slider/keen-slider.min.css";
 
 const DATA = [
   { count: 244, text: "Offers to Cornell" },

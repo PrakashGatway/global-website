@@ -1,12 +1,7 @@
 import type React from "react";
 import type { Metadata, Viewport } from "next";
 import {
-  Geist,
-  Geist_Mono,
-  Noto_Sans,
-  Poppins,
-  PT_Sans,
-  Raleway,
+  Noto_Sans
 } from "next/font/google";
 import Navbar from "@/components/navbar";
 import "./globals.css";
@@ -18,9 +13,8 @@ import { Toaster } from "react-hot-toast";
 import Script from "next/script";
 import BreadcrumbSchema from "@/components/BreadcrumbSchema";
 
-import ScrollToTop from "@/components/ScrolltoTop";
 import WhatsAppButton from "@/components/whatsappbtn";
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 const ptSans = Noto_Sans({
   subsets: ["latin"],

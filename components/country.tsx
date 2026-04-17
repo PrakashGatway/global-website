@@ -58,7 +58,7 @@ const HeroSection = ({ data, alldata }) => {
                 {/* <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight">
                   {data?.title || "Study in Germany"}
                 </h1> */}
-                <p
+                <span
                   className="text-white text-sm sm:text-base leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
                 />
@@ -263,7 +263,7 @@ const FormSection = ({ data }) => {
         <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
       </h2> */}
 
-          <p
+          <span
             className="text-gray-700 leading-relaxed text-xs sm:text-lg mb-6"
             dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
           />
@@ -319,11 +319,10 @@ const WhyStudySection = ({ data }) => {
             </span>
           </Tagging>
         </div>
-        <p className="text-[#123b73] text-sm sm:text-base lg:text-lg mb-8 leading-relaxed" dangerouslySetInnerHTML={{
+        <div className="text-[#123b73] text-sm sm:text-base lg:text-lg mb-8 leading-relaxed" dangerouslySetInnerHTML={{
           __html: data?.subTitle
-        }}>
-
-        </p>
+        }}
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
           {(data?.items || []).map((item, index) => (
             <div key={index} className="flex items-start gap-3 sm:gap-4 bg-gray-200 p-4 rounded-xl">
@@ -375,7 +374,7 @@ const PopularCoursesSection = ({ data }) => {
             </span>
             <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
           </Tagging>
-          <p
+          <span
             className="text-gray-500 mt-3 text-sm lg:text-base"
             dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
           />
@@ -399,7 +398,7 @@ const PopularCoursesSection = ({ data }) => {
                 </div>
                 <div className="px-4 py-4 flex flex-col flex-grow">
                   <div className="text-base lg:text-xl font-bold text-[#F46C44]" dangerouslySetInnerHTML={{ __html: item?.coursesname }} />
-                  <p className="text-sm text-gray-800 mt-2 line-clamp-2" dangerouslySetInnerHTML={{ __html: item?.description || "" }} />
+                  <div className="text-sm text-gray-800 mt-2 line-clamp-2" dangerouslySetInnerHTML={{ __html: item?.description || "" }} />
                   <div className="mt-auto pt-3 flex justify-end">
                     <button className="bg-[#F46C44] text-white text-sm px-4 py-1.5 rounded-full flex items-center gap-2 hover:bg-primary transition">
                       Explore →
@@ -451,9 +450,9 @@ const LifeInSection = ({ data }) => {
                 {/* Benefit Box */}
                 <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[30px] sm:rounded-tr-[50px] px-4 sm:px-6 py-3 sm:py-4 lg:py-5 text-white text-sm sm:text-base lg:w-40 ">
                   <span className='text-base sm:text-2xl lg:text-xl font-semibold' dangerouslySetInnerHTML={{ __html: item?.title }} />
-                  <p className='text-xs sm:text-sm text-white mt-1' dangerouslySetInnerHTML={{
+                  <span className='text-xs sm:text-sm text-white mt-1' dangerouslySetInnerHTML={{
                     __html: item?.description
-                  }}></p>
+                  }}></span>
                 </div>
               </div>
             ))}
@@ -582,11 +581,9 @@ const ServiceSection = ({ data }) => {
                 }}>
 
                 </h3>
-                <p className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed" dangerouslySetInnerHTML={{
+                <div className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed" dangerouslySetInnerHTML={{
                   __html: service?.itemsubtitle
-                }}>
-
-                </p>
+                }}/>
               </div>
             </div>
           ))}
@@ -614,10 +611,9 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
             </span>
           </Tagging>
 
-          <p className="mt-4 sm:mt-6 text-xs sm:text-base lg:text-lg leading-relaxed" dangerouslySetInnerHTML={{
+          <span className="mt-4 sm:mt-6 text-xs sm:text-base lg:text-lg leading-relaxed" dangerouslySetInnerHTML={{
             __html: data?.subTitle || "Germany provides various scholarships for international students, including DAAD and university-funded options."
-          }}>
-          </p>
+          }}/>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 sm:gap-x-16 gap-y-4 sm:gap-y-6 mt-6 sm:mt-10">
@@ -628,11 +624,11 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
                   <div className="bg-yellow-400 text-black rounded-full p-1.5 sm:p-2 flex-shrink-0">
                     <DynamicLucideIcon name="CircleDollarSign" size={16} className="sm:w-5 sm:h-5" />
                   </div>
-                  <p className="border-b border-white pb-1 hover:opacity-80 cursor-pointer text-xs sm:text-base" dangerouslySetInnerHTML={{
+                  <span className="border-b border-white pb-1 hover:opacity-80 cursor-pointer text-xs sm:text-base" dangerouslySetInnerHTML={{
                     __html: item
                   }}>
 
-                  </p>
+                  </span>
                 </div>
               ))}
             </div>
@@ -662,7 +658,7 @@ const CTASection = ({ data }) => {
         <div className="text-white relative z-10">
           <Tag data={data?.tag} text={data?.title} css={"text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"} />
 
-          <p
+          <span
             className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
             dangerouslySetInnerHTML={{
               __html: data?.subtitle || "Explore top universities, expert guidance, and seamless admission support with Ooshas Global.",

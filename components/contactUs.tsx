@@ -505,7 +505,7 @@ const CTASection = ({ data }: { data?: any }) => {
           <h2 className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight">
             {data?.title || "Start Your Global Education Journey"}
           </h2>
-          <p
+          <span
             className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
             dangerouslySetInnerHTML={{
               __html: data?.subtitle || "Explore top universities, expert guidance, and seamless admission support with Ooshas Global.",

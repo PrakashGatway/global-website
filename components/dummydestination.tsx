@@ -1,9 +1,6 @@
-import { useLayoutEffect, useRef } from "react";
-import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
+import { useRef } from "react";
 import Link from "next/link";
 
-gsap.registerPlugin(ScrollTrigger);
 
 export function Destinationhome({ homePage }) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
@@ -17,39 +14,6 @@ export function Destinationhome({ homePage }) {
       cta: step.ctabutton,
       route: step.ctaRoute,
     })) || [];
-
-  useLayoutEffect(() => {
-    if (!sectionRef.current) return;
-
-    const ctx = gsap.context(() => {
-      const cards = cardsRef.current.filter(Boolean) as HTMLElement[];
-
-      cards.forEach((card) => {
-        gsap.fromTo(
-          card,
-          {
-            opacity: 0,
-            y: 20,
-            scale: 0.98,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.6,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   const titleParts = homePage?.dreamDestination?.title?.split("||") || [];
   const defaultTitle = "4 Steps to Your Dream Destination";
@@ -103,10 +67,10 @@ export function Destinationhome({ homePage }) {
                 {step.title}
               </h3>
 
-              <p
+              <span
                 className="text-base leading-relaxed mb-5 text-gray-600"
                 dangerouslySetInnerHTML={{
-                  __html: step.description || "",
+                  __html: step?.description,
                 }}
               />
 

@@ -119,19 +119,10 @@ export default function VideoTestimonialsSlider({
             {title.includes("||") ? title.split("||")[1].trim() : "Testimonials"}
             <span className="absolute right-0 -bottom-1 w-20 lg:w-32 h-[2px] lg:h-1 bg-[#F46C44]"></span>
           </h3>
-          <p
+          <div
             className="text-gray-600 mt-2"
             dangerouslySetInnerHTML={{
               __html: subtitle
-                ? subtitle
-                  .split("||")
-                  .map((text, index) =>
-                    index === 1
-                      ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
-                      : text.trim()
-                  )
-                  .join(" ")
-                : ""
             }}
           />
         </motion.div>

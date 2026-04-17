@@ -56,7 +56,7 @@ const FAQSection = ({ Faqres }) => {
                     }`}
                 >
                   <div className="px-6 pb-5 pt-3">
-                    <p className="text-black text-xs lg:text-base leading-relaxed" dangerouslySetInnerHTML={{__html :faq.answer}}/>
+                    <div className="text-black text-xs lg:text-base leading-relaxed" dangerouslySetInnerHTML={{__html :faq.answer}}/>
                   </div>
                 </div>
               </div>

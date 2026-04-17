@@ -1,9 +1,11 @@
-export default function BreadcrumbSchema({ params }) {
+export default async function BreadcrumbSchema({ params }) {
 
-  const pathArray = Object.values(params || []);
+  const param = await params
 
-  const breadcrumbs = pathArray.map((segment, index) => {
-    const href = "/" + pathArray.slice(0, index + 1).join("/");
+  const pathArray = param ? Object.values(param) : [];
+
+  const breadcrumbs = pathArray?.map((segment, index) => {
+    const href = "/" + pathArray?.slice(0, index + 1).join("/");
 
     return {
       "@type": "ListItem",

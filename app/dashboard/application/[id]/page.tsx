@@ -205,21 +205,15 @@ const PRIMARY_STATUS_STEPS = [
 export default function ApplicationDetailPage() {
 
   const params = useParams()
-  const [activeTab, setActiveTab] = useState<'overview' | 'requirements' | 'documents' | 'backups' | 'activity' | 'notes'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'requirements' | 'documents' | 'backups' | 'activity' | 'notes'>('requirements')
   const [expandedRequirements, setExpandedRequirements] = useState<string[]>([])
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
-  const [showUploadModal, setShowUploadModal] = useState(false)
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({})
   const [noteContent, setNoteContent] = useState('')
   const [noteType, setNoteType] = useState<'user' | 'ooshas'>('user')
-  const [draggedItem, setDraggedItem] = useState<number | null>(null)
   const [activeDocTab, setActiveDocTab] = useState<'student' | 'ooshas'>('student')
   const [activeNoteTab, setActiveNoteTab] = useState<'all' | 'student' | 'ooshas' | 'admin'>('all')
   const [loading, setLoading] = useState(true)
   const [application, setApplication] = useState<any>(null)
-  const [openShare, setOpenShare] = useState(false)
-  const [copied, setCopied] = useState(false)
 
   const [showIntakeModal, setShowIntakeModal] = useState(false)
   const [selectedIntake, setSelectedIntake] = useState("")
@@ -543,12 +537,12 @@ export default function ApplicationDetailPage() {
                     </div>
                     <div className="relative flex items-center justify-center mb-2">
 
-                      {isCurrent && <div className="absolute w-10 h-10 rounded-full bg-orange-400 animate-ping opacity-20" />}
-                      <div className={`relative w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${isCompleted ? "bg-emerald-500 border-emerald-100 text-white" : isCurrent ? "bg-white border-orange-500 text-orange-600 scale-105" : "bg-white border-slate-200 text-slate-600"}`}>
+                      {isCurrent && <div className="absolute w-12 h-12 rounded-full bg-orange-400 animate-ping opacity-20" />}
+                      <div className={`relative w-10 h-10 rounded-full flex items-center justify-center shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)] border-2 transition-all duration-300 ${isCompleted ? "bg-emerald-500 border-emerald-100 text-white" : isCurrent ? "bg-white border-orange-500 text-orange-600 scale-105" : "bg-white border-slate-200 text-slate-600"}`}>
                         <StepIcon className="w-5 h-5" />
                         {isCompleted && (
-                          <div className="absolute p-1.5 bg-primary rounded-full">
-                            <svg className=" w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <div className="absolute p-1.5 bg-primary rounded-full shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)]">
+                            <svg className=" w-5 h-5 text-white shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
                           </div>
@@ -569,24 +563,23 @@ export default function ApplicationDetailPage() {
             </div>
           </div>
 
-          {/* Mobile View: Vertical Timeline */}
-          <div className="md:hidden relative pl-8 space-y-8 before:absolute before:left-[11px] before:top-2 before:h-full before:w-0.5 before:bg-slate-200">
+          <div className="md:hidden relative pl-8 space-y-3 before:absolute before:left-[11px] before:top-2 before:h-full before:w-0.5 before:bg-slate-200">
             {PRIMARY_STATUS_STEPS.map((step, index) => {
               const StepIcon = step.icon
               const isCompleted = isStepCompleted(index)
               const isCurrent = isStepCurrent(index)
               return (
-                <div key={step.key} className="relative flex items-start gap-4">
-                  <div className={`absolute -left-[29px] top-1 w-6 h-6 rounded-full border-4 flex items-center justify-center bg-white z-10 ${isCompleted ? "border-emerald-500 text-emerald-500" : isCurrent ? "border-orange-500 text-orange-500" : "border-slate-300 text-slate-300"}`}>
+                <div key={step.key} className="relative flex items-start gap-1">
+                  <div className={`absolute -left-[38px] top-1 w-8 h-8 rounded-full border-3 shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)] flex items-center justify-center bg-white z-10 ${isCompleted ? "border-emerald-500 text-emerald-500" : isCurrent ? "border-orange-500 text-orange-500" : "border-slate-300 text-slate-300"}`}>
                     {isCompleted ? (
-                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     ) : (
                       <div className={`w-2 h-2 rounded-full ${isCurrent ? "bg-orange-500 animate-pulse" : "bg-slate-300"}`} />
                     )}
                   </div>
-                  <div className={`flex-1 p-4 rounded-xl border transition-all ${isCurrent ? "bg-orange-50/50 border-orange-200 shadow-sm" : isCompleted ? "bg-emerald-50/30 border-emerald-100" : "bg-white border-slate-100 opacity-70"}`}>
+                  <div className={`flex-1 shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)] p-4 rounded-xl border transition-all ${isCurrent ? "bg-orange-50/50 border-orange-200 shadow-sm" : isCompleted ? "bg-emerald-50/30 border-emerald-100" : "bg-white border-slate-100 opacity-70"}`}>
                     <div className="flex items-center gap-2 mb-1">
                       <StepIcon className={`w-4 h-4 ${isCurrent ? "text-orange-600" : isCompleted ? "text-emerald-600" : "text-slate-400"}`} />
                       <span className={`text-sm font-bold ${isCurrent ? "text-orange-900" : "text-slate-700"}`}>{step.label}</span>
@@ -603,7 +596,6 @@ export default function ApplicationDetailPage() {
         <div className="border-b border-gray-200 pt-2">
           <div className="flex gap-1 overflow-x-auto no-scrollbar">
             {[
-              { id: 'overview', label: 'Overview', icon: Eye },
               { id: 'requirements', label: 'Requirements', icon: ClipboardList },
               { id: 'documents', label: 'Documents', icon: FileText },
               { id: 'backups', label: 'Backup Programs', icon: Layers },
@@ -616,9 +608,8 @@ export default function ApplicationDetailPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-md text-base font-medium whitespace-nowrap transition-all duration-200 ${isActive ? 'text-orange-600 bg-orange-50' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'}`}
+                  className={`relative flex items-center gap-1.5 px-4 py-2 rounded-md text-base font-medium whitespace-nowrap transition-all duration-200 ${isActive ? 'text-orange-600' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'}`}
                 >
-                  <TabIcon className={`w-3.5 h-3.5 ${isActive ? 'text-orange-500' : ''}`} />
                   {tab.label}
                   {isActive && <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-orange-500 rounded-full" />}
                 </button>
@@ -631,43 +622,6 @@ export default function ApplicationDetailPage() {
       {/* Tab Content */}
       <div className="mx-auto px-2 py-6">
         <AnimatePresence mode="wait">
-          {activeTab === 'overview' && (
-            <motion.div
-              key="overview"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-6"
-            >
-              <div className="flex flex-wrap items-center gap-2 mt-4">
-                {[
-                  { key: "all", label: "All", count: requirements.length },
-                  { key: "pending", label: "Pending", count: requirements.filter(r => r.status === "pending").length },
-                  { key: "approved", label: "Approved", count: requirements.filter(r => r.status === "approved").length },
-                  { key: "rejected", label: "Rejected", count: requirements.filter(r => r.status === "rejected").length },
-                  { key: "review", label: "In Review", count: requirements.filter(r => r.status === "review").length },
-                ].map((tab) => {
-                  const isActive = activeFilter === tab.key
-                  return (
-                    <button
-                      key={tab.key}
-                      onClick={() => setActiveFilter(tab.key as any)}
-                      className={`px-3 py-1 rounded-md text-xs font-medium transition-all border flex items-center gap-1 ${isActive ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-white text-gray-600 border-gray-200 hover:bg-gray-100"}`}
-                    >
-                      {tab.label}
-                      <span className="text-[15px] bg-gray-100 px-1.5 py-0.5 rounded">{tab.count}</span>
-                    </button>
-                  )
-                })}
-                <div className="ml-auto">
-                  <button className="flex items-center gap-1 px-3 py-1 text-base border rounded-md text-gray-600 hover:bg-gray-100">
-                    Filters ⏷
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
           {activeTab === 'requirements' && (
             <motion.div
               key="requirements"
@@ -684,7 +638,7 @@ export default function ApplicationDetailPage() {
                 <p className="text-sm text-gray-500 mt-1">Complete all required items to proceed with your application</p>
               </div>
               <div className="divide-y divide-gray-100">
-                {requirements.map((req) => (
+                {[...application?.documents,...application?.extraRequirements].map((req) => (
                   <div key={req.id} className="hover:bg-gray-50 transition-colors">
                     <div onClick={() => toggleRequirement(req.id)} className="p-5 cursor-pointer">
                       <div className="flex items-start justify-between">

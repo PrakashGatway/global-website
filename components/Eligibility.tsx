@@ -26,12 +26,12 @@ export default function EligibilitySection({ pageData }) {
 
 
 
-          <p
+          <span
             className="text-sm lg:text-base text-gray-600 mb-4"
             dangerouslySetInnerHTML={{
               __html: pageData?.sections?.eligibilityCriteria?.subtitle || "",
             }}
-          ></p>
+          ></span>
 
 
         </div>

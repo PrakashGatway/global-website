@@ -171,28 +171,28 @@ export function GlobalProvider({ children }) {
     }, [])
 
     // Track user interaction (scroll/click/key) - but don't block if only cancelling popup
-    useEffect(() => {
-        const handleUserInteraction = (e) => {
-            // Ignore interactions that are just closing the popup
-            if (e.target?.closest('.popup-close-button') || e.target?.closest('.popup-overlay')) {
-                return;
-            }
-            if (!hasInteracted) {
-                console.log('👆 User interacted with page content')
-                setHasInteracted(true)
-            }
-        }
+    // useEffect(() => {
+    //     const handleUserInteraction = (e) => {
+    //         // Ignore interactions that are just closing the popup
+    //         if (e.target?.closest('.popup-close-button') || e.target?.closest('.popup-overlay')) {
+    //             return;
+    //         }
+    //         if (!hasInteracted) {
+    //             console.log('👆 User interacted with page content')
+    //             setHasInteracted(true)
+    //         }
+    //     }
 
-        window.addEventListener('click', handleUserInteraction)
-        window.addEventListener('scroll', handleUserInteraction)
-        window.addEventListener('keydown', handleUserInteraction)
+    //     window.addEventListener('click', handleUserInteraction)
+    //     window.addEventListener('scroll', handleUserInteraction)
+    //     window.addEventListener('keydown', handleUserInteraction)
 
-        return () => {
-            window.removeEventListener('click', handleUserInteraction)
-            window.removeEventListener('scroll', handleUserInteraction)
-            window.removeEventListener('keydown', handleUserInteraction)
-        }
-    }, [hasInteracted])
+    //     return () => {
+    //         window.removeEventListener('click', handleUserInteraction)
+    //         window.removeEventListener('scroll', handleUserInteraction)
+    //         window.removeEventListener('keydown', handleUserInteraction)
+    //     }
+    // }, [hasInteracted])
 
     // Auth check effect
     useEffect(() => {

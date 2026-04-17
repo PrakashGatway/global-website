@@ -296,23 +296,12 @@ export default function Homepage({
                   : null}
               </motion.span>
 
-              <motion.p
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
+              <span
                 className="mt-6 text-base font-medium lg:text-lg text-primary mx-auto text-justify lg:mx-0 lg:mb-10"
                 dangerouslySetInnerHTML={{
                   __html: homePage?.hero?.subtitle
-                    ? homePage.hero.subtitle
-                      .split("||")
-                      .map((text, index) =>
-                        index === 1
-                          ? `<span class="font-semibold text-[#f46c44]">${text.trim()}</span>`
-                          : text.trim(),
-                      )
-                      .join(" ")
-                    : "",
                 }}
+                suppressHydrationWarning
               />
 
               {/* CTA BUTTONS */}
@@ -396,7 +385,7 @@ export default function Homepage({
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {/* Card */}
           {homePage?.stats?.item?.map((stat, index) => (
-            <div className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] 
+            <div key={index} className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] 
             transition duration-300">
               <DynamicLucideIcon
                 name={stat?.icon}
@@ -775,14 +764,14 @@ export default function Homepage({
 
                 </motion.span>
 
-                <motion.p
+                <motion.span
                   initial={{ y: 30, opacity: 0 }}
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
                   viewport={{ once: true }}
                   className="text-sm font-medium sm:text-base text-gray-600 mb-6 leading-relaxed mx-auto lg:mx-0"
                   dangerouslySetInnerHTML={{
-                    __html: homePage?.trustedPartners?.subtitle || "",
+                    __html: homePage?.trustedPartners?.subtitle
                   }}
                 />
 
@@ -815,12 +804,12 @@ export default function Homepage({
                 <span className="absolute right-0 bottom-0  w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
               </span>
             </h2>
-            <p
+            <div
               className="text-gray-800 text-sm lg:text-base font-medium max-w-3xl leading-relaxed"
               dangerouslySetInnerHTML={{
                 __html: homePage?.topUniversities?.subtitle || "",
               }}
-            ></p>
+            ></div>
           </div>
 
           <div ref={sliderRefD} className="keen-slider items-start">
@@ -1047,7 +1036,7 @@ export default function Homepage({
                     >
                       {/* Icon */}
                       <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center mb-3 md:mb-4 mx-auto">
-                        <img src={service.icon} alt="" />
+                        <img src={service.icon || "https://cdn-icons-png.flaticon.com/512/5474/5474438.png"} alt="" />
                       </div>
 
                       {/* Title */}
@@ -1056,7 +1045,7 @@ export default function Homepage({
                       </h3>
 
                       {/* Description */}
-                      <p
+                      <span
                         className="text-sm md:text-sm text-muted-foreground leading-relaxed line-clamp-4 md:line-clamp-5"
                         dangerouslySetInnerHTML={{
                           __html: service.subTitle || "",

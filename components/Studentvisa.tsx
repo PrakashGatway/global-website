@@ -54,7 +54,7 @@ const StudentVisaStories = ({
 
     return () => clearInterval(interval);
   }, [instanceRef, autoSlideInterval]);
-
+  
   if (!stories?.length) return null;
 
   return (
