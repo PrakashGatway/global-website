@@ -13,6 +13,7 @@ import axiosInstance from "@/app/axiosInstance"
 import { ModernSelect } from "@/components/ui/select"
 import Link from "next/link"
 import { CreateApplicationModal } from "@/components/dashboard/applicationModel"
+// import { useSearchParams } from 'next/navigation';
 
 export const dynamic = "force-dynamic";
 
@@ -114,7 +115,8 @@ export default function CoursesPage() {
   const [categories, setCategories] = useState([])
   const [universities, setUniversities] = useState([])
 
-const university = new URLSearchParams(window.location.search).get('university');
+  // const searchParams = useSearchParams();
+  const university = ""
 
   // Filters state
   const [filters, setFilters] = useState({
@@ -468,8 +470,8 @@ const university = new URLSearchParams(window.location.search).get('university')
                               key={mode.value}
                               onClick={() => handleFilterChange('studyMode', filters.studyMode === mode.value ? '' : mode.value)}
                               className={`px-3 py-2 rounded-lg border text-sm transition-all duration-200 ${filters.studyMode === mode.value
-                                  ? 'border-primary bg-primary/10 text-primary'
-                                  : 'border-border hover:border-primary/50 hover:bg-muted'
+                                ? 'border-primary bg-primary/10 text-primary'
+                                : 'border-border hover:border-primary/50 hover:bg-muted'
                                 }`}
                             >
                               {mode.label}
@@ -490,8 +492,8 @@ const university = new URLSearchParams(window.location.search).get('university')
                               key={level.value}
                               onClick={() => handleFilterChange('level', filters.level === level.value ? '' : level.value)}
                               className={`px-3 py-1.5 rounded-full border text-sm transition-all duration-200 ${filters.level === level.value
-                                  ? 'border-primary bg-primary/10 text-primary'
-                                  : 'border-border hover:border-primary/50 hover:bg-muted'
+                                ? 'border-primary bg-primary/10 text-primary'
+                                : 'border-border hover:border-primary/50 hover:bg-muted'
                                 }`}
                             >
                               {level.label}
@@ -694,26 +696,26 @@ const university = new URLSearchParams(window.location.search).get('university')
                         </span>
                       </div>
                     </div>
-<div className="flex gap-2">
-                    {course.studyMode && (
-                      <div className="mb-3">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-muted/50 rounded-full text-xs font-medium border border-border/50">
-                          <Briefcase className="w-3 h-3" />
-                          {course.studyMode}
-                        </span>
-                      </div>
-                    )}
+                    <div className="flex gap-2">
+                      {course.studyMode && (
+                        <div className="mb-3">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-muted/50 rounded-full text-xs font-medium border border-border/50">
+                            <Briefcase className="w-3 h-3" />
+                            {course.studyMode}
+                          </span>
+                        </div>
+                      )}
 
-                    {/* Category */}
-                    {course.category?.name && (
-                      <div className="mb-3">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/5 rounded-full text-xs font-medium text-primary">
-                          <BookOpen className="w-3 h-3" />
-                          {course.category.name}
-                        </span>
-                      </div>
-                    )}
-</div>
+                      {/* Category */}
+                      {course.category?.name && (
+                        <div className="mb-3">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/5 rounded-full text-xs font-medium text-primary">
+                            <BookOpen className="w-3 h-3" />
+                            {course.category.name}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                     {/* Study Mode Badge */}
 
 
@@ -808,7 +810,7 @@ const university = new URLSearchParams(window.location.search).get('university')
               animate={{ opacity: 1 }}
               className="text-center py-8"
             >
-           
+
               <p className="text-gray-800">You've explored all programs</p>
               <p className="text-sm text-gray-800/70 mt-1">
                 Showing {courses.length} programs
