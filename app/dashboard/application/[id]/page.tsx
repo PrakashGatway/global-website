@@ -210,7 +210,7 @@ export default function ApplicationDetailPage() {
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({})
   const [noteContent, setNoteContent] = useState('')
   const [noteType, setNoteType] = useState<'user' | 'ooshas'>('user')
-  const [activeDocTab, setActiveDocTab] = useState<'student' | 'ooshas'>('student')
+  const [activeDocTab, setActiveDocTab] = useState('All')
   const [activeNoteTab, setActiveNoteTab] = useState<'all' | 'student' | 'ooshas' | 'admin'>('all')
   const [loading, setLoading] = useState(true)
   const [application, setApplication] = useState<any>(null)
@@ -594,7 +594,7 @@ export default function ApplicationDetailPage() {
 
         {/* Tab Navigation */}
         <div className="border-b border-gray-200 pt-2">
-          <div className="flex gap-1 overflow-x-auto no-scrollbar">
+          <div className="flex overflow-x-auto no-scrollbar">
             {[
               { id: 'requirements', label: 'Requirements', icon: ClipboardList },
               { id: 'documents', label: 'Documents', icon: FileText },
@@ -608,10 +608,10 @@ export default function ApplicationDetailPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`relative flex items-center gap-1.5 px-4 py-2 rounded-md text-base font-medium whitespace-nowrap transition-all duration-200 ${isActive ? 'text-orange-600' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'}`}
+                  className={`relative flex items-center gap-1.5 px-4 py-2 text-base font-medium whitespace-nowrap transition-all duration-200 ${isActive ? 'text-orange-600' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'}`}
                 >
                   {tab.label}
-                  {isActive && <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-orange-500 rounded-full" />}
+                  {isActive && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-orange-500 rounded-full" />}
                 </button>
               )
             })}
@@ -620,7 +620,7 @@ export default function ApplicationDetailPage() {
       </div>
 
       {/* Tab Content */}
-      <div className="mx-auto px-2 py-6">
+      <div className="mx-auto py-4">
         <AnimatePresence mode="wait">
           {activeTab === 'requirements' && (
             <motion.div
@@ -628,17 +628,24 @@ export default function ApplicationDetailPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="bg-white rounded-xl border border-gray-200 overflow-hidden"
+              className="bg-white border border-gray-200 overflow-hidden"
             >
-              <div className="p-5 border-b border-gray-200 bg-gradient-to-r from-orange-500/5 to-transparent">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                  <ClipboardList className="w-5 h-5 text-orange-500" />
-                  Application Requirements
-                </h3>
-                <p className="text-sm text-gray-500 mt-1">Complete all required items to proceed with your application</p>
+              <div className="border-b border-gray-200">
+                <div className="flex bg-primary">
+                  {["All", 'Pending', 'inreview', 'Approved', 'Rejected'].map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => setActiveDocTab(status)}
+                      className={`px-4 py-3 text-sm font-medium uppercase relative ${activeDocTab === status ? 'text-orange-300' : 'text-gray-100 hover:text-gray-400'}`}
+                    >
+                      {status}
+                      {activeDocTab === status && <motion.div layoutId="reqTabIndicator" className="absolute bottom-0 left-0 right-0 h-1 bg-orange-300" />}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="divide-y divide-gray-100">
-                {[...application?.documents,...application?.extraRequirements].map((req) => (
+                {application?.documents?.filter((doc) =>{ if (activeDocTab === 'All') return true; doc.status === activeDocTab}).map((req) => (
                   <div key={req.id} className="hover:bg-gray-50 transition-colors">
                     <div onClick={() => toggleRequirement(req.id)} className="p-5 cursor-pointer">
                       <div className="flex items-start justify-between">
@@ -648,9 +655,9 @@ export default function ApplicationDetailPage() {
                               <span className="flex items-center gap-1">
                                 {getStatusIcon(req.status)}
                                 {req.status === 'rejected' && 'Rejected'}
-                                {req.status === 'in_review' && 'In Review'}
+                                {req.status === 'inreview' && 'In Review'}
                                 {req.status === 'approved' && 'Approved'}
-                                {req.status === 'pending' && 'Pending'}
+                                {req.status === 'Pending' && 'Pending'}
                               </span>
                             </span>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${req.state === 'required' ? 'bg-red-100 text-red-700' : req.state === 'optional' ? 'bg-gray-100 text-gray-700' : 'bg-purple-100 text-purple-700'}`}>
@@ -658,7 +665,7 @@ export default function ApplicationDetailPage() {
                             </span>
                             <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">{req.type}</span>
                           </div>
-                          <h4 className="font-medium text-gray-900 text-lg">{req.title}</h4>
+                          <h4 className="font-medium text-gray-900 text-lg">{req.name}</h4>
                           <p className="text-sm text-gray-500 mt-1">{req.description}</p>
                           {req.type === 'link' && req.link && (
                             <a href={req.link.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 mt-2" onClick={(e) => e.stopPropagation()}>
