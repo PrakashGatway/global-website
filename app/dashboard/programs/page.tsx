@@ -571,7 +571,7 @@ export default function CoursesPage() {
 
         {/* Courses Grid */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
         >
           {loading ? (
             // Enhanced Skeleton Loading
@@ -620,33 +620,30 @@ export default function CoursesPage() {
             courses.map((course, index) => {
               const levelStyles = getLevelStyles(course.level)
               return (
-                <motion.div
-                  key={course._id}
-                  custom={index}
-                  onHoverStart={() => setHoveredCard(course._id)}
-                  onHoverEnd={() => setHoveredCard(null)}
-                  className={`group relative bg-gradient-to-b ${levelStyles.gradient} border rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/30`}
-                >
+              <motion.div
+  key={course._id}
+  className={`group relative flex flex-col h-full bg-gradient-to-b ${levelStyles.gradient} border rounded-2xl overflow-hidden`}
+>
                   {/* Header Section with Gradient Background */}
-                  <div className="p-6 relative">
+                 <div className="p-6 px-4 relative flex flex-col flex-1">
                     {/* University Logo and Name */}
-                    <div className="flex items-start gap-3 mb-4">
-                      <div className="w-14 h-14 rounded-xl bg-white shadow-lg border-2 border-background p-2 transform transition-transform duration-300 group-hover:scale-105 flex-shrink-0">
+
+                    <div className="flex-1">
+                      <div className="flex items-start gap-2 mb-4">
                         {course.university?.uni_logo ? (
                           <img
-                            src={course.university.uni_logo}
-                            alt={course.university?.name}
-                            className="w-full h-full object-contain"
-                          />
+                          src={course.university?.uni_logo}
+                          alt={course.university?.name}
+                          className="w-20 h-auto max-h-16 object-fit bg-white shadow-lg border-2"
+                        />
                         ) : (
                           <Building2 className="w-full h-full text-gray-800" />
                         )}
-                      </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-base line-clamp-2 group-hover:text-primary transition-colors">
                           {course.name}
                         </h3>
-                        <p className="text-sm text-gray-800 truncate">
+                        <p className="text-xs text-gray-800 truncate">
                           {course.university?.name}
                         </p>
                         <p className="text-xs text-gray-800 flex items-center gap-1 mt-0.5">
@@ -658,19 +655,19 @@ export default function CoursesPage() {
 
                     {/* Description */}
                     {course.description && (
-                      <p className="text-foreground/80 text-sm mb-4 line-clamp-2">
+                      <p className="text-foreground/80 text-sm mb-4 line-clamp-2" title={course.description}>
                         {course.description}
                       </p>
                     )}
 
                     {/* Key Details Grid */}
-                    <div className="space-y-2 mb-4">
+                    <div className="space-y-1 mb-4 text-sm">
                       <div className="flex items-center justify-between">
                         <span className="inline-flex items-center gap-1.5 text-sm text-gray-800">
                           <IndianRupeeIcon className="w-4 h-4" />
                           Tuition Fee
                         </span>
-                        <span className="font-semibold">
+                        <span className="font-medium">
                           {formatCurrency(course.tuitionFee || 0, course.currency)}
                           <span className="text-xs text-gray-800 ml-1">/year</span>
                         </span>
@@ -680,7 +677,7 @@ export default function CoursesPage() {
                           <Clock className="w-4 h-4" />
                           Duration
                         </span>
-                        <span className="font-semibold">
+                        <span className="font-medium">
                           {course.duration || 'N/A'}
                           {/* <span className="text-xs text-gray-800 ml-1">full time</span> */}
                         </span>
@@ -690,7 +687,7 @@ export default function CoursesPage() {
                           <FileText className="w-4 h-4" />
                           Application Fee
                         </span>
-                        <span className="font-semibold">
+                        <span className="font-medium">
                           {formatCurrency(course.applicationFee || 0, course.currency)}
                           {/* <span className="text-xs text-gray-800 ml-1">one-time</span> */}
                         </span>
@@ -763,9 +760,11 @@ export default function CoursesPage() {
                         </div>
                       </div>
                     )}
+                    </div>
+                    
 
                     {/* Action Buttons */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 mt-auto">
                       <Link
                         href={`/dashboard/programs/${course.slug}`}
                         className="flex-1 px-4 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center text-sm group-hover:scale-[1.02]"

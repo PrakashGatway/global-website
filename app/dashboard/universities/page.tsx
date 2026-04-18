@@ -143,7 +143,7 @@ export default function UniversitiesPage() {
       const currentPage = reset ? 1 : page
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: '12',
+        limit: '8',
         ...(debouncedSearchQuery && { name: debouncedSearchQuery }),
         ...(filters.country && { country: filters.country }),
         ...(filters.sort_by && { sort_by: filters.sort_by }),
@@ -474,7 +474,7 @@ export default function UniversitiesPage() {
 
         {/* University Cards Grid */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -529,11 +529,11 @@ export default function UniversitiesPage() {
             universities.map((uni, index) => (
               <motion.div
                 key={uni._id}
-                className={` relative bg-gradient-to-br ${getCardGradient(uni.uni_type)} border rounded-3xl overflow-hidden transition-all duration-100 hover:outline-2  hover:outline-primary/70`}
+                className={`relative flex flex-col h-full bg-gradient-to-br ${getCardGradient(uni.uni_type)} border rounded-3xl overflow-hidden`}
               >
 
                 {/* Cover Image */}
-                <div className="relative h-40 overflow-hidden">
+                <div className="relative h-30 overflow-hidden">
                   {uni.cover_photo ? (
                     <img
                       src={uni.cover_photo}
@@ -553,28 +553,38 @@ export default function UniversitiesPage() {
                   </div> */}
                 </div>
 
-                <div className="p-6 relative">
+                <div className="p-3 relative flex flex-col flex-1">
                   {/* Logo and Header */}
                   <div className="flex items-start justify-between -mt-12 mb-4 relative">
-                    <div className="flex items-center gap-3">
-                      <div className="w-16 h-16 rounded-xl bg-white shadow-lg border-2 border-background p-2 transform transition-transform duration-300 group-hover:scale-105">
-                        {uni.uni_logo ? (
-                          <img
-                            src={uni.uni_logo}
-                            alt={uni.name}
-                            className="w-full h-full object-contain"
-                          />
-                        ) : (
-                          <Building className="w-full h-full text-muted-foreground" />
-                        )}
-                      </div>
+                    <div className="flex items-center gap-1">
+                      {/* <div className="w-32 h-10 rounded-xl bg-white shadow-lg border-2 border-background p-2 transform transition-transform duration-300 group-hover:scale-105"> */}
+                      {uni.uni_logo ? (
+                        <img
+                          src={uni.uni_logo}
+                          alt={uni.name}
+                          className="w-20 h-auto max-h-10 object-fit bg-white shadow-lg border-2"
+                        />
+                      ) : (
+                        <Building className="w-full h-full text-muted-foreground" />
+                      )}
+                      {/* </div> */}
                       <div>
-                        <h3 className="font-bold text-lg line-clamp-1 group-hover:text-primary transition-colors">
+                        <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary transition-colors">
                           {uni.name}
                         </h3>
                         <p className="text-sm text-muted-foreground flex items-center gap-1">
                           <MapPin className="w-3 h-3" />
                           {uni.city}, {uni.country}
+                          {uni.uni_web && (
+                            <a
+                              href={uni.uni_web}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2.5 border border-border rounded-lg hover:bg-muted hover:border-primary/50 transition-all duration-300 group-hover:scale-[1.02]"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </a>
+                          )}
                         </p>
                       </div>
                     </div>
@@ -590,21 +600,24 @@ export default function UniversitiesPage() {
                       {uni.uni_type}
                     </span>
                   </div> */}
+                  <div className="relative flex flex-col flex-1">
+                    {/* Slogan */}
+                    {uni.slogan && (
+                      <p className="text-xs text-muted-foreground italic mb-3 line-clamp-2">
+                        "{uni.slogan}"
+                      </p>
+                    )}
 
-                  {/* Slogan */}
-                  {uni.slogan && (
-                    <p className="text-xs text-muted-foreground italic mb-3 line-clamp-2">
-                      "{uni.slogan}"
+                    {/* Description */}
+                    <p
+                      className="text-foreground/80 text-[13px] mb-2 line-clamp-3"
+                      title={uni.short_description || "No description available."}
+                    >
+                      {uni.short_description || "No description available."}
                     </p>
-                  )}
 
-                  {/* Description */}
-                  <p className="text-foreground/80 text-sm mb-4 line-clamp-3">
-                    {uni.short_description || "No description available."}
-                  </p>
-
-                  {/* Stats Grid */}
-                  {/* <div className="grid grid-cols-2 gap-3 mb-4">
+                    {/* Stats Grid */}
+                    {/* <div className="grid grid-cols-2 gap-3 mb-4">
                     <div className="bg-muted/30 rounded-lg p-2.5 border border-border/50">
                       <p className="text-xs text-muted-foreground mb-1">Established</p>
                       <p className="font-semibold flex items-center gap-1">
@@ -625,81 +638,80 @@ export default function UniversitiesPage() {
                     </div>
                   </div> */}
 
-                  {/* Intakes */}
-                  {uni.intakes && uni.intakes.length > 0 && (
-                    <div className="mb-4">
-                      <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        Intakes
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {uni.intakes.slice(0, 3).map((intake, index) => (
-                          <span
-                            key={index}
-                            className="text-xs px-2.5 py-1 bg-primary/10 text-primary rounded-full font-medium"
-                          >
-                            {intake}
+                    {/* Intakes */}
+                    {uni.intakes && uni.intakes.length > 0 && (
+                      <div className="mb-3">
+                        <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          Intakes
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {uni.intakes.slice(0, 3).map((intake, index) => (
+                            <span
+                              key={index}
+                              className="text-xs px-2.5 py-1 bg-primary/10 text-primary rounded-full font-medium"
+                            >
+                              {intake}
+                            </span>
+                          ))}
+                          {uni.intakes.length > 3 && (
+                            <span className="text-xs px-2.5 py-1 bg-muted text-muted-foreground rounded-full">
+                              +{uni.intakes.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Accommodation */}
+                    {(uni.on_campus_accommodation || uni.off_campus_accommodation) && (
+                      <div className="flex items-center gap-3 mb-4">
+                        {uni.on_campus_accommodation && (
+                          <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                            <Check className="w-3 h-3" />
+                            On Campus
                           </span>
-                        ))}
-                        {uni.intakes.length > 3 && (
-                          <span className="text-xs px-2.5 py-1 bg-muted text-muted-foreground rounded-full">
-                            +{uni.intakes.length - 3}
+                        )}
+                        {uni.off_campus_accommodation && (
+                          <span className="inline-flex items-center gap-1.5 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                            <Check className="w-3 h-3" />
+                            Off Campus
                           </span>
                         )}
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {/* Accommodation */}
-                  {(uni.on_campus_accommodation || uni.off_campus_accommodation) && (
-                    <div className="flex items-center gap-3 mb-4">
-                      {uni.on_campus_accommodation && (
-                        <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                          <Check className="w-3 h-3" />
-                          On Campus
-                        </span>
-                      )}
-                      {uni.off_campus_accommodation && (
-                        <span className="inline-flex items-center gap-1.5 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                          <Check className="w-3 h-3" />
-                          Off Campus
-                        </span>
-                      )}
-                    </div>
-                  )}
+                    {/* Tags */}
+                    {uni.tags && (
+                      <div className="flex flex-wrap gap-1.5 mb-4">
+                        {uni.tags.split(',').slice(0, 3).map((tag, i) => (
+                          <span
+                            key={i}
+                            className="px-2 py-0.5 bg-muted/50 rounded-full text-xs text-muted-foreground border border-border/50"
+                          >
+                            {tag.trim()}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
-                  {/* Tags */}
-                  {uni.tags && (
-                    <div className="flex flex-wrap gap-1.5 mb-4">
-                      {uni.tags.split(',').slice(0, 3).map((tag, i) => (
-                        <span
-                          key={i}
-                          className="px-2 py-0.5 bg-muted/50 rounded-full text-xs text-muted-foreground border border-border/50"
-                        >
-                          {tag.trim()}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  </div>
 
                   {/* Footer Actions */}
-                  <div className="flex items-center gap-3 pt-4">
+                  <div className="flex items-end gap-2 pt-1 mt-auto h-full justify-end">
                     <Link
                       href={`/dashboard/universities/${uni?.slug}`}
-                      className="flex-1 px-4 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
+                      className="flex-1 px-4 py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
                     >
                       View Details
                     </Link>
-                    {uni.uni_web && (
-                      <a
-                        href={uni.uni_web}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-2.5 border border-border rounded-lg hover:bg-muted hover:border-primary/50 transition-all duration-300 group-hover:scale-[1.02]"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                    )}
+                    <Link
+                      href={`/dashboard/programs?university=${uni._id}`}
+                      className="flex-1 px-4 py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
+                    >
+                      Apply
+                    </Link>
+
                   </div>
                 </div>
 
