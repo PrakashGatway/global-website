@@ -1,7 +1,10 @@
 import ContactUsPage from "@/components/contactUs";
 import { serverInstance } from "../axiosInstance";
 
-// ✅ Dynamic SEO
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function generateMetadata() {
   try {
     const res = await serverInstance.get("page-information/slug/contact");
