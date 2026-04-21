@@ -160,7 +160,9 @@ export default function UniversitiesPage() {
         setUniversities(prev => [...prev, ...(data || [])])
       }
 
-      setHasMore(data.hasMore || false)
+    //       "page": 1,
+    // "totalPages": 2,
+      setHasMore(response.data.page < response.data.totalPages || false)
     } catch (error) {
       console.error('Error fetching universities:', error)
     } finally {
@@ -565,7 +567,7 @@ export default function UniversitiesPage() {
                           className="w-20 h-auto max-h-10 object-fit bg-white shadow-lg border-2"
                         />
                       ) : (
-                        <Building className="w-full h-full text-muted-foreground" />
+                        <Building className="w-28 h-28 text-muted-foreground" />
                       )}
                       {/* </div> */}
                       <div>

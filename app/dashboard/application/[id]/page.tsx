@@ -122,6 +122,7 @@ import { useParams } from "next/navigation"
 import axiosInstance from "@/app/axiosInstance"
 import { get } from "http"
 import DynamicFormFields from "@/components/dashboard/application/dynamicform"
+import toast from "react-hot-toast"
 
 // Types based on your schema
 interface Document {
@@ -210,6 +211,7 @@ export default function ApplicationDetailPage() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dynamicValues, setDynamicValues] = useState({});
+  const [isUpdating, setIsUpdating] = useState(false)
   let validateFormRef = useRef(null);
 
   const handleDynamicChange = (values, validateFn) => {
@@ -252,6 +254,33 @@ export default function ApplicationDetailPage() {
     e.target.value = '';
   };
 
+
+  const handleUpdateIntake = async () => {
+    if (!selectedIntake) return
+    try {
+      setIsUpdating(true)
+      await axiosInstance.put(
+        `/applications/update/${application._id}`,
+        {
+          intake: selectedIntake,
+          backups: application.backups || [] // keep existing backups
+        }
+      )
+      setApplication(prev => ({
+        ...prev,
+        intake: selectedIntake
+      }))
+
+      toast.success("Intake updated successfully")
+      setShowIntakeModal(false)
+
+    } catch (error) {
+      console.error(error)
+      toast.error("Failed to update intake")
+    } finally {
+      setIsUpdating(false)
+    }
+  }
   const uploadDocument = async (
     applicationId: string,
     documentId: string,
@@ -536,30 +565,38 @@ export default function ApplicationDetailPage() {
     <main className="relative max-w-7xl mx-auto px-4 overflow-y-auto">
       {showIntakeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-4">
+          <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-lg font-semibold">Change Intake</h2>
               <button onClick={() => setShowIntakeModal(false)}>✖</button>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-[400px] overflow-y-auto">
-              {(application?.course?.university?.intakes || application?.intake ? [application.intake, "September 2026", "January 2027", "May 2027", "September 2027"] : ["September 2026", "January 2027", "May 2027", "September 2027", "January 2028"]).map((item: string) => (
-                <div
-                  key={item}
-                  onClick={() => setSelectedIntake(item)}
-                  className={`border rounded-lg p-3 cursor-pointer transition ${selectedIntake === item ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:border-gray-400"}`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <input type="radio" checked={selectedIntake === item} readOnly />
-                    <p className="font-medium text-sm">{item}</p>
+            <div className="min-h-[200px]">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-6 overflow-y-auto">
+                {((application?.course?.university?.intakes || [])).map((item: string) => (
+                  <div
+                    key={item}
+                    onClick={() => setSelectedIntake(item)}
+                    className={`border rounded-lg p-3 cursor-pointer border-2 transition ${selectedIntake === item ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:border-gray-400"}`}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <input type="radio" className="h-4 w-4" checked={selectedIntake === item} readOnly />
+                      <p className="font-medium text-sm">{item}</p>
+                    </div>
+                    <p className="text-xs text-gray-500">Status: Open</p>
                   </div>
-                  <p className="text-xs text-gray-500">Success: High (75%)</p>
-                  <p className="text-xs text-gray-500">Status: Open</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
+
             <div className="flex justify-end gap-2 mt-4">
-              <button onClick={() => setShowIntakeModal(false)} className="px-3 py-1 text-sm border rounded-md">Cancel</button>
-              <button onClick={() => { console.log("Selected Intake:", selectedIntake); setShowIntakeModal(false); }} className="px-4 py-1 text-sm bg-blue-600 text-white rounded-md">Save</button>
+              <button onClick={() => setShowIntakeModal(false)} className="px-3 py-2 text-sm border rounded-md">Cancel</button>
+              <button
+                onClick={handleUpdateIntake}
+                disabled={isUpdating}
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md disabled:opacity-50"
+              >
+                {isUpdating ? "Updating..." : "Submit"}
+              </button>
             </div>
           </div>
         </div>

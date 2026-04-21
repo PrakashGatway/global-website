@@ -6,7 +6,7 @@ import { X, ChevronRight, ChevronLeft, Check, GraduationCap, Calendar, BookOpen,
 import { toast } from 'react-hot-toast'
 import axiosInstance from '@/app/axiosInstance'
 import { ApplicationForm, PrerequisitesForm, BackupsForm, ExpectationsForm } from './applicationSteps'
-import { count } from 'console'
+import { useRouter } from 'next/navigation'
 
 interface CreateApplicationModalProps {
   isOpen: boolean
@@ -58,6 +58,7 @@ export function CreateApplicationModal({
 }: CreateApplicationModalProps) {
   const [currentStep, setCurrentStep] = React.useState(0)
   const [isLoading, setIsLoading] = React.useState(false)
+  const Router = useRouter()
 
   // Get available intakes from program data
   const availableIntakes = React.useMemo(() => {
@@ -146,6 +147,9 @@ export function CreateApplicationModal({
       const response = await axiosInstance.post('/applications', applicationData)
 
       toast.success('Application submitted successfully!')
+      if (response.data?.data?.applicationNumber) {
+        Router.push(`/dashboard/application/${response.data?.data?.applicationNumber}`) // Redirect to application details page
+      }
       onApplicationCreated?.()
       onClose()
     } catch (error: any) {

@@ -8,7 +8,10 @@ import {
   Plus, Search, Filter, Eye, Edit2, Save, Trash2, RefreshCw,
   Mail, Phone, MessageCircle, Award, TrendingUp, Star, Flag, Mail as MailIcon, FileX,
   Building2, BadgeCheck,
-  AlertCircleIcon
+  AlertCircleIcon,
+  SendHorizonalIcon,
+  WatchIcon,
+  Check
 } from "lucide-react"
 import axiosInstance from "@/app/axiosInstance"
 import { format, formatDistanceToNow } from "date-fns"
@@ -16,6 +19,7 @@ import toast from "react-hot-toast"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { FaPlaneArrival } from "react-icons/fa"
 
 // Types based on schema
 interface Document {
@@ -114,22 +118,37 @@ const getStatusInfo = (status: string) => {
       icon: <Clock className="w-4 h-4" />,
       label: 'Pending'
     },
-    'Under Review': {
+    'Started': {
+      color: 'bg-blue-100 text-blue-700 border-blue-200',
+      icon: <RefreshCw className="w-4 h-4 animate-spin" />,
+      label: 'Processing'
+    },
+    'ReviewbyOoshas': {
       color: 'bg-blue-100 text-blue-700 border-blue-200',
       icon: <RefreshCw className="w-4 h-4 animate-spin" />,
       label: 'Under Review'
     },
-    'Offer Received': {
+    'SubmitToSchool': {
+      color: 'bg-blue-100 text-blue-700 border-blue-200',
+      icon: <SendHorizonalIcon className="w-4 h-4" />,
+      label: 'Submitted to School'
+    },
+    'AwaitingSchoolResponse': {
+      color: 'bg-blue-100 text-blue-700 border-blue-200',
+      icon: <WatchIcon className="w-4 h-4" />,
+      label: 'Awaiting School Response'
+    },
+    'AdmissionProcessing': {
+      color: 'bg-green-100 text-green-700 border-green-200',
+      icon: <CheckCircle className="w-4 h-4" />,
+      label: 'Admission Processing'
+    },
+    'OfferReceived': {
       color: 'bg-green-100 text-green-700 border-green-200',
       icon: <CheckCircle className="w-4 h-4" />,
       label: 'Offer Received'
     },
-    'Case Closed': {
-      color: 'bg-gray-100 text-gray-700 border-gray-200',
-      icon: <X className="w-4 h-4" />,
-      label: 'Case Closed'
-    },
-    'Application Refused': {
+    'Refused': {
       color: 'bg-red-100 text-red-700 border-red-200',
       icon: <FileX className="w-4 h-4" />,
       label: 'Application Refused'
@@ -138,6 +157,21 @@ const getStatusInfo = (status: string) => {
       color: 'bg-purple-100 text-purple-700 border-purple-200',
       icon: <Flag className="w-4 h-4" />,
       label: 'Withdrawn'
+    },
+    'PreArrival': {
+      color: 'bg-gray-100 text-gray-700 border-gray-200',
+      icon: <Calendar className="w-4 h-4" />,
+      label: 'Pre-Arrival'
+    },
+    'Arrived': {
+      color: 'bg-gray-100 text-gray-700 border-gray-200',
+      icon: <FaPlaneArrival className="w-4 h-4" />,
+      label: 'Arrived'
+    },
+    'Completed': {
+      color: 'bg-gray-100 text-gray-700 border-gray-200',
+      icon: <Check className="w-4 h-4" />,
+      label: 'Completed'
     }
   }
   return statusMap[status] || statusMap['Pending']
