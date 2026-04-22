@@ -1,15 +1,15 @@
 import axios from "axios"
 
-let mode = "dev"
+let mode = "devggg"
 
 const BASE_URL =
   mode === "dev"
-    ? "https://api.ooshasglobal.com/api"
-    : "http://192.168.1.7:5000/api"
+    ? "http://localhost:5000/api"
+    : "https://api.ooshasglobal.com/api"
 
 
 export const serverInstance = axios.create({
-  baseURL: "https://api.ooshasglobal.com/api",
+  baseURL: BASE_URL,
   timeout: 60000,
   headers: {
     "Content-Type": "application/json",
