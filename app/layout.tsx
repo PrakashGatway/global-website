@@ -22,6 +22,8 @@ const ptSans = Noto_Sans({
   display: "swap",
 });
 
+export const revalidate = 600; // Revalidate every hour
+
 export const metadata: Metadata = {
   title:
     "Ooshas Global – Study Abroad Consultants for UK, Germany, Italy & Australia",
@@ -64,6 +66,7 @@ export default async function RootLayout({
   );
 
   const serviceres = servicedata.reverse();
+
 
   return (
     <html lang="en">

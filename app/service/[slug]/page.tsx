@@ -1,6 +1,7 @@
 import { serverInstance } from "@/app/axiosInstance";
 import NotFound from "@/app/not-found";
-import ServicePage from "@/components/ServicePage";
+import ServicePage from "@/components/Servicepage/ServicePage";
+import { log } from "console";
 import { redirect } from "next/navigation";
 
 
@@ -37,18 +38,28 @@ export default async function Page({params}) {
     }
 
 
-  const [serviceRes, testimonialImgRes , Faqres] = await Promise.all([
+  const [serviceRes,testimonialImgRes,Faqres,videores,scholarshipres] = await Promise.all([
     serverInstance.get(`/page-information/slug/${slug}`),
     serverInstance.get("/testimonials?type=image"),
         serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`),
+    serverInstance.get("/testimonials?type=video&limit=6"),
+    serverInstance.get(`/scholarships/public/list`)
 
   ]);
+
+  console.log(serviceRes.data.data,"ServiceRes")
+
+  
 
   return (
     <ServicePage
       serviceData={serviceRes.data.data}
       testimonialimg={testimonialImgRes.data.data}
       Faqres = {Faqres.data.data}
+      videoRes={videores.data.data}
+      scholarshipres={scholarshipres.data.data}
+
+      
     />
   );
 }

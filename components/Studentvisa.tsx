@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
 import { Tag, Tagging } from "./tag";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
@@ -17,6 +16,8 @@ const StudentVisaStories = ({
   const [slidesPerView, setSlidesPerView] = useState(3);
   const [loaded, setLoaded] = useState(false);
 
+console.log(title)
+
   // Responsive slides
   useEffect(() => {
     const updateSlides = () => {
@@ -28,6 +29,8 @@ const StudentVisaStories = ({
     window.addEventListener("resize", updateSlides);
     return () => window.removeEventListener("resize", updateSlides);
   }, []);
+
+  
 
   // Keen slider setup
   const [sliderRef, instanceRef] = useKeenSlider({
@@ -63,17 +66,21 @@ const StudentVisaStories = ({
         {/* Header */}
         <div className="text-left mb-12">
           <Tagging data={tag} css="relative inline-block mb-4 sm:mb-6 block">
-            <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
-              {title?.split('||')[0]?.trim() || ""}
+            <span className="text-black text-2xl sm:text-3xl block font-medium mr-2">
+              {title.split("||")[0]}
             </span>
-            <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
-              {title?.split('||')[1]?.trim() || ""}
+            <span className="text-[#F46C44] text-2xl sm:text-3xl block font-semibold mr-2">
+              {title.split("||")[1]}
             </span>
+          
             <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
           </Tagging>
 
           {subtitle && (
-            <p className="text-lg text-gray-600 max-w-2xl">{subtitle}</p>
+            <p className="text-lg text-gray-600 max-w-2xl" dangerouslySetInnerHTML={{
+              __html: subtitle
+            }}>
+            </p>
           )}
         </div>
 

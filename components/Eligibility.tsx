@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
+import { Tagging } from "./tag";
 
-export default function EligibilitySection({ pageData }) {
+export default function EligibilitySection({ pageData,tag = 1 }) {
 
   const [open, setOpen] = useState(0);
 
@@ -13,14 +14,11 @@ export default function EligibilitySection({ pageData }) {
 
         {/* LEFT CONTENT */}
         <div>
-          <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl leading-snug mb-2">
-            <span className="text-[#F46C44] block">
-              {pageData?.sections?.eligibilityCriteria?.title.split("||")[0]?.trim() }
-
-            </span>
-            <span className="text-primary font-bold relative inline-block ">
-              {pageData?.sections?.eligibilityCriteria?.title.split("||")[1]?.trim() }
-            </span>
+          <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl leading-snug mb-2" >
+            <Tagging data={tag} css="relative inline-block mb-4 sm:mb-6 block">
+           <span className="text-black font-medium">{pageData?.sections?.eligibilityCriteria?.title.split("||")[0]}</span>
+            <span className="text-[#F46C44] font-semibold"> {pageData?.sections?.eligibilityCriteria?.title.split("||")[1]}</span>
+            </Tagging>
           </h2>
 
 

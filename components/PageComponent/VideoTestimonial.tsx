@@ -112,14 +112,19 @@ export default function VideoTestimonialsSlider({
           viewport={{ once: true }}
           className="mb-10"
         >
-          <h2 className="text-2xl lg:text-4xl font-light text-[#F46C44]">
-            {title.includes("||") ? title.split("||")[0].trim() : ""}
-          </h2>
-          <h3 className="text-2xl lg:text-4xl font-bold text-primary relative inline-block lg:mt-2">
-            {title.includes("||") ? title.split("||")[1].trim() : "Testimonials"}
-            <span className="absolute right-0 -bottom-1 w-20 lg:w-32 h-[2px] lg:h-1 bg-[#F46C44]"></span>
-          </h3>
-          <div
+          <Tagging data={tag} css="relative inline-block mb-4 sm:mb-6 block">
+            <span className="text-black text-2xl sm:text-3xl block font-medium mr-2">
+              {title.split("||")[0]}
+            </span>
+            <span className="text-[#F46C44] text-2xl sm:text-3xl block font-semibold mr-2">
+              {title.split("||")[1]}
+            </span>
+          
+            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
+          </Tagging>
+
+
+          <p
             className="text-gray-600 mt-2"
             dangerouslySetInnerHTML={{
               __html: subtitle

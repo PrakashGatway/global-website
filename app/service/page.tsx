@@ -1,4 +1,4 @@
-import ServicePage from "@/components/ServicePage";
+import ServicePage from "@/components/Servicepage/ServicePage";
 import { serverInstance } from "../axiosInstance";
 
 

@@ -25,8 +25,6 @@ import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { DynamicLucideIcon } from "./DynamicLucideIcon";
 import { ModernSelect } from "./ui/select";
-
-import "keen-slider/keen-slider.min.css";
 import StudentVisaStories from "./Studentvisa";
 import UniversityCard from "./UniversityCard";
 import StudyDestinations from "./homepageCom/CountryCards";
@@ -43,7 +41,6 @@ export default function Homepage({
 }: any) {
   const [openForm, setOpenForm] = useState(false);
   const [countries, setCountries] = useState([]);
-  console.log(countryData, "country data")
 
   function AutoSlidePlugin(slider) {
     let timeout;
@@ -101,7 +98,17 @@ export default function Homepage({
     [AutoSlidePlugin], // ✅ updated name here
   );
 
+  const [visacontent, setVisaContent] = useState([]);
+
+  const fetchVisa = ()=>{
   const filtervisa = imageData.filter((item) => item.target === "visa");
+  setVisaContent(filtervisa);
+  }
+
+  useEffect(()=>{
+    fetchVisa();
+  },[imageData])
+
 
   let destination = [
     (slider) => {
@@ -1184,7 +1191,7 @@ export default function Homepage({
       />
 
       <StudentVisaStories
-        stories={filtervisa}
+        stories={visacontent}
         title={homePage?.visa?.title}
         subtitle={homePage?.visa?.subtitle}
         tag={homePage?.visa?.tag}
