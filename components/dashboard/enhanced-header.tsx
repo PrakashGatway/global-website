@@ -26,7 +26,7 @@ export function EnhancedHeader({
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <motion.h1
-            className="text-2xl font-bold tracking-tight text-foreground"
+            className="text-xl font-semibold tracking-tight text-foreground"
           >
             Support Center
           </motion.h1>

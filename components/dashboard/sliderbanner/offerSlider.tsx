@@ -132,7 +132,7 @@ export default function OfferSlider({ offers = [] }: OfferSliderProps) {
   };
 
   return (
-    <div className="relative rounded-3xl overflow-hidden h-70 animate-fade-up">
+    <div className="relative rounded-3xl overflow-hidden h-60 sm:h-70  animate-fade-up">
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={slide._id}
@@ -191,11 +191,11 @@ export default function OfferSlider({ offers = [] }: OfferSliderProps) {
             </div>
 
             <div>
-              <h2 className="text-xl font-bold mb-1">
+              <h2 className="text-base sm:text-xl font-bold mb-1">
                 {slide.title}
               </h2>
               <div className="flex flex-col gap-1">
-                <span className="text-lg font-black">
+                <span className="text-base sm:text-lg font-black">
                   {formatDiscount(slide)}
                 </span>
                 <span className="text-sm opacity-90">

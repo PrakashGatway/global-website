@@ -154,7 +154,7 @@ export const profileSchema = {
         title: "Education Summary",
         fields: [
           {
-            name: "country",
+            name: "countryOfEducation",
             label: "Country of education",
             type: "select",
             optionsSource: "countries",

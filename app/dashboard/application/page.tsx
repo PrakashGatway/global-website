@@ -20,6 +20,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { FaPlaneArrival } from "react-icons/fa"
+import { useGlobal } from "@/src/statecontext"
 
 // Types based on schema
 interface Document {
@@ -199,20 +200,22 @@ const getPaymentStatusInfo = (status: string) => {
   return statusMap[status] || statusMap['Pending']
 }
 
-export default function ApplicationHistoryPage() {
+export default function ApplicationHistoryPage({heading = "Application History", subheading = "Track your study abroad applications and manage required documents", limit = 10, viewAll = false}) {
   const [applications, setApplications] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<string[]>([])
   const [filterCountry, setFilterCountry] = useState<string>('')
+  const {allProfile} = useGlobal()
+
 
   const router = useRouter()
 
   // Pagination
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 10,
+    limit: limit || 10,
     total: 0,
     pages: 0,
     hasMore: false
@@ -433,16 +436,13 @@ export default function ApplicationHistoryPage() {
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Application History</h1>
+              <h1 className="text-xl font-bold text-gray-900">{heading}</h1>
               <p className="text-gray-500 text-sm mt-1">
-                Track your study abroad applications and manage required documents
+                {subheading}
               </p>
             </div>
           </div>
         </div>
-
-
-
         {loading ? (
           <div className="min-h-screen">
             <div className="max-w-7xl mx-auto">
@@ -480,7 +480,7 @@ export default function ApplicationHistoryPage() {
           </div>
         ) : (
           <>
-            {errorMessage('The student\'s profile is incomplete and the system is not able to determine eligibility or calculate correct administration fees due to missing/invalid information related to the student. It is highly advised that you complete the profile before submitting applications.')}
+            { allProfile?.profileCompletion < 60 && errorMessage('The student\'s profile is incomplete and the system is not able to determine eligibility or calculate correct administration fees due to missing/invalid information related to the student. It is highly advised that you complete the profile before submitting applications.')}
             <div className="space-y-4">
               {applications.map(application => (
                 <ApplicationCard key={application._id} application={application} />

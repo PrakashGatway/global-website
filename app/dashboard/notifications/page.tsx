@@ -474,7 +474,7 @@ export default function NotificationsPage() {
 
   return (
     <main className="flex-1 overflow-y-auto">
-      <div className="space-y-4 sm:p-6 p-4">
+      <div className="space-y-4 p-4">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -482,7 +482,7 @@ export default function NotificationsPage() {
           className="flex items-center justify-between flex-wrap gap-1"
         >
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
+            <h1 className="text-xl font-semibold flex items-center gap-2">
               Notifications
             </h1>
             <p className="text-muted-foreground text-sm">

@@ -1,21 +1,12 @@
 import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, MapPin, Globe, Share2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Globe, Share2, Link2, SquareArrowOutUpRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, User, GraduationCap, FileCheck, Target, CreditCard, UserPlus } from "lucide-react";
+import { Check, User, GraduationCap, FileCheck, Target, CreditCard, UserPlus, ArrowRight, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useGlobal } from "@/src/statecontext";
 
-interface UniversitySlide {
-  id: number;
-  name: string;
-  location: string;
-  type: string;
-  established: string;
-  ranking: string;
-  image: string;
-}
-
-export default function RewardSlider({universities}: any) {
+export default function RewardSlider({ universities }: any) {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
 
@@ -25,7 +16,9 @@ export default function RewardSlider({universities}: any) {
       setCurrent((prev) => (prev + 1) % universities.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [universities.length]);
+
+  if (!universities || universities.length === 0) return null;
 
   const slide = universities[current];
 
@@ -55,7 +48,7 @@ export default function RewardSlider({universities}: any) {
   };
 
   return (
-    <div className="relative rounded-4xl overflow-hidden shadow h-70 animate-fade-up">
+    <div className="relative rounded-4xl overflow-hidden shadow h-60 sm:h-70 animate-fade-up">
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={slide._id}
@@ -72,7 +65,6 @@ export default function RewardSlider({universities}: any) {
             alt={slide?.name}
             className="w-full h-full object-cover"
           />
-          {/* Dark overlay for readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/10 to-black/0" />
         </motion.div>
       </AnimatePresence>
@@ -90,26 +82,16 @@ export default function RewardSlider({universities}: any) {
               <div className="bg-white/50 rounded-xl p-2">
                 <Image src={slide?.uni_logo} alt={slide?.name} width={80} height={80} className="rounded-xl w-full h-8 object-cover" />
               </div>
-              <div className="flex gap-2">
-                {/* {[slide.type, slide.established, slide.ranking].map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-0.5 rounded text-xs font-semibold bg-white/20 text-white backdrop-blur-sm"
-                  >
-                    {tag}
-                  </span>
-                ))} */}
-              </div>
             </div>
 
-            <h2 className="text-2xl font-heading font-bold text-white mb-1">
+            <h2 className="text-base sm:text-2xl font-heading font-bold text-white mb-1">
               {slide.name}
             </h2>
-            <p className="text-white max-w-lg text-sm mb-2 font-medium line-clamp-2">
+            <p className="text-white text-xs sm:text-base max-w-lg text-sm mb-2 font-medium line-clamp-2">
               {slide?.short_description}
             </p>
 
-            <div className="flex items-center gap-4 text-white/80 text-sm mb-2">
+            <div className="flex items-center gap-4 text-white/80 text-xs sm:text-sm mb-2">
               <span className="flex items-center gap-1">
                 <MapPin className="w-4 h-4" />
                 {slide?.address}
@@ -117,8 +99,7 @@ export default function RewardSlider({universities}: any) {
             </div>
 
             <div className="flex items-center gap-3">
-              
-              <Link href={`/dashboard/universities/${slide?.slug}`} className="px-4 py-2 rounded-lg bg-white text-black font-semibold text-sm hover:opacity-90 transition-opacity shadow-md">
+              <Link href={`/dashboard/universities/${slide?.slug}`} className="px-4 py-2 rounded-lg bg-white text-black font-semibold text-xs sm:text-sm hover:opacity-90 transition-opacity shadow-md">
                 View Details
               </Link>
             </div>
@@ -142,13 +123,13 @@ export default function RewardSlider({universities}: any) {
   );
 }
 
-
-
 interface Step {
   id: number;
   label: string;
   icon: React.ReactNode;
   completedIcon: React.ReactNode;
+  route?: string;
+  requiredProfilePercentage?: number;
 }
 
 const steps: Step[] = [
@@ -157,77 +138,95 @@ const steps: Step[] = [
     label: "Complete profile",
     icon: <User className="w-5 h-5" />,
     completedIcon: <Check className="w-5 h-5" />,
+    route: "/dashboard/settings",
+    requiredProfilePercentage: 0,
   },
   {
     id: 2,
     label: "Start applying",
     icon: <GraduationCap className="w-5 h-5" />,
     completedIcon: <Check className="w-5 h-5" />,
+    route: "/dashboard/universities",
+    requiredProfilePercentage: 60,
   },
   {
     id: 3,
     label: "Review & submit",
     icon: <FileCheck className="w-5 h-5" />,
     completedIcon: <Check className="w-5 h-5" />,
+    route: "/dashboard/application",
+    requiredProfilePercentage: 80,
   },
   {
     id: 4,
     label: "Get your results",
     icon: <Target className="w-5 h-5" />,
     completedIcon: <Check className="w-5 h-5" />,
+    route: "/dashboard/application",
+    requiredProfilePercentage: 90,
   },
   {
     id: 5,
     label: "Apply for visa",
     icon: <CreditCard className="w-5 h-5" />,
     completedIcon: <Check className="w-5 h-5" />,
+    route: "/dashboard",
+    requiredProfilePercentage: 95,
   },
   {
     id: 6,
     label: "Enrol & settle",
     icon: <UserPlus className="w-5 h-5" />,
     completedIcon: <Check className="w-5 h-5" />,
+    route: "/dashboard",
+    requiredProfilePercentage: 100,
   },
 ];
 
-interface StepProgressProps {
-  currentStep?: number;
-}
+export function StepProgress() {
+  const [calculatedStep, setCalculatedStep] = useState(1);
+  const { allProfile } = useGlobal();
 
-export function StepProgress({ currentStep = 3 }: StepProgressProps) {
+  useEffect(() => {
+    if (allProfile) {
+      const completion = allProfile.profileCompletion || 0;
+      if (completion >= 60) {
+        setCalculatedStep(2);
+      }
+    }
+  }, [allProfile]);
+
   return (
     <div className="bg-pink-50 rounded-3xl p-6 pb-12 animate-fade-up">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
-          
           <h3 className="text-xl font-heading font-bold text-foreground">My Progress</h3>
         </div>
-        <span className="text-sm text-muted-foreground font-medium">
-          Step {currentStep} of {steps.length}
-        </span>
+        <div className="text-right">
+          <span className="text-sm text-muted-foreground font-medium">
+            Step {calculatedStep} of {steps.length}
+          </span>
+        </div>
       </div>
 
       {/* Steps with SVG path */}
       <div className="relative">
-        {/* SVG connecting path */}
         <svg
           className="absolute top-0 left-0 w-full h-22 pointer-events-none"
           viewBox="0 0 1000 80"
           preserveAspectRatio="none"
           fill="none"
         >
-          {/* Completed path */}
           <path
-            d={generateWavePath(1000, currentStep, steps.length)}
+            d={generateWavePath(1000, calculatedStep, steps.length)}
             stroke="#F26D44"
             strokeWidth="3"
             fill="none"
             strokeLinecap="round"
           />
-          {/* Pending path */}
           <path
-            d={generatePendingPath(1000, currentStep, steps.length)}
+            d={generatePendingPath(1000, calculatedStep, steps.length)}
             stroke="#c5baba"
             strokeWidth="3"
             fill="none"
@@ -237,44 +236,52 @@ export function StepProgress({ currentStep = 3 }: StepProgressProps) {
         </svg>
 
         {/* Step circles */}
-        <div className="relative mt-6 pt-4  flex justify-between">
+        <div className="relative mt-6 pt-4 flex justify-between">
           {steps.map((step) => {
-            const isComplete = step.id <= currentStep;
-            const isCurrent = step.id === currentStep;
+            const isComplete = step.id <= calculatedStep;
+            const isCurrent = step.id === calculatedStep;
+            const isAccessible = true;
 
             return (
-              <div key={step.id} className="flex flex-col items-center gap-3 z-10" style={{ width: `${100 / steps.length}%` }}>
-                {/* Number badge */}
+              <div
+                key={step.id}
+                className="flex flex-col items-center gap-3 z-10 cursor-pointer transition-transform hover:scale-105"
+                style={{ width: `${100 / steps.length}%` }}
+              // onClick={() => isAccessible && handleStepClick(step)}
+              >
                 <div className="relative">
                   <span
-                    className={`absolute -top-2 -right-2 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center z-20 ${
-                      isComplete
-                        ? "bg-secondary text-secondary-foreground"
-                        : "bg-step-pending text-step-pending-foreground"
-                    }`}
+                    className={`absolute -top-2 -right-2 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center z-20 ${isComplete
+                      ? "bg-secondary text-secondary-foreground"
+                      : "bg-step-pending text-step-pending-foreground"
+                      }`}
                   >
                     {step.id}
                   </span>
-                  {/* Icon circle */}
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
-                      isComplete
-                        ? "bg-white text-secondary shadow-xl border-2 border-gray-400"
-                        : "bg-muted text-muted-foreground border-2 border-border"
-                    } ${isCurrent ? "ring-2 ring-secondary/20 scale-110" : ""}`}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${isComplete
+                      ? "bg-white text-secondary shadow-xl border-2 border-gray-400"
+                      : isAccessible
+                        ? "bg-white/50 text-gray-500 border-2 border-dashed border-gray-300 cursor-pointer hover:bg-white hover:shadow-md"
+                        : "bg-muted text-muted-foreground border-2 border-border opacity-50 cursor-not-allowed"
+                      } ${isCurrent ? "ring-2 ring-secondary/20 scale-110" : ""}`}
                   >
                     {isComplete ? step.completedIcon : step.icon}
                   </div>
                 </div>
 
-                {/* Label */}
                 <span
-                  className={`text-xs md:text-base mt-4 font-medium text-center leading-tight ${
-                    isComplete ? "text-gray-900" : "text-muted-foreground"
-                  }`}
+                  className={`text-xs md:text-base mt-4 font-medium text-center leading-tight ${isComplete ? "text-gray-900" : isAccessible ? "text-gray-600" : "text-muted-foreground"
+                    }`}
                 >
                   {step.label}
+
                 </span>
+                <Link href={step.route}>
+                  <SquareArrowOutUpRight className={`w-5 h-5 ${isComplete ? "text-secondary" : "text-gray-400"} ${isCurrent ? "block" : "hidden"}`} />
+                </Link>
+           
+
               </div>
             );
           })}
@@ -284,6 +291,7 @@ export function StepProgress({ currentStep = 3 }: StepProgressProps) {
   );
 }
 
+// Helper functions
 function generateWavePath(width: number, currentStep: number, totalSteps: number): string {
   const segmentWidth = width / totalSteps;
   const completedEnd = (currentStep - 0.5) * segmentWidth;

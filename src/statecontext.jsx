@@ -40,6 +40,8 @@ export function GlobalProvider({ children }) {
         try {
             const res = await axiosInstance.get("/auth/me")
             setProfile(res.data.data)
+            setallProfile(res.data)
+
         } catch (err) {
             console.log("Not authorized")
         }

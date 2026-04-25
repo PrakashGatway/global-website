@@ -279,7 +279,7 @@ export default function OffersPage() {
 
     return (
         <main className="flex-1 overflow-y-auto min-h-[70vh]">
-            <div className=" mx-auto sm:p-4 space-y-6">
+            <div className="max-w-7xl mx-auto px-4 sm:p-4 space-y-6">
 
                 {/* Header */}
                 <motion.div
@@ -288,8 +288,8 @@ export default function OffersPage() {
                     className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                 >
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900">Offers & Rewards</h1>
-                        <p className="text-slate-500 text-sm mt-1">Earn points, unlock coupons, and enjoy exclusive benefits</p>
+                        <h1 className="text-xl font-bold text-slate-900">Offers & Rewards</h1>
+                        <p className="text-slate-500 text-sm">Earn points, unlock coupons, and enjoy exclusive benefits</p>
                     </div>
                     <div className="flex font-semibold items-center gap-2 border-2 border-slate-500 rounded-full px-4 py-1 shadow-xl ">
                         <p className="">Wallet: {profile?.wallet}</p>
@@ -301,10 +301,8 @@ export default function OffersPage() {
                     {['refer', 'coupons', "rewards"].map((tab) => (
                         <motion.button
                             key={tab}
-                            whileHover={{ y: -2 }}
-                            whileTap={{ scale: 0.95 }}
                             onClick={() => setActiveTab(tab as 'refer' | 'coupons')}
-                            className={`pb-4 px-4 font-semibold text-sm flex items-center gap-2 transition-all relative ${activeTab === tab ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'
+                            className={`pb-3 px-3 font-semibold text-sm flex items-center gap-2 transition-all relative ${activeTab === tab ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'
                                 }`}
                         >
                             {tab === 'refer' ? <UserPlus className="w-5 h-5" /> : tab == "rewards" ? <Gift className="w-5 h-5" /> : <Ticket className="w-5 h-5" />}
@@ -411,6 +409,12 @@ export default function OffersPage() {
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold text-slate-900">Recent Referrals</h3>
                                 <div className="space-y-3">
+                                    {referrals?.data?.length === 0 && (
+                                        <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 backdrop-blur border border-white/10">
+                                            <Users className="w-4 h-4 text-amber-400" />
+                                            <span className="text-sm font-medium">No referrals yet</span>
+                                        </div>
+                                    )}
                                     {referrals?.data?.map((referral, index) => (
                                         <motion.div
                                             key={referral.id}
@@ -453,7 +457,7 @@ export default function OffersPage() {
                             exit={{ opacity: 0, x: -20 }}
                             className="space-y-6 max-w-6xl mx-auto"
                         >
-                                  {
+                            {
                                 coupons?.data?.length === 0 && (
                                     <div className="flex flex-col items-center justify-center h-100 w-full">
                                         <Image src="https://assets-v2.lottiefiles.com/a/0953d504-117d-11ee-aa49-1f149204cb5f/9uZcoEJaoF.gif" alt="No rewards" width={250} height={250} className="mx-auto max-w-full max-h-full" />

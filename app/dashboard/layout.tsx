@@ -49,43 +49,37 @@ export default function DashboardLayout({
 
   if (usePathname().includes("/checkout")) {
     return (
-      <GlobalProvider>
-        <div className="min-h-screen bg-white">
-          <main
-            className="flex-1 overflow-y-auto pb-20 lg:pb-0"
-          >
-            <div className="mx-auto">
-              {children}
-            </div>
-          </main>
-        </div>
-      </GlobalProvider>
+      <div className="min-h-screen bg-white">
+        <main
+          className="flex-1 overflow-y-auto pb-20 lg:pb-0"
+        >
+          <div className="mx-auto">
+            {children}
+          </div>
+        </main>
+      </div>
     )
   }
 
   return (
-    <GlobalProvider>
-      <div className="min-h-screen bg-white">
-        <div className="flex h-screen overflow-hidden">
-          <Sidebar />
-
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <DashboardHeader profile={profile} Logout={Logout} />
-
-            <main
-              ref={containerRef}
-              className="flex-1 overflow-y-auto pb-20 lg:pb-0"
-            >
-              <div className="mx-auto p-4">
-                <NotificationProvider>
-                  {children}
-                </NotificationProvider>
-              </div>
-            </main>
-          </div>
+    <div className="min-h-screen bg-white">
+      <div className="flex h-screen overflow-hidden">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <DashboardHeader profile={profile} Logout={Logout} />
+          <main
+            ref={containerRef}
+            className="flex-1 overflow-y-auto pb-20 lg:pb-0"
+          >
+            <div className="mx-auto p-4">
+              <NotificationProvider>
+                {children}
+              </NotificationProvider>
+            </div>
+          </main>
         </div>
-        <MobileBottomNav />
       </div>
-    </GlobalProvider>
+      <MobileBottomNav />
+    </div>
   )
 }
