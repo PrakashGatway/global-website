@@ -662,7 +662,7 @@ export default function ProfilePage() {
                         {profile?.email || 'No email found'}
                       </p>
 
-                      <div className="mt-2 max-w-xl">
+                      {profile?.role !== "counsellor" && (<div className="mt-2 max-w-xl">
                         <div className="flex justify-between text-xs mb-1">
                           <span>Profile Completion</span>
                           <span className="font-semibold text-primary">
@@ -677,7 +677,7 @@ export default function ProfilePage() {
                             className="h-full bg-primary rounded-full"
                           />
                         </div>
-                      </div>
+                      </div>)}
                     </div>
                   </div>
                 </div>
@@ -698,7 +698,9 @@ export default function ProfilePage() {
                     hasError={stepErrors.profile}
                     onClick={() => handleStepChange('profile')}
                   />
-                  <ProfileCompletionStep
+                 {profile?.role !== "counsellor" && (
+                  <>
+                   <ProfileCompletionStep
                     step={2}
                     title="Address Information"
                     description="Add your address details"
@@ -734,6 +736,8 @@ export default function ProfilePage() {
                     hasError={stepErrors.visaStudypermit}
                     onClick={() => handleStepChange('visaStudypermit')}
                   />
+                  </>
+                 )}
                 </div>
               </div>
             </div>

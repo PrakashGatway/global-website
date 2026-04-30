@@ -13,10 +13,12 @@ import {
   Settings,
   ChevronLeft,
   LucideIndianRupee,
-  ChevronRight
+  ChevronRight,
+  User2Icon
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useGlobal } from "@/src/statecontext";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -31,10 +33,24 @@ const menuItems = [
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },
 ];
 
+const counsellor = [
+  
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+  { icon: FileText, label: "Application", href: "/dashboard/application_details" },
+  { icon: User2Icon, label: "Student", href: "/dashboard/user" },
+  { icon: LucideIndianRupee, label: "Offers", href: "/dashboard/offers" },
+  { icon: Headphones, label: "Support", href: "/dashboard/support" },
+  { icon: Bell, label: "Notifications", href: "/dashboard/notifications" },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+
+]
+
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = usePathname();
+  const { profile } = useGlobal();
 
+  // console.log()
   // if(location){
   //   location.startsWith("/dashboard/loan")
   //   return null
@@ -78,7 +94,8 @@ export function Sidebar() {
 
       {/* Menu Items */}
       <nav className={`flex-1 ${collapsed ? "px-2 py-0 space-y-1" : "px-2 py-2 space-y-2"}  overflow-y-auto mt-4 no-scrollbar scrollbar-hide scollbar-none`}>
-        {menuItems.map((item) => {
+        {profile?.role === "counsellor" ? 
+        counsellor.map((item) => {
           const isActive =
             location === item.href ||
             (item.href !== "/dashboard" && location.startsWith(item.href));
@@ -133,7 +150,65 @@ export function Sidebar() {
               </motion.div>
             </Link>
           );
-        })}
+        })
+        :
+        menuItems.map((item) => {
+          const isActive =
+            location === item.href ||
+            (item.href !== "/dashboard" && location.startsWith(item.href));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="block"
+            >
+              <motion.div
+                whileTap={{ scale: 0.97 }}
+                className={`flex items-center rounded-xl transition-colors relative ${isActive
+                  ? "bg-[#6d1901] font-semibold"
+                  : "hover:bg-[#6d1901]/30"
+
+                  } ${collapsed ? "flex-col gap-1 px-2 py-2" : "gap-2 px-4 py-2.5"}`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="sidebar-active"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  />
+                )}
+
+                <item.icon className="w-6 h-6 flex-shrink-0 stroke-[1.8px] mb-0 pb-0" />
+                <AnimatePresence>
+                  {collapsed && (
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: "auto" }}
+                      exit={{ opacity: 0, width: 0 }}
+                      className="text-center overflow-hidden text-[11px] font-medium"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {!collapsed && (
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: "auto" }}
+                      exit={{ opacity: 0, width: 0 }}
+                      className="whitespace-nowrap overflow-hidden text-[15px] font-medium"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </Link>
+          );
+        })
+      }
       </nav>
 
       {/* Logout */}
