@@ -700,8 +700,7 @@ function EditApplicationForm({
       return { ...prev, rejectionReason: updated };
     });
 
-  const removeRejection = (index: number) =>
-    setForm((prev) => ({ ...prev, rejectionReason: prev.rejectionReason.filter((_, i) => i !== index) }));
+  const removeRejection = (index: number) => setForm((prev) => ({ ...prev, rejectionReason: prev.rejectionReason.filter((_, i) => i !== index) }));
 
   // Backup helpers
   const addBackup = () =>
@@ -720,8 +719,7 @@ function EditApplicationForm({
       return { ...prev, backups: updated };
     });
 
-  const removeBackup = (index: number) =>
-    setForm((prev) => ({ ...prev, backups: prev.backups.filter((_, i) => i !== index) }));
+  const removeBackup = (index: number) => setForm((prev) => ({ ...prev, backups: prev.backups.filter((_, i) => i !== index) }));
 
   const handleSubmit = async () => {
     setSubmitting(true);
