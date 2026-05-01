@@ -4,39 +4,39 @@ import axiosInstance from "@/app/axiosInstance";
 import { useGlobal } from "@/src/statecontext";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
-/* ─── Static seed data ───────────────────────────────────────────────── */
-const userData = {
-  success: true,
-  data: {
-    _id: "69ec622de8226f391b368e34",
-    name: "naveen",
-    email: "naveen1@gmail.com",
-    phone: "6375554625",
-    hasAcceptedTerms: false,
-    status: "Active",
-    role: "user",
-    maritalStatus: "single",
-    otherImage: "",
-    referalBy: "BGPYF1",
-    wallet: 0,
-    dateOfBirth: "2026-04-25T06:41:49.467Z",
-    referalCode: "BGPY79",
-    lastLogin: "2026-04-25T06:43:45.982Z",
-    createdAt: "2026-04-25T06:41:49.467Z",
-    updatedAt: "2026-04-25T06:43:45.982Z",
-    assignto: "BGPYF1",
-    other: [
-      {
-        _id: "69ec624de8226f391b368e58",
-        hasGmat: false,
-        hasGre: false,
-        visaRefused: false,
-        otherCompletion: 20,
-        otherDetails: "",
-      },
-    ],
-  },
-};
+// /* ─── Static seed data ───────────────────────────────────────────────── */
+// const userData = {
+//   success: true,
+//   data: {
+//     _id: "69ec622de8226f391b368e34",
+//     name: "naveen",
+//     email: "naveen1@gmail.com",
+//     phone: "6375554625",
+//     hasAcceptedTerms: false,
+//     status: "Active",
+//     role: "user",
+//     maritalStatus: "single",
+//     otherImage: "",
+//     referalBy: "BGPYF1",
+//     wallet: 0,
+//     dateOfBirth: "2026-04-25T06:41:49.467Z",
+//     referalCode: "BGPY79",
+//     lastLogin: "2026-04-25T06:43:45.982Z",
+//     createdAt: "2026-04-25T06:41:49.467Z",
+//     updatedAt: "2026-04-25T06:43:45.982Z",
+//     assignto: "BGPYF1",
+//     other: [
+//       {
+//         _id: "69ec624de8226f391b368e58",
+//         hasGmat: false,
+//         hasGre: false,
+//         visaRefused: false,
+//         otherCompletion: 20,
+//         otherDetails: "",
+//       },
+//     ],
+//   },
+// };
 
 /* ─── Types ──────────────────────────────────────────────────────────── */
 interface ReferralUser {
@@ -131,14 +131,14 @@ function DetailModal({ user, onClose }: { user: ReferralUser; onClose: () => voi
         </div>
 
         {/* Extra raw details */}
-        {Object.keys(user).filter(k => !["_id","name","email","phone","status","role","referalCode","wallet","createdAt"].includes(k)).length > 0 && (
+        {Object.keys(user).filter(k => !["_id", "name", "email", "phone", "status", "role", "referalCode", "wallet", "createdAt"].includes(k)).length > 0 && (
           <details className="mt-4 group">
             <summary className="cursor-pointer text-xs font-semibold text-slate-400 hover:text-slate-600 select-none">
-              More details 
+              More details
             </summary>
             <div className="mt-3 grid grid-cols-2 gap-2">
               {Object.entries(user)
-                .filter(([k]) => !["_id","name","email","phone","status","role","referalCode","wallet","createdAt"].includes(k))
+                .filter(([k]) => !["_id", "name", "email", "phone", "status", "role", "referalCode", "wallet", "createdAt"].includes(k))
                 .map(([k, v]) => (
                   <Badge key={k} label={k} value={String(v ?? "—")} />
                 ))}
@@ -160,10 +160,10 @@ function DetailModal({ user, onClose }: { user: ReferralUser; onClose: () => voi
 
 /* ─── Main Page ──────────────────────────────────────────────────────── */
 const Page = () => {
-  const user = userData.data;
-  const other = user?.other[0];
+  // const user = userData.data;
+  // const other = user?.other[0];
   const { profile } = useGlobal();
-//   console.log(profile)
+  //   console.log(profile)
 
   /* Search state */
   const [query, setQuery] = useState("");
@@ -175,11 +175,12 @@ const Page = () => {
   const [selectedUser, setSelectedUser] = useState<ReferralUser | null>(null);
 
   /* Debounced API call */
-  const fetchReferrals = useCallback(async (code: string) => {
+  const fetchReferrals = useCallback(async (code: string, id: string) => {
     if (!code) { setReferralList([]); return; }
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`/users/code/${code}`);
+      console.log(`/users/code/${code}`);
+      const response = await axiosInstance.get(`/users/code/${code}/${id}`);
       const data: ReferralUser[] = response.data.data ?? [];
       setReferralList(Array.isArray(data) ? data : [data]);
     } catch (err) {
@@ -191,22 +192,22 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
-    fetchReferrals(debouncedQuery || profile?.referalCode || "");
+    fetchReferrals(debouncedQuery || profile?.referalCode || "", profile?._id || "");
   }, [debouncedQuery, profile?.referalCode, fetchReferrals]);
 
   /* ── Render ── */
   return (
-    <div className="min-h-screen ">
-    
+    <div className="">
+
       <div className=" mx-auto space-y-6">
 
 
         {/* ── Referral Search + List ─────────────────── */}
         <div className="fade-up-3 bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
-          <h2 className="heading text-base font-bold text-slate-800 mb-4">Referral Lookup</h2>
+          <h2 className="heading text-2xl font-bold text-slate-800 mb-4">Student List</h2>
 
           {/* Search input */}
-          <div className="relative mb-4">
+          {/* <div className="relative mb-4">
             <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
               🔍
             </span>
@@ -222,7 +223,7 @@ const Page = () => {
                 Loading…
               </span>
             )}
-          </div>
+          </div> */}
 
           {/* List */}
           {referralList.length === 0 && !loading ? (

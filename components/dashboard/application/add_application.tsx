@@ -5,7 +5,6 @@ import Select from "react-select";
 import React, { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 
-
 const STEPS = [
   {
     name: "Basic Information",
@@ -15,7 +14,7 @@ const STEPS = [
       { name: "email", label: "Enter Email", type: "text", required: true },
       { name: "phone", label: "Phone Number", type: "text", required: true },
       { name: "dateOfBirth", label: "Date of Birth", type: "date", required: true },
-      { name: "nationality", label: "Nationality", type: "select", options: ["Indian", "American", "British", "Australian", "Canadian", "Other"] },
+      { name: "nationality", label: "Nationality", type: "select", options: [] },
       { name: "gender", label: "Gender", type: "select", options: ["male", "female", "other"] },
       { name: "firstLanguage", label: "First Language", type: "text" },
       { name: "maritalStatus", label: "Marital Status", type: "select", options: ["Single", "Married", "Divorced", "Widowed"] },
@@ -31,7 +30,7 @@ const STEPS = [
       { name: "address2", label: "Address Line 2", type: "text" },
       { name: "city", label: "City", type: "text", required: true },
       { name: "state", label: "State", type: "text", required: true },
-      // { name: "country", label: "Country", type: "select", required: true, options: ["India", "USA", "UK", "Australia", "Canada", "Germany", "Other"] },
+      { name: "country", label: "Country", type: "select", required: true, options: [] },
       { name: "postalcode", label: "Postal Code", type: "text", required: true },
     ],
   },
@@ -39,19 +38,22 @@ const STEPS = [
     name: "Application Details",
     icon: "3",
     fields: [
-      { name: "country", label: "Destination Country", type: "select", options: [], required: true },
+      { name: "destinationCountry", label: "Destination Country", type: "select", options: [], required: true },
       { name: "university", label: "University Name", type: "select", options: [] },
-      { name: "course", label: "Course Name", type: "select", options: [] },
+      { name: "destinationcourse", label: "Course Name", type: "select", options: [] },
       { name: "intake", label: "Intake", type: "select", options: [] },
-      // { name: "passport", label: "Upload Passport", type: "file" },
-      // { name: "academic", label: "Upload Academic Documents", type: "file" },
-      // { name: "cv", label: "Upload CV", type: "file" },
-      // { name: "experience", label: "Upload Experience Certificate", type: "file" },
-      // { name: "photo", label: "Upload Photograph", type: "file" }
     ],
-  },
+    repeater: {
+      name: "backups",
+      label: "Backup Courses",
+      fields: [
+        { name: "course", label: "Course Name", type: "select", options: [], required: true },
+        { name: "intake", label: "Intake", type: "select", options: [], required: true },
+        { name: "order", label: "Order", type: "text", required: true }
+      ]
+    }
+  }
 ];
-
 
 const MultiSelectInput = ({ field, fieldKey, selected, onAdd, onRemove }: any) => {
   const [open, setOpen] = useState(false);
@@ -105,7 +107,6 @@ const MultiSelectInput = ({ field, fieldKey, selected, onAdd, onRemove }: any) =
   );
 };
 
-
 const inputBase = "w-full font-[inherit] text-[13px] bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-800 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100";
 const inputError = "!border-red-500";
 
@@ -122,14 +123,12 @@ const FieldRenderer = ({
   const req = field.required ? <span className="text-red-500"> *</span> : null;
 
   if (field.type === "select") {
-    // Convert options to proper {label, value} format for react-select
     const selectOptions = (field.options || []).map((o: any) =>
       typeof o === "object" && o !== null && "label" in o
         ? o
         : { label: String(o), value: String(o) }
     );
 
-    // Find currently selected option
     const selectedOption = selectOptions.find(
       (opt: any) => String(opt.value) === String(value)
     ) || null;
@@ -139,7 +138,6 @@ const FieldRenderer = ({
         <label className="text-xs font-medium text-slate-500" htmlFor={fieldKey}>
           {field.label}{req}
         </label>
-
         <Select
           options={selectOptions}
           value={selectedOption}
@@ -150,7 +148,6 @@ const FieldRenderer = ({
           noOptionsMessage={() => "No options available"}
           classNamePrefix="react-select"
         />
-
         {hasError && <span className="text-[11px] text-red-500">This field is required</span>}
       </div>
     );
@@ -209,7 +206,7 @@ const FieldRenderer = ({
       </div>
     );
   }
-  // Default input (text, date, file, etc.)
+
   return (
     <div className="flex flex-col gap-1">
       <label className="text-xs font-medium text-slate-500" htmlFor={fieldKey}>
@@ -241,6 +238,7 @@ const ProfileForm = () => {
   const [universityOptions, setUniversityOptions] = useState<any[]>([]);
   const [intakeOptions, setIntakeOptions] = useState<any[]>([]);
   const [courseOptions, setCourseOptions] = useState<any[]>([]);
+  const [userid, setUserid] = useState<string>("");
 
   const total = STEPS.length;
   const step = STEPS[current];
@@ -280,7 +278,7 @@ const ProfileForm = () => {
     setRepeaterItems((prev) => prev.filter((_, i) => i !== idx)), []);
 
   // Validation
-  const validate = () => {
+  const validate = useCallback(() => {
     const newErrors: Record<string, boolean> = {};
     const checkFields = (fields: any[], prefix = "") => {
       fields.forEach((f) => {
@@ -297,42 +295,124 @@ const ProfileForm = () => {
     if (step.fields) checkFields(step.fields);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [formData, multiState, step.fields]);
 
-  const navigate = (dir: number) => {
-    // if (dir === 1 && current === total - 1) {
-    //   setSubmitted(true);
-    //   return;
-    // }
+  const navigate = useCallback((dir: number) => {
     if (dir === 1 && !validate()) return;
-
     setCurrent((c) => Math.max(0, Math.min(total - 1, c + dir)));
     setRepeaterItems([]);
     setErrors({});
-  };
+  }, [validate]);
 
-  const jumpBack = (idx: number) => {
+  const jumpBack = useCallback((idx: number) => {
     if (idx < current) {
       setCurrent(idx);
       setRepeaterItems([]);
       setErrors({});
     }
-  };
+  }, [current]);
 
-  // Render Fields with Dynamic Options
-  const renderFields = (fields: any[], prefix = "") => (
+  const submitForms = useCallback(async (): Promise<void> => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("Token not found. Please login again.");
+      return;
+    }
+
+    try {
+      const payload = {
+        ...formData,
+        backups: repeaterItems
+      };
+
+      const response = await serverInstance.post(`/applications/create`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        setSubmitted(true);
+      }
+    } catch (error: any) {
+      console.error("Error submitting form:", error);
+      alert(
+        "Error: " +
+        (error?.response?.data?.message || "Something went wrong")
+      );
+    }
+  }, [formData, repeaterItems]);
+
+  const renderRepeater = useCallback((rep: any) => (
+    <div className="mt-4">
+      <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-3">
+        {rep.label}
+      </p>
+      {repeaterItems.map((item, idx) => (
+        <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 mb-3">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-sm font-medium text-slate-700">
+              {rep.label.replace(/s$/, "")} {idx + 1}
+            </span>
+            <button
+              type="button"
+              className="text-[11px] text-red-500 border border-red-300 bg-transparent px-3 py-1 rounded-full cursor-pointer hover:opacity-70 transition-opacity"
+              onClick={() => removeRepItem(idx)}
+            >
+              Remove
+            </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {rep.fields.map((f: any) => {
+              let dynamicField = { ...f };
+              if (f.name === "course") dynamicField.options = courseOptions;
+              if (f.name === "intake") dynamicField.options = intakeOptions;
+
+              return (
+                <FieldRenderer
+                  key={f.name}
+                  field={dynamicField}
+                  fieldKey={f.name}
+                  value={item[f.name] ?? ""}
+                  multiSelected={[]}
+                  onChange={(_, val) => handleRepChange(idx, f.name, val)}
+                  onMultiAdd={() => { }}
+                  onMultiRemove={() => { }}
+                  hasError={false}
+                />
+              );
+            })}
+          </div>
+        </div>
+      ))}
+      <button
+        type="button"
+        className="text-xs font-medium text-blue-600 border border-blue-300 bg-blue-50 px-4 py-2 rounded-full cursor-pointer hover:opacity-75 transition-opacity mt-1"
+        onClick={addRepItem}
+      >
+        + Add {rep.label.replace(/s$/, "")}
+      </button>
+    </div>
+  ), [repeaterItems, courseOptions, intakeOptions, handleRepChange, addRepItem, removeRepItem]);
+
+  const renderFields = useCallback((fields: any[], prefix = "") => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {fields.map((f) => {
         let dynamicField = { ...f };
 
-        // Apply dynamic options
-        if (f.name === "country" && f.label === "Destination Country") {
+        if (f.name === "destinationCountry") {
+          dynamicField.options = countryOptions;
+        } else if (f.name === "nationality") {
+          dynamicField.options = countryOptions;
+        } else if (f.name === "country" && f.label === "Country") {
           dynamicField.options = countryOptions;
         } else if (f.name === "university" && f.label === "University Name") {
           dynamicField.options = universityOptions;
+        } else if (f.name === "destinationcourse" && f.label === "Course Name") {
+          dynamicField.options = courseOptions;
         } else if (f.name === "course" && f.label === "Course Name") {
           dynamicField.options = courseOptions;
-          console.log("course options", courseOptions);
         } else if (f.name === "intake" && f.label === "Intake") {
           dynamicField.options = intakeOptions;
         }
@@ -354,227 +434,7 @@ const ProfileForm = () => {
         );
       })}
     </div>
-  );
-
-  //  const [userid, setUserid] = useState("");
-
-  // const submitForms = async (fields: any): Promise<void> => {
-  //   console.log('fields', fields);
-  //   if (fields == 1) {
-  //     try {
-  //       const token = localStorage.getItem("token"); // retrieve the token
-  //       const response = await serverInstance.post(`/users`, formData, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-
-  //       const createdId = response?.data?.data?._id;
-
-  //       console.log('response',response, createdId);
-  //       setUserid(createdId);
-  //       // setSubmitted(true);
-  //       // alert(response.message || "Profile information saved successfully!");
-  //       navigate(1);
-  //     } catch (error) {
-  //       console.error('Error submitting form:', error);
-  //       alert("error: " + (error?.response?.data?.message || "Failed to save profile information."));
-  //     }
-  //   }else if(fields == 2) {
-
-  //     try {
-
-  //       const token = localStorage.getItem("token"); // retrieve the token
-  //       const response = await serverInstance.post(`/auth/profile_info`, formData, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       console.log('response', response);
-  //       // setSubmitted(true);
-  //     } catch (error) {
-  //       console.error('Error submitting form:', error);
-  //     }
-
-  //   }else{
-
-  //     try {
-  //       const token = localStorage.getItem("token"); // retrieve the token
-  //       const response = await serverInstance.post(`/applications`, formData, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       console.log('response', response);
-  //       // setSubmitted(true);
-  //     } catch (error) {
-  //       console.error('Error submitting form:', error);
-  //     }
-
-  //   }
-  // };
-
-  const [userid, setUserid] = useState<string>("");
-
-  const submitForms = async (fields: number): Promise<void> => {
-    // console.log("fields", fields,formData);
-
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("Token not found. Please login again.");
-      return;
-    }
-
-    try {
-       navigate(1);
-      // STEP 1
-      if (fields == 3) {
-        const response = await serverInstance.post(`/applications/create`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const createdId = response?.data?.data?._id;
-
-        console.log("response", response, createdId);
-
-        if (response.status === 200 || response.status === 201) {
-          setSubmitted(true);
-          // setUserid(createdId);
-          // localStorage.setItem("userid", createdId); // optional backup
-        }
-
-       
-      }
-
-      // // STEP 2
-      // else if (fields == 2) {
-      //   const payload = {
-      //     ...formData,
-      //     userId: userid || localStorage.getItem("userid"),
-      //   };
-      //   console.log(payload)
-      //   const response = await serverInstance.post(
-      //     `/auth/referral`,
-      //     payload,
-      //     {
-      //       headers: {
-      //         Authorization: `Bearer ${token}`,
-      //       },
-      //     }
-      //   );
-
-      //   console.log("Step 2 response", response);
-
-      //   navigate(1);
-      // }
-      // else {
-      //   const payload = new FormData();
-
-      //   // add all normal fields + files
-      //   Object.entries(formData).forEach(([key, value]) => {
-      //     if (
-      //       value !== undefined &&
-      //       value !== null &&
-      //       value !== ""
-      //     ) {
-      //       if (value instanceof File) {
-      //         payload.append(key, value, value.name);
-      //       } else {
-      //         payload.append(key, String(value));
-      //       }
-      //     }
-      //   });
-
-      //   // add userId only oncesss
-      //   const finalUserId = userid || localStorage.getItem("userid");
-
-      //   if (finalUserId) {
-      //     payload.append("userId", finalUserId);
-      //   }
-
-      //   // debug payload
-      //   for (const [key, value] of payload.entries()) {
-      //     console.log(key, value);
-      //   }
-
-      //   const response = await axios.post(
-      //     `http://localhost:5001/api/applications/create`,
-      //     payload,
-      //     {
-      //       headers: {
-      //         // Authorization: `Bearer ${token}`,
-      //         "Content-Type": "multipart/form-data"
-
-      //       },
-
-      //     }
-      //   );
-
-      //   console.log("Step 3 response", response);
-
-      //   // if (response?.status === 200 || response?.status === 201) {
-      //   //   setSubmitted(true);
-      //   // }
-      // }
-
-    } catch (error: any) {
-      console.error("Error submitting form:", error);
-
-      alert(
-        "Error: " +
-        (error?.response?.data?.message || "Something went wrong")
-      );
-    }
-  };
-
-  const renderRepeater = (rep: any) => (
-    <div className="mt-4">
-      <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-3">
-        {rep.label}
-      </p>
-      {repeaterItems.map((item, idx) => (
-        <div key={idx} className="bg-white border border-slate-200 rounded-xl p-4 mb-3">
-          <div className="flex justify-between items-center mb-3">
-            <span className="text-sm font-medium text-slate-700">
-              {rep.label.replace(/s$/, "")} {idx + 1}
-            </span>
-            <button
-              type="button"
-              className="text-[11px] text-red-500 border border-red-300 bg-transparent px-3 py-1 rounded-full cursor-pointer hover:opacity-70 transition-opacity"
-              onClick={() => removeRepItem(idx)}
-            >
-              Remove
-            </button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {rep.fields.map((f: any) => (
-              <FieldRenderer
-                key={f.name}
-                field={f}
-                fieldKey={f.name}
-                value={item[f.name] ?? ""}
-                multiSelected={[]}
-                onChange={(_, val) => handleRepChange(idx, f.name, val)}
-                onMultiAdd={() => { }}
-                onMultiRemove={() => { }}
-                hasError={false}
-              />
-            ))}
-          </div>
-        </div>
-      ))}
-      <button
-        type="button"
-        className="text-xs font-medium text-blue-600 border border-blue-300 bg-blue-50 px-4 py-2 rounded-full cursor-pointer hover:opacity-75 transition-opacity mt-1"
-        onClick={addRepItem}
-      >
-        + Add {rep.label.replace(/s$/, "")}
-      </button>
-    </div>
-  );
+  ), [countryOptions, universityOptions, courseOptions, intakeOptions, formData, multiState, errors, handleChange, handleMultiAdd, handleMultiRemove]);
 
   // Fetch Countries
   useEffect(() => {
@@ -599,14 +459,14 @@ const ProfileForm = () => {
   // Fetch Universities when country changes
   useEffect(() => {
     const fetchUniversities = async () => {
-      if (!formData.country) {
+      if (!formData.destinationCountry) {
         setUniversityOptions([]);
         setIntakeOptions([]);
         return;
       }
 
       try {
-        const response = await serverInstance.get(`/universities?country=${formData.country}`);
+        const response = await serverInstance.get(`/universities?country=${formData.destinationCountry}`);
         const data = Array.isArray(response.data)
           ? response.data
           : response.data?.data || response.data?.result || [];
@@ -616,11 +476,9 @@ const ProfileForm = () => {
           value: u.code || u.name || u.id,
         }));
 
-        // Extract unique intakes
         const allIntakes = [...new Set(
           data.flatMap((u: any) => (Array.isArray(u.intakes) ? u.intakes : []))
         )].map((i: string) => ({ label: i, value: i }));
-
 
         setUniversityOptions(mappedUniversities);
         setIntakeOptions(allIntakes);
@@ -632,7 +490,7 @@ const ProfileForm = () => {
     };
 
     fetchUniversities();
-  }, [formData.country]);
+  }, [formData.destinationCountry]);
 
   // Fetch Courses when university changes
   useEffect(() => {
@@ -665,28 +523,28 @@ const ProfileForm = () => {
 
   // Reset dependent fields when parent changes
   useEffect(() => {
-    if (!formData.country) {
+    if (!formData.destinationCountry) {
       handleChange("university", "");
-      handleChange("course", "");
+      handleChange("destinationcourse", "");
       handleChange("intake", "");
     }
-  }, [formData.country]);
+  }, [formData.destinationCountry, handleChange]);
 
   useEffect(() => {
     if (!formData.university) {
-      handleChange("course", "");
+      handleChange("destinationcourse", "");
     }
-  }, [formData.university]);
+  }, [formData.university, handleChange]);
 
   if (submitted) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center max-w-md w-full shadow-sm">
           <div className="text-5xl text-green-500 mb-4">✓</div>
-          <h2 className="text-2xl font-semibold text-slate-800 mb-2">Profile submitted!</h2>
-          <p className="text-sm text-slate-500">All your details have been saved successfully.</p>
+          <h2 className="text-2xl font-semibold text-slate-800 mb-2">Application Submitted!</h2>
+          <p className="text-sm text-slate-500">Your application has been saved successfully.</p>
           <div className="flex items-center justify-center my-2">
-            <button className="px-4 py-2 bg-orange-500 text-white rounded" onClick={() => { setSubmitted(false); }}>ok</button>
+            <button className="px-4 py-2 bg-orange-500 text-white rounded" onClick={() => { setSubmitted(false); window.location.reload(); }}>OK</button>
           </div>
         </div>
       </div>
@@ -770,9 +628,8 @@ const ProfileForm = () => {
 
         <button
           type="button"
-          className={`text-sm font-medium px-6 py-2.5 rounded-xl text-white border-none cursor-pointer hover:opacity-80 transition-opacity ${isLast ? "bg-green-600" : "bg-blue-600"
-            }`}
-          onClick={() => { submitForms(step.icon) }}
+          className={`text-sm font-medium px-6 py-2.5 rounded-xl text-white border-none cursor-pointer hover:opacity-80 transition-opacity ${isLast ? "bg-green-600" : "bg-blue-600"}`}
+          onClick={submitForms}
         >
           {isLast ? "Submit" : "Next"}
         </button>
