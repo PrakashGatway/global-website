@@ -4,9 +4,8 @@ let mode = "dev"
 
 const BASE_URL =
   mode === "dev"
-    ? "http://localhost:5000/api"
-    : "https://api.ooshasglobal.com/api"
-
+    ? "https://api.ooshasglobal.com/api"
+    : "http://localhost:5000/api"
 
 export const serverInstance = axios.create({
   baseURL: BASE_URL,
@@ -44,14 +43,10 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-
-
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error?.response?.status
-
-
     if (status === 401 || status === 403) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("token")
@@ -60,7 +55,6 @@ axiosInstance.interceptors.response.use(
         // window.location.href = "/"
       }
     }
-
     return Promise.reject(error)
   }
 )
