@@ -51,10 +51,12 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: any;
 }>) {
-  const [feature, countryres, unicat] = await Promise.all([
+  const [feature, countryres, unicat,footerRes] = await Promise.all([
     serverInstance.get("/page-information/navbar?isNavbar=true"),
     serverInstance.get("/page-information/navbar?isFeatured=true&type=country"),
     serverInstance.get("/universities/search"),
+    serverInstance.get("/page-information/navbar?isFooter=true&type=country"),
+
   ]);
 
   const featureRes = feature.data.data.filter(
@@ -64,6 +66,8 @@ export default async function RootLayout({
   const servicedata = feature.data.data.filter(
     (item) => item.pageType === "service",
   );
+
+  const footerData = footerRes?.data?.data
 
   const serviceres = servicedata.reverse();
 
@@ -146,6 +150,7 @@ export default async function RootLayout({
             Featureitem={featureRes || []}
             Serviceitem={serviceres || []}
             countryres={countryres.data.data}
+            footerData={footerData}
           />
         </GlobalProvider>
       </body>
