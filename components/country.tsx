@@ -531,10 +531,9 @@ const ContentSection = ({ data }) => {
               <h2 className="text-primary text-xl sm:text-3xl md:text-4xl font-bold">
                 <span className="text-[#F46C44] block" dangerouslySetInnerHTML={{
                   __html: item.title?.split("||")[0]
-                }}></span>
+                }}/>
                 <div className="flex flex-wrap gap-2 mt-1">
-                  <span dangerouslySetInnerHTML={{ __html: item.title?.split("||")[1] }}></span>
-
+                  <span dangerouslySetInnerHTML={{ __html: item.title?.split("||")[1] }}/>
                 </div>
               </h2>
             </div>
@@ -558,13 +557,11 @@ const ServiceSection = ({ data }) => {
               className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2"
               dangerouslySetInnerHTML={{
                 __html: data?.servicetitle?.split("||")[0]?.trim() || "",
-              }}
-            ></span>
+              }} /> {" "}
             <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold" dangerouslySetInnerHTML={{
               __html: data?.servicetitle?.split('||')[1]?.trim() || ""
-            }}>
+            }}/>
 
-            </span>
             <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
           </Tagging>
 
