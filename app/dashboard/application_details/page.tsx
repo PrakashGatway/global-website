@@ -213,10 +213,11 @@ export default function Page() {
         if (debouncedQuery) params.set("search", debouncedQuery);
         if (statusFilter) params.set("primaryStatus", statusFilter);
 
-        // const res = await axiosInstance.get(`/applications?${params}`, {
+        // const res = await axiosInstance.get(`/applications?getDataByAssignTo`, {
         //   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         // });
-        const res = await axiosInstance.get(`/applications/getDataByAssignTo`, {
+
+        const res = await axiosInstance.get(`/applications/getApplicationsByCounsellor?${params.toString()}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         const d = res.data;
@@ -277,7 +278,7 @@ export default function Page() {
         </div>
 
         {/* Search + Filter Bar */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+        {/* <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
           <div className="flex gap-3">
             <div className="relative flex-1">
               <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -342,7 +343,7 @@ export default function Page() {
               )}
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Table */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -369,7 +370,6 @@ export default function Page() {
                     <tr className="border-b border-slate-100 bg-slate-50/80">
                       <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Student</th>
                       <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">App No.</th>
-                      {/* <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Course</th> */}
                       <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Intake</th>
                       <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
                       <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Payment</th>
@@ -378,7 +378,7 @@ export default function Page() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    {applications.map((app: any) => (
+                    {/* {applications.map((app: any) => (
                       <tr key={app._id} className="hover:bg-slate-50/60 transition-colors group">
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
@@ -396,12 +396,6 @@ export default function Page() {
                             {app.applications[0]?.applicationNumber}
                           </span>
                         </td>
-                        {/* <td className="px-5 py-4">
-                          <p className="text-slate-700 font-medium truncate max-w-[160px]">{app.applications[0]?.course?.name ?? "—"}</p>
-                          {app.applications[0]?.university?.name && (
-                            <p className="text-xs text-slate-400 truncate">{app.courseapplications[0].university.name}</p>
-                          )}
-                        </td> */}
                         <td className="px-5 py-4 text-slate-600 text-xs">{app.applications[0]?.intake ?? "—"}</td>
                         <td className="px-5 py-4">
                           <StatusPill status={app.applications[0]?.primaryStatus} />
@@ -419,9 +413,48 @@ export default function Page() {
                           </button>
                         </td>
                       </tr>
+                    ))} */}
+
+                    {applications.map((app: any) => (
+                      <tr key={app._id} className="hover:bg-slate-50/60 transition-colors group">
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                              {app?.student?.name?.[0]?.toUpperCase() ?? "?"}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-slate-800 truncate capitalize">{app?.student?.name ?? "—"}</p>
+                              <p className="text-xs text-slate-400 truncate">{app?.student?.email}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-5 py-4">
+                          <span className="font-mono text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">
+                            {app.applicationNumber}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-slate-600 text-xs">{app.intake ?? "—"}</td>
+                        <td className="px-5 py-4">
+                          <StatusPill status={app.primaryStatus} />
+                        </td>
+                        <td className="px-5 py-4">
+                          <PaymentBadge status={app.paymentStatus} />
+                        </td>
+                        <td className="px-5 py-4 text-xs text-slate-500">{formatDate(app.createdAt)}</td>
+                        <td className="px-5 py-4 text-center">
+                          <button
+                            onClick={() => router.push(`/dashboard/application_details/${app._id}`)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-100 text-xs font-semibold transition"
+                          >
+                            <Eye size={13} /> View
+                          </button>
+                        </td>
+                      </tr>
                     ))}
+
                   </tbody>
                 </table>
+
               </div>
               <Pagination
                 currentPage={currentPage}

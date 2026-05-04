@@ -21,6 +21,8 @@ import {
   File,
   Edit,
   MessageCircle,
+  Activity,
+  Timer,
 } from "lucide-react";
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
@@ -34,6 +36,21 @@ type ApplicationStatus =
   | "Withdrawn" | "PreArrival" | "Arrived" | "Completed";
 
 type PaymentStatus = "Pending" | "Completed" | "Failed";
+
+
+
+interface ActivityLog {
+  _id: string
+  action: string
+  description: string
+  status: string
+  user: { name: string }
+  userType: 'student' | 'ooshas' | 'admin' | 'system'
+  createdAt: string
+  callDuration?: string
+  callType?: 'incoming' | 'outgoing' | 'missed'
+  metadata?: Record<string, any>
+}
 
 interface Student {
   _id: string;
@@ -624,6 +641,8 @@ export default function ApplicationDetailPage() {
   const [showRequirementForm, setShowRequirementForm] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
 
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([])
+
   const [formData, setFormData] = useState({
     primaryStatus: "Pending" as ApplicationStatus,
     adminNotes: "",
@@ -660,7 +679,26 @@ export default function ApplicationDetailPage() {
     }
   }, [id]);
 
-  useEffect(() => { fetchApplication(); }, [fetchApplication]);
+  
+    const fetchActivities = async () => {
+      try {
+        const response = await axiosInstance.get(`/communication/applications/${id}/activities?limit=100`)
+        const activities = response.data?.data || []
+        // Transform to match the expected format
+        const formattedActivities = activities.map(activity => ({
+          ...activity,
+          id: activity._id,
+          user: activity.user?.name || 'System',
+          timestamp: activity.createdAt
+        }))
+        setActivityLogs(formattedActivities)
+      } catch (error) {
+        console.error('Error fetching activities:', error)
+      }
+    }
+  
+
+  useEffect(() => { fetchApplication(); fetchActivities() }, [fetchApplication]);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -883,6 +921,7 @@ export default function ApplicationDetailPage() {
     { id: "documents", label: "Documents", icon: FileText },
     { id: "backups", label: "Backups & Rejections", icon: BookOpen },
     { id: "message", label: "Messages ", icon: MessageCircle },
+    { id: "activity", label: "Activity", icon: Activity },
   ];
 
   return (
@@ -1260,6 +1299,78 @@ export default function ApplicationDetailPage() {
                 <MessagingTab applicationId={application._id} />
               </div>
             )}
+            
+        {activeTab === 'activity' && (
+          <div
+            key="activity"
+            className="bg-white rounded-xl border border-gray-200 max-w-3xl mx-auto overflow-hidden"
+          >
+            <div className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
+              {activityLogs.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Activity className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <p className="text-gray-500">No activity records found</p>
+                </div>
+              ) : (
+                activityLogs.map((log, index) => (
+                  <div
+                    key={log._id}
+                    className="p-5 hover:bg-gray-50 transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-start gap-4">
+
+
+                      {/* Content Section */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="font-semibold text-gray-900">{log.action.replace(/_/g, ' ').toUpperCase()}</h4>
+                            {log.status && (
+                              <StatusPill status={log.status} />
+                            )}
+                          </div>
+                          <span className="text-xs text-gray-500 whitespace-nowrap">
+                            {formatDate(log.createdAt)}
+                          </span>
+                        </div>
+
+                        <p className="text-sm text-gray-600 mb-2">{log.description}</p>
+
+                        <div className="flex items-center gap-3 text-xs">
+                          <span className="text-gray-500 flex uppercase items-center gap-1">
+                            By: {log.user || 'System'}
+                          </span>
+                          {log.callDuration && (
+                            <>
+                              <span className="text-gray-300">•</span>
+                              <span className="text-gray-500 flex items-center gap-1">
+                                <Timer className="w-3 h-3" />
+                                Duration: {log.callDuration}
+                              </span>
+                            </>
+                          )}
+                          {log.callType && (
+                            <>
+                              <span className="text-gray-300">•</span>
+                              <span className={`flex items-center gap-1 ${log.callType === 'missed' ? 'text-red-600' :
+                                log.callType === 'incoming' ? 'text-green-600' : 'text-blue-600'
+                                }`}>
+                                {log.callType === 'missed' ? 'Missed Call' :
+                                  log.callType === 'incoming' ? 'Incoming Call' : 'Outgoing Call'}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
           </div>
         </div>
       </div>

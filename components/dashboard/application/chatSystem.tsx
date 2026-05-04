@@ -11,13 +11,13 @@ interface Message {
     createdAt: string;
 }
 
-const MessagingTab = ({
-    applicationId,
-    // token,
-}: {
-    applicationId: string;
-    // token: string;
-}) => {
+    const MessagingTab = ({
+        applicationId,
+        // token,
+    }: {
+        applicationId: string;
+        // token: string;
+    }) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
     const [loading, setLoading] = useState(false);
@@ -41,6 +41,7 @@ const MessagingTab = ({
             const data = res.data?.data || res.data || [];
             if (Array.isArray(data)) {
                 setMessages(data);
+                console.log(data);
             }
         } catch (err) {
             console.error("Fetch error:", err);
@@ -53,7 +54,7 @@ const MessagingTab = ({
 
         const tempMsg: Message = {
             content: newMessage,
-            userType: "admin",
+            userType: "ooshas",
             createdAt: new Date().toISOString(),
         };
 
@@ -69,7 +70,7 @@ const MessagingTab = ({
                     type: "message",
                     content: tempMsg.content,
                     user: applicationId,
-                    userType: "admin",
+                    userType: "ooshas",
                 },
                 {
                     headers: {
@@ -145,7 +146,7 @@ const MessagingTab = ({
                     </p>
                 ) : (
                     messages.map((msg, i) => {
-                        const isAdmin = msg.userType === "admin";
+                        const isAdmin = msg.userType === "ooshas";
                         const showDate =
                             i === 0 ||
                             formatDate(msg.createdAt) !==

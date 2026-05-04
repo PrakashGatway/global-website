@@ -236,7 +236,7 @@ const InitialSelectionPopup = ({ onSelect, onClose }: { onSelect: (type: 'new' |
           <p className="text-sm text-slate-500 mb-6">
             Is this application for an existing student or a new student?
           </p>
-          
+
           <div className="space-y-3">
             <button
               onClick={() => onSelect('existing')}
@@ -245,7 +245,7 @@ const InitialSelectionPopup = ({ onSelect, onClose }: { onSelect: (type: 'new' |
               <div className="font-medium text-slate-800 group-hover:text-blue-600">Existing Student</div>
               <div className="text-xs text-slate-400 group-hover:text-blue-500">Select from registered students</div>
             </button>
-            
+
             <button
               onClick={() => onSelect('new')}
               className="w-full text-left px-4 py-3 border border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all group"
@@ -271,7 +271,7 @@ const InitialSelectionPopup = ({ onSelect, onClose }: { onSelect: (type: 'new' |
 //   // Adding these states since they were used in your snippet's logic
 //   const [referralList, setReferralList] = useState<any[]>([]);
 //   const [loading, setLoading] = useState(false);
-  
+
 //   // Replace with your actual global context hook
 //   // const { profile } = useGlobal(); 
 //   const profile = { referalCode: "REF123", _id: "admin_id" }; // Mock for demo
@@ -306,7 +306,7 @@ const InitialSelectionPopup = ({ onSelect, onClose }: { onSelect: (type: 'new' |
 //   return (
 //     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
 //       <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
-        
+
 //         {/* Header Section */}
 //         <div className="p-6 border-b border-slate-200">
 //           <div className="flex justify-between items-center mb-4">
@@ -321,7 +321,7 @@ const InitialSelectionPopup = ({ onSelect, onClose }: { onSelect: (type: 'new' |
 //               <span className="text-xl">✕</span>
 //             </button>
 //           </div>
-          
+
 //           <div className="relative">
 //             <input
 //               type="text"
@@ -333,7 +333,7 @@ const InitialSelectionPopup = ({ onSelect, onClose }: { onSelect: (type: 'new' |
 //             <span className="absolute right-4 top-3.5 text-slate-400 text-lg">🔍</span>
 //           </div>
 //         </div>
-        
+
 //         {/* List Section */}
 //         <div className="flex-1 overflow-y-auto p-4 bg-slate-50/50">
 //           {filteredStudents.length === 0 ? (
@@ -414,7 +414,7 @@ const StudentSelectionPopup = ({ students, onSelect, onClose }: { students: any[
               ✕
             </button>
           </div>
-          
+
           <input
             type="text"
             placeholder="Search by name, email or phone..."
@@ -423,7 +423,7 @@ const StudentSelectionPopup = ({ students, onSelect, onClose }: { students: any[
             className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
           />
         </div>
-        
+
         <div className="flex-1 overflow-y-auto p-4">
           {filteredStudents.length === 0 ? (
             <div className="text-center py-8 text-slate-400">
@@ -482,10 +482,10 @@ const ProfileForm = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axiosInstance.get(`/users/code/${code}/${id}`
-      //   , {
-      //   headers: { Authorization: `Bearer ${token}` }
-      // }
-    );
+        //   , {
+        //   headers: { Authorization: `Bearer ${token}` }
+        // }
+      );
       const data = Array.isArray(response.data) ? response.data : response.data?.data || [];
       setStudents(data);
     } catch (error) {
@@ -509,7 +509,7 @@ const ProfileForm = () => {
   const handleStudentSelect = (student: any) => {
     // Populate form data with student information
     setFormData({
-      name: student._id || "",
+      student: student._id || "",
       // email: student.email || "",
       // phone: student.phone || "",
       // dateOfBirth: student.dateOfBirth || "",
@@ -526,7 +526,7 @@ const ProfileForm = () => {
       // country: student.country || "",
       // postalcode: student.postalcode || "",
     });
-    
+
     setShowStudentPopup(false);
     // Jump to step 3 (Application Details)
     setCurrent(2);
@@ -602,7 +602,6 @@ const ProfileForm = () => {
   }, [current]);
 
   const submitForms = useCallback(async (): Promise<void> => {
-    console.log(formData, "form data")
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -611,21 +610,39 @@ const ProfileForm = () => {
     }
 
     try {
-      console.log(formData.student ,"id ");
+      console.log(formData.student, "id ");
       const payload = {
         ...formData,
         backups: repeaterItems
       };
+    console.log(payload, "form data",current);
 
-      // const response = await serverInstance.post(`/applications/create`, payload, {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      // });
+    if(current !== total - 1) {
+      navigate(1);
+      return;
+    }
 
-      // if (response.status === 200 || response.status === 201) {
-      //   setSubmitted(true);
-      // }
+    if(!formData.student) {
+      const response = await serverInstance.post(`/applications/create`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        setSubmitted(true);
+      }
+    } else {
+      const response = await serverInstance.post(`/applications/existing_user`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        setSubmitted(true);
+      }
+    }
     } catch (error: any) {
       console.error("Error submitting form:", error);
       alert(
@@ -634,6 +651,7 @@ const ProfileForm = () => {
       );
     }
   }, [formData, repeaterItems]);
+
 
   const renderRepeater = useCallback((rep: any) => (
     <div className="mt-4">
@@ -687,6 +705,7 @@ const ProfileForm = () => {
     </div>
   ), [repeaterItems, courseOptions, intakeOptions, handleRepChange, addRepItem, removeRepItem]);
 
+  
   const renderFields = useCallback((fields: any[], prefix = "") => (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {fields.map((f) => {
@@ -849,8 +868,8 @@ const ProfileForm = () => {
 
   if (showStudentPopup) {
     return (
-      <StudentSelectionPopup 
-        students={students} 
+      <StudentSelectionPopup
+        students={students}
         onSelect={handleStudentSelect}
         onClose={() => {
           setShowStudentPopup(false);
@@ -939,7 +958,7 @@ const ProfileForm = () => {
           type="button"
           className={`text-sm font-medium px-6 py-2.5 rounded-xl text-white border-none cursor-pointer 
             hover:opacity-80 transition-opacity ${isLast ? "bg-green-600" : "bg-blue-600"}`}
-          onClick={() => { console.log("test"); submitForms(); }}
+          onClick={() => { submitForms(); }}
         >
           {isLast ? "Submit" : "Next"}
         </button>

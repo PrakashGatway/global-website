@@ -52,7 +52,10 @@ export function DashboardHeader({ profile,Logout }) {
               className="flex items-center gap-2 p-1 pr-3 rounded-xl transition-colors"
             >
               <span className="h-11 w-11 border rounded-full p-0 m-0  shadow-lg overflow-hidden">
-                <Image src={profile && profile.profileImage ? profile.profileImage : `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s`} alt={profile && profile.name} width={40} height={40} className="h-full w-full ovject-cover" />
+                <Image 
+                src={profile && profile.profileImage ? profile.profileImage 
+                : `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s`} 
+                alt={profile && profile.name || "user"} width={40} height={40} className="h-full w-full ovject-cover" />
               </span>
               <div className="hidden md:block text-left">
                 <p className="text-sm font-semibold capitalize leading-none">{profile && profile.name}</p>
