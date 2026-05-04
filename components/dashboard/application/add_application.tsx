@@ -1,19 +1,20 @@
 "use client";
 
-import { serverInstance } from "@/app/axiosInstance";
+import axiosInstance, { serverInstance } from "@/app/axiosInstance";
 import Select from "react-select";
 import React, { useState, useCallback, useEffect } from "react";
 import axios from "axios";
+import { useGlobal } from "@/src/statecontext";
 
 const STEPS = [
   {
     name: "Basic Information",
     icon: "1",
     fields: [
-      { name: "name", label: "Full Name", type: "text", required: true },
-      { name: "email", label: "Enter Email", type: "text", required: true },
-      { name: "phone", label: "Phone Number", type: "text", required: true },
-      { name: "dateOfBirth", label: "Date of Birth", type: "date", required: true },
+      { name: "name", label: "Full Name", type: "text", required: false },
+      { name: "email", label: "Enter Email", type: "text", required: false },
+      { name: "phone", label: "Phone Number", type: "text", required: false },
+      { name: "dateOfBirth", label: "Date of Birth", type: "date", required: false },
       { name: "nationality", label: "Nationality", type: "select", options: [] },
       { name: "gender", label: "Gender", type: "select", options: ["male", "female", "other"] },
       { name: "firstLanguage", label: "First Language", type: "text" },
@@ -26,19 +27,19 @@ const STEPS = [
     name: "Address",
     icon: "2",
     fields: [
-      { name: "address1", label: "Address Line 1", type: "text", required: true },
+      { name: "address1", label: "Address Line 1", type: "text", required: false },
       { name: "address2", label: "Address Line 2", type: "text" },
-      { name: "city", label: "City", type: "text", required: true },
-      { name: "state", label: "State", type: "text", required: true },
-      { name: "country", label: "Country", type: "select", required: true, options: [] },
-      { name: "postalcode", label: "Postal Code", type: "text", required: true },
+      { name: "city", label: "City", type: "text", required: false },
+      { name: "state", label: "State", type: "text", required: false },
+      { name: "country", label: "Country", type: "select", required: false, options: [] },
+      { name: "postalcode", label: "Postal Code", type: "text", required: false },
     ],
   },
   {
     name: "Application Details",
     icon: "3",
     fields: [
-      { name: "destinationCountry", label: "Destination Country", type: "select", options: [], required: true },
+      { name: "destinationCountry", label: "Destination Country", type: "select", options: [], required: false },
       { name: "university", label: "University Name", type: "select", options: [] },
       { name: "destinationcourse", label: "Course Name", type: "select", options: [] },
       { name: "intake", label: "Intake", type: "select", options: [] },
@@ -47,9 +48,9 @@ const STEPS = [
       name: "backups",
       label: "Backup Courses",
       fields: [
-        { name: "course", label: "Course Name", type: "select", options: [], required: true },
-        { name: "intake", label: "Intake", type: "select", options: [], required: true },
-        { name: "order", label: "Order", type: "text", required: true }
+        { name: "course", label: "Course Name", type: "select", options: [], required: false },
+        { name: "intake", label: "Intake", type: "select", options: [], required: false },
+        { name: "order", label: "Order", type: "text", required: false }
       ]
     }
   }
@@ -225,7 +226,237 @@ const FieldRenderer = ({
   );
 };
 
+// Initial Selection Popup Component
+const InitialSelectionPopup = ({ onSelect, onClose }: { onSelect: (type: 'new' | 'existing') => void, onClose?: () => void }) => {
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl max-w-md w-full shadow-xl animate-[fadeUp_0.25s_ease_both]">
+        <div className="p-6">
+          <h3 className="text-xl font-semibold text-slate-800 mb-2">Create Application</h3>
+          <p className="text-sm text-slate-500 mb-6">
+            Is this application for an existing student or a new student?
+          </p>
+          
+          <div className="space-y-3">
+            <button
+              onClick={() => onSelect('existing')}
+              className="w-full text-left px-4 py-3 border border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all group"
+            >
+              <div className="font-medium text-slate-800 group-hover:text-blue-600">Existing Student</div>
+              <div className="text-xs text-slate-400 group-hover:text-blue-500">Select from registered students</div>
+            </button>
+            
+            <button
+              onClick={() => onSelect('new')}
+              className="w-full text-left px-4 py-3 border border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all group"
+            >
+              <div className="font-medium text-slate-800 group-hover:text-blue-600">New Student</div>
+              <div className="text-xs text-slate-400 group-hover:text-blue-500">Fill all details from scratch</div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// interface StudentSelectionPopupProps {
+//   students: any[];
+//   onSelect: (student: any) => void;
+//   onClose: () => void;
+// }
+
+// const StudentSelectionPopup = ({ students, onSelect, onClose }: StudentSelectionPopupProps) => {
+//   const [searchTerm, setSearchTerm] = useState("");
+//   // Adding these states since they were used in your snippet's logic
+//   const [referralList, setReferralList] = useState<any[]>([]);
+//   const [loading, setLoading] = useState(false);
+  
+//   // Replace with your actual global context hook
+//   // const { profile } = useGlobal(); 
+//   const profile = { referalCode: "REF123", _id: "admin_id" }; // Mock for demo
+
+//   const filteredStudents = students.filter(student =>
+//     student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//     student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//     student.phone?.includes(searchTerm) ||
+//     student._id?.toLowerCase().includes(searchTerm.toLowerCase()) // Now searchable by ID too
+//   );
+
+//   /* Logic from your snippet */
+//   const fetchReferrals = useCallback(async (code: string, id: string) => {
+//     if (!code) return;
+//     setLoading(true);
+//     try {
+//       const response = await axiosInstance.get(`/users/code/${code}/${id}`);
+//       const data = response.data.data ?? [];
+//       setReferralList(Array.isArray(data) ? data : [data]);
+//     } catch (err) {
+//       console.error("Error fetching referrals:", err);
+//       setReferralList([]);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     fetchReferrals(profile?.referalCode || "", profile?._id || "");
+//   }, [profile?.referalCode, profile?._id, fetchReferrals]);
+
+//   return (
+//     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+//       <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+        
+//         {/* Header Section */}
+//         <div className="p-6 border-b border-slate-200">
+//           <div className="flex justify-between items-center mb-4">
+//             <div>
+//               <h3 className="text-xl font-bold text-slate-800">Select Student</h3>
+//               <p className="text-sm text-slate-500">Choose a student to create an application</p>
+//             </div>
+//             <button
+//               onClick={onClose}
+//               className="p-2 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"
+//             >
+//               <span className="text-xl">✕</span>
+//             </button>
+//           </div>
+          
+//           <div className="relative">
+//             <input
+//               type="text"
+//               placeholder="Search by name, email, phone or ID..."
+//               value={searchTerm}
+//               onChange={(e) => setSearchTerm(e.target.value)}
+//               className="w-full pl-4 pr-10 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 transition-all"
+//             />
+//             <span className="absolute right-4 top-3.5 text-slate-400 text-lg">🔍</span>
+//           </div>
+//         </div>
+        
+//         {/* List Section */}
+//         <div className="flex-1 overflow-y-auto p-4 bg-slate-50/50">
+//           {filteredStudents.length === 0 ? (
+//             <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+//               <span className="text-4xl mb-2">👤</span>
+//               <p>No students found matching "{searchTerm}"</p>
+//             </div>
+//           ) : (
+//             <div className="space-y-3">
+//               {filteredStudents.map((student) => (
+//                 <button
+//                   key={student._id || student.id}
+//                   onClick={() => onSelect(student)}
+//                   className="group w-full text-left p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-400 hover:shadow-md hover:shadow-blue-100/50 transition-all flex justify-between items-start"
+//                 >
+//                   <div className="flex-1">
+//                     <div className="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
+//                       {student.name}
+//                     </div>
+//                     <div className="text-sm text-slate-500 mt-1 flex flex-wrap gap-y-1">
+//                       <span className="flex items-center">📧 {student.email}</span>
+//                       {student.phone && (
+//                         <span className="flex items-center ml-4">📞 {student.phone}</span>
+//                       )}
+//                     </div>
+//                   </div>
+
+//                   {/* Student ID Badge */}
+//                   <div className="flex flex-col items-end gap-2">
+//                     <span className="text-[10px] font-mono font-bold bg-slate-100 text-slate-500 px-2 py-1 rounded-md uppercase tracking-wider group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
+//                       ID: {student._id || student.id || "N/A"}
+//                     </span>
+//                     {student.status && (
+//                       <span className="text-[9px] px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-bold uppercase">
+//                         {student.status}
+//                       </span>
+//                     )}
+//                   </div>
+//                 </button>
+//               ))}
+//             </div>
+//           )}
+//         </div>
+
+//         {/* Footer */}
+//         <div className="p-4 border-t border-slate-100 bg-white text-center">
+//           <p className="text-xs text-slate-400">
+//             Showing {filteredStudents.length} of {students.length} total students
+//           </p>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+
+
+// Student Selection Popup Component
+const StudentSelectionPopup = ({ students, onSelect, onClose }: { students: any[], onSelect: (student: any) => void, onClose: () => void }) => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredStudents = students.filter(student =>
+    student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.phone?.includes(searchTerm)
+  );
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] shadow-xl animate-[fadeUp_0.25s_ease_both] flex flex-col">
+        <div className="p-6 border-b border-slate-200">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-semibold text-slate-800">Select Student</h3>
+            <button
+              onClick={onClose}
+              className="text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+          
+          <input
+            type="text"
+            placeholder="Search by name, email or phone..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          />
+        </div>
+        
+        <div className="flex-1 overflow-y-auto p-4">
+          {filteredStudents.length === 0 ? (
+            <div className="text-center py-8 text-slate-400">
+              No students found
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {filteredStudents.map((student) => (
+                <button
+                  key={student._id || student.id}
+                  onClick={() => onSelect(student)}
+                  className="w-full text-left p-4 border border-slate-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all"
+                >
+                  <div className="font-medium text-slate-800">{student.name}</div>
+                  <div className="text-sm text-slate-500 mt-1">
+                    <span>{student.email}</span>
+                    {student.phone && <span className="ml-3">{student.phone}</span>}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ProfileForm = () => {
+  const [showInitialPopup, setShowInitialPopup] = useState(true);
+  const [showStudentPopup, setShowStudentPopup] = useState(false);
+  const [students, setStudents] = useState<any[]>([]);
+  const [loadingStudents, setLoadingStudents] = useState(false);
   const [current, setCurrent] = useState(0);
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [multiState, setMultiState] = useState<Record<string, string[]>>({});
@@ -242,6 +473,64 @@ const ProfileForm = () => {
 
   const total = STEPS.length;
   const step = STEPS[current];
+
+  const { profile } = useGlobal();
+
+  // Fetch students list
+  const fetchStudents = async (code: string, id: string) => {
+    setLoadingStudents(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axiosInstance.get(`/users/code/${code}/${id}`
+      //   , {
+      //   headers: { Authorization: `Bearer ${token}` }
+      // }
+    );
+      const data = Array.isArray(response.data) ? response.data : response.data?.data || [];
+      setStudents(data);
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    } finally {
+      setLoadingStudents(false);
+    }
+  };
+
+  // Handle initial selection
+  const handleInitialSelect = (type: 'new' | 'existing') => {
+    setShowInitialPopup(false);
+    if (type === 'existing') {
+      fetchStudents(profile?.referalCode || "", profile?._id || "");
+      setShowStudentPopup(true);
+    }
+    // For 'new', just close popup and show form
+  };
+
+  // Handle student selection
+  const handleStudentSelect = (student: any) => {
+    // Populate form data with student information
+    setFormData({
+      name: student._id || "",
+      // email: student.email || "",
+      // phone: student.phone || "",
+      // dateOfBirth: student.dateOfBirth || "",
+      // nationality: student.nationality || "",
+      // gender: student.gender || "",
+      // firstLanguage: student.firstLanguage || "",
+      // maritalStatus: student.maritalStatus || "",
+      // passportNumber: student.passportNumber || "",
+      // passportExpiry: student.passportExpiry || "",
+      // address1: student.address1 || "",
+      // address2: student.address2 || "",
+      // city: student.city || "",
+      // state: student.state || "",
+      // country: student.country || "",
+      // postalcode: student.postalcode || "",
+    });
+    
+    setShowStudentPopup(false);
+    // Jump to step 3 (Application Details)
+    setCurrent(2);
+  };
 
   // Handlers
   const handleChange = useCallback((key: string, val: any) => {
@@ -313,6 +602,7 @@ const ProfileForm = () => {
   }, [current]);
 
   const submitForms = useCallback(async (): Promise<void> => {
+    console.log(formData, "form data")
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -321,20 +611,21 @@ const ProfileForm = () => {
     }
 
     try {
+      console.log(formData.student ,"id ");
       const payload = {
         ...formData,
         backups: repeaterItems
       };
 
-      const response = await serverInstance.post(`/applications/create`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // const response = await serverInstance.post(`/applications/create`, payload, {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // });
 
-      if (response.status === 200 || response.status === 201) {
-        setSubmitted(true);
-      }
+      // if (response.status === 200 || response.status === 201) {
+      //   setSubmitted(true);
+      // }
     } catch (error: any) {
       console.error("Error submitting form:", error);
       alert(
@@ -551,6 +842,24 @@ const ProfileForm = () => {
     );
   }
 
+  // Show popup if not yet selected
+  if (showInitialPopup) {
+    return <InitialSelectionPopup onSelect={handleInitialSelect} />;
+  }
+
+  if (showStudentPopup) {
+    return (
+      <StudentSelectionPopup 
+        students={students} 
+        onSelect={handleStudentSelect}
+        onClose={() => {
+          setShowStudentPopup(false);
+          setShowInitialPopup(true);
+        }}
+      />
+    );
+  }
+
   const progress = ((current + 1) / total) * 100;
   const isLast = current === total - 1;
 
@@ -628,8 +937,9 @@ const ProfileForm = () => {
 
         <button
           type="button"
-          className={`text-sm font-medium px-6 py-2.5 rounded-xl text-white border-none cursor-pointer hover:opacity-80 transition-opacity ${isLast ? "bg-green-600" : "bg-blue-600"}`}
-          onClick={submitForms}
+          className={`text-sm font-medium px-6 py-2.5 rounded-xl text-white border-none cursor-pointer 
+            hover:opacity-80 transition-opacity ${isLast ? "bg-green-600" : "bg-blue-600"}`}
+          onClick={() => { console.log("test"); submitForms(); }}
         >
           {isLast ? "Submit" : "Next"}
         </button>
@@ -646,3 +956,4 @@ const ProfileForm = () => {
 };
 
 export default ProfileForm;
+

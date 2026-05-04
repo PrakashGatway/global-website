@@ -47,7 +47,7 @@ export default function VideoTestimonialsSlider({
   items = [],
   title = "More || Videos",
   subtitle = "What our students say",
-  tag = 1
+  tag = 2
 }: VideoTestimonialsSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -94,6 +94,7 @@ export default function VideoTestimonialsSlider({
   const currentItem = videoItems[currentIndex];
   const videoId = getYouTubeId(currentItem.videoUrl);
   const isMp4 = currentItem.videoUrl?.endsWith('.mp4');
+
 
   return (
     <motion.section
@@ -183,10 +184,10 @@ export default function VideoTestimonialsSlider({
               viewport={{ once: true }}
               className="bg-gray-50 rounded-2xl lg:rounded-3xl p-4 lg:p-6 h-full"
             >
-              <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 <Play className="w-5 h-5 text-red-600 fill-red-600" />
                 More Videos
-              </h4>
+              </h3>
 
               <div className="space-y-4">
                 {videoItems.map((item, index) => (
@@ -228,9 +229,9 @@ export default function VideoTestimonialsSlider({
 
                       {/* Video Info */}
                       <div className="flex-1 min-w-0">
-                        <h5 className="font-semibold text-gray-800 text-sm line-clamp-1 group-hover:text-red-600 transition">
+                        <h4 className="font-semibold text-gray-800 text-sm line-clamp-1 group-hover:text-red-600 transition">
                           {item.name}
-                        </h5>
+                        </h4>
                         <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
                           {item.designation || 'Testimonial'}
                         </p>

@@ -54,7 +54,7 @@ const HeroSection = ({ data, alldata }) => {
               <div className="w-full">
                 <Tag data={data?.tag}
                   css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight"}
-                  text={data?.title} />
+                  text={data?.title}  />
                 {/* <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight">
                   {data?.title || "Study in Germany"}
                 </h1> */}

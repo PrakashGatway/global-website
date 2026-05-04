@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
+import MessagingTab from "@/components/dashboard/application/chatSystem";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -1249,6 +1250,14 @@ export default function ApplicationDetailPage() {
                     </div>
                   )}
                 </div>
+              </div>
+            )}
+
+            {/* ── INFO TAB ── */}
+            {activeTab === "message" && (
+              <div>
+                <h3 className="text-sm font-semibold text-slate-700 mb-4">Course Information</h3>
+                <MessagingTab applicationId={application._id} />
               </div>
             )}
           </div>

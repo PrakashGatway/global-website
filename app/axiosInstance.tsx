@@ -3,9 +3,10 @@ import axios from "axios"
 let mode = "dev"
 
 const BASE_URL =
-  mode === "dev"
-    ? "https://api.ooshasglobal.com/api"
-    : "http://localhost:5000/api"
+  mode === "no"
+    ? "http://localhost:5000/api"
+    : "https://api.ooshasglobal.com/api"
+
 
 export const serverInstance = axios.create({
   baseURL: BASE_URL,

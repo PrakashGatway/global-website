@@ -1181,7 +1181,7 @@ export default function Homepage({
         subtitle={homePage?.imageTestimonials?.subtitle}
         items={imageData}
       /> */}
-
+{console.log(homePage,"home tag")}
       <VideoTestimonialsSlider
         title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
         subtitle={homePage?.videoTestimonials?.subtitle}
