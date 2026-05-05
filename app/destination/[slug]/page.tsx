@@ -30,17 +30,18 @@ export async function generateMetadata({ params }: { params: any }) {
 export default async function Page({ params }: { params: any }) {
   const { slug } = await params
 
+
+  const Pageres = await serverInstance.get(`/page-information/slug/${slug}`);
+
   const [
     Universityres,
     Faqres,
     imageRes,
-    Pageres,
     videoRes
   ] = await Promise.all([
-    serverInstance.get("/universities?limit=5"),
+    serverInstance.get(`/universities?limit=5&country=${Pageres.data.data.country.code}`),
     serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`),
     serverInstance.get("/testimonials?type=image&limit=15"),
-    serverInstance.get(`/page-information/slug/${slug}`),
     serverInstance.get("/testimonials?type=video&limit=6"),
   ]);
 
