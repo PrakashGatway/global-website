@@ -112,7 +112,7 @@ export default function Navbar({
     setLogin(!!token)
   }, [])
 
-    const filterUniversitiesByCountry = (countryCode: string): University[] => {
+  const filterUniversitiesByCountry = (countryCode: string): University[] => {
     if (!countryCode || !unicat) return [];
     return unicat.filter((uni) => uni.country === countryCode);
   };
@@ -392,7 +392,7 @@ export default function Navbar({
                         {profile?.name?.charAt(0).toUpperCase()}
                       </div>
                     </div>
-                    <div className="absolute right-0 mt-3 w-60 p-4 border-2 border-gray-200 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
+                    <div className="absolute right-0 mt-3 w-80 p-4 border-2 border-gray-200 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
                       <div className="flex gap-4">
                         <div>
                           <div className="w-10 h-10 rounded-full bg-gray-200 text-gray-700 border-2 border-gray-600 flex items-center justify-center text-sm font-bold">
@@ -401,7 +401,7 @@ export default function Navbar({
                         </div>
                         <div>
                           <p className="font-semibold capitalize text-gray-800">{profile?.name}</p>
-                          <p className="text-xs text-gray-500">{profile?.email}</p>
+                          <p className="text-xs text-gray-500" style={{ "overflowWrap": "anywhere" }}>{profile?.email}</p>
                         </div>
                       </div>
                       <div className="flex flex-col mt-2 text-sm">

@@ -18,6 +18,12 @@ export async function generateMetadata({ params }) {
     alternates: {
       canonical: `/${seo?.canonicalUrl || `universities/${slug}`}`,
     },
+
+    robots: {
+      index: false,
+      follow: false,
+    },
+
     openGraph: {
       title: seo?.metaTitle,
       description: seo?.metaDescription,

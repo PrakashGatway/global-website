@@ -9,7 +9,8 @@ import {
     Info, X, UserPlus, Wallet, CreditCard, Calendar,
     Eye, EyeOff, AlertCircle, Heart, Percent,
     Send, Mail, Trophy,
-    MessageCirclePlus, PlusCircle
+    MessageCirclePlus, PlusCircle,
+    Trash2
 } from "lucide-react"
 import { addDays, format, formatDistanceToNow } from "date-fns"
 import { useGlobal } from "@/src/statecontext"
@@ -213,7 +214,15 @@ interface CreateCouponModalProps {
 
 const CreateCouponModal: React.FC<CreateCouponModalProps> = ({ isOpen, onClose, onSuccess }) => {
     const { profile } = useGlobal()
+
+    // User search states
+    const [searchQuery, setSearchQuery] = useState('')
+    const [debouncedQuery, setDebouncedQuery] = useState('')
+    const [referralList, setReferralList] = useState<ReferralUser[]>([])
+    const [loadingUsers, setLoadingUsers] = useState(false)
+    const [showDropdown, setShowDropdown] = useState(false)
     const [formData, setFormData] = useState({
+        assingBy: profile?._id,
         code: '',
         title: '',
         description: '',
@@ -231,12 +240,6 @@ const CreateCouponModal: React.FC<CreateCouponModalProps> = ({ isOpen, onClose, 
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
 
-    // User search states
-    const [searchQuery, setSearchQuery] = useState('')
-    const [debouncedQuery, setDebouncedQuery] = useState('')
-    const [referralList, setReferralList] = useState<ReferralUser[]>([])
-    const [loadingUsers, setLoadingUsers] = useState(false)
-    const [showDropdown, setShowDropdown] = useState(false)
 
     // Debounce logic
     useEffect(() => {
@@ -286,34 +289,39 @@ const CreateCouponModal: React.FC<CreateCouponModalProps> = ({ isOpen, onClose, 
 
         try {
             const payload = {
+                type: 'coupon', // Required by schema
                 code: formData.code,
                 title: formData.title,
                 description: formData.description,
-                discountType: formData.discountType,
-                minPurchaseAmount: Number(formData.minPurchase),
-                applicableTo: formData.applicableTo,
                 validFrom: new Date(formData.validFrom).toISOString(),
                 validTo: new Date(formData.validTo).toISOString(),
-                usageLimit: formData.usageLimit ? Number(formData.usageLimit) : undefined,
-                discountValue: Number(formData.discountValue),
-                maxDiscountAmount: formData.maxDiscount ? Number(formData.maxDiscount) : undefined,
+                usageLimit: formData.usageLimit ? Number(formData.usageLimit) : null,
                 status: formData.status,
-                userSpecificCoupon: formData.userSpecificCoupon,
-                assignedUserId: formData.userSpecificCoupon ? formData.assignedUserId : undefined
+                assingBy: formData.assingBy || profile?._id || 'admin',
+
+                // Nest coupon-specific fields inside couponData
+                couponData: {
+                    discountType: formData.discountType,
+                    discountValue: Number(formData.discountValue),
+                    minPurchaseAmount: Number(formData.minPurchase) || 0,
+                    maxDiscountAmount: formData.maxDiscount ? Number(formData.maxDiscount) : null,
+                    applicableTo: formData.applicableTo === 'Courses Only' ? 'courses'
+                        : formData.applicableTo === 'Programs Only' ? 'programs'
+                            : 'all',
+                    isUserSpecific: formData.userSpecificCoupon,
+                    users: formData.userSpecificCoupon && formData.assignedUserId
+                        ? [formData.assignedUserId]
+                        : [],
+                }
             }
+
+            console.log(payload)
 
             const response = await axiosInstance.post('/coupons', payload)
             if (response.data?.success) {
                 toast.success('Coupon created successfully!')
                 onSuccess()
                 onClose()
-                // Reset form
-                setFormData({
-                    code: '', title: '', description: '', discountType: 'percentage',
-                    minPurchase: 0, applicableTo: 'Courses Only', validFrom: '', validTo: '',
-                    usageLimit: '', discountValue: '', maxDiscount: '', status: 'Active',
-                    userSpecificCoupon: false, assignedUserId: ''
-                })
             } else {
                 toast.error(response.data?.message || 'Failed to create coupon')
             }
@@ -599,7 +607,7 @@ const CreateCouponModal: React.FC<CreateCouponModalProps> = ({ isOpen, onClose, 
                         </button>
                         <button
                             type="submit"
-                            disabled={isSubmitting}
+                            // disabled={isSubmitting}
                             className="px-4 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
                             {isSubmitting ? (
@@ -645,22 +653,17 @@ export default function OffersPage() {
         setTimeout(() => setCopiedCode(null), 2000)
     }
 
-    const handleScratchComplete = useCallback(async (couponId: string) => {
-        const rewardsRes = await axiosInstance.post(`/coupons/scratch/use/${couponId}`);
-        if (rewardsRes.data?.success) {
-            updateProfile()
-            toast.success(rewardsRes.data?.message)
-        }
-        setRewards(prev => prev.map(coupon =>
-            coupon._id === couponId ? rewardsRes.data?.updatedCard : coupon
-        ))
-    }, [rewards, updateProfile])
 
-    const copyCouponCode = (code: string, e: React.MouseEvent) => {
-        e.stopPropagation()
-        navigator.clipboard.writeText(code)
-        setCopiedCode(code)
-        setTimeout(() => setCopiedCode(null), 2000)
+    const deleteCoupon = async (code: string, e: React.MouseEvent) => {
+        try {
+            const res = await axiosInstance.delete(`/coupons/${code}`)
+            if (res.data.success) {
+                toast.success(res.data.message)
+                myReferrals()
+            }
+        } catch (error) {
+            toast.error('Error deleting coupon')
+        }
     }
 
     const shareViaSocial = (platform: string) => {
@@ -679,12 +682,14 @@ export default function OffersPage() {
         }
         window.open(shareUrl, '_blank')
     }
+    console.log(profile)
 
     const myReferrals = async () => {
         try {
+            if (!profile?._id) return;
             const [response, coupouns, rewardsRes] = await Promise.all([
                 await axiosInstance.get('/auth/my-referrals'),
-                await axiosInstance.get('/coupons/available/list'),
+                await axiosInstance.get(`/coupons/assign/${profile?._id}`),
                 await axiosInstance.get('/coupons/scratch/my')
             ])
             setCoupons(coupouns.data)
@@ -700,7 +705,7 @@ export default function OffersPage() {
 
     useEffect(() => {
         myReferrals()
-    }, [])
+    }, [profile?.id, profile])
 
     return (
         <main className="flex-1 overflow-y-auto min-h-[70vh]">
@@ -741,8 +746,8 @@ export default function OffersPage() {
                             className={`pb-3 px-3 font-semibold text-sm flex items-center gap-2 transition-all relative ${activeTab === tab ? 'text-slate-900' : 'text-slate-500 hover:text-slate-700'
                                 }`}
                         >
-                            {tab === 'refer' ? <UserPlus className="w-5 h-5" /> : tab === "rewards" ? <Gift className="w-5 h-5" /> : <Ticket className="w-5 h-5" />}
-                            {tab === 'refer' ? 'Refer & Earn' : tab === "rewards" ? 'Rewards' : 'My Coupons'}
+                            {tab === 'refer' ? <UserPlus className="w-5 h-5" /> : <Ticket className="w-5 h-5" />}
+                            {tab === 'refer' ? 'Refer & Earn' : 'Coupons'}
 
                             {activeTab === tab && (
                                 <motion.div
@@ -820,7 +825,7 @@ export default function OffersPage() {
                                     )}
                                     {referrals?.data?.map((referral, index) => (
                                         <motion.div
-                                            key={referral.id}
+                                            key={index}
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: index * 0.05 }}
@@ -868,7 +873,7 @@ export default function OffersPage() {
                                     </div>
                                 )
                             }
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="flex flex-col gap-4">
                                 {coupons?.data?.map((coupon, index) => (
                                     <motion.div
                                         key={coupon._id}
@@ -878,57 +883,52 @@ export default function OffersPage() {
                                     >
                                         <div
                                             onClick={() => setSelectedCoupon(coupon)}
-                                            className={`relative group cursor-pointer rounded-3xl overflow-hidden bg-gradient-to-r from-[#F26D44] via-purple-500 to-indigo-800 hover:scale-[1.01] transition-all duration-300 shadow-lg hover:shadow-2xl`}
+                                            className={`relative group cursor-pointer rounded-2xl overflow-hidden bg-white border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all duration-300 flex flex-col md:flex-row`}
                                         >
+                                            {/* Left Banner */}
+                                            <div className={`p-6 md:w-64 bg-gradient-to-br from-[#F26D44] to-indigo-600 text-white flex flex-col items-center justify-center`}>
+                                                <p className="text-3xl font-extrabold tracking-tight drop-shadow-md">
+                                                    {coupon?.couponData?.discountValue} {coupon?.couponData?.discountType == 'percentage' ? '%' : 'OFF'}
+                                                </p>
+                                                <p className="text-sm text-white/90 mt-1 line-clamp-1 text-center">
+                                                    {coupon.description}
+                                                </p>
+                                            </div>
 
-                                            <div className="relative bg-white/90 backdrop-blur-xl rounded-3xl">
-                                                {new Date(coupon.validTo) < addDays(new Date(), 7) && (
-                                                    <div className="absolute top-4 right-[-40px] rotate-45 bg-red-500 text-white text-xs px-10 py-1 shadow-lg animate-pulse">
-                                                        Expiring Soon
-                                                    </div>
-                                                )}
-
-                                                <div className={`p-6 bg-gradient-to-br from-[#F26D44] to-indigo-600 text-white`}>
-                                                    <div className="mt-2 text-center">
-                                                        <p className="text-2xl font-extrabold tracking-tight drop-shadow-xl">
-                                                            {coupon?.couponData?.discountValue} {coupon?.couponData?.discountType == 'percentage' ? '%' : 'OFF'}
-                                                        </p>
-                                                        <p className="text-sm text-white/90 mt-1 line-clamp-2">
-                                                            {coupon.description}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="p-4 space-y-3 mb-1">
-
-                                                    {/* Coupon Code */}
-                                                    <div className="bg-slate-100 rounded-xl px-1 py-1 flex items-center justify-between border border-dashed border-slate-300 hover:border-slate-400 transition">
-                                                        <code className="font-medium px-2 text-slate-800">
+                                            {/* Right Content */}
+                                            <div className="p-5 flex-1 flex flex-col md:flex-row items-center justify-between gap-4">
+                                                <div className="space-y-1 text-center md:text-left">
+                                                    <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                                                        <code className="text-xl font-bold px-3 py-1 bg-slate-100 rounded-lg text-slate-800 border border-dashed border-slate-300">
                                                             {coupon.code}
                                                         </code>
-
-                                                        <button
-                                                            onClick={(e) => copyCouponCode(coupon.code, e)}
-                                                            className="p-2 rounded-full bg-white shadow hover:scale-110 transition"
-                                                        >
-                                                            {copiedCode === coupon.code ? (
-                                                                <Check className="w-4 h-4 text-green-600" />
-                                                            ) : (
-                                                                <Copy className="w-4 h-4 text-slate-600" />
-                                                            )}
-                                                        </button>
-                                                    </div>
-
-                                                    {/* Info Row */}
-                                                    <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
-                                                        <span className="font-medium">Min. ₹{coupon?.couponData?.minPurchaseAmount}</span>
-                                                        <span className="flex items-center gap-1">
-                                                            <Calendar className="w-3 h-3" />
-                                                            {format(new Date(coupon.validTo), 'dd MMM yyyy')}
+                                                        <span className="text-sm font-medium text-slate-500">
+                                                            Min. Purchase: ₹{coupon?.couponData?.minPurchaseAmount}
                                                         </span>
                                                     </div>
                                                 </div>
+
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 rounded-full border border-slate-100 text-sm text-slate-600">
+                                                        <Calendar className="w-4 h-4" />
+                                                        {format(new Date(coupon.validTo), 'dd MMM yyyy')}
+                                                    </div>
+
+                                                    <button
+                                                        onClick={(e) => deleteCoupon(coupon._id, e)}
+                                                        className="p-2.5 rounded-full bg-slate-50 border border-slate-200 hover:bg-white hover:shadow hover:scale-105 transition-all"
+                                                    >
+                                                        <Trash2 className="w-5 h-5 text-red-600" />
+                                                    </button>
+                                                </div>
                                             </div>
+
+                                            {/* Expiring Soon Badge */}
+                                            {new Date(coupon.validTo) < addDays(new Date(), 7) && (
+                                                <div className="absolute top-0 right-0 bg-red-500 text-white text-xs px-4 py-1 rounded-bl-xl shadow-sm animate-pulse font-medium">
+                                                    Expiring Soon
+                                                </div>
+                                            )}
                                         </div>
                                     </motion.div>
                                 ))}

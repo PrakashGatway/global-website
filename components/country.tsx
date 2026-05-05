@@ -54,7 +54,7 @@ const HeroSection = ({ data, alldata }) => {
               <div className="w-full">
                 <Tag data={data?.tag}
                   css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight"}
-                  text={data?.title}  />
+                  text={data?.title} />
                 {/* <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight">
                   {data?.title || "Study in Germany"}
                 </h1> */}
@@ -531,9 +531,9 @@ const ContentSection = ({ data }) => {
               <h2 className="text-primary text-xl sm:text-3xl md:text-4xl font-bold">
                 <span className="text-[#F46C44] block" dangerouslySetInnerHTML={{
                   __html: item.title?.split("||")[0]
-                }}/>
+                }} />
                 <div className="flex flex-wrap gap-2 mt-1">
-                  <span dangerouslySetInnerHTML={{ __html: item.title?.split("||")[1] }}/>
+                  <span dangerouslySetInnerHTML={{ __html: item.title?.split("||")[1] }} />
                 </div>
               </h2>
             </div>
@@ -560,7 +560,7 @@ const ServiceSection = ({ data }) => {
               }} /> {" "}
             <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold" dangerouslySetInnerHTML={{
               __html: data?.servicetitle?.split('||')[1]?.trim() || ""
-            }}/>
+            }} />
 
             <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
           </Tagging>
@@ -578,9 +578,15 @@ const ServiceSection = ({ data }) => {
                 }}>
 
                 </h3>
-                <div className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed" dangerouslySetInnerHTML={{
+                {/* <div className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed" dangerouslySetInnerHTML={{
                   __html: service?.itemsubtitle
-                }}/>
+                }} /> */}
+                <div
+                  className="list-disc pl-3 text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed [&_ul]:list-disc [&_ul]:pl-4 [&_ul]:space-y-1"
+                  dangerouslySetInnerHTML={{
+                    __html: service?.itemsubtitle
+                  }}
+                />
               </div>
             </div>
           ))}
@@ -610,7 +616,7 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
 
           <span className="mt-4 sm:mt-6 text-xs sm:text-base lg:text-lg leading-relaxed" dangerouslySetInnerHTML={{
             __html: data?.subTitle || "Germany provides various scholarships for international students, including DAAD and university-funded options."
-          }}/>
+          }} />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 sm:gap-x-16 gap-y-4 sm:gap-y-6 mt-6 sm:mt-10">

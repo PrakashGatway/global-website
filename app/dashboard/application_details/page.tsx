@@ -278,7 +278,7 @@ export default function Page() {
         </div>
 
         {/* Search + Filter Bar */}
-        {/* <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
           <div className="flex gap-3">
             <div className="relative flex-1">
               <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -343,7 +343,7 @@ export default function Page() {
               )}
             </div>
           )}
-        </div> */}
+        </div>
 
         {/* Table */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
