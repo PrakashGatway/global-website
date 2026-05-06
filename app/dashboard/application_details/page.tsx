@@ -368,8 +368,9 @@ export default function Page() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/80">
+                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Application No.</th>
                       <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Student</th>
-                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">App No.</th>
+                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Contect No.</th>
                       <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Intake</th>
                       <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
                       <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Payment</th>
@@ -378,61 +379,26 @@ export default function Page() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    {/* {applications.map((app: any) => (
-                      <tr key={app._id} className="hover:bg-slate-50/60 transition-colors group">
-                        <td className="px-5 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                              {app?.name?.[0]?.toUpperCase() ?? "?"}
-                            </div>
-                            <div className="min-w-0">
-                              <p className="font-semibold text-slate-800 truncate capitalize">{app?.name ?? "—"}</p>
-                              <p className="text-xs text-slate-400 truncate">{app?.email}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-4">
-                          <span className="font-mono text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">
-                            {app.applications[0]?.applicationNumber}
-                          </span>
-                        </td>
-                        <td className="px-5 py-4 text-slate-600 text-xs">{app.applications[0]?.intake ?? "—"}</td>
-                        <td className="px-5 py-4">
-                          <StatusPill status={app.applications[0]?.primaryStatus} />
-                        </td>
-                        <td className="px-5 py-4">
-                          <PaymentBadge status={app.applications[0]?.paymentStatus} />
-                        </td>
-                        <td className="px-5 py-4 text-xs text-slate-500">{formatDate(app.createdAt)}</td>
-                        <td className="px-5 py-4 text-center">
-                          <button
-                            onClick={() => router.push(`/dashboard/application_details/${app.applications[0]._id}`)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-100 text-xs font-semibold transition"
-                          >
-                            <Eye size={13} /> View
-                          </button>
-                        </td>
-                      </tr>
-                    ))} */}
-
                     {applications.map((app: any) => (
                       <tr key={app._id} className="hover:bg-slate-50/60 transition-colors group">
                         <td className="px-5 py-4">
+                          <span className="font-mono text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">
+                            {app.applicationNumber}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                            {/* <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                               {app?.student?.name?.[0]?.toUpperCase() ?? "?"}
-                            </div>
+                            </div> */}
                             <div className="min-w-0">
                               <p className="font-semibold text-slate-800 truncate capitalize">{app?.student?.name ?? "—"}</p>
                               <p className="text-xs text-slate-400 truncate">{app?.student?.email}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-5 py-4">
-                          <span className="font-mono text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">
-                            {app.applicationNumber}
-                          </span>
-                        </td>
+                        <td className="px-5 py-4 text-slate-600 text-xs">{app?.student?.phone ?? "—"}</td>
+
                         <td className="px-5 py-4 text-slate-600 text-xs">{app.intake ?? "—"}</td>
                         <td className="px-5 py-4">
                           <StatusPill status={app.primaryStatus} />
