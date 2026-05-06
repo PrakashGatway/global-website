@@ -47,9 +47,9 @@ export default function SupportPage() {
       const res = await axiosInstance.get(`/support?${params}`)
       const data = res.data?.data
       setTickets(data)
-      if(selectedTicketId._id){
+      if (selectedTicketId._id) {
         let ticket = data.find((t: any) => t._id === selectedTicketId._id)
-        if(ticket){
+        if (ticket) {
           setSelectedTicketId(ticket)
         }
       }

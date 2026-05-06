@@ -39,7 +39,7 @@ const counsellor = [
   { icon: FileText, label: "Application", href: "/dashboard/application_details" },
   { icon: User2Icon, label: "Student", href: "/dashboard/user" },
   { icon: LucideIndianRupee, label: "Offers", href: "/dashboard/offers/counsellor" },
-  { icon: Headphones, label: "Support", href: "/dashboard/support" },
+  { icon: Headphones, label: "Support", href: "/dashboard/support/counsellor" },
   // { icon: Bell, label: "Notifications", href: "/dashboard/notifications" },
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },
 

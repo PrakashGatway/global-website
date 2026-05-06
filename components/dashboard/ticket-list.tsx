@@ -64,9 +64,10 @@ export function TicketList({ tickets, selectedId, onSelectTicket }: TicketListPr
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="p-6 text-center min-h-[60vh]"
-
           >
-            <Image src="https://assets-v2.lottiefiles.com/a/09c40a94-1179-11ee-a418-7394edff93c8/NEgtRnqrdz.gif" alt="No tickets" width={250} height={250} className="m-auto opacity-50" />
+            <Image src="https://assets-v2.lottiefiles.com/a/09c40a94-1179-11ee-a418-7394edff93c8/NEgtRnqrdz.gif"
+             alt="No tickets" width={250} height={250} className="m-auto opacity-50" />
+             
           </motion.div>
         ) : (
           <motion.div
@@ -84,7 +85,7 @@ export function TicketList({ tickets, selectedId, onSelectTicket }: TicketListPr
                 onClick={() => onSelectTicket(ticket)}
                 className={cn(
                   'w-full px-4 py-2 border-b border-border cursor-pointer transition-all text-left',
-                  selectedId._id == ticket._id &&
+                  selectedId?._id == ticket?._id &&
                   '!bg-gray-300 border-l-4  border-l-primary'
                 )}
               >
