@@ -53,7 +53,7 @@ export default function SupportPage() {
             const allTickets = responses.flatMap((res) => res.data?.data ?? [])
             
             setTickets(allTickets)
-
+            console.log(selectedTicket)
             // // Update selected ticket if it exists in new data
             // if (selectedTicket?._id) {
             //     const updatedTicket = allTickets.find(
