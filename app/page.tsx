@@ -3,10 +3,10 @@ import { baseUrl, serverInstance } from "./axiosInstance";
 
 const getHomePageData = async () => {
   const res = await fetch(`${baseUrl}/page-information/slug/home`, {
-  headers: {
-    "Content-Type": "application/json",
-  }
-});
+    headers: {
+      "Content-Type": "application/json",
+    }
+  });
 
 
   if (!res.ok) {
@@ -44,7 +44,7 @@ export default async function Home() {
   const { data } = await getHomePageData();
   const homePage = data.sections;
 
-  const [destinationRes,countryRes, imageRes  , Faqres, videoRes,blogres,unires] = await Promise.all([
+  const [destinationRes, countryRes, imageRes, Faqres, videoRes, blogres, unires] = await Promise.all([
     serverInstance.get(
       "/page-information/navbar?isFeatured=true&type=destinations&limit=6"
     ),
@@ -57,7 +57,7 @@ export default async function Home() {
     serverInstance.get("/universities?limit=10")
   ]);
 
-    
+
 
 
   return (
@@ -66,7 +66,7 @@ export default async function Home() {
       destinationData={destinationRes.data.data}
       countryData={countryRes.data.data}
       imageData={imageRes.data.data}
-      Faqres = {Faqres.data.data}
+      Faqres={Faqres.data.data}
       videoRes={videoRes.data.data}
       blogres={blogres.data.data}
       unires={unires.data.result}

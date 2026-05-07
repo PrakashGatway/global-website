@@ -100,14 +100,14 @@ export default function Homepage({
 
   const [visacontent, setVisaContent] = useState([]);
 
-  const fetchVisa = ()=>{
-  const filtervisa = imageData.filter((item) => item.target === "visa");
-  setVisaContent(filtervisa);
+  const fetchVisa = () => {
+    const filtervisa = imageData.filter((item) => item.target === "visa");
+    setVisaContent(filtervisa);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchVisa();
-  },[imageData])
+  }, [imageData])
 
 
   let destination = [
@@ -1181,7 +1181,7 @@ export default function Homepage({
         subtitle={homePage?.imageTestimonials?.subtitle}
         items={imageData}
       /> */}
-      
+
       <VideoTestimonialsSlider
         title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
         subtitle={homePage?.videoTestimonials?.subtitle}

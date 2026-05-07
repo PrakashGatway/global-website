@@ -10,8 +10,18 @@ import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { GlobalProvider, useGlobal } from "../../src/statecontext"
 
+import toast from "react-hot-toast"
 import { usePathname } from "next/navigation"
 import { NotificationProvider } from "@/components/dashboard/Notification"
+
+import {
+  messaging,
+  getToken,
+  onMessage,
+} from "@/lib/firebase";
+import axiosInstance from "../axiosInstance"
+
+
 
 export default function DashboardLayout({
   children,
@@ -29,6 +39,48 @@ export default function DashboardLayout({
       setSidebarOpen(false)
     }
   }, [router])
+
+
+  useEffect(() => {
+    requestPermission();
+  }, []);
+
+  const requestPermission = async () => {
+    try {
+      const permission = await Notification.requestPermission();
+
+      if (permission === "granted") {
+
+        const token = await getToken(messaging, {
+          vapidKey: "BDyrqnEnHplqPQDrfienXIeY4eo49-eCp3Sq7kp78t1RXwPWnUpILuTdBJXY2Isu5fZNX6fDV1FhF6m7yP0Hr2s",
+        });
+
+        console.log("FCM TOKEN:", token);
+
+        // // SAVE TOKEN IN DATABASE
+        axiosInstance.post('/save-token', {
+          token,
+          userId: profile._id
+        })
+
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (!messaging) return;
+
+    onMessage(messaging, (payload) => {
+      console.log("Foreground Notification:", payload);
+
+      alert(payload.notification.body);
+
+      toast.success(payload.notification.body);
+
+    });
+  }, []);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
