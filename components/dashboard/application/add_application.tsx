@@ -783,7 +783,7 @@ const ProfileForm = () => {
 
         const mappedUniversities = data.map((u: any) => ({
           label: u.name,
-          value: u.code || u.name || u.id,
+          value: u._id || u.code,  
         }));
 
         const allIntakes = [...new Set(
@@ -811,7 +811,7 @@ const ProfileForm = () => {
       }
 
       try {
-        const response = await serverInstance.get(`/courses?code=${formData.university}`);
+        const response = await serverInstance.get(`/courses?university=${formData.university}`);
         const data = Array.isArray(response.data)
           ? response.data
           : response.data?.data || response.data?.result || [];
@@ -820,7 +820,7 @@ const ProfileForm = () => {
           label: c.name,
           value: c._id,
         }));
-        console.log("courses", mappedCourses, `/courses?code=${formData.university}`);
+        console.log("courses", mappedCourses, `/courses?university=${formData.university}`);
         setCourseOptions(mappedCourses);
       } catch (error) {
         console.error("Error fetching courses:", error);

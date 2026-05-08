@@ -11,8 +11,6 @@ import {
   Eye,
   RefreshCw,
   Filter,
-  CheckCircle,
-  AlertCircle,
   FileText,
   X,
 } from "lucide-react";

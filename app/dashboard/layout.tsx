@@ -1,4 +1,3 @@
-
 "use client"
 
 import type React from "react"
@@ -58,7 +57,7 @@ export default function DashboardLayout({
         console.log("FCM TOKEN:", token,profile);
 
         // // SAVE TOKEN IN DATABASE
-        const api = await  axiosInstance.post('/users/save-token', {
+        const api = await axiosInstance.post('/users/save-token', {
           token,
           userId: profile._id
         })
@@ -76,10 +75,15 @@ export default function DashboardLayout({
     onMessage(messaging, (payload) => {
       console.log("Foreground Notification:", payload);
 
-      alert(payload.notification.body);
-
-      toast.success(payload.notification.body);
-
+      // Show alert with notification body
+      if (payload.notification?.body) {
+        alert(payload.notification.body);
+      }
+      
+      // Also show toast notification
+      if (payload.notification?.body) {
+        toast.success(payload.notification.body);
+      }
     });
   }, []);
 

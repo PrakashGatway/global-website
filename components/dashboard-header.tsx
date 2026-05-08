@@ -1,21 +1,55 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Bell, User, Settings, LogOut, ChevronDown, BellElectricIcon, BellIcon, HistoryIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import axiosInstance from "@/app/axiosInstance";
 
 export function DashboardHeader({ profile,Logout }) {
   const [searchFocus, setSearchFocus] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const location = usePathname()
+  const [newNotification, setNewNotification] = useState([]);
 
   // if(location){
   //   location.startsWith("/dashboard/loan")
   //   return null
   // }
 
+  // Fetch notifications with unread filter support
+const fetchNotifications = useCallback(async (page = 1, limit = 10) => {
+  try {
+    setLoading(true);
+
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      unread: 'true' 
+    });
+
+    const response = await axiosInstance.get(`/notifications?${params.toString()}`);
+
+    if (response.data.success) {
+      const newNotifications = response.data.data.notifications;
+      console.log("Fetched notifications:", newNotifications);
+      setNewNotification(newNotifications);
+
+    }
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+  } finally {
+    setLoading(false);
+  }
+  // Added filters.showUnreadOnly to dependency array
+}, [ axiosInstance]);
+
+  
+
+    useEffect(() => {
+      fetchNotifications();
+    },[])
   return (
     <header className="sticky top-0 z-30 w-full bg-card border-b border-border">
       <div className="flex items-center justify-between px-4 md:px-8 py-2.5 gap-4">
@@ -37,8 +71,13 @@ export function DashboardHeader({ profile,Logout }) {
         <div className="flex items-center gap-2">
           <Link
             href="/dashboard/notifications"
-            className="h-11 w-11 flex items-center justify-center border rounded-full p-0 m-0 shadow-lg relative overflow-hidden"
+            className="h-11 w-11 flex items-center justify-center p-0 m-0  relative "
           >
+            {newNotification.length > 0 && (
+              <span className="absolute z-50 -top-1 -right-1 bg-destructive text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                {newNotification.length}
+              </span>
+            )}
             <Image src="https://i.pinimg.com/originals/fb/11/55/fb1155591460c455edf3ced130b127b9.gif" alt="avatar" width={40} height={40} className="w-full h-full object-cover" />
 
           </Link>

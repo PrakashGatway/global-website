@@ -96,7 +96,7 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
                       Top Group of Universities
                     </h4>
 
-                    <ul className="space-y-2 text-gray-100 text-sm">
+                    <ul className="list-disc pl-2 space-y-2 text-gray-100 text-sm">
                     {Featureitem.map((item) => (
                         <li key={item._id}  className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
                           <Link href={`/universities/group/${item.slug}`}>
@@ -118,7 +118,7 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
                       Our Services
                     </h4>
 
-                    <ul  className="space-y-2 text-gray-100 text-sm">
+                    <ul  className=" list-disc pl-2 space-y-2 text-gray-100 text-sm">
                     {Serviceitem.map((item) => (
                         <li key={item._id} className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
                           <Link href={`/service/${item.slug}`}>
@@ -140,7 +140,7 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
                       Quick Links
                     </h4>
 
-                    <ul className="space-y-2 text-gray-100 text-sm">
+                    <ul className="list-disc pl-2 space-y-2 text-gray-100 text-sm">
                       <li className="cursor-pointer transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2">
                         <Link href="/">Home</Link>
                       </li>
@@ -174,8 +174,8 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
                     </h4>
 
                     {footerData && footerData.length > 0 ? (
-                      <ul className="space-y-2 text-gray-100 text-sm">
-                        {footerData.slice(0, 6).map((country) => (
+                      <ul className="list-disc pl-2 space-y-2 text-gray-100 text-sm">
+                        {footerData.slice(0, 6).reverse().map((country) => (
                           <li 
                             key={country._id || country.slug}
                             className="cursor-pointer text-sm transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2"
