@@ -10,7 +10,7 @@ import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { GlobalProvider, useGlobal } from "../../src/statecontext"
 
-import toast from "react-hot-toast"
+import toast, { Toaster } from "react-hot-toast"
 import { usePathname } from "next/navigation"
 import { NotificationProvider } from "@/components/dashboard/Notification"
 
@@ -43,7 +43,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     requestPermission();
-  }, []);
+  }, [profile]);
 
   const requestPermission = async () => {
     try {
@@ -55,13 +55,14 @@ export default function DashboardLayout({
           vapidKey: "BDyrqnEnHplqPQDrfienXIeY4eo49-eCp3Sq7kp78t1RXwPWnUpILuTdBJXY2Isu5fZNX6fDV1FhF6m7yP0Hr2s",
         });
 
-        console.log("FCM TOKEN:", token);
+        console.log("FCM TOKEN:", token,profile);
 
         // // SAVE TOKEN IN DATABASE
-        axiosInstance.post('/save-token', {
+        const api = await  axiosInstance.post('/users/save-token', {
           token,
           userId: profile._id
         })
+        console.log(api,"api",profile._id)
 
       }
     } catch (error) {
@@ -115,6 +116,7 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-white">
+    <Toaster/>
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
