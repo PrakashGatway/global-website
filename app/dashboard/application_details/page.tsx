@@ -13,6 +13,14 @@ import {
   Filter,
   FileText,
   X,
+  MoreHorizontal,
+  Send,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  TrendingUp,
+  Users,
+  Activity,
 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -80,37 +88,65 @@ function useDebounce<T>(value: T, delay: number): T {
 
 // ── UI Components ─────────────────────────────────────────────────────────────
 
-const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string }> = {
-  Pending: { bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-400" },
-  Started: { bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-400" },
-  ReviewbyOoshas: { bg: "bg-purple-50", text: "text-purple-700", dot: "bg-purple-400" },
-  SubmitToSchool: { bg: "bg-slate-50", text: "text-slate-700", dot: "bg-slate-400" },
-  AwaitingSchoolResponse: { bg: "bg-indigo-50", text: "text-indigo-700", dot: "bg-indigo-400" },
-  AdmissionProcessing: { bg: "bg-cyan-50", text: "text-cyan-700", dot: "bg-cyan-400" },
-  Refused: { bg: "bg-rose-50", text: "text-rose-700", dot: "bg-rose-400" },
-  Withdrawn: { bg: "bg-gray-50", text: "text-gray-700", dot: "bg-gray-400" },
-  PreArrival: { bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-400" },
-  Arrived: { bg: "bg-green-50", text: "text-green-700", dot: "bg-green-400" },
-  Completed: { bg: "bg-teal-50", text: "text-teal-700", dot: "bg-teal-400" },
+const STATUS_CONFIG: Record<string, { bg: string; text: string; icon: any }> = {
+  Pending: { bg: "bg-orange-50", text: "text-orange-700", icon: Clock },
+  Started: { bg: "bg-blue-50", text: "text-blue-700", icon: Activity },
+  ReviewbyOoshas: { bg: "bg-purple-50", text: "text-purple-700", icon: Users },
+  SubmitToSchool: { bg: "bg-indigo-50", text: "text-indigo-700", icon: Send },
+  AwaitingSchoolResponse: { bg: "bg-cyan-50", text: "text-cyan-700", icon: Clock },
+  AdmissionProcessing: { bg: "bg-violet-50", text: "text-violet-700", icon: Activity },
+  Refused: { bg: "bg-red-50", text: "text-red-700", icon: AlertCircle },
+  Withdrawn: { bg: "bg-gray-50", text: "text-gray-600", icon: X },
+  PreArrival: { bg: "bg-emerald-50", text: "text-emerald-700", icon: TrendingUp },
+  Arrived: { bg: "bg-green-50", text: "text-green-700", icon: CheckCircle },
+  Completed: { bg: "bg-teal-50", text: "text-teal-700", icon: CheckCircle },
 };
 
 function StatusPill({ status }: { status: string }) {
-  const cfg = STATUS_CONFIG[status] ?? { bg: "bg-slate-50", text: "text-slate-600", dot: "bg-slate-400" };
+  const cfg = STATUS_CONFIG[status] ?? { bg: "bg-slate-50", text: "text-slate-600", icon: Clock };
+  const Icon = cfg.icon;
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${cfg.bg} ${cfg.text}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${cfg.bg} ${cfg.text}`}>
+      <Icon size={12} />
       {status}
     </span>
   );
 }
 
 function PaymentBadge({ status }: { status: PaymentStatus }) {
-  const map: Record<PaymentStatus, string> = {
-    Pending: "bg-amber-50 text-amber-700",
-    Completed: "bg-emerald-50 text-emerald-700",
-    Failed: "bg-rose-50 text-rose-700",
+  const map: Record<PaymentStatus, { bg: string; text: string }> = {
+    Pending: { bg: "bg-orange-50", text: "text-orange-700" },
+    Completed: { bg: "bg-emerald-50", text: "text-emerald-700" },
+    Failed: { bg: "bg-red-50", text: "text-red-700" },
   };
-  return <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${map[status]}`}>{status}</span>;
+  return <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${map[status].bg} ${map[status].text}`}>{status}</span>;
+}
+
+function ProgressBar({ sent, total }: { sent: number; total: number }) {
+  const percentage = total > 0 ? (sent / total) * 100 : 0;
+  return (
+    <div className="flex items-center gap-2">
+      <div className="w-20 bg-gray-100 rounded-full h-1.5">
+        <div
+          className="bg-violet-600 h-1.5 rounded-full transition-all duration-300"
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+      <span className="text-xs text-gray-600 font-medium">
+        {sent} / {total}
+      </span>
+    </div>
+  );
+}
+
+function StatsDisplay({ sent, failed, delivered }: { sent: number; failed: number; delivered: number }) {
+  return (
+    <div className="flex items-center gap-3 text-xs">
+      <span className="text-emerald-600">Sent: {sent}</span>
+      <span className="text-red-600">Failed: {failed}</span>
+      <span className="text-blue-600">Delivered: {delivered}</span>
+    </div>
+  );
 }
 
 function Pagination({
@@ -156,10 +192,11 @@ function Pagination({
             <button
               key={page}
               onClick={() => onPageChange(page as number)}
-              className={`min-w-[32px] h-8 rounded-lg text-sm font-medium transition ${currentPage === page
-                ? "bg-violet-600 text-white"
-                : "border border-slate-200 text-slate-600 hover:bg-slate-50"
-                }`}
+              className={`min-w-[32px] h-8 rounded-lg text-sm font-medium transition ${
+                currentPage === page
+                  ? "bg-violet-600 text-white"
+                  : "border border-slate-200 text-slate-600 hover:bg-slate-50"
+              }`}
             >
               {page}
             </button>
@@ -200,39 +237,68 @@ export default function Page() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+ const [startDateFilter, setStartDateFilter] = useState("");
+const [endDateFilter, setEndDateFilter] = useState("");
 
-  const fetchApplications = useCallback(
-    async (page = 1) => {
-      setLoading(true);
-      try {
-        const params = new URLSearchParams();
-        params.set("page", page.toString());
-        params.set("limit", LIMIT.toString());
-        if (debouncedQuery) params.set("search", debouncedQuery);
-        if (statusFilter) params.set("primaryStatus", statusFilter);
+const fetchApplications = useCallback(
+  async (page = 1) => {
+    setLoading(true);
 
-        // const res = await axiosInstance.get(`/applications?getDataByAssignTo`, {
-        //   headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        // });
+    try {
+      const params = new URLSearchParams();
 
-        const res = await axiosInstance.get(`/applications/getApplicationsByCounsellor?${params.toString()}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-        const d = res.data;
-        setApplications(d.data || []);
-        setTotal(d.total || 0);
-        setTotalPages(d.pages || Math.ceil((d.total || 0) / LIMIT) || 1);
-        console.log(d.data);
-      } catch (err) {
-        console.error(err);
-        setApplications([]);
-      } finally {
-        setLoading(false);
+      params.set("page", page.toString());
+      params.set("limit", LIMIT.toString());
+
+      if (debouncedQuery) {
+        params.set("search", debouncedQuery);
       }
-    },
-    [debouncedQuery, statusFilter]
-  );
 
+      if (statusFilter) {
+        params.set("primaryStatus", statusFilter);
+      }
+
+      // Start Date Filter
+      if (startDateFilter) {
+        params.set("startDate", startDateFilter);
+      }
+
+      // End Date Filter
+      if (endDateFilter) {
+        params.set("endDate", endDateFilter);
+      }
+
+      const res = await axiosInstance.get(
+        `/applications/getApplicationsByCounsellor?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      const d = res.data;
+
+      setApplications(d.data || []);
+      setTotal(d.total || 0);
+      setTotalPages(
+        d.pages || Math.ceil((d.total || 0) / LIMIT) || 1
+      );
+
+    } catch (err) {
+      console.error(err);
+      setApplications([]);
+    } finally {
+      setLoading(false);
+    }
+  },
+  [
+    debouncedQuery,
+    statusFilter,
+    startDateFilter,
+    endDateFilter,
+  ]
+);
   useEffect(() => { setCurrentPage(1); }, [debouncedQuery, statusFilter]);
   useEffect(() => { fetchApplications(currentPage); }, [currentPage, fetchApplications]);
 
@@ -255,28 +321,30 @@ export default function Page() {
     );
   }
 
+  
+
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-5">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-full mx-auto px-6 py-6 space-y-5">
 
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Applications</h1>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Message Campaigns</h1>
             <p className="text-sm text-slate-500 mt-0.5">
-              {total > 0 ? `${total} total applications` : "Manage all student applications"}
+              Manage and track all your message campaigns
             </p>
           </div>
           <button
             onClick={() => setView("add")}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold transition shadow-sm shadow-violet-200"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold transition "
           >
-            <Plus size={16} /> New Application
+            <Plus size={16} /> New Campaign
           </button>
         </div>
 
         {/* Search + Filter Bar */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+        <div className="bg-white rounded-xl border border-slate-200  p-4">
           <div className="flex gap-3">
             <div className="relative flex-1">
               <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -284,8 +352,8 @@ export default function Page() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by name, email, application number…"
-                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition"
+                placeholder="Search campaigns..."
+                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition"
               />
               {query && (
                 <button onClick={() => setQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -295,10 +363,11 @@ export default function Page() {
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition ${showFilters || activeFilters > 0
-                ? "border-violet-300 bg-violet-50 text-violet-700"
-                : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                }`}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition ${
+                showFilters || activeFilters > 0
+                  ? "border-violet-300 bg-violet-50 text-violet-700"
+                  : "border-slate-200 text-slate-600 hover:bg-slate-50"
+              }`}
             >
               <Filter size={15} />
               Filters
@@ -310,46 +379,89 @@ export default function Page() {
             </button>
             <button
               onClick={() => fetchApplications(currentPage)}
-              className="p-2.5 rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 transition"
+              className="p-2.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 transition"
             >
               <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
             </button>
           </div>
 
           {showFilters && (
-            <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap gap-3 items-center">
-              <div className="flex items-center gap-2">
-                <label className="text-xs font-medium text-slate-500">Status</label>
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="text-sm rounded-lg border border-slate-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-400"
-                >
-                  <option value="">All Statuses</option>
-                  {STATUS_OPTIONS.map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
-              </div>
-              {activeFilters > 0 && (
-                <button
-                  onClick={() => { setStatusFilter(""); setQuery(""); }}
-                  className="text-xs text-rose-500 hover:text-rose-700 flex items-center gap-1"
-                >
-                  <X size={12} /> Clear all
-                </button>
-              )}
-            </div>
-          )}
+  <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap gap-3 items-center">
+    
+    {/* Status Filter */}
+    <div className="flex items-center gap-2">
+      <label className="text-xs font-medium text-slate-500">
+        Status
+      </label>
+
+      <select
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+        className="text-sm rounded-lg border border-slate-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-400"
+      >
+        <option value="">All Statuses</option>
+
+        {STATUS_OPTIONS.map((s) => (
+          <option key={s} value={s}>
+            {s}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* Start Date */}
+    <div className="flex items-center gap-2">
+      <label className="text-xs font-medium text-slate-500">
+        Start Date
+      </label>
+
+      <input
+        type="date"
+        value={startDateFilter}
+        onChange={(e) => setStartDateFilter(e.target.value)}
+        className="text-sm rounded-lg border border-slate-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-400"
+      />
+    </div>
+
+    {/* End Date */}
+    <div className="flex items-center gap-2">
+      <label className="text-xs font-medium text-slate-500">
+        End Date
+      </label>
+
+      <input
+        type="date"
+        value={endDateFilter}
+        onChange={(e) => setEndDateFilter(e.target.value)}
+        className="text-sm rounded-lg border border-slate-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-400"
+      />
+    </div>
+
+    {/* Clear Filters */}
+    {activeFilters > 0 && (
+      <button
+        onClick={() => {
+          setStatusFilter("");
+          setQuery("");
+          setStartDateFilter("");
+          setEndDateFilter("");
+        }}
+        className="text-xs text-rose-500 hover:text-rose-700 flex items-center gap-1"
+      >
+        <X size={12} /> Clear all
+      </button>
+    )}
+  </div>
+)}
         </div>
 
-        {/* Table */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        {/* Table - Matching the reference design */}
+        <div className="bg-white rounded-xl border border-slate-200  overflow-hidden">
           {loading ? (
             <div className="flex items-center justify-center py-20">
               <div className="flex flex-col items-center gap-3">
                 <RefreshCw size={24} className="animate-spin text-violet-500" />
-                <p className="text-sm text-slate-400">Loading applications…</p>
+                <p className="text-sm text-slate-400">Loading campaigns…</p>
               </div>
             </div>
           ) : applications.length === 0 ? (
@@ -357,7 +469,7 @@ export default function Page() {
               <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center">
                 <FileText size={22} className="text-slate-400" />
               </div>
-              <p className="text-sm font-medium text-slate-600">No applications found</p>
+              <p className="text-sm font-medium text-slate-600">No campaigns found</p>
               <p className="text-xs text-slate-400">Try adjusting your search or filters</p>
             </div>
           ) : (
@@ -366,59 +478,90 @@ export default function Page() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-100 bg-slate-50/80">
-                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Application No.</th>
-                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Student</th>
-                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Contect No.</th>
+                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
+                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Country</th>
                       <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Intake</th>
-                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Payment</th>
-                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Created</th>
-                      <th className="px-5 py-3.5 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Action</th>
+                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Apllication No.</th>
+                        <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Payment Status</th>
+                          <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Primary Status</th>
+                          <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Phone</th>
+                          <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Created At</th>
+                          <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Updated At</th>
+                  
+                     
+                      <th className="px-5 py-3.5 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    {applications.map((app: any) => (
-                      <tr key={app._id} className="hover:bg-slate-50/60 transition-colors group">
-                        <td className="px-5 py-4">
-                          <span className="font-mono text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md">
-                            {app.applicationNumber}
-                          </span>
-                        </td>
-                        <td className="px-5 py-4">
-                          <div className="flex items-center gap-3">
-                            {/* <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                              {app?.student?.name?.[0]?.toUpperCase() ?? "?"}
-                            </div> */}
-                            <div className="min-w-0">
-                              <p className="font-semibold text-slate-800 truncate capitalize">{app?.student?.name ?? "—"}</p>
-                              <p className="text-xs text-slate-400 truncate">{app?.student?.email}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-5 py-4 text-slate-600 text-xs">{app?.student?.phone ?? "—"}</td>
-
-                        <td className="px-5 py-4 text-slate-600 text-xs">{app.intake ?? "—"}</td>
-                        <td className="px-5 py-4">
-                          <StatusPill status={app.primaryStatus} />
-                        </td>
-                        <td className="px-5 py-4">
-                          <PaymentBadge status={app.paymentStatus} />
-                        </td>
-                        <td className="px-5 py-4 text-xs text-slate-500">{formatDate(app.createdAt)}</td>
-                        <td className="px-5 py-4 text-center">
-                          <button
+                    {applications.map((app: any, idx: number) => {
+                      // Mock data for the table columns matching the reference
+                      console.log(app)
+                      const campaignName = app?.student?.name || "Unnamed Campaign";
+                      const messageType = app?.country || "Unknown Country";
+                      const status = app?.intake;
+                      const schedule = app?.applicationNumber;
+                      const paymentStatus = app?.paymentStatus;
+                      const phone = app?.student?.phone || "—";
+                      const createdAt = formatDate(app?.createdAt);
+                      const primaryStatus = app?.primaryStatus || "—";
+                      const updatedAt = formatDate(app?.updatedAt);
+                    
+                      
+                      const statusColors: Record<string, string> = {
+                        "Sent": "text-emerald-600 bg-emerald-50",
+                        "Partial": "text-orange-600 bg-orange-50",
+                        "Pending": "text-amber-600 bg-amber-50",
+                        "Started": "text-blue-600 bg-blue-50",
+                      };
+                      
+                      return (
+                        <tr key={app._id} className="hover:bg-slate-50/60 transition-colors group">
+                          <td className="px-5 py-4">
+                            <span className="font-medium text-slate-800 text-sm">
+                              {campaignName.length > 30 ? campaignName.substring(0, 30) + "..." : campaignName}
+                            </span>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className="text-slate-600 text-xs">{messageType}</span>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className={`inline-flex items-center  py-1 rounded-md text-xs font-medium ${statusColors[status] || " text-gray-600"}`}>
+                              {status}
+                            </span>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className="text-slate-600 text-xs">{schedule}</span>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className="text-slate-600 text-xs">{paymentStatus}</span>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className="text-slate-600 text-xs">{primaryStatus}</span>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className="text-slate-600 text-xs">{phone}</span>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className="text-slate-600 text-xs">{createdAt}</span>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className="text-slate-600 text-xs">{updatedAt}</span>
+                          </td>
+                        
+                         
+                          <td className="px-5 py-4 text-center">
+                             <button
                             onClick={() => router.push(`/dashboard/application_details/${app._id}`)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-100 text-xs font-semibold transition"
                           >
                             <Eye size={13} /> View
                           </button>
-                        </td>
-                      </tr>
-                    ))}
-
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
-
               </div>
               <Pagination
                 currentPage={currentPage}
