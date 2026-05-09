@@ -382,7 +382,9 @@ export default function UniDetailsClient({
             className="overflow-x-auto scrollbar-hide"
           >
             <div className="flex gap-4 px-4">
-              {activeSections.map((section) => (
+              {activeSections.map((section) => {
+                console.log(section.section_key)
+                 return (
                 <button
                   key={section._id}
                   ref={(el) => {
@@ -398,7 +400,7 @@ export default function UniDetailsClient({
                     __html: section.heading
                   }} />
                 </button>
-              ))}
+              )})}
             </div>
           </div>
         </div>
@@ -417,7 +419,7 @@ export default function UniDetailsClient({
               }}
               className="scroll-mt-28"
             >
-              <h2 className="text-2xl font-bold text-slate-900 mb-4"
+              <h2 className="text-2xl font-bold text-primary mb-4 "
                 dangerouslySetInnerHTML={{
                   __html: section.heading
                 }}

@@ -14,9 +14,9 @@ const StudentVisaStories = ({
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slidesPerView, setSlidesPerView] = useState(3);
-  const [loaded, setLoaded] = useState(false);
+ 
 
-console.log(title)
+
 
   // Responsive slides
   useEffect(() => {
@@ -42,9 +42,7 @@ console.log(title)
     slideChanged(slider) {
       setCurrentSlide(slider.track.details.rel);
     },
-    created() {
-      setLoaded(true);
-    },
+   
   });
 
   // Auto slide
@@ -121,7 +119,7 @@ console.log(title)
 };
 
 const StoryCard = ({ story }) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
+  
 
   return (
     <div className="group bg-white rounded-3xl shadow overflow-hidden flex flex-col h-full">
@@ -129,17 +127,12 @@ const StoryCard = ({ story }) => {
       <div className="relative h-84 overflow-hidden bg-gradient-to-br from-orange-400 to-red-500">
         {story.image ? (
           <>
-            {!imageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-                <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            )}
+           
             <img
               src={story.image}
               alt={story.name}
-              onLoad={() => setImageLoaded(true)}
-              className={`w-full h-full object-cover object-top transition ${imageLoaded ? "opacity-100" : "opacity-0"
-                }`}
+             
+              className={`w-full h-full object-cover object-top transition opacity-100`}
             />
           </>
         ) : (
