@@ -7,7 +7,7 @@ const BASE_URL =
     ? "http://localhost:5000/api"
     : "https://api.ooshasglobal.com/api"
 
-
+ 
 export const serverInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 60000,
