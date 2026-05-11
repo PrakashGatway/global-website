@@ -175,7 +175,7 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
 
                     {footerData && footerData.length > 0 ? (
                       <ul className="list-disc pl-2 space-y-2 text-gray-100 text-sm">
-                        {footerData.slice(0, 6).reverse().map((country) => (
+                        {footerData.reverse().map((country) => (
                           <li 
                             key={country._id || country.slug}
                             className="cursor-pointer text-sm transition-all duration-300 hover:text-[#f46c44] hover:translate-x-2"
