@@ -129,6 +129,7 @@ export default function UniversitySliderClient({ universities }) {
 
 
 export const CountryCardGrid = ({ countries }) => {
+  console.log(countries)
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
       {countries.map((country) => (

@@ -45,7 +45,7 @@ const fetchNotifications = useCallback(async (page = 1, limit = 10) => {
   // Added filters.showUnreadOnly to dependency array
 }, [ axiosInstance]);
 
-  
+  // console.log("profile", profile);
 
     useEffect(() => {
       fetchNotifications();
@@ -139,13 +139,13 @@ const fetchNotifications = useCallback(async (page = 1, limit = 10) => {
                         <BellIcon className="w-5 h-5 text-muted-foreground" />
                         Notification
                       </Link>
-                      <Link
+                      {profile?.role !== "counsellor" && <Link
                         href="/dashboard/application"
                         className="flex items-center gap-3 w-full px-3 py-2.5 text-sm rounded-lg hover:bg-muted transition-colors"
                       >
                         <HistoryIcon className="w-5 h-5 text-muted-foreground" />
                         Application history
-                      </Link>
+                      </Link>}
                     </div>
                     <div className="p-1.5 border-t border-border">
                       <button

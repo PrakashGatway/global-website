@@ -263,18 +263,18 @@ export default function Homepage({
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
         className="
-    relative overflow-hidden
-    bg-white
-    bg-no-repeat bg-cover bg-bottom
-    pt-12 lg:pt-20 
-  "
+          relative overflow-hidden
+          bg-white
+          bg-no-repeat bg-cover bg-bottom
+          pt-12 lg:pt-20 
+        "
       >
-        {/* mobile overlay only */}
+        
         <div className="absolute inset-0 bg-white/50 md:bg-transparent pointer-events-none" />
 
         <div className="relative z-10 w-7xl max-w-screen mx-auto px-3">
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-2">
-            {/* LEFT CONTENT */}
+            
             <motion.div
               initial={{ x: -60, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -310,8 +310,7 @@ export default function Homepage({
                 }}
                 suppressHydrationWarning
               />
-
-              {/* CTA BUTTONS */}
+              
               <motion.div
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -348,7 +347,7 @@ export default function Homepage({
               </motion.div>
             </motion.div>
 
-            {/* RIGHT IMAGE */}
+            
             <motion.div
               initial={{ x: 60, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -356,7 +355,7 @@ export default function Homepage({
               className="flex justify-center lg:justify-end"
             >
               <div className="relative flex items-center justify-center">
-                {/* Animated Circle */}
+              
                 <div className="absolute -right top-51 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
                   <img
                     src="/images/hero-bg-round.png"
@@ -365,7 +364,7 @@ export default function Homepage({
                   />
                 </div>
 
-                {/* Hero Image */}
+                
                 {homePage?.hero?.heroImage && (
                   <motion.div
                     initial={{ scale: 0.9 }}

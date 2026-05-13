@@ -82,7 +82,7 @@ export default function DashboardPage() {
         </h2>
 
         <p className="text-sm sm:text-base text-gray-600 mt-2">
-          Contact your advisor at ApplyBoard.
+          Contact your advisor at ooshasglobal.
         </p>
 
         {/* Content */}
@@ -127,7 +127,7 @@ export default function DashboardPage() {
             href="#"
             className="text-purple-600 text-sm hover:underline"
           >
-            © 2026 ApplyBoard.com
+            © 2026 ooshasglobal.com
           </a>
         </div>
       </div>
