@@ -1,709 +1,936 @@
 {
-    "profile": {
-        "title": "Personal Information",
-        "fields": [
-            {
-                "name": "name",
-                "label": "Full Name",
-                "type": "text",
-                "required": true,
-                "validation": {
-                    "minLength": 2,
-                    "message": "full name must be at least 2 characters"
-                }
-            },
-            {
-                "name": "dateOfBirth",
-                "label": "Date of Birth",
-                "type": "date",
-                "required": true
-            },
-            {
-                "name": "firstLanguage",
-                "label": "First Language",
-                "type": "text",
-                "required": true
-            },
-            {
-                "name": "nationality",
-                "label": "Country of Citizenship",
-                "type": "select",
-                "options": [
-                    "India",
-                    "Canada",
-                    "USA",
-                    "UK",
-                    "Australia"
-                ],
-                "optionsSource": "countries",
-                "required": true
-            },
-            {
-                "name": "passportNumber",
-                "label": "Passport Number",
-                "type": "text",
-                "required": false,
-                "validation": {
-                    "minLength": 6,
-                    "message": "Invalid passport number"
-                }
-            },
-            {
-                "name": "passportExpiry",
-                "label": "Passport Expiry Date",
-                "type": "date",
-                "required": false
-            },
-            {
-                "name": "maritalStatus",
-                "label": "Marital Status",
-                "type": "radio",
-                "options": [
-                    {
-                        "label": "Single",
-                        "value": "Single"
-                    },
-                    {
-                        "label": "Married",
-                        "value": "Married"
-                    }
-                ],
-                "required": true
-            },
-            {
-                "name": "gender",
-                "label": "Gender",
-                "type": "radio",
-                "options": [
-                    {
-                        "label": "Male",
-                        "value": "male"
-                    },
-                    {
-                        "label": "Female",
-                        "value": "female"
-                    },
-                    {
-                        "label": "Other",
-                        "value": "other"
-                    }
-                ],
-                "required": true
-            }
-        ]
-    },
-    "address": {
-        "title": "Address Details",
-        "fields": [
-            {
-                "name": "address1",
-                "label": "Address Line 1",
-                "type": "text",
-                "required": true,
-                "validation": {
-                    "minLength": 5,
-                    "message": "Address too short"
-                },
-                "col": 2
-            },
-            {
-                "name": "address2",
-                "label": "Address Line 2",
-                "type": "text",
-                "validation": {
-                    "minLength": 5,
-                    "message": "Address too short"
-                },
-                "col": 2
-            },
-            {
-                "name": "city",
-                "label": "City",
-                "type": "text",
-                "required": true
-            },
-            {
-                "name": "country",
-                "label": "Country",
-                "type": "select",
-                "optionsSource": "countries",
-                "options": [
-                    "India",
-                    "Canada",
-                    "UK"
-                ],
-                "required": true
-            },
-            {
-                "name": "state",
-                "label": "State",
-                "type": "text",
-                "required": true
-            },
-            {
-                "name": "postalcode",
-                "label": "Postal Code",
-                "type": "text",
-                "validation": {
-                    "pattern": "^[0-9]{5,6}$",
-                    "message": "Invalid postal code"
-                }
-            }
-        ]
-    },
-    "education": {
-        "title": "Education History",
-        "type": "multi",
-        "sections": {
-            "summary": {
-                "type": "single",
-                "title": "Education Summary",
-                "fields": [
-                    {
-                        "name": "country",
-                        "label": "Country of education",
-                        "type": "select",
-                        "optionsSource": "countries",
-                        "required": true,
-                        "options": [
-                            "India",
-                            "Canada",
-                            "USA"
-                        ]
-                    },
-                    {
-                        "name": "highestEducationLevel",
-                        "label": "Highest level of education",
-                        "type": "select",
-                        "required": true,
-                        "options": [
-                            "Grade 10",
-                            "Grade 12",
-                            "Diploma",
-                            "Bachelor"
-                        ]
-                    },
-                    {
-                        "name": "gradingScheme",
-                        "label": "Grading scheme",
-                        "type": "select",
-                        "required": true,
-                        "options": [
-                            "Percentage",
-                            "CGPA"
-                        ]
-                    },
-                    {
-                        "name": "graduated",
-                        "label": "I have graduated",
-                        "type": "radio",
-                        "options": [
-                            {
-                                "label": "Yes",
-                                "value": "yes"
-                            },
-                            {
-                                "label": "No",
-                                "value": "no"
-                            }
-                        ],
-                        "required": true,
-                        "col": 2
-                    }
-                ]
-            },
-            "schools": {
-                "type": "repeatable",
-                "title": "Schools Attended",
-                "fields": [
-                    {
-                        "name": "country",
-                        "label": "Country of institution",
-                        "type": "select",
-                        "optionsSource": "countries",
-                        "required": true
-                    },
-                    {
-                        "name": "institutionName",
-                        "label": "Name of institution",
-                        "type": "text",
-                        "required": true
-                    },
-                    {
-                        "name": "educationLevel",
-                        "label": "Level of education",
-                        "type": "select",
-                        "required": true,
-                        "options": [
-                            "Grade1",
-                            "Grade2",
-                            "Grade3"
-                        ]
-                    },
-                    {
-                        "name": "gradingScheme",
-                        "label": "Grading Scheme",
-                        "type": "select",
-                        "required": true,
-                        "options": [
-                            "Other"
-                        ]
-                    },
-                    {
-                        "name": "startDate",
-                        "label": "Attended institution from",
-                        "type": "date",
-                        "required": true
-                    },
-                    {
-                        "name": "endDate",
-                        "label": "Attended institution to",
-                        "type": "date",
-                        "required": true
-                    },
-                    {
-                        "name": "degreeName",
-                        "label": "Degree name",
-                        "type": "text"
-                    },
-                    {
-                        "name": "address",
-                        "label": "Address",
-                        "type": "text",
-                        "col": 2
-                    },
-                    {
-                        "name": "city",
-                        "label": "City/Town",
-                        "type": "text"
-                    },
-                    {
-                        "name": "state",
-                        "label": "Province / State",
-                        "type": "text"
-                    },
-                    {
-                        "name": "postalCode",
-                        "label": "Postal / Zip code",
-                        "type": "text"
-                    }
-                ]
-            }
+  "profile": {
+    "title": "Personal Name",
+    "fields": [
+      {
+        "name": "name",
+        "label": "Full Name",
+        "type": "text",
+        "required": true,
+        "validation": {
+          "minLength": 2,
+          "message": "full name must be at least 2 characters"
         }
-    },
-    "testscore": {
+      },
+      {
+        "name": "dateOfBirth",
+        "label": "Date of Birth",
+        "type": "date",
+        "required": true
+      },
+      {
+        "name": "firstLanguage",
+        "label": "First Language",
+        "type": "text",
+        "required": true
+      },
+      {
+        "name": "nationality",
+        "label": "Country of Citizenship",
+        "type": "select",
+        "options": [
+          "India",
+          "Canada",
+          "USA",
+          "UK",
+          "Australia"
+        ],
+        "optionsSource": "countries",
+        "required": true
+      },
+      {
+        "name": "passportNumber",
+        "label": "Passport Number",
+        "type": "text",
+        "required": false,
+        "validation": {
+          "minLength": 6,
+          "message": "Invalid passport number"
+        }
+      },
+      {
+        "name": "passportExpiry",
+        "label": "Passport Expiry Date",
+        "type": "date",
+        "required": false
+      },
+      {
+        "name": "maritalStatus",
+        "label": "Marital Status",
+        "type": "radio",
+        "options": [
+          {
+            "label": "Single",
+            "value": "Single"
+          },
+          {
+            "label": "Married",
+            "value": "Married"
+          }
+        ],
+        "required": true
+      },
+      {
+        "name": "gender",
+        "label": "Gender",
+        "type": "radio",
+        "options": [
+          {
+            "label": "Male",
+            "value": "male"
+          },
+          {
+            "label": "Female",
+            "value": "female"
+          },
+          {
+            "label": "Other",
+            "value": "other"
+          }
+        ],
+        "required": true
+      }
+    ]
+  },
+  "address": {
+    "title": "Address Details",
+    "fields": [
+      {
+        "name": "address1",
+        "label": "Address Line 1",
+        "type": "text",
+        "required": true,
+        "validation": {
+          "minLength": 5,
+          "message": "Address too short"
+        },
+        "col": 2
+      },
+      {
+        "name": "address2",
+        "label": "Address Line 2",
+        "type": "text",
+        "validation": {
+          "minLength": 5,
+          "message": "Address too short"
+        },
+        "col": 2
+      },
+      {
+        "name": "city",
+        "label": "City",
+        "type": "text",
+        "required": true
+      },
+      {
+        "name": "country",
+        "label": "Country",
+        "type": "select",
+        "optionsSource": "countries",
+        "options": [
+          "India",
+          "Canada",
+          "UK"
+        ],
+        "required": true
+      },
+      {
+        "name": "state",
+        "label": "State",
+        "type": "text",
+        "required": true
+      },
+      {
+        "name": "postalcode",
+        "label": "Postal Code",
+        "type": "text",
+        "validation": {
+          "pattern": "/^[0-9]{5,6}$/",
+          "message": "Invalid postal code"
+        }
+      }
+    ]
+  },
+  "education": {
+    "title": "Education History",
+    "type": "multi",
+    "sections": {
+      "summary": {
+        "type": "single",
+        "title": "Education Summary",
+        "fields": [
+          {
+            "name": "countryOfEducation",
+            "label": "Country of education",
+            "type": "select",
+            "optionsSource": "countries",
+            "required": true,
+            "options": [
+              "India",
+              "Canada",
+              "USA"
+            ]
+          },
+          {
+            "name": "highestEducationLevel",
+            "label": "Highest level of education",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Grade 10",
+              "Grade 12",
+              "Diploma",
+              "Bachelor"
+            ]
+          },
+          {
+            "name": "gradingScheme",
+            "label": "Grading scheme",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Percentage",
+              "CGPA"
+            ]
+          },
+          {
+            "name": "graduated",
+            "label": "I have graduated",
+            "type": "radio",
+            "options": [
+              {
+                "label": "Yes",
+                "value": "yes"
+              },
+              {
+                "label": "No",
+                "value": "no"
+              }
+            ],
+            "required": true,
+            "col": 2
+          }
+        ]
+      },
+      "schools": {
+        "type": "repeatable",
+        "title": "Schools Attended",
+        "fields": [
+          {
+            "name": "country",
+            "label": "Country of institution",
+            "type": "select",
+            "optionsSource": "countries",
+            "required": true
+          },
+          {
+            "name": "institutionName",
+            "label": "Name of institution",
+            "type": "text",
+            "required": true
+          },
+          {
+            "name": "educationLevel",
+            "label": "Level of education",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Grade1",
+              "Grade2",
+              "Grade3"
+            ]
+          },
+          {
+            "name": "gradingScheme",
+            "label": "Grading Scheme",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Other"
+            ]
+          },
+          {
+            "name": "startDate",
+            "label": "Attended institution from",
+            "type": "date",
+            "required": true
+          },
+          {
+            "name": "endDate",
+            "label": "Attended institution to",
+            "type": "date",
+            "required": true
+          },
+          {
+            "name": "degreeName",
+            "label": "Degree name",
+            "type": "text"
+          },
+          {
+            "name": "address",
+            "label": "Address",
+            "type": "text",
+            "col": 2
+          },
+          {
+            "name": "city",
+            "label": "City/Town",
+            "type": "text"
+          },
+          {
+            "name": "state",
+            "label": "Province / State",
+            "type": "text"
+          },
+          {
+            "name": "postalCode",
+            "label": "Postal / Zip code",
+            "type": "text"
+          }
+        ]
+      }
+    }
+  },
+  "testscore": {
+    "title": "English Test Scores",
+    "type": "multi",
+    "sections": {
+      "englishscore": {
         "title": "English Test Scores",
-        "type": "multi",
-        "sections": {
-            "englishscore": {
-                "title": "English Test Scores",
-                "type": "single",
-                "fields": [
-                    {
-                        "name": "englishStatus",
-                        "label": "English language proficiency",
-                        "type": "radio",
-                        "options": [
-                            {
-                                "label": "I have valid proof of English language proficiency",
-                                "value": "hasTest",
-                                "children": [
-                                    {
-                                        "name": "englishTest",
-                                        "label": "Select Test Type",
-                                        "type": "radio",
-                                        "options": [
-                                            {
-                                                "label": "TOEFL",
-                                                "value": "toefl",
-                                                "scoreGroup": {
-                                                    "title": "Your Scores",
-                                                    "fields": [
-                                                        {
-                                                            "name": "reading",
-                                                            "label": "Reading",
-                                                            "type": "number",
-                                                            "required": true
-                                                        },
-                                                        {
-                                                            "name": "listening",
-                                                            "label": "Listening",
-                                                            "type": "number",
-                                                            "required": true
-                                                        },
-                                                        {
-                                                            "name": "writing",
-                                                            "label": "Writing",
-                                                            "type": "number",
-                                                            "required": true
-                                                        },
-                                                        {
-                                                            "name": "speaking",
-                                                            "label": "Speaking",
-                                                            "type": "number",
-                                                            "required": true
-                                                        },
-                                                        {
-                                                            "name": "examDate",
-                                                            "label": "Date of exam",
-                                                            "type": "date",
-                                                            "required": true
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "label": "IELTS",
-                                                "value": "ielts",
-                                                "scoreGroup": {
-                                                    "title": "Your Scores",
-                                                    "fields": [
-                                                        {
-                                                            "name": "reading",
-                                                            "type": "number",
-                                                            "label": "Reading",
-                                                            "required": true
-                                                        },
-                                                        {
-                                                            "name": "listening",
-                                                            "type": "number",
-                                                            "label": "Listening",
-                                                            "required": true
-                                                        },
-                                                        {
-                                                            "name": "writing",
-                                                            "type": "number",
-                                                            "label": "Writing",
-                                                            "required": true
-                                                        },
-                                                        {
-                                                            "name": "speaking",
-                                                            "type": "number",
-                                                            "label": "Speaking",
-                                                            "required": true
-                                                        },
-                                                        {
-                                                            "name": "examDate",
-                                                            "type": "date",
-                                                            "label": "Date of exam",
-                                                            "required": true
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "label": "PTE",
-                                                "value": "pte",
-                                                "scoreGroup": {
-                                                    "title": "Your Scores",
-                                                    "fields": [
-                                                        {
-                                                            "name": "totalScore",
-                                                            "label": "Total Score",
-                                                            "type": "number",
-                                                            "required": true
-                                                        },
-                                                        {
-                                                            "name": "examDate",
-                                                            "label": "Date of exam",
-                                                            "type": "date",
-                                                            "required": true
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "label": "Duolingo",
-                                                "value": "duolingo",
-                                                "scoreGroup": {
-                                                    "title": "Your Scores",
-                                                    "fields": [
-                                                        {
-                                                            "name": "totalScore",
-                                                            "label": "Total Score",
-                                                            "type": "number",
-                                                            "required": true
-                                                        },
-                                                        {
-                                                            "name": "examDate",
-                                                            "label": "Date of exam",
-                                                            "type": "date",
-                                                            "required": true
-                                                        }
-                                                    ]
-                                                }
-                                            },
-                                            {
-                                                "label": "Other tests",
-                                                "value": "othertest",
-                                                "tooltip": "When this option is selected, we will assume that you meet the language proficiency requirements for all programs and bypass the language proficiency check on the search page. This may cause programs to appear for which you are not eligible. Your precise eligibility will be evaluated later, after you create an application and upload the required documents."
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "label": "I have not taken a language test and will apply to programs allowing proof after acceptance",
-                                "value": "afterAcceptance"
-                            },
-                            {
-                                "label": "I believe my academic or nationality background qualifies me for an exemption",
-                                "value": "exemption"
-                            },
-                            {
-                                "label": "I have not taken a language test and do not plan to take one",
-                                "value": "noTest"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "coursescore": {
-                "title": "GRE or GMAT Scores",
-                "type": "single",
-                "fields": [
-                    {
-                        "name": "hasGmat",
-                        "label": "I have GMAT exam scores",
-                        "type": "switch",
-                        "defaultValue": false,
-                        "children": [
-                            {
-                                "name": "gmatTotal",
-                                "label": "Total",
-                                "type": "scoreGroup",
-                                "fields": [
-                                    {
-                                        "name": "score",
-                                        "label": "Score",
-                                        "type": "number",
-                                        "required": true
-                                    },
-                                    {
-                                        "name": "rank",
-                                        "label": "Rank %",
-                                        "type": "number",
-                                        "required": true
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "gmatVerbal",
-                                "label": "Verbal",
-                                "type": "scoreGroup",
-                                "fields": [
-                                    {
-                                        "name": "score",
-                                        "label": "Score",
-                                        "type": "number",
-                                        "required": true
-                                    },
-                                    {
-                                        "name": "rank",
-                                        "label": "Rank %",
-                                        "type": "number",
-                                        "required": true
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "gmatQuantitative",
-                                "label": "Quantitative",
-                                "type": "scoreGroup",
-                                "fields": [
-                                    {
-                                        "name": "score",
-                                        "label": "Score",
-                                        "type": "number",
-                                        "required": true
-                                    },
-                                    {
-                                        "name": "rank",
-                                        "label": "Rank %",
-                                        "type": "number",
-                                        "required": true
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "gmatAwa",
-                                "label": "AWA",
-                                "type": "scoreGroup",
-                                "fields": [
-                                    {
-                                        "name": "score",
-                                        "label": "Score",
-                                        "type": "number",
-                                        "required": true
-                                    },
-                                    {
-                                        "name": "rank",
-                                        "label": "Rank %",
-                                        "type": "number",
-                                        "required": true
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "gmatExamDate",
-                                "label": "Date of exam",
-                                "type": "date",
-                                "required": true
-                            }
-                        ]
-                    },
-                    {
-                        "name": "hasGre",
-                        "label": "I have GRE exam scores",
-                        "type": "switch",
-                        "defaultValue": false,
-                        "children": [
-                            {
-                                "name": "greTotal",
-                                "label": "Total",
-                                "type": "scoreGroup",
-                                "fields": [
-                                    {
-                                        "name": "score",
-                                        "label": "Score",
-                                        "type": "number",
-                                        "required": true
-                                    },
-                                    {
-                                        "name": "rank",
-                                        "label": "Rank %",
-                                        "type": "number",
-                                        "required": true
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "greVerbal",
-                                "label": "Verbal",
-                                "type": "scoreGroup",
-                                "fields": [
-                                    {
-                                        "name": "score",
-                                        "label": "Score",
-                                        "type": "number",
-                                        "required": true
-                                    },
-                                    {
-                                        "name": "rank",
-                                        "label": "Rank %",
-                                        "type": "number",
-                                        "required": true
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "greQuantitative",
-                                "label": "Quantitative",
-                                "type": "scoreGroup",
-                                "fields": [
-                                    {
-                                        "name": "score",
-                                        "label": "Score",
-                                        "type": "number",
-                                        "required": true
-                                    },
-                                    {
-                                        "name": "rank",
-                                        "label": "Rank %",
-                                        "type": "number",
-                                        "required": true
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "greAwa",
-                                "label": "AWA",
-                                "type": "scoreGroup",
-                                "fields": [
-                                    {
-                                        "name": "score",
-                                        "label": "Score",
-                                        "type": "number",
-                                        "required": true
-                                    },
-                                    {
-                                        "name": "rank",
-                                        "label": "Rank %",
-                                        "type": "number",
-                                        "required": true
-                                    }
-                                ]
-                            },
-                            {
-                                "name": "greExamDate",
-                                "label": "Date of exam",
-                                "type": "date",
-                                "required": true
-                            }
-                        ]
-                    }
-                ]
-            }
-        }
-    },
-    "visaStudypermit": {
-        "title": "Visa & Study Permit",
         "type": "single",
         "fields": [
-            {
-                "name": "visaRefused",
-                "label": "Have you been refused a visa from Canada, the USA, the United Kingdom, New Zealand, Australia or Ireland?",
-                "type": "radio",
+          {
+            "name": "englishStatus",
+            "label": "English language proficiency",
+            "type": "radio",
+            "options": [
+              {
+                "label": "I have valid proof of English language proficiency",
+                "value": "hasTest",
+                "children": [
+                  {
+                    "name": "englishTest",
+                    "label": "Select Test Type",
+                    "type": "radio",
+                    "options": [
+                      {
+                        "label": "TOEFL",
+                        "value": "toefl",
+                        "scoreGroup": {
+                          "title": "Your Scores",
+                          "fields": [
+                            {
+                              "name": "reading",
+                              "label": "Reading",
+                              "type": "number",
+                              "required": true
+                            },
+                            {
+                              "name": "listening",
+                              "label": "Listening",
+                              "type": "number",
+                              "required": true
+                            },
+                            {
+                              "name": "writing",
+                              "label": "Writing",
+                              "type": "number",
+                              "required": true
+                            },
+                            {
+                              "name": "speaking",
+                              "label": "Speaking",
+                              "type": "number",
+                              "required": true
+                            },
+                            {
+                              "name": "examDate",
+                              "label": "Date of exam",
+                              "type": "date",
+                              "required": true
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "label": "IELTS",
+                        "value": "ielts",
+                        "scoreGroup": {
+                          "title": "Your Scores",
+                          "fields": [
+                            {
+                              "name": "reading",
+                              "type": "number",
+                              "label": "Reading",
+                              "required": true
+                            },
+                            {
+                              "name": "listening",
+                              "type": "number",
+                              "label": "Listening",
+                              "required": true
+                            },
+                            {
+                              "name": "writing",
+                              "type": "number",
+                              "label": "Writing",
+                              "required": true
+                            },
+                            {
+                              "name": "speaking",
+                              "type": "number",
+                              "label": "Speaking",
+                              "required": true
+                            },
+                            {
+                              "name": "examDate",
+                              "type": "date",
+                              "label": "Date of exam",
+                              "required": true
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "label": "PTE",
+                        "value": "pte",
+                        "scoreGroup": {
+                          "title": "Your Scores",
+                          "fields": [
+                            {
+                              "name": "totalScore",
+                              "label": "Total Score",
+                              "type": "number",
+                              "required": true
+                            },
+                            {
+                              "name": "examDate",
+                              "label": "Date of exam",
+                              "type": "date",
+                              "required": true
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "label": "Duolingo",
+                        "value": "duolingo",
+                        "scoreGroup": {
+                          "title": "Your Scores",
+                          "fields": [
+                            {
+                              "name": "totalScore",
+                              "label": "Total Score",
+                              "type": "number",
+                              "required": true
+                            },
+                            {
+                              "name": "examDate",
+                              "label": "Date of exam",
+                              "type": "date",
+                              "required": true
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "label": "Other tests",
+                        "value": "othertest",
+                        "tooltip": "When this option is selected, we will assume that you meet the language proficiency requirements for all programs and bypass the language proficiency check on the search page. This may cause programs to appear for which you are not eligible. Your precise eligibility will be evaluated later, after you create an application and upload the required documents."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "label": "I have not taken a language test and will apply to programs allowing proof after acceptance",
+                "value": "afterAcceptance"
+              },
+              {
+                "label": "I believe my academic or nationality background qualifies me for an exemption",
+                "value": "exemption"
+              },
+              {
+                "label": "I have not taken a language test and do not plan to take one",
+                "value": "noTest"
+              }
+            ]
+          }
+        ]
+      },
+      "coursescore": {
+        "title": "GRE or GMAT Scores",
+        "type": "single",
+        "fields": [
+          {
+            "name": "hasGmat",
+            "label": "I have GMAT exam scores",
+            "type": "switch",
+            "defaultValue": false,
+            "children": [
+              {
+                "name": "gmatTotal",
+                "label": "Total",
+                "type": "scoreGroup",
+                "fields": [
+                  {
+                    "name": "score",
+                    "label": "Score",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "name": "rank",
+                    "label": "Rank %",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "name": "gmatVerbal",
+                "label": "Verbal",
+                "type": "scoreGroup",
+                "fields": [
+                  {
+                    "name": "score",
+                    "label": "Score",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "name": "rank",
+                    "label": "Rank %",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "name": "gmatQuantitative",
+                "label": "Quantitative",
+                "type": "scoreGroup",
+                "fields": [
+                  {
+                    "name": "score",
+                    "label": "Score",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "name": "rank",
+                    "label": "Rank %",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "name": "gmatAwa",
+                "label": "AWA",
+                "type": "scoreGroup",
+                "fields": [
+                  {
+                    "name": "score",
+                    "label": "Score",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "name": "rank",
+                    "label": "Rank %",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "name": "gmatExamDate",
+                "label": "Date of exam",
+                "type": "date",
+                "required": true
+              }
+            ]
+          },
+          {
+            "name": "hasGre",
+            "label": "I have GRE exam scores",
+            "type": "switch",
+            "defaultValue": false,
+            "children": [
+              {
+                "name": "greTotal",
+                "label": "Total",
+                "type": "scoreGroup",
+                "fields": [
+                  {
+                    "name": "score",
+                    "label": "Score",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "name": "rank",
+                    "label": "Rank %",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "name": "greVerbal",
+                "label": "Verbal",
+                "type": "scoreGroup",
+                "fields": [
+                  {
+                    "name": "score",
+                    "label": "Score",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "name": "rank",
+                    "label": "Rank %",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "name": "greQuantitative",
+                "label": "Quantitative",
+                "type": "scoreGroup",
+                "fields": [
+                  {
+                    "name": "score",
+                    "label": "Score",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "name": "rank",
+                    "label": "Rank %",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "name": "greAwa",
+                "label": "AWA",
+                "type": "scoreGroup",
+                "fields": [
+                  {
+                    "name": "score",
+                    "label": "Score",
+                    "type": "number",
+                    "required": true
+                  },
+                  {
+                    "name": "rank",
+                    "label": "Rank %",
+                    "type": "number",
+                    "required": true
+                  }
+                ]
+              },
+              {
+                "name": "greExamDate",
+                "label": "Date of exam",
+                "type": "date",
+                "required": true
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "visaStudypermit": {
+    "title": "Visa & Study Permit",
+    "type": "single",
+    "fields": [
+      {
+        "name": "visaRefused",
+        "label": "Have you been refused a visa from Canada, the USA, the United Kingdom, New Zealand, Australia or Ireland?",
+        "type": "radio",
+        "required": true,
+        "options": [
+          {
+            "label": "Yes",
+            "value": "yes"
+          },
+          {
+            "label": "No",
+            "value": "no"
+          }
+        ],
+        "tooltip": "Include any past visa refusals. This information helps assess eligibility."
+      },
+      {
+        "name": "validVisas",
+        "label": "Which valid study permits or visas do you have?",
+        "type": "checkbox",
+        "options": [
+          {
+            "label": "Canadian Study Permit / Visitor Visa",
+            "value": "canada"
+          },
+          {
+            "label": "USA F1 Visa",
+            "value": "usa"
+          },
+          {
+            "label": "Australian Study Visa",
+            "value": "australia"
+          },
+          {
+            "label": "UK Tier 4 Student / Short Term Study Visa",
+            "value": "uk"
+          },
+          {
+            "label": "Irish Stamp 2",
+            "value": "ireland"
+          },
+          {
+            "label": "I don't have this",
+            "value": "none"
+          }
+        ]
+      },
+      {
+        "name": "visaDetails",
+        "label": "Please provide more information about your current study permit/visa and any past refusals, if any",
+        "type": "textarea",
+        "placeholder": "Enter your details..."
+      }
+    ]
+  },
+  "chooseCourse": {
+    "type": "stepper",
+    "steps": [
+      {
+        "title": "Destination Country",
+        "name": "countryInterested",
+        "label": "Which countries are you interested in?",
+        "image": "https://images.unsplash.com/photo-1699347914926-19507156bb72?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "type": "select-card",
+        "required": true,
+        "options": [
+          {
+            "label": "Canada",
+            "value": "canada",
+            "image": "https://plus.unsplash.com/premium_photo-1674591172352-0af9308f0dac?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          },
+          {
+            "label": "U.S.A",
+            "value": "usa",
+            "image": "https://plus.unsplash.com/premium_photo-1674591172747-2c1d461d7b68?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          },
+          {
+            "label": "Australia",
+            "value": "australia",
+            "image": "https://images.unsplash.com/photo-1680173764109-bfe1a34a1877?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          },
+          {
+            "label": "U.K.",
+            "value": "uk",
+            "image": "https://plus.unsplash.com/premium_photo-1674591172569-834e3c928c3d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          },
+          {
+            "label": "Germany",
+            "value": "germany",
+            "image": "https://plus.unsplash.com/premium_photo-1674590091046-18f2ad87f344?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          },
+          {
+            "label": "Ireland",
+            "value": "ireland",
+            "image": "https://plus.unsplash.com/premium_photo-1675865394105-f4b090661646?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          }
+        ]
+      },
+      {
+        "title": "Field of Study",
+        "name": "studyPreference",
+        "label": "What would you like to study?",
+        "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format&fit=crop",
+        "type": "group",
+        "fields": [
+          {
+            "name": "fieldOfStudy",
+            "label": "Select a field of study",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Engineering and Technology",
+              "Sciences",
+              "Arts",
+              "Business, Management and Economics",
+              "Law, Politics, Social & Teaching"
+            ]
+          },
+          {
+            "name": "programOfStudy",
+            "label": "Select a program of study",
+            "type": "select",
+            "required": true,
+            "options": [
+              "Engineering and Technology",
+              "Sciences",
+              "Arts",
+              "Business, Management and Economics",
+              "Law, Politics, Social & Teaching"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Study Level",
+        "name": "studyLevel",
+        "label": "What is your intended level of study?",
+        "image": "https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1200&auto=format&fit=crop",
+        "type": "radio-card",
+        "required": true,
+        "options": [
+          {
+            "label": "Master's or Post-Graduate Certificate",
+            "value": "masters"
+          },
+          {
+            "label": "Bachelor's Degree",
+            "value": "bachelors"
+          },
+          {
+            "label": "College Diploma / Certificate",
+            "value": "diploma"
+          }
+        ]
+      },
+      {
+        "title": "Nationality",
+        "name": "nationality",
+        "label": "What is your nationality?",
+        "image": "https://plus.unsplash.com/premium_photo-1670517733844-f3b8fd6de86c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "optionsSource": "countries",
+        "type": "select",
+        "required": true,
+        "helperText": "(auto detected) — you can change this if needed",
+        "options": [
+          "India",
+          "Canada",
+          "USA",
+          "UK",
+          "Australia",
+          "Germany",
+          "Ireland"
+        ]
+      },
+      {
+        "title": "English Proficiency",
+        "name": "englishProficiency",
+        "label": "Let's talk about English tests",
+        "image": "/images/onboarding/english.png",
+        "type": "conditional-radio",
+        "question": "Do you have any English test results?",
+        "subLabel": "IELTS, TOEFL, PTE, Duolingo, etc.",
+        "required": true,
+        "options": [
+          {
+            "label": "Yes, I have results",
+            "value": "yes",
+            "fields": [
+              {
+                "name": "englishExamType",
+                "label": "Select your Test",
+                "type": "select",
                 "required": true,
                 "options": [
-                    {
-                        "label": "Yes",
-                        "value": "yes"
-                    },
-                    {
-                        "label": "No",
-                        "value": "no"
-                    }
-                ],
-                "tooltip": "Include any past visa refusals. This information helps assess eligibility."
-            },
-            {
-                "name": "validVisas",
-                "label": "Which valid study permits or visas do you have?",
-                "type": "checkbox",
-                "options": [
-                    {
-                        "label": "Canadian Study Permit / Visitor Visa",
-                        "value": "canada"
-                    },
-                    {
-                        "label": "USA F1 Visa",
-                        "value": "usa"
-                    },
-                    {
-                        "label": "Australian Study Visa",
-                        "value": "australia"
-                    },
-                    {
-                        "label": "UK Tier 4 Student / Short Term Study Visa",
-                        "value": "uk"
-                    },
-                    {
-                        "label": "Irish Stamp 2",
-                        "value": "ireland"
-                    },
-                    {
-                        "label": "I don't have this",
-                        "value": "none"
-                    }
+                  "IELTS",
+                  "TOEFL",
+                  "PTE",
+                  "Duolingo"
                 ]
-            },
-            {
-                "name": "visaDetails",
-                "label": "Please provide more information about your current study permit/visa and any past refusals, if any",
-                "type": "textarea",
-                "placeholder": "Enter your details..."
-            }
+              },
+              {
+                "name": "overallScore",
+                "label": "Enter your score",
+                "type": "input",
+                "inputType": "number",
+                "required": true,
+                "placeholder": "Enter your score"
+              }
+            ]
+          },
+          {
+            "label": "No, I don't have any",
+            "value": "no"
+          }
         ]
-    }
+      },
+      {
+        "title": "Financials",
+        "name": "financialFunds",
+        "label": "Available funds for tuition and living expenses abroad? (USD)",
+        "image": "https://plus.unsplash.com/premium_photo-1661718074815-1564d2eb920f?q=80&w=1285&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "type": "range",
+        "required": true,
+        "min": 0,
+        "max": 50000,
+        "step": 500,
+        "unit": "USD"
+      },
+      {
+        "title": "Personalized Study Plan",
+        "name": "studyPlanUnlocked",
+        "type": "success",
+        "buttonText": "Start Now",
+        "bannerMessage": "🎉 You've unlocked your personalized study plan!",
+        "description": "Congratulations! Your personalized plan is ready with exclusive benefits designed just for you.",
+        "benefits": [
+          {
+            "icon": "💰",
+            "title": "$500 offer",
+            "sub": "for early applicants"
+          },
+          {
+            "icon": "🎓",
+            "title": "Scholarship opportunities",
+            "sub": "matched to your profile"
+          },
+          {
+            "icon": "👨‍🏫",
+            "title": "Free 1:1 session",
+            "sub": "with an education advisor"
+          }
+        ],
+        "freeService": {
+          "title": "Free services",
+          "desc": "Our service is 100% free. You'll never pay for assistance."
+        },
+        "offerBox": {
+          "title": "⚡ Limited Time Offer",
+          "message": "Create your free account to access your plan and claim your rewards.",
+          "points": [
+            "100% Free Service",
+            "Instant Access",
+            "Secure Process"
+          ]
+        },
+        "stats": [
+          {
+            "value": "1.3M+",
+            "label": "Students helped"
+          },
+          {
+            "value": "95%",
+            "label": "Success rate"
+          },
+          {
+            "value": "1,500+",
+            "label": "Universities"
+          }
+        ]
+      }
+    ]
+  }
 }
