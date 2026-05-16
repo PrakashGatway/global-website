@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useEffect, useLayoutEffect } from "react"
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useParams, useRouter,
+    //  useSearchParams
+     } from "next/navigation"
 import { motion } from "framer-motion"
 import {
     MapPin, Globe, Users, Star, Calendar,
@@ -440,18 +442,18 @@ export default function CountryDetailPage() {
     const [activeTab, setActiveTab] = useState("overview")
     const [saved, setSaved] = useState(false)
 
-    const searchParams = useSearchParams();
+    // const searchParams = useSearchParams();
 
-    useEffect(() => {
+    // useEffect(() => {
         
-    const tabFromUrl = searchParams.get("tab");
+    // const tabFromUrl = searchParams.get("tab");
     
-    if (tabFromUrl) {
-        setActiveTab(tabFromUrl);
-    } else if (country?.extra_content?.[0]?.sections?.[0]?.section_key) {
-        setActiveTab(country.extra_content[0].sections[0].section_key);
-    }
-    }, [searchParams, country]);
+    // if (tabFromUrl) {
+    //     setActiveTab(tabFromUrl);
+    // } else if (country?.extra_content?.[0]?.sections?.[0]?.section_key) {
+    //     setActiveTab(country.extra_content[0].sections[0].section_key);
+    // }
+    // }, [searchParams, country]);
 
 
     useEffect(() => {
