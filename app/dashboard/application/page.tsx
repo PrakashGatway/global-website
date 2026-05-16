@@ -297,7 +297,8 @@ export default function ApplicationHistoryPage({heading = "Application History",
     const statusInfo = getStatusInfo(application.primaryStatus)
     const paymentInfo = getPaymentStatusInfo(application.paymentStatus)
     const university = application.course?.university
-    const documentCount = application.documents.length
+    const documentCount = application.documents.length;
+
 
     return (
       <motion.div
@@ -351,13 +352,13 @@ export default function ApplicationHistoryPage({heading = "Application History",
                 </span>
               </span>
             </div> */}
-            {application.course.applicationFee && statusInfo.label == "Pending" && (
+            {application.course.applicationFee !== 0 && statusInfo.label == "Pending" && (
               <span className="text-sm font-medium text-gray-900">
                 Application Fee: {application.course.currency || 'USD'} {application.course.applicationFee.toLocaleString()}
               </span>
             )}
             <div className="flex w-full justify-end gap-1">
-              {paymentInfo.label == "Pending" && (
+              {(application.course.applicationFee !== 0 && paymentInfo.label == "Pending") && (
                 <button onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
@@ -373,10 +374,11 @@ export default function ApplicationHistoryPage({heading = "Application History",
 
           </div>
         </div>
-        {paymentInfo.label == "Pending" && errorMessage('Without payment confirmation, the application process cannot proceed. Please complete the payment to move forward with your application.', 'py-2')}
+        {(application.course.applicationFee !== 0 && paymentInfo.label == "Pending") && errorMessage('Without payment confirmation, the application process cannot proceed. Please complete the payment to move forward with your application.', 'py-2')}
 
         {/* Footer Info */}
         <div className="flex items-center justify-between pt-1.5 border-t border-gray-300">
+      
           <div className="flex items-center gap-4 text-xs text-gray-500">
             <div className="flex flex-wrap items-center gap-3 !text-xs !text-gray-600">
               {application.course.level && (
@@ -410,8 +412,8 @@ export default function ApplicationHistoryPage({heading = "Application History",
           </div>
 
           <div className="flex items-center gap-2">
-
-            <div className="flex items-center text-xs gap-1">
+            {(application.course.applicationFee !== 0 && paymentInfo.label == "Pending") && 
+            (<div className="flex items-center text-xs gap-1">
               <span>
                 Payment Status :
               </span>
@@ -421,7 +423,8 @@ export default function ApplicationHistoryPage({heading = "Application History",
                   {paymentInfo.label == "Pending" ? "Unpaid" : paymentInfo.label}
                 </span>
               </span>
-            </div>
+            </div>)
+            }
           </div>
 
         </div>
@@ -480,7 +483,7 @@ export default function ApplicationHistoryPage({heading = "Application History",
           </div>
         ) : (
           <>
-            { allProfile?.profileCompletion < 60 && errorMessage('The student\'s profile is incomplete and the system is not able to determine eligibility or calculate correct administration fees due to missing/invalid information related to the student. It is highly advised that you complete the profile before submitting applications.')}
+            {/* { allProfile?.profileCompletion < 60 && errorMessage('The student\'s profile is incomplete and the system is not able to determine eligibility or calculate correct administration fees due to missing/invalid information related to the student. It is highly advised that you complete the profile before submitting applications.')} */}
             <div className="space-y-4">
               {applications.map(application => (
                 <ApplicationCard key={application._id} application={application} />

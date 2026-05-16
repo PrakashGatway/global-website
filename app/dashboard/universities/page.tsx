@@ -7,6 +7,7 @@ import axiosInstance from "@/app/axiosInstance"
 import AmazingSelect, { ModernSelect } from "@/components/ui/select"
 import Link from "next/link"
 import Image from "next/image"
+import { useSearchParams } from "next/navigation"
 
 interface University {
   _id: string
@@ -82,7 +83,8 @@ export default function UniversitiesPage() {
   const observerTarget = useRef<HTMLDivElement>(null)
   const [countries, setCountries] = useState([])
   const filterButtonRef = useRef(null);
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const search = useSearchParams().get("country") || ""
 
   // Debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 500)
@@ -112,7 +114,7 @@ export default function UniversitiesPage() {
 
   // Filters state
   const [filters, setFilters] = useState({
-    country: "",
+    country: search || "",
     city: "",
     uni_type: "",
     has_accommodation: "",

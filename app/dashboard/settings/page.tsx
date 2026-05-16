@@ -14,7 +14,6 @@ import {
 import axiosInstance from "@/app/axiosInstance"
 import { useGlobal } from "@/src/statecontext"
 import FormRenderer from "../../../components/dashboard/stepForm/formRender"
-// import { profileSchema } from "@/config/schema"
 import profileSchema from "@/app/data/profileSchema.json"
 import { validateForm } from "@/utils/validateForm"
 import { useForm, FormProvider } from "react-hook-form"
@@ -106,6 +105,18 @@ const visaValidationSchema = z.object({
   })
 });
 
+const documentValidationSchema = z.object({
+  Document: z.object({
+    Passport: z.string().optional(),
+    AcademicDocuments: z.string().optional(),
+    UpdatedCV: z.string().optional(),
+    ExperienceCertificate: z.string().optional(),
+    Photographs: z.string().optional(),
+    IELTSscorecard: z.string().optional(),
+    LOR: z.string().optional(),
+  })
+});
+
 // Profile Completion Steps Component
 const ProfileCompletionStep = ({
   step,
@@ -153,15 +164,14 @@ const ProfileCompletionStep = ({
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { profile, allProfile,updateProfile } = useGlobal();
+  const { profile, allProfile, updateProfile } = useGlobal();
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'profile' | 'address' | 'education' | 'testscore' | 'visaStudypermit'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'address' | 'education' | 'testscore' | 'visaStudypermit' | 'Document'>('profile');
   const [uploadingImage, setUploadingImage] = useState(false);
   const [saving, setSaving] = useState(false);
   const [educations, setEducations] = useState<any[]>([]);
   const [workExperiences, setWorkExperiences] = useState<any[]>([]);
   const [stepErrors, setStepErrors] = useState<Record<string, boolean>>({});
-
   const [countries, setCountries] = useState([])
 
   const fetchCountries = useCallback(async () => {
@@ -264,12 +274,21 @@ export default function ProfilePage() {
         visaRefused: '',
         validVisas: [],
         visaDetails: ''
+      },
+      Document: {
+        Passport: "",
+        AcademicDocuments: "",
+        UpdatedCV: "",
+        ExperienceCertificate: "",
+        Photographs: "",
+        IELTSscorecard: "",
+        LOR: ""
       }
     },
-    mode: "onChange" // This enables real-time validation
+    mode: "onChange"
   });
 
-  const { reset, watch, formState: { errors, isValid }, trigger, getValues } = methods;
+  const { reset, watch, formState: { errors, isValid }, trigger, getValues, setValue } = methods;
 
   // Function to validate a specific step
   const validateStep = async (step: string): Promise<boolean> => {
@@ -282,15 +301,18 @@ export default function ProfilePage() {
       case 'address':
         validationSchema = addressValidationSchema;
         break;
-      // case 'education':
-      //   validationSchema = educationValidationSchema;
-      //   break;
+      case 'education':
+        validationSchema = educationValidationSchema;
+        break;
       case 'testscore':
         validationSchema = testScoreValidationSchema;
         break;
-      // case 'visaStudypermit':
-      //   validationSchema = visaValidationSchema;
-      //   break;
+      case 'visaStudypermit':
+        validationSchema = visaValidationSchema;
+        break;
+      // case 'Document':
+      //   validationSchema = documentValidationSchema;
+        // break;
       default:
         return true;
     }
@@ -303,27 +325,16 @@ export default function ProfilePage() {
     } catch (error) {
       if (error instanceof z.ZodError) {
         setStepErrors(prev => ({ ...prev, [step]: true }));
-        // Trigger React Hook Form validation to show errors
         await trigger(step === 'visaStudypermit' ? 'visaStudypermit' : step);
       }
       return false;
     }
   };
 
-  // Validate and navigate to step
   const handleStepChange = async (step: typeof activeTab) => {
-    // Validate current step before switching
-    // const isCurrentStepValid = await validateStep(activeTab);
-    // if (!isCurrentStepValid) {
-    //   const firstError = document.querySelector('[aria-invalid="true"]');
-    //   if (firstError) {
-    //     firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    //   }
-    //   return;
-    // }
-
     setActiveTab(step);
   };
+
   useEffect(() => {
     if (!profile) return;
 
@@ -410,8 +421,15 @@ export default function ProfilePage() {
         validVisas: allProfile.profile.validVisas || [],
         visaDetails: allProfile.profile.visaRefusedInfo || ''
       },
-      hasGmat: allProfile.profile.hasGmat ? true : false,
-      hasGre: allProfile.profile.hasGre ? true : false,
+      Document: allProfile?.profile?.documents || {
+        Passport: "",
+        AcademicDocuments: "",
+        UpdatedCV: "",
+        ExperienceCertificate: "",
+        Photographs: "",
+        IELTSscorecard: "",
+        LOR: ""
+      }
     });
 
     setEducations(allProfile.profile.educations || []);
@@ -432,147 +450,151 @@ export default function ProfilePage() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       profile({ ...profile, profileImage: response.data.url });
+      toast.success("Profile picture updated!");
     } catch (error) {
       console.error('Error uploading image:', error);
+      toast.error("Failed to upload image");
     } finally {
       setUploadingImage(false);
     }
   };
 
-  // useEffect(() => {
-  //   const subscription = methods.watch((value) => {
-  //     console.log("LIVE FORM DATA 🔥", value);
-  //     // Validate current step on change
-  //     validateStep(activeTab);
-  //   });
-
-  //   return () => subscription.unsubscribe();
-  // }, [methods, activeTab]);
-
+  
   const buildProfilePayload = (values) => {
-    console.log("Building payload with values:", values);
-    return {
-      currentAddress: {
-        addressLine1: values.address.address1,
-        addressLine2: values.address.address2,
-        city: values.address.city,
-        state: values.address.state,
-        country: values.address.country,
-        postalCode: values.address.postalcode,
+  console.log("Building payload with values:", values);
+  
+  return {
+    currentAddress: {
+      addressLine1: values.address?.address1 || "",
+      addressLine2: values.address?.address2 || "",
+      city: values.address?.city || "",
+      state: values.address?.state || "",
+      country: values.address?.country || "",
+      postalCode: values.address?.postalcode || "",
+    },
+    highestAcademic: {
+      countryOfEducation: values.education?.summary?.countryOfEducation || "",
+      highestEducationLevel: values.education?.summary?.highestEducationLevel || "",
+      gradingScheme: values.education?.summary?.gradingScheme || "",
+      graduated: values.education?.summary?.graduated === "true",
+    },
+    educationHistory: values.education?.schools?.map((school) => ({
+      educationLevel: school.educationLevel,
+      institutionName: school.institutionName,
+      gradingScheme: school.gradingScheme,
+      startDate: school.startDate,
+      endDate: school.endDate,
+      degreeName: school.degreeName,
+      address: school.address,
+      city: school.city,
+      state: school.state,
+      country: school.country,
+      postalCode: school.postalcode,
+    })) || [],
+    englishProficiencyScore: {
+      englishStatus: values.testscore?.englishscore?.englishStatus || "",
+      englishTest: values.testscore?.englishscore?.englishTest || "",
+      reading: values.testscore?.englishscore?.reading || "",
+      listening: values.testscore?.englishscore?.listening || "",
+      writing: values.testscore?.englishscore?.writing || "",
+      speaking: values.testscore?.englishscore?.speaking || "",
+      examDate: values.testscore?.englishscore?.examDate || "",
+      totalScore: values.testscore?.englishscore?.totalScore || "",
+    },
+    hasGmat: !!values.testscore?.coursescore?.hasGmat,
+    hasGre: !!values.testscore?.coursescore?.hasGre,
+    gmatScore: values.testscore?.coursescore?.hasGmat ? {
+      totalScore: {
+        score: Number(values.testscore.coursescore.hasGmat?.gmatTotal?.score) || null,
+        rank: Number(values.testscore.coursescore.hasGmat?.gmatTotal?.rank) || null,
       },
-      highestAcademic: {
-        countryOfEducation: values.education.summary.countryOfEducation,
-        highestEducationLevel: values.education.summary.highestEducationLevel,
-        gradingScheme: values.education.summary.gradingScheme,
-        graduated: values.education.summary.graduated === "true",
+      verbal: {
+        score: Number(values.testscore.coursescore.hasGmat?.gmatVerbal?.score) || null,
+        rank: Number(values.testscore.coursescore.hasGmat?.gmatVerbal?.rank) || null,
       },
-      educationHistory: values.education.schools?.map((school) => ({
-        educationLevel: school.educationLevel,
-        institutionName: school.institutionName,
-        gradingScheme: school.gradingScheme,
-        startDate: school.startDate,
-        endDate: school.endDate,
-        degreeName: school.degreeName,
-        address: school.address,
-        city: school.city,
-        state: school.state,
-        country: school.country,
-        postalCode: school.postalCode,
-      })) || [],
-      englishProficiencyScore: {
-        englishStatus: values.testscore.englishscore.englishStatus,
-        englishTest: values.testscore.englishscore.englishTest,
-        reading: values.testscore.englishscore.reading,
-        listening: values.testscore.englishscore.listening,
-        writing: values.testscore.englishscore.writing,
-        speaking: values.testscore.englishscore.speaking,
-        examDate: values.testscore.englishscore.examDate,
+      quantitative: {
+        score: Number(values.testscore.coursescore.hasGmat?.gmatQuantitative?.score) || null,
+        rank: Number(values.testscore.coursescore.hasGmat?.gmatQuantitative?.rank) || null,
       },
-      hasGmat: !!values.testscore.coursescore.hasGmat,
-      hasGre: !!values.testscore.coursescore.hasGre,
-      gmatScore: values.testscore.coursescore.hasGmat ? {
-        totalScore: {
-          score: Number(values.testscore.coursescore.hasGmat?.gmatTotal?.score) || null,
-          rank: Number(values.testscore.coursescore.hasGmat?.gmatTotal?.rank) || null,
-        },
-        verbal: {
-          score: Number(values.testscore.coursescore.hasGmat?.gmatVerbal?.score) || null,
-          rank: Number(values.testscore.coursescore.hasGmat?.gmatVerbal?.rank) || null,
-        },
-        quantitative: {
-          score: Number(values.testscore.coursescore.hasGmat?.gmatQuantitative?.score) || null,
-          rank: Number(values.testscore.coursescore.hasGmat?.gmatQuantitative?.rank) || null,
-        },
-        analyticalWriting: {
-          score: Number(values.testscore.coursescore.hasGmat?.gmatAwa?.score) || null,
-          rank: Number(values.testscore.coursescore.hasGmat?.gmatAwa?.rank) || null,
-        },
-        examDate: values.testscore.coursescore.hasGmat?.gmatExamDate || null,
-      } : undefined,
-      greScore: values.testscore.coursescore.hasGre ? {
-        totalScore: {
-          score: Number(values.testscore.coursescore.hasGre?.greTotal?.score) || null,
-          rank: Number(values.testscore.coursescore.hasGre?.greTotal?.rank) || null,
-        },
-        verbal: {
-          score: Number(values.testscore.coursescore.hasGre?.greVerbal?.score) || null,
-          rank: Number(values.testscore.coursescore.hasGre?.greVerbal?.rank) || null,
-        },
-        quantitative: {
-          score: Number(values.testscore.coursescore.hasGre?.greQuantitative?.score) || null,
-          rank: Number(values.testscore.coursescore.hasGre?.greQuantitative?.rank) || null,
-        },
-        analyticalWriting: {
-          score: Number(values.testscore.coursescore.hasGre?.greAwa?.score) || null,
-          rank: Number(values.testscore.coursescore.hasGre?.greAwa?.rank) || null,
-        },
-        examDate: values.testscore.coursescore.hasGre?.greExamDate || null,
-      } : undefined,
-      visaRefused: values.visaStudypermit.visaRefused === "yes",
-      validVisas: values.visaStudypermit.validVisas || [],
-      visaRefusedInfo: values.visaStudypermit.visaDetails || "",
-      preferences: {
-        preferredCountries: values.visaStudypermit.preferredCountries,
-        preferredIntake: values.visaStudypermit.preferredIntakes,
-        preferredCourse: values.visaStudypermit.preferredStudyLevel,
-        budgetRange: {
-          min: values.visaStudypermit.budget.min,
-          max: values.visaStudypermit.budget.max,
-        },
+      analyticalWriting: {
+        score: Number(values.testscore.coursescore.hasGmat?.gmatAwa?.score) || null,
+        rank: Number(values.testscore.coursescore.hasGmat?.gmatAwa?.rank) || null,
       },
-    };
+      examDate: values.testscore.coursescore.hasGmat?.gmatExamDate || null,
+    } : undefined,
+    greScore: values.testscore?.coursescore?.hasGre ? {
+      totalScore: {
+        score: Number(values.testscore.coursescore.hasGre?.greTotal?.score) || null,
+        rank: Number(values.testscore.coursescore.hasGre?.greTotal?.rank) || null,
+      },
+      verbal: {
+        score: Number(values.testscore.coursescore.hasGre?.greVerbal?.score) || null,
+        rank: Number(values.testscore.coursescore.hasGre?.greVerbal?.rank) || null,
+      },
+      quantitative: {
+        score: Number(values.testscore.coursescore.hasGre?.greQuantitative?.score) || null,
+        rank: Number(values.testscore.coursescore.hasGre?.greQuantitative?.rank) || null,
+      },
+      analyticalWriting: {
+        score: Number(values.testscore.coursescore.hasGre?.greAwa?.score) || null,
+        rank: Number(values.testscore.coursescore.hasGre?.greAwa?.rank) || null,
+      },
+      examDate: values.testscore.coursescore.hasGre?.greExamDate || null,
+    } : undefined,
+    visaRefused: values.visaStudypermit?.visaRefused === "yes",
+    validVisas: values.visaStudypermit?.validVisas || [],
+    visaRefusedInfo: values.visaStudypermit?.visaDetails || "",
+    preferences: {
+      preferredCountries: values.visaStudypermit?.preferredCountries || [],
+      preferredIntake: values.visaStudypermit?.preferredIntakes || [],
+      preferredCourse: values.visaStudypermit?.preferredStudyLevel || "",
+      budgetRange: {
+        min: values.visaStudypermit?.budget?.min || 0,
+        max: values.visaStudypermit?.budget?.max || 0,
+      },
+    },
+    // Include documents in the payload
+    documents: values?.Document?.documents || {}
   };
+};
 
   const handleSave = async () => {
-    try {
-      const isValid = await validateStep(activeTab);
-      if (!isValid) {
-        const firstError = document.querySelector('[aria-invalid="true"]');
-        if (firstError) {
-          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        return;
+  try {
+    const isValid = await validateStep(activeTab);
+    if (!isValid) {
+      const firstError = document.querySelector('[aria-invalid="true"]');
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-      const formValues = methods.getValues();
-
-      setSaving(true);
-      if (activeTab == 'profile') {
-        await axiosInstance.put("/auth/profile",
-          formValues.profile
-        );
-      } else {
-        const payload = buildProfilePayload(formValues);
-        await axiosInstance.post("/auth/profile_info", payload);
-      }
-      toast.success("Profile updated successfully!");
-
-      updateProfile()
-    } catch (err) {
-      toast.error(err.message || "An error occurred while saving your profile.");
-    } finally {
-      setSaving(false);
+      toast.error("Please fill all required fields");
+      return;
     }
-  };
+
+    const formValues = methods.getValues();
+    console.log("form data", formValues);
+    setSaving(true);
+
+    if (activeTab === 'profile') {
+      await axiosInstance.put("/auth/profile", formValues.profile);
+      toast.success("Profile updated successfully!");
+    } else {
+      // Build payload including documents
+      const payload = buildProfilePayload(formValues);
+      console.log(payload, "payload",formValues.documents);
+      
+      // Send the payload (which includes documents) to profile_info
+      await axiosInstance.post("/auth/profile_info", payload);
+      toast.success("Profile information updated successfully!");
+    }
+
+    updateProfile();
+  } catch (err: any) {
+    console.error("Save error:", err);
+    toast.error(err.response?.data?.message || err.message || "An error occurred while saving your profile.");
+  } finally {
+    setSaving(false);
+  }
+};
 
   if (loading) {
     return (
@@ -600,6 +622,8 @@ export default function ProfilePage() {
       case 'visaStudypermit':
         return !!(watch('visaStudypermit.validVisas') &&
           watch('visaStudypermit.validVisas')?.length > 0);
+      case 'Document':
+        return !!(watch('Document.Passport') && watch('Document.AcademicDocuments'));
       default:
         return false;
     }
@@ -699,46 +723,57 @@ export default function ProfilePage() {
                     hasError={stepErrors.profile}
                     onClick={() => handleStepChange('profile')}
                   />
-                 {profile?.role !== "counsellor" && (
-                  <>
-                   <ProfileCompletionStep
-                    step={2}
-                    title="Address Information"
-                    description="Add your address details"
-                    isCompleted={isStepCompleted('address')}
-                    isActive={activeTab === 'address'}
-                    hasError={stepErrors.address}
-                    onClick={() => handleStepChange('address')}
-                  />
-                  <ProfileCompletionStep
-                    step={3}
-                    title="Education History"
-                    description="Add your academic background"
-                    isCompleted={isStepCompleted('education')}
-                    isActive={activeTab === 'education'}
-                    hasError={stepErrors.education}
-                    onClick={() => handleStepChange('education')}
-                  />
-                  <ProfileCompletionStep
-                    step={4}
-                    title="Test Scores"
-                    description="Add your standardized test scores"
-                    isCompleted={isStepCompleted('testscore')}
-                    isActive={activeTab === 'testscore'}
-                    hasError={stepErrors.testscore}
-                    onClick={() => handleStepChange('testscore')}
-                  />
-                  <ProfileCompletionStep
-                    step={5}
-                    title="Study Preferences"
-                    description="Set your course preferences"
-                    isCompleted={isStepCompleted('visaStudypermit')}
-                    isActive={activeTab === 'visaStudypermit'}
-                    hasError={stepErrors.visaStudypermit}
-                    onClick={() => handleStepChange('visaStudypermit')}
-                  />
-                  </>
-                 )}
+                  {profile?.role !== "counsellor" && (
+                    <>
+                      <ProfileCompletionStep
+                        step={2}
+                        title="Address Information"
+                        description="Add your address details"
+                        isCompleted={isStepCompleted('address')}
+                        isActive={activeTab === 'address'}
+                        hasError={stepErrors.address}
+                        onClick={() => handleStepChange('address')}
+                      />
+                      <ProfileCompletionStep
+                        step={3}
+                        title="Education History"
+                        description="Add your academic background"
+                        isCompleted={isStepCompleted('education')}
+                        isActive={activeTab === 'education'}
+                        hasError={stepErrors.education}
+                        onClick={() => handleStepChange('education')}
+                      />
+
+                      <ProfileCompletionStep
+                        step={4}
+                        title="Document Upload"
+                        description="Add your academic & other documents"
+                        isCompleted={isStepCompleted('Document')}
+                        isActive={activeTab === 'Document'}
+                        hasError={stepErrors.Document}
+                        onClick={() => handleStepChange('Document')}
+                      />
+{/* 
+                      <ProfileCompletionStep
+                        step={5}
+                        title="Test Scores"
+                        description="Add your standardized test scores"
+                        isCompleted={isStepCompleted('testscore')}
+                        isActive={activeTab === 'testscore'}
+                        hasError={stepErrors.testscore}
+                        onClick={() => handleStepChange('testscore')}
+                      />
+                      <ProfileCompletionStep
+                        step={6}
+                        title="Visa & Study Permit"
+                        description="Set your visa details"
+                        isCompleted={isStepCompleted('visaStudypermit')}
+                        isActive={activeTab === 'visaStudypermit'}
+                        hasError={stepErrors.visaStudypermit}
+                        onClick={() => handleStepChange('visaStudypermit')}
+                      /> */}
+                    </>
+                  )}
                 </div>
               </div>
             </div>

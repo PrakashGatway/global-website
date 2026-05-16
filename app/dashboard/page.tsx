@@ -67,6 +67,7 @@ export default function DashboardPage() {
 
       {/* Progress */}
       <StepProgress />
+      
       <ApplicationHistoryPage heading="Recent Applications" subheading="" limit={3} viewAll={true} />
       <div className="block sm:hidden w-full lg:w-1/4">
         {offers?.length > 0 && (

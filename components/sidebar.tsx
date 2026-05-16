@@ -14,7 +14,8 @@ import {
   ChevronLeft,
   LucideIndianRupee,
   ChevronRight,
-  User2Icon
+  User2Icon,
+  ReceiptText
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -23,6 +24,7 @@ import { useGlobal } from "@/src/statecontext";
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: BookOpen, label: "Universities", href: "/dashboard/universities" },
+  { icon: ReceiptText, label: "Visa Guide", href: "/dashboard/countrys" },
   { icon: BarChart3, label: "Find Programs", href: "/dashboard/programs" },
   { icon: FileText, label: "Application", href: "/dashboard/application" },
   { icon: Wallet, label: "Payments", href: "/dashboard/payment" },
