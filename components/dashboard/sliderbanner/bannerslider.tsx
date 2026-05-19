@@ -48,7 +48,7 @@ export default function RewardSlider({ universities }: any) {
   };
 
   return (
-    <div className="relative rounded-4xl overflow-hidden shadow h-60 sm:h-70 animate-fade-up">
+    <div className="relative rounded-3xl sm:rounded-4xl overflow-hidden shadow h-[240px] sm:h-[280px] md:h-70 animate-fade-up w-full">
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={slide._id}
@@ -65,41 +65,48 @@ export default function RewardSlider({ universities }: any) {
             alt={slide?.name}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/10 to-black/0" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-black/10 sm:bg-gradient-to-r sm:from-black/80 sm:via-black/10 sm:to-black/0" />
         </motion.div>
       </AnimatePresence>
 
-      <div className="relative z-10 h-full flex flex-col justify-center p-5 md:p-12">
+      <div className="relative z-10 h-full flex flex-col justify-center p-4 sm:p-6 md:p-12">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={slide._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 1, ease: "easeOut" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="w-full"
           >
-            <div className="flex items-center gap-3 mb-3">
-              <div className="bg-white/50 rounded-xl p-2">
-                <Image src={slide?.uni_logo} alt={slide?.name} width={80} height={80} className="rounded-xl w-full h-8 object-cover" />
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+              <div className="bg-white/90 backdrop-blur-sm rounded-lg sm:rounded-xl p-1.5 sm:p-2 shadow-sm">
+                <Image 
+                  src={slide?.uni_logo} 
+                  alt={slide?.name} 
+                  width={80} 
+                  height={80} 
+                  className="rounded-md sm:rounded-xl w-8 h-8 sm:w-10 sm:h-10 object-contain" 
+                />
               </div>
             </div>
 
-            <h2 className="text-base sm:text-2xl font-heading font-bold text-white mb-1">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-heading font-bold text-white mb-1 leading-tight">
               {slide.name}
             </h2>
-            <p className="text-white text-xs sm:text-base max-w-lg text-sm mb-2 font-medium line-clamp-2">
+            <p className="text-white/90 text-xs sm:text-sm md:text-base max-w-lg font-medium line-clamp-2 mb-3 sm:mb-4">
               {slide?.short_description}
             </p>
 
-            <div className="flex items-center gap-4 text-white/80 text-xs sm:text-sm mb-2">
-              <span className="flex items-center gap-1">
-                <MapPin className="w-4 h-4" />
-                {slide?.address}
+            <div className="flex items-center gap-3 text-white/80 text-[10px] sm:text-xs md:text-sm mb-3 sm:mb-4">
+              <span className="flex items-center gap-1 bg-black/20 px-2 py-1 rounded-md backdrop-blur-md">
+                <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="truncate max-w-[150px] sm:max-w-none">{slide?.address}</span>
               </span>
             </div>
 
             <div className="flex items-center gap-3">
-              <Link href={`/dashboard/universities/${slide?.slug}`} className="px-4 py-2 rounded-lg bg-white text-black font-semibold text-xs sm:text-sm hover:opacity-90 transition-opacity shadow-md">
+              <Link href={`/dashboard/universities/${slide?.slug}`} className="inline-flex items-center justify-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-white text-black font-semibold text-xs sm:text-sm hover:bg-gray-100 transition-colors shadow-md whitespace-nowrap">
                 View Details
               </Link>
             </div>
@@ -109,13 +116,13 @@ export default function RewardSlider({ universities }: any) {
 
       <button
         onClick={goPrev}
-        className="absolute left-1 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/0 text-white hover:bg-black/50 transition-colors hidden md:block z-10 backdrop-blur-sm"
+        className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 text-white hover:bg-black/50 transition-colors hidden md:block z-10 backdrop-blur-sm border border-white/10"
       >
         <ChevronLeft className="w-5 h-5" />
       </button>
       <button
         onClick={goNext}
-        className="absolute right-1 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/0 text-white hover:bg-black/50 transition-colors hidden md:block z-10 backdrop-blur-sm"
+        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/20 text-white hover:bg-black/50 transition-colors hidden md:block z-10 backdrop-blur-sm border border-white/10"
       >
         <ChevronRight className="w-5 h-5" />
       </button>
@@ -197,21 +204,21 @@ export function StepProgress() {
   }, [allProfile]);
 
   return (
-    <div className="bg-pink-50 rounded-3xl p-6 pb-12 animate-fade-up">
+    <div className="bg-pink-50 rounded-3xl p-4 sm:p-6 pb-8 sm:pb-12 animate-fade-up w-full overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3">
-          <h3 className="text-xl font-heading font-bold text-foreground">My Progress</h3>
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <h3 className="text-lg sm:text-xl font-heading font-bold text-foreground">My Progress</h3>
         </div>
         <div className="text-right">
-          <span className="text-sm text-muted-foreground font-medium">
+          <span className="text-xs sm:text-sm text-muted-foreground font-medium bg-white/50 px-2 py-1 rounded-md">
             Step {calculatedStep} of {steps.length}
           </span>
         </div>
       </div>
 
-      {/* Steps with SVG path */}
-      <div className="relative">
+      {/* DESKTOP VIEW: Horizontal SVG Wave (Hidden on Mobile/Tablet) */}
+      <div className="hidden md:block relative">
         <svg
           className="absolute top-0 left-0 w-full h-22 pointer-events-none"
           viewBox="0 0 1000 80"
@@ -245,9 +252,8 @@ export function StepProgress() {
             return (
               <div
                 key={step.id}
-                className="flex flex-col items-center gap-3 z-10 cursor-pointer transition-transform hover:scale-105"
+                className="flex flex-col items-center gap-3 z-10 cursor-pointer transition-transform hover:scale-105 group"
                 style={{ width: `${100 / steps.length}%` }}
-              // onClick={() => isAccessible && handleStepClick(step)}
               >
                 <div className="relative">
                   <span
@@ -271,21 +277,68 @@ export function StepProgress() {
                 </div>
 
                 <span
-                  className={`text-xs md:text-base mt-4 font-medium text-center leading-tight ${isComplete ? "text-gray-900" : isAccessible ? "text-gray-600" : "text-muted-foreground"
+                  className={`text-sm md:text-base mt-2 font-medium text-center leading-tight px-1 ${isComplete ? "text-gray-900" : isAccessible ? "text-gray-600" : "text-muted-foreground"
                     }`}
                 >
                   {step.label}
-
                 </span>
-                <Link href={step.route}>
-                  <SquareArrowOutUpRight className={`w-5 h-5 ${isComplete ? "text-secondary" : "text-gray-400"} ${isCurrent ? "block" : "hidden"}`} />
+                
+                <Link href={step.route || "#"} className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                   <SquareArrowOutUpRight className={`w-4 h-4 ${isComplete ? "text-secondary" : "text-gray-400"}`} />
                 </Link>
-           
-
               </div>
             );
           })}
         </div>
+      </div>
+
+      {/* MOBILE/TABLET VIEW: Vertical Timeline (Visible only on < md) */}
+      <div className="md:hidden flex flex-col space-y-4 relative">
+        {/* Vertical Line Background */}
+        <div className="absolute left-6 top-4 bottom-4 w-0.5 bg-gray-200 z-0"></div>
+        
+        {steps.map((step, index) => {
+          const isComplete = step.id <= calculatedStep;
+          const isCurrent = step.id === calculatedStep;
+          const isLast = index === steps.length - 1;
+
+          return (
+            <div key={step.id} className="relative flex items-start gap-4 z-10">
+              {/* Icon Circle */}
+              <div className="flex-shrink-0">
+                 <div
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${isComplete
+                      ? "bg-white text-[#F26D44] border-2 border-[#F26D44]" // Using hardcoded secondary color approx for safety or rely on class
+                      : isCurrent
+                        ? "bg-white text-gray-700 border-2 border-gray-400 ring-2 ring-gray-100"
+                        : "bg-gray-50 text-gray-400 border-2 border-dashed border-gray-300"
+                      }`}
+                  >
+                    {isComplete ? step.completedIcon : step.icon}
+                  </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-grow pt-2 pb-2">
+                <div className="flex justify-between items-center">
+                  <h4 className={`text-sm font-bold ${isComplete ? 'text-gray-900' : isCurrent ? 'text-gray-800' : 'text-gray-500'}`}>
+                    {step.label}
+                  </h4>
+                  {isCurrent && (
+                     <Link href={step.route || "#"} className="text-[#F26D44]">
+                       <SquareArrowOutUpRight className="w-4 h-4" />
+                     </Link>
+                  )}
+                </div>
+                {isCurrent && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Current Step
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

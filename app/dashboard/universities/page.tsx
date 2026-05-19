@@ -332,7 +332,7 @@ export default function UniversitiesPage() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-xl hover:shadow-lg transition-all duration-300 relative"
+              className="flex items-center gap-2 p-2 lg:px-5 lg:py-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-xl hover:shadow-lg transition-all duration-300 relative"
             >
               <Filter className="w-4 h-4" />
               Filters
@@ -532,7 +532,7 @@ export default function UniversitiesPage() {
           ) : (
             universities.map((uni, index) => (
               <motion.div
-                key={uni._id}
+                key={index}
                 className={`relative flex flex-col h-full bg-gradient-to-br ${getCardGradient(uni.uni_type)} border rounded-3xl overflow-hidden`}
               >
 
@@ -705,13 +705,13 @@ export default function UniversitiesPage() {
                   <div className="flex items-end gap-2 pt-1 mt-auto h-full justify-end">
                     <Link
                       href={`/dashboard/universities/${uni?.slug}`}
-                      className="flex-1 px-4 py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
+                      className="flex-1 p-2 lg:px-4 lg:py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
                     >
                       View Details
                     </Link>
                     <Link
                       href={`/dashboard/programs?university=${uni._id}`}
-                      className="flex-1 px-4 py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
+                      className="flex-1 p-2 lg:px-4 lg:py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
                     >
                       Apply
                     </Link>

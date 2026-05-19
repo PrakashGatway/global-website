@@ -3,13 +3,52 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import Tooltip from "../tooltip";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import { ModernSelect } from "@/components/ui/select";
 import axiosInstance from "@/app/axiosInstance";
-import { Upload, FileText, X, RefreshCw, CheckCircle, Eye, Trash2 } from "lucide-react";
+import { Upload, FileText, X, RefreshCw, CheckCircle, Eye, Trash2, FileIcon } from "lucide-react";
 import toast from "react-hot-toast";
+import { useGlobal } from "@/src/statecontext";
 
-// Reusable error message component
+// --- Helper Functions ---
+
+const getFileName = (url: string): string => {
+  if (!url) return '';
+  if (url.startsWith('data:')) return 'Uploaded Image';
+  const parts = url.split('/');
+  const lastPart = parts[parts.length - 1];
+  return lastPart.split('?')[0] || 'Document';
+};
+
+const getFileTypeIcon = (url: string) => {
+  const isImg = url.match(/\.(jpg|jpeg|png|gif|webp)$/i) || url.startsWith('data:image');
+  const imageUrl = url.startsWith('http') ? url :
+    process.env.NODE_ENV === "development"
+      ? `http://localhost:5000${url}`
+      : url;
+
+  if (isImg) {
+    return (
+      <div className="w-full h-full relative">
+        <img
+          src={imageUrl}
+          alt="Preview"
+          className="w-full h-full object-cover rounded-lg"
+          onError={(e) => {
+            e.currentTarget.src = "https://static.thenounproject.com/png/3191078-200.png";
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (/\.(pdf)$/i.test(url)) return <FileText className="w-8 h-8 text-red-500" />;
+  if (/\.(doc|docx)$/i.test(url)) return <FileIcon className="w-8 h-8 text-blue-500" />;
+  return <FileIcon className="w-8 h-8 text-gray-500" />;
+};
+
+// --- Components ---
+
 const FieldError = ({ message }: { message?: string }) =>
   message ? (
     <motion.p
@@ -28,7 +67,6 @@ const FieldError = ({ message }: { message?: string }) =>
     </motion.p>
   ) : null;
 
-// Reusable label component
 const FieldLabel = ({
   label,
   required,
@@ -61,47 +99,115 @@ const FieldLabel = ({
   </motion.label>
 );
 
-// Base input styles
-const baseInputStyles = `
-  w-full px-3.5 py-2.5 text-sm rounded-lg border border-border 
-  bg-background text-foreground placeholder:text-muted-foreground/70
-  focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary 
-  disabled:cursor-not-allowed disabled:opacity-60 disabled:bg-muted/40
-  transition-all duration-200 ease-in-out
-  aria-invalid:border-destructive aria-invalid:focus:ring-destructive/30
-`;
-
-// Animation variants
-const fieldVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
-};
-
-const childVariants = {
-  hidden: { opacity: 0, x: -20 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.3, delay: 0.1 } }
-};
-
-// Document Preview Modal Component
 const DocumentPreview = ({ url, onClose }: { url: string; onClose: () => void }) => {
-  const isImage = url.match(/\.(jpg|jpeg|png|gif|webp)$/i);
-  
+  const isImage = url.match(/\.(jpg|jpeg|png|gif|webp)$/i) || url.startsWith('data:image');
+  const imageUrl = url.startsWith('http') ? url :
+    process.env.NODE_ENV === "development"
+      ? `http://localhost:5000${url}`
+      : url;
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={onClose}>
-      <div className="bg-white dark:bg-gray-900 rounded-lg p-4 max-w-4xl max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-semibold">Document Preview</h3>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
+          <div>
+            <h3 className="font-semibold text-base sm:text-lg">Document Preview</h3>
+            <p className="text-xs sm:text-sm text-gray-500 truncate max-w-[200px] sm:max-w-md">{getFileName(url)}</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+            aria-label="Close preview"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
-        {isImage ? (
-          <img src={url} alt="Preview" className="max-w-full h-auto" />
-        ) : (
-          <iframe src={url} className="w-full h-[500px]" title="Document Preview" />
-        )}
+
+        <div className="overflow-auto max-h-[60vh] flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-xl">
+          {isImage ? (
+            <img
+              src={imageUrl}
+              alt="Document preview"
+              className="max-w-full h-auto max-h-[50vh] object-contain rounded-lg"
+              onError={(e) => {
+                e.currentTarget.src = "https://static.thenounproject.com/png/3191078-200.png";
+              }}
+            />
+          ) : (
+            <iframe
+              src={imageUrl}
+              className="w-full h-[50vh] min-h-[300px] rounded-lg"
+              title="Document Preview"
+              sandbox="allow-scripts allow-same-origin"
+            />
+          )}
+        </div>
+
+        <div className="mt-4 flex justify-end gap-2">
+          <a
+            href={url}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+          >
+            <FileText className="w-4 h-4" />
+            Download
+          </a>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+// File Upload Counter Component
+const FileUploadCounter = ({ uploadedFiles, totalFields }: { uploadedFiles: number; totalFields: number }) => {
+  if (totalFields === 0) return null;
+  
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mb-4 p-3 bg-primary/5 rounded-lg border border-primary/20"
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <FileText className="w-4 h-4 text-primary" />
+          <span className="text-sm font-medium text-foreground">File Upload Progress</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-primary">{uploadedFiles}</span>
+          <span className="text-sm text-muted-foreground">/ {totalFields}</span>
+        </div>
       </div>
-    </div>
+      <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${(uploadedFiles / totalFields) * 100}%` }}
+          className="h-full bg-primary rounded-full"
+          transition={{ duration: 0.3 }}
+        />
+      </div>
+    </motion.div>
   );
 };
 
@@ -112,25 +218,31 @@ interface FormRendererProps {
 }
 
 export default function FormRenderer({ schema, sectionKey = "", countries = [] }: FormRendererProps) {
-  const { register, watch, setValue, formState: { errors } } = useFormContext();
+  const { register, watch, setValue, getValues, formState: { errors } } = useFormContext();
   const [uploadingFiles, setUploadingFiles] = useState<Record<string, boolean>>({});
-  const [fileUrls, setFileUrls] = useState<Record<string, string>>({});
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize file URLs from existing data
-  useEffect(() => {
-    if (sectionKey) {
-      const existingDocs = watch(sectionKey);
-      if (existingDocs && typeof existingDocs === 'object') {
-        setFileUrls(existingDocs);
-      }
-    }
-  }, [sectionKey, watch]);
+  const { allProfile } = useGlobal()
 
-  // Handle file upload
+  console.log(allProfile)
+
+  // Helper function to check if a file exists in form data (persisted after refresh)
+  const hasFileInFormData = (fieldName: string): boolean => {
+    const formPath = sectionKey ? `${sectionKey}.${fieldName}` : fieldName;
+    const value = getValues(formPath);
+    return !!(value && typeof value === 'string' && value.trim() !== '' && !value.includes('nofile'));
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, fieldName: string, field: any) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // Check if file already exists in form data (from API or previous upload)
+    if (hasFileInFormData(fieldName)) {
+      toast.error("File already exists. Please remove the existing file first if you want to change it.");
+      return;
+    }
 
     // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
@@ -138,57 +250,136 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
       return;
     }
 
-    // Validate file type based on field accept attribute
+    // Validate file type
     const acceptTypes = field.accept?.split(',') || ['.pdf', '.jpg', '.jpeg', '.png'];
     const fileExtension = `.${file.name.split('.').pop()?.toLowerCase()}`;
     if (acceptTypes.length > 0 && !acceptTypes.includes(fileExtension)) {
-      toast.error(`Invalid file type. Accepted types: ${acceptTypes.join(', ')}`);
+      toast.error(`Invalid file type. Accepted: ${acceptTypes.join(', ')}`);
       return;
     }
 
-    // Set uploading state to show loading indicator
     setUploadingFiles(prev => ({ ...prev, [fieldName]: true }));
 
     try {
       const formData = new FormData();
       formData.append("file", file);
 
+      const extraData = {
+        fieldName,
+        status: "uploaded",
+        imageUrl: URL.createObjectURL(file),
+      };
+
+      formData.append("data", JSON.stringify(extraData));
+
       const response = await axiosInstance.post("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("Upload response:", response.data); // Debug log
 
-      if (response.data.success) {
+      if (response.data?.success && response.data?.docUrl) {
+        let fileUrl = response.data.docUrl;
 
-        const fileUrl = response.data.docUrl;
-        setFileUrls(prev => ({ ...prev, [fieldName]: fileUrl }));
-        setValue(`${sectionKey}.${fieldName}`, fileUrl);
+        if (fileUrl.includes("nofile") || fileUrl === "/uploads/docs/nofile" || (!fileUrl.startsWith('/uploads/') && !fileUrl.startsWith('http'))) {
+          throw new Error("Server returned an invalid file URL. Please try again or contact support.");
+        }
+
+        const formPath = sectionKey
+          ? `${sectionKey}.${fieldName}`
+          : fieldName;
+
+        setValue(formPath, fileUrl, { shouldValidate: true, shouldDirty: true });
+
         toast.success(`${field.label} uploaded successfully!`);
       } else {
-        throw new Error(response.data.message || "Upload failed");
+        throw new Error(response.data?.message || "Upload failed - no valid URL returned");
       }
     } catch (error: any) {
       console.error("Error uploading file:", error);
-      console.error("Error response:", error.response?.data);
-      toast.error(error.response?.data?.message || `Failed to upload ${field.label}. Please try again.`);
+      const errorMsg = error.message || error.response?.data?.message || `Failed to upload ${field.label}.`;
+      toast.error(errorMsg);
     } finally {
       setUploadingFiles(prev => ({ ...prev, [fieldName]: false }));
-      // Clear the input value to allow re-uploading same file
-      e.target.value = '';
+      if (e.target) e.target.value = '';
     }
   };
 
-  // Handle file removal
+
+
+
+
   const handleRemoveFile = (fieldName: string, field: any) => {
-    setFileUrls(prev => {
-      const newUrls = { ...prev };
-      delete newUrls[fieldName];
-      return newUrls;
-    });
-    setValue(`${sectionKey}.${fieldName}`, '');
-    toast.success(`${field.label} removed successfully`);
+    const formPath = sectionKey
+      ? `${sectionKey}.${fieldName}`
+      : fieldName;
+
+    setValue(formPath, '', { shouldValidate: true, shouldDirty: true });
+    toast.success(`${field.label} removed`);
   };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent, fieldName: string, field: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Check if file already exists in form data
+    if (hasFileInFormData(fieldName)) {
+      toast.error("File already exists. Please remove the existing file first if you want to change it.");
+      return;
+    }
+
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      const fakeEvent = {
+        target: {
+          files: files,
+          value: ''
+        }
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
+
+      handleFileUpload(fakeEvent, fieldName, field);
+    }
+  };
+
+  // Collect all file fields to show upload progress
+  const getAllFileFields = (schema: any): string[] => {
+    if (!schema?.fields) return [];
+
+    const fileFields: string[] = [];
+    const collectFileFields = (fields: any[]) => {
+      fields.forEach((field: any) => {
+        if (field.type === "file") {
+          fileFields.push(field.name);
+        }
+        // Handle nested fields in radio children, etc.
+        if (field.type === "radio" && field.options) {
+          field.options.forEach((option: any) => {
+            if (option.children) {
+              collectFileFields(option.children);
+            }
+          });
+        }
+        if (field.type === "switch" && field.children) {
+          collectFileFields(field.children);
+        }
+      });
+    };
+
+    collectFileFields(schema.fields);
+    return fileFields;
+  };
+
+  const fileFields = getAllFileFields(schema);
+  // Count uploaded files by checking actual form data
+ const uploadedFiles = Object.values(
+  allProfile?.profile?.documents || {}
+).filter((doc: any) => doc?.status === "true").length;
+
+
 
   if (schema?.type === "multi" && schema.sections) {
     return (
@@ -234,6 +425,11 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
 
   return (
     <>
+      {/* File Upload Counter */}
+      {fileFields.length > 0 && (
+        <FileUploadCounter uploadedFiles={uploadedFiles} totalFields={fileFields.length} />
+      )}
+
       <motion.div
         className="grid grid-cols-1 md:grid-cols-1 gap-5"
         initial="hidden"
@@ -254,7 +450,18 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
           const isRequired = field.required;
           const isDisabled = field.disabled;
           const isFullWidth = field.col === 2 || field.type === "radio" || field.type === "checkbox";
-          const currentValue = watch(fullName);
+
+          const formPath = sectionKey ? `${sectionKey}.${field.name}` : field.name;
+          const apiDocument =
+            allProfile?.profile?.documents?.[field.name];
+
+          const currentValue =
+            apiDocument?.url ||
+            watch(formPath);
+
+          const hasFile =
+            apiDocument?.status === "true" ||
+            hasFileInFormData(field.name);
 
           return (
             <motion.div
@@ -282,77 +489,128 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className={cn(
-                    "border-2 border-dashed rounded-lg p-4 transition-all",
-                    fieldError ? "border-destructive" : "border-border hover:border-primary/50",
-                    uploadingFiles[field.name] && "opacity-60"
-                  )}>
+                  <div
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, field.name, field)}
+                    className={cn(
+                      "border-2 border-dashed rounded-xl p-4 transition-all relative group",
+                      fieldError ? "border-destructive bg-destructive/5" : "border-border hover:border-primary/50 hover:bg-muted/30",
+                      (uploadingFiles[field.name] || hasFile) && "opacity-60 pointer-events-none"
+                    )}
+                  >
                     <input
                       id={fullName}
                       type="file"
-                      accept={ ".pdf,.jpg,.jpeg,.png"}
+                      ref={fileInputRef}
+                      accept={field.accept || ".pdf,.jpg,.jpeg,.png"}
                       onChange={(e) => handleFileUpload(e, field.name, field)}
-                      disabled={uploadingFiles[field.name] || isDisabled}
+                      disabled={uploadingFiles[field.name] || isDisabled || hasFile}
                       className="hidden"
                     />
-                    
+
                     <label
                       htmlFor={fullName}
                       className={cn(
-                        "flex flex-col items-center justify-center gap-2 cursor-pointer",
-                        (uploadingFiles[field.name] || isDisabled) && "cursor-not-allowed"
+                        "flex flex-col items-center justify-center gap-2 cursor-pointer min-h-[120px]",
+                        (uploadingFiles[field.name] || isDisabled || hasFile) && "cursor-not-allowed"
                       )}
                     >
+                      {/* State: Uploading */}
                       {uploadingFiles[field.name] ? (
                         <>
                           <RefreshCw className="w-8 h-8 animate-spin text-primary" />
                           <p className="text-sm text-muted-foreground">Uploading...</p>
                         </>
-                      ) : fileUrls[field.name] || currentValue ? (
-                        <>
-                          <CheckCircle className="w-8 h-8 text-green-500" />
-                          <p className="text-sm text-green-600">File uploaded successfully</p>
-                          <div className="flex gap-3 mt-2">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setPreviewUrl(fileUrls[field.name] || currentValue);
-                              }}
-                              className="text-xs text-primary hover:underline flex items-center gap-1"
-                            >
-                              <Eye className="w-3 h-3" />
-                              View
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRemoveFile(field.name, field);
-                              }}
-                              className="text-xs text-destructive hover:underline flex items-center gap-1"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                              Remove
-                            </button>
+                      ) :
+                        // State: File Exists (check persisted form data)
+                        (hasFile && currentValue) ? (
+                          <div className="w-full flex items-center gap-3 sm:gap-4 p-2">
+                            {/* Thumbnail / Icon */}
+                            <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-white border border-border flex items-center justify-center overflow-hidden shadow-sm">
+                              {getFileTypeIcon(currentValue)}
+                            </div>
+
+                            {/* File Info */}
+                            <div className="flex-1 min-w-0 text-left">
+                              <p className="text-sm font-medium text-foreground truncate">
+                                {getFileName(currentValue)}
+                              </p>
+                              <p className="text-xs text-green-600 flex items-center gap-1 mt-1">
+                                <CheckCircle className="w-3 h-3" />
+                                Uploaded - Cannot reupload
+                              </p>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-1.5">
+                              <motion.button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  if (currentValue && !currentValue.includes("nofile") && currentValue !== "/uploads/docs/nofile") {
+                                    setPreviewUrl(currentValue);
+                                  } else {
+                                    toast.error("No valid file to preview.");
+                                  }
+                                }}
+                                className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                title="Preview document"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                              >
+                                <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+                              </motion.button>
+                              <motion.button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  handleRemoveFile(field.name, field);
+                                }}
+                                className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                                title="Remove file"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                              >
+                                <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                              </motion.button>
+                            </div>
                           </div>
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="w-8 h-8 text-muted-foreground" />
-                          <p className="text-sm text-center">
-                            <span className="text-primary">Click to upload</span> or drag and drop
-                          </p>
-                          <p className="text-xs text-muted-foreground text-center">
-                            {field.accept?.replace(/\./g, '').toUpperCase() || 'PDF, JPG, PNG'} (Max 5MB)
-                          </p>
-                        </>
-                      )}
+                        ) :
+                          // State: Empty - Upload Prompt
+                          (
+                            <>
+                              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                                <Upload className="w-7 h-7 text-primary" />
+                              </div>
+                              <div className="text-center">
+                                <p className="text-sm sm:text-base font-medium text-foreground">
+                                  <span className="text-primary">Click to upload</span> or drag & drop
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {(field.accept || "PDF, JPG, PNG").replace(/\./g, '').toUpperCase()} • Max 5MB
+                                </p>
+                              </div>
+                            </>
+                          )}
                     </label>
+
+                    {/* Disabled overlay text when file exists */}
+                    {hasFile && currentValue && (
+                      <div className="absolute inset-0 bg-black/50 rounded-xl flex items-center justify-center">
+                        <p className="text-white text-sm font-medium">File Uploaded - Cannot Reupload</p>
+                      </div>
+                    )}
                   </div>
-                  
+
+                  {field.helperText && !fieldError && (
+                    <p className="text-xs text-muted-foreground mt-1.5">
+                      {field.helperText}
+                    </p>
+                  )}
+
                   <FieldError message={fieldError} />
-                  
                 </motion.div>
               )}
 
@@ -366,7 +624,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                   <motion.input
                     id={fullName}
                     type={field.type || "text"}
-                    {...register(fullName, {
+                    {...register(formPath, {
                       required: isRequired ? `${field.label} is required` : false,
                     })}
                     disabled={isDisabled}
@@ -406,7 +664,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
                         type="checkbox"
-                        {...register(fullName)}
+                        {...register(formPath)}
                         className="sr-only peer"
                       />
                       <motion.div
@@ -427,7 +685,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
 
                   {/* Children Render */}
                   <AnimatePresence>
-                    {watch(fullName) && field.children && (
+                    {watch(formPath) && field.children && (
                       <motion.div
                         className="mt-4 pl-4 border-l-2 border-primary/30 space-y-4"
                         variants={childVariants}
@@ -437,7 +695,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                       >
                         <FormRenderer
                           schema={{ fields: field.children }}
-                          sectionKey={fullName}
+                          sectionKey={formPath}
                           countries={countries}
                         />
                       </motion.div>
@@ -469,7 +727,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                     animate="visible"
                   >
                     {field.fields?.map((subField: any) => {
-                      const subFullName = `${fullName}.${subField.name}`;
+                      const subFullName = `${formPath}.${subField.name}`;
                       const subError = errors?.[subFullName]?.message as string | undefined;
 
                       return (
@@ -509,7 +767,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                 <motion.textarea
                   id={fullName}
                   rows={field.rows || 4}
-                  {...register(fullName, {
+                  {...register(formPath, {
                     required: isRequired ? `${field.label} is required` : false,
                   })}
                   disabled={isDisabled}
@@ -531,8 +789,8 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                 field.optionsSource === "countries" ? (
                   <ModernSelect
                     options={countries}
-                    value={watch(fullName)}
-                    onChange={(value) => setValue(fullName, value)}
+                    value={watch(formPath)}
+                    onChange={(value) => setValue(formPath, value)}
                     placeholder={`Select ${field.label}`}
                     className="py-0"
                   />
@@ -545,14 +803,14 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                   >
                     <motion.select
                       id={fullName}
-                      {...register(fullName, {
+                      {...register(formPath, {
                         required: isRequired ? `${field.label} is required` : false,
                       })}
                       disabled={isDisabled}
                       aria-invalid={!!fieldError}
                       className={cn(
                         baseInputStyles,
-                        "appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTUgN2w1IDVsNS01IiAvPjwvc3ZnPg==')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:1.25em_1.25em]"
+                        "appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bGxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDIwIDIwIiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTUgN2w1IDVsNS01IiAvPjwvc3ZnPg==')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:1.25em_1.25em]"
                       )}
                       whileFocus={{ scale: 1.01 }}
                     >
@@ -572,7 +830,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                 <motion.input
                   id={fullName}
                   type="date"
-                  {...register(fullName, {
+                  {...register(formPath, {
                     required: isRequired ? `${field.label} is required` : false,
                   })}
                   disabled={isDisabled}
@@ -593,9 +851,9 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                 <motion.fieldset className="space-y-2.5 mt-1">
                   <legend className="sr-only">{field.label}</legend>
 
-                  {field.options?.map((option: any, idx: number) => {
+                  {field.options?.map((option: any) => {
                     const optionId = `${fullName}-${option.value}`;
-                    const fieldValue = watch(fullName);
+                    const fieldValue = watch(formPath);
                     const isSelected = fieldValue === option.value;
 
                     return (
@@ -616,7 +874,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                             id={optionId}
                             type="radio"
                             value={option.value}
-                            {...register(fullName, {
+                            {...register(formPath, {
                               required: isRequired ? `${field.label} is required` : false,
                             })}
                             disabled={isDisabled}
@@ -730,7 +988,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                         const NONE_VALUE = "none";
 
                         if (option.value === NONE_VALUE) {
-                          setValue(fullName, [NONE_VALUE]);
+                          setValue(formPath, [NONE_VALUE]);
                           return;
                         }
 
@@ -742,7 +1000,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
                           updated.push(option.value);
                         }
 
-                        setValue(fullName, updated);
+                        setValue(formPath, updated);
                       };
 
                       return (
@@ -792,7 +1050,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
               </AnimatePresence>
 
               {/* HELPER TEXT */}
-              {field.helperText && !fieldError && (
+              {field.helperText && !fieldError && field.type !== "file" && (
                 <motion.p
                   className="text-xs text-muted-foreground mt-1.5"
                   initial={{ opacity: 0 }}
@@ -808,12 +1066,35 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
       </motion.div>
 
       {/* Document Preview Modal */}
-      {previewUrl && (
-        <DocumentPreview url={previewUrl} onClose={() => setPreviewUrl(null)} />
-      )}
+      <AnimatePresence>
+        {previewUrl && (
+          <DocumentPreview url={previewUrl} onClose={() => setPreviewUrl(null)} />
+        )}
+      </AnimatePresence>
     </>
   );
 }
+
+// Animation variants
+const fieldVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
+};
+
+const childVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.3, delay: 0.1 } }
+};
+
+// Base input styles
+const baseInputStyles = `
+  w-full px-3.5 py-2.5 text-sm rounded-lg border border-border 
+  bg-background text-foreground placeholder:text-muted-foreground/70
+  focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary 
+  disabled:cursor-not-allowed disabled:opacity-60 disabled:bg-muted/40
+  transition-all duration-200 ease-in-out
+  aria-invalid:border-destructive aria-invalid:focus:ring-destructive/30
+`;
 
 function RepeatableSection({ section, sectionKey, countries }: any) {
   const { control } = useFormContext();

@@ -745,7 +745,7 @@ export default function CoursesPage() {
                     <div className="flex items-center gap-3 mt-auto">
                       <Link
                         href={`/dashboard/programs/${course.slug}`}
-                        className="flex-1 px-4 py-2.5 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center text-sm group-hover:scale-[1.02]"
+                        className="flex-1 p-2 lg:px-4 lg:py-2.5 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center text-sm group-hover:scale-[1.02]"
                       >
                         View Details
                       </Link>
@@ -754,7 +754,7 @@ export default function CoursesPage() {
                           setSelectedCourse(course)
                           setIsModalOpen(true)
                         }}
-                        className="flex-1 px-4 py-2.5 border-2 border-primary/20 text-primary rounded-lg hover:bg-primary hover:text-primary-foreground transition-all duration-300 font-medium text-sm group-hover:scale-[1.02]"
+                        className="flex-1 p-2 lg:px-4 lg:py-2.5 border-2 border-primary/20 text-primary rounded-lg hover:bg-primary hover:text-primary-foreground transition-all duration-300 font-medium text-sm group-hover:scale-[1.02]"
                       >
                         Apply Now
                       </button>

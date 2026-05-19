@@ -4,8 +4,10 @@ import axiosInstance from "@/app/axiosInstance";
 import { useGlobal } from "@/src/statecontext";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, ChevronDown, ChevronUp, User, Phone, Mail, Calendar, MapPin, Globe, CreditCard, BookOpen, GraduationCap, FileText, Clock, Shield, Users, Wallet, Flag, Heart, Briefcase, Home, Lock, Key, Award, Star } from "lucide-react";
+import { Plus, ChevronDown, ChevronUp, User, Phone, Mail, Calendar, MapPin, Globe, CreditCard, BookOpen, GraduationCap, FileText, Clock, Shield, Users, Wallet, Flag, Heart, Briefcase, Home, Lock, Key, Award, Star, CheckCircle, XCircle, Eye, Download, Upload, FileCheck, FileX } from "lucide-react";
 import { useRouter } from "next/navigation";
+
+import { toast } from "react-hot-toast";
 
 /* ─── Types ──────────────────────────────────────────────────────────── */
 interface EducationHistory {
@@ -51,6 +53,14 @@ interface Preferences {
   };
 }
 
+interface Document {
+  key: string;
+  url: string;
+  status: 'pending' | 'approved' | 'rejected';
+  uploadedAt?: string;
+  notes?: string;
+}
+
 interface ProfileData {
   createdAt?: string;
   currentAddress?: {
@@ -61,7 +71,7 @@ interface ProfileData {
     postalCode?: string;
     state?: string;
   };
-  documents?: any[];
+  documents?: Record<string, Document>;
   educationHistory?: EducationHistory[];
   englishProficiencyScore?: EnglishProficiencyScore;
   highestAcademic?: HighestAcademic;
@@ -141,6 +151,7 @@ function StatusPill({ status }: { status: string }) {
     submitted: "bg-cyan-100 text-cyan-700 ring-cyan-200",
     accepted: "bg-green-100 text-green-700 ring-green-200",
     rejected: "bg-red-100 text-red-700 ring-red-200",
+    approved: "bg-green-100 text-green-700 ring-green-200",
   };
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold ring-1 ${colors[status] ?? "bg-slate-100 text-slate-600 ring-slate-200"}`}>
@@ -195,17 +206,199 @@ function InfoRow({ label, value, icon: Icon }: { label: string; value: React.Rea
   );
 }
 
+// Document Card Component
+function DocumentCard({ document, documentName, onApprove, onReject, onPreview }: {
+  document: Document;
+  documentName: string;
+  onApprove: (docName: string) => void;
+  onReject: (docName: string) => void;
+  onPreview: (url: string) => void;
+}) {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-100 text-green-700 border-green-200';
+      case 'rejected':
+        return 'bg-red-100 text-red-700 border-red-200';
+      default:
+        return 'bg-amber-100 text-amber-700 border-amber-200';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'approved':
+        return <CheckCircle className="w-4 h-4" />;
+      case 'rejected':
+        return <XCircle className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="border border-gray-200 rounded-xl p-4 bg-white hover:shadow-md transition-all"
+    >
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            <FileText className="w-5 h-5 text-violet-500" />
+            <h4 className="font-semibold text-gray-800 capitalize">
+              {documentName.replace(/([A-Z])/g, ' $1').trim()}
+            </h4>
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(document.status)}`}>
+              {getStatusIcon(document.status)}
+              {document.status}
+            </span>
+          </div>
+
+          <p className="text-xs text-gray-500 mb-2">
+            Uploaded: {document.uploadedAt ? new Date(document.uploadedAt).toLocaleDateString() : 'N/A'}
+          </p>
+
+          {document.notes && (
+            <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded-lg mt-2">
+              Notes: {document.notes}
+            </p>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 ml-4">
+          <button
+            onClick={() => onPreview(document.url)}
+            className="p-2 text-gray-600 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+            title="Preview"
+          >
+            <Eye className="w-4 h-4" />
+          </button>
+
+          <a
+            href={document.url}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            title="Download"
+          >
+            <Download className="w-4 h-4" />
+          </a>
+
+          {document.status !== 'approved' && (
+            <button
+              onClick={() => onApprove(documentName)}
+              className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+              title="Approve"
+            >
+              <CheckCircle className="w-4 h-4" />
+            </button>
+          )}
+
+          {document.status !== 'rejected' && (
+            <button
+              onClick={() => onReject(documentName)}
+              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              title="Reject"
+            >
+              <XCircle className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// Document Preview Modal
+function DocumentPreviewModal({ url, onClose }: { url: string; onClose: () => void }) {
+  const isImage = url.match(/\.(jpg|jpeg|png|gif|webp)$/i) || url.startsWith('data:image');
+  const fullUrl = url.startsWith('http') ? url :
+    process.env.NODE_ENV === "development"
+      ? `http://localhost:5000${url}`
+      : url;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="bg-white dark:bg-gray-900 rounded-2xl p-4 sm:p-6 max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
+          <h3 className="font-semibold text-base sm:text-lg">Document Preview</h3>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="overflow-auto max-h-[60vh] flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-xl">
+          {isImage ? (
+            <img
+              src={fullUrl}
+              alt="Document preview"
+              className="max-w-full h-auto max-h-[50vh] object-contain rounded-lg"
+            />
+          ) : (
+            <iframe
+              src={fullUrl}
+              className="w-full h-[50vh] min-h-[300px] rounded-lg"
+              title="Document Preview"
+              sandbox="allow-scripts allow-same-origin"
+            />
+          )}
+        </div>
+
+        <div className="mt-4 flex justify-end gap-2">
+          <a
+            href={fullUrl}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+          >
+            <Download className="w-4 h-4" />
+            Download
+          </a>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 /* ─── Detail Sidebar Component ───────────────────────────────────────── */
 function StudentDetailSidebar({
   user,
   onClose,
-  applications
+  applications,
+  allProfile
 }: {
   user: ReferralUser;
   onClose: () => void;
   applications: Application[];
+  allProfile: any;
 }) {
-  const [activeTab, setActiveTab] = useState<"info" | "applications">("info");
+  const [activeTab, setActiveTab] = useState<"info" | "applications" | "documents">("info");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [updatingDocs, setUpdatingDocs] = useState<Record<string, boolean>>({});
 
   const formatDate = (date: string | undefined) => {
     if (!date) return "N/A";
@@ -223,7 +416,61 @@ function StudentDetailSidebar({
     return `₹${amount.toLocaleString()}`;
   };
 
-  const profile = user.profile;
+  const profile = user.profile || allProfile?.profile;
+
+  // Get documents from profile
+  const documents = profile?.documents || {};
+
+ const handleDocumentStatus = async (
+  documentName: string,
+  status: boolean
+) => {
+  setUpdatingDocs((prev) => ({
+    ...prev,
+    [documentName]: true,
+  }));
+
+  try {
+    const response = await axiosInstance.patch(
+      "/auth/edit-doc",
+      {
+        userId: user._id,
+        documentName,
+        status,
+      }
+    );
+
+    if (response.data.success) {
+      toast.success(
+        `${documentName} ${
+          status ? "approved" : "rejected"
+        } successfully`
+      );
+    }
+  } catch (error) {
+    console.error(
+      `Error updating ${documentName}:`,
+      error
+    );
+
+    toast.error("Failed to update document status");
+  } finally {
+    setUpdatingDocs((prev) => ({
+      ...prev,
+      [documentName]: false,
+    }));
+  }
+};
+
+  const handlePreview = (url: string) => {
+    setPreviewUrl(url);
+  };
+
+  // Document statistics
+  const totalDocuments = Object.keys(documents).length;
+  const approvedDocs = Object.values(documents).filter(doc => doc.status === 'approved').length;
+  const pendingDocs = Object.values(documents).filter(doc => doc.status === 'pending').length;
+  const rejectedDocs = Object.values(documents).filter(doc => doc.status === 'rejected').length;
 
   return (
     <motion.div
@@ -298,6 +545,21 @@ function StudentDetailSidebar({
           >
             Applications ({applications.length})
             {activeTab === "applications" && (
+              <motion.div
+                layoutId="activeTab"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-violet-600"
+              />
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab("documents")}
+            className={`px-4 py-2 text-sm font-medium transition-colors relative ${activeTab === "documents"
+              ? "text-violet-600"
+              : "text-gray-500 hover:text-gray-700"
+              }`}
+          >
+            Documents ({totalDocuments})
+            {activeTab === "documents" && (
               <motion.div
                 layoutId="activeTab"
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-violet-600"
@@ -437,15 +699,8 @@ function StudentDetailSidebar({
                   )}
                 </InfoSection>
               )}
-
-              {/* Documents */}
-              {profile?.documents && profile.documents.length > 0 && (
-                <InfoSection title="DOCUMENTS" icon={FileText}>
-                  <p className="text-sm text-gray-600">{profile.documents.length} document(s) uploaded</p>
-                </InfoSection>
-              )}
             </motion.div>
-          ) : (
+          ) : activeTab === "applications" ? (
             <motion.div
               key="applications"
               initial={{ opacity: 0, y: 20 }}
@@ -495,16 +750,79 @@ function StudentDetailSidebar({
                 ))
               )}
             </motion.div>
+          ) : (
+            <motion.div
+              key="documents"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-4"
+            >
+              {/* Document Statistics */}
+              {totalDocuments > 0 && (
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="bg-blue-50 rounded-xl p-3 text-center">
+                    <FileText className="w-5 h-5 text-blue-600 mx-auto mb-1" />
+                    <p className="text-2xl font-bold text-blue-600">{totalDocuments}</p>
+                    <p className="text-xs text-gray-600">Total</p>
+                  </div>
+                  <div className="bg-green-50 rounded-xl p-3 text-center">
+                    <CheckCircle className="w-5 h-5 text-green-600 mx-auto mb-1" />
+                    <p className="text-2xl font-bold text-green-600">{approvedDocs}</p>
+                    <p className="text-xs text-gray-600">Approved</p>
+                  </div>
+                  <div className="bg-amber-50 rounded-xl p-3 text-center">
+                    <Clock className="w-5 h-5 text-amber-600 mx-auto mb-1" />
+                    <p className="text-2xl font-bold text-amber-600">{pendingDocs}</p>
+                    <p className="text-xs text-gray-600">Pending</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Documents List */}
+              {totalDocuments === 0 ? (
+                <div className="text-center py-12">
+                  <div className="text-gray-400 text-6xl mb-4">📄</div>
+                  <p className="text-gray-500">No documents uploaded</p>
+                  <p className="text-xs text-gray-400 mt-1">Documents will appear here once uploaded by student</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {Object.entries(documents).map(([docName, doc]) => (
+                    <DocumentCard
+                      key={docName}
+                      document={doc as Document}
+                      documentName={docName}
+                      onApprove={() =>
+                        handleDocumentStatus(docName, true)
+                      }
+                      onReject={() =>
+                        handleDocumentStatus(docName, false)
+                      }
+                      onPreview={handlePreview}
+                    />
+                  ))}
+                </div>
+              )}
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* Document Preview Modal */}
+      <AnimatePresence>
+        {previewUrl && (
+          <DocumentPreviewModal url={previewUrl} onClose={() => setPreviewUrl(null)} />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
 
 /* ─── Main Page ──────────────────────────────────────────────────────── */
 const Page = () => {
-  const { profile } = useGlobal();
+  const { profile, allProfile } = useGlobal();
 
   /* Search state */
   const [query, setQuery] = useState("");
@@ -601,7 +919,6 @@ const Page = () => {
                   <th className="py-3 px-5 font-medium">Student</th>
                   <th className="py-3 px-5 font-medium">Contact</th>
                   <th className="py-3 px-5 font-medium">Email</th>
-                  {/* <th className="py-3 px-5 font-medium">Location</th> */}
                   <th className="py-3 px-5 font-medium">Referral Code</th>
                   <th className="py-3 px-5 font-medium">Wallet</th>
                   <th className="py-3 px-5 font-medium">Status</th>
@@ -634,9 +951,6 @@ const Page = () => {
                     >
                       <td className="py-4 px-5">
                         <div className="flex items-center gap-3">
-                          {/* <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-indigo-500 flex items-center justify-center text-white text-sm font-bold shrink-0">
-                            {student.name?.[0]?.toUpperCase() ?? "?"}
-                          </div> */}
                           <div>
                             <p className="font-semibold text-gray-800 capitalize">{student.name}</p>
                             <p className="text-xs text-gray-400">{student.gender || "N/A"}</p>
@@ -649,10 +963,6 @@ const Page = () => {
                       <td className="py-4 px-5">
                         <p className="text-sm text-gray-600 truncate max-w-[200px]">{student.email || "N/A"}</p>
                       </td>
-                      {/* <td className="py-4 px-5">
-                        <p className="text-sm text-gray-600">{student.city || "N/A"}</p>
-                        <p className="text-xs text-gray-400">{student.country || ""}</p>
-                      </td> */}
                       <td className="py-4 px-5">
                         <code className="text-xs bg-gray-100 px-2 py-1 rounded">{student.referalCode || "N/A"}</code>
                       </td>
@@ -701,6 +1011,7 @@ const Page = () => {
             user={selectedUser}
             onClose={() => setSelectedUser(null)}
             applications={applications}
+            allProfile={allProfile}
           />
         )}
       </AnimatePresence>

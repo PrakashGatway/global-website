@@ -1,4 +1,5 @@
 "use client"
+import { usePathname } from "next/navigation";
 import { FaWhatsapp } from "react-icons/fa";
 
 export default function WhatsAppButton() {
@@ -8,7 +9,14 @@ export default function WhatsAppButton() {
 
   const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
+  const pathname = usePathname()
+
+  if(pathname.startsWith("/dashboard")){
+  return null
+  }
+
   return (
+    
     <button
       onClick={() => window.open(whatsappLink, "_blank")}
      

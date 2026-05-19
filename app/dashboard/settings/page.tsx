@@ -554,7 +554,23 @@ export default function ProfilePage() {
       },
     },
     // Include documents in the payload
-    documents: values?.Document?.documents || {}
+documents: {
+  ...(allProfile?.profile?.documents || {}),
+
+  ...Object.entries(values?.Document?.documents || {}).reduce(
+    (acc, [key, value]) => {
+      acc[key] = {
+        key: key, // ✅ send field name
+        url: value,
+        status: value ? "true" : "false",
+        
+      };
+
+      return acc;
+    },
+    {}
+  )
+}
   };
 };
 
