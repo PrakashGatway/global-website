@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useLayoutEffect } from "react"
 import { useParams, useRouter,
-    //  useSearchParams
+     useSearchParams
      } from "next/navigation"
 import { motion } from "framer-motion"
 import {
@@ -426,7 +426,12 @@ const VisaRequirements = ({ visaDetails }: { visaDetails: VisaDetails }) => {
     )
 }
 
-// Main Country Detail Page Component
+
+// app/next js
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+// Main Country Detail Page Component   { searchParams }: PageProps
 export default function CountryDetailPage() {
     const params = useParams()
     const router = useRouter()
@@ -441,19 +446,20 @@ export default function CountryDetailPage() {
     const [loadingUniversities, setLoadingUniversities] = useState(false)
     const [activeTab, setActiveTab] = useState("overview")
     const [saved, setSaved] = useState(false)
+    const [Countries,setCountries] = useState([]);
 
-    // const searchParams = useSearchParams();
+    const searchParams = useSearchParams();
 
-    // useEffect(() => {
+    useEffect(() => {
         
-    // const tabFromUrl = searchParams.get("tab");
+    const tab = searchParams.get("tab");
     
-    // if (tabFromUrl) {
-    //     setActiveTab(tabFromUrl);
-    // } else if (country?.extra_content?.[0]?.sections?.[0]?.section_key) {
-    //     setActiveTab(country.extra_content[0].sections[0].section_key);
-    // }
-    // }, [searchParams, country]);
+    if (tab) {
+        setActiveTab(tab);
+    } else if (country?.extra_content?.[0]?.sections?.[0]?.section_key) {
+        setActiveTab(country.extra_content[0].sections[0].section_key);
+    }
+    }, [searchParams, country]);
 
 
     useEffect(() => {
@@ -518,6 +524,29 @@ export default function CountryDetailPage() {
     const hasUniversities = universities.length > 0
 
     
+    const fetchCountries = async () => {
+        try {
+            setLoading(true)
+            const params = new URLSearchParams({
+                page: "1",
+                limit: "6",
+            })
+            
+            const response = await axiosInstance.get(`/countries?${params}`)
+            const data: any = response.data
+            
+            setCountries(data.data)
+        } catch (error) {
+            console.error('Error fetching countries:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchCountries()
+    }, [])
+
 
     if (loading) {
         return (
@@ -559,7 +588,7 @@ export default function CountryDetailPage() {
                 >
                     <Link href="/dashboard" className="hover:text-[#F26D44] transition-colors">Home</Link>
                     <ChevronRight className="w-4 h-4" />
-                    <Link href="/dashboard/countries" className="hover:text-[#F26D44] transition-colors">Countries</Link>
+                    <Link href="/dashboard/countrys" className="hover:text-[#F26D44] transition-colors">Countries</Link>
                     <ChevronRight className="w-4 h-4" />
                     <span className="text-gray-900 font-medium">{country.name}</span>
                 </motion.div>
@@ -647,7 +676,7 @@ export default function CountryDetailPage() {
                 </div>
 
                 {/* Stats Bar */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     <StatCard 
                         icon={University} 
                         label="Universities" 
@@ -668,7 +697,7 @@ export default function CountryDetailPage() {
                         label="Member Since" 
                         value={new Date(country.createdAt).getFullYear().toString()} 
                     />
-                </div>
+                </div> */}
 
                 {/* Main Content Area */}
                 <div className="flex flex-col lg:flex-row gap-8">

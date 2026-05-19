@@ -71,6 +71,20 @@ module.exports = {
           "100%": { transform: "translateX(-50%)" },
         },
       },
+
+       // auto scroll
+      
+      
+      animation: {
+        'marquee-vertical': 'marqueeVertical 20s linear infinite',
+      },
+      keyframes: {
+        marqueeVertical: {
+          '0%': { transform: 'translateY(0%)' },
+          '100%': { transform: 'translateY(-50%)' },
+        },
+      },
+      
     },
   },
 

@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo, Suspense } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, Filter, MapPin, Globe, Users, Star, Building, ChevronDown, Loader2, BookOpen, Calendar, DollarSign, Award, GraduationCap, X, Check, ExternalLink, TrendingUp, Clock, Shield, Sparkles } from "lucide-react"
 import axiosInstance from "@/app/axiosInstance"
 import AmazingSelect, { ModernSelect } from "@/components/ui/select"
 import Link from "next/link"
 import Image from "next/image"
-// import { useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 
 interface University {
   _id: string
@@ -71,7 +71,17 @@ const itemVariants = {
   },
 }
 
+
 export default function UniversitiesPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading universities...</div>}>
+      <UniversitiesPageClient />
+    </Suspense>
+  )
+}
+
+function UniversitiesPageClient() {
+// export default function UniversitiesPage() {
   // State management
   const [universities, setUniversities] = useState<University[]>([])
   const [loading, setLoading] = useState(true)
@@ -84,7 +94,14 @@ export default function UniversitiesPage() {
   const [countries, setCountries] = useState([])
   const filterButtonRef = useRef(null);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-  const search =  "" //useSearchParams().get("country") ||
+  const searchParams =  useSearchParams();
+  // const search = searchParams.get("country") || "" //
+  const [search, setsearch] = useState("");
+
+  useEffect(() => {
+    const country = searchParams.get("country") || ""
+    setsearch(country); 
+  },[searchParams]);
 
   // Debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 500)

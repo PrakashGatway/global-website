@@ -10,6 +10,7 @@ export function GlobalProvider({ children }) {
     const [profile, setProfile] = useState(null)
     const [allProfile, setallProfile] = useState(null)
     const [authToken, setauthToken] = useState(null)
+    const [show, setShow] = useState(false)
 
     // Popup states
     const [isPopupOpen, setIsPopupOpen] = useState(false)
@@ -218,7 +219,8 @@ export function GlobalProvider({ children }) {
             updateProfile,
             allProfile,
             openPopup: showPopup,
-            closePopup
+            closePopup,
+            show, setShow
         }}>
             {children}
             <PopupForm
