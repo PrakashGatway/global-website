@@ -49,7 +49,7 @@ export default async function Home() {
       "/page-information/navbar?isFeatured=true&type=destinations&limit=6"
     ),
 
-    serverInstance.get("/page-information/navbar?isFeatured=true&type=country&limit=6"),
+    serverInstance.get("/page-information/navbar?isFeatured=true&type=country&limit=8"),
     serverInstance.get("/testimonials?type=image&limit=15"),
     serverInstance.get("/faqs/public/list?type=General&limit=15"),
     serverInstance.get("/testimonials?type=video&limit=6"),

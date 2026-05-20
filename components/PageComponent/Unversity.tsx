@@ -131,7 +131,7 @@ export default function UniversitySliderClient({ universities }) {
 export const CountryCardGrid = ({ countries }) => {
   console.log(countries)
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
       {countries.map((country) => (
         <Link
           key={country._id}
@@ -141,7 +141,7 @@ export const CountryCardGrid = ({ countries }) => {
         >
           {/* Background Image */}
           <img
-            src={country.navbarImage || country.cardImage || '/placeholder-country.jpg'}
+            src={country?.country?.image || country.navbarImage || country.cardImage || '/placeholder-country.jpg'}
             alt={`${country.navbarTitle || country.title} flag or landmark`}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"

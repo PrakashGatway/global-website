@@ -56,7 +56,6 @@ export default async function RootLayout({
     serverInstance.get("/page-information/navbar?isFeatured=true&type=country"),
     serverInstance.get("/universities/search"),
     serverInstance.get("/page-information/navbar?isFooter=true&type=country&limit=15"),
-
   ]);
 
   const featureRes = feature.data.data.filter(
