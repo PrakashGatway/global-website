@@ -24,7 +24,7 @@ import { useGlobal } from "@/src/statecontext";
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: BookOpen, label: "Universities", href: "/dashboard/universities" },
-  { icon: ReceiptText, label: "Visa Guide", href: "/dashboard/countrys" },
+  { icon: ReceiptText, label: "Countries", href: "/dashboard/countries" },
   { icon: BarChart3, label: "Find Programs", href: "/dashboard/programs" },
   { icon: FileText, label: "Application", href: "/dashboard/application" },
   { icon: Wallet, label: "Payments", href: "/dashboard/payment" },

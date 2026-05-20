@@ -588,7 +588,7 @@ export default function CountryDetailPage() {
                 >
                     <Link href="/dashboard" className="hover:text-[#F26D44] transition-colors">Home</Link>
                     <ChevronRight className="w-4 h-4" />
-                    <Link href="/dashboard/countrys" className="hover:text-[#F26D44] transition-colors">Countries</Link>
+                    <Link href="/dashboard/countries" className="hover:text-[#F26D44] transition-colors">Countries</Link>
                     <ChevronRight className="w-4 h-4" />
                     <span className="text-gray-900 font-medium">{country.name}</span>
                 </motion.div>

@@ -185,6 +185,7 @@ export default function ProfilePage() {
     }
   }, [])
 
+  
   useEffect(() => {
     fetchCountries()
   }, [fetchCountries])
@@ -201,7 +202,9 @@ export default function ProfilePage() {
         firstLanguage: '',
         maritalStatus: '',
         passportExpiry: '',
-        passportNumber: ''
+        passportNumber: '',
+        intake: '',
+        tuitionfee: '',
       },
       address: {
         address1: '',
@@ -352,7 +355,9 @@ export default function ProfilePage() {
         firstLanguage: profile.firstLanguage || '',
         maritalStatus: profile.maritalStatus || '',
         passportExpiry: formatDate(profile.passportExpiry),
-        passportNumber: profile.passportNumber || ''
+        passportNumber: profile.passportNumber || '',
+        intake: profile.intake || '',
+        tuitionfee : profile.tuitionfee || ''
       },
       address: allProfile?.profile?.currentAddress && {
         address1: allProfile.profile.currentAddress.addressLine1 || '',

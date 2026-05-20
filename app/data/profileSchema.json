@@ -89,6 +89,28 @@
           }
         ],
         "required": true
+      },
+      {
+        "name" : "intake",
+        "label" : "Intake",
+        "type" : "select",
+        "options" : [
+          "june 2026",
+          "december 2026"
+        ]
+
+      },
+       {
+        "name" : "tuitionfee",
+        "label" : "Budget (Tuition Fees)",
+        "type" : "text",
+        "default" : "INR",
+        "validation": {
+          "minLength": 5,
+          "message": "Invalid Budget"
+        }
+
+
       }
     ]
   },
