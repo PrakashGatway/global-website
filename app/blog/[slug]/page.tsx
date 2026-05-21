@@ -92,7 +92,7 @@ export default async function Page({ params }) {
     const latestBlogs = latestRes.data.data
 
 
-    const res = await serverInstance.get("/blogs/categories")
+    const res = await serverInstance.get("/blogs/categories?limit=50")
     const blogCategory = res.data.data
 
     // get all blogs ordered by date
@@ -101,7 +101,7 @@ export default async function Page({ params }) {
     );
 
     const allBlogs = navRes.data.data;
-
+ console.log(blogCategory,"hhh")
     return (
         <>
 

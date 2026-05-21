@@ -58,7 +58,7 @@ export default async function BlogPage({
   
   
 
-  const blogcategory = await serverInstance.get("/blogs/categories")
+  const blogcategory = await serverInstance.get("/blogs/categories?limit=50")
 
   
 

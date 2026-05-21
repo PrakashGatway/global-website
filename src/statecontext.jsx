@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react";
 import axiosInstance from "../app/axiosInstance";
 import PopupForm from "@/components/Popform";
+import { usePathname } from "next/navigation";
 
 const Globalcontext = createContext()
 
@@ -37,6 +38,11 @@ export function GlobalProvider({ children }) {
             setLoading(false)
         }
     }
+  const pathname = usePathname();
+
+useEffect(() => {
+  getProfile();
+}, [pathname]);
 
     const updateProfile = async () => {
         try {
