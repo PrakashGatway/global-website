@@ -24,7 +24,7 @@ export default function BlogGrid({ filteredBlogs }) {
 
     return (
         <>
-            <section className=" py-12 sm:py-14 lg:py-16 px-2 relative overflow-hidden">
+            <section className=" py-12 sm:py-14 lg:py-16 px-2 relative overflow-hidden bg-white">
                 
                 <div className="max-w-7xl mx-auto">
                

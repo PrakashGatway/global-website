@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 export default function UniversitySliderClient({ universities }) {
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -80,14 +81,15 @@ export default function UniversitySliderClient({ universities }) {
   ];
 
   return (
-    <section className="max-w-[1440px] mx-auto lg:pt-12 overflow-hidden">
-      <div className="  relative max-w-7xl px-4 mx-auto">
+    <section className="max-w-[1440px] mx-auto lg:pt-1 overflow-hidden bg-white">
+     {universities?.title && (
+      <div className="relative max-w-7xl px-4 mx-auto">
         <h2 className="text-xl   mb-2 ">
           <span className="text-[#F46C44] lg:text-4xl font-light" >
-            {universities.title?.split('||')[0]}
+            {universities?.title?.split('||')[0] || null}
           </span>{" "} <br />
           <span className="text-primary font-bold relative lg:text-5xl">
-            {universities.title?.split('||')[1]}
+            {universities?.title?.split('||')[1] || null}
             <span className="absolute right-0 -bottom-1 lg:bottom-0  w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
 
 
@@ -99,6 +101,7 @@ export default function UniversitySliderClient({ universities }) {
         </h2>
 
       </div>
+     ) } 
 
       {/* FULL WIDTH SLIDER */}
       <div ref={sliderRef} className="keen-slider w-full   ">
@@ -128,43 +131,298 @@ export default function UniversitySliderClient({ universities }) {
 }
 
 
-export const CountryCardGrid = ({ countries }) => {
-  console.log(countries)
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
-      {countries.map((country) => (
-        <Link
-          key={country._id}
-          href={`/${country.slug}`}
-          className="group relative block h-48 sm:h-56 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          aria-label={`Learn about studying in ${country.navbarTitle || country.title}`}
-        >
-          {/* Background Image */}
-          <img
-            src={country?.country?.image || country.navbarImage || country.cardImage || '/placeholder-country.jpg'}
-            alt={`${country.navbarTitle || country.title} flag or landmark`}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
 
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
 
-          {/* Content Badge */}
-          <div className="absolute inset-0 flex items-end justify-center pb-4 px-3">
-            <span className="bg-black/50 backdrop-blur-sm border border-white/20 text-white font-semibold text-sm sm:text-base py-2.5 px-5 rounded-xl shadow-lg transform transition-transform group-hover:scale-[1.02]">
-              {country.navbarTitle || country.title}
-            </span>
-          </div>
 
-          {/* Optional: Subtitle or CTA hint on hover */}
-          <div className="absolute inset-0 flex items-start justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-            <span className="text-white/90 text-xs bg-black/30 px-2.5 py-1 rounded-full backdrop-blur-sm">
-              Explore →
-            </span>
-          </div>
-        </Link>
-      ))}
-    </div>
-  );
+import { motion } from "framer-motion";
+import { useState, useMemo } from "react";
+
+// --- Types ---
+interface Country {
+    id: string;
+    name: string;
+    description: string;
+    link: string;
+    badge?: string;
+    badgeColor?: string;
+    bgClass: string;
+    image: string;
+}
+
+
+
+export const CountryCardGrid = ({ countries }: { countries: any[] }) => {
+   const [hoveredId, setHoveredId] = useState<string | null>(null);
+   const [mappedCountries, setMappedCountries] = useState<any[]>([]);
+
+   useEffect(() => {
+       if (countries && Array.isArray(countries)) {
+           const transformed = countries.map((item: any, index: number) => {
+               // Handle nested country object (like item 0) OR flat structure (items 1-6)
+               const countryData = item && typeof item === 'object' 
+                   ? { ...item.country, ...item } 
+                   : { ...item };
+
+               // Normalize all required fields with fallbacks
+               const normalized = {
+                   id: String(countryData._id || countryData.id || index),
+                   name:  countryData.title || 'Country',
+                   image: countryData.image || countryData.navbarImage || countryData.cardImage || '',
+                   link: countryData.slug ? `/${countryData.slug}` : countryData.link || '#',
+                   description: countryData.subTitle || countryData.description || '',
+                  
+                   
+                  
+                   ...item
+               };
+
+               return normalized;
+           });
+
+           setMappedCountries(transformed);
+       }
+   }, [countries]);
+
+   console.log(countries);
+
+   // --- Dynamic Layout Logic --- (UNCHANGED)
+   const firstRow = useMemo(() => mappedCountries.slice(0, 4), [mappedCountries]);
+   const secondRow = useMemo(() => mappedCountries.slice(4), [mappedCountries]);
+
+   const getCardWidth = (id: string, rowType: 'first' | 'second') => {
+       const rowItems = rowType === 'first' ? firstRow : secondRow;
+       const idsInRow = rowItems.map(c => c.id);
+       
+       if (!idsInRow.includes(id)) return "lg:w-[20%]";
+
+       const defaultBigId = rowType === 'first' ? idsInRow[0] : idsInRow[idsInRow.length - 1];
+
+       if (!hoveredId) {
+           return id === defaultBigId ? "lg:w-[40%]" : "lg:w-[20%]";
+       }
+
+       if (idsInRow.includes(hoveredId)) {
+           return id === hoveredId ? "lg:w-[40%]" : "lg:w-[20%]";
+       }
+
+       return id === defaultBigId ? "lg:w-[40%]" : "lg:w-[20%]";
+   };
+
+   if (!mappedCountries.length) return null;
+
+   return (
+       <div className="w-full max-w-7xl mx-auto px-4 py-8">
+           {/* Mobile View */}
+           <div className="lg:hidden">
+               <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                   {mappedCountries.map((country) => (
+                       <MobileCard key={country.id} country={country} />
+                   ))}
+               </div>
+           </div>
+
+           {/* Desktop View - First Row */}
+           {firstRow.length > 0 && (
+               <div className="hidden lg:flex lg:flex-row gap-4 mb-4">
+                   {firstRow.map((country) => (
+                       <DesktopCard 
+                           key={country.id}
+                           country={country}
+                           widthClass={getCardWidth(country.id, 'first')}
+                           hoveredId={hoveredId}
+                           setHoveredId={setHoveredId}
+                       />
+                   ))}
+               </div>
+           )}
+
+           {/* Desktop View - Second Row */}
+           {secondRow.length > 0 && (
+               <div className="hidden lg:flex lg:flex-row gap-4">
+                   {secondRow.map((country, index) => (
+                       <DesktopCard 
+                           key={country.id}
+                           country={country}
+                           widthClass={getCardWidth(country.id, 'second')}
+                           hoveredId={hoveredId}
+                           setHoveredId={setHoveredId}
+                           delay={0.2 + index * 0.05}
+                       />
+                   ))}
+               </div>
+           )}
+       </div>
+   );
 };
+
+// --- Desktop Card Component ---
+function DesktopCard({ 
+    country, 
+    widthClass, 
+    hoveredId, 
+    setHoveredId, 
+    delay = 0.2 
+}: { 
+    country: Country; 
+    widthClass: string; 
+    hoveredId: string | null; 
+    setHoveredId: (id: string | null) => void;
+    delay?: number;
+}) {
+ 
+  console.log(country.country)
+    return (
+        <motion.a
+            href={country.link}
+            className={`relative h-64 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ease-in-out ${widthClass} bg-gradient-to-br ${country.bgClass} hover:shadow-2xl group`}
+            onHoverStart={() => setHoveredId(country.id)}
+            onHoverEnd={() => setHoveredId(null)}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay }}
+            layout
+        >
+            <img
+                src={country.image?.startsWith('http') ? country.image : ``}
+                alt={country.name}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-primary/20 to-transparent z-10" />
+            
+          {country.country.name && (
+  <span
+    className="
+      absolute top-4 left-4 z-20
+      bg-black/50 backdrop-blur-sm
+      text-white text-xs font-semibold
+      px-3 py-1 rounded-full
+      shadow-lg
+    "
+  >
+    <span className="flex items-center gap-2">
+      <img
+        className="w-8 h-8 rounded-[8px] object-cover"
+        src={country.navbarImage}
+        alt={country.country.name}
+      />
+
+      <span className="whitespace-nowrap">
+        {country.country.name}
+      </span>
+    </span>
+  </span>
+)}
+            
+            <div className="absolute bottom-0 left-0 right-0 z-20 p-5 text-white transition-all ">
+                <h3 className="text-2xl font-bold leading-tight">{country?.name}</h3>
+                <p className="text-sm text-white/90 mt-1 line-clamp-2">{country?.description}</p>
+                
+                <span className="inline-flex items-center gap-1 mt-3 bg-[#f46c44] text-white text-xs font-bold px-4 py-2 rounded-full  ">
+                    Explore {country.name.split(' ')[0]} →
+                </span>
+            </div>
+        </motion.a>
+    );
+}
+
+// --- Mobile Card Component ---
+function MobileCard({ country }: { country: Country }) {
+  return (
+    <motion.a
+      href={country.link}
+      className="
+        relative w-full
+        h-52 sm:h-60 md:h-64
+        rounded-2xl overflow-hidden
+        cursor-pointer group
+        bg-gray-900
+        shadow-lg
+      "
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Background Image */}
+      <img
+        src={country.image?.startsWith("http") ? country.image : ""}
+        alt={country.name}
+        className="
+          absolute inset-0
+          w-full h-full
+          object-cover
+          transition-transform duration-500
+          group-hover:scale-110
+        "
+      />
+
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent z-10" />
+
+      {/* Country Badge */}
+     {country.country?.name && (
+  <div className="absolute top-3 left-3 z-20 max-w-[80%]">
+    <div
+      className="
+        flex items-center gap-2
+        bg-black/45 backdrop-blur-md
+        text-white
+        px-3 py-2
+        rounded-full
+        shadow-lg
+      "
+    >
+      <img
+        className="
+          w-5 h-5 min-w-[20px]
+          rounded-full
+          object-cover
+          border border-white/20
+        "
+        src={country.navbarImage}
+        alt={country.country.name}
+      />
+
+      <span
+        className="
+          text-[11px] sm:text-xs
+          font-semibold
+          truncate
+        "
+      >
+        {country.country.name}
+      </span>
+    </div>
+  </div>
+)}
+      {/* Bottom Content */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 p-4 text-white">
+        <h3
+          className="
+            text-base sm:text-lg
+            font-bold
+            leading-snug
+            line-clamp-2
+          "
+        >
+          {country.name}
+        </h3>
+
+        <span
+          className="
+            inline-flex items-center gap-1.5
+            mt-3
+            bg-[#f46c44] text-white
+            text-xs sm:text-sm
+            font-semibold
+            px-4 py-2
+            rounded-full
+            shadow-md
+          "
+        >
+          Explore
+          <ArrowRight className="w-3.5 h-3.5" />
+        </span>
+      </div>
+    </motion.a>
+  );
+}

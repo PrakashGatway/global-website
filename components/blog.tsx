@@ -1,6 +1,6 @@
 "use client"
 import Image from 'next/image';
-import { Facebook, Instagram, Twitter, Youtube, Send, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Send, Linkedin, MessageSquare } from "lucide-react";
 import UniversitiesSlider from '@/components/PageComponent/UniversitiesSlider';
 import { useEffect, useState, useTransition } from 'react';
 
@@ -11,6 +11,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import axiosInstance from '@/app/axiosInstance';
+import UniversitySliderClient from './PageComponent/Unversity';
 
 
 export default function Blogs({ Blogdata,
@@ -51,32 +52,35 @@ export default function Blogs({ Blogdata,
         )
     };
 
-    const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm()
+    const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting }
+  } = useForm();
 
-    const onSubmit = async (data) => {
-        try {
-            const res = await axiosInstance.post("/contactus", {
-                subject: "contactform",
-                type: "Website",
-                fullName: data.name,
-                email: data.email,
-                phone: data.phone,
-                destination: data.destination,
-                description: data.description
-            })
+  const onSubmit = async (data) => {
+    try {
+      const res = await axiosInstance.post("/contactus", {
+        subject: "Contact Form",
+        type: "Website",
+        fullName: data.Name,
+        email: data.email,
+        phone: data.phone,
+        destination: data.destination,
+        description: "form",
+      });
 
-            if (res.status === 200 || res.status === 201) {
-                toast.success("Message sent successfully ✅");
-                reset();
-            } else {
-                toast.error("Failed to send message ❌");
-            }
-
-        }
-        catch {
-            toast.error("Somthing went wrong ❌")
-        }
+      if (res.status === 200 || res.status === 201) {
+        toast.success("Message sent successfully ✅");
+        reset();
+      } else {
+        toast.error("Failed to send message ❌");
+      }
+    } catch (error) {
+      toast.error("Failed to send message ❌");
     }
+  };
 
 
 
@@ -358,175 +362,185 @@ export default function Blogs({ Blogdata,
       </div>
 
       {/* Social Icons */}
-      <div className="flex justify-start lg:justify-center gap-2 sm:gap-4 mt-4 sm:mt-6">
-        {[Facebook, Instagram, Twitter, Youtube, Send, Linkedin].map((Icon, i) => (
-          <button
-            key={i}
-            className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-gray-900 flex items-center justify-center text-white hover:bg-black transition-all cursor-pointer"
-            aria-label={Icon.name}
-          >
-            <Icon size={18} className="sm:hidden" />
-            <Icon size={20} className="hidden sm:block lg:hidden" />
-            <Icon size={24} className="hidden lg:block" />
-          </button>
-        ))}
-      </div>
+     <div className="flex justify-start lg:justify-center gap-2 sm:gap-4 mt-4 sm:mt-6">
+  {[
+    {
+      Icon: Facebook,
+      link: "https://www.facebook.com/share/18vb1scYJk/?mibextid=wwXIfr",
+    },
+    {
+      Icon: Instagram,
+      link: "https://www.instagram.com/ooshasglobal",
+    },
+    {
+      Icon: Youtube,
+      link: "https://youtube.com/@ooshasglobal",
+    },
+    {
+      Icon: Linkedin,
+      link: "https://www.linkedin.com/",
+    },
+  ].map(({ Icon, link }, i) => (
+    <a
+      key={i}
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-gray-900 flex items-center justify-center text-white hover:bg-black transition-all cursor-pointer"
+      aria-label={Icon.name}
+    >
+      <Icon size={18} className="sm:hidden" />
+      <Icon size={20} className="hidden sm:block lg:hidden" />
+      <Icon size={24} className="hidden lg:block" />
+    </a>
+  ))}
+</div>
 
     </div>
   </div>
 </section>
-            <section className='py-12'>
-                <UniversitiesSlider />
+            <section className='py-12 bg-white'>
+                      <UniversitySliderClient />
+                
             </section>
 
 
             {/* Book Your Online Counselling Session */}
-           <section className="py-6 sm:py-10 lg:py-12 bg-gray-600 relative overflow-hidden">
-
-  {/* Background */}
-  <div
-    className="absolute inset-0 opacity-80"
-    style={{
-      backgroundImage:
-        "url(https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&h=800&fit=crop)",
-      backgroundSize: "cover",
-      backgroundPosition: "top",
-      filter: "blur(1px)",
-    }}
-  ></div>
-
-  <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 sm:py-10 relative z-10">
-    
-    <div className="flex flex-col gap-6 sm:gap-10 lg:flex-row lg:justify-between lg:items-start">
-
-      {/* LEFT CONTENT */}
-      <div className="w-full lg:w-35/80 text-left lg:text-left">
-        
-        <h2 className="text-xl sm:text-3xl lg:text-6xl font-bold text-white leading-tight">
-          Book Your Online <br />
-          Counselling <br />
-          Session
-        </h2>
-
-        <p className="text-white text-sm sm:text-base lg:text-lg opacity-80 mt-2 sm:mt-4">
-          {/* optional text */}
-        </p>
-
-      </div>
-
-      {/* FORM */}
-      <div className="bg-white w-full lg:w-40/80 p-4 sm:p-6 lg:py-10 rounded-lg shadow-md">
-        
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 sm:space-y-6 lg:space-y-8"
-        >
-
-          {/* Name */}
-          <div>
-            <input
-              {...register("name", { required: "full name is required" })}
-              type="text"
-              placeholder="Name *"
-              className="w-full text-sm sm:text-base px-2 py-2 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-            />
-            {errors.name && (
-              <p className="text-red-500 text-xs sm:text-sm mt-1">
-                {errors.name.message}
+           <section id="contact-form" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div>
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-6">
+               Send Us a Message
+              </h2>
+              <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                Have question about studying abroad ? Fill out the form below and our education experts will get back to you within 24 hours
               </p>
-            )}
+
+              <div className="space-y-6">
+                {[{
+                  title : "Why Choose Us?",
+                  subtitle : "Get personalized guidance from experienced counselors who understand your academic goals and career aspirations."
+                },{
+                  title : "Quick Response",
+                  subtitle : "Our team ensures a quick response within 24 hours. For urgent queries, feel free to call us directly."
+                }].map((point, index) => (
+                  <div key={index} className="flex items-start gap-4">
+                    <MessageSquare className="h-6 w-6" style={{ color: '#FF6B35' }} />
+                    <div>
+                      <h4 className="font-bold text-gray-800 mb-2">{point.title}</h4>
+                      <p className="text-gray-600">{point.subtitle}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white p-8 rounded-lg shadow-lg">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div>
+                  <label className="block text-gray-700 text-sm font-semibold mb-2">
+                    Name *
+                  </label>
+                  <input
+                    {...register("Name", { required: "First name is required" })}
+                    type="text"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.firstName ? 'border-red-500' : 'border-gray-300'}`}
+                  />
+                  {errors.firstName && (
+                    <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-semibold mb-2">
+                    Email Address *
+                  </label>
+                  <input
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address"
+                      }
+                    })}
+                    type="email"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-semibold mb-2">
+                    Phone Number *
+                  </label>
+                  <input
+                    maxLength={10}
+                    {...register("phone", {
+                      required: "Phone number is required",
+                      pattern: {
+                        value: /^[0-9]{10}$/,
+                        message: "Please enter a valid 10-digit phone number"
+                      }
+                    })}
+                    type="tel"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent ${errors.phone ? 'border-red-500' : 'border-gray-300'}`}
+                  />
+                  {errors.phone && (
+                    <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-gray-700 text-sm font-semibold mb-2">
+                    Country to Study
+                  </label>
+                  <select
+                    {...register("destination")}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+                  >
+                    <option value="">Select Destination</option>
+                    <option value="usa">Study in USA</option>
+                    <option value="uk">Study in UK</option>
+                    <option value="canada">Study in France</option>
+                    <option value="australia">Study in Italy</option>
+                    <option value="germany">Study in Germany</option>
+                    <option value="france">Study in Dubai</option>
+                  </select>
+                </div>
+
+
+
+                <div className="flex items-start">
+                  <input
+                    type="checkbox"
+                    id="terms-contact"
+                    {...register("terms", { required: "You must agree to the terms" })}
+                    className="mt-1 mr-3"
+                  />
+                  <label htmlFor="terms-contact" className="text-sm text-gray-700">
+                    I agree to receive updates and promotional materials from Ooshas Global
+                  </label>
+                  {errors.terms && (
+                    <p className="text-red-500 text-sm mt-1">{errors.terms.message}</p>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`w-full text-white px-6 py-4 rounded-lg font-bold text-lg transition ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90'}`}
+                  style={{ backgroundColor: '#FF6B35', borderTopRightRadius: '25px' }}
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </button>
+              </form>
+            </div>
           </div>
-
-          {/* Phone */}
-          <div>
-            <input
-              {...register("phone", { required: "phone number is required" })}
-              type="tel"
-              placeholder="Mobile Number *"
-              className="w-full text-sm sm:text-base px-2 py-2 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-            />
-            {errors.phone && (
-              <p className="text-red-500 text-xs sm:text-sm mt-1">
-                {errors.phone.message}
-              </p>
-            )}
-          </div>
-
-          {/* Email */}
-          <div>
-            <input
-              {...register("email", { required: "email is required" })}
-              type="email"
-              placeholder="Email Address *"
-              className="w-full text-sm sm:text-base px-2 py-2 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-xs sm:text-sm mt-1">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-
-          {/* Destination */}
-          <div>
-            <input
-              {...register("destination", { required: "destination is required" })}
-              type="text"
-              placeholder="Preferred Study Destination *"
-              className="w-full text-sm sm:text-base px-2 py-2 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-            />
-            {errors.destination && (
-              <p className="text-red-500 text-xs sm:text-sm mt-1">
-                {errors.destination.message}
-              </p>
-            )}
-          </div>
-
-          {/* Message */}
-          <div>
-            <input
-              {...register("description")}
-              type="text"
-              placeholder="Message *"
-              className="w-full text-sm sm:text-base px-2 py-2 border-b border-gray-300 focus:outline-none focus:border-b-2 focus:border-[#FF6B35]"
-            />
-          </div>
-
-          {/* Checkbox */}
-          <div className="flex items-start gap-2">
-            <input
-              {...register("terms", { required: "You must agree to the terms" })}
-              type="checkbox"
-              id="terms"
-              className="mt-1"
-            />
-            <label htmlFor="terms" className="text-xs sm:text-sm text-gray-700">
-              I agree to the terms and conditions
-            </label>
-          </div>
-
-          {errors.terms && (
-            <p className="text-red-500 text-xs sm:text-sm -mt-2">
-              {errors.terms.message}
-            </p>
-          )}
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full text-white px-6 py-2.5 rounded-lg font-semibold text-sm sm:text-base hover:opacity-90 transition active:scale-95"
-            style={{ backgroundColor: "#FF6B35" }}
-          >
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </button>
-
-        </form>
-
-      </div>
-
-    </div>
-  </div>
-</section>
+        </div>
+      </section>
         </>
     )
 }

@@ -39,8 +39,8 @@ export default async function BlogPage({
 
   const limit =
     typeof searchquery.limit === "string"
-      ? 9
-      : 9
+      ? 50
+      : 50
 
         const category =
     typeof searchquery.category === "string"
@@ -55,6 +55,7 @@ export default async function BlogPage({
     },
   })
 
+  
   
 
   const blogcategory = await serverInstance.get("/blogs/categories")

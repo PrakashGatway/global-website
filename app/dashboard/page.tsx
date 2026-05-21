@@ -48,6 +48,7 @@ import { useGlobal } from "@/src/statecontext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
+import DashboardCounsellor from "@/components/dashboard/counsellerDashboard/dashboard";
 
 // Step configuration with icons
 const stepIcons = {
@@ -375,9 +376,16 @@ export default function DashboardPage() {
     { name: "Pre-Departure", status: "upcoming" },
   ];
 
+  console.log(allProfile)
+
   return (
     <div className="min-h-screen bg-white">
-      <div className="p-4">
+      {allProfile?.data?.role === "counsellor" ? (
+        
+        <DashboardCounsellor/>
+
+      ):(
+        <> <div className="p-4">
         {/* Welcome Section */}
         {/* <div className="mb-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -860,7 +868,11 @@ export default function DashboardPage() {
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #a8a8a8;
         }
-      `}</style>
+      `}</style></>
+      )}
+     
+
+     
     </div>
   );
 }
