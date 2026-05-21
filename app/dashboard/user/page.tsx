@@ -389,13 +389,16 @@ function StudentDetailSidebar({
   user,
   onClose,
   applications,
-  allProfile
 }: {
   user: ReferralUser;
   onClose: () => void;
   applications: Application[];
-  allProfile: any;
 }) {
+  
+  const {allProfile,update,setupdate} = useGlobal()
+  const profile = user.profile || allProfile?.profile;
+  // Get documents from profile
+  const documents = profile?.documents || {};
   const [activeTab, setActiveTab] = useState<"info" | "applications" | "documents">("info");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [updatingDocs, setUpdatingDocs] = useState<Record<string, boolean>>({});
@@ -416,12 +419,8 @@ function StudentDetailSidebar({
     return `₹${amount.toLocaleString()}`;
   };
 
-  const profile = user.profile || allProfile?.profile;
 
-  // Get documents from profile
-  const documents = profile?.documents || {};
-
- const handleDocumentStatus = async (
+  const handleDocumentStatus = async (
   documentName: string,
   status: boolean
 ) => {
@@ -431,29 +430,55 @@ function StudentDetailSidebar({
   }));
 
   try {
+    // Create updated documents object with the new status for the specific document
+    const updatedDocuments = {
+      ...documents,
+      [documentName]: {
+        ...documents[documentName],
+        status: status ? "true" : "false" // Convert boolean to string "true"/"false"
+      }
+    };
+
+    // Send the entire updated documents object to the API
     const response = await axiosInstance.patch(
       "/auth/edit-doc",
       {
         userId: user._id,
-        documentName,
-        status,
+        documents: updatedDocuments
       }
     );
 
-    if (response.data.success) {
+    if (response.data) {
+      // Update local state with the new documents
+      setDocuments(updatedDocuments);
+      
+      // Also update parent component if callback provided
+      if (onProfileUpdate && allProfile) {
+        const updatedProfile = {
+          ...allProfile,
+          profile: {
+            ...allProfile.profile,
+            documents: updatedDocuments
+          }
+        };
+        onProfileUpdate(updatedProfile);
+      }
+      setupdate(!update);
+      
       toast.success(
         `${documentName} ${
           status ? "approved" : "rejected"
         } successfully`
       );
+    } else {
+      toast.error(response.data.message || "Failed to update document status");
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       `Error updating ${documentName}:`,
       error
     );
-
-    toast.error("Failed to update document status");
+    toast.error(error.response?.data?.message || "Failed to update document status");
   } finally {
     setUpdatingDocs((prev) => ({
       ...prev,
@@ -461,6 +486,48 @@ function StudentDetailSidebar({
     }));
   }
 };
+
+
+//  const handleDocumentStatus = async (
+//   documentName: string,
+//   status: boolean
+// ) => {
+//   setUpdatingDocs((prev) => ({
+//     ...prev,
+//     [documentName]: true,
+//   }));
+
+//   try {
+//     const response = await axiosInstance.patch(
+//       "/auth/edit-doc",
+//       {
+//         userId: user._id,
+//         documentName,
+//         status,
+//       }
+//     );
+
+//     if (response.data.success) {
+//       toast.success(
+//         `${documentName} ${
+//           status ? "approved" : "rejected"
+//         } successfully`
+//       );
+//     }
+//   } catch (error) {
+//     console.error(
+//       `Error updating ${documentName}:`,
+//       error
+//     );
+
+//     toast.error("Failed to update document status");
+//   } finally {
+//     setUpdatingDocs((prev) => ({
+//       ...prev,
+//       [documentName]: false,
+//     }));
+//   }
+// };
 
   const handlePreview = (url: string) => {
     setPreviewUrl(url);
@@ -822,7 +889,7 @@ function StudentDetailSidebar({
 
 /* ─── Main Page ──────────────────────────────────────────────────────── */
 const Page = () => {
-  const { profile, allProfile } = useGlobal();
+  const { profile } = useGlobal();
 
   /* Search state */
   const [query, setQuery] = useState("");
@@ -1011,7 +1078,6 @@ const Page = () => {
             user={selectedUser}
             onClose={() => setSelectedUser(null)}
             applications={applications}
-            allProfile={allProfile}
           />
         )}
       </AnimatePresence>

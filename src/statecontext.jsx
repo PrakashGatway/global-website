@@ -11,6 +11,7 @@ export function GlobalProvider({ children }) {
     const [allProfile, setallProfile] = useState(null)
     const [authToken, setauthToken] = useState(null)
     const [show, setShow] = useState(false)
+    const [update, setupdate] = useState();
 
     // Popup states
     const [isPopupOpen, setIsPopupOpen] = useState(false)
@@ -209,7 +210,7 @@ export function GlobalProvider({ children }) {
             }
             setLoading(false)
         }
-    }, [])
+    }, [update])
 
     return (
         <Globalcontext.Provider value={{
@@ -220,7 +221,8 @@ export function GlobalProvider({ children }) {
             allProfile,
             openPopup: showPopup,
             closePopup,
-            show, setShow
+            show, setShow,
+            update, setupdate
         }}>
             {children}
             <PopupForm
