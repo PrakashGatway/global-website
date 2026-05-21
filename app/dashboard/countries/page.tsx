@@ -278,22 +278,9 @@ export default function CountriesPage() {
         allProfile?.profile?.otherDetails?.countries_shortlist || []
     );
 
-
-//         useEffect(() => {
-
-//     if (
-//         allProfile?.profile?.otherDetails
-//             ?.countries_shortlist
-//     ) {
-
-//         setShortlistedCountries(
-//             allProfile?.profile?.otherDetails
-//                 .countries_shortlist
-//         );
-
-//     }
-
-// }, [allProfile]);
+        useEffect(() => {
+            setShortlistedCountries(allProfile?.profile?.otherDetails?.countries_shortlist || [])
+        },[allProfile])
 
 console.log(shortlistedCountries)
 
@@ -494,7 +481,7 @@ console.log(shortlistedCountries)
                                     </p>
 
                                     <h3 className="mt-1 text-[13px] sm:text-[15px] font-semibold text-[#111827] leading-snug">
-                                        MS in Data Science
+                                         {allProfile?.profile?.otherDetails?.categorie_shortlist?.join(', ') || ""}
                                     </h3>
                                 </div>
                             </div>
@@ -589,7 +576,7 @@ console.log(shortlistedCountries)
                                     </p>
 
                                     <h3 className="mt-1 text-[13px] sm:text-[15px] font-semibold text-[#111827] leading-snug">
-                                        Europe, North America, Australia
+                                         {allProfile?.profile?.otherDetails?.countries_shortlist?.join(', ') || ""}
                                     </h3>
                                 </div>
                             </div>

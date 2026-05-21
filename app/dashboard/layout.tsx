@@ -54,15 +54,12 @@ export default function DashboardLayout({
           vapidKey: "BDyrqnEnHplqPQDrfienXIeY4eo49-eCp3Sq7kp78t1RXwPWnUpILuTdBJXY2Isu5fZNX6fDV1FhF6m7yP0Hr2s",
         });
 
-        console.log("FCM TOKEN:", token,profile);
 
         // // SAVE TOKEN IN DATABASE
         const api = await axiosInstance.post('/users/save-token', {
           token,
           userId: profile._id
         })
-        console.log(api,"api",profile._id)
-
       }
     } catch (error) {
       console.log(error);
@@ -73,12 +70,12 @@ export default function DashboardLayout({
     if (!messaging) return;
 
     onMessage(messaging, (payload) => {
-      console.log("Foreground Notification:", payload);
+      // console.log("Foreground Notification:", payload);
 
       // Show alert with notification body
-      if (payload.notification?.body) {
-        alert(payload.notification.body);
-      }
+      // if (payload.notification?.body) {
+      //   alert(payload.notification.body);
+      // }
       
       // Also show toast notification
       if (payload.notification?.body) {

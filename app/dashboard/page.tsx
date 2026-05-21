@@ -295,6 +295,17 @@ export default function DashboardPage() {
           link: "/dashboard/countries",
         },
         {
+          step: 3,
+          title: "Course Shortlisting",
+          desc: "Shortlist courses that match your career goals",
+          status: profileData.otherDetails?.categorie_shortlist?.length > 0 ? "current" : "upcoming",
+          icon: "globe",
+          progress: profileData.otherDetails?.categorie_shortlist?.length || "0",
+          progressLabel: "Course Shortlisted",
+          action: "View Course",
+          link: "/dashboard/countries",
+        },
+        {
           step: 6,
           title: "Visa Process",
           desc: "Complete your visa application and documentation",
