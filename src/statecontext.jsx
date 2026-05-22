@@ -40,9 +40,6 @@ export function GlobalProvider({ children }) {
     }
   const pathname = usePathname();
 
-useEffect(() => {
-  getProfile();
-}, [pathname]);
 
     const updateProfile = async () => {
         try {
@@ -216,7 +213,7 @@ useEffect(() => {
             }
             setLoading(false)
         }
-    }, [update])
+    }, [pathname])
 
     useEffect(() => {
         getProfile();

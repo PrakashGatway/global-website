@@ -9,7 +9,7 @@ import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { GlobalProvider, useGlobal } from "../../src/statecontext"
 
-import toast, { Toaster } from "react-hot-toast"
+
 import { usePathname } from "next/navigation"
 import { NotificationProvider } from "@/components/dashboard/Notification"
 
@@ -117,7 +117,7 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-white">
-    <Toaster position="top-center"/>
+   
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex flex-col overflow-hidden">

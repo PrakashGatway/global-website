@@ -141,7 +141,7 @@ export default async function RootLayout({
           />
 
           {children}
-          <Toaster position="bottom-right" reverseOrder={false} />
+          <Toaster position="top-center" reverseOrder={false} />
 
           <WhatsAppButton />
 

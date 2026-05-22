@@ -79,7 +79,7 @@ export default async function Page({ params }) {
     try {
         const res = await serverInstance.get(`/blogs/${slug}`)
         blog = res.data.data
-        console.log(blog.seo?.keywords)
+        console.log(blog,"hello")
 
     } catch (error) {
         console.error("Error fetching blog:", error)
@@ -101,7 +101,12 @@ export default async function Page({ params }) {
     );
 
     const allBlogs = navRes.data.data;
- console.log(blogCategory,"hhh")
+
+   const uniblog = await serverInstance.get(`/universities?limit=5&country=`)
+
+   console.log(uniblog,"gg")
+   
+ 
     return (
         <>
 
