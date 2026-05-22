@@ -634,12 +634,12 @@ const sendMessage = async () => {
           </span>
         </h1>
 
-        <div className="flex gap-3">
+        {/* <div className="flex gap-3">
           <button className="bg-[#ff6a1a] hover:bg-[#f45f0d] text-white px-6 py-3 rounded-md font-medium text-sm">
             MARK AS UNREAD
           </button>
 
-        </div>
+        </div> */}
       </div>
 
       {/* Main Card */}
@@ -1175,11 +1175,11 @@ const sendMessage = async () => {
               <div className="text-gray-700 leading-7 text-[15px]">
                 {item.content}
               </div>
-              {/* {item.extra_content?.attachments[0]?.name && 
+              {item.extra_content?.attachments[0]?.name && 
               <a href={`https://api.ooshasglobal.com${item.extra_content?.attachments[0]?.url}`} target="_blank"  className="flex items-center gap-2">
                 
       <Paperclip className="w-4 h-4 text-slate-400" />{item.extra_content?.attachments[0]?.name}
-              </a>} */}
+              </a>}
             </div>
           </div>
 
@@ -1250,7 +1250,7 @@ const sendMessage = async () => {
   <div className="grid grid-cols-2 gap-4">
     <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col gap-1">
       <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Cams ID</span>
-      <span className="text-lg font-bold text-slate-700">1198162</span>
+      <span className="text-lg font-bold text-slate-700">{application._id}</span>
     </div>
     <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col gap-1">
       <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Recipient</span>
@@ -1290,6 +1290,7 @@ const sendMessage = async () => {
   </div>
 
   {/* Uploaded Files Chips view layout */}
+
   {uploadedFiles.length > 0 && (
     <div className="space-y-2">
       <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
@@ -1320,8 +1321,9 @@ const sendMessage = async () => {
   <div className="flex items-center justify-between pt-2 border-t border-slate-100">
     <button 
       type="button"
-      disabled={isUploading || isSending}
+      disabled={subject !== "Document Uploaded" || isUploading || isSending }
       onClick={() => fileInputRef.current.click()}
+      
       className="border border-slate-200 rounded-xl px-4 py-2.5 flex items-center gap-2 text-slate-600 hover:bg-slate-50 text-sm font-medium transition-colors disabled:opacity-50"
     >
       <Paperclip className="w-4 h-4 text-slate-400" />
@@ -1389,7 +1391,8 @@ const sendMessage = async () => {
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-4">
-              <button onClick={() => setShowIntakeModal(false)} className="px-3 py-2 text-sm border rounded-md hover:bg-gray-50">Cancel</button>
+              <button onClick={() => setShowIntakeModal(false)}
+               className="px-3 py-2 text-sm border rounded-md hover:bg-gray-50">Cancel</button>
               <button
                 onClick={async () => {
                   if (selectedIntake) {
