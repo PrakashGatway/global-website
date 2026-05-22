@@ -396,12 +396,13 @@ function StudentDetailSidebar({
 }) {
   
   const {allProfile,update,setupdate} = useGlobal()
-  const profile = user.profile || allProfile?.profile;
+  const [profile,setprofile] = useState(user.profile || allProfile?.profile);
   // Get documents from profile
   const documents = profile?.documents || {};
   const [activeTab, setActiveTab] = useState<"info" | "applications" | "documents">("info");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [updatingDocs, setUpdatingDocs] = useState<Record<string, boolean>>({});
+
 
   const formatDate = (date: string | undefined) => {
     if (!date) return "N/A";
@@ -448,37 +449,22 @@ function StudentDetailSidebar({
       }
     );
 
-    if (response.data) {
-      // Update local state with the new documents
-      setDocuments(updatedDocuments);
-      
-      // Also update parent component if callback provided
-      if (onProfileUpdate && allProfile) {
-        const updatedProfile = {
-          ...allProfile,
-          profile: {
-            ...allProfile.profile,
-            documents: updatedDocuments
-          }
-        };
-        onProfileUpdate(updatedProfile);
-      }
+    if (response.data.success) {
+     
       setupdate(!update);
-      
+      console.log(update)
       toast.success(
         `${documentName} ${
           status ? "approved" : "rejected"
         } successfully`
-      );
-    } else {
-      toast.error(response.data.message || "Failed to update document status");
-    }
+      );}
+
   } catch (error: any) {
     console.error(
-      `Error updating ${documentName}:`,
+      `Error updating :`,
       error
     );
-    toast.error(error.response?.data?.message || "Failed to update document status");
+    // toast.error(error.response?.data?.message || "Failed to update document status");
   } finally {
     setUpdatingDocs((prev) => ({
       ...prev,
@@ -487,52 +473,16 @@ function StudentDetailSidebar({
   }
 };
 
-
-//  const handleDocumentStatus = async (
-//   documentName: string,
-//   status: boolean
-// ) => {
-//   setUpdatingDocs((prev) => ({
-//     ...prev,
-//     [documentName]: true,
-//   }));
-
-//   try {
-//     const response = await axiosInstance.patch(
-//       "/auth/edit-doc",
-//       {
-//         userId: user._id,
-//         documentName,
-//         status,
-//       }
-//     );
-
-//     if (response.data.success) {
-//       toast.success(
-//         `${documentName} ${
-//           status ? "approved" : "rejected"
-//         } successfully`
-//       );
-//     }
-//   } catch (error) {
-//     console.error(
-//       `Error updating ${documentName}:`,
-//       error
-//     );
-
-//     toast.error("Failed to update document status");
-//   } finally {
-//     setUpdatingDocs((prev) => ({
-//       ...prev,
-//       [documentName]: false,
-//     }));
-//   }
-// };
-
   const handlePreview = (url: string) => {
     setPreviewUrl(url);
   };
 
+  
+  useEffect(() => {
+    setprofile(user.profile || allProfile?.profile)
+    
+  },[update,allProfile])
+  
   // Document statistics
   const totalDocuments = Object.keys(documents).length;
   const approvedDocs = Object.values(documents).filter(doc => doc.status === 'approved').length;

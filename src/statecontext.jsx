@@ -218,6 +218,10 @@ useEffect(() => {
         }
     }, [update])
 
+    useEffect(() => {
+        getProfile();
+    },[update])
+    
     return (
         <Globalcontext.Provider value={{
             profile,
