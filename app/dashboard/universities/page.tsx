@@ -720,7 +720,7 @@ function UniversitiesPageClient() {
                                     </p>
 
                                     <h3 className="mt-1 text-[13px] sm:text-[15px] font-semibold text-[#111827] leading-snug">
-                                       {allProfile?.profile?.otherDetails.categorie_shortlist.join(', ')}
+                                       {allProfile?.profile?.otherDetails?.categorie_shortlist?.join(', ')}
                                     </h3>
                                 </div>
                             </div>
@@ -815,7 +815,7 @@ function UniversitiesPageClient() {
                                     </p>
 
                                     <h3 className="mt-1 text-[13px] sm:text-[15px] font-semibold text-[#111827] leading-snug">
-                                         {allProfile?.profile?.otherDetails.countries_shortlist.join(', ')}
+                                         {allProfile?.profile?.otherDetails?.countries_shortlist?.join(', ')}
                                     </h3>
                                 </div>
                             </div>
@@ -971,8 +971,9 @@ function UniversitiesPageClient() {
                         <ModernSelect
                           options={countries}
                           value={filters.country}
-                          onChange={(value) =>
-                            handleFilterChange("country", value)
+                          onChange={(value) =>{
+                            console.log(value,"value")
+                            handleFilterChange("country", value)}
                           }
                           placeholder="Select country"
                           className="py-0"

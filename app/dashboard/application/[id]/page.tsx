@@ -1175,11 +1175,11 @@ const sendMessage = async () => {
               <div className="text-gray-700 leading-7 text-[15px]">
                 {item.content}
               </div>
-              {item.extra_content?.attachments[0]?.name && 
-              <a href={`http://localhost:5000${item.extra_content?.attachments[0]?.url}`} target="_blank"  className="flex items-center gap-2">
+              {/* {item.extra_content?.attachments[0]?.name && 
+              <a href={`https://api.ooshasglobal.com${item.extra_content?.attachments[0]?.url}`} target="_blank"  className="flex items-center gap-2">
                 
       <Paperclip className="w-4 h-4 text-slate-400" />{item.extra_content?.attachments[0]?.name}
-              </a>}
+              </a>} */}
             </div>
           </div>
 

@@ -95,7 +95,7 @@ export function Sidebar() {
       </div>
 
       {/* Menu Items */}
-      <nav className={`flex-1 ${collapsed ? "px-2 py-0 space-y-1" : "px-2 py-2 space-y-2"}  overflow-y-auto mt-4 no-scrollbar scrollbar-hide scollbar-none`}>
+      <nav className={`flex-1 ${show ? "px-2 py-0 space-y-1" : "px-2 py-2 space-y-2"}  overflow-y-auto mt-4 no-scrollbar scrollbar-hide scollbar-none`}>
         {profile?.role === "counsellor" ?
           counsellor.map((item) => {
             const isActive =
@@ -113,7 +113,7 @@ export function Sidebar() {
                     ? "bg-[#6d1901] font-semibold"
                     : "hover:bg-[#6d1901]/30"
 
-                    } ${collapsed ? "flex-col gap-1 px-2 py-2" : "gap-2 px-4 py-2.5"}`}
+                    } ${show ? "flex-col gap-1 px-2 py-2" : "gap-2 px-4 py-2.5"}`}
                 >
                   {isActive && (
                     <motion.div
@@ -125,7 +125,7 @@ export function Sidebar() {
 
                   <item.icon className="w-6 h-6 flex-shrink-0 stroke-[1.8px] mb-0 pb-0" />
                   <AnimatePresence>
-                    {collapsed && (
+                    {show && (
                       <motion.span
                         initial={{ opacity: 0, width: 0 }}
                         animate={{ opacity: 1, width: "auto" }}
@@ -138,7 +138,7 @@ export function Sidebar() {
                   </AnimatePresence>
 
                   <AnimatePresence>
-                    {!collapsed && (
+                    {!show && (
                       <motion.span
                         initial={{ opacity: 0, width: 0 }}
                         animate={{ opacity: 1, width: "auto" }}
@@ -170,7 +170,7 @@ export function Sidebar() {
                     ? "bg-[#6d1901] font-semibold"
                     : "hover:bg-[#6d1901]/30"
 
-                    } ${collapsed ? "flex-col gap-1 px-2 py-2" : "gap-2 px-4 py-2.5"}`}
+                    } ${show ? "flex-col gap-1 px-2 py-2" : "gap-2 px-4 py-2.5"}`}
                 >
                   {isActive && (
                     <motion.div
@@ -182,7 +182,7 @@ export function Sidebar() {
 
                   <item.icon className="w-6 h-6 flex-shrink-0 stroke-[1.8px] mb-0 pb-0" />
                   <AnimatePresence>
-                    {collapsed && (
+                    {show && (
                       <motion.span
                         initial={{ opacity: 0, width: 0 }}
                         animate={{ opacity: 1, width: "auto" }}
@@ -195,7 +195,7 @@ export function Sidebar() {
                   </AnimatePresence>
 
                   <AnimatePresence>
-                    {!collapsed && (
+                    {!show && (
                       <motion.span
                         initial={{ opacity: 0, width: 0 }}
                         animate={{ opacity: 1, width: "auto" }}
@@ -218,7 +218,7 @@ export function Sidebar() {
         <button className="flex items-center gap-3 px-3 py-2.5 rounded-xl w-full hover:bg-sidebar-accent transition-colors">
           <LogOut className="w-5 h-5 flex-shrink-0" />
           <AnimatePresence>
-            {!collapsed && (
+            {!show && (
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

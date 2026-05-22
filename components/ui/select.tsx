@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, ChevronDown,ChevronUp, X, Check } from "lucide-react"
 import * as Select from '@radix-ui/react-select';
@@ -284,16 +284,33 @@ export const ModernSelect = ({
   placeholder = "Select...",
   label,
   searchable = true,
-  className = ""
-}:any) => {
+  className = "",
+}: any) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [open, setOpen] = useState(false);
 
-  const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Debounce Search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 400);
 
-  const selectedOption = options.find(opt => opt.value === value);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Filter Options
+  const filteredOptions = useMemo(() => {
+    return options.filter((option: any) =>
+      option.label
+        .toLowerCase()
+        .includes(debouncedSearch.toLowerCase())
+    );
+  }, [options, debouncedSearch]);
+
+  const selectedOption = options.find(
+    (opt: any) => opt.value === value
+  );
 
   return (
     <div className={`w-full ${className}`}>
@@ -302,15 +319,15 @@ export const ModernSelect = ({
           {label}
         </label>
       )}
-      
-      <Select.Root 
-        value={value || ""} 
+
+      <Select.Root
+        value={value || ""}
         onValueChange={onChange}
         open={open}
         onOpenChange={setOpen}
       >
-        <Select.Trigger 
-          className={`
+        <Select.Trigger
+          className="
             inline-flex items-center justify-between
             w-full px-4 py-2.5
             border border-gray-300 dark:border-gray-800
@@ -319,19 +336,19 @@ export const ModernSelect = ({
             hover:bg-gray-50 dark:hover:bg-gray-800/50
             focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500
             transition-all duration-200
-            ${value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}
-          `}
+          "
         >
           <Select.Value placeholder={placeholder}>
             {selectedOption?.label}
           </Select.Value>
+
           <Select.Icon>
             <ChevronDown className="w-4 h-4 text-gray-400" />
           </Select.Icon>
         </Select.Trigger>
 
         <Select.Portal>
-          <Select.Content 
+          <Select.Content
             className="
               z-50
               bg-white dark:bg-gray-900
@@ -344,7 +361,7 @@ export const ModernSelect = ({
             position="popper"
             sideOffset={4}
           >
-            <Select.ScrollUpButton className="flex items-center justify-center h-6 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300">
+            <Select.ScrollUpButton className="flex items-center justify-center h-6 bg-white dark:bg-gray-900">
               <ChevronUp className="w-4 h-4" />
             </Select.ScrollUpButton>
 
@@ -352,10 +369,14 @@ export const ModernSelect = ({
               <div className="p-2 border-b border-gray-200 dark:border-gray-800">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+
                   <input
                     type="text"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) =>
+                      setSearchQuery(e.target.value)
+                    }
+                    onKeyDown={(e) => e.stopPropagation()}
                     placeholder="Search..."
                     className="
                       w-full pl-9 pr-8 py-2
@@ -364,12 +385,16 @@ export const ModernSelect = ({
                       rounded-md
                       text-sm
                       placeholder:text-gray-400
-                      focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500
+                      focus:outline-none focus:ring-2 focus:ring-blue-500/20
                     "
                   />
+
                   {searchQuery && (
                     <button
-                      onClick={() => setSearchQuery("")}
+                      onClick={() => {
+                        setSearchQuery("");
+                        setDebouncedSearch("");
+                      }}
                       className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
                     >
                       <X className="w-3.5 h-3.5 text-gray-400" />
@@ -381,11 +406,11 @@ export const ModernSelect = ({
 
             <Select.Viewport className="p-1.5 max-h-60">
               {filteredOptions.length > 0 ? (
-                filteredOptions.map((option,index) => (
+                filteredOptions.map((option: any, index: number) => (
                   <Select.Item
                     key={index}
                     value={option?.value || "Not Found"}
-                    className={`
+                    className="
                       relative flex items-center
                       px-8 py-2.5
                       rounded-md
@@ -393,11 +418,14 @@ export const ModernSelect = ({
                       cursor-pointer
                       select-none
                       outline-none
-                      data-[highlighted]:bg-blue-50 data-[highlighted]:dark:bg-blue-900/30
-                      data-[state=checked]:text-blue-600 data-[state=checked]:dark:text-blue-400
-                    `}
+                      data-[highlighted]:bg-blue-50
+                      data-[state=checked]:text-blue-600
+                    "
                   >
-                    <Select.ItemText>{option.label}</Select.ItemText>
+                    <Select.ItemText>
+                      {option.label}
+                    </Select.ItemText>
+
                     <Select.ItemIndicator className="absolute left-2 inline-flex items-center">
                       <Check className="w-4 h-4" />
                     </Select.ItemIndicator>
@@ -405,14 +433,14 @@ export const ModernSelect = ({
                 ))
               ) : (
                 <div className="px-3 py-8 text-center">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-gray-500">
                     No options found
                   </p>
                 </div>
               )}
             </Select.Viewport>
 
-            <Select.ScrollDownButton className="flex items-center justify-center h-6 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300">
+            <Select.ScrollDownButton className="flex items-center justify-center h-6 bg-white dark:bg-gray-900">
               <ChevronDown className="w-4 h-4" />
             </Select.ScrollDownButton>
           </Select.Content>
@@ -420,4 +448,4 @@ export const ModernSelect = ({
       </Select.Root>
     </div>
   );
-}
+};
