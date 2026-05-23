@@ -10,24 +10,24 @@ import { useTransition } from "react";
 
 export default function BlogGrid({ filteredBlogs }) {
 
-        const [isPending, startTransition] = useTransition()
+    const [isPending, startTransition] = useTransition()
 
-        const router = useRouter()
+    const router = useRouter()
 
-        const goToBlog = (slug) => {
-  startTransition(() => {
-    router.push(`/blog/${slug}`);
-  });
-};
-    
+    const goToBlog = (slug) => {
+        startTransition(() => {
+            router.push(`/blog/${slug}`);
+        });
+    };
+
 
 
     return (
         <>
             <section className=" py-12 sm:py-14 lg:py-16 px-2 relative overflow-hidden bg-white">
-                
+
                 <div className="max-w-7xl mx-auto">
-               
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-12 relative z-[10]">
                         {filteredBlogs.length > 0 ? (
                             filteredBlogs.map((post) => (
@@ -75,15 +75,19 @@ export default function BlogGrid({ filteredBlogs }) {
                                     </div>
 
                                     {/* CONTENT */}
-                                    <div className="p-3 text-center">
-                                        <p className="text-gray-800 text-base font-medium mb-3 line-clamp-2">
+                                    <div className="p-3 text-start">
+                                        <h3 className="text-gray-900 text-lg font-medium mb-2 line-clamp-2">
+                                            {post.title}
+                                        </h3>
+                                        <p className="text-gray-600 text-sm font-medium mb-3 line-clamp-2">
                                             {post.shortDescription}
                                         </p>
+
 
                                         <button
                                             onClick={() => goToBlog(post.slug)}
                                             className="
-    text-white px-6 lg:w-50 py-2 mx-auto
+    text-white px-6 lg:w-50 py-2
     bg-[#1f2937]
     rounded-tr-4xl
     shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]

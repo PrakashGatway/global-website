@@ -7,13 +7,13 @@ import { usePathname } from "next/navigation";
 import axiosInstance from "@/app/axiosInstance";
 import { useGlobal } from "@/src/statecontext";
 
-export function DashboardHeader({ profile,Logout }) {
+export function DashboardHeader({ profile, Logout }) {
   const [searchFocus, setSearchFocus] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const location = usePathname()
   const [newNotification, setNewNotification] = useState([]);
-  const { show,setShow } = useGlobal();
+  const { show, setShow } = useGlobal();
 
   // if(location){
   //   location.startsWith("/dashboard/loan")
@@ -21,66 +21,57 @@ export function DashboardHeader({ profile,Logout }) {
   // }
 
   // Fetch notifications with unread filter support
-const fetchNotifications = useCallback(async (page = 1, limit = 10) => {
-  try {
-    setLoading(true);
+  const fetchNotifications = useCallback(async (page = 1, limit = 10) => {
+    try {
+      setLoading(true);
 
-    const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-      unread: 'true' 
-    });
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        unread: 'true'
+      });
 
-    const response = await axiosInstance.get(`/notifications?${params.toString()}`);
+      const response = await axiosInstance.get(`/notifications?${params.toString()}`);
 
-    if (response.data.success) {
-      const newNotifications = response.data.data.notifications;
-      console.log("Fetched notifications:", newNotifications);
-      setNewNotification(newNotifications);
+      if (response.data.success) {
+        const newNotifications = response.data.data.notifications;
+        console.log("Fetched notifications:", newNotifications);
+        setNewNotification(newNotifications);
 
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Error fetching notifications:', error);
-  } finally {
-    setLoading(false);
-  }
-  // Added filters.showUnreadOnly to dependency array
-}, [ axiosInstance]);
+  }, [axiosInstance]);
 
   // console.log("profile", profile);
 
-    useEffect(() => {
-      fetchNotifications();
-    },[])
+  useEffect(() => {
+    fetchNotifications();
+  }, [])
   return (
-    <header className="sticky top-0 z-30 w-full bg-card border-b  border-border">
-      <div className="flex items-center justify-between px-2 md:px-4 py-2.5 gap-4">
-         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Menu className="text-gray-600" onClick={() => setShow(!show)}/>
-
-            <ul>
-              <li className="text-xs text-gray-600">Welcome Back,</li>
-              <li>{profile && profile.name} 👋</li>
-            </ul>
-          </div>
-
+    <header className="sticky top-0 z-50 w-full bg-card border-b  border-border">
+      <div className="flex items-center justify-between px-2 md:px-4 py-2 gap-4">
+        <div className="flex gap-3 w-[50%] items-center justify-start">
+          <Menu className="text-gray-600" onClick={() => setShow(!show)} />
+          <motion.div
+            animate={{ maxWidth: searchFocus ? 600 : 420 }}
+            className="relative flex-1"
+          >
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search..."
+              onFocus={() => setSearchFocus(true)}
+              onBlur={() => setSearchFocus(false)}
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none 
+            focus:ring-2 focus:ring-primary/30 transition-all bg-background text-sm"
+            />
+          </motion.div>
         </div>
 
-        <motion.div
-          animate={{ maxWidth: searchFocus ? 700 : 620 }}
-          className="relative flex-1"
-        >
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search..."
-            onFocus={() => setSearchFocus(true)}
-            onBlur={() => setSearchFocus(false)}
-            className="w-full pl-10 pr-4 py-2.5 border border-border rounded-xl focus:outline-none 
-            focus:ring-2 focus:ring-primary/30 transition-all bg-background text-sm"
-          />
-        </motion.div>
 
         {/* Right Icons */}
         <div className="flex items-center gap-2">
@@ -93,9 +84,8 @@ const fetchNotifications = useCallback(async (page = 1, limit = 10) => {
                 {newNotification.length}
               </span>
             )}
-            <Image src="https://i.pinimg.com/originals/fb/11/55/fb1155591460c455edf3ced130b127b9.gif" 
-            alt="avatar" width={40} height={40} className="w-full h-full object-cover" />
-
+            <Image src="https://i.pinimg.com/originals/fb/11/55/fb1155591460c455edf3ced130b127b9.gif"
+              alt="avatar" width={40} height={40} className="w-full rounded-full h-full object-cover" />
           </Link>
 
           {/* Profile Dropdown */}
@@ -106,15 +96,15 @@ const fetchNotifications = useCallback(async (page = 1, limit = 10) => {
               onClick={() => setProfileOpen(!profileOpen)}
               className="flex items-center gap-2 p-1 pr-3 rounded-xl transition-colors"
             >
-              <span className="h-11 w-11 border rounded-full p-0 m-0  shadow-lg overflow-hidden">
-                <Image 
-                src={profile && profile.profileImage ? profile.profileImage 
-                : `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s`} 
-                alt={profile && profile.name || "user"} width={40} height={40} className="h-full w-full ovject-cover" />
+              <span className="h-10 w-10 border rounded-full p-0 m-0 shadow-lg overflow-hidden">
+                <Image
+                  src={profile && profile.profileImage ? profile.profileImage
+                    : `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s`}
+                  alt={profile && profile.name || "user"} width={34} height={34} className="ovject-cover" />
               </span>
               <div className="hidden md:block text-left ">
                 <p className="text-sm font-semibold capitalize leading-none">{profile && profile.name}</p>
-                <p className="text-sm text-gray-600 pt-1 capitalize leading-none">Student</p>
+                <p className="text-sm text-gray-600 pt-1 capitalize leading-none"> {profile?.role == "user" ? "User" : profile?.role}</p>
               </div>
               <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${profileOpen ? "rotate-180" : ""}`} />
             </motion.button>
@@ -122,7 +112,7 @@ const fetchNotifications = useCallback(async (page = 1, limit = 10) => {
             <AnimatePresence>
               {profileOpen && (
                 <>
-                  <div className="fixed inset-0 z-40 bg-black/10" onClick={() => setProfileOpen(false)} />
+                  <div className="fixed inset-0 z-50 bg-black/10" onClick={() => setProfileOpen(false)} />
                   <motion.div
                     initial={{ opacity: 1, y: -130, x: 20, scale: 0 }}
                     animate={{ opacity: 1, y: 0, x: 0, scale: 1 }}

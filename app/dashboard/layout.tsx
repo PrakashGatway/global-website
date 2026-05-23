@@ -54,8 +54,6 @@ export default function DashboardLayout({
           vapidKey: "BDyrqnEnHplqPQDrfienXIeY4eo49-eCp3Sq7kp78t1RXwPWnUpILuTdBJXY2Isu5fZNX6fDV1FhF6m7yP0Hr2s",
         });
 
-
-        // // SAVE TOKEN IN DATABASE
         const api = await axiosInstance.post('/users/save-token', {
           token,
           userId: profile._id
@@ -77,7 +75,6 @@ export default function DashboardLayout({
       //   alert(payload.notification.body);
       // }
       
-      // Also show toast notification
       if (payload.notification?.body) {
         toast.success(payload.notification.body);
       }

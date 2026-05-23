@@ -130,7 +130,7 @@ export default async function RootLayout({
 
       <body
         className={`${ptSans.className} antialiased`}
-        style={{ maxWidth: "1640px", margin: "0 auto" }}
+        style={{ maxWidth: "1840px", margin: "0 auto" }}
       >
         <GlobalProvider>
           <Navbar
