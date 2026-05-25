@@ -17,7 +17,8 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
     pathname === "/signup" ||
     pathname.startsWith("/dashboard") || 
     pathname.startsWith("/api") || 
-    pathname.startsWith("/onboarding")
+    pathname.startsWith("/onboarding") ||
+    pathname.startsWith("/consultant")
   ) {
     return null
   }

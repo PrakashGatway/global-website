@@ -155,7 +155,9 @@ export default function Navbar({
     pathname === "/signup" ||
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/api") ||
-    pathname.startsWith("/onboarding")
+    pathname.startsWith("/onboarding") ||
+    pathname.startsWith("/consultant")
+
   ) {
     return null;
   }

@@ -32,7 +32,7 @@ export default async function Page({ params }: { params: any }) {
 
 
   const Pageres = await serverInstance.get(`/page-information/slug/${slug}`);
-  
+
 
   const [
     Universityres,
@@ -40,7 +40,7 @@ export default async function Page({ params }: { params: any }) {
     imageRes,
     videoRes
   ] = await Promise.all([
-    serverInstance.get(`/universities?limit=5&country=${Pageres?.data?.data?.country?.code || "" }`),
+    serverInstance.get(`/universities?limit=5&country=${Pageres?.data?.data?.country?.code || ""}`),
     serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`),
     serverInstance.get("/testimonials?type=image&limit=15"),
     serverInstance.get("/testimonials?type=video&limit=6"),
