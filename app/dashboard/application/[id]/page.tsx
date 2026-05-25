@@ -128,7 +128,8 @@ import {
   UserCheck,
   UserX,
   CheckBadge,
-  Link2OffIcon
+  Link2OffIcon,
+  SendHorizonal
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -480,52 +481,76 @@ export default function StudentDetailsPage() {
   const currentStepIndex = PRIMARY_STATUS_STEPS.findIndex(step => step.key === application?.primaryStatus);
   const isStepCompleted = (index: number) => index < currentStepIndex;
   const isStepCurrent = (index: number) => index === currentStepIndex;
-  const [openCommentModal,setopenCommentModal] = useState();
-  const [MessageData,setMessageData] = useState([])
 
-  const [newMessage, setNewMessage] = useState('');
-const [subject, setSubject] = useState('');
-const [uploadedFiles1, setUploadedFiles1] = useState([]); // Stores { name: string, url: string }
-const [isUploading, setIsUploading] = useState(false);
-const [isSending, setIsSending] = useState(false);
+  
+  // ==============================
+// STATES
+// ==============================
+
+const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+
+const [messageList, setMessageList] = useState([]);
+
+const [messageText, setMessageText] = useState("");
+
+const [messageSubject, setMessageSubject] = useState("");
+
+const [messageAttachments, setMessageAttachments] = useState([]);
+// Stores: { name: string, url: string }
+
+const [isAttachmentUploading, setIsAttachmentUploading] = useState(false);
+
+const [isCommentSubmitting, setIsCommentSubmitting] = useState(false);
+
+const [selectedRecipient, setSelectedRecipient] = useState("");
+
 const fileInputRef = useRef(null);
-const [sendto,setsendto] = useState('');
+
+
+// ==============================
+// FILE UPLOAD
+// ==============================
 
 const handleFileChange = async (e) => {
   if (!e.target.files || e.target.files.length === 0) return;
-  
+
   const filesArray = Array.from(e.target.files);
-  setIsUploading(true);
+
+  setIsAttachmentUploading(true);
 
   try {
-    // Process and upload each selected file
     for (const file of filesArray) {
       const formData = new FormData();
       formData.append("file", file);
 
-
       const response = await axiosInstance.post("/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (response.data?.success && response.data?.docUrl) {
         let fileUrl = response.data.docUrl;
 
-        // Validation rule from your snippet
+        // Validation
         if (
-          fileUrl.includes("nofile") || 
-          fileUrl === "/uploads/docs/nofile" || 
-          (!fileUrl.startsWith('/uploads/') && !fileUrl.startsWith('http'))
+          fileUrl.includes("nofile") ||
+          fileUrl === "/uploads/docs/nofile" ||
+          (!fileUrl.startsWith("/uploads/") &&
+            !fileUrl.startsWith("http"))
         ) {
           throw new Error("Server returned an invalid file URL.");
         }
 
-        // Keep track of the file metadata and server string url
-        setUploadedFiles((prev) => [
-          ...prev, 
-          { name: file.name, url: fileUrl }
-        ]);
-        
+        // // Save uploaded file
+        // setMessageAttachments((prev) => [
+        //   ...prev,
+        //   {
+        //     name: file.name,
+        //     url: fileUrl,
+        //   },
+        // ]);
+
         toast.success(`${file.name} uploaded successfully!`);
       } else {
         throw new Error(response.data?.message || "Upload failed");
@@ -533,78 +558,113 @@ const handleFileChange = async (e) => {
     }
   } catch (error) {
     console.error("File upload error:", error);
-    toast.error(error.message || "Failed to upload file");
+
+    toast.error(error?.message || "Failed to upload file");
   } finally {
-    setIsUploading(false);
-    if (fileInputRef.current) fileInputRef.current.value = ""; // Clear file selector input
+    setIsAttachmentUploading(false);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   }
 };
+
+
+// ==============================
+// REMOVE FILE
+// ==============================
 
 const removeUploadedFile = (indexToRemove) => {
-  setUploadedFiles1((prev) => prev.filter((_, index) => index !== indexToRemove));
+  setMessageAttachments((prev) =>
+    prev.filter((_, index) => index !== indexToRemove)
+  );
 };
 
-  // Mark messages as read
-  const markMessagesAsRead = async () => {
-    try {
-      await axiosInstance.put(`/communication/applications/${application._id}/messages/read`)
-      // setMessages(prev => prev.map(msg => ({ ...msg, isRead: true })))
-      // setUnreadCount(0)
-    } catch (error) {
-      console.error('Error marking messages as read:', error)
-    }
+
+// ==============================
+// MARK AS READ
+// ==============================
+
+const markMessagesAsRead = async () => {
+  try {
+    await axiosInstance.put(
+      `/communication/applications/${application._id}/messages/read`
+    );
+  } catch (error) {
+    console.error("Error marking messages as read:", error);
   }
+};
 
-    const fetchMessages = async () => {
-      try {
-        const response = await axiosInstance.get(`/communication/applications/${application._id}/messages`)
-        setMessageData(response.data?.data || [])
-      } catch (error) {
-        console.error('Error fetching messages:', error)
-      }
-    }
 
-    useEffect(()=> {
-       fetchMessages();
-    },[application])
+
+const fetchMessages = async () => {
+  try {
+    const response = await axiosInstance.get(
+      `/communication/applications/${application._id}/messages`
+    );
+
+    setMessageList(response.data?.data?.reverse() || []);
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+  }
+};
+
+
+useEffect(() => {
+  fetchMessages();
+}, [application]);
+
+
 
 const sendMessage = async () => {
-  if (!newMessage.trim()) return;
+  if (!messageText.trim()) return;
 
-  setIsSending(true);
+  setIsCommentSubmitting(true);
+
   try {
-    const response = await axiosInstance.post(`/communication/applications/${application._id}/messages`, {
-      content: newMessage.trim(),
-      userId : subject === "Document Uploaded" ? profile.role === "user" ? profile._id : sendto : "",
-      extra_content: {
-        subject: subject || 'General Update',
-        camsId: application._id,
-        recipient: 'Ooshas',
-        attachments: uploadedFiles // Sends array of { name, url } items to backend
+    await axiosInstance.post(
+      `/communication/applications/${application._id}/messages`,
+      {
+        content: messageText.trim(),
+
+        userId:
+          messageSubject === "Document Uploaded"
+            ? profile.role === "user"
+              ? profile._id
+              : selectedRecipient
+            : "",
+
+        extra_content: {
+          subject: messageSubject || "General Update",
+          camsId: application._id,
+          recipient: "Ooshas",
+          attachments: messageAttachments,
+        },
       }
-    });
+    );
 
-    const newMsg = response.data?.data;
-    // setMessages(prev => [...prev, newMsg]);
-    
-    // Clear state data
-    setNewMessage('');
-    setSubject('');
-    setUploadedFiles([]);
-    setopenCommentModal(false);
+    // Reset form
+    setMessageText("");
+    setMessageSubject("");
+    setMessageAttachments([]);
 
-    await markMessagesAsRead();
+    setIsCommentModalOpen(false);
+
+    // await markMessagesAsRead();
+
     await fetchMessages();
+
     fetchActivities();
-    toast.success('Comment saved');
+
+    toast.success("Comment saved");
   } catch (error) {
-    console.error('Error sending message:', error);
-    toast.error('Failed to send message');
+    console.error("Error sending message:", error);
+
+    toast.error("Failed to send message");
   } finally {
-    setIsSending(false);
+    setIsCommentSubmitting(false);
   }
 };
-
 
   if (loading) {
     return (
@@ -630,7 +690,7 @@ const sendMessage = async () => {
         <h1 className="text-[24px] font-semibold text-black">
           {application?.student?.name || "Student Name"}{" "}
           <span className="text-gray-600 text-lg">
-            | CAMS ID: {application?.applicationNumber || "N/A"}
+            | Applicaion ID: {application?.applicationNumber || "N/A"}
           </span>
         </h1>
 
@@ -691,6 +751,39 @@ const sendMessage = async () => {
               </div>
             </div>
           </div>
+
+
+            {/* Staff Details */}
+            {/* <div className="mt-2 w-full border-t pt-5 px-8 grid grid-cols-3 gap-10 mt-8 pt-8 border-t">
+              <div>
+                <h4 className="font-semibold underline text-gray-700 mb-3">Case Owner:</h4>
+                <div className="space-y-2 text-sm">
+                  <p><span className="font-semibold">Name :</span> {application?.caseOwner?.name || "N/A"}</p>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-semibold underline text-gray-700 mb-3">URM Details:</h4>
+                <div className="space-y-2 text-sm">
+                  <p><span className="font-semibold">Name:</span> {application?.urm?.name || "N/A"}</p>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">Number :</span>
+                    <span>{application?.urm?.phone || "N/A"}</span>
+                    <Phone size={16} className="text-gray-500" />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-semibold underline text-gray-700 mb-3">SRM Details:</h4>
+                <div className="space-y-2 text-sm">
+                  <p><span className="font-semibold">Name :</span> {application?.srm?.name || "N/A"}</p>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">Mobile No :</span>
+                    <span>{application?.srm?.phone || "N/A"}</span>
+                    <Phone size={16} className="text-gray-500" />
+                  </div>
+                </div>
+              </div>
+            </div> */}
 
           {/* <div className="mt-2 w-full border-t pt-5 px-8">
             <div className="hidden md:block relative overflow-x-auto pb-4">
@@ -795,7 +888,7 @@ const sendMessage = async () => {
                 value={application?.student?.name || "N/A"}
               />
               <DetailItem
-                label="CAMS ID"
+                label="Applicaion ID"
                 value={application?.applicationNumber || "N/A"}
               />
               <DetailItem
@@ -812,7 +905,8 @@ const sendMessage = async () => {
               />
               <EditableItem
                 label="Student Date of Birth"
-                value={application?.student?.dateOfBirth ? format(new Date(application.student.dateOfBirth), 'yyyy-MM-dd') : "N/A"}
+                value={application?.student?.dateOfBirth ? format(new Date(application.student.dateOfBirth), 'yyyy-MM-dd') :
+                   "N/A"}
               />
               <DetailItem
                 label="Student E-Mail"
@@ -822,14 +916,6 @@ const sendMessage = async () => {
                 label="Student Phone No"
                 value={application?.student?.phone || "N/A"}
               />
-              {/* <EditableItem
-                label="Communication E-Mail ID"
-                value={application?.communicationEmail || "N/A"}
-              />
-              <EditableItem
-                label="Communication Phone No."
-                value={application?.communicationPhone || "N/A"}
-              /> */}
             </div>
 
             {/* Course Details Section */}
@@ -872,37 +958,6 @@ const sendMessage = async () => {
               </div>
             </div>
 
-            {/* Staff Details */}
-            <div className="grid grid-cols-3 gap-10 mt-8 pt-8 border-t">
-              <div>
-                <h4 className="font-semibold underline text-gray-700 mb-3">Case Owner:</h4>
-                <div className="space-y-2 text-sm">
-                  <p><span className="font-semibold">Name :</span> {application?.caseOwner?.name || "N/A"}</p>
-                </div>
-              </div>
-              <div>
-                <h4 className="font-semibold underline text-gray-700 mb-3">URM Details:</h4>
-                <div className="space-y-2 text-sm">
-                  <p><span className="font-semibold">Name:</span> {application?.urm?.name || "N/A"}</p>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">Number :</span>
-                    <span>{application?.urm?.phone || "N/A"}</span>
-                    <Phone size={16} className="text-gray-500" />
-                  </div>
-                </div>
-              </div>
-              <div>
-                <h4 className="font-semibold underline text-gray-700 mb-3">SRM Details:</h4>
-                <div className="space-y-2 text-sm">
-                  <p><span className="font-semibold">Name :</span> {application?.srm?.name || "N/A"}</p>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">Mobile No :</span>
-                    <span>{application?.srm?.phone || "N/A"}</span>
-                    <Phone size={16} className="text-gray-500" />
-                  </div>
-                </div>
-              </div>
-            </div>
 
             {/* Document Downloads */}
             {/* <div className="mt-12 border-t pt-8">
@@ -1116,249 +1171,415 @@ const sendMessage = async () => {
 {/* Activity Log Tab Content */}
 {activeTab === 'activity' && (
   <div className="bg-white">
-    {/* Header */}
-    <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800">
-          Agent Communication Status
-        </h3>
-      </div>
 
-      <button
-        onClick={() => setopenCommentModal(true)}
-        className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-md transition-colors"
-      >
-        ADD COMMENTS
-      </button>
+  {/* Header */}
+  <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
+    <div>
+      <h3 className="text-lg font-semibold text-gray-800">
+        Agent Communication Status
+      </h3>
     </div>
 
-    {/* Table Header */}
-    <div className="grid grid-cols-12 gap-4 bg-gray-100 px-8 py-4 text-sm font-semibold text-gray-700 border-b">
-      <div className="col-span-3">Details</div>
-      <div className="col-span-5">Comment</div>
-      <div className="col-span-3">Status</div>
-      <div className="col-span-1">Commented By</div>
-    </div>
-
-    {/* Activity List */}
-    <div className="max-h-[650px] overflow-y-auto divide-y divide-gray-200">
-      {MessageData.map((item, index) => (
-        <motion.div
-          key={item.id}
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.05 }}
-          className="grid grid-cols-12 gap-4 px-8 py-6 hover:bg-gray-50 transition-colors"
-        >
-          {/* Details */}
-          <div className="col-span-3">
-            <div className="text-sm text-gray-700 leading-6">
-              <p className="font-medium">{item?.createdAt.split("T")[0]}</p>
-              {/* <p>({item.createdAt.split("T")['1']})</p> */}
-
-              <div className="mt-4">
-                <p className="font-semibold text-gray-800">
-                  Subject:
-                </p>
-
-                <p className=" font-semibold text-gray-900 mt-2">
-                  {item?.extra_content?.subject}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Comment */}
-          <div className="col-span-5">
-            <div className="space-y-3">
-            
-              <div className="text-gray-700 leading-7 text-[15px]">
-                {item.content}
-              </div>
-              {item.extra_content?.attachments[0]?.name && 
-              <a href={`https://api.ooshasglobal.com${item.extra_content?.attachments[0]?.url}`} target="_blank"  className="flex items-center gap-2">
-                
-      <Paperclip className="w-4 h-4 text-slate-400" />{item.extra_content?.attachments[0]?.name}
-              </a>}
-            </div>
-          </div>
-
-          {/* Status */}
-          <div className="col-span-3">
-            <div className="space-y-5 text-sm">
-              <div>
-                <p className="font-bold text-gray-800">
-                  Primary Status:
-                </p>
-
-                <p className="text-gray-700">
-                  {item.primaryStatus || "Application Processed"}
-                </p>
-              </div>
-
-              <div>
-                <p className="font-bold text-gray-800">
-                  Message Status:
-                </p>
-
-                <p className="text-gray-700">
-                  {item?.isRead?"true":"false"}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Commented By */}
-          <div className="col-span-1 flex items-start justify-center">
-            <span className="text-gray-700 font-medium">
-              {item.userType}
-            </span>
-          </div>
-        </motion.div>
-      ))}
-    </div>
-
-{/* Add Comment Modal */}
-<AnimatePresence>
-  {openCommentModal && (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4"
+    <button
+      onClick={() => setIsCommentModalOpen(true)}
+      className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md transition-colors"
     >
-      <motion.div
-        initial={{ scale: 0.98, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.98, opacity: 0 }}
-        transition={{ type: "spring", duration: 0.4 }}
-        className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border border-slate-100"
-      >
-      {/* Modal Body */}
-<div className="p-6 space-y-6">
-  {/* Native Hidden File Input Trigger */}
-  <input
-    type="file"
-    ref={fileInputRef}
-    onChange={handleFileChange}
-    multiple
-    disabled={isUploading || isSending}
-    className="hidden"
-  />
-
-  {/* Top Info Cards */}
-  <div className="grid grid-cols-2 gap-4">
-    <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col gap-1">
-      <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Cams ID</span>
-      <span className="text-lg font-bold text-slate-700">{application._id}</span>
-    </div>
-    <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col gap-1">
-      <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Recipient</span>
-      <span className="text-lg font-bold text-slate-700">Ooshas</span>
-    </div>
-  </div>
-
-  {/* Subject Dropdown */}
-  <div className="space-y-1.5">
-    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-      Subject <span className="text-rose-500">*</span>
-    </label>
-    <select 
-      value={subject}
-      onChange={(e) => setSubject(e.target.value)}
-      className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-700 outline-none focus:border-orange-500 focus:bg-white"
-    >
-      <option value="">Select a subject...</option>
-      <option value="Application Processed">Application Processed</option>
-      <option value="Document Uploaded">Document Uploaded</option>
-      <option value="University Update">University Update</option>
-    </select>
-  </div>
-
-  {/* Editor Container */}
-  <div className="space-y-1.5">
-    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Message</label>
-    <div className="border border-slate-200 rounded-xl overflow-hidden focus-within:border-orange-500 focus-within:ring-4 focus-within:ring-orange-500/10 transition-all">
-      <textarea
-        rows={5}
-        value={newMessage}
-        onChange={(e) => setNewMessage(e.target.value)}
-        placeholder="Type your comment details here..."
-        className="w-full p-4 outline-none resize-none text-sm text-slate-700 placeholder-slate-400 bg-white"
-      />
-    </div>
-  </div>
-
-  {/* Uploaded Files Chips view layout */}
-
-  {uploadedFiles.length > 0 && (
-    <div className="space-y-2">
-      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-        Uploaded Attachments ({uploadedFiles.length})
-      </label>
-      <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto p-1">
-        {uploadedFiles.map((file, index) => (
-          <div 
-            key={index} 
-            className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-1.5 text-xs text-emerald-800"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="truncate max-w-[200px] font-medium">{file.name}</span>
-            <button
-              type="button"
-              onClick={() => removeUploadedFile(index)}
-              className="text-emerald-500 hover:text-rose-500 font-bold ml-1 text-sm leading-none"
-            >
-              ×
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  )}
-
-  {/* Footer Actions */}
-  <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-    <button 
-      type="button"
-      disabled={subject !== "Document Uploaded" || isUploading || isSending }
-      onClick={() => fileInputRef.current.click()}
-      
-      className="border border-slate-200 rounded-xl px-4 py-2.5 flex items-center gap-2 text-slate-600 hover:bg-slate-50 text-sm font-medium transition-colors disabled:opacity-50"
-    >
-      <Paperclip className="w-4 h-4 text-slate-400" />
-      <span>{isUploading ? 'Uploading to Server...' : 'Attach files'}</span>
+      ADD COMMENTS
     </button>
-
-    <div className="flex items-center gap-3">
-      <button
-        type="button"
-        disabled={isSending || isUploading}
-        onClick={() => setopenCommentModal(false)}
-        className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50"
-      >
-        Cancel
-      </button>
-      
-      <button
-        type="button"
-        onClick={sendMessage}
-        disabled={isSending || isUploading || !newMessage.trim()}
-        className="bg-orange-500 hover:bg-orange-600 active:bg-orange-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow-md shadow-orange-500/10 transition-all"
-      >
-        {isSending ? 'Sending...' : 'Send Comment'}
-      </button>
-    </div>
   </div>
-</div>
 
+  {/* Table Header */}
+  <div className="grid grid-cols-12 gap-4 bg-gray-100 px-8 py-4 text-sm font-semibold text-gray-700 border-b">
+    <div className="col-span-3">Details</div>
+    <div className="col-span-5">Comment</div>
+    <div className="col-span-3">Status</div>
+    <div className="col-span-1">Commented By</div>
+  </div>
+
+  {/* Messages */}
+  <div className="max-h-[650px] overflow-y-auto divide-y divide-gray-200">
+
+    {messageList?.map((item, index) => (
+
+      <motion.div
+        key={item.id}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05 }}
+        className="grid grid-cols-12 gap-4 px-8 py-6 hover:bg-gray-50 transition-colors"
+      >
+
+        {/* Details */}
+        <div className="col-span-3">
+
+          <div className="text-sm text-gray-700 leading-6">
+
+            <p className="font-medium">
+              {item?.createdAt.split("T")[0]}
+            </p>
+
+            <div className="mt-4">
+
+              <p className="font-semibold text-gray-800">
+                Subject:
+              </p>
+
+              <p className="font-semibold text-gray-900 mt-2">
+                {item?.extra_content?.subject}
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* Comment */}
+        <div className="col-span-5">
+
+          <div className="space-y-3">
+
+            <div className="text-gray-700 leading-7 text-[15px]">
+              {item.content}
+            </div>
+
+            {item.extra_content?.attachments?.[0]?.name && (
+
+              <a
+                href={`https://api.ooshasglobal.com${item.extra_content?.attachments?.[0]?.url}`}
+                target="_blank"
+                className="flex items-center gap-2"
+              >
+                <Paperclip className="w-4 h-4 text-slate-400" />
+
+                {item.extra_content?.attachments?.[0]?.name}
+
+              </a>
+
+            )}
+
+          </div>
+
+        </div>
+
+
+        {/* Status */}
+        <div className="col-span-3">
+
+          <div className="space-y-5 text-sm">
+
+            <div>
+
+              <p className="font-bold text-gray-800">
+                Primary Status:
+              </p>
+
+              <p className="text-gray-700">
+                {item.primaryStatus || "Application Processed"}
+              </p>
+
+            </div>
+
+            <div>
+
+              <p className="font-bold text-gray-800">
+                Message Status:
+              </p>
+
+              <p className="text-gray-700">
+                {item?.isRead ? "true" : "false"}
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* User */}
+        <div className="col-span-1 flex flex-col items-center justify-between">
+
+          <span className="text-gray-700 font-medium">
+            {item.userType === "student" ? "Me" : item.userType }
+          </span>
+                
+          {item.userType !== "student" && !item?.isRead && (
+            <button
+              onClick={() => {
+                setIsCommentModalOpen(true); 
+                setMessageSubject(item?.extra_content?.subject);
+                markMessagesAsRead();
+              }}
+              className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-1 px-2 rounded-md transition-colors"
+            >
+              reply <SendHorizonal className="h-4" />
+            </button>
+          )}
+
+        </div>
+      </motion.div>
+
+    ))}
+
+  </div>
+
+
+  {/* Modal */}
+  <AnimatePresence>
+
+    {isCommentModalOpen && (
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-end justify-end p-6"
+      >
+
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          transition={{ type: "spring", duration: 0.4 }}
+          className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200"
+        >
+
+          {/* Header */}
+          <div className="bg-white border-b border-slate-100 px-5 py-4">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <h3 className="text-base font-bold text-slate-800">
+                  New Message
+                </h3>
+
+                <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
+
+                  <span>To</span>
+
+                  <span className="font-medium text-slate-700">
+                    Ooshas
+                  </span>
+
+                </div>
+
+              </div>
+
+              <button
+                onClick={() => setIsCommentModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 transition-colors"
+              >
+
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+          {/* Body */}
+          <div className="p-5 space-y-5">
+
+            {/* Subject */}
+            <div className="space-y-1.5">
+
+              <div className="flex items-center gap-2 text-sm">
+
+                <label className="font-medium text-slate-600 w-16">
+                  Subject
+                </label>
+
+                <select
+                  value={messageSubject}
+                  onChange={(e) => setMessageSubject(e.target.value)}
+                  className="flex-1 bg-transparent border-b border-slate-200 py-1.5 text-sm text-slate-700 outline-none focus:border-orange-500"
+                >
+
+                  <option value="">
+                    Select a subject...
+                  </option>
+
+                  <option value="Application Processed">
+                    Application Processed
+                  </option>
+
+                  <option value="Document Uploaded">
+                    Document Uploaded
+                  </option>
+
+                  <option value="University Update">
+                    University Update
+                  </option>
+
+                </select>
+
+              </div>
+
+            </div>
+
+
+            {/* Message */}
+            <div className="space-y-1.5">
+
+              <textarea
+                rows={5}
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                placeholder="Type your comment details here..."
+                className="w-full p-3 outline-none resize-none text-sm text-slate-700 placeholder-slate-400 bg-slate-50 rounded-xl border border-slate-100 focus:border-orange-500 focus:bg-white transition-all"
+              />
+
+            </div>
+
+
+            {/* Attachments */}
+            {messageAttachments.length > 0 && (
+
+              <div className="space-y-2">
+
+                <div className="flex flex-wrap gap-2">
+
+                  {messageAttachments.map((file, index) => (
+
+                    <div
+                      key={index}
+                      className="flex items-center gap-1.5 bg-slate-100 rounded-full px-3 py-1 text-xs text-slate-600"
+                    >
+
+                      <svg
+                        className="w-3 h-3 text-slate-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                        />
+
+                      </svg>
+
+                      <span className="max-w-[120px] truncate">
+                        {file.name}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => removeUploadedFile(index)}
+                        className="text-slate-400 hover:text-rose-500 ml-1"
+                      >
+                        ×
+                      </button>
+
+                    </div>
+
+                  ))}
+
+                </div>
+
+              </div>
+
+            )}
+
+
+            {/* Actions */}
+            <div className="flex items-center justify-end gap-2 pt-2">
+
+              {/* Upload */}
+              <button
+                type="button"
+                disabled={
+                  messageSubject !== "Document Uploaded" ||
+                  isAttachmentUploading ||
+                  isCommentSubmitting
+                }
+                onClick={() => fileInputRef.current.click()}
+                className="p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-50"
+              >
+
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                  />
+
+                </svg>
+
+              </button>
+
+
+              {/* Send */}
+              <button
+                type="button"
+                onClick={sendMessage}
+                disabled={
+                  isCommentSubmitting ||
+                  isAttachmentUploading ||
+                  !messageText.trim()
+                }
+                className="bg-orange-500 hover:bg-orange-600 disabled:bg-slate-200 disabled:text-slate-400 text-white font-medium px-5 py-2 rounded-full text-sm transition-all"
+              >
+
+                {isCommentSubmitting ? "Sending..." : "Send"}
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+          {/* Hidden File Input */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            multiple
+            disabled={
+              isAttachmentUploading ||
+              isCommentSubmitting
+            }
+            className="hidden"
+          />
+
+        </motion.div>
 
       </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
 
-  </div>
+    )}
+
+  </AnimatePresence>
+
+</div>
 )}
 
       </div>
@@ -1516,6 +1737,7 @@ const sendMessage = async () => {
                             ))}
                           </div>
                         )}
+
                         {uploadProgress[selectedRequirement?.id] > 0 && uploadProgress[selectedRequirement?.id] < 100 && (
                           <div className="mt-4">
                             <div className="flex items-center justify-between mb-1">
@@ -1576,7 +1798,7 @@ function EditableItem({ label, value }: DetailProps) {
       </p>
       <div className="flex items-center gap-2">
         <p className="text-gray-600 text-sm">{value}</p>
-        <Pencil size={14} className="text-gray-500 cursor-pointer hover:text-[#ff6a1a]" />
+        {/* <Pencil size={14} className="text-gray-500 cursor-pointer hover:text-[#ff6a1a]" /> */}
       </div>
     </div>
   );

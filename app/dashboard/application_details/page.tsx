@@ -330,16 +330,16 @@ const fetchApplications = useCallback(
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Message Campaigns</h1>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Application Management</h1>
             <p className="text-sm text-slate-500 mt-0.5">
-              Manage and track all your message campaigns
+              Manage and track all your application
             </p>
           </div>
           <button
             onClick={() => setView("add")}
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold transition "
           >
-            <Plus size={16} /> New Campaign
+            <Plus size={16} /> New Applicaion
           </button>
         </div>
 

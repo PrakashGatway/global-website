@@ -112,11 +112,12 @@ const iconMap = {
   default: Sparkles,
 };
 
-function CourseShortlist({ isOpen, onClose }) {
+
+function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selected, setselected] = useState();
+  const [selected, setSelected] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
@@ -126,253 +127,80 @@ function CourseShortlist({ isOpen, onClose }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await axiosInstance.get(
-        `/courses/categories?page=${currentPage}&limit=${limit}`,
-      );
+      const res = await axiosInstance.get(`/courses/categories?page=${currentPage}&limit=${limit}`);
       setList(res.data.data || []);
       setTotalPages(res.data.pages || 1);
       setTotalItems(res.data.total || 0);
-      const selectedCount = res.data.data.filter((ele) => ele?.selected == true);
-      console.log(selectedCount,list); // This returns the correct count
-
-      setselected(selectedCount?.length || 0);
-      if(selectedCount?.length > 1){
-        onClose();
-      }
+      setSelected(res.data.data.filter(ele => ele?.selected).length || 0);
     } catch (err) {
-      setError("Failed to load Field of Study. Please try again.");
-      console.error(err);
+      setError("Failed to load. Please try again.");
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (!isOpen) return;
-    fetchCourses(page);
+    if (isOpen) fetchCourses(page);
   }, [isOpen, page, fetchCourses]);
 
   const toggleCourse = async (id) => {
-    // setselected(prev => [...new Set([...prev, id])]);
-
-    const res = await axiosInstance.patch("/auth/edit-doc", {
-      categorie_shortlist: id,
-    });
-    console.log(res);
+    await axiosInstance.patch("/auth/edit-doc", { categorie_shortlist: id });
     fetchCourses(page);
-  };
-
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages || newPage === page) return;
-    setPage(newPage);
-  };
-
-  const handleSubmit = async () => {
-    // const selected = list.filter(course => selected.has(course.id));
-    console.log("Selected courses:", selected);
-    onClose();
-  };
-
-  const handleClose = () => {
-    setPage(1);
-    setselected([]);
-    onClose();
+    setSelectedCount?.(prev => prev + (list.find(e => e.name === id)?.selected ? -1 : 1));
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
-        onClick={handleClose}
-      />
-
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-5 flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-white">Choose Your Field of Study.</h2>
-              <p className="text-indigo-100 text-sm mt-1">
-                {totalItems > 0
-                  ? `${totalItems} available`
-                  : "Select Field of Study that interest you"}
-              </p>
-            </div>
-            <button
-              onClick={handleClose}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white"
-            >
-              <X size={20} />
-            </button>
-          </div>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl flex flex-col max-h-[85vh]">
+        <div className="bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-5">
+          <h2 className="text-xl font-bold text-white">Choose Your Field of Study</h2>
+          <p className="text-indigo-100 text-sm mt-1">{totalItems} available</p>
         </div>
 
-        {/* Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-6 min-h-0">
-          {loading && (
-            <div className="flex flex-col items-center justify-center py-12 space-y-3">
-              <Loader2 size={32} className="text-indigo-600 animate-spin" />
-              <p className="text-gray-500 text-sm">Loading Fields...</p>
-            </div>
-          )}
+        <div className="flex-1 overflow-y-auto p-6">
+          {loading && <Loader2 size={32} className="animate-spin mx-auto text-indigo-600" />}
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          
+          {!loading && !error && list.map(ele => (
+            <button
+              key={ele.id}
+              onClick={() => toggleCourse(ele.name)}
+              className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 mb-2
+                ${ele.selected ? "border-indigo-600 bg-indigo-50" : "border-gray-100 hover:border-indigo-200"}`}
+            >
+              <span>{ele.selected ? "✓" : ""}</span>
+              <span className="font-semibold">{ele.name}</span>
+              <span className="text-sm text-gray-500 ml-auto">{ele.description}</span>
+            </button>
+          ))}
+        </div>
 
-          {error && (
-            <div className="text-center py-8">
-              <p className="text-red-500 mb-3">{error}</p>
+        {totalPages > 1 && (
+          <div className="flex justify-center gap-2 p-3 bg-gray-50">
+            {Array.from({ length: totalPages }, (_, i) => (
               <button
-                onClick={() => fetchCourses(page)}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
+                key={i}
+                onClick={() => setPage(i + 1)}
+                className={`w-8 h-8 rounded-lg ${page === i + 1 ? "bg-indigo-600 text-white" : "hover:bg-gray-200"}`}
               >
-                Retry
+                {i + 1}
               </button>
-            </div>
-          )}
-
-          {!loading && !error && (
-            <div className="space-y-3">
-              {list.map((ele) => {
-                const IconComponent = iconMap[ele.icon] || iconMap.default;
-                // const isSelected = selected.includes(ele._id);
-
-                return (
-                  <button
-                    key={ele.id}
-                    onClick={() => toggleCourse(ele.name)}
-                    className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-200 text-left group
-                      ${
-                        ele.selected
-                          ? "border-indigo-600 bg-indigo-50 shadow-md"
-                          : "border-gray-100 bg-white hover:border-indigo-200 hover:shadow-sm"
-                      }`}
-                  >
-                    <div
-                      className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-colors
-                      ${ele.selected ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 group-hover:bg-indigo-100 group-hover:text-indigo-600"}
-                    `}
-                    >
-                      <IconComponent size={24} />
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h3
-                          className={`font-semibold truncate ${ele.selected ? "text-indigo-900" : "text-gray-900"}`}
-                        >
-                          {ele.name}
-                        </h3>
-                        {ele.selected && (
-                          <span className="flex-shrink-0 w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs">
-                            ✓
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">
-                        {ele.description}
-                      </p>
-                    </div>
-
-                    <ChevronRight
-                      size={20}
-                      className={`flex-shrink-0 transition-colors ${ele.selected ? "text-indigo-600" : "text-gray-300"}`}
-                    />
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          {!loading && !error && list.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
-              <Sparkles size={40} className="mx-auto mb-3 opacity-50" />
-              <p>No Field available</p>
-            </div>
-          )}
-        </div>
-
-        {/* Pagination */}
-        {!loading && !error && totalPages > 1 && (
-          <div className="flex-shrink-0 px-6 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-center gap-2">
-            <button
-              onClick={() => handlePageChange(page - 1)}
-              disabled={page === 1}
-              className={`p-2 rounded-lg transition-all
-                ${
-                  page === 1
-                    ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-600 hover:bg-white hover:shadow-sm hover:text-indigo-600"
-                }`}
-            >
-              <ChevronLeft size={18} />
-            </button>
-
-            <div className="flex items-center gap-1">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (pageNum) => (
-                  <button
-                    key={pageNum}
-                    onClick={() => handlePageChange(pageNum)}
-                    className={`min-w-[32px] h-8 px-2 rounded-lg text-sm font-medium transition-all
-                    ${
-                      pageNum === page
-                        ? "bg-indigo-600 text-white shadow-md"
-                        : "text-gray-600 hover:bg-white hover:shadow-sm hover:text-indigo-600"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                ),
-              )}
-            </div>
-
-            <button
-              onClick={() => handlePageChange(page + 1)}
-              disabled={page === totalPages}
-              className={`p-2 rounded-lg transition-all
-                ${
-                  page === totalPages
-                    ? "text-gray-300 cursor-not-allowed"
-                    : "text-gray-600 hover:bg-white hover:shadow-sm hover:text-indigo-600"
-                }`}
-            >
-              <ChevronRight size={18} />
-            </button>
+            ))}
           </div>
         )}
 
-        {/* Footer */}
-        <div className="flex-shrink-0 px-6 py-4 bg-white border-t border-gray-100 flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-sm font-medium text-gray-900">
-              {selected} selected
-            </span>
-            {totalPages > 1 && (
-              <span className="text-xs text-gray-400">
-                Page {page} of {totalPages}
-              </span>
-            )}
-          </div>
-          <div className="flex gap-3">
-            <button
-              onClick={handleClose}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium text-sm transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={selected === 0}
-              className={`px-6 py-2 rounded-xl font-medium text-sm transition-all
-                ${
-                  selected > 0
-                    ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-600/20"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                }`}
-            >
-              Continue {selected}
-            </button>
-          </div>
+        <div className="flex justify-between p-4 border-t">
+          <span>{selected} selected</span>
+          <button
+            onClick={onClose}
+            disabled={selected < 2}
+            className="px-6 py-2 bg-indigo-600 text-white rounded-xl disabled:bg-gray-200"
+          >
+            Continue
+          </button>
         </div>
       </div>
     </div>
@@ -380,36 +208,31 @@ function CourseShortlist({ isOpen, onClose }) {
 }
 
 export default function UniversitiesPage() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCount, setSelectedCount] = useState(0);
+  const [hasChecked, setHasChecked] = useState(false);
+
+  useEffect(() => {
+    axiosInstance.get("/courses/categories?page=1&limit=10").then(res => {
+      const count = res.data.data.filter(ele => ele?.selected).length || 0;
+      setSelectedCount(count);
+      setIsOpen(count < 2);
+      setHasChecked(true);
+    });
+  }, []);
 
   return (
-    <div className="">
-      {/* <button
-        onClick={() => setIsOpen(true)}
-        className="px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium"
-      >
-        Browse Courses
-      </button> */}
-
-      <Suspense
-        fallback={
-          <div className="p-6 text-sm text-muted-foreground">
-            Loading universities...
-          </div>
-        }
-      >
+    <div>
+      {hasChecked && selectedCount < 2 && (
+        <CourseShortlist isOpen={isOpen} onClose={() => setIsOpen(false)} setSelectedCount={setSelectedCount} />
+      )}
+      <Suspense fallback={<div>Loading...</div>}>
         <UniversitiesPageClient />
       </Suspense>
-
-      <CourseShortlist isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </div>
   );
-  // return (
-  //   <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading universities...</div>}>
-  //     <UniversitiesPageClient />
-  //   </Suspense>
-  // )
 }
+
 
 function UniversitiesPageClient() {
 

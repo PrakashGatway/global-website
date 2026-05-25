@@ -5,6 +5,7 @@ import Select from "react-select";
 import React, { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import { useGlobal } from "@/src/statecontext";
+import { X } from "lucide-react";
 
 const STEPS = [
   {
@@ -232,7 +233,8 @@ const InitialSelectionPopup = ({ onSelect, onClose }: { onSelect: (type: 'new' |
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl max-w-md w-full shadow-xl animate-[fadeUp_0.25s_ease_both]">
         <div className="p-6">
-          <h3 className="text-xl font-semibold text-slate-800 mb-2">Create Application</h3>
+          <p> <X/> </p>
+          <h3 className="text-xl font-semibold text-slate-800 mb-2">Create Application </h3>
           <p className="text-sm text-slate-500 mb-6">
             Is this application for an existing student or a new student?
           </p>
@@ -260,138 +262,7 @@ const InitialSelectionPopup = ({ onSelect, onClose }: { onSelect: (type: 'new' |
   );
 };
 
-// interface StudentSelectionPopupProps {
-//   students: any[];
-//   onSelect: (student: any) => void;
-//   onClose: () => void;
-// }
 
-// const StudentSelectionPopup = ({ students, onSelect, onClose }: StudentSelectionPopupProps) => {
-//   const [searchTerm, setSearchTerm] = useState("");
-//   // Adding these states since they were used in your snippet's logic
-//   const [referralList, setReferralList] = useState<any[]>([]);
-//   const [loading, setLoading] = useState(false);
-
-//   // Replace with your actual global context hook
-//   // const { profile } = useGlobal(); 
-//   const profile = { referalCode: "REF123", _id: "admin_id" }; // Mock for demo
-
-//   const filteredStudents = students.filter(student =>
-//     student.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//     student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//     student.phone?.includes(searchTerm) ||
-//     student._id?.toLowerCase().includes(searchTerm.toLowerCase()) // Now searchable by ID too
-//   );
-
-//   /* Logic from your snippet */
-//   const fetchReferrals = useCallback(async (code: string, id: string) => {
-//     if (!code) return;
-//     setLoading(true);
-//     try {
-//       const response = await axiosInstance.get(`/users/code/${code}/${id}`);
-//       const data = response.data.data ?? [];
-//       setReferralList(Array.isArray(data) ? data : [data]);
-//     } catch (err) {
-//       console.error("Error fetching referrals:", err);
-//       setReferralList([]);
-//     } finally {
-//       setLoading(false);
-//     }
-//   }, []);
-
-//   useEffect(() => {
-//     fetchReferrals(profile?.referalCode || "", profile?._id || "");
-//   }, [profile?.referalCode, profile?._id, fetchReferrals]);
-
-//   return (
-//     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-//       <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
-
-//         {/* Header Section */}
-//         <div className="p-6 border-b border-slate-200">
-//           <div className="flex justify-between items-center mb-4">
-//             <div>
-//               <h3 className="text-xl font-bold text-slate-800">Select Student</h3>
-//               <p className="text-sm text-slate-500">Choose a student to create an application</p>
-//             </div>
-//             <button
-//               onClick={onClose}
-//               className="p-2 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"
-//             >
-//               <span className="text-xl">✕</span>
-//             </button>
-//           </div>
-
-//           <div className="relative">
-//             <input
-//               type="text"
-//               placeholder="Search by name, email, phone or ID..."
-//               value={searchTerm}
-//               onChange={(e) => setSearchTerm(e.target.value)}
-//               className="w-full pl-4 pr-10 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50/50 transition-all"
-//             />
-//             <span className="absolute right-4 top-3.5 text-slate-400 text-lg">🔍</span>
-//           </div>
-//         </div>
-
-//         {/* List Section */}
-//         <div className="flex-1 overflow-y-auto p-4 bg-slate-50/50">
-//           {filteredStudents.length === 0 ? (
-//             <div className="flex flex-col items-center justify-center py-12 text-slate-400">
-//               <span className="text-4xl mb-2">👤</span>
-//               <p>No students found matching "{searchTerm}"</p>
-//             </div>
-//           ) : (
-//             <div className="space-y-3">
-//               {filteredStudents.map((student) => (
-//                 <button
-//                   key={student._id || student.id}
-//                   onClick={() => onSelect(student)}
-//                   className="group w-full text-left p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-400 hover:shadow-md hover:shadow-blue-100/50 transition-all flex justify-between items-start"
-//                 >
-//                   <div className="flex-1">
-//                     <div className="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
-//                       {student.name}
-//                     </div>
-//                     <div className="text-sm text-slate-500 mt-1 flex flex-wrap gap-y-1">
-//                       <span className="flex items-center">📧 {student.email}</span>
-//                       {student.phone && (
-//                         <span className="flex items-center ml-4">📞 {student.phone}</span>
-//                       )}
-//                     </div>
-//                   </div>
-
-//                   {/* Student ID Badge */}
-//                   <div className="flex flex-col items-end gap-2">
-//                     <span className="text-[10px] font-mono font-bold bg-slate-100 text-slate-500 px-2 py-1 rounded-md uppercase tracking-wider group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
-//                       ID: {student._id || student.id || "N/A"}
-//                     </span>
-//                     {student.status && (
-//                       <span className="text-[9px] px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-bold uppercase">
-//                         {student.status}
-//                       </span>
-//                     )}
-//                   </div>
-//                 </button>
-//               ))}
-//             </div>
-//           )}
-//         </div>
-
-//         {/* Footer */}
-//         <div className="p-4 border-t border-slate-100 bg-white text-center">
-//           <p className="text-xs text-slate-400">
-//             Showing {filteredStudents.length} of {students.length} total students
-//           </p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-
-
-// Student Selection Popup Component
 const StudentSelectionPopup = ({ students, onSelect, onClose }: { students: any[], onSelect: (student: any) => void, onClose: () => void }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -452,7 +323,7 @@ const StudentSelectionPopup = ({ students, onSelect, onClose }: { students: any[
   );
 };
 
-const ProfileForm = () => {
+const Add_application = () => {
   const [showInitialPopup, setShowInitialPopup] = useState(true);
   const [showStudentPopup, setShowStudentPopup] = useState(false);
   const [students, setStudents] = useState<any[]>([]);
@@ -750,7 +621,7 @@ const ProfileForm = () => {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await serverInstance.get(`/countries?limit=300`);
+        const response = await axiosInstance.get(`/countries?limit=300`);
         const data = Array.isArray(response.data) ? response.data : response.data?.data || [];
 
         const mapped = data.map((c: any) => ({
@@ -974,5 +845,5 @@ const ProfileForm = () => {
   );
 };
 
-export default ProfileForm;
+export default Add_application;
 

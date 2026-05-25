@@ -48,9 +48,12 @@ export function DashboardHeader({ profile, Logout }) {
 
   // console.log("profile", profile);
 
+  
   useEffect(() => {
     fetchNotifications();
   }, [])
+
+
   return (
     <header className="sticky top-0 z-50 w-full bg-card border-b  border-border">
       <div className="flex items-center justify-between px-2 md:px-4 py-2 gap-4">
@@ -104,7 +107,10 @@ export function DashboardHeader({ profile, Logout }) {
               </span>
               <div className="hidden md:block text-left ">
                 <p className="text-sm font-semibold capitalize leading-none">{profile && profile.name}</p>
-                <p className="text-sm text-gray-600 pt-1 capitalize leading-none"> {profile?.role == "user" ? "User" : profile?.role}</p>
+
+                <p className="text-sm text-gray-600 pt-1 capitalize leading-none"> {
+                  profile?.role == "user" ? "User" : profile?.role}</p>
+
               </div>
               <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${profileOpen ? "rotate-180" : ""}`} />
             </motion.button>
