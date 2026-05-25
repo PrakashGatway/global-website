@@ -278,6 +278,10 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
           .blog-html tr {
       text-align: center;
     }
+            .blog-html table * p {
+      padding: 10px;
+    }
+    
 
     .blog-html tr:nth-child(even) {
       background-color: #f3ebeb;
@@ -302,8 +306,12 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
       font-weight: 600;
     }
 
+    .blog-html * a {
+      color: #240dbd;
+    }
+
     .blog-html p {
-      margin: 12px 0;
+      // padding: 12px;
       line-height: 1.8;
     }
 
@@ -646,14 +654,6 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
               ))}
             </div>
           </div>
-
-
-
-
-
-
-
-
         </aside>
       </div>
 
