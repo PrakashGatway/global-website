@@ -42,28 +42,22 @@ export default function BlogGrid({ filteredBlogs }) {
                                     {/* ORANGE BACK SHAPE */}
                                     <div
                                         className="
-                    absolute -top-2 -left-[6.5px]
+                    absolute -top-1 -left-[3px] shadow-xl
                     w-28 h-28 sm:w-36 sm:h-36 lg:w-35 lg:h-35
-                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-[20px] lg:rounded-tl-[70px]
                     bg-[#FF6B35] -z-10
                   "
                                     />
 
                                     {/* IMAGE */}
                                     <div
-                                        className="
-                    relative overflow-hidden bg-gray-300
-                    h-[200px] sm:h-[220px] lg:h-[220px]
-                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[65px]
-                  "
-                                    >
+                                        className="" >
                                         <img
                                             src={
                                                 post.coverImage ||
                                                 "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
                                             }
                                             alt={post.title}
-                                            className="w-full h-[220px] object-cover"
+                                            className="w-full h-[210px] object-cover"
                                             onError={(e) => {
                                                 e.currentTarget.src =
                                                     "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
@@ -75,28 +69,17 @@ export default function BlogGrid({ filteredBlogs }) {
                                     </div>
 
                                     {/* CONTENT */}
-                                    <div className="p-3 text-start">
-                                        <h3 className="text-gray-900 text-lg font-medium mb-2 line-clamp-2">
+                                    <div className="p-4 pt-2 text-start">
+
+                                        <h3 onClick={() => goToBlog(post.slug)} className="text-gray-900 hover:text-[#FF6B35] cursor-pointer text-lg font-medium mb-1 line-clamp-2">
                                             {post.title}
                                         </h3>
-                                        <p className="text-gray-600 text-sm font-medium mb-3 line-clamp-2">
+                                        <p className="text-gray-600 text-sm font-medium mb-2 line-clamp-2">
                                             {post.shortDescription}
                                         </p>
-
-
                                         <button
                                             onClick={() => goToBlog(post.slug)}
-                                            className="
-    text-white px-6 lg:w-50 py-2
-    bg-[#1f2937]
-    rounded-tr-4xl
-    shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
-    text-sm font-semibold
-    hover:bg-[#FF6B35]
-    hover:shadow-[-6px_6px_5px_0px_rgba(0,0,0,0.60)]
-    flex items-center justify-center gap-2
-    transition-all
-  "
+                                            className="font-medium text-sm text-blue-900 hover:translate-x-2 cursor-pointer border p-1.5 px-3 transition-all duration-300"
                                         >
                                             Read More »
                                         </button>

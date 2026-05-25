@@ -6,12 +6,12 @@ export default function TableOfContents({ toc }: any) {
     const [openIndex, setOpenIndex] = useState<number | null>(null)
 
     return (
-        <div className="bg-white rounded-xl p-6 shadow-sm border">
-            <h3 className="font-bold text-xl mb-6 border-b pb-3">
+        <div className="">
+            <h3 className="font-bold text-xl mb-2">
                 Table Of Contents
             </h3>
 
-            <ul className="space-y-4">
+            <ul className="space-y-2">
                 {toc.map((item: any, index: number) => (
                     <li key={index}>
                         <div
@@ -24,7 +24,7 @@ export default function TableOfContents({ toc }: any) {
 
                             <a
                                 href={`#${item.id}`}
-                                className="font-medium text-gray-700 hover:text-orange-600"
+                                className="font-medium text-blue-900 hover:text-orange-600"
                             >
                                 {item.title}
                             </a>

@@ -14,8 +14,6 @@ import FAQSection from "./faqPage"
 export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBlogs }) {
 
 
-console.log(blog)
-
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm()
 
 
@@ -136,7 +134,7 @@ console.log(blog)
   const headings = extractHeadings(blog.description)
 
   return (
-    <section className="bg-[#f7f9fc] min-h-screen">
+    <section className="bg-white min-h-screen">
 
       {/* ================= BREADCRUMB NAVIGATION ================= */}
       <div className="max-w-7xl mx-auto px-4 py-4 text-sm text-gray-600">
@@ -153,7 +151,7 @@ console.log(blog)
 
       {/* ================= HERO SECTION ================= */}
       <div className="relative w-full h-[360px]">
-        <div className="absolute inset-0 bg-gray-600/50  flex items-end">
+        <div className="absolute inset-0 bg-[#F46C44]  flex items-end">
 
           {/* Main container */}
           <div className=" mx-auto w-full px-4 pb-4 flex items-end justify-between gap-6">
@@ -226,14 +224,14 @@ console.log(blog)
 
 
       {/* ================= MAIN CONTENT AREA ================= */}
-      <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5">
+      <div className="max-w-7xl mx-auto px-1 py-6 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5">
 
         {/* ================= LEFT CONTENT COLUMN ================= */}
-        <div className="space-y-8">
+        <div className="space-y-4">
 
           {/* SHORT DESCRIPTION SECTION */}
           {blog.shortDescription && (
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+            <div className="">
               <p className="text-gray-700 leading-relaxed text-lg">
                 {blog.shortDescription}
               </p>
@@ -245,7 +243,7 @@ console.log(blog)
 
 
           {/* MAIN BLOG CONTENT */}
-          <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+          <div className="">
             {/* SEO Meta Info (hidden but for structure) */}
             <div className="sr-only">
               <h1>{blog.seo?.metaTitle || blog.title}</h1>
@@ -269,18 +267,21 @@ console.log(blog)
     .blog-html th,
     .blog-html td {
       border: 1px solid #e5e7eb;
-      padding: 12px 14px;
-      text-align: left;
-      vertical-align: top;
     }
 
     .blog-html th {
-      background: #f3f4f6;
+      background: #F46C44;
+      text-align: center;
+      color: white;
       font-weight: 600;
+    }
+          .blog-html tr {
+      text-align: center;
     }
 
     .blog-html tr:nth-child(even) {
-      background-color: #fafafa;
+      background-color: #f3ebeb;
+      
     }
 
     .blog-html h2 {
@@ -406,10 +407,10 @@ console.log(blog)
         </div>
 
         {/* ================= RIGHT SIDEBAR ================= */}
-        <aside className="space-y-6 sticky top-32 h-fit">
+        <aside className="space-y-3 sticky top-24 h-fit">
 
           {/* ================= BLOG ENQUIRY FORM ================= */}
-          <div className="bg-white/95 relative backdrop-blur-sm p-5 rounded-2xl  border border-primary max-w-130 mx-auto">
+          <div className="bg-white/95 relative backdrop-blur-sm p-5 rounded-2xl border-2 border-[#F46C44] max-w-full mx-auto">
             <div className="absolute top-4 right-4 z-10">
               <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-orange-200 px-3 py-1.5 rounded-full shadow-sm hover:shadow-md transition-shadow duration-200">
                 {/* Animated Pulse Dot */}
@@ -417,8 +418,6 @@ console.log(blog)
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
                 </span>
-
-                {/* Text */}
                 <span className="text-xs font-bold text-gray-700 whitespace-nowrap">
                   Book Free Counselling
                 </span>
@@ -546,7 +545,7 @@ console.log(blog)
               </div>
 
               {/* Checkbox */}
-              <div className="flex items-start gap-2.5 pt-1">
+              <div className="flex items-center gap-2.5 pt-1">
                 <input
                   type="checkbox"
                   id="agree"
@@ -682,7 +681,7 @@ console.log(blog)
                     </div>
                 </div>
             </div> */}
-      <FAQSection Faqres={blog.faq} />
+      <FAQSection Faqres={blog?.faq || []} />
 
 
     </section>

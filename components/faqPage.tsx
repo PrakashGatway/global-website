@@ -24,7 +24,7 @@ const FAQSection = ({ Faqres }) => {
         {/* FAQ Grid */}
         <div className="max-w-7xl mx-auto">
           <div className="space-y-3">
-            {(Faqres || []).map((faq, index) => (
+            {Faqres && Faqres.length > 0 && (Faqres || []).map((faq, index) => (
               <div
                 key={faq._id || index}
                 className="bg-white rounded-xl py-2 border border-orange-200 overflow-hidden transition-all duration-300"

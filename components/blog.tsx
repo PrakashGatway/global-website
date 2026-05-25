@@ -270,7 +270,6 @@ export default function Blogs({ Blogdata,
                 <div className="container mx-auto px-6">
                     <div className="flex justify-center items-center gap-2 flex-wrap">
 
-                        {/* PREVIOUS */}
                         {page > 1 ? (
                             <Link
                                 href={`/blog?page=${page - 1}&limit=${limit}`}

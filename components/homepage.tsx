@@ -15,7 +15,7 @@ import Blogs from "./blog";
 import BlogGrid from "./blogGrid";
 import { useKeenSlider } from "keen-slider/react";
 import MultiStepForm from "./PopupForm";
-import { useCallback, useEffect, useState } from "react";
+import { startTransition, useCallback, useEffect, useState } from "react";
 import FAQSection from "./faqPage";
 import { useGlobal } from "@/src/statecontext";
 import { usePathname, useRouter } from "next/navigation";
@@ -41,6 +41,11 @@ export default function Homepage({
 }: any) {
   const [openForm, setOpenForm] = useState(false);
   const [countries, setCountries] = useState([]);
+  const router = useRouter()
+
+  const goToBlog = (slug) => {
+    router.push(`/blog/${slug}`);
+  };
 
   function AutoSlidePlugin(slider) {
     let timeout;
@@ -269,12 +274,12 @@ export default function Homepage({
           pt-12 lg:pt-20 
         "
       >
-        
+
         <div className="absolute inset-0 bg-white/50 md:bg-transparent pointer-events-none" />
 
         <div className="relative z-10 w-7xl max-w-screen mx-auto px-3">
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-2">
-            
+
             <motion.div
               initial={{ x: -60, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -310,7 +315,7 @@ export default function Homepage({
                 }}
                 suppressHydrationWarning
               />
-              
+
               <motion.div
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -347,7 +352,7 @@ export default function Homepage({
               </motion.div>
             </motion.div>
 
-            
+
             <motion.div
               initial={{ x: 60, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -355,7 +360,7 @@ export default function Homepage({
               className="flex justify-center lg:justify-end"
             >
               <div className="relative flex items-center justify-center">
-              
+
                 <div className="absolute -right top-51 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
                   <img
                     src="/images/hero-bg-round.png"
@@ -364,7 +369,7 @@ export default function Homepage({
                   />
                 </div>
 
-                
+
                 {homePage?.hero?.heroImage && (
                   <motion.div
                     initial={{ scale: 0.9 }}
@@ -1107,57 +1112,46 @@ export default function Homepage({
                   transition-all duration-300 hover:shadow-xl
                 "
                   >
-                    {/* ORANGE SHAPE */}
                     <div
                       className="
-                    absolute -top-2 -left-[6.5px]
+                    absolute -top-1 -left-[3px] shadow-xl
                     w-28 h-28 sm:w-36 sm:h-36 lg:w-35 lg:h-35
-                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-[20px] lg:rounded-tl-[70px]
                     bg-[#FF6B35] -z-10
                   "
                     />
 
                     {/* IMAGE */}
                     <div
-                      className="
-                    relative overflow-hidden bg-gray-300
-                    h-[200px] sm:h-[220px] lg:h-[220px]
-                    rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[65px]
-                  "
-                    >
+                      className="" >
                       <img
                         src={
                           post.coverImage ||
                           "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
                         }
                         alt={post.title}
-                        className="w-full h-[220px] object-cover"
+                        className="w-full h-[210px] object-cover"
                         onError={(e) => {
                           e.currentTarget.src =
-                            "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg";
+                            "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
                         }}
                       />
+
+
+
                     </div>
 
                     {/* CONTENT */}
-                    <div className="p-3 text-center">
-                      <p className="text-gray-800 text-sm sm:text-base font-medium mb-3 line-clamp-2">
+                    <div className="p-4 pt-2 text-start">
+
+                      <h3 onClick={() => goToBlog(post.slug)} className="text-gray-900 hover:text-[#FF6B35] cursor-pointer text-lg font-medium mb-1 line-clamp-2">
+                        {post.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm font-medium mb-2 line-clamp-2">
                         {post.shortDescription}
                       </p>
-
                       <button
                         onClick={() => goToBlog(post.slug)}
-                        className="
-                        text-white px-6 lg:w-50 py-2 mx-auto
-                        bg-[#1f2937]
-                        rounded-tr-4xl
-                        shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
-                        text-sm sm:text-sm font-semibold
-                        hover:bg-[#FF6B35]
-                        hover:shadow-[-6px_6px_5px_0px_rgba(0,0,0,0.60)]
-                        flex items-center justify-center gap-2
-                        transition-all
-                      "
+                        className="font-medium text-sm text-blue-900 hover:translate-x-2 cursor-pointer border p-1.5 px-3 transition-all duration-300"
                       >
                         Read More »
                       </button>
