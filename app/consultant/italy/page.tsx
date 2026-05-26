@@ -4,7 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { array } from "zod";
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+});
 
 type LeadForm = {
   name: string;
@@ -70,7 +74,7 @@ export default function ItalyLanding() {
             phone: "",
             course: "",
           });
-        }, 800);
+        }, 2000);
       }
       else {
         setSubmitted(true);
@@ -84,7 +88,7 @@ export default function ItalyLanding() {
             phone: "",
             course: "",
           });
-        }, 800);
+        }, 2000);
       }
     } catch (error) {
       console.error(error);
@@ -100,8 +104,133 @@ export default function ItalyLanding() {
     { q: "Is MBA a good option in Italy?", a: "Absolutely. Italy hosts globally ranked B-schools such as SDA Bocconi, MIP Politecnico di Milano and LUISS." },
   ];
 
+  const studyPrograms = [
+    {
+      id: 1,
+      title: "Engineering",
+      icon: "/svg/engineering.svg",
+      subjects: [
+        "Mechanical Engineering",
+        "Aerospace Engineering",
+        "Civil Engineering",
+        "Environmental Engineering",
+        "Automation & Robotics Engineering",
+      ],
+    },
+
+    {
+      id: 2,
+      title: "Technology & IT",
+      icon: "/svg/technology.svg",
+      subjects: [
+        "Artificial Intelligence (AI)",
+        "Cybersecurity",
+        "Data Science & Analytics",
+        "Software Engineering",
+        "Cloud Computing & Engineering",
+      ],
+    },
+
+    {
+      id: 3,
+      title: "Design & Arts",
+      icon: "/svg/creativity.svg",
+      subjects: [
+        "Fashion Design",
+        "Luxury Brand Management",
+        "Product Design",
+        "Architecture",
+        "Interior Design",
+      ],
+    },
+
+    {
+      id: 4,
+      title: "Business & Management",
+      icon: "/svg/research.svg",
+      subjects: [
+        "Master of Business Administration (MBA)",
+        "Finance & Banking",
+        "International Business",
+        "Luxury Management",
+        "Marketing & Brand Management",
+      ],
+    },
+
+    {
+      id: 5,
+      title: "Hospitality & Tourism",
+      icon: "/svg/hotel.svg",
+      subjects: [
+        "Hospitality Management",
+        "Tourism Management",
+        "Event Management",
+        "Hotel & Resort Management",
+        "Food & Beverage Management",
+      ],
+    },
+
+    {
+      id: 6,
+      title: "Science & Humanities",
+      icon: "/svg/people.svg",
+      subjects: [
+        "Mechanical Engineering",
+        "Aerospace Engineering",
+        "Civil Engineering",
+        "Environmental Engineering",
+        "Automation & Robotics Engineering",
+      ],
+    },
+  ];
+
+  const universities = [
+    {
+      id: 1,
+      name: "University of Padua",
+      image: "/lan/padua.webp",
+      logo: "https://best.dctv.unipd.it/wp-content/uploads/2025/05/unipd_logo.png",
+      address: "Via 8 Febbraio 1848, 2 35122 Padova (PD), Italy",
+    },
+    {
+      id: 2,
+      name: "University of Sapienza",
+      image: "/lan/speniza.webp",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Uniroma1.svg/1280px-Uniroma1.svg.png",
+      address: "Piazzale Aldo Moro, 5, 00185 Rome (RM), Italy",
+    },
+    {
+      id: 3,
+      name: "University of Bologna",
+      image: "/lan/blogna.webp",
+      logo: "https://www.interculturalticket.eu/sites/default/files/member-logo/2020-07/BOOK_logo_alma.4d13d572b5ab.png",
+      address: "Via Zamboni, 33, 40126 Bologna (BO), Italy",
+    },
+    {
+      id: 4,
+      name: "University of Turin",
+      image: "/lan/torino.webp",
+      logo: "https://international.upf.pf/wp-content/uploads/2025/09/logo-universita-degli-studi-di-torino.png",
+      address: "Via Giuseppe Verdi, 8, 10124 Torino (TO), Italy",
+    },
+    {
+      id: 5,
+      name: "University of Florence",
+      image: "/lan/florence.webp",
+      logo: "https://study-eu.s3.eu-west-1.amazonaws.com/uploads/university/university-of-florence-logo.png",
+      address: "Piazza di San Marco, 4, 50121 Firenze (FI), Italy",
+    },
+    {
+      id: 6,
+      name: "University of Milan",
+      image: "/lan/milano.webp",
+      logo: "https://4euplus.eu/cuni_new_web/dist/images/4eu/logo_detail_milano_2x.png?v=1.1.1",
+      address: "Via Festa del Perdono, 7, 20122 Milano (MI), Italy",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-white text-[#0b2545]">
+    <div className={`min-h-screen bg-white text-[#0b2545]`}>
       <header className={`sticky top-0 z-40 bg-white transition-all duration-300 ${scrolled ? 'shadow-[0_2px_10px_rgba(11,37,69,0.08)]' : 'shadow-none py-1'}`}>
         <div className="max-w-7xl overflow-hidden mx-auto px-4 flex items-center justify-between h-16 lg:h-20">
           <div className="items-center text-end gap-2">
@@ -119,7 +248,7 @@ export default function ItalyLanding() {
 
           <a href="tel:+918302092630">
             <button
-              className="inline-flex items-center gap-2 bg-[#f46c44] hover:bg-[#ea6c46] text-white font-semibold px-5 py-2.5 rounded shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.25)] transition-all"
+              className="inline-flex justify-center items-center gap-2 bg-[#f46c44] hover:bg-[#ea6c46] text-white font-semibold px-5 py-2.5 rounded shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.25)] transition-all"
             >
               📞 <span>+91 8302092630</span>
             </button>
@@ -136,22 +265,22 @@ export default function ItalyLanding() {
             backgroundImage: `url('/2.jpg')`,
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/30 to-[#00306A]/10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-black/30" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 py-12 lg:py-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           {/* Left Content */}
-          <div>
+          <div className="">
 
-            <h1 className="mt-5 text-3xl sm:text-[2.7rem] font-semibold leading-tight">
-              <span className="text-white">Study in Italy for Indian Students</span>
+            <h1 className="mt-5 text-3xl sm:text-5xl font-bold leading-tight">
+              <span className="text-white">Study in <span className="text-[#F46C44]">Italy</span> <br /> for Indian Students</span>
             </h1>
-            <p className="mt-5 text-base sm:text-xl text-white max-w-xl">
+            <p className="mt-3 text-base sm:text-xl text-white max-w-xl">
               Applying for Upcoming Intake in Italy
             </p>
 
 
-            <ul className="mt-6 grid grid-cols-1 sm:grid-cols-1 gap-3 text-white font-medium">
+            <ul className="mt-3 grid grid-cols-1 sm:grid-cols-1 gap-1.5 text-white font-medium">
               {[
                 "Assured Admission in Italy",
                 "Get Up to 100% Scholarships",
@@ -160,7 +289,7 @@ export default function ItalyLanding() {
                 "GET 360 DEGREE SOLUTION"
               ].map((b) => (
                 <li key={b} className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-[#f46c44] text-white text-xs flex items-center justify-center font-bold">✓</span>
+                  <span className="w-6 h-6 rounded-full text-white text-xs flex items-center justify-center font-bold">✓</span>
                   {b}
                 </li>
               ))}
@@ -176,17 +305,15 @@ export default function ItalyLanding() {
             </div> */}
 
             <div className="mt-8 flex flex-wrap gap-6 text-white">
-              <div>
-                <div className="text-4xl font-medium ">50+</div>
+              <div className="bg-white/10 text-center backdrop-blur-md border border-white/20 rounded-2xl p-3">
+                <div className="text-4xl font-medium">50+</div>
                 <div className="text-sm mt-1">University Partners</div>
               </div>
-              <div className="h-12 w-px bg-[#0b2545]/10" />
-              <div>
+              <div className="bg-white/10 text-center backdrop-blur-md border border-white/20 rounded-2xl p-3">
                 <div className="text-4xl font-medium">10k+</div>
                 <div className="text-sm mt-1">Careers Transformed</div>
               </div>
-              <div className="h-12 w-px bg-[#0b2545]/10" />
-              <div>
+              <div className="bg-white/10 text-center backdrop-blur-md border border-white/20 rounded-2xl p-3">
                 <div className="text-4xl font-medium">70+</div>
                 <div className="text-sm mt-1">Italian Universities</div>
               </div>
@@ -194,27 +321,19 @@ export default function ItalyLanding() {
           </div>
 
           {/* Right Side - Lead Form */}
-          <div className="relative w-full max-w-md min-h-[400px] ml-auto">
-            {/* Background Glow */}
-            <div className="absolute -inset-3 bg-[#ff6b3d]/20 blur-2xl rounded-xl" />
+          <div className="relative w-full max-w-md min-h-[400px] p-1.5 bg-[#f46c44] sm:ml-auto">
 
-            {/* Form Card */}
-            <div className="relative bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200">
+            <div className="relative bg-white shadow-2xl overflow-hidden">
 
               {/* Top Header */}
-              <div className="bg-gradient-to-r from-[#EA6C46] to-[#EA6C46]/80 px-5 py-3 relative">
-                <h3 className="text-white text-xl font-medium text-center uppercase tracking-wide">
+              <div className="absolute rounded-br-3xl top-0 left-0 bg-gradient-to-r from-[#EA6C46] to-[#EA6C46]/80 px-4 py-2">
+                <h3 className="text-white text-base font-medium">
                   Book Your Free Consultation
                 </h3>
-
-                {/* Plane Icon */}
-                {/* <div className="absolute right-2 top-2 text-5xl opacity-90">
-                  ✈️
-                </div> */}
               </div>
 
               {/* Stats */}
-              <div className="flex items-center justify-center gap-8 py-3 border-b border-gray-200 text-[#0b2545] font-semibold text-sm">
+              <div className="mt-10 flex items-center justify-center gap-8 py-3 border-b border-gray-200 text-[#0b2545] font-semibold text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">📚</span>
                   <span>100 + Courses</span>
@@ -385,7 +504,7 @@ export default function ItalyLanding() {
                 Top Universities in Italy
               </span>
             </h2>
-            <p className="mt-3 text-lg text-[#0b2545]/80 font-medium leading-8">
+            <p className="mt-3 text-base text-[#0b2545]/80 font-medium leading-8">
               Applying to top universities in Italy is a step towards quality
               education and a vibrant cultural experience. It usually takes
               around 3–6 months and includes course selection, eligibility
@@ -394,38 +513,45 @@ export default function ItalyLanding() {
           </div>
 
           {/* University Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((university, index) => (
-              <div className="group relative overflow-hidden bg-white shadow-[0_15px_50px_-15px_rgba(0,0,0,0.25)] hover:shadow-[0_20px_60px_-10px_rgba(244,108,68,0.45)] transition-all duration-500">
-
-                {/* Image */}
-                <div className="relative overflow-hidden h-[430px]">
-                  <img
-                    src="/padua.webp"
-                    alt="University of Padua"
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-
-                  {/* Logo */}
-                  <div className="absolute top-2 left-2 bg-white p-2 rounded-sm shadow-lg">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR90DIAFyV7wcoEgx6FFqOPX82aAWa7vMWAwA&s" alt="" className="h-10" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {universities.map((university, index) => (
+              <div className="duration-300 hover:scale-105 transition-all hover:-translate-y-1 cursor-pointer" key={index}>
+                <div className="bg-[#efefef] p-2 max-w-[450px] mx-auto">
+                  <div className="overflow-hidden">
+                    <img
+                      src={university.image}
+                      alt={university.name}
+                      className="w-full h-[220px] object-cover"
+                    />
+                    <div className="flex -mt-20 ml-2">
+                      <div className="bg-white p-2 shadow-xl">
+                        <img
+                          src={university.logo}
+                          alt="logo"
+                          className="h-12 object-contain"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Bottom Content */}
-                  <div onClick={()=>setPopupOpen(true)} className="absolute bottom-0 left-0 right-0 p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-2xl font-bold text-white">
-                          University of Padua
-                        </h3>
-                      </div>
+                  <div className="pt-4 px-2">
+                    <h3 className="text-xl font-medium text-black">
+                      {university.name}
+                    </h3>
 
-                      <div className="w-12 h-12 flex font-medium items-center justify-center text-white text-xl shadow-lg group-hover:translate-x-1 transition-all">
+                    <p className="text-[#444] mt-2 text-sm leading-relaxed">
+                      {university.address}
+                    </p>
+
+                    {/* Bottom CTA */}
+                    <div onClick={() => setPopupOpen(true)} className="flex pb-2 items-center justify-between mt-6 group cursor-pointer">
+                      <span className="text-[#F46C44] text-lg font-semibold tracking-wide">
+                        Enquiry Now
+                      </span>
+
+                      <span className=" right-0 text-[#F46C44] text-4xl group-hover:translate-x-2 transition-all duration-300">
                         →
-                      </div>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -434,26 +560,26 @@ export default function ItalyLanding() {
         </div>
         {/* Scholarship Banner Section */}
       </section>
-      <section className=" ">
-        <div className="max-w-7xl mx-auto py-2 px-4 overflow-hidden">
-          <div className="relative">
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{
-                backgroundImage:
-                  "url('https://districtoffices.net/wp-content/uploads/2019/10/DO_Blog-Image_Meeting-1024x535-1-2000x1044.jpg')",
-              }}
-            />
+      <section>
+        <div className="relative max-w-7xl overflow-hidden mx-auto px-2 -mt-12 rounded-3xl">
 
-            {/* Dark Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/30" />
+          {/* Image */}
+          <img
+            src="/cta.png"
+            alt=""
+            className="object-cover  sm:object-right w-full h-[600px] sm:h-[420px] md:h-[500px]"
+          />
 
-            {/* Content */}
-            <div className="relative z-10 w-full px-6 sm:px-12 py-12">
+          {/* Overlay */}
+          {/* <div className="absolute inset-0 bg-black/30" /> */}
+
+          {/* Content */}
+          <div className="absolute bottom-16 flex items-center">
+            <div className="px-6 sm:px-10 md:px-14 z-10 w-full">
               <div className="max-w-2xl">
 
                 {/* Heading */}
-                <h2 className="text-4xl font-medium text-white leading-tight">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium text-white leading-tight">
                   Grab upto{" "}
                   <span className="">
                     100% Scholarship
@@ -461,19 +587,26 @@ export default function ItalyLanding() {
                 </h2>
 
                 {/* Description */}
-                <p className="mt-2 text-base text-white leading-8 max-w-xl">
-                  Find the opportunities for Scholarships in Italy with our comprehensive guidance to ensure your academic convenience
+                <p className="mt-4 text-sm sm:text-base text-white leading-7 sm:leading-8 max-w-xl">
+                  Find the opportunities for Scholarships in Italy with our
+                  comprehensive guidance to ensure your academic convenience
                 </p>
 
-                {/* Buttons */}
-                <div className="flex flex-wrap gap-4 mt-4">
-                  <button onClick={()=>setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-4 py-3 rounded-md text-base font-medium hover:scale-105 transition-all duration-300">
+                {/* Button */}
+                <div className="flex flex-wrap gap-4 mt-6">
+                  <button
+                    onClick={() => setPopupOpen(true)}
+                    type="button"
+                    className="bg-gray-800 hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-base font-medium hover:scale-105 transition-all duration-300"
+                  >
                     Connect with Experts →
                   </button>
                 </div>
+
               </div>
             </div>
           </div>
+
         </div>
       </section>
       {/* Top Demanding Courses Section */}
@@ -495,40 +628,46 @@ export default function ItalyLanding() {
           </div>
 
           {/* Course Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((c) => (
-              <div className="group relative bg-white rounded border border-[#f7d8cc] p-6 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_60px_-15px_rgba(244,108,68,0.35)] hover:-translate-y-2 transition-all duration-500 overflow-hidden">
-                <div className="relative z-10">
-
-                  <h3 className="text-3xl font-medium text-black mb-6">
-                    Engineering
-                  </h3>
-
-                  <ul className="space-y-2 text-[#0b2545]/80">
-                    <li className="flex items-start gap-3"><span className="w-5 h-5 rounded-full bg-[#f46c44] text-white text-xs flex items-center justify-center font-bold">✓</span>
-                      Mechanical Engineering
-                    </li>
-                    <li className="flex items-start gap-3"><span className="w-5 h-5 rounded-full bg-[#f46c44] text-white text-xs flex items-center justify-center font-bold">✓</span>
-                      Aerospace Engineering
-                    </li>
-                    <li className="flex items-start gap-3"><span className="w-5 h-5 rounded-full bg-[#f46c44] text-white text-xs flex items-center justify-center font-bold">✓</span>
-                      Civil Engineering
-                    </li>
-                    <li className="flex items-start gap-3"><span className="w-5 h-5 rounded-full bg-[#f46c44] text-white text-xs flex items-center justify-center font-bold">✓</span>
-                      Environmental Engineering
-                    </li>
-                    <li className="flex items-start gap-3"><span className="w-5 h-5 rounded-full bg-[#f46c44] text-white text-xs flex items-center justify-center font-bold">✓</span>
-                      Automation & Robotics
-                    </li>
-                  </ul>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {studyPrograms.map((program) => (
+              <div
+                key={program.id}
+                className="bg-[#f5f5f5] p-2 shadow transition-all duration-300"
+              >
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="flex items-center bg-white justify-center p-1 min-h-[220px]">
+                    <img
+                      src={program.icon}
+                      alt={program.title}
+                      className="w-24 h-24 object-contain"
+                    />
+                  </div>
+                  <div className="p-1 col-span-2 bg-white flex flex-col justify-center">
+                    <h3 className="text-lg font-semibold text-[#F46C44] mb-2">
+                      {program.title}
+                    </h3>
+                    <ul className="space-y-1">
+                      {program.subjects.map((subject, index) => (
+                        <li
+                          key={index}
+                          className="flex items-start gap-3 text-[#2d2d2d] text-sm font-medium leading-relaxed"
+                        >
+                          <span className="text-[#F46C44] text-sm leading-none mt-1">
+                            ✓
+                          </span>
+                          <span>{subject}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-              </div>))}
-
+              </div>
+            ))}
           </div>
 
           {/* CTA */}
           <div className="text-center mt-12">
-            <button onClick={()=>setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e45c36] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_16px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+            <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e45c36] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_16px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
               Connect with Experts to Choose the Right Course →
             </button>
           </div>
@@ -563,7 +702,7 @@ export default function ItalyLanding() {
               />
             </div>
             <div>
-              <div className="space-y-3">
+              <div className="space-y-2">
 
                 {[
                   {
@@ -604,7 +743,7 @@ export default function ItalyLanding() {
                 ].map((item, index) => (
                   <div
                     key={index}
-                    className="group bg-white border border-[#f7d8cc] rounded-3xl p-4 shadow-[0_10px_35px_-15px_rgba(0,0,0,0.12)] hover:shadow-[0_20px_50px_-15px_rgba(244,108,68,0.25)] hover:-translate-y-1 transition-all duration-300"
+                    className="group bg-white border p-2 hover:-translate-y-1 transition-all duration-300"
                   >
                     <div className="flex gap-2">
 
@@ -619,7 +758,7 @@ export default function ItalyLanding() {
                           {item.title}
                         </h3>
 
-                        <p className="mt-1 font-medium text-[#0b2545]/70 leading-7">
+                        <p className="mt-1 text-sm font-medium text-[#0b2545]/80">
                           {item.desc}
                         </p>
                       </div>
@@ -630,7 +769,7 @@ export default function ItalyLanding() {
 
               {/* CTA Buttons */}
               <div className="flex flex-wrap gap-5 mt-10">
-                <button onClick={()=>setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_10px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_15px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_10px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_15px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
                   Connect with Experts →
                 </button>
               </div>
@@ -662,54 +801,54 @@ export default function ItalyLanding() {
 
             {[
               {
-                icon: "📝",
+                icon: "/svg/res.svg",
                 title: "Student Profile Analysis",
                 desc: "We carefully evaluate your academic background, career goals, and interests to create a personalized Italy study plan.",
               },
               {
-                icon: "🏛️",
+                icon: "/svg/classroom.svg",
                 title: "Course & University Selection",
                 desc: "Get expert guidance in choosing the best-fit universities and courses based on your profile and future career goals.",
               },
               {
-                icon: "📄",
+                icon: "/svg/consultant.svg",
                 title: "Admission Assistance",
                 desc: "Complete support for applications, SOPs, documentation, and university admissions without confusion or delays.",
               },
               {
-                icon: "💶",
+                icon: "/svg/tuition.svg",
                 title: "Scholarship Assistance",
                 desc: "We help students identify scholarship opportunities and maximize funding chances for affordable education in Italy.",
               },
               {
-                icon: "🎯",
+                icon: "/svg/mentoring.svg",
                 title: "IELTS Coaching",
                 desc: "Professional IELTS guidance with mock tests and personalized coaching to help you meet language requirements.",
               },
               {
-                icon: "🛂",
+                icon: "/svg/passport.svg",
                 title: "Study Visa Assistance",
                 desc: "End-to-end visa filing support including documentation, embassy appointments, and interview preparation.",
               },
             ].map((item, index) => (
               <div
                 key={index}
-                className="group relative bg-white rounded border border-[#f7d8cc] p-6 overflow-hidden shadow-[0_15px_40px_-15px_rgba(0,0,0,0.12)] hover:shadow-[0_25px_60px_-15px_rgba(244,108,68,0.35)] hover:-translate-y-2 transition-all duration-500"
+                className="bg-[#f5f5f5] p-2 shadow transition-all duration-300"
               >
-                <div className="relative z-10">
-                  <div>
-                    <img className="h-10 mb-3" src="https://cdn-icons-png.flaticon.com/512/3090/3090011.png" alt="" />
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="flex items-center bg-white justify-center p-1 min-h-[200px]">
+                    <img
+                      src={item.icon}
+                      alt={item.title}
+                      className="w-24 h-24 object-contain"
+                    />
                   </div>
-
-                  {/* Title */}
-                  <h3 className="text-xl font-semibold text-black leading-snug">
-                    {item.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="mt-2 text-[#0b2545]/75 font-medium leading-6 text-[15px]">
-                    {item.desc}
-                  </p>
+                  <div className="p-3 col-span-2 bg-white flex flex-col justify-center">
+                    <h3 className="text-xl font-semibold text-[#F46C44] mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="font-medium">{item.desc}</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -720,7 +859,7 @@ export default function ItalyLanding() {
 
             <div className="inline-flex flex-col items-center">
               <div className="flex flex-wrap justify-center gap-5">
-                <button onClick={()=>setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
                   Book Your FREE Counselling →
                 </button>
               </div>
@@ -738,7 +877,7 @@ export default function ItalyLanding() {
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{
             backgroundImage:
-              "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwnbYK2MCt3tMOIx19cy8xYGjSuzZBpoWQzQ&s')",
+              "url('/bg.jpg')",
           }}
         />
 
@@ -769,7 +908,7 @@ export default function ItalyLanding() {
               {/* CTA Buttons */}
               <div className="flex flex-wrap gap-5 mt-4">
 
-                <button onClick={()=>setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-105 transition-all duration-300">
+                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-105 transition-all duration-300">
                   Book Appointment →
                 </button>
               </div>
@@ -854,7 +993,7 @@ export default function ItalyLanding() {
 
           {/* Button */}
           <div className="mt-10">
-            <button onClick={()=>setPopupOpen(true)} type="button" className="bg-white hover:bg-gray-200 hover:scale-102 text-[#b91c1c] font-semibold text-xl px-6 py-3 rounded-full shadow-lg transition-all">
+            <button onClick={() => setPopupOpen(true)} type="button" className="bg-white hover:bg-gray-200 hover:scale-102 text-[#b91c1c] font-semibold text-xl px-6 py-3 rounded-full shadow-lg transition-all">
               Book Your Seat Now
             </button>
           </div>
@@ -869,30 +1008,29 @@ export default function ItalyLanding() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-lg"
+            className="relative w-full max-w-lg p-1.5 bg-[#f46c44]"
           >
 
             {/* Form Card */}
-            <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-
+            <div className="relative bg-white shadow-2xl overflow-hidden">
               {/* Close Button */}
               <button
                 onClick={closePopup}
                 aria-label="Close"
-                className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white shadow-md hover:bg-[#f46c44] hover:text-white text-[#0b2545] flex items-center justify-center transition-all"
+                className="absolute top-4 bg-gray-100 right-4 z-20 w-9 h-9 rounded-full shadow-md hover:bg-[#f46c44] hover:text-white text-[#0b2545] flex items-center justify-center transition-all"
               >
                 ✕
               </button>
 
-              {/* Header */}
-              <div className="bg-gradient-to-r from-[#EA6C46] to-[#EA6C46]/80 px-5 py-4">
-                <h3 className="text-white text-xl font-semibold text-center uppercase tracking-wide">
+
+              <div className="absolute rounded-br-3xl top-0 left-0 bg-gradient-to-r from-[#EA6C46] to-[#EA6C46]/80 px-4 py-2">
+                <h3 className="text-white text-base font-medium">
                   Book Your Free Consultation
                 </h3>
               </div>
 
               {/* Stats */}
-              <div className="flex items-center justify-center gap-8 py-3 border-b border-gray-200 text-[#0b2545] font-semibold text-sm">
+              <div className="flex mt-10 items-center justify-center gap-8 py-3 border-b border-gray-200 text-[#0b2545] font-semibold text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">📚</span>
                   <span>100 + Courses</span>

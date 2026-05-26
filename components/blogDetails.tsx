@@ -244,17 +244,6 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
 
           {/* MAIN BLOG CONTENT */}
           <div className="">
-            {/* SEO Meta Info (hidden but for structure) */}
-            <div className="sr-only">
-              <h1>{blog.seo?.metaTitle || blog.title}</h1>
-              <p>{blog.seo?.metaDescription}</p>
-              <p>
-                Keywords: {blog.seo?.keywords?.split(",").join(", ")}
-              </p>
-
-            </div>
-
-            {/* Blog Content */}
             <div>
               <style>{`
     .blog-html table {

@@ -104,7 +104,6 @@ export default async function Page({ params }) {
 
    const uniblog = await serverInstance.get(`/universities?limit=5&country=`)
 
-   console.log(uniblog,"gg")
    
  
     return (
