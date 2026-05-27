@@ -1176,8 +1176,9 @@ const sendMessage = async () => {
   <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
     <div>
       <h3 className="text-lg font-semibold text-gray-800">
-        Agent Communication Status
+        Ticket Communication History
       </h3>
+      <p>Track all agent updates, internal discussions, and resolution milestones.</p>
     </div>
 
     <button
@@ -1191,9 +1192,9 @@ const sendMessage = async () => {
   {/* Table Header */}
   <div className="grid grid-cols-12 gap-4 bg-gray-100 px-8 py-4 text-sm font-semibold text-gray-700 border-b">
     <div className="col-span-3">Details</div>
-    <div className="col-span-5">Comment</div>
+    <div className="col-span-4">Comment</div>
     <div className="col-span-3">Status</div>
-    <div className="col-span-1">Commented By</div>
+    <div className="col-span-2">Commented By</div>
   </div>
 
   {/* Messages */}

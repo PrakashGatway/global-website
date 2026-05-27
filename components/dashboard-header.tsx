@@ -53,6 +53,7 @@ export function DashboardHeader({ profile, Logout }) {
     fetchNotifications();
   }, [])
 
+  
 
   return (
     <header className="sticky top-0 z-50 w-full bg-card border-b  border-border">

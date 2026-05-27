@@ -46,13 +46,24 @@ import { useRouter, useParams } from "next/navigation";
 import MessagingTab from "@/components/dashboard/application/chatSystem";
 import { motion,AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
+import VisaApplicationManager from "@/components/dashboard/application/visaprosessing";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type ApplicationStatus =
-  | "Pending" | "Started" | "ReviewbyOoshas" | "SubmitToSchool"
-  | "AwaitingSchoolResponse" | "AdmissionProcessing" | "Refused"
-  | "Withdrawn" | "PreArrival" | "Arrived" | "Completed" | "Visaprocessing";
+        'Pending'|
+        'Started'|
+        'ReviewbyOoshas'|
+        'SubmitToSchool'|
+        'AwaitingSchoolResponse'|
+        'AdmissionProcessing'|
+        'OfferReceived'|
+        'Refused'|
+        'VisaProsessing'|
+        'Withdrawn'|
+        'PreArrival'|
+        'Arrived'|
+        'Completed';
 
 type PaymentStatus = "Pending" | "Completed" | "Failed";
 
@@ -153,8 +164,19 @@ const INTAKE_OPTIONS = [
 ];
 
 const STATUS_OPTIONS: ApplicationStatus[] = [
-  "Pending", "Started", "ReviewbyOoshas", "SubmitToSchool", "AwaitingSchoolResponse",
-  "AdmissionProcessing", "Refused", "Withdrawn", "PreArrival", "Arrived", "Completed",
+        'Pending',
+        'Started',
+        'ReviewbyOoshas',
+        'SubmitToSchool',
+        'AwaitingSchoolResponse',
+        'AdmissionProcessing',
+        'OfferReceived',
+        'Refused',
+        'VisaProsessing',
+        'Withdrawn',
+        'PreArrival',
+        'Arrived',
+        'Completed'
 ];
 
 // ── Reusable UI ───────────────────────────────────────────────────────────────
@@ -1020,7 +1042,7 @@ export default function ApplicationDetailPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [activeTab, setActiveTab] = useState("backups");
+  const [activeTab, setActiveTab] = useState("message");
   const [showDocUpload, setShowDocUpload] = useState(false);
   const [showRequirementForm, setShowRequirementForm] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
@@ -1417,12 +1439,28 @@ const fetchMessages = async () => {
   }
 };
 
+const [Visainfo,setVisainfo] = useState([]);
+
+const fetchVisa = async () => {
+  try {
+    const response = await axiosInstance.get(
+      `/visa/${application._id}`
+    );
+
+      console.log(response.data?.data,"Data ")
+    setVisainfo(response.data?.data || []);
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+  }
+};
+
 
 useEffect(() => {
   fetchMessages();
+  fetchVisa();
 }, [application]);
 
-console.log(application);
+// console.log(application);
 
 const sendMessage = async () => {
   if (!messageText.trim()) return;
@@ -1474,6 +1512,9 @@ const sendMessage = async () => {
   }
 };
 
+
+
+
   const sectionCls = "bg-white rounded-2xl border border-slate-200 shadow-sm p-5";
   const labelCls = "block text-xs font-medium text-slate-500 mb-1";
   const inputCls = "w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-400";
@@ -1505,10 +1546,12 @@ const sendMessage = async () => {
     );
   }
 
+
+
   const tabs = [
-    // { id: "documents", label: "Documents", icon: FileText },
-    { id: "backups", label: "Backups", icon: BookOpen },
     { id: "message", label: "Comments ", icon: MessageCircle },
+    { id: "backups", label: "Backups", icon: BookOpen },
+    { id: "visa", label: "Visa Prosessing", icon: FileText },
     { id: "activity", label: "Activity", icon: Activity },
   ];
 
@@ -1564,9 +1607,9 @@ const sendMessage = async () => {
         )}
 
         {/* Stats Overview */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <StatsBar app={application} docs={formData.documents} />
-        </div>
+        </div> */}
 
         <div className="flex gap-6 items-start">
           {/* Left Sidebar: Application Info */}
@@ -1769,18 +1812,20 @@ const sendMessage = async () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all border-b-2 -mb-px mr-1 rounded-t-lg ${activeTab === tab.id
+                    className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all border-b-2 -mb-px mr-1 
+                      rounded-t-lg ${activeTab === tab.id
                       ? "border-violet-600 text-violet-700 bg-violet-50/60"
                       : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"
-                      }`}
+                      }
+                      `}
                   >
                     <tab.icon size={15} />
                     {tab.label}
-                    {tab.id === "documents" && formData.documents.length > 0 && (
+                    {/* {tab.id === "documents" && formData.documents.length > 0 && (
                       <span className="ml-0.5 text-xs bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded-full font-semibold">
                         {formData.documents.length}
                       </span>
-                    )}
+                    )} */}
                     {tab.id === "backups" && (formData.backups.length + formData.rejectionReason.length) > 0 && (
                       <span className="ml-0.5 text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full font-semibold">
                         {formData.backups.length + formData.rejectionReason.length}
@@ -1792,7 +1837,7 @@ const sendMessage = async () => {
 
               <div className="p-6">
   {/* DOCUMENTS TAB */}
-  {activeTab === "documents" && (
+  {activeTab === "visa" && (
     <div className="animate-in fade-in slide-in-from-right-2 duration-300">
       
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -1801,11 +1846,12 @@ const sendMessage = async () => {
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-500">
               <FileText size={14} className="text-white" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-800">Document Requirements</h3>
+            <h3 className="text-lg font-semibold text-slate-800">Visa Requirements</h3>
           </div>
-          <p className="text-sm text-slate-400 ml-8">Manage and review all student documents in one place</p>
+          <p className="text-sm text-slate-400 ml-8">Manage student visa requirements in one place</p>
         </div>
-        <button
+
+        {/* <button
           onClick={() => setShowRequirementForm(!showRequirementForm)}
           className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-sm ${
             showRequirementForm
@@ -1824,27 +1870,29 @@ const sendMessage = async () => {
               Create Requirement
             </>
           )}
-        </button>
+        </button> */}
+        
       </div>
       
       {showRequirementForm && (
         <div className="mb-6 animate-in slide-in-from-top-3 duration-300">
           <DocumentRequirementForm
-            onAdd={handleAddRequirement}
+           onAdd={handleAddRequirement}
             onCancel={() => setShowRequirementForm(false)}
           />
         </div>
       )}
 
       
-      {formData.documents.length === 0 ? (
+      
+      {/* {formData.documents.length === 0 ? (
         <div className="text-center py-20 bg-gradient-to-br from-slate-50 to-white rounded-2xl border-2 border-dashed border-slate-200">
           <div className="w-24 h-24 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
             <FolderOpen size={40} className="text-slate-300" />
           </div>
-          <p className="text-base font-semibold text-slate-600">No documents yet</p>
+          <p className="text-base font-semibold text-slate-600">No data yet</p>
           <p className="text-sm text-slate-400 mt-1 max-w-sm mx-auto">
-            Click "Create Requirement" to add required documents for this application
+            Click "Create Requirement" to add requirement for this application
           </p>
         </div>
       ) : (
@@ -1862,7 +1910,11 @@ const sendMessage = async () => {
             />
           ))}
         </div>
-      )}
+      )} */}
+      
+
+      
+      <VisaApplicationManager data={Visainfo} applicaion={application}/> 
     </div>
   )}
 
@@ -2064,11 +2116,12 @@ const sendMessage = async () => {
     <div className="bg-white">
 
   {/* Header */}
-  <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
+  <div className="flex items-center justify-between p-4 border-b border-gray-200">
     <div>
       <h3 className="text-lg font-semibold text-gray-800">
-        Agent Communication Status
+        Ticket Communication History
       </h3>
+      <p>Track all agent updates, internal discussions, and resolution milestones.</p>
     </div>
 
     <button
@@ -2082,9 +2135,9 @@ const sendMessage = async () => {
   {/* Table Header */}
   <div className="grid grid-cols-12 gap-4 bg-gray-100 px-8 py-4 text-sm font-semibold text-gray-700 border-b">
     <div className="col-span-3">Details</div>
-    <div className="col-span-5">Comment</div>
+    <div className="col-span-4">Comment</div>
     <div className="col-span-3">Status</div>
-    <div className="col-span-1">Commented By</div>
+    <div className="col-span-2">Commented By</div>
   </div>
 
   {/* Messages */}
@@ -2093,7 +2146,7 @@ const sendMessage = async () => {
     {messageList?.map((item, index) => (
 
       <motion.div
-        key={item.id}
+        key={index}
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05 }}
@@ -2132,10 +2185,10 @@ const sendMessage = async () => {
           <div className="space-y-3">
 
             <div className="text-gray-700 leading-7 text-[15px]">
-              {item.content}
+              {item?.content}
             </div>
 
-            {item.extra_content?.attachments?.[0]?.name && (
+            {item?.extra_content?.attachments?.[0]?.name && (
 
               <a
                 href={`https://api.ooshasglobal.com${item.extra_content?.attachments?.[0]?.url}`}
