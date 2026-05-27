@@ -77,33 +77,33 @@ interface VisaDecisionData {
   currentStatus: string;
   embassy: string;
   vfsCenter: string;
-  
+
   // Personal Details
   dateOfBirth: string;
   passportNo: string;
-  
+
   // Timeline
   timeline: TimelineEvent[];
-  
+
   // Submitted Documents
   documents: SubmittedDocument[];
-  
+
   // Embassy Updates
   embassyUpdates: EmbassyUpdate[];
-  
+
   // Next Steps
   nextSteps: string[];
-  
+
   // Important Notes
   importantNotes: string[];
-  
+
   // Counselor Info
   counselor: {
     name: string;
     rating: number;
     studentsHelped: number;
   };
-  
+
   // Declaration
   declarationText: string;
   applicantName: string;
@@ -130,7 +130,7 @@ const mockVisaDecisionData: VisaDecisionData = {
   vfsCenter: "VFS Global, New Delhi",
   dateOfBirth: "12 Aug 2002",
   passportNo: "A1234567",
-  
+
   timeline: [
     {
       date: "10 May 2024",
@@ -163,7 +163,7 @@ const mockVisaDecisionData: VisaDecisionData = {
       status: "pending"
     }
   ],
-  
+
   documents: [
     { name: "Passport (First & Last Page)", status: "Verified", submittedOn: "10 May 2024", remarks: "Accepted" },
     { name: "APS Certificate", status: "Verified", submittedOn: "10 May 2024", remarks: "Accepted" },
@@ -177,7 +177,7 @@ const mockVisaDecisionData: VisaDecisionData = {
     { name: "Visa Application Form", status: "Verified", submittedOn: "10 May 2024", remarks: "Accepted" },
     { name: "Application Fee Receipt", status: "Verified", submittedOn: "10 May 2024", remarks: "Accepted" },
   ],
-  
+
   embassyUpdates: [
     {
       date: "20 May 2024",
@@ -198,7 +198,7 @@ const mockVisaDecisionData: VisaDecisionData = {
       message: "Your application has been submitted successfully."
     }
   ],
-  
+
   nextSteps: [
     "Document Verification - The officer will verify your documents.",
     "Background Check - Your background may be verified.",
@@ -206,19 +206,19 @@ const mockVisaDecisionData: VisaDecisionData = {
     "Decision Notification - You will be informed via email/SMS.",
     "Passport Return - Your passport will be returned via VFS."
   ],
-  
+
   importantNotes: [
     "Please ensure your passport is valid.",
     "Do not book travel tickets until visa is approved.",
     "Keep checking your email for updates."
   ],
-  
+
   counselor: {
     name: "Priya Mehta",
     rating: 4.9,
     studentsHelped: 128
   },
-  
+
   declarationText: "I understand that my application is under review and the decision is at the sole discretion of the embassy. I will await the official communication regarding the decision.",
   applicantName: "Ananya Sharma",
   applicantEmail: "ananya.sharma@example.com"
@@ -236,41 +236,41 @@ export default function VisaDecisionPage() {
   );
   const [declarationAccepted, setDeclarationAccepted] = useState(false);
   const [signature, setSignature] = useState("");
-  
+
 
   useEffect(() => {
-  // Flag to track component mount status
-  let isMounted = true; 
+    // Flag to track component mount status
+    let isMounted = true;
 
-  const fetchData = async () => {
-    try {
-      const res = await axiosInstance.get('/visa/user');
-      console.log(res.data.data, "user ");
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    const fetchData = async () => {
+      try {
+        const res = await axiosInstance.get('/visa/user');
+        console.log(res.data.data, "user ");
 
-      // Only update state if component is still mounted
-      if (isMounted) {
-        setData(mockVisaDecisionData);
-        setLoading(false);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Only update state if component is still mounted
+        if (isMounted) {
+          setData(mockVisaDecisionData);
+          setLoading(false);
+        }
+      } catch (error) {
+        if (isMounted) {
+          // Handle your errors safely here
+          setLoading(false);
+        }
       }
-    } catch (error) {
-      if (isMounted) {
-        // Handle your errors safely here
-        setLoading(false); 
-      }
-    }
-  };
-  
-  fetchData();
+    };
 
-  // Cleanup function runs when component unmounts
-  return () => {
-    isMounted = false;
-  };
-}, []);
+    fetchData();
 
-  
+    // Cleanup function runs when component unmounts
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+
   const toggleSection = (section: string) => {
     setExpandedSections(prev => {
       const newSet = new Set(prev);
@@ -282,7 +282,7 @@ export default function VisaDecisionPage() {
       return newSet;
     });
   };
-  
+
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
       case "verified":
@@ -299,7 +299,7 @@ export default function VisaDecisionPage() {
         return <AlertCircle size={16} className="text-slate-400" />;
     }
   };
-  
+
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "verified":
@@ -314,16 +314,16 @@ export default function VisaDecisionPage() {
         return "bg-slate-50 text-slate-600 border-slate-200";
     }
   };
-  
+
   const handlePrint = () => {
     window.print();
   };
-  
+
   const handleSave = () => {
     // Implement save/export functionality
     alert("Application details saved successfully!");
   };
-  
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
@@ -334,46 +334,43 @@ export default function VisaDecisionPage() {
       </div>
     );
   }
-  
-  if (!data) {
+
+  // if (!data) {
+  // return (
+  //   <div className="h-[80vh] bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center px-6">
+  //     <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-slate-200 p-10 text-center">
+
+  //       {/* Icon */}
+  //       <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-amber-100 flex items-center justify-center">
+  //         <AlertCircle size={40} className="text-amber-500" />
+  //       </div>
+
+  //       {/* Heading */}
+  //       <h2 className="text-2xl font-bold text-slate-800 mb-3">
+  //         Offer Letter Not Available Yet
+  //       </h2>
+
+  //       {/* Description */}
+  //       <p className="text-slate-600 leading-relaxed mb-6">
+  //         Your offer letter has not been received yet. 
+  //         Please wait while the university reviews your application.
+  //         Once the offer letter is available, it will appear here automatically.
+  //       </p>
+
+  //       {/* Status Badge */}
+  //       <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-sm font-medium">
+  //         <Clock size={16} />
+  //         Waiting for University Response
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
+  // }
+
   return (
-    <div className="h-[80vh] bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center px-6">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-slate-200 p-10 text-center">
-        
-        {/* Icon */}
-        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-amber-100 flex items-center justify-center">
-          <AlertCircle size={40} className="text-amber-500" />
-        </div>
 
-        {/* Heading */}
-        <h2 className="text-2xl font-bold text-slate-800 mb-3">
-          Offer Letter Not Available Yet
-        </h2>
-
-        {/* Description */}
-        <p className="text-slate-600 leading-relaxed mb-6">
-          Your offer letter has not been received yet. 
-          Please wait while the university reviews your application.
-          Once the offer letter is available, it will appear here automatically.
-        </p>
-
-        {/* Status Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-sm font-medium">
-          <Clock size={16} />
-          Waiting for University Response
-        </div>
-      </div>
-    </div>
-  );
-}
-  
-  return (
-    
     <div className="min-h-screen bg-white">
       <div className="max-w-full mx-auto px-6 py-6 space-y-5">
-
-        
-        {/* Header */}
         <div className="mb-6">
           {/* <div className="flex items-center gap-2 text-sm text-slate-500 mb-4">
             <span>My Journey</span>
@@ -382,7 +379,7 @@ export default function VisaDecisionPage() {
             <ChevronRight size={14} />
             <span className="text-violet-600 font-medium">Visa Decision</span>
           </div> */}
-          
+
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-slate-800">Visa Decision</h1>
@@ -406,7 +403,7 @@ export default function VisaDecisionPage() {
             </div>
           </div>
         </div>
-        
+
         {/* Current Status Banner */}
         <div className="mb-6 p-5 rounded-2xl bg-amber-50 border border-amber-200">
           <div className="flex items-start gap-3">
@@ -414,7 +411,7 @@ export default function VisaDecisionPage() {
               <Clock size={24} className="text-amber-600" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-amber-800">Current Status: {data.currentStatus}</h3>
+              <h3 className="font-semibold text-amber-800">Current Status: {data?.currentStatus}</h3>
               <p className="text-amber-700 text-sm mt-1">
                 Your application is being reviewed by the visa officer.
                 Please do not contact the embassy during this time.
@@ -430,11 +427,11 @@ export default function VisaDecisionPage() {
             </div>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content - Left/Center */}
           <div className="lg:col-span-2 space-y-5">
-            
+
             {/* Application Summary */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
               <button
@@ -451,78 +448,78 @@ export default function VisaDecisionPage() {
                   <ChevronRight size={18} className="text-slate-400" />
                 )}
               </button>
-              
+
               {expandedSections.has("summary") && (
                 <div className="px-5 pb-5 pt-2 border-t border-slate-100">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="text-xs text-slate-500">Country</label>
                       <p className="font-medium text-slate-800 flex items-center gap-1 mt-0.5">
-                        <Globe size={14} /> {data.country}
+                        <Globe size={14} /> {data?.country}
                       </p>
                     </div>
                     <div>
                       <label className="text-xs text-slate-500">University</label>
-                      <p className="font-medium text-slate-800">{data.university}</p>
+                      <p className="font-medium text-slate-800">{data?.university}</p>
                     </div>
                     <div>
                       <label className="text-xs text-slate-500">Program</label>
-                      <p className="font-medium text-slate-800">{data.program}</p>
+                      <p className="font-medium text-slate-800">{data?.program}</p>
                     </div>
                     <div>
                       <label className="text-xs text-slate-500">Intake</label>
-                      <p className="font-medium text-slate-800">{data.intake}</p>
+                      <p className="font-medium text-slate-800">{data?.intake}</p>
                     </div>
                     <div>
                       <label className="text-xs text-slate-500">Visa Type</label>
-                      <p className="font-medium text-slate-800">{data.visaType}</p>
+                      <p className="font-medium text-slate-800">{data?.visaType}</p>
                     </div>
                     <div>
                       <label className="text-xs text-slate-500">Visa Category</label>
-                      <p className="font-medium text-slate-800">{data.visaCategory}</p>
+                      <p className="font-medium text-slate-800">{data?.visaCategory}</p>
                     </div>
                     <div>
                       <label className="text-xs text-slate-500">Application No.</label>
-                      <p className="font-medium text-slate-800">{data.applicationNo}</p>
+                      <p className="font-medium text-slate-800">{data?.applicationNo}</p>
                     </div>
                     <div>
                       <label className="text-xs text-slate-500">Tracking ID</label>
-                      <p className="font-medium text-slate-800">{data.trackingId}</p>
+                      <p className="font-medium text-slate-800">{data?.trackingId}</p>
                     </div>
                     <div>
                       <label className="text-xs text-slate-500">Date Started</label>
-                      <p className="font-medium text-slate-800">{data.dateStarted}</p>
+                      <p className="font-medium text-slate-800">{data?.dateStarted}</p>
                     </div>
                     <div>
                       <label className="text-xs text-slate-500">Last Updated</label>
-                      <p className="font-medium text-slate-800">{data.lastUpdated}</p>
+                      <p className="font-medium text-slate-800">{data?.lastUpdated}</p>
                     </div>
                     <div>
                       <label className="text-xs text-slate-500">Embassy</label>
-                      <p className="font-medium text-slate-800">{data.embassy}</p>
+                      <p className="font-medium text-slate-800">{data?.embassy}</p>
                     </div>
                     <div>
                       <label className="text-xs text-slate-500">VFS Center</label>
-                      <p className="font-medium text-slate-800">{data.vfsCenter}</p>
+                      <p className="font-medium text-slate-800">{data?.vfsCenter}</p>
                     </div>
                   </div>
-                  
+
                   <div className="mt-4 pt-4 border-t border-slate-100">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="text-xs text-slate-500">Date of Birth</label>
-                        <p className="font-medium text-slate-800">{data.dateOfBirth}</p>
+                        <p className="font-medium text-slate-800">{data?.dateOfBirth}</p>
                       </div>
                       <div>
                         <label className="text-xs text-slate-500">Passport No.</label>
-                        <p className="font-medium text-slate-800">{data.passportNo}</p>
+                        <p className="font-medium text-slate-800">{data?.passportNo}</p>
                       </div>
                     </div>
                   </div>
                 </div>
               )}
             </div>
-            
+
             {/* Decision Timeline */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
               <button
@@ -539,36 +536,32 @@ export default function VisaDecisionPage() {
                   <ChevronRight size={18} className="text-slate-400" />
                 )}
               </button>
-              
+
               {expandedSections.has("timeline") && (
                 <div className="px-5 pb-5 pt-2 border-t border-slate-100">
                   <div className="relative">
-                    {data.timeline.map((event, idx) => (
+                    {data?.timeline.map((event, idx) => (
                       <div key={idx} className="flex gap-4 pb-8 last:pb-0 relative">
                         <div className="flex flex-col items-center">
-                          <div className={`p-1.5 rounded-full ${
-                            event.status === "completed" ? "bg-emerald-100" :
-                            event.status === "current" ? "bg-amber-100" : "bg-slate-100"
-                          }`}>
+                          <div className={`p-1.5 rounded-full ${event.status === "completed" ? "bg-emerald-100" :
+                              event.status === "current" ? "bg-amber-100" : "bg-slate-100"
+                            }`}>
                             {getStatusIcon(event.status)}
                           </div>
-                          {idx < data.timeline.length - 1 && (
-                            <div className={`w-0.5 flex-1 mt-2 ${
-                              event.status === "completed" ? "bg-emerald-200" : "bg-slate-200"
-                            }`} />
+                          {idx < data?.timeline.length - 1 && (
+                            <div className={`w-0.5 flex-1 mt-2 ${event.status === "completed" ? "bg-emerald-200" : "bg-slate-200"
+                              }`} />
                           )}
                         </div>
                         <div className="flex-1">
                           <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                            <h3 className={`font-semibold ${
-                              event.status === "current" ? "text-amber-700" : "text-slate-800"
-                            }`}>
+                            <h3 className={`font-semibold ${event.status === "current" ? "text-amber-700" : "text-slate-800"
+                              }`}>
                               {event.title}
                             </h3>
-                            <span className={`text-xs px-2 py-0.5 rounded-full ${
-                              event.status === "completed" ? "bg-emerald-100 text-emerald-700" :
-                              event.status === "current" ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-500"
-                            }`}>
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${event.status === "completed" ? "bg-emerald-100 text-emerald-700" :
+                                event.status === "current" ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-500"
+                              }`}>
                               {event.date}
                             </span>
                           </div>
@@ -580,7 +573,7 @@ export default function VisaDecisionPage() {
                 </div>
               )}
             </div>
-            
+
             {/* Submitted Documents */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
               <button
@@ -591,7 +584,7 @@ export default function VisaDecisionPage() {
                   <FileText size={18} className="text-violet-600" />
                   <h2 className="font-semibold text-slate-800">
                     Submitted Documents
-                    <span className="ml-2 text-xs text-slate-500 font-normal">({data.documents.filter(d => d.status === "Verified").length}/{data.documents.length})</span>
+                    <span className="ml-2 text-xs text-slate-500 font-normal">({data?.documents.filter(d => d.status === "Verified").length}/{data?.documents.length})</span>
                   </h2>
                 </div>
                 {expandedSections.has("documents") ? (
@@ -600,7 +593,7 @@ export default function VisaDecisionPage() {
                   <ChevronRight size={18} className="text-slate-400" />
                 )}
               </button>
-              
+
               {expandedSections.has("documents") && (
                 <div className="px-5 pb-5 pt-2 border-t border-slate-100">
                   <div className="overflow-x-auto">
@@ -614,7 +607,7 @@ export default function VisaDecisionPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {data.documents.map((doc, idx) => (
+                        {data?.documents.map((doc, idx) => (
                           <tr key={idx} className="border-t border-slate-100">
                             <td className="py-2 px-3 text-slate-700">{doc.name}</td>
                             <td className="py-2 px-3">
@@ -633,7 +626,7 @@ export default function VisaDecisionPage() {
                 </div>
               )}
             </div>
-            
+
             {/* What Happens Next? */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
               <button
@@ -650,11 +643,11 @@ export default function VisaDecisionPage() {
                   <ChevronRight size={18} className="text-slate-400" />
                 )}
               </button>
-              
+
               {expandedSections.has("nextsteps") && (
                 <div className="px-5 pb-5 pt-2 border-t border-slate-100">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {data.nextSteps.map((step, idx) => (
+                    {data?.nextSteps.map((step, idx) => (
                       <div key={idx} className="flex items-start gap-2 p-2 rounded-lg bg-slate-50">
                         <Check size={14} className="text-emerald-500 mt-0.5 shrink-0" />
                         <span className="text-sm text-slate-700">{step}</span>
@@ -665,12 +658,12 @@ export default function VisaDecisionPage() {
               )}
             </div>
           </div>
-          
+
           <Rigthsidebar />
-          
+
         </div>
       </div>
-      
+
       {/* Print Styles */}
       <style jsx global>{`
         @media print {

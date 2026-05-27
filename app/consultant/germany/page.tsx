@@ -22,52 +22,112 @@ type LeadForm = {
 const testimonials = [
     {
         id: 1,
-        name: "Yashaswi Bansode",
-        date: "7 June, 2025",
-        image:
-            "https://randomuser.me/api/portraits/women/44.jpg",
+        name: "Ananya Verma",
+        date: "12 June, 2025",
+        image: "https://randomuser.me/api/portraits/women/44.jpg",
         review:
-            "I had a wonderful experience with Yes Germany Consultancy. Their team was incredibly supportive throughout the entire process and helped me achieve my dream.",
+            "Ooshas Global provided excellent guidance throughout my Germany admission process. Their counselors helped me shortlist public universities and prepare strong applications.",
+        score: "University Admission",
+        country: "Germany",
     },
 
     {
         id: 2,
-        name: "Saathwick Senthilkumar",
-        date: "4 May, 2025",
-        image:
-            "https://randomuser.me/api/portraits/men/32.jpg",
+        name: "Aman Verma",
+        date: "8 June, 2025",
+        image: "https://randomuser.me/api/portraits/men/32.jpg",
         review:
-            "Yes Germany Abroad Consultation made my dream of studying in Germany come true! They secured visa dates quickly and guided me perfectly.",
+            "I was confused about APS, blocked account, and visa procedures, but Ooshas Global guided me perfectly and made the Germany process smooth.",
+        score: "Visa Approved",
+        country: "Germany",
     },
 
     {
         id: 3,
-        name: "Mansi Joshi",
-        date: "1 May, 2025",
-        image:
-            "https://randomuser.me/api/portraits/women/68.jpg",
+        name: "Naveen Kumar",
+        date: "4 June, 2025",
+        image: "https://randomuser.me/api/portraits/men/41.jpg",
         review:
-            "The team treats students very professionally and personally. They answered every query with kindness and helped throughout the journey.",
+            "The entire Germany admission journey became stress-free because of Ooshas Global. Their SOP guidance and documentation support were outstanding.",
+        score: "Admission Success",
+        country: "Germany",
     },
 
     {
         id: 4,
-        name: "Rahul Sharma",
-        date: "20 April, 2025",
-        image:
-            "https://randomuser.me/api/portraits/men/75.jpg",
+        name: "Ritika Sharma",
+        date: "29 May, 2025",
+        image: "https://randomuser.me/api/portraits/women/68.jpg",
         review:
-            "From university applications to visa process, everything was smooth and stress-free. Highly recommended for Germany study abroad guidance.",
+            "The counselors were always available to answer my doubts. From university shortlisting to visa preparation, everything was handled professionally.",
+        score: "Offer Letter",
+        country: "Germany",
     },
 
     {
         id: 5,
-        name: "Priya Verma",
-        date: "11 March, 2025",
-        image:
-            "https://randomuser.me/api/portraits/women/90.jpg",
+        name: "Pratik Meena",
+        date: "22 May, 2025",
+        image: "https://randomuser.me/api/portraits/men/75.jpg",
         review:
-            "Amazing support and transparent process. Their counselors genuinely care about students and help with every small detail.",
+            "I had an amazing experience with Ooshas Global. Their transparent process and Germany counseling made my dream of studying abroad possible.",
+        score: "Student Visa",
+        country: "Germany",
+    },
+
+    {
+        id: 6,
+        name: "Akshita Jain",
+        date: "18 May, 2025",
+        image: "https://randomuser.me/api/portraits/women/90.jpg",
+        review:
+            "The team helped me with SOP preparation, APS certificate process, and German university applications. Their support was exceptional.",
+        score: "APS Cleared",
+        country: "Germany",
+    },
+
+    {
+        id: 7,
+        name: "Rahul Singh",
+        date: "11 May, 2025",
+        image: "https://randomuser.me/api/portraits/men/85.jpg",
+        review:
+            "Their counselors carefully evaluated my profile and suggested the best German public universities according to my career goals and budget.",
+        score: "Profile Selection",
+        country: "Germany",
+    },
+
+    {
+        id: 8,
+        name: "Priyanshi Soni",
+        date: "5 May, 2025",
+        image: "https://randomuser.me/api/portraits/women/55.jpg",
+        review:
+            "Ooshas Global made the whole Germany process stress-free. Their visa interview preparation and blocked account guidance were incredibly helpful.",
+        score: "Visa Success",
+        country: "Germany",
+    },
+
+    {
+        id: 9,
+        name: "Mohit Sharma",
+        date: "28 April, 2025",
+        image: "https://randomuser.me/api/portraits/men/60.jpg",
+        review:
+            "From documentation to university applications, every step was handled professionally. I highly recommend Ooshas Global for Germany study guidance.",
+        score: "Admission Confirmed",
+        country: "Germany",
+    },
+
+    {
+        id: 10,
+        name: "Sneha Kapoor",
+        date: "20 April, 2025",
+        image: "https://randomuser.me/api/portraits/women/24.jpg",
+        review:
+            "The counselors genuinely cared about my future and guided me at every stage of my Germany study abroad journey. Their support gave me confidence.",
+        score: "Dream University",
+        country: "Germany",
     },
 ];
 
@@ -75,10 +135,8 @@ export function TestimonialSection() {
     return (
         <section className="bg-[#F36D45] py-16 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4">
-
-                {/* Heading */}
-                <h2 className="text-center text-white text-3xl sm:text-5xl font-semibold mb-16">
-                    Student Feedbacks
+                <h2 className="text-center text-white text-3xl sm:text-4xl font-medium mb-16">
+                    Student Testimonials
                 </h2>
                 <div className="relative">
 
@@ -101,18 +159,18 @@ export function TestimonialSection() {
                                     className="min-w-[320px] max-w-[320px] bg-white p-6 shadow-[0_10px_40px_rgba(0,0,0,0.12)] hover:-translate-y-2 transition-all duration-300"
                                 >
                                     {/* User */}
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2">
                                         <img
-                                            src={testimonial.image}
+                                            src={"https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI="}
                                             alt={testimonial.name}
-                                            className="w-12 h-12 rounded-full object-cover"
+                                            className="w-14 h-14 rounded-full overflow-hidden object-cover"
                                         />
 
                                         <div>
                                             <h3 className="text-lg font-semibold text-black line-clamp-1">
                                                 {testimonial.name}
                                             </h3>
-                                            <p className="text-gray-500 text-sm mt-px">
+                                            <p className="text-gray-500 text-sm">
                                                 {testimonial.date}
                                             </p>
                                         </div>
@@ -146,7 +204,7 @@ export function TestimonialSection() {
 
                 {/* Bottom CTA */}
                 <div className="flex justify-center mt-14">
-                    <button className="border-2 rounded-full hover:bg-[#bb1f34] text-white px-6 py-3 text-lg font-semibold shadow-xl transition-all duration-300 hover:scale-103">
+                    <button className="border-2 rounded-full hover:bg-[#bb1f34] text-white px-6 py-2.5 text-base font-semibold shadow-xl transition-all duration-300 hover:scale-103">
                         Connect with Experts to Choose the Right Course
                     </button>
                 </div>
@@ -191,10 +249,10 @@ export default function GermanyLanding() {
             const payload = {
                 fullName: currentForm.name,
                 email: currentForm.email,
+                type: "germany-landing",
                 phone: currentForm.phone,
-                destination: "Italy",
+                destination: "Germany",
                 subject: "Study Abroad Enquiry",
-                type: "website-form",
                 source: "website",
                 city: currentForm.city || "",
                 description: `Course Interest: ${currentForm.course}`,
@@ -203,10 +261,8 @@ export default function GermanyLanding() {
             toast.success("Form submitted successfully");
             if (isHero) {
                 setHeroSubmitted(true);
-
                 setTimeout(() => {
                     setHeroSubmitted(false);
-
                     setHeroForm({
                         name: "",
                         email: "",
@@ -234,13 +290,39 @@ export default function GermanyLanding() {
             toast.error("Failed to submit the form. Please try again.");
         }
     };
-
     const faqs = [
-        { q: "Are Bachelor's programs available in English in Italy?", a: "Yes, many Italian universities offer Bachelor's and Master's programs fully taught in English across engineering, business and design." },
-        { q: "Are scholarships available for Indian students?", a: "Yes, Italian universities and the government offer multiple scholarships including tuition waivers and DSU regional grants up to 100%." },
-        { q: "Can I study in Italy without IELTS?", a: "A few universities accept alternatives like MOI or English-medium 12th certificates. Our counsellors will guide you based on your profile." },
-        { q: "What is the cost of studying in Italy?", a: "Public university tuition typically ranges from €900 to €4,000 per year, with affordable living costs compared to other European countries." },
-        { q: "Is MBA a good option in Italy?", a: "Absolutely. Italy hosts globally ranked B-schools such as SDA Bocconi, MIP Politecnico di Milano and LUISS." },
+        {
+            q: "Are Bachelor's programs available in English in Germany?",
+            a: "Yes, many German public and private universities offer Bachelor's and Master's programs fully taught in English, especially in engineering, business, IT, and management.",
+        },
+
+        {
+            q: "Are scholarships available for Indian students in Germany?",
+            a: "Yes, students can apply for DAAD scholarships, university-specific grants, and other funding opportunities that help reduce tuition and living expenses.",
+        },
+
+        {
+            q: "Can I study in Germany without IELTS?",
+            a: "Some German universities accept alternatives like MOI (Medium of Instruction) certificates or English-medium education proof instead of IELTS.",
+        },
+        {
+            q: "What is APS certification for Germany?",
+            a: "APS certification is a mandatory academic verification process for Indian students applying for German universities and student visas.",
+        },
+
+        {
+            q: "Can international students work while studying in Germany?",
+            a: "Yes, international students can work part-time for up to 20 hours per week during studies, helping them manage living expenses and gain experience.",
+        },
+
+        {
+            q: "Is Germany a good option for MBA studies?",
+            a: "Absolutely. Germany offers globally recognized MBA and management programs with strong industry exposure and excellent career opportunities.",
+        },
+        {
+            q: "Can students stay in Germany after graduation?",
+            a: "Yes, graduates can apply for a post-study work permit and stay in Germany to search for full-time job opportunities after completing their studies.",
+        },
     ];
 
     const studyPrograms = [
@@ -335,7 +417,7 @@ export default function GermanyLanding() {
         {
             id: 1,
             name: "Technical University of Munich",
-            image: "/germany/tum.webp",
+            image: "/lan/munich.webp",
             logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Logo_of_the_Technical_University_of_Munich.svg",
             address: "Arcisstraße 21, 80333 Munich, Bavaria, Germany",
             description:
@@ -344,7 +426,7 @@ export default function GermanyLanding() {
         {
             id: 2,
             name: "Free University of Berlin",
-            image: "/germany/berlin.webp",
+            image: "/lan/berlin.webp",
             logo: "https://www.standyou.com/uploads/20220507124025_file_Free-University-of-Berlin.png",
             address: "Kaiserswerther Str. 16–18, 14195 Berlin, Germany",
             description:
@@ -353,7 +435,7 @@ export default function GermanyLanding() {
         {
             id: 3,
             name: "Ludwig Maximilian University of Munich",
-            image: "/germany/lmu.webp",
+            image: "/lan/lmi.webp",
             logo: "https://d2lk14jtvqry1q.cloudfront.net/media/small_Ludwig_Maximilian_University_of_Munich_04e35b6553_534996274e_c70ef7f15c.png",
             address: "Geschwister-Scholl-Platz 1, 80539 Munich, Germany",
             description:
@@ -362,7 +444,7 @@ export default function GermanyLanding() {
         {
             id: 4,
             name: "University of Hamburg",
-            image: "/germany/hamburg.webp",
+            image: "/lan/hamburg.webp",
             logo: "https://www.erneuerbare-energien-hamburg.de/assets/images/c/Universit%C3%A4t%20Hamburg-3e2b0ea9.png",
             address: "Mittelweg 177, 20148 Hamburg, Germany",
             description:
@@ -371,7 +453,7 @@ export default function GermanyLanding() {
         {
             id: 5,
             name: "Humboldt University of Berlin",
-            image: "/germany/humboldt.webp",
+            image: "/lan/Humboldt.webp",
             logo: "https://erudera.com/media/images/Huberlin-logo.svg.original.png",
             address: "Unter den Linden 6, 10099 Berlin, Germany",
             description:
@@ -380,7 +462,7 @@ export default function GermanyLanding() {
         {
             id: 6,
             name: "Karlsruhe Institute of Technology",
-            image: "/germany/kit.webp",
+            image: "/lan/kit.webp",
             logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Logo_KIT.svg/1280px-Logo_KIT.svg.png",
             address: "Kaiserstraße 12, 76131 Karlsruhe, Germany",
             description:
@@ -419,23 +501,23 @@ export default function GermanyLanding() {
             <section id="home" className="relative overflow-hidden">
                 {/* Background Image with Overlay */}
                 <div
-                    className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                    className="absolute inset-0 bg-fit bg-bottom bg-flip bg-no-repeat"
                     style={{
-                        backgroundImage: `url('/2.jpg')`,
+                        backgroundImage: `url('https://yesgermany.com/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-15-at-14.41.53.jpeg')`,
                     }}
                 >
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-black/30" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/20 to-black/30" />
                 </div>
 
                 <div className="relative max-w-7xl mx-auto px-4 py-12 lg:py-12 grid grid-cols-1 lg:grid-cols-3 gap-3 items-center">
                     {/* Left Content */}
-                    <div className="lg:col-span-2 text-white">
+                    <div className="lg:col-span-2 text-black">
 
                         <h1 className="mt-5 text-3xl sm:text-5xl font-bold leading-tight">
-                            <span className="text-white">Make Your Study In <span className="text-[#F46C44]">Germany</span> <br /> Dream Into A Reality</span>
+                            <span className="text-black">Make Your Study In <span className="text-[#F46C44]">Germany</span> <br /> Dream Into A Reality</span>
                         </h1>
 
-                        <ul className="mt-3 grid grid-cols-1 sm:grid-cols-1 gap-1.5 text-white font-medium">
+                        <ul className="mt-3 grid grid-cols-1 sm:grid-cols-1 gap-1.5 text-black font-medium">
                             {[
                                 "Assured Admission in Germany's Top Universities",
                                 "Get Up to 100% Scholarships",
@@ -443,7 +525,7 @@ export default function GermanyLanding() {
                                 "English Taught Programs Available"
                             ].map((b) => (
                                 <li key={b} className="flex items-center gap-2">
-                                    <span className="w-6 h-6 rounded-full text-white text-xs flex items-center justify-center font-bold">✓</span>
+                                    <span className="w-6 h-6 rounded-full text-xs flex items-center justify-center font-bold">✓</span>
                                     {b}
                                 </li>
                             ))}
@@ -567,7 +649,6 @@ export default function GermanyLanding() {
                                         </div>
                                     </div>
 
-                                    {/* Email + Degree */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                         <div>
                                             <label className="text-sm font-semibold text-[#0b2545] block mb-2">
@@ -683,7 +764,7 @@ export default function GermanyLanding() {
                                 <div className="bg-[#efefef] p-2 max-w-[450px] mx-auto">
                                     <div className="overflow-hidden">
                                         <img
-                                            src={"https://techportal.in/wp-content/uploads/2023/12/munvh.jpg" || university.image}
+                                            src={university.image}
                                             alt={university.name}
                                             className="w-full h-[220px] object-cover"
                                         />
@@ -791,27 +872,21 @@ export default function GermanyLanding() {
 
                     {/* CTA */}
                     <div className="text-center mt-12">
-                        <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e45c36] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_16px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+                        <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e45c36] text-white px-6 py-2.5 rounded-full text-base font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_16px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
                             Connect with Experts to Choose the Right Course →
                         </button>
                     </div>
                 </div>
             </section>
-            {/* Study Support Section */}
 
             <TestimonialSection />
 
-            <section className="bg-[#f7f7f7] py-12 overflow-hidden">
+            <section className="bg-[#f7f7f7] py-10 overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4">
-
                     <div className="grid lg:grid-cols-2 gap-14 items-center">
-
-                        {/* LEFT CONTENT */}
                         <div>
-
-                            {/* Heading */}
                             <h2 className="text-3xl sm:text-4xl font-semibold leading-tight text-black max-w-2xl">
-                                Most Trusted German Education Consultant
+                                Most Trusted <span className="text-[#F46C44]">Germany Education Consultant</span>
                             </h2>
 
                             {/* Description */}
@@ -837,7 +912,7 @@ export default function GermanyLanding() {
                             <div className="mt-6">
                                 <button
                                     onClick={() => setPopupOpen(true)}
-                                    className="bg-[#F36D45] hover:bg-[#c1182a] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-xl hover:scale-102 transition-all duration-300"
+                                    className="bg-[#F36D45] hover:bg-[#c1182a] text-white px-6 py-2.5 rounded-full text-base font-semibold shadow-xl hover:scale-102 transition-all duration-300"
                                 >
                                     Connect with Experts to Choose the Right Course
                                 </button>
@@ -846,7 +921,7 @@ export default function GermanyLanding() {
                         </div>
 
                         {/* RIGHT IMAGES */}
-                        <div className="relative flex justify-center lg:justify-end items-center min-h-[650px]">
+                        <div className="relative flex justify-center lg:justify-end items-center">
 
                             {/* Dot Pattern */}
                             <div className="absolute top-0 right-10 grid grid-cols-6 gap-3 opacity-30">
@@ -861,23 +936,14 @@ export default function GermanyLanding() {
                             {/* Main Image */}
                             <div className="relative z-10">
                                 <img
-                                    src="https://img.freepik.com/free-photo/portrait-cute-young-brunette-student-holding-exercise-books-isolated-white-wall_231208-11488.jpg?semt=ais_hybrid&w=740&q=80"
+                                    src="/a.png"
                                     alt="Students"
-                                    className="w-[420px] h-[520px] object-cover rounded-[20px] shadow-2xl"
-                                />
-                            </div>
-
-                            {/* Side Image */}
-                            <div className="absolute left-0 bottom-10 z-20">
-                                <img
-                                    src="https://img.magnific.com/premium-psd/young-indian-college-student-with-laptop-book-isolated-background-png_920413-3117.jpg?semt=ais_hybrid&w=740&q=80"
-                                    alt="Student"
-                                    className="w-[280px] h-[430px] object-cover rounded-[20px] shadow-2xl border-[8px] border-[#f7f7f7]"
+                                    className="w-full object-cover"
                                 />
                             </div>
 
                             {/* Paper Plane */}
-                            <div className="absolute bottom-16 left-10 z-30">
+                            <div className="absolute -bottom-10 -left-10 z-30">
                                 <div className="relative">
 
                                     {/* Dashed Curve */}
@@ -991,7 +1057,7 @@ export default function GermanyLanding() {
 
                         <div className="inline-flex flex-col items-center">
                             <div className="flex flex-wrap justify-center gap-5">
-                                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+                                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-2.5 rounded-full font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
                                     Book Your FREE Counselling →
                                 </button>
                             </div>
@@ -1006,10 +1072,10 @@ export default function GermanyLanding() {
             >
                 {/* Background Image */}
                 <div
-                    className="absolute inset-0 bg-cover bg-center opacity-20"
+                    className="absolute inset-0 bg-cover bg-center opacity-30"
                     style={{
                         backgroundImage:
-                            "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwnbYK2MCt3tMOIx19cy8xYGjSuzZBpoWQzQ&s')",
+                            "url('/faq.jpeg')",
                     }}
                 />
 
@@ -1110,60 +1176,63 @@ export default function GermanyLanding() {
                 <div className="relative max-w-7xl mx-auto px-4 py-16 text-center">
 
                     {/* Heading */}
-                    <h2 className="text-2xl md:text-3xl font-semibold text-white leading-tight max-w-7xl mx-auto">
-                        Want Guaranteed Admissions at Top Italian Universities for
+                    <h2 className="text-2xl md:text-3xl font-semibold text-white leading-tight max-w-5xl mx-auto">
+                        Want Guaranteed Admissions at Top German Universities for
                         MBA, Masters & Bachelor in Upcoming Intake?
                     </h2>
 
                     {/* Text */}
-                    <div className="mt-6 space-y-2 text-white text-base">
+                    <div className="mt-6 space-y-2 text-white text-base md:text-lg">
                         <p>BOOK NOW for a FREE Counselling Session !!</p>
                         <p>Register Now to Get Free Profile Evaluation</p>
-                        <p>Choose from 70+ Universities</p>
-                        <p>Hurry Up! Admission Open for Upcoming Intake.</p>
+                        <p>Choose from 100+ German Public & Private Universities</p>
+                        <p>Get Guidance for APS, SOP, Visa & Blocked Account</p>
+                        <p>Hurry Up! Admissions Open for Upcoming Intake.</p>
                     </div>
 
                     {/* Button */}
                     <div className="mt-10">
-                        <button onClick={() => setPopupOpen(true)} type="button" className="bg-white hover:bg-gray-200 hover:scale-102 text-[#b91c1c] font-semibold text-xl px-6 py-3 rounded-full shadow-lg transition-all">
+                        <button
+                            onClick={() => setPopupOpen(true)}
+                            type="button"
+                            className="bg-white hover:bg-gray-200 hover:scale-105 text-[#000000] font-semibold text-xl px-8 py-3 rounded-full shadow-lg transition-all duration-300"
+                        >
                             Book Your Seat Now
                         </button>
                     </div>
                 </div>
             </footer>
 
-            {/* POPUP */}
             {popupOpen && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-[1px]"
+                    className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-4 bg-black/60 backdrop-blur-[1px]"
                     onClick={closePopup}
                 >
                     <div
                         onClick={(e) => e.stopPropagation()}
-                        className="relative w-full max-w-lg"
+                        className="relative w-full max-h-[95vh] overflow-y-auto scrollbar-hide max-w-lg p-1.5 bg-[#f46c44]"
                     >
 
                         {/* Form Card */}
-                        <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200">
-
+                        <div className="relative bg-white shadow-2xl overflow-hidden">
                             {/* Close Button */}
                             <button
                                 onClick={closePopup}
                                 aria-label="Close"
-                                className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-white shadow-md hover:bg-[#f46c44] hover:text-white text-[#0b2545] flex items-center justify-center transition-all"
+                                className="absolute top-4 bg-gray-100 right-4 z-20 w-9 h-9 rounded-full shadow-md hover:bg-[#f46c44] hover:text-white text-[#0b2545] flex items-center justify-center transition-all"
                             >
                                 ✕
                             </button>
 
-                            {/* Header */}
-                            <div className="bg-gradient-to-r from-[#EA6C46] to-[#EA6C46]/80 px-5 py-4">
-                                <h3 className="text-white text-xl font-semibold text-center uppercase tracking-wide">
+
+                            <div className="absolute rounded-br-3xl top-0 left-0 bg-gradient-to-r from-[#EA6C46] to-[#EA6C46]/80 px-4 py-2">
+                                <h3 className="text-white text-base font-medium">
                                     Book Your Free Consultation
                                 </h3>
                             </div>
 
                             {/* Stats */}
-                            <div className="flex items-center justify-center gap-8 py-3 border-b border-gray-200 text-[#0b2545] font-semibold text-sm">
+                            <div className="flex mt-10 items-center justify-center gap-8 py-3 border-b border-gray-200 text-[#0b2545] font-semibold text-sm">
                                 <div className="flex items-center gap-2">
                                     <span className="text-xl">📚</span>
                                     <span>100 + Courses</span>

@@ -55,7 +55,7 @@ export default function ItalyLanding() {
         phone: currentForm.phone,
         destination: "Italy",
         subject: "Study Abroad Enquiry",
-        type: "website-form",
+        type: "italy-landing",
         source: "website",
         city: currentForm.city || "",
         description: `Course Interest: ${currentForm.course}`,
@@ -268,7 +268,7 @@ export default function ItalyLanding() {
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-black/30" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 py-12 lg:py-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div className="relative max-w-7xl mx-auto p-2 sm:px-4 py-12 lg:py-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center justify-between">
           {/* Left Content */}
           <div className="">
 
@@ -304,207 +304,211 @@ export default function ItalyLanding() {
               </a>
             </div> */}
 
-            <div className="mt-8 flex flex-wrap gap-6 text-white">
+            <div className="mt-8 flex gap-2 sm:gap-4 text-white">
               <div className="bg-white/10 text-center backdrop-blur-md border border-white/20 rounded-2xl p-3">
-                <div className="text-4xl font-medium">50+</div>
-                <div className="text-sm mt-1">University Partners</div>
+                <div className="text-xl sm:text-4xl font-medium">50+</div>
+                <div className="text-xs sm:text-sm mt-1">University Partners</div>
               </div>
               <div className="bg-white/10 text-center backdrop-blur-md border border-white/20 rounded-2xl p-3">
-                <div className="text-4xl font-medium">10k+</div>
-                <div className="text-sm mt-1">Careers Transformed</div>
+                <div className="text-xl sm:text-4xl font-medium">10k+</div>
+                <div className="text-xs sm:text-sm mt-1">Careers Transformed</div>
               </div>
               <div className="bg-white/10 text-center backdrop-blur-md border border-white/20 rounded-2xl p-3">
-                <div className="text-4xl font-medium">70+</div>
-                <div className="text-sm mt-1">Italian Universities</div>
+                <div className="text-xl sm:text-4xl font-medium">70+</div>
+                <div className="text-xs sm:text-sm mt-1">Italian Universities</div>
               </div>
             </div>
           </div>
 
           {/* Right Side - Lead Form */}
-          <div className="relative w-full max-w-md min-h-[400px] p-1.5 bg-[#f46c44] sm:ml-auto">
+          <div className="flex items-center justify-center lg:justify-end">
+            <div className="relative w-full max-w-md min-h-[400px] p-1.5 bg-[#f46c44]">
 
-            <div className="relative bg-white shadow-2xl overflow-hidden">
+              <div className="relative bg-white shadow-2xl overflow-hidden">
 
-              {/* Top Header */}
-              <div className="absolute rounded-br-3xl top-0 left-0 bg-gradient-to-r from-[#EA6C46] to-[#EA6C46]/80 px-4 py-2">
-                <h3 className="text-white text-base font-medium">
-                  Book Your Free Consultation
-                </h3>
-              </div>
-
-              {/* Stats */}
-              <div className="mt-10 flex items-center justify-center gap-8 py-3 border-b border-gray-200 text-[#0b2545] font-semibold text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">📚</span>
-                  <span>100 + Courses</span>
+                {/* Top Header */}
+                <div className="absolute rounded-br-3xl top-0 left-0 bg-gradient-to-r from-[#EA6C46] to-[#EA6C46]/80 px-4 py-2">
+                  <h3 className="text-white text-base font-medium">
+                    Book Your Free Consultation
+                  </h3>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">👨‍🎓</span>
-                  <span>10K + Counseled</span>
+                {/* Stats */}
+                <div className="mt-10 flex items-center justify-center gap-8 py-3 border-b border-gray-200 text-[#0b2545] font-semibold text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">📚</span>
+                    <span>100 + Courses</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">👨‍🎓</span>
+                    <span>10K + Counseled</span>
+                  </div>
                 </div>
-              </div>
 
-              {heroSubmitted ? (
-                <div className="py-10 px-6 text-center">
-                  <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-3xl mx-auto">
-                    ✓
-                  </div>
-
-                  <h4 className="mt-4 text-2xl font-bold text-[#0b2545]">
-                    Thank You!
-                  </h4>
-
-                  <p className="text-sm text-gray-500 mt-2">
-                    Our counsellor will contact you shortly.
-                  </p>
-                </div>
-              ) : (
-                <form
-                  onSubmit={(e) => handleSubmit(e, true)}
-                  className="p-5 space-y-3"
-                >
-                  {/* Name + Mobile */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-sm font-semibold text-[#0b2545] block mb-2">
-                        Full Name <span className="text-red-500">*</span>
-                      </label>
-
-                      <input
-                        required
-                        value={heroForm.name}
-                        onChange={(e) =>
-                          setHeroForm({ ...heroForm, name: e.target.value })
-                        }
-                        placeholder="Enter Full Name*"
-                        className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
-                      />
+                {heroSubmitted ? (
+                  <div className="py-10 px-6 text-center">
+                    <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-3xl mx-auto">
+                      ✓
                     </div>
 
-                    <div>
-                      <label className="text-sm font-semibold text-[#0b2545] block mb-2">
-                        Mobile No. <span className="text-red-500">*</span>
-                      </label>
+                    <h4 className="mt-4 text-2xl font-bold text-[#0b2545]">
+                      Thank You!
+                    </h4>
 
-                      <input
-                        required
-                        type="tel"
-                        value={heroForm.phone}
-                        onChange={(e) =>
-                          setHeroForm({ ...heroForm, phone: e.target.value })
-                        }
-                        placeholder="Enter Mobile No.*"
-                        className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Email + Degree */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-sm font-semibold text-[#0b2545] block mb-2">
-                        Email Id <span className="text-red-500">*</span>
-                      </label>
-
-                      <input
-                        required
-                        type="email"
-                        value={heroForm.email}
-                        onChange={(e) =>
-                          setHeroForm({ ...heroForm, email: e.target.value })
-                        }
-                        placeholder="Enter Email Id*"
-                        className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-semibold text-[#0b2545] block mb-2">
-                        Degree <span className="text-red-500">*</span>
-                      </label>
-
-                      <input
-                        required
-                        value={heroForm.course}
-                        onChange={(e) =>
-                          setHeroForm({ ...heroForm, course: e.target.value })
-                        }
-                        placeholder="Enter Degree*"
-                        className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
-                      />
-                    </div>
-                  </div>
-
-                  {/* State */}
-                  <div>
-                    <label className="text-sm font-semibold text-[#0b2545] block mb-2">
-                      City <span className="text-red-500">*</span>
-                    </label>
-
-                    <input
-                      required
-                      value={heroForm?.city}
-                      onChange={(e) =>
-                        setHeroForm({ ...heroForm, city: e.target.value })
-                      }
-                      placeholder="Enter City*"
-                      className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
-                    />
-                  </div>
-
-                  {/* Branch */}
-                  <div>
-                    <label className="text-sm font-semibold text-[#0b2545] block mb-2">
-                      State {""}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      required
-                      value={heroForm?.state}
-                      onChange={(e) =>
-                        setHeroForm({ ...heroForm, state: e.target.value })
-                      }
-                      placeholder="Enter State*"
-                      className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
-                    />
-
-                  </div>
-
-                  {/* Checkbox */}
-                  <div className="flex items-start gap-2 text-sm text-[#0b2545]">
-                    <input type="checkbox" required className="mt-1" />
-
-                    <p className="leading-5">
-                      I agree to receive information from Ooshas Global.
+                    <p className="text-sm text-gray-500 mt-2">
+                      Our counsellor will contact you shortly.
                     </p>
                   </div>
-
-                  {/* Submit */}
-                  <button
-                    type="submit"
-                    className="w-full bg-[#F46C44] hover:bg-[#bf341f] transition-all text-white font-bold py-2.5 rounded-md text-xl shadow-lg"
+                ) : (
+                  <form
+                    onSubmit={(e) => handleSubmit(e, true)}
+                    className="p-5 space-y-3"
                   >
-                    Submit
-                  </button>
-                </form>
-              )}
+                    {/* Name + Mobile */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-sm font-semibold text-[#0b2545] block mb-2">
+                          Full Name <span className="text-red-500">*</span>
+                        </label>
+
+                        <input
+                          required
+                          value={heroForm.name}
+                          onChange={(e) =>
+                            setHeroForm({ ...heroForm, name: e.target.value })
+                          }
+                          placeholder="Enter Full Name*"
+                          className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-semibold text-[#0b2545] block mb-2">
+                          Mobile No. <span className="text-red-500">*</span>
+                        </label>
+
+                        <input
+                          required
+                          type="tel"
+                          value={heroForm.phone}
+                          onChange={(e) =>
+                            setHeroForm({ ...heroForm, phone: e.target.value })
+                          }
+                          placeholder="Enter Mobile No.*"
+                          className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Email + Degree */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-sm font-semibold text-[#0b2545] block mb-2">
+                          Email Id <span className="text-red-500">*</span>
+                        </label>
+
+                        <input
+                          required
+                          type="email"
+                          value={heroForm.email}
+                          onChange={(e) =>
+                            setHeroForm({ ...heroForm, email: e.target.value })
+                          }
+                          placeholder="Enter Email Id*"
+                          className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-sm font-semibold text-[#0b2545] block mb-2">
+                          Degree <span className="text-red-500">*</span>
+                        </label>
+
+                        <input
+                          required
+                          value={heroForm.course}
+                          onChange={(e) =>
+                            setHeroForm({ ...heroForm, course: e.target.value })
+                          }
+                          placeholder="Enter Degree*"
+                          className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* State */}
+                    <div>
+                      <label className="text-sm font-semibold text-[#0b2545] block mb-2">
+                        City <span className="text-red-500">*</span>
+                      </label>
+
+                      <input
+                        required
+                        value={heroForm?.city}
+                        onChange={(e) =>
+                          setHeroForm({ ...heroForm, city: e.target.value })
+                        }
+                        placeholder="Enter City*"
+                        className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
+                      />
+                    </div>
+
+                    {/* Branch */}
+                    <div>
+                      <label className="text-sm font-semibold text-[#0b2545] block mb-2">
+                        State {""}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        required
+                        value={heroForm?.state}
+                        onChange={(e) =>
+                          setHeroForm({ ...heroForm, state: e.target.value })
+                        }
+                        placeholder="Enter State*"
+                        className="w-full border border-gray-300 rounded-md px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#ff6b3d]/30 focus:border-[#ff6b3d]"
+                      />
+
+                    </div>
+
+                    {/* Checkbox */}
+                    <div className="flex items-start gap-2 text-sm text-[#0b2545]">
+                      <input type="checkbox" required className="mt-1" />
+
+                      <p className="leading-5">
+                        I agree to receive information from Ooshas Global.
+                      </p>
+                    </div>
+
+                    {/* Submit */}
+                    <button
+                      type="submit"
+                      className="w-full bg-[#F46C44] hover:bg-[#bf341f] transition-all text-white font-bold py-2.5 rounded-md text-xl shadow-lg"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                )}
+              </div>
             </div>
+
           </div>
+
         </div>
       </section>
       {/* Top Universities Section */}
       <section className="relative py-12 to-white overflow-hidden">
 
-        <div className="relative max-w-7xl mx-auto px-4">
-          <div className="text-center max-w-5xl mx-auto mb-14">
+        <div className="relative max-w-7xl mx-auto px-2 sm:px-4">
+          <div className="text-center max-w-5xl mx-auto mb-10">
             <h2 className="text-3xl md:text-4xl font-semibold text-[#0b2545] leading-tight">
               Applying For{" "}
               <span className="text-[#f46c44]">
                 Top Universities in Italy
               </span>
             </h2>
-            <p className="mt-3 text-base text-[#0b2545]/80 font-medium leading-8">
+            <p className="mt-2 text-base text-[#0b2545]/80 font-medium sm:leading-8">
               Applying to top universities in Italy is a step towards quality
               education and a vibrant cultural experience. It usually takes
               around 3–6 months and includes course selection, eligibility
@@ -544,7 +548,7 @@ export default function ItalyLanding() {
                     </p>
 
                     {/* Bottom CTA */}
-                    <div onClick={() => setPopupOpen(true)} className="flex pb-2 items-center justify-between mt-6 group cursor-pointer">
+                    <div onClick={() => setPopupOpen(true)} className="flex pb-2 items-center justify-between mt-4 group cursor-pointer">
                       <span className="text-[#F46C44] text-lg font-semibold tracking-wide">
                         Enquiry Now
                       </span>
@@ -561,7 +565,7 @@ export default function ItalyLanding() {
         {/* Scholarship Banner Section */}
       </section>
       <section>
-        <div className="relative max-w-7xl overflow-hidden mx-auto px-2 -mt-12 rounded-3xl">
+        <div className="relative max-w-7xl overflow-hidden mx-auto px-2 -mt-40 sm:-mt-12 rounded-3xl">
 
           {/* Image */}
           <img
@@ -667,7 +671,7 @@ export default function ItalyLanding() {
 
           {/* CTA */}
           <div className="text-center mt-12">
-            <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e45c36] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_16px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+            <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e45c36] text-white px-6 py-2.5 rounded-full text-xs sm:text-base font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_16px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
               Connect with Experts to Choose the Right Course →
             </button>
           </div>
@@ -696,9 +700,9 @@ export default function ItalyLanding() {
             <div className="sm:sticky sm:top-24">
 
               <img
-                src="https://districtoffices.net/wp-content/uploads/2019/10/DO_Blog-Image_Meeting-1024x535-1-2000x1044.jpg"
+                src="/3.png"
                 alt="Study in Italy Support"
-                className="w-full h-[450px] object-cover"
+                className="w-full  object-cover"
               />
             </div>
             <div>
@@ -769,7 +773,7 @@ export default function ItalyLanding() {
 
               {/* CTA Buttons */}
               <div className="flex flex-wrap gap-5 mt-10">
-                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_10px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_15px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-2.5 rounded-full text-base font-semibold shadow-[0_10px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_15px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
                   Connect with Experts →
                 </button>
               </div>
@@ -835,8 +839,8 @@ export default function ItalyLanding() {
                 key={index}
                 className="bg-[#f5f5f5] p-2 shadow transition-all duration-300"
               >
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="flex items-center bg-white justify-center p-1 min-h-[200px]">
+                <div className="grid grid-cols-3 gap-2 h-full">
+                  <div className="flex items-center bg-white justify-center p-1 h-full">
                     <img
                       src={item.icon}
                       alt={item.title}
@@ -859,7 +863,7 @@ export default function ItalyLanding() {
 
             <div className="inline-flex flex-col items-center">
               <div className="flex flex-wrap justify-center gap-5">
-                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-2.5 rounded-full text-base font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
                   Book Your FREE Counselling →
                 </button>
               </div>
@@ -963,7 +967,6 @@ export default function ItalyLanding() {
 
       {/* Simple CTA Footer */}
       <footer className="relative overflow-hidden ">
-
         <div
           className="absolute inset-0 bg-cover z bg-center"
           style={{
@@ -982,8 +985,6 @@ export default function ItalyLanding() {
             Want Guaranteed Admissions at Top Italian Universities for
             MBA, Masters & Bachelor in Upcoming Intake?
           </h2>
-
-          {/* Text */}
           <div className="mt-6 space-y-2 text-white text-base">
             <p>BOOK NOW for a FREE Counselling Session !!</p>
             <p>Register Now to Get Free Profile Evaluation</p>
@@ -1000,20 +1001,16 @@ export default function ItalyLanding() {
         </div>
       </footer>
 
-      {/* POPUP */}
       {popupOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-[1px]"
+          className="fixed inset-0 z-50 flex items-center justify-center p-1 sm:p-4 bg-black/60 backdrop-blur-[1px]"
           onClick={closePopup}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-lg p-1.5 bg-[#f46c44]"
+            className="relative w-full max-h-[95vh] overflow-y-auto scrollbar-hide max-w-lg p-1.5 bg-[#f46c44]"
           >
-
-            {/* Form Card */}
             <div className="relative bg-white shadow-2xl overflow-hidden">
-              {/* Close Button */}
               <button
                 onClick={closePopup}
                 aria-label="Close"
