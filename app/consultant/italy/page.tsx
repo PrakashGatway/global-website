@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: " Study In Italy consultant | Ooshas Global",
   description:
-    "Looking for a Germany education consultant? Ooshas Global helps students apply for Bachelor's and Master's in Germany with scholarship, visa, APS, and university admission support.",
+    "Looking for a Italy education consultant? Ooshas Global helps students apply for Bachelor's and Master's in Italy with scholarship, visa, and university admission support.",
   keywords: [
     "Study In Italy",
     "Masters in Italy",
