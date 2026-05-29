@@ -11,15 +11,15 @@ export default function WhatsAppButton() {
 
   const pathname = usePathname()
 
-  if(pathname.startsWith("/dashboard")){
-  return null
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/api") || pathname.startsWith("/consultant")) {
+    return null
   }
 
   return (
-    
+
     <button
       onClick={() => window.open(whatsappLink, "_blank")}
-     
+
       rel="noopener noreferrer"
       className="
         fixed right-3 bottom-6 z-50

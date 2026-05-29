@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Inter } from "next/font/google";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -25,6 +26,7 @@ export default function ItalyLanding() {
     const [submitted, setSubmitted] = useState(false);
     const [heroSubmitted, setHeroSubmitted] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -62,6 +64,7 @@ export default function ItalyLanding() {
             };
             await axiosInstance.post("/contactus", payload);
             toast.success("Form submitted successfully");
+             router.push("/thank-you");
             if (isHero) {
                 setHeroSubmitted(true);
 
@@ -548,7 +551,7 @@ export default function ItalyLanding() {
                                         </p>
 
                                         {/* Bottom CTA */}
-                                        <div onClick={() => setPopupOpen(true)} className="flex pb-2 items-center justify-between mt-4 group cursor-pointer">
+                                        <div onClick={() => router.push("/consultant/contact-form")} className="flex pb-2 items-center justify-between mt-4 group cursor-pointer">
                                             <span className="text-[#F46C44] text-lg font-semibold tracking-wide">
                                                 Enquiry Now
                                             </span>
@@ -599,7 +602,7 @@ export default function ItalyLanding() {
                                 {/* Button */}
                                 <div className="flex flex-wrap gap-4 mt-6">
                                     <button
-                                        onClick={() => setPopupOpen(true)}
+                                        onClick={() => router.push("/consultant/contact-form")}
                                         type="button"
                                         className="bg-gray-800 hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-base font-medium hover:scale-105 transition-all duration-300"
                                     >
@@ -671,7 +674,7 @@ export default function ItalyLanding() {
 
                     {/* CTA */}
                     <div className="text-center mt-12">
-                        <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e45c36] text-white px-6 py-2.5 rounded-full text-xs sm:text-base font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_16px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+                        <button onClick={() => router.push("/consultant/contact-form")} type="button" className="bg-[#f46c44] hover:bg-[#e45c36] text-white px-6 py-2.5 rounded-full text-xs sm:text-base font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_16px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
                             Connect with Experts to Choose the Right Course →
                         </button>
                     </div>
@@ -773,7 +776,7 @@ export default function ItalyLanding() {
 
                             {/* CTA Buttons */}
                             <div className="flex flex-wrap gap-5 mt-10">
-                                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-2.5 rounded-full text-base font-semibold shadow-[0_10px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_15px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+                                <button onClick={() => router.push("/consultant/contact-form")} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-2.5 rounded-full text-base font-semibold shadow-[0_10px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_15px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
                                     Connect with Experts →
                                 </button>
                             </div>
@@ -863,7 +866,7 @@ export default function ItalyLanding() {
 
                         <div className="inline-flex flex-col items-center">
                             <div className="flex flex-wrap justify-center gap-5">
-                                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-2.5 rounded-full text-base font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+                                <button onClick={() => router.push("/consultant/contact-form")} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-2.5 rounded-full text-base font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
                                     Book Your FREE Counselling →
                                 </button>
                             </div>
@@ -912,7 +915,7 @@ export default function ItalyLanding() {
                             {/* CTA Buttons */}
                             <div className="flex flex-wrap gap-5 mt-4">
 
-                                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-105 transition-all duration-300">
+                                <button onClick={() => router.push("/consultant/contact-form")} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-105 transition-all duration-300">
                                     Book Appointment →
                                 </button>
                             </div>
@@ -994,7 +997,7 @@ export default function ItalyLanding() {
 
                     {/* Button */}
                     <div className="mt-10">
-                        <button onClick={() => setPopupOpen(true)} type="button" className="bg-white hover:bg-gray-200 hover:scale-102 text-[#b91c1c] font-semibold text-xl px-6 py-3 rounded-full shadow-lg transition-all">
+                        <button onClick={() => router.push("/consultant/contact-form")} type="button" className="bg-white hover:bg-gray-200 hover:scale-102 text-[#b91c1c] font-semibold text-xl px-6 py-3 rounded-full shadow-lg transition-all">
                             Book Your Seat Now
                         </button>
                     </div>
