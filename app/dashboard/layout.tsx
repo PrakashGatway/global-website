@@ -9,7 +9,6 @@ import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { GlobalProvider, useGlobal } from "../../src/statecontext"
 
-
 import { usePathname } from "next/navigation"
 import { NotificationProvider } from "@/components/dashboard/Notification"
 
@@ -19,8 +18,7 @@ import {
   onMessage,
 } from "@/lib/firebase";
 import axiosInstance from "../axiosInstance"
-
-
+import { toast } from "sonner" // Make sure to import toast
 
 export default function DashboardLayout({
   children,
@@ -32,6 +30,9 @@ export default function DashboardLayout({
   const isMobile = useIsMobile()
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile)
   const { profile, loading, Logout } = useGlobal();
+  
+  // Add a ref to track if token has been requested/saved
+  const tokenRequestedRef = useRef(false);
 
   useEffect(() => {
     if (isMobile && sidebarOpen) {
@@ -39,28 +40,48 @@ export default function DashboardLayout({
     }
   }, [router])
 
-
+  // Modified: Only request permission once when profile is available and not loading
   useEffect(() => {
-    requestPermission();
-  }, [profile]);
+    // Only proceed if we have a profile, not loading, and haven't requested token yet
+    if (profile && !loading && !tokenRequestedRef.current) {
+      tokenRequestedRef.current = true; // Mark as requested immediately to prevent multiple calls
+      requestPermission();
+    }
+  }, [profile, loading]); // Remove requestPermission from dependencies
 
   const requestPermission = async () => {
     try {
+      // Check if Notification API is available
+      if (typeof Notification === 'undefined') {
+        console.log('Notification API not supported');
+        return;
+      }
+
       const permission = await Notification.requestPermission();
 
       if (permission === "granted") {
+        // Check if messaging is initialized
+        if (!messaging) {
+          console.log('Firebase messaging not initialized');
+          return;
+        }
 
         const token = await getToken(messaging, {
           vapidKey: "BDyrqnEnHplqPQDrfienXIeY4eo49-eCp3Sq7kp78t1RXwPWnUpILuTdBJXY2Isu5fZNX6fDV1FhF6m7yP0Hr2s",
         });
 
-        const api = await axiosInstance.post('/users/save-token', {
-          token,
-          userId: profile._id
-        })
+        if (token && profile?._id) {
+          await axiosInstance.post('/users/save-token', {
+            token,
+            userId: profile._id
+          });
+          console.log('FCM token saved successfully');
+        }
       }
     } catch (error) {
-      console.log(error);
+      console.log('Error requesting notification permission:', error);
+      // If there's an error, allow retry on next profile change
+      tokenRequestedRef.current = false;
     }
   };
 
@@ -68,13 +89,6 @@ export default function DashboardLayout({
     if (!messaging) return;
 
     onMessage(messaging, (payload) => {
-      // console.log("Foreground Notification:", payload);
-
-      // Show alert with notification body
-      // if (payload.notification?.body) {
-      //   alert(payload.notification.body);
-      // }
-      
       if (payload.notification?.body) {
         toast.success(payload.notification.body);
       }
@@ -91,7 +105,6 @@ export default function DashboardLayout({
     window.addEventListener('keydown', handleEscape)
     return () => window.removeEventListener('keydown', handleEscape)
   }, [sidebarOpen, isMobile])
-
 
   if (!loading && !profile) {
     window.location.replace("/login")
@@ -114,7 +127,6 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-white">
-   
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex flex-col overflow-hidden">

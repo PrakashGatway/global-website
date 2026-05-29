@@ -856,7 +856,7 @@ const sendMessage = async () => {
               {[
                 { id: 'information', label: 'Information', icon: User },
                 // { id: 'documents', label: 'Documents', icon: FileCheck2 },
-                { id: 'activity', label: 'Application History', icon: Activity }
+                { id: 'activity', label: 'Comments', icon: Activity }
               ].map(tab => {
                 const TabIcon = tab.icon
                 const isActive = activeTab === tab.id
@@ -983,490 +983,544 @@ const sendMessage = async () => {
         )}
 
       {/* Documents Tab Content */}
-{activeTab === "documents" && (
-  <div className="bg-[#fafafa] min-h-screen">
-    {/* Top Tabs */}
-    {/* <div className="border-b border-gray-200 bg-white px-6">
-      <div className="flex items-center gap-8 overflow-x-auto">
-        {["All", "Pending", "Approved", "Rejected"].map((status) => (
-          <button
-            key={status}
-            onClick={() =>
-              setActiveDocTab(status === "All" ? "All" : status)
-            }
-            className={`relative py-4 text-sm font-medium whitespace-nowrap transition-all duration-200 ${
-              activeDocTab === status
-                ? "text-[#ff6a1a]"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            {status}
-
-            {activeDocTab === status && (
-              <motion.div
-                layoutId="docTab"
-                className="absolute left-0 bottom-0 h-[2px] w-full bg-[#ff6a1a]"
-              />
-            )}
-          </button>
-        ))}
-      </div>
-    </div> */}
-
-    {/* Main Content */}
-    <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-6 p-6">
-      
-      {/* Upload Section */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-8 min-h-[520px] flex flex-col items-center justify-center text-center shadow-sm">
-        <div className="w-24 h-24 rounded-full bg-orange-50 flex items-center justify-center mb-6">
-          <Upload className="w-12 h-12 text-[#ff6a1a]" />
-        </div>
-
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">
-          Upload Documents
-        </h3>
-
-        <p className="text-sm text-gray-500 mb-6 max-w-[260px]">
-          Please upload only color scan copies in PDF, DOC, or image format.
-        </p>
-
-        <button className="px-6 py-3 rounded-xl bg-[#ff6a1a] hover:bg-[#f45f0d] text-white font-medium shadow-md transition-all duration-200 flex items-center gap-2">
-          <Upload className="w-4 h-4" />
-          Upload File
-        </button>
-      </div>
-
-      {/* Documents List */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-        <div className="max-h-[520px] overflow-y-auto custom-scrollbar">
-          {application?.documents?.filter((doc: any) => {
-            if (activeDocTab === "All") return doc.type === "user";
-            return (
-              doc.status === activeDocTab && doc.type === "user"
-            );
-          }).length === 0 ? (
-            <div className="text-center py-20">
-              <div className="text-6xl mb-4">📄</div>
-              <p className="text-gray-500 text-sm">
-                No documents found
-              </p>
-            </div>
-          ) : (
-            application?.documents
-              ?.filter((doc: any) => {
-                if (activeDocTab === "All")
-                  return doc.type === "user";
-
-                return (
-                  doc.status === activeDocTab &&
-                  doc.type === "user"
-                );
-              })
-              .map((req: any, index: number) => (
-                <motion.div
-                  key={req._id || index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25 }}
-                  whileHover={{ backgroundColor: "#fafafa" }}
-                  className="flex items-center justify-between gap-4 px-6 py-5 border-b border-gray-100 transition-all"
+      {activeTab === "documents" && (
+        <div className="bg-[#fafafa] min-h-screen">
+          {/* Top Tabs */}
+          {/* <div className="border-b border-gray-200 bg-white px-6">
+            <div className="flex items-center gap-8 overflow-x-auto">
+              {["All", "Pending", "Approved", "Rejected"].map((status) => (
+                <button
+                  key={status}
+                  onClick={() =>
+                    setActiveDocTab(status === "All" ? "All" : status)
+                  }
+                  className={`relative py-4 text-sm font-medium whitespace-nowrap transition-all duration-200 ${
+                    activeDocTab === status
+                      ? "text-[#ff6a1a]"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
                 >
-                  {/* Left */}
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    {/* Status Icon */}
-                    <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
-                        req.status === "Approved"
-                          ? "bg-green-100 text-green-600"
-                          : req.status === "Rejected"
-                          ? "bg-red-100 text-red-600"
-                          : req.status === "inreview"
-                          ? "bg-yellow-100 text-yellow-600"
-                          : "bg-gray-100 text-gray-500"
-                      }`}
-                    >
-                      {getStatusIcon(req.status)}
-                    </div>
+                  {status}
 
-                    {/* File Details */}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="text-sm font-medium text-gray-800 truncate">
-                          {req.name}
-                        </h4>
+                  {activeDocTab === status && (
+                    <motion.div
+                      layoutId="docTab"
+                      className="absolute left-0 bottom-0 h-[2px] w-full bg-[#ff6a1a]"
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div> */}
 
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
-                            req.required === "required"
-                              ? "bg-red-50 text-red-700 border border-red-200"
-                              : req.required === "optional"
-                              ? "bg-gray-50 text-gray-700 border border-gray-200"
-                              : "bg-purple-50 text-purple-700 border border-purple-200"
-                          }`}
-                        >
-                          {req.required === "required"
-                            ? "Required"
-                            : req.required === "optional"
-                            ? "Optional"
-                            : "Early Access"}
-                        </span>
-                      </div>
+          {/* Main Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-6 p-6">
+            
+            {/* Upload Section */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-8 min-h-[520px] flex flex-col items-center justify-center text-center shadow-sm">
+              <div className="w-24 h-24 rounded-full bg-orange-50 flex items-center justify-center mb-6">
+                <Upload className="w-12 h-12 text-[#ff6a1a]" />
+              </div>
 
-                      <p className="text-xs text-gray-400 mt-1">
-                        Uploaded on{" "}
-                        {req.createdAt
-                          ? new Date(req.createdAt).toDateString()
-                          : "N/A"}
-                      </p>
-                    </div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                Upload Documents
+              </h3>
+
+              <p className="text-sm text-gray-500 mb-6 max-w-[260px]">
+                Please upload only color scan copies in PDF, DOC, or image format.
+              </p>
+
+              <button className="px-6 py-3 rounded-xl bg-[#ff6a1a] hover:bg-[#f45f0d] text-white font-medium shadow-md transition-all duration-200 flex items-center gap-2">
+                <Upload className="w-4 h-4" />
+                Upload File
+              </button>
+            </div>
+
+            {/* Documents List */}
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+              <div className="max-h-[520px] overflow-y-auto custom-scrollbar">
+                {application?.documents?.filter((doc: any) => {
+                  if (activeDocTab === "All") return doc.type === "user";
+                  return (
+                    doc.status === activeDocTab && doc.type === "user"
+                  );
+                }).length === 0 ? (
+                  <div className="text-center py-20">
+                    <div className="text-6xl mb-4">📄</div>
+                    <p className="text-gray-500 text-sm">
+                      No documents found
+                    </p>
                   </div>
+                ) : (
+                  application?.documents
+                    ?.filter((doc: any) => {
+                      if (activeDocTab === "All")
+                        return doc.type === "user";
 
-                  {/* Right Actions */}
-                  <div className="flex items-center gap-4 shrink-0">
-                    {/* Status Badge */}
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(
-                        req.status
-                      )}`}
-                    >
-                      {req.status === "Rejected" && "Rejected"}
-                      {req.status === "inreview" && "In Review"}
-                      {req.status === "Approved" && "Approved"}
-                      {req.status === "Pending" && "Pending"}
-                    </span>
-
-                    {/* View */}
-                    <button className="text-[#ff6a1a] hover:scale-110 transition-all">
-                      <Eye className="w-5 h-5" />
-                    </button>
-
-                    {/* Download */}
-                    <button className="text-[#ff6a1a] hover:scale-110 transition-all">
-                      <Download className="w-5 h-5" />
-                    </button>
-
-                    {/* Answer */}
-                    {(req.status === "Pending" ||
-                      req.status === "Rejected") && (
-                      <button
-                        onClick={() => {
-                          setSelectedRequirement(req);
-                          setIsDrawerOpen(true);
-                        }}
-                        className="px-4 py-2 bg-[#ff6a1a] hover:bg-[#f45f0d] text-white text-sm font-medium rounded-lg transition-all duration-200"
+                      return (
+                        doc.status === activeDocTab &&
+                        doc.type === "user"
+                      );
+                    })
+                    .map((req: any, index: number) => (
+                      <motion.div
+                        key={req._id || index}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
+                        whileHover={{ backgroundColor: "#fafafa" }}
+                        className="flex items-center justify-between gap-4 px-6 py-5 border-b border-gray-100 transition-all"
                       >
-                        Answer
-                      </button>
-                    )}
-                  </div>
-                </motion.div>
-              ))
-          )}
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+                        {/* Left */}
+                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                          {/* Status Icon */}
+                          <div
+                            className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
+                              req.status === "Approved"
+                                ? "bg-green-100 text-green-600"
+                                : req.status === "Rejected"
+                                ? "bg-red-100 text-red-600"
+                                : req.status === "inreview"
+                                ? "bg-yellow-100 text-yellow-600"
+                                : "bg-gray-100 text-gray-500"
+                            }`}
+                          >
+                            {getStatusIcon(req.status)}
+                          </div>
 
-{/* Activity Log Tab Content */}
-{activeTab === 'activity' && (
-  <div className="bg-white">
+                          {/* File Details */}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h4 className="text-sm font-medium text-gray-800 truncate">
+                                {req.name}
+                              </h4>
 
-  {/* Header */}
-  <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
-    <div>
-      <h3 className="text-lg font-semibold text-gray-800">
-        Ticket Communication History
-      </h3>
-      <p>Track all agent updates, internal discussions, and resolution milestones.</p>
-    </div>
+                              <span
+                                className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
+                                  req.required === "required"
+                                    ? "bg-red-50 text-red-700 border border-red-200"
+                                    : req.required === "optional"
+                                    ? "bg-gray-50 text-gray-700 border border-gray-200"
+                                    : "bg-purple-50 text-purple-700 border border-purple-200"
+                                }`}
+                              >
+                                {req.required === "required"
+                                  ? "Required"
+                                  : req.required === "optional"
+                                  ? "Optional"
+                                  : "Early Access"}
+                              </span>
+                            </div>
 
-    <button
-      onClick={() => setIsCommentModalOpen(true)}
-      className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md transition-colors"
-    >
-      ADD COMMENTS
-    </button>
-  </div>
+                            <p className="text-xs text-gray-400 mt-1">
+                              Uploaded on{" "}
+                              {req.createdAt
+                                ? new Date(req.createdAt).toDateString()
+                                : "N/A"}
+                            </p>
+                          </div>
+                        </div>
 
-  {/* Table Header */}
-  <div className="grid grid-cols-12 gap-4 bg-gray-100 px-8 py-4 text-sm font-semibold text-gray-700 border-b">
-    <div className="col-span-3">Details</div>
-    <div className="col-span-4">Comment</div>
-    <div className="col-span-3">Status</div>
-    <div className="col-span-2">Commented By</div>
-  </div>
+                        {/* Right Actions */}
+                        <div className="flex items-center gap-4 shrink-0">
+                          {/* Status Badge */}
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(
+                              req.status
+                            )}`}
+                          >
+                            {req.status === "Rejected" && "Rejected"}
+                            {req.status === "inreview" && "In Review"}
+                            {req.status === "Approved" && "Approved"}
+                            {req.status === "Pending" && "Pending"}
+                          </span>
 
-  {/* Messages */}
-  <div className="max-h-[650px] overflow-y-auto divide-y divide-gray-200">
+                          {/* View */}
+                          <button className="text-[#ff6a1a] hover:scale-110 transition-all">
+                            <Eye className="w-5 h-5" />
+                          </button>
 
-    {messageList?.map((item, index) => (
+                          {/* Download */}
+                          <button className="text-[#ff6a1a] hover:scale-110 transition-all">
+                            <Download className="w-5 h-5" />
+                          </button>
 
-      <motion.div
-        key={item.id}
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.05 }}
-        className="grid grid-cols-12 gap-4 px-8 py-6 hover:bg-gray-50 transition-colors"
-      >
-
-        {/* Details */}
-        <div className="col-span-3">
-
-          <div className="text-sm text-gray-700 leading-6">
-
-            <p className="font-medium">
-              {item?.createdAt.split("T")[0]}
-            </p>
-
-            <div className="mt-4">
-
-              <p className="font-semibold text-gray-800">
-                Subject:
-              </p>
-
-              <p className="font-semibold text-gray-900 mt-2">
-                {item?.extra_content?.subject}
-              </p>
-
+                          {/* Answer */}
+                          {(req.status === "Pending" ||
+                            req.status === "Rejected") && (
+                            <button
+                              onClick={() => {
+                                setSelectedRequirement(req);
+                                setIsDrawerOpen(true);
+                              }}
+                              className="px-4 py-2 bg-[#ff6a1a] hover:bg-[#f45f0d] text-white text-sm font-medium rounded-lg transition-all duration-200"
+                            >
+                              Answer
+                            </button>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))
+                )}
+              </div>
             </div>
+          </div>
+        </div>
+      )}
 
+      {/* Activity Log Tab Content */}
+      {activeTab === 'activity' && (
+        <div className="bg-white">
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800">
+              Ticket Communication History
+            </h3>
+            <p>Track all agent updates, internal discussions, and resolution milestones.</p>
           </div>
 
+          <button
+            onClick={() => setIsCommentModalOpen(true)}
+            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md transition-colors"
+          >
+            ADD COMMENTS
+          </button>
         </div>
 
-
-        {/* Comment */}
-        <div className="col-span-5">
-
-          <div className="space-y-3">
-
-            <div className="text-gray-700 leading-7 text-[15px]">
-              {item.content}
-            </div>
-
-            {item.extra_content?.attachments?.[0]?.name && (
-
-              <a
-                href={`https://api.ooshasglobal.com${item.extra_content?.attachments?.[0]?.url}`}
-                target="_blank"
-                className="flex items-center gap-2"
-              >
-                <Paperclip className="w-4 h-4 text-slate-400" />
-
-                {item.extra_content?.attachments?.[0]?.name}
-
-              </a>
-
-            )}
-
-          </div>
-
+        {/* Table Header */}
+        <div className="grid grid-cols-12 gap-4 bg-gray-100 px-8 py-4 text-sm font-semibold text-gray-700 border-b">
+          <div className="col-span-3">Details</div>
+          <div className="col-span-4">Comment</div>
+          <div className="col-span-3">Status</div>
+          <div className="col-span-2">Commented By</div>
         </div>
 
+        {/* Messages */}
+        <div className="max-h-[650px] overflow-y-auto divide-y divide-gray-200">
 
-        {/* Status */}
-        <div className="col-span-3">
+          {messageList?.map((item, index) => (
 
-          <div className="space-y-5 text-sm">
-
-            <div>
-
-              <p className="font-bold text-gray-800">
-                Primary Status:
-              </p>
-
-              <p className="text-gray-700">
-                {item.primaryStatus || "Application Processed"}
-              </p>
-
-            </div>
-
-            <div>
-
-              <p className="font-bold text-gray-800">
-                Message Status:
-              </p>
-
-              <p className="text-gray-700">
-                {item?.isRead ? "true" : "false"}
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        {/* User */}
-        <div className="col-span-1 flex flex-col items-center justify-between">
-
-          <span className="text-gray-700 font-medium">
-            {item.userType === "student" ? "Me" : item.userType }
-          </span>
-                
-          {item.userType !== "student" && !item?.isRead && (
-            <button
-              onClick={() => {
-                setIsCommentModalOpen(true); 
-                setMessageSubject(item?.extra_content?.subject);
-                markMessagesAsRead();
-              }}
-              className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-1 px-2 rounded-md transition-colors"
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              className="grid grid-cols-12 gap-4 px-8 py-6 hover:bg-gray-50 transition-colors"
             >
-              reply <SendHorizonal className="h-4" />
-            </button>
-          )}
 
-        </div>
-      </motion.div>
+              {/* Details */}
+              <div className="col-span-3">
 
-    ))}
+                <div className="text-sm text-gray-700 leading-6">
 
-  </div>
+                  <p className="font-medium">
+                    {item?.createdAt.split("T")[0]}
+                  </p>
 
+                  <div className="mt-4">
 
-  {/* Modal */}
-  <AnimatePresence>
+                    <p className="font-semibold text-gray-800">
+                      Subject:
+                    </p>
 
-    {isCommentModalOpen && (
+                    <p className="font-semibold text-gray-900 mt-2">
+                      {item?.extra_content?.subject}
+                    </p>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-end justify-end p-6"
-      >
-
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.95, opacity: 0, y: 20 }}
-          transition={{ type: "spring", duration: 0.4 }}
-          className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200"
-        >
-
-          {/* Header */}
-          <div className="bg-white border-b border-slate-100 px-5 py-4">
-
-            <div className="flex items-center justify-between">
-
-              <div>
-
-                <h3 className="text-base font-bold text-slate-800">
-                  New Message
-                </h3>
-
-                <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
-
-                  <span>To</span>
-
-                  <span className="font-medium text-slate-700">
-                    Ooshas
-                  </span>
+                  </div>
 
                 </div>
 
               </div>
 
-              <button
-                onClick={() => setIsCommentModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors"
-              >
 
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+              {/* Comment */}
+              <div className="col-span-4">
 
-              </button>
+                <div className="space-y-3">
 
-            </div>
+                  <div className="text-gray-700 leading-7 text-[15px]">
+                    {item.content}
+                  </div>
 
-          </div>
+                  {item.extra_content?.attachments?.[0]?.name && (
 
+                    <a
+                      href={`https://api.ooshasglobal.com${item.extra_content?.attachments?.[0]?.url}`}
+                      target="_blank"
+                      className="flex items-center gap-2"
+                    >
+                      <Paperclip className="w-4 h-4 text-slate-400" />
 
-          {/* Body */}
-          <div className="p-5 space-y-5">
+                      {item.extra_content?.attachments?.[0]?.name}
 
-            {/* Subject */}
-            <div className="space-y-1.5">
+                    </a>
 
-              <div className="flex items-center gap-2 text-sm">
+                  )}
 
-                <label className="font-medium text-slate-600 w-16">
-                  Subject
-                </label>
-
-                <select
-                  value={messageSubject}
-                  onChange={(e) => setMessageSubject(e.target.value)}
-                  className="flex-1 bg-transparent border-b border-slate-200 py-1.5 text-sm text-slate-700 outline-none focus:border-orange-500"
-                >
-
-                  <option value="">
-                    Select a subject...
-                  </option>
-
-                  <option value="Application Processed">
-                    Application Processed
-                  </option>
-
-                  <option value="Document Uploaded">
-                    Document Uploaded
-                  </option>
-
-                  <option value="University Update">
-                    University Update
-                  </option>
-
-                </select>
+                </div>
 
               </div>
 
-            </div>
+
+              {/* Status */}
+              <div className="col-span-3">
+
+                <div className="space-y-5 text-sm">
+
+                  <div>
+
+                    <p className="font-bold text-gray-800">
+                      Primary Status:
+                    </p>
+
+                    <p className="text-gray-700">
+                      {item.primaryStatus || "Application Processed"}
+                    </p>
+
+                  </div>
+
+                  <div>
+
+                    <p className="font-bold text-gray-800">
+                      Message Status:
+                    </p>
+
+                    <p className="text-gray-700">
+                      {item?.isRead ? "true" : "false"}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
 
 
-            {/* Message */}
-            <div className="space-y-1.5">
+              {/* User */}
+              <div className="col-span-2 flex flex-col items-center justify-between">
 
-              <textarea
-                rows={5}
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-                placeholder="Type your comment details here..."
-                className="w-full p-3 outline-none resize-none text-sm text-slate-700 placeholder-slate-400 bg-slate-50 rounded-xl border border-slate-100 focus:border-orange-500 focus:bg-white transition-all"
-              />
+                <span className="text-gray-700 font-medium">
+                  {item.userType === "student" ? "Me" : item.userType }
+                </span>
+                      
+                {item.userType !== "student" && !item?.isRead && (
+                  <button
+                    onClick={() => {
+                      setIsCommentModalOpen(true); 
+                      setMessageSubject(item?.extra_content?.subject);
+                      markMessagesAsRead();
+                    }}
+                    className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-1 px-2 rounded-md transition-colors"
+                  >
+                    reply <SendHorizonal className="h-4" />
+                  </button>
+                )}
 
-            </div>
+              </div>
+            </motion.div>
+
+          ))}
+
+        </div>
 
 
-            {/* Attachments */}
-            {messageAttachments.length > 0 && (
+        {/* Modal */}
+        <AnimatePresence>
 
-              <div className="space-y-2">
+          {isCommentModalOpen && (
 
-                <div className="flex flex-wrap gap-2">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-end justify-end p-6"
+            >
 
-                  {messageAttachments.map((file, index) => (
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                transition={{ type: "spring", duration: 0.4 }}
+                className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200"
+              >
 
-                    <div
-                      key={index}
-                      className="flex items-center gap-1.5 bg-slate-100 rounded-full px-3 py-1 text-xs text-slate-600"
+                {/* Header */}
+                <div className="bg-white border-b border-slate-100 px-5 py-4">
+
+                  <div className="flex items-center justify-between">
+
+                    <div>
+
+                      <h3 className="text-base font-bold text-slate-800">
+                        New Message
+                      </h3>
+
+                      <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
+
+                        <span>To</span>
+
+                        <span className="font-medium text-slate-700">
+                          Ooshas
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                    <button
+                      onClick={() => setIsCommentModalOpen(false)}
+                      className="text-slate-400 hover:text-slate-600 transition-colors"
                     >
 
                       <svg
-                        className="w-3 h-3 text-slate-400"
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+
+                {/* Body */}
+                <div className="p-5 space-y-5">
+
+                  {/* Subject */}
+                  <div className="space-y-1.5">
+
+                    <div className="flex items-center gap-2 text-sm">
+
+                      <label className="font-medium text-slate-600 w-16">
+                        Subject
+                      </label>
+
+                      <select
+                        value={messageSubject}
+                        onChange={(e) => setMessageSubject(e.target.value)}
+                        className="flex-1 bg-transparent border-b border-slate-200 py-1.5 text-sm text-slate-700 outline-none focus:border-orange-500"
+                      >
+
+                        <option value="">
+                          Select a subject...
+                        </option>
+
+                        <option value="Application Processed">
+                          Application Processed
+                        </option>
+
+                        <option value="Document Uploaded">
+                          Document Uploaded
+                        </option>
+
+                        <option value="University Update">
+                          University Update
+                        </option>
+
+                      </select>
+
+                    </div>
+
+                  </div>
+
+
+                  {/* Message */}
+                  <div className="space-y-1.5">
+
+                    <textarea
+                      rows={5}
+                      value={messageText}
+                      onChange={(e) => setMessageText(e.target.value)}
+                      placeholder="Type your comment details here..."
+                      className="w-full p-3 outline-none resize-none text-sm text-slate-700 placeholder-slate-400 bg-slate-50 rounded-xl border border-slate-100 focus:border-orange-500 focus:bg-white transition-all"
+                    />
+
+                  </div>
+
+
+                  {/* Attachments */}
+                  {messageAttachments.length > 0 && (
+
+                    <div className="space-y-2">
+
+                      <div className="flex flex-wrap gap-2">
+
+                        {messageAttachments.map((file, index) => (
+
+                          <div
+                            key={index}
+                            className="flex items-center gap-1.5 bg-slate-100 rounded-full px-3 py-1 text-xs text-slate-600"
+                          >
+
+                            <svg
+                              className="w-3 h-3 text-slate-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                              />
+
+                            </svg>
+
+                            <span className="max-w-[120px] truncate">
+                              {file.name}
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={() => removeUploadedFile(index)}
+                              className="text-slate-400 hover:text-rose-500 ml-1"
+                            >
+                              ×
+                            </button>
+
+                          </div>
+
+                        ))}
+
+                      </div>
+
+                    </div>
+
+                  )}
+
+
+                  {/* Actions */}
+                  <div className="flex items-center justify-end gap-2 pt-2">
+
+                    {/* Upload */}
+                    <button
+                      type="button"
+                      disabled={
+                        messageSubject !== "Document Uploaded" ||
+                        isAttachmentUploading ||
+                        isCommentSubmitting
+                      }
+                      onClick={() => fileInputRef.current.click()}
+                      className="p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-50"
+                    >
+
+                      <svg
+                        className="w-5 h-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -1481,107 +1535,53 @@ const sendMessage = async () => {
 
                       </svg>
 
-                      <span className="max-w-[120px] truncate">
-                        {file.name}
-                      </span>
+                    </button>
 
-                      <button
-                        type="button"
-                        onClick={() => removeUploadedFile(index)}
-                        className="text-slate-400 hover:text-rose-500 ml-1"
-                      >
-                        ×
-                      </button>
 
-                    </div>
+                    {/* Send */}
+                    <button
+                      type="button"
+                      onClick={sendMessage}
+                      disabled={
+                        isCommentSubmitting ||
+                        isAttachmentUploading ||
+                        !messageText.trim()
+                      }
+                      className="bg-orange-500 hover:bg-orange-600 disabled:bg-slate-200 disabled:text-slate-400 text-white font-medium px-5 py-2 rounded-full text-sm transition-all"
+                    >
 
-                  ))}
+                      {isCommentSubmitting ? "Sending..." : "Send"}
+
+                    </button>
+
+                  </div>
 
                 </div>
 
-              </div>
 
-            )}
+                {/* Hidden File Input */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  multiple
+                  disabled={
+                    isAttachmentUploading ||
+                    isCommentSubmitting
+                  }
+                  className="hidden"
+                />
 
+              </motion.div>
 
-            {/* Actions */}
-            <div className="flex items-center justify-end gap-2 pt-2">
+            </motion.div>
 
-              {/* Upload */}
-              <button
-                type="button"
-                disabled={
-                  messageSubject !== "Document Uploaded" ||
-                  isAttachmentUploading ||
-                  isCommentSubmitting
-                }
-                onClick={() => fileInputRef.current.click()}
-                className="p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-50"
-              >
+          )}
 
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+        </AnimatePresence>
 
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                  />
-
-                </svg>
-
-              </button>
-
-
-              {/* Send */}
-              <button
-                type="button"
-                onClick={sendMessage}
-                disabled={
-                  isCommentSubmitting ||
-                  isAttachmentUploading ||
-                  !messageText.trim()
-                }
-                className="bg-orange-500 hover:bg-orange-600 disabled:bg-slate-200 disabled:text-slate-400 text-white font-medium px-5 py-2 rounded-full text-sm transition-all"
-              >
-
-                {isCommentSubmitting ? "Sending..." : "Send"}
-
-              </button>
-
-            </div>
-
-          </div>
-
-
-          {/* Hidden File Input */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            multiple
-            disabled={
-              isAttachmentUploading ||
-              isCommentSubmitting
-            }
-            className="hidden"
-          />
-
-        </motion.div>
-
-      </motion.div>
-
-    )}
-
-  </AnimatePresence>
-
-</div>
-)}
+      </div>
+      )}
 
       </div>
 

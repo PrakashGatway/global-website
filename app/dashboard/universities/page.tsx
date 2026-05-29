@@ -112,7 +112,6 @@ const iconMap = {
   default: Sparkles,
 };
 
-
 function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -127,11 +126,13 @@ function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
     try {
       setLoading(true);
       setError(null);
-      const res = await axiosInstance.get(`/courses/categories?page=${currentPage}&limit=${limit}`);
+      const res = await axiosInstance.get(
+        `/courses/categories?page=${currentPage}&limit=${limit}`,
+      );
       setList(res.data.data || []);
       setTotalPages(res.data.pages || 1);
       setTotalItems(res.data.total || 0);
-      setSelected(res.data.data.filter(ele => ele?.selected).length || 0);
+      setSelected(res.data.data.filter((ele) => ele?.selected).length || 0);
     } catch (err) {
       setError("Failed to load. Please try again.");
     } finally {
@@ -146,36 +147,52 @@ function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
   const toggleCourse = async (id) => {
     await axiosInstance.patch("/auth/edit-doc", { categorie_shortlist: id });
     fetchCourses(page);
-    setSelectedCount?.(prev => prev + (list.find(e => e.name === id)?.selected ? -1 : 1));
+    setSelectedCount?.(
+      (prev) => prev + (list.find((e) => e.name === id)?.selected ? -1 : 1),
+    );
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
       <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl flex flex-col max-h-[85vh]">
         <div className="bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-5">
-          <h2 className="text-xl font-bold text-white">Choose Your Field of Study</h2>
+          <h2 className="text-xl font-bold text-white">
+            Choose Your Field of Study
+          </h2>
           <p className="text-indigo-100 text-sm mt-1">{totalItems} available</p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
-          {loading && <Loader2 size={32} className="animate-spin mx-auto text-indigo-600" />}
+          {loading && (
+            <Loader2
+              size={32}
+              className="animate-spin mx-auto text-indigo-600"
+            />
+          )}
           {error && <p className="text-red-500 text-center">{error}</p>}
-          
-          {!loading && !error && list.map(ele => (
-            <button
-              key={ele.id}
-              onClick={() => toggleCourse(ele.name)}
-              className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 mb-2
+
+          {!loading &&
+            !error &&
+            list.map((ele) => (
+              <button
+                key={ele.id}
+                onClick={() => toggleCourse(ele.name)}
+                className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 mb-2
                 ${ele.selected ? "border-indigo-600 bg-indigo-50" : "border-gray-100 hover:border-indigo-200"}`}
-            >
-              <span>{ele.selected ? "✓" : ""}</span>
-              <span className="font-semibold">{ele.name}</span>
-              <span className="text-sm text-gray-500 ml-auto">{ele.description}</span>
-            </button>
-          ))}
+              >
+                <span>{ele.selected ? "✓" : ""}</span>
+                <span className="font-semibold">{ele.name}</span>
+                <span className="text-sm text-gray-500 ml-auto">
+                  {ele.description}
+                </span>
+              </button>
+            ))}
         </div>
 
         {totalPages > 1 && (
@@ -213,8 +230,8 @@ export default function UniversitiesPage() {
   const [hasChecked, setHasChecked] = useState(false);
 
   useEffect(() => {
-    axiosInstance.get("/courses/categories?page=1&limit=10").then(res => {
-      const count = res.data.data.filter(ele => ele?.selected).length || 0;
+    axiosInstance.get("/courses/categories?page=1&limit=10").then((res) => {
+      const count = res.data.data.filter((ele) => ele?.selected).length || 0;
       setSelectedCount(count);
       setIsOpen(count < 2);
       setHasChecked(true);
@@ -224,8 +241,13 @@ export default function UniversitiesPage() {
   return (
     <div>
       {hasChecked && selectedCount < 2 && (
-        <CourseShortlist isOpen={isOpen} onClose={() => setIsOpen(false)} setSelectedCount={setSelectedCount} />
+        <CourseShortlist
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          setSelectedCount={setSelectedCount}
+        />
       )}
+      
       <Suspense fallback={<div>Loading...</div>}>
         <UniversitiesPageClient />
       </Suspense>
@@ -233,10 +255,8 @@ export default function UniversitiesPage() {
   );
 }
 
-
 function UniversitiesPageClient() {
-
-  const {allProfile} = useGlobal()
+  const { allProfile,profile } = useGlobal();
 
   const [universities, setUniversities] = useState<University[]>([]);
   const [loading, setLoading] = useState(true);
@@ -252,18 +272,57 @@ function UniversitiesPageClient() {
   const searchParams = useSearchParams();
   // const search = searchParams.get("country") || "" //
   const [search, setsearch] = useState("");
+  // Filters state
+  const [filters, setFilters] = useState({
+    country: "",
+  category: "", // add this 
+    city: "",
+    uni_type: "",
+    has_accommodation: "",
+    min_acceptance_rate: "",
+    max_acceptance_rate: "",
+    sort_by: "name",
+    sort_order: "asc",
+  });
 
-  useEffect(() => {
-    const country = searchParams.get("country") || "";
-    if(country) {
-    setsearch(country);
-    }else {
-      setsearch(allProfile?.profile?.otherDetails?.countries_shortlist?.join(",") || "")
-    }
 
-  }, [searchParams,allProfile]);
+//   useEffect(() => {
+//     const country = searchParams.get("country") || "";
+//     if (country) {
+//       setsearch(country);
+//     } else {
+//       setsearch(allProfile?.profile?.otherDetails?.countries_shortlist?.join(",") || "");
+//       console.log(allProfile?.profile?.otherDetails?.categorie_shortlist);
+//     }
+//   }, [searchParams, allProfile]);
 
-  // Debounced search query
+
+
+useEffect(() => {
+  const country = searchParams.get("country") || "";
+
+  const shortlistCountries = allProfile?.profile?.otherDetails?.countries_shortlist || [];
+
+  const shortlistCategories = allProfile?.profile?.otherDetails?.categorie_shortlist?.join(",") || [];
+
+  // country search state
+  const finalCountry = country || shortlistCountries.join(",");
+
+  setsearch(finalCountry);
+
+  // set filters
+  setFilters((prev) => ({
+    ...prev,
+    country: finalCountry,
+    category: shortlistCategories, // set categories
+  }));
+
+  console.log(shortlistCategories, "categories");
+}, [searchParams, allProfile, profile]);
+
+
+// console.log(search, "search list")
+//   // Debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   // Handle click outside
@@ -291,17 +350,6 @@ function UniversitiesPageClient() {
     };
   }, []);
 
-  // Filters state
-  const [filters, setFilters] = useState({
-    country:  "",
-    city: "",
-    uni_type: "",
-    has_accommodation: "",
-    min_acceptance_rate: "",
-    max_acceptance_rate: "",
-    sort_by: "name",
-    sort_order: "asc",
-  });
 
   const fetchCountries = useCallback(async () => {
     try {
@@ -322,21 +370,34 @@ function UniversitiesPageClient() {
   }, [fetchCountries]);
 
   // Fetch universities with debounced search
-  const fetchUniversities = useCallback(async (reset = false) => {
+  const fetchUniversities = useCallback(
+    async (reset = false) => {
       try {
         const currentPage = reset ? 1 : page;
+        // const params = new URLSearchParams({
+        //   page: currentPage.toString(),
+        //   limit: "8",
+        //   ...(debouncedSearchQuery && { name: debouncedSearchQuery }),
+        //   ...(filters.country && { country: filters.country }),
+        //   ...(filters.sort_by && { sort_by: filters.sort_by }),
+        //   ...(filters.city && { city: filters.city }),
+        //   ...(filters.uni_type && { type: filters.uni_type }),
+        //   ...(filters.country === "" && search && { country: search }),
+        // });
+
+
         const params = new URLSearchParams({
           page: currentPage.toString(),
           limit: "8",
           ...(debouncedSearchQuery && { name: debouncedSearchQuery }),
           ...(filters.country && { country: filters.country }),
+          // ...(filters.category && { category: filters.category }), // add this
           ...(filters.sort_by && { sort_by: filters.sort_by }),
           ...(filters.city && { city: filters.city }),
           ...(filters.uni_type && { type: filters.uni_type }),
-          ...(filters.country === "" && search && { country: search})
         });
 
-        console.log(params,'param',typeof(search))
+        console.log(params, "param", typeof search);
         const response = await axiosInstance.get(`/universities?${params}`);
         const data = response.data.result;
 
@@ -353,14 +414,16 @@ function UniversitiesPageClient() {
         setLoading(false);
         setLoadingMore(false);
       }
-    },[page, debouncedSearchQuery, filters,search]);
+    },
+    [page, debouncedSearchQuery, filters, search],
+  );
 
   // Initial fetch and reset on filter changes
   useEffect(() => {
     setLoading(true);
     setPage(1);
     fetchUniversities(true);
-  }, [debouncedSearchQuery, filters,search]);
+  }, [debouncedSearchQuery, filters, search]);
 
   // Infinite scroll observer
   useEffect(() => {
@@ -417,6 +480,7 @@ function UniversitiesPageClient() {
   const clearFilters = () => {
     setFilters({
       country: "",
+      category: "",
       city: "",
       uni_type: "",
       has_accommodation: "",
@@ -479,234 +543,8 @@ function UniversitiesPageClient() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          
-                    {/* Breadcrumb */}
-                    {/* <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                        <Link href="/dashboard" className="hover:text-[#F26D44] transition-colors">Home</Link>
-                        <ChevronRight className="w-4 h-4" />
-                        <span className="text-gray-900 font-medium">Countries</span>
-                    </div> */}
-
-                    {/* Title */}
-                    <div className="w-full rounded-2xl border border-[#E9ECF5] bg-white p-4 sm:p-6 shadow-sm">
-
-                        {/* Header */}
-                        <div className="mb-5 flex items-center justify-between">
-                            <h2 className="text-[15px] sm:text-[18px] font-semibold text-[#1E2A5A]">
-                                Your Preferences
-                            </h2>
-
-                            <button onClick={() => setIsEditOpen(true)} className="flex items-center gap-2 text-[12px] sm:text-[14px] font-medium text-[#4F46E5] hover:opacity-80 transition">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-4 w-4"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth={2}
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z"
-                                    />
-                                </svg>
-                                Edit Preferences
-                            </button>
-                        </div>
-
-                        {/* Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
-
-                            {/* Card */}
-                            <div className="flex items-start gap-3 rounded-xl border border-[#EEF1F7] p-3 sm:p-4">
-                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E8EBF5] bg-white">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5 text-[#5B5BD6]"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M8 21h8M12 17v4M7 4h10l1 10H6L7 4z"
-                                        />
-                                    </svg>
-                                </div>
-
-                                <div className="min-w-0">
-                                    <p className="text-[11px] sm:text-[12px] font-medium text-[#8A94A6]">
-                                        Field of Study
-                                    </p>
-
-                                    <h3 className="mt-1 text-[13px] sm:text-[15px] font-semibold text-[#111827] leading-snug">
-                                       {allProfile?.profile?.otherDetails?.categorie_shortlist?.join(', ')}
-                                    </h3>
-                                </div>
-                            </div>
-
-                            {/* Card */}
-                            <div className="flex items-start gap-3 rounded-xl border border-[#EEF1F7] p-3 sm:p-4">
-                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E8EBF5] bg-white">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5 text-[#5B5BD6]"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                        />
-                                    </svg>
-                                </div>
-
-                                <div className="min-w-0">
-                                    <p className="text-[11px] sm:text-[12px] font-medium text-[#8A94A6]">
-                                        Intake
-                                    </p>
-
-                                    <h3 className="mt-1 text-[13px] sm:text-[15px] font-semibold text-[#111827]">
-                                        {allProfile?.data?.intake}
-                                    </h3>
-                                </div>
-                            </div>
-
-                            {/* Card */}
-                            <div className="flex items-start gap-3 rounded-xl border border-[#EEF1F7] p-3 sm:p-4">
-                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#DDF5E8] bg-white">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5 text-[#16A34A]"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"
-                                        />
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M19.4 15A7.97 7.97 0 0020 12a8 8 0 10-8 8"
-                                        />
-                                    </svg>
-                                </div>
-
-                                <div className="min-w-0">
-                                    <p className="text-[11px] sm:text-[12px] font-medium text-[#8A94A6]">
-                                        Budget (Tuition Fee)
-                                    </p>
-
-                                    <h3 className="mt-1 text-[13px] sm:text-[15px] font-semibold text-[#111827] leading-snug">
-                                        Up to {allProfile?.data?.tuitionfee} / year
-                                    </h3>
-                                </div>
-                            </div>
-
-                            {/* Card */}
-                            <div className="flex items-start gap-3 rounded-xl border border-[#EEF1F7] p-3 sm:p-4">
-                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E8EBF5] bg-white">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5 text-[#5B5BD6]"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M17.657 16.657L13.414 12.414a4 4 0 10-5.657 5.657l4.243 4.243"
-                                        />
-                                    </svg>
-                                </div>
-
-                                <div className="min-w-0">
-                                    <p className="text-[11px] sm:text-[12px] font-medium text-[#8A94A6]">
-                                        Preferred Location
-                                    </p>
-
-                                    <h3 className="mt-1 text-[13px] sm:text-[15px] font-semibold text-[#111827] leading-snug">
-                                         {allProfile?.profile?.otherDetails?.countries_shortlist?.join(', ')}
-                                    </h3>
-                                </div>
-                            </div>
-
-                            {/* Card */}
-                            <div className="flex items-start gap-3 rounded-xl border border-[#EEF1F7] p-3 sm:p-4">
-                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E8EBF5] bg-white">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5 text-[#5B5BD6]"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"
-                                        />
-                                    </svg>
-                                </div>
-
-                                <div className="min-w-0">
-                                    <p className="text-[11px] sm:text-[12px] font-medium text-[#8A94A6]">
-                                        Post Study Work
-                                    </p>
-
-                                    <h3 className="mt-1 text-[13px] sm:text-[15px] font-semibold text-[#111827]">
-                                        Important
-                                    </h3>
-                                </div>
-                            </div>
-
-                            {/* Card */}
-                            <div className="flex items-start gap-3 rounded-xl border border-[#EEF1F7] p-3 sm:p-4">
-                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#E8EBF5] bg-white">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-5 w-5 text-[#5B5BD6]"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M17 20h5V4H2v16h5"
-                                        />
-                                    </svg>
-                                </div>
-
-                                <div className="min-w-0">
-                                    <p className="text-[11px] sm:text-[12px] font-medium text-[#8A94A6]">
-                                        Stay Back Period
-                                    </p>
-
-                                    <h3 className="mt-1 text-[13px] sm:text-[15px] font-semibold text-[#111827] leading-snug">
-                                        Long Term (2+ years)
-                                    </h3>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                      
-
+          {/* Breadcrumb */}
+       
         </motion.div>
 
         {/* Search and Filter Bar */}
@@ -794,10 +632,10 @@ function UniversitiesPageClient() {
                         <ModernSelect
                           options={countries}
                           value={filters.country}
-                          onChange={(value) =>{
-                            console.log(value,"value")
-                            handleFilterChange("country", value)}
-                          }
+                          onChange={(value) => {
+                            console.log(value, "value");
+                            handleFilterChange("country", value);
+                          }}
                           placeholder="Select country"
                           className="py-0"
                         />
