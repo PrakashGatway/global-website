@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Inter } from "next/font/google";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -204,9 +205,9 @@ export function TestimonialSection() {
 
                 {/* Bottom CTA */}
                 <div className="flex justify-center mt-14">
-                    <button className="border-2 rounded-full hover:bg-[#bb1f34] text-white px-6 py-2.5 text-base font-semibold shadow-xl transition-all duration-300 hover:scale-103">
+                    <Link href="/consultant/contact-form" className="border-2 rounded-full hover:bg-[#bb1f34] text-white px-6 py-2.5 text-base font-semibold shadow-xl transition-all duration-300 hover:scale-103">
                         Connect with Experts to Choose the Right Course
-                    </button>
+                    </Link>
                 </div>
 
             </div>
@@ -222,6 +223,8 @@ export default function GermanyLanding() {
     const [submitted, setSubmitted] = useState(false);
     const [heroSubmitted, setHeroSubmitted] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const router = useRouter();
+
 
     useEffect(() => {
         const handleScroll = () => {
@@ -259,6 +262,7 @@ export default function GermanyLanding() {
             };
             await axiosInstance.post("/contactus", payload);
             toast.success("Form submitted successfully");
+            router.push("/thank-you");
             if (isHero) {
                 setHeroSubmitted(true);
                 setTimeout(() => {
@@ -799,7 +803,7 @@ export default function GermanyLanding() {
                                         </p>
 
                                         {/* Bottom CTA */}
-                                        <div onClick={() => setPopupOpen(true)} className="flex pb-2 items-center justify-between mt-3 group cursor-pointer">
+                                        <div onClick={() => router.push("/consultant/contact-form")} className="flex pb-2 items-center justify-between mt-3 group cursor-pointer">
                                             <span className="text-[#F46C44] text-lg font-semibold tracking-wide">
                                                 Enquiry Now
                                             </span>
@@ -872,7 +876,7 @@ export default function GermanyLanding() {
 
                     {/* CTA */}
                     <div className="text-center mt-12">
-                        <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e45c36] text-white px-6 py-2.5 rounded-full text-base font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_16px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+                        <button onClick={() => router.push("/consultant/contact-form")} type="button" className="bg-[#f46c44] hover:bg-[#e45c36] text-white px-6 py-2.5 rounded-full text-base font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_16px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
                             Connect with Experts to Choose the Right Course →
                         </button>
                     </div>
@@ -911,7 +915,7 @@ export default function GermanyLanding() {
                             {/* CTA */}
                             <div className="mt-6">
                                 <button
-                                    onClick={() => setPopupOpen(true)}
+                                    onClick={() => router.push("/consultant/contact-form")}
                                     className="bg-[#F36D45] hover:bg-[#c1182a] text-white px-6 py-2.5 rounded-full text-base font-semibold shadow-xl hover:scale-102 transition-all duration-300"
                                 >
                                     Connect with Experts to Choose the Right Course
@@ -1057,7 +1061,7 @@ export default function GermanyLanding() {
 
                         <div className="inline-flex flex-col items-center">
                             <div className="flex flex-wrap justify-center gap-5">
-                                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-2.5 rounded-full font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
+                                <button onClick={() => router.push("/consultant/contact-form")} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-2.5 rounded-full font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-101 transition-all duration-300">
                                     Book Your FREE Counselling →
                                 </button>
                             </div>
@@ -1106,7 +1110,7 @@ export default function GermanyLanding() {
                             {/* CTA Buttons */}
                             <div className="flex flex-wrap gap-5 mt-4">
 
-                                <button onClick={() => setPopupOpen(true)} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-105 transition-all duration-300">
+                                <button onClick={() => router.push("/consultant/contact-form")} type="button" className="bg-[#f46c44] hover:bg-[#e15d37] text-white px-6 py-3 rounded-full text-lg font-semibold shadow-[0_12px_35px_rgba(244,108,68,0.35)] hover:shadow-[0_18px_45px_rgba(244,108,68,0.45)] hover:scale-105 transition-all duration-300">
                                     Book Appointment →
                                 </button>
                             </div>
@@ -1193,7 +1197,7 @@ export default function GermanyLanding() {
                     {/* Button */}
                     <div className="mt-10">
                         <button
-                            onClick={() => setPopupOpen(true)}
+                            onClick={() => router.push("/consultant/contact-form")}
                             type="button"
                             className="bg-white hover:bg-gray-200 hover:scale-105 text-[#000000] font-semibold text-xl px-8 py-3 rounded-full shadow-lg transition-all duration-300"
                         >

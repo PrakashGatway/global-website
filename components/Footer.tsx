@@ -18,7 +18,7 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
     pathname.startsWith("/dashboard") || 
     pathname.startsWith("/api") || 
     pathname.startsWith("/onboarding") ||
-    pathname.startsWith("/consultant")
+    pathname.startsWith("/consultant") || pathname.startsWith("/thank-you")
   ) {
     return null
   }
