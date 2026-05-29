@@ -297,7 +297,7 @@ export default function ApplicationHistoryPage({heading = "Application History",
     const statusInfo = getStatusInfo(application.primaryStatus)
     const paymentInfo = getPaymentStatusInfo(application.paymentStatus)
     const university = application.course?.university
-    const documentCount = application.documents.length;
+    // const documentCount = application.documents.length;
 
 
     return (

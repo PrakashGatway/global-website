@@ -193,7 +193,7 @@ export default function VisaApplicationManager({
   const [saveStatus, setSaveStatus] = useState<
     "idle" | "saving" | "saved" | "error"
   >("idle");
-  
+
   const [saveMessage, setSaveMessage] = useState("");
 
   console.log(applicaion?.student?._id, "applicaion");
@@ -691,7 +691,7 @@ export default function VisaApplicationManager({
                 <Clock size={18} />
               </div>
               <h2 className="font-semibold text-slate-800 text-lg">
-                Application Steps
+                Visa Processing Steps
               </h2>
               <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
                 {formData.steps.length} steps

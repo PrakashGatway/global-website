@@ -46,7 +46,7 @@ import { useRouter, useParams } from "next/navigation";
 import MessagingTab from "@/components/dashboard/application/chatSystem";
 import { motion,AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
-import VisaApplicationManager from "@/components/dashboard/application/visaprosessing";
+import VisaApplicationManager from "@/components/dashboard/application/visaprocessing";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
