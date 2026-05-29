@@ -2641,7 +2641,7 @@ export default function ApplicationDetailPage() {
                     <div className="max-h-[650px] overflow-y-auto divide-y divide-gray-200">
                       {messageList?.map((item, index): any => (
                         <motion.div
-                          key={index}
+                          key={index+1}
                           initial={{ opacity: 0, y: 15 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.05 }}
