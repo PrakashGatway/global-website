@@ -27,6 +27,26 @@ export function GlobalProvider({ children }) {
     const timer2Ref = useRef(null);
     const hasInitializedTimers = useRef(false);
 
+      const [selectedCountries, setSelectedCountries] = useState([])
+
+    const addCountry = (country) => {
+
+        const exists = selectedCountries.find(
+            item => item._id === country._id
+        )
+
+        if (!exists) {
+            setSelectedCountries(prev => [...prev, country])
+        }
+    }
+
+    const removeCountry = (id) => {
+        setSelectedCountries(prev =>
+            prev.filter(item => item._id !== id)
+        )
+    }
+
+
     const getProfile = async () => {
         try {
             const res = await axiosInstance.get("/auth/me")
@@ -229,7 +249,11 @@ export function GlobalProvider({ children }) {
             openPopup: showPopup,
             closePopup,
             show, setShow,
-            update, setupdate
+            update, setupdate,
+            selectedCountries,
+            setSelectedCountries,
+            addCountry,
+            removeCountry
         }}>
             {children}
             <PopupForm

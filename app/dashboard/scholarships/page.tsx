@@ -5,6 +5,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Search, MapPin, Grid, List, ChevronRight, Star, GraduationCap, Globe, Calendar, DollarSign, Filter, Loader2, AlertCircle } from 'lucide-react';
 import axiosInstance from '@/app/axiosInstance';
+import { useRouter } from 'next/navigation';
+
 
 // TypeScript Interfaces matching your schema
 interface Country {
@@ -117,6 +119,8 @@ export default function ScholarshipPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [SelectedCountry, setSelectedCountry] = useState([])
+    const [allCountries, setallCountries] = useState([])
 
     // Filter states
     const [filters, setFilters] = useState({
@@ -135,15 +139,16 @@ export default function ScholarshipPage() {
             const params = {
                 page,
                 limit: 12,
-                country: filters.country || undefined,
-                level: filters.level || undefined,
-                fundingType: filters.fundingType || undefined,
-                deliveryMode: filters.deliveryMode || undefined,
-                search: filters.search || undefined
+                country: filters.country || "",
+                level: filters.level || "",
+                fundingType: filters.fundingType || "",
+                deliveryMode: filters.deliveryMode || "",
+                search: filters.search || ""
             };
+            console.log(params)
 
             const response = await axiosInstance.get(`/scholarships/public/list?${new URLSearchParams(params)}`);
-
+            console.log(response)
             setScholarships(response.data.data);
             if (response.data.pagination) setPagination(response.data.pagination);
 
@@ -154,10 +159,34 @@ export default function ScholarshipPage() {
         }
     }, [filters]);
 
+    const fetchCounries = async () => {
+        try {
+            const response = await axiosInstance.get(`/countries?limit=50&populateExtra=true`)
+            setallCountries(response?.data?.data)
+
+        }
+        catch (error) {
+            console.log(error);
+            alert("Error...");
+        }
+    }
+    console.log(scholarships)
+
+
+
     // Initial fetch and filter change
     useEffect(() => {
         fetchScholarships(1);
+        fetchCounries()
+
     }, [fetchScholarships]);
+
+
+
+  
+
+
+
 
     // Handle filter change
     const handleFilterChange = (key: string, value: string) => {
@@ -198,6 +227,8 @@ export default function ScholarshipPage() {
         return 'bg-gray-100 text-gray-800';
     };
 
+    const router = useRouter()
+
     return (
         <div className="min-h-screen mx-auto px-2 py-2">
 
@@ -222,17 +253,24 @@ export default function ScholarshipPage() {
                         <Globe className="w-4 h-4" />
                         <span className="text-sm font-medium">All Countries</span>
                     </button>
-                    {COUNTRIES.map((country) => (
+                    {allCountries.map((country, i) => (
                         <button
-                            key={country.code}
-                            onClick={() => handleFilterChange('country', country.code)}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-full border-2 whitespace-nowrap transition-all ${filters.country === country.code
-                                ? 'border-[#ff6b35] bg-orange-50 text-[#ff6b35]'
-                                : 'border-gray-200 hover:border-[#ff6b35] hover:text-[#ff6b35]'
+                            key={country._id}
+                            onClick={() => handleFilterChange('country', country._id)}
+                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 whitespace-nowrap transition-all ${filters.country === country?._id
+                                    ? "border-[#ff6b35] bg-orange-50 text-[#ff6b35]"
+                                    : "border-gray-200 hover:border-[#ff6b35] hover:text-[#ff6b35]"
                                 }`}
                         >
-                            <span className="text-lg">{country.flag}</span>
-                            <span className="text-sm font-medium">{country.name}</span>
+                            <img
+                                src={country?.flg}
+                                alt={country?.name}
+                                className="w-6 h-6 rounded-full object-cover flex-shrink-0"
+                            />
+
+                            <span className="text-sm font-medium leading-none">
+                                {country?.name}
+                            </span>
                         </button>
                     ))}
                 </div>
@@ -403,79 +441,40 @@ export default function ScholarshipPage() {
                         : 'grid-cols-1'
                         }`}>
                         {scholarships.map((scholarship) => (
-                            <div
-                                key={scholarship._id}
-                                className={`bg-white rounded-2xl overflow-hidden shadow hover:shadow-xl transition-all duration-300 border border-gray-100 group ${viewMode === 'list' ? 'flex flex-col md:flex-row' : ''
-                                    }`}
-                            >
-                                {/* Image/Gradient Header */}
-                                <div className={`relative ${viewMode === 'list' ? 'md:w-64' : 'h-48'} bg-gradient-to-br from-[#ff6b35]/10 to-[#e55a2b]/10`}>
-                                    {scholarship.university?.name ? (
-                                        <div className="absolute inset-0 flex items-center justify-center p-4">
-                                            <div className="text-center">
-                                                <GraduationCap className="w-12 h-12 text-[#ff6b35] mx-auto mb-2" />
-                                                <p className="text-xs text-gray-500 font-medium">{scholarship.university.name}</p>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <Globe className="w-16 h-16 text-[#ff6b35]/30" />
-                                        </div>
-                                    )}
-
-                                    {/* Funding Type Badge */}
-                                    <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium ${getFundingBadgeColor(scholarship.fundingType)}`}>
-                                        {scholarship.fundingType || 'Scholarship'}
-                                    </div>
-                                </div>
-
-                                {/* Content */}
-                                <div className={`p-6 ${viewMode === 'list' ? 'flex-1' : ''}`}>
-                                    <div className="flex items-start justify-between gap-3 mb-3">
-                                        <h3 className="font-bold text-gray-900 text-lg leading-tight group-hover:text-[#ff6b35] transition-colors">
-                                            {scholarship.title}
-                                        </h3>
+                            <div className="duration-300 hover:scale-105 transition-all hover:-translate-y-1 cursor-pointer" key={scholarship?._id}>
+                                <div className="bg-[#efefef] p-2 max-w-[450px] mx-auto">
+                                    <div className="overflow-hidden">
+                                        <img
+                                            src="https://www.mili.edu.af/blogs/elements/post_image/2024-12-23-18-16-4822.jpg"
+                                            alt={scholarship.title}
+                                            className="w-full h-[220px] object-cover"
+                                        />
+                                   
                                     </div>
 
-                                    <div className="space-y-2 mb-4">
-                                        <p className="text-sm text-gray-600 flex items-center gap-2">
-                                            <MapPin className="w-4 h-4 text-gray-400" />
-                                            {scholarship.country?.name}
-                                            {scholarship.university?.name && ` • ${scholarship.university.name}`}
+                                    <div className="pt-4 px-2">
+                                        <div className="relative group w-fit">
+                                            <h3 className="text-xl line-clamp-2 font-medium text-black cursor-pointer">
+                                                {scholarship.title}
+                                            </h3>
+
+                                           
+                                        </div>
+
+                                        <p className="text-[#444] mt-2 text-sm line-clamp-2 leading-relaxed">
+                                            {scholarship.description}
                                         </p>
 
-                                        <div className="flex flex-wrap gap-2">
-                                            {scholarship.level.slice(0, 2).map((lvl, idx) => (
-                                                <span key={idx} className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md">
-                                                    {lvl}
-                                                </span>
-                                            ))}
-                                            {scholarship.deliveryMode && (
-                                                <span className="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md">
-                                                    {scholarship.deliveryMode}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
+                                        {/* Bottom CTA */}
+                                        <div onClick={() => router.push(`/dashboard/scholarships/${scholarship.slug}`)} className="flex pb-2 items-center justify-between mt-3 group cursor-pointer">
+                                            <span className="text-[#F46C44] text-lg font-semibold tracking-wide">
+                                                Details
+                                            </span>
 
-                                    {/* Amount & Deadline */}
-                                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                        <div>
-                                            {scholarship.amount && (
-                                                <p className="text-xl font-bold text-[#ff6b35]">{scholarship.amount}</p>
-                                            )}
-                                            <p className="text-xs text-gray-500 mt-1">
-                                                <Calendar className="w-3 h-3 inline mr-1" />
-                                                Deadline: {formatDeadline(scholarship.deadline)}
-                                            </p>
+                                            <span className=" right-0 text-[#F46C44] text-4xl group-hover:translate-x-2 transition-all duration-300">
+                                                →
+                                            </span>
                                         </div>
-                                        <a
-                                            href={`/scholarship/${scholarship.slug}`}
-                                            className="bg-[#ff6b35] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#e55a2b] transition shadow-sm hover:shadow-md inline-flex items-center gap-1"
-                                        >
-                                            View Details
-                                            <ChevronRight className="w-4 h-4" />
-                                        </a>
                                     </div>
                                 </div>
                             </div>

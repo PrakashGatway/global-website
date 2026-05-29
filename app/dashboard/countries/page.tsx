@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect, useRef } from "react"
+import { usePathname, useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
     Globe, Search, Filter, ChevronRight, Star, Users,
@@ -13,6 +13,7 @@ import Link from "next/link"
 import axiosInstance from "@/app/axiosInstance"
 import { useGlobal } from "@/src/statecontext"
 import toast from "react-hot-toast"
+import CompareDrawer from "@/components/dashboard/countries/compareDrawer"
 
 
 interface Country {
@@ -246,9 +247,8 @@ export default function CountriesPage() {
 
     // State Management
     const [countries, setCountries] = useState<Country[]>([])
-    const [loading, setLoading] = useState(true)
     const [searchQuery, setSearchQuery] = useState("")
-    const [currentPage, setCurrentPage] = useState(1)
+
     const [totalPages, setTotalPages] = useState(1)
     const [totalCountries, setTotalCountries] = useState(0)
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
@@ -257,6 +257,27 @@ export default function CountriesPage() {
     const [showFilters, setShowFilters] = useState(false)
 
     const [isEditOpen, setIsEditOpen] = useState(false);
+
+    const [openDrawer, setOpenDrawer] = useState(false)
+    const [currentCountry, setCurrentCountry] = useState(null)
+    const [page, setPage] = useState(1)
+    const [currentPage, setCurrentPage] = useState()
+
+    const [loading, setLoading] = useState(false) // Start with false, not true
+    const [initialLoad, setInitialLoad] = useState(true) // Track initial load
+
+
+
+
+    const [hasMore, setHasMore] = useState(true)
+
+    const observerTarget = useRef(null)
+
+    const handleCompare = (country) => {
+        setCurrentCountry(country)
+        setOpenDrawer(true)
+    }
+
 
     const [preferences, setPreferences] = useState({
         fieldOfStudy: "MS in Data Science",
@@ -267,22 +288,22 @@ export default function CountriesPage() {
         stayBack: "Long Term (2+ years)",
     });
 
-    const limit = 12
+    const limit = 30
     const { allProfile } = useGlobal()
 
-  
 
-   const [shortlistedCountries,
-    setShortlistedCountries] =
-    useState(
-        allProfile?.profile?.otherDetails?.countries_shortlist || []
-    );
 
-        useEffect(() => {
-            setShortlistedCountries(allProfile?.profile?.otherDetails?.countries_shortlist || [])
-        },[allProfile])
+    const [shortlistedCountries,
+        setShortlistedCountries] =
+        useState(
+            allProfile?.profile?.otherDetails?.countries_shortlist || []
+        );
 
-console.log(shortlistedCountries)
+    useEffect(() => {
+        setShortlistedCountries(allProfile?.profile?.otherDetails?.countries_shortlist || [])
+    }, [allProfile])
+
+
 
 
 
@@ -357,12 +378,12 @@ console.log(shortlistedCountries)
 
     };
 
-    // Fetch Countries
+    
     const fetchCountries = async () => {
         try {
             setLoading(true)
             const params = new URLSearchParams({
-                page: currentPage.toString(),
+                page: page.toString(),
                 limit: limit.toString(),
                 ...(searchQuery && { search: searchQuery }),
                 ...(statusFilter && { status: statusFilter }),
@@ -372,19 +393,95 @@ console.log(shortlistedCountries)
             const response = await axiosInstance.get(`/countries?${params}&populateExtra=true`)
             const data: CountriesResponse = response.data
 
-            setCountries(data.data)
+            console.log('Page:', page, 'Data length:', data.data.length, 'Total:', data.total, 'Pages:', data.pages)
+
+            setCountries((prev) => {
+                if (page === 1) {
+                    // First page - replace all data
+                    return data.data
+                } else {
+                    // Subsequent pages - append new data
+                    const merged = [...prev, ...data.data]
+                    // Remove duplicates just in case
+                    const uniqueCountries = merged.filter(
+                        (item, index, self) =>
+                            index === self.findIndex((t) => t._id === item._id)
+                    )
+                    return uniqueCountries
+                }
+            })
+
             setTotalPages(data.pages)
             setTotalCountries(data.total)
+
+            // Check if we have more pages to load
+            const morePages = page < data.pages
+            setHasMore(morePages)
+
+            console.log('Has more:', morePages, 'Current page:', page, 'Total pages:', data.pages)
+
         } catch (error) {
             console.error('Error fetching countries:', error)
+            toast.error('Failed to fetch countries')
+            setHasMore(false)
         } finally {
             setLoading(false)
+            setInitialLoad(false)
         }
     }
 
+    // Load first page when component mounts or filters change
     useEffect(() => {
-        fetchCountries()
-    }, [currentPage, searchQuery, statusFilter, featuredFilter])
+        setPage(1)
+        setCountries([])
+        setHasMore(true)
+        setInitialLoad(true)
+        // Fetch will be triggered by the page change effect below
+    }, [searchQuery, statusFilter, featuredFilter])
+
+    // Fetch when page changes
+    useEffect(() => {
+        if (page === 1 && !initialLoad) {
+            // If resetting to page 1, don't fetch twice on initial load
+            fetchCountries()
+        } else if (page > 1) {
+            fetchCountries()
+        } else if (initialLoad) {
+            fetchCountries()
+        }
+    }, [page])
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0]
+                console.log('Observer triggered:', entry.isIntersecting, 'hasMore:', hasMore, 'loading:', loading)
+
+                if (entry.isIntersecting && hasMore && !loading) {
+                    console.log('Loading next page...')
+                    setPage((prev) => prev + 1)
+                }
+            },
+            {
+                root: null,
+                rootMargin: "200px",
+                threshold: 0
+            }
+        )
+
+        const currentTarget = observerTarget.current
+
+        if (currentTarget) {
+            observer.observe(currentTarget)
+        }
+
+        return () => {
+            if (currentTarget) {
+                observer.unobserve(currentTarget)
+            }
+            observer.disconnect()
+        }
+    }, [hasMore, loading])
 
     // Handle search with debounce
     useEffect(() => {
@@ -413,11 +510,17 @@ console.log(shortlistedCountries)
 
     const hasActiveFilters = searchQuery || statusFilter || featuredFilter
 
+
+
+    const navigation = (slug) => {
+        router.push(`/dashboard/countries/${slug}`)
+    }
+
     return (
         <main className="flex-1 min-h-screen bg-white">
             <div className="max-w-7xl mx-auto px-4 py-6">
                 {/* Header Section */}
-               
+
 
                 {/* Search and Filters */}
                 <div className="space-y-4 mb-8">
@@ -571,7 +674,6 @@ console.log(shortlistedCountries)
                         ))}
                     </div>
                 )} */}
-
                 <div className="w-full rounded-2xl border border-[#E8ECF4] bg-white shadow-sm overflow-hidden">
 
                     {/* Header */}
@@ -589,6 +691,7 @@ console.log(shortlistedCountries)
                     </div>
 
                     {/* Desktop Table */}
+
                     <div className="hidden lg:block overflow-x-auto">
                         <table className="w-full min-w-[1100px]">
 
@@ -627,11 +730,13 @@ console.log(shortlistedCountries)
                                     const extra =
                                         item?.extra_content;
 
+
                                     return (
 
                                         <tr
                                             key={item._id || index}
-                                            className="border-b border-[#F1F5F9] hover:bg-[#FAFBFD] transition"
+                                            className="border-b border-[#F1F5F9] hover:bg-[#FAFBFD] transition cursor-pointer relative z-1"
+                                        // onClick={() => navigation(item.code)}
                                         >
 
                                             {/* Country */}
@@ -733,7 +838,16 @@ console.log(shortlistedCountries)
 
                                                 <div className="flex flex-col gap-3">
 
-                                                    <label className="flex items-center gap-2 text-[13px] font-medium text-[#2563EB]">
+                                                    {/* SHORTLIST */}
+
+                                                    <label
+                                                        className="
+            flex items-center gap-2
+            text-[13px] font-medium
+            text-[#2563EB]
+            cursor-pointer
+        "
+                                                    >
 
                                                         <input
                                                             type="checkbox"
@@ -746,21 +860,65 @@ console.log(shortlistedCountries)
                                                                 handleShortlist(item)
                                                             }
 
-                                                            className="h-4 w-4 rounded"
+                                                            className="
+                h-4 w-4
+                rounded
+                accent-blue-600
+                cursor-pointer
+            "
                                                         />
 
                                                         Shortlist
 
                                                     </label>
-                                                    <button className="text-[12px] font-medium text-[#2563EB]">
-                                                        Compare
-                                                    </button>
+
+                                                    {/* BUTTONS */}
+
+                                                    <div className="flex gap-2">
+
+                                                        {/* VIEW BUTTON */}
+
+                                                        <button
+                                                            onClick={() => navigation(item?.code)}
+                                                            className="
+                px-4 py-2
+                rounded-lg
+                border border-gray-300
+                text-sm font-medium
+                hover:bg-gray-100
+                transition
+            "
+                                                        >
+                                                            View
+                                                        </button>
+
+                                                        {/* COMPARE BUTTON */}
+
+                                                        <button
+                                                            onClick={() => handleCompare(item)}
+                                                            className="
+                px-4 py-2
+                rounded-lg
+                bg-blue-600
+                hover:bg-blue-700
+                text-white
+                text-sm
+                font-medium
+                shadow-sm
+                transition
+            "
+                                                        >
+                                                            Compare
+                                                        </button>
+
+                                                    </div>
 
                                                 </div>
 
                                             </td>
 
                                         </tr>
+
 
                                     );
 
@@ -771,6 +929,15 @@ console.log(shortlistedCountries)
                         </table>
 
                     </div>
+                    <CompareDrawer
+                        open={openDrawer}
+                        setOpen={setOpenDrawer}
+                        countries={countries}
+                        currentCountry={currentCountry}
+                    />
+
+
+
 
                     {/* Mobile Cards */}
                     <div className="flex flex-col gap-4 p-4 lg:hidden">
@@ -783,7 +950,8 @@ console.log(shortlistedCountries)
 
                                 <div
                                     key={item._id || index}
-                                    className="rounded-2xl border border-[#EEF2F7] bg-white p-4 shadow-sm transition hover:shadow-md"
+                                    className="rounded-2xl border border-[#EEF2F7] bg-white p-4 shadow-sm transition hover:shadow-md cursor-pointer"
+                                    onClick={() => navigation(item.code)}
                                 >
 
                                     {/* Top */}
@@ -928,63 +1096,40 @@ console.log(shortlistedCountries)
                         })}
 
                     </div>
+                    <div
+                        ref={observerTarget}
+                        className="h-20 flex justify-center items-center"
+                    >
+
+                        <div
+                            ref={observerTarget}
+                            className="h-20 flex justify-center items-center"
+                        >
+                            {loading && (
+                                <div className="flex flex-col items-center gap-2">
+                                    <div className="h-8 w-8 rounded-full border-b-2 border-[#F26D44] animate-spin" />
+                                    <p className="text-sm text-gray-500">Loading more countries...</p>
+                                </div>
+                            )}
+
+                            {!hasMore && countries.length > 0 && (
+                                <p className="text-sm text-gray-400">You've seen all {totalCountries} countries</p>
+                            )}
+                        </div>
+
+                    </div>
                 </div>
 
 
-               
 
 
 
-                {/* Pagination */}
-                {totalPages > 1 && (
-                    <div className="flex justify-center items-center gap-2 mt-8 pt-6 border-t border-gray-200">
-                        <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-                        >
-                            <ChevronLeft className="w-5 h-5" />
-                        </button>
 
-                        <div className="flex gap-1">
-                            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                let pageNum
-                                if (totalPages <= 5) {
-                                    pageNum = i + 1
-                                } else if (currentPage <= 3) {
-                                    pageNum = i + 1
-                                } else if (currentPage >= totalPages - 2) {
-                                    pageNum = totalPages - 4 + i
-                                } else {
-                                    pageNum = currentPage - 2 + i
-                                }
 
-                                return (
-                                    <button
-                                        key={pageNum}
-                                        onClick={() => handlePageChange(pageNum)}
-                                        className={`w-10 h-10 rounded-lg transition-all duration-200 ${currentPage === pageNum
-                                            ? 'bg-[#F26D44] text-white'
-                                            : 'border border-gray-200 hover:bg-gray-50'
-                                            }`}
-                                    >
-                                        {pageNum}
-                                    </button>
-                                )
-                            })}
-                        </div>
 
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-                        >
-                            <ChevronRight className="w-5 h-5" />
-                        </button>
-                    </div>
-                )}
 
             </div>
+
         </main>
     )
 }

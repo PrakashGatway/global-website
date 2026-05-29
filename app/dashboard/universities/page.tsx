@@ -400,6 +400,7 @@ useEffect(() => {
         console.log(params, "param", typeof search);
         const response = await axiosInstance.get(`/universities?${params}`);
         const data = response.data.result;
+        
 
         if (reset) {
           setUniversities(data || []);

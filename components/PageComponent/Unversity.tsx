@@ -287,7 +287,7 @@ function DesktopCard({
                 alt={country.name}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/70 via-primary/20 to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent z-10" />
             
           {country.country.name && (
   <span
@@ -317,7 +317,7 @@ function DesktopCard({
                 <h3 className="text-2xl font-bold leading-tight">{country?.name}</h3>
                 <p className="text-sm text-white/90 mt-1 line-clamp-2">{country?.description}</p>
                 
-                <span className="inline-flex items-center gap-1 mt-3 bg-[#f46c44] text-white text-xs font-bold px-4 py-2 rounded-full  ">
+                <span className="inline-flex items-center gap-1 hover:text-orange-500 mt-5  text-white text-xs font-bold px-4  ">
                     Explore {country.name.split(' ')[0]} →
                 </span>
             </div>
@@ -356,7 +356,7 @@ function MobileCard({ country }: { country: Country }) {
       />
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />
 
       {/* Country Badge */}
      {country.country?.name && (

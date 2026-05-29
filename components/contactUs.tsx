@@ -9,6 +9,7 @@ import Link from "next/link";
 import FAQSection from "@/components/faqPage";
 import { DynamicLucideIcon } from "./DynamicLucideIcon";
 import { NewTag } from "./tag";
+import { url } from "inspector";
 
 export default function ContactUsPage({ contactData, Faqres }) {
   const heroTitle = contactData?.sections?.hero?.title || "";
@@ -59,59 +60,86 @@ export default function ContactUsPage({ contactData, Faqres }) {
   return (
     <div className='bg-[#fffaf7]'>
 
-      <section className="relative flex items-center" style={{ backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1 }}>
+      <section
+  className="relative bg-[#f46c44] min-h-[580px] py-30 -mt-20 z-50"
+  style={{
+    backgroundImage: `url("/contact-hero.png")`,
+    backgroundSize: "80%",
+    backgroundPosition: "right center",
+    backgroundRepeat: "no-repeat",
+    
+  }}
+>
+  <div className=" px-6 lg:px-35 lg:pt-14 relative">
 
-        <div className="w-full sm:pl-22 mx-auto grid lg:grid-cols-2 gap-12 items-center justify-between">
-          <div className="text-white space-y-6 p-6 sm:pt-0 pt-12">
-            <h1 className="text-4xl lg:text-6xl font-bold text-white tracking-tight">
-              {contactData?.title || "Contact Us"}
-            </h1>
-            <p className="text-lg max-w-2xl font-medium text-white">
-              {heroSubtitle}
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link href="#contact-form">
-                <button
-                  className="
-                    text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#1f2937]
-                    rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base font-semibold
-                    hover:bg-black hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)] 
-                    flex items-center justify-center gap-2
-                    transition-all hover:opacity-90
-                  "
-                >
-                  Contact Now
-                </button>
-              </Link>
+    
 
-              <Link href="/login">
-                <button
-                  className="
-                    text-black/80 px-6 sm:px-8 py-2.5 sm:py-3 bg-white
-                    rounded-tr-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)] text-base  font-semibold
-                    transition-all hover:bg-black hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)] 
-                  "
-                >
-                  Check Your Eligibility
-                </button>
-              </Link>
-            </div>
-          </div>
-          <div className="h-full w-full">
-            <div className='relative h-[100%] w-full rounded-bl-[40%] overflow-hidden mr-10'>
-              <img className='h-full w-full object-cover' src={contactData?.sections?.hero?.heroImage} alt={contactData?.sections?.hero?.title} />
-              {/* <div className='absolute bottom-0 right-0 h-[5.7%] w-full bg-[#f46c44] z-11'>
-              </div> */}
-            </div>
-          </div>
+     
+         
+       <div className="relative z-30 text-white py-16 lg:py-0">
+        <h1 className="text-5xl lg:text-7xl font-bold mb-6">
+          {contactData?.title || "Contact"}
+        </h1>
+
+        <p className="text-lg lg:text-xl max-w-xl mb-8 leading-relaxed">
+          {heroSubtitle}
+        </p>
+
+        <div className="flex flex-wrap gap-4">
+          <Link href="#contact-form">
+            <button
+              className="
+                bg-[#1f2937]
+                text-white
+                px-8 py-3
+                rounded-full
+                font-semibold
+                shadow-lg
+                hover:bg-black
+                transition-all
+              "
+            >
+              Contact Now
+            </button>
+          </Link>
+
+          <Link href="/login">
+            <button
+              className="
+                bg-white
+                text-[#1f2937]
+                px-8 py-3
+                rounded-full
+                font-semibold
+                shadow-lg
+                hover:bg-black
+                hover:text-white
+                transition-all
+              "
+            >
+              Check Your Eligibility
+            </button>
+          </Link>
         </div>
-      </section>
+      </div>
+     
+     
+     
+
+  
+
+      {/* Mobile Image */}
+     
+
+  
+  </div>
+</section>
 
       {/* Contact Information Section */}
-      <section className="py-20 mt-5 relative" style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
+      <section className="py-20 mt-5 relative z-1" style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
         <div className="max-w-7xl mx-auto px-4">
           <div className=" mb-12">
-            
+
             <NewTag
               data={contactData?.sections?.getInTouch?.tag || 2}
               css="block text-[#ea6c46] text-2xl sm:text-3xl md:text-4xl font-semibold inline-block"
@@ -126,100 +154,100 @@ export default function ContactUsPage({ contactData, Faqres }) {
             </p>
           </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-  {getInTouchpoint.map((point, idx) => (
-    <motion.div
-      key={idx}
-      className="group relative bg-white/80 backdrop-blur-lg p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: idx * 0.1 }}
-      viewport={{ once: true }}
-    >
-      {/* Gradient Hover Border */}
-      {/* <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-300 bg-gradient-to-r from-[#FF6B35]/20 to-orange-400/20 blur-xl"></div> */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {getInTouchpoint.map((point, idx) => (
+              <motion.div
+                key={idx}
+                className="group relative bg-white/80 backdrop-blur-lg p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: idx * 0.1 }}
+                viewport={{ once: true }}
+              >
+                {/* Gradient Hover Border */}
+                {/* <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-300 bg-gradient-to-r from-[#FF6B35]/20 to-orange-400/20 blur-xl"></div> */}
 
-      {/* Icon */}
-      <div className="relative z-10 flex justify-center mb-4">
-        <div className="w-16 h-16 flex items-center justify-center rounded-full border border-gray-300 bg-white shadow-md group-hover:bg-[#FF6B35] group-hover:text-white transition-all duration-300">
-          <DynamicLucideIcon
-            name={`${point?.icon}`}
-            size={32}
-            className="stroke-[1.8px]"
-          />
-        </div>
-      </div>
+                {/* Icon */}
+                <div className="relative z-10 flex justify-center mb-4">
+                  <div className="w-16 h-16 flex items-center justify-center rounded-full border border-gray-300 bg-white shadow-md group-hover:bg-[#FF6B35] group-hover:text-white transition-all duration-300">
+                    <DynamicLucideIcon
+                      name={`${point?.icon}`}
+                      size={32}
+                      className="stroke-[1.8px]"
+                    />
+                  </div>
+                </div>
 
-      {/* Title */}
-      <h3 className="text-lg font-semibold text-gray-800 text-center mb-1">
-        {point?.title}
-      </h3>
+                {/* Title */}
+                <h3 className="text-lg font-semibold text-gray-800 text-center mb-1">
+                  {point?.title}
+                </h3>
 
-      {/* Subtitle */}
-      <p className="text-sm text-gray-500 text-center mb-4">
-        {point?.subtitle}
-      </p>
+                {/* Subtitle */}
+                <p className="text-sm text-gray-500 text-center mb-4">
+                  {point?.subtitle}
+                </p>
 
-      {/* Content */}
-      <div className="space-y-2 text-center">
-        {/* Phone */}
-        {point?.Number?.split("||").map((num, i) => (
-          <a
-            key={i}
-            href={`tel:${num.trim()}`}
-            className="block text-base font-medium text-[#FF6B35] hover:underline"
-          >
-            {num}
-          </a>
-        ))}
+                {/* Content */}
+                <div className="space-y-2 text-center">
+                  {/* Phone */}
+                  {point?.Number?.split("||").map((num, i) => (
+                    <a
+                      key={i}
+                      href={`tel:${num.trim()}`}
+                      className="block text-base font-medium text-[#FF6B35] hover:underline"
+                    >
+                      {num}
+                    </a>
+                  ))}
 
-        {/* Email */}
-        {point?.email?.split("||").map((mail, i) => (
-          <a
-            key={i}
-            href={`mailto:${mail}`}
-            className="block text-base font-medium text-[#FF6B35] hover:underline"
-          >
-            {mail}
-          </a>
-        ))}
+                  {/* Email */}
+                  {point?.email?.split("||").map((mail, i) => (
+                    <a
+                      key={i}
+                      href={`mailto:${mail}`}
+                      className="block text-base font-medium text-[#FF6B35] hover:underline"
+                    >
+                      {mail}
+                    </a>
+                  ))}
 
-        {/* Location */}
-        {point?.Location && (
-          <a
-            href={`https://www.google.com/maps?q=${encodeURIComponent(
-              point.Location
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-base font-medium text-[#FF6B35] hover:underline"
-          >
-            {point.Location}
-          </a>
-        )}
-        {idx == 3 && (
-          <button>
-            <Link
-              href="#contact-form"
-              rel="noopener noreferrer"
-              className="block text-base font-medium text-[#FF6B35] hover:underline"
-            >
-              Book Now
-            </Link>
-          </button>
-        )}
+                  {/* Location */}
+                  {point?.Location && (
+                    <a
+                      href={`https://www.google.com/maps?q=${encodeURIComponent(
+                        point.Location
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-base font-medium text-[#FF6B35] hover:underline"
+                    >
+                      {point.Location}
+                    </a>
+                  )}
+                  {idx == 3 && (
+                    <button>
+                      <Link
+                        href="#contact-form"
+                        rel="noopener noreferrer"
+                        className="block text-base font-medium text-[#FF6B35] hover:underline"
+                      >
+                        Book Now
+                      </Link>
+                    </button>
+                  )}
 
 
-        {/* Timing */}
-        {point?.timing?.split("||").map((time, i) => (
-          <p key={i} className="text-sm text-gray-600">
-            {time}
-          </p>
-        ))}
-      </div>
-    </motion.div>
-  ))}
-</div>
+                  {/* Timing */}
+                  {point?.timing?.split("||").map((time, i) => (
+                    <p key={i} className="text-sm text-gray-600">
+                      {time}
+                    </p>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
