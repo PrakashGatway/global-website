@@ -45,8 +45,8 @@ const getYouTubeId = (url: string): string | null => {
 
 export default function VideoTestimonialsSlider({
   items = [],
-  title = "More || Videos",
-  subtitle = "What our students say",
+  title = " Video || Testinomial",
+  subtitle = "",
   tag = 2
 }: VideoTestimonialsSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);

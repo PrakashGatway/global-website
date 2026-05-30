@@ -7,16 +7,33 @@ import { useForm } from "react-hook-form"
 import axiosInstance from "@/app/axiosInstance"
 import toast from "react-hot-toast"
 import FAQSection from "./faqPage"
+import UniversityCard from "./UniversityCard"
+import StudentVisaStories from "./Studentvisa"
+import VideoTestimonialsSlider from "./PageComponent/VideoTestimonial"
+import { useEffect, useState } from "react"
 
 
 
 
-export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBlogs }) {
+export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBlogs,uniblog,imageData,videoData }) {
 
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm()
 
+   const [visacontent, setVisaContent] = useState([]);
+  
+    const fetchVisa = () => {
+      const filtervisa = imageData.filter((item) => item.target === "visa");
+      setVisaContent(filtervisa);
+      console.log(filtervisa)
+    }
+  
 
+console.log(imageData)
+console.log(visacontent)
+useEffect(()=>{
+  fetchVisa()
+},[fetchVisa])
   const onSubmit = async (data) => {
     try {
       const res = await axiosInstance.post("/contactus", {
@@ -345,7 +362,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
 
               {/* TAGS */}
               <div className="flex flex-wrap gap-2">
-                {blog.tags.map((tag, index) => (
+                {blog?.tags&&blog?.tags?.map((tag, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
@@ -522,24 +539,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
               </div>
 
               {/* Message */}
-              <div className="space-y-1.5">
-                <label htmlFor="message" className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Your Query
-                </label>
-                <div className="relative">
-                  <svg className="absolute left-3 top-3 w-4 h-4 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                  </svg>
-                  <textarea
-                    id="message"
-                    rows={2}
-                    {...register("message", { required: "Message required" })}
-                    placeholder="What are you looking for?"
-                    className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all duration-200 placeholder:text-gray-400 hover:border-gray-300 resize-none"
-                  />
-                </div>
-                {errors.message && <p className="text-[11px] text-red-500 font-medium">{errors.message.message}</p>}
-              </div>
+            
 
               {/* Checkbox */}
               <div className="flex items-center gap-2.5 pt-1">
@@ -670,6 +670,11 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
                     </div>
                 </div>
             </div> */}
+
+            <UniversityCard university= {uniblog.result} />
+            <VideoTestimonialsSlider items={videoData}/>
+            <StudentVisaStories stories={visacontent}/>
+            
       <FAQSection Faqres={blog?.faq || []} />
 
 

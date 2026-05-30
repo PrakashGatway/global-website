@@ -79,7 +79,6 @@ export default async function Page({ params }) {
     try {
         const res = await serverInstance.get(`/blogs/${slug}`)
         blog = res.data.data
-        console.log(blog,"hello")
 
     } catch (error) {
         console.error("Error fetching blog:", error)
@@ -102,14 +101,18 @@ export default async function Page({ params }) {
 
     const allBlogs = navRes.data.data;
 
-   const uniblog = await serverInstance.get(`/universities?limit=5&country=`)
+   const uniblog = await serverInstance.get(`/universities?limit=5&country=${blog?.country?.code}`)
+
+   const resvideo = await serverInstance.get("/testimonials?type=video&limit=6")
+   const resimage = await serverInstance.get("/testimonials?type=image&limit=15")
+
 
    
  
     return (
         <>
 
-            <BlogDetailsPage latestBlogs={latestBlogs} blog={blog} blogCategory={blogCategory} allBlogs={allBlogs} />
+            <BlogDetailsPage latestBlogs={latestBlogs} blog={blog} blogCategory={blogCategory} allBlogs={allBlogs} uniblog={uniblog.data} imageData={resimage.data.data} videoData = {resvideo.data.data} />
         </>
     )
 }

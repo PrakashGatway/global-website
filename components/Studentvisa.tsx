@@ -6,7 +6,7 @@ import { Tag, Tagging } from "./tag";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
 const StudentVisaStories = ({
-  title,
+  title="Visa || Stories",
   subtitle,
   stories,
   autoSlideInterval = 3000,
@@ -65,10 +65,10 @@ const StudentVisaStories = ({
         <div className="text-left mb-12">
           <Tagging data={tag} css="relative inline-block mb-4 sm:mb-6 block">
             <span className="text-black text-2xl sm:text-3xl block font-medium mr-2">
-              {title.split("||")[0]}
+              {title&&title?.split("||")[0]}
             </span>
             <span className="text-[#F46C44] text-2xl sm:text-3xl block font-semibold mr-2">
-              {title.split("||")[1]}
+              {title&&title?.split("||")[1]}
             </span>
           
             <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
@@ -122,9 +122,9 @@ const StoryCard = ({ story }) => {
   
 
   return (
-    <div className="group bg-white rounded-3xl shadow overflow-hidden flex flex-col h-full">
+    <div className="group bg-white  shadow-[0_0_20px_rgba(0,0,0,0.08)] overflow-hidden flex flex-col h-full">
       {/* Image */}
-      <div className="relative h-84 overflow-hidden bg-gradient-to-br from-orange-400 to-red-500">
+      <div className="relative h-75 overflow-hidden bg-gradient-to-br from-orange-400 to-red-500">
         {story.image ? (
           <>
            

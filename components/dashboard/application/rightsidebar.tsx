@@ -6,14 +6,21 @@ import {
   Award,
   Building2,
   Calendar,
+  CalendarDays,
+  Check,
   ChevronRight,
   Clock,
   FileLock,
+  FileText,
+  Mail,
+  MessageCircle,
   MessageSquare,
+  Phone,
   PhoneCall,
   Sparkles,
   Upload,
   Video,
+  Wallet,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -24,7 +31,7 @@ export const Rigthsidebar = () => {
   const { profile } = useGlobal();
 
   const [universities, setUniversities] = useState<any[]>([]);
-  const [loading ,setLoading] = useState<boolean>();
+  const [loading, setLoading] = useState<boolean>();
 
 
   const [upcomingDeadlines] = useState([
@@ -32,18 +39,95 @@ export const Rigthsidebar = () => {
       title: "Application Deadline",
       date: "May 30, 2026",
       color: "text-red-600",
+      daysLeft: "2 Days Left",
     },
     {
       title: "Document Submission",
       date: "June 15, 2026",
       color: "text-orange-600",
+      daysLeft: "2 Days Left",
     },
     {
       title: "Visa Appointment",
       date: "July 10, 2026",
       color: "text-blue-600",
+      daysLeft: "2 Days Left",
     },
   ]);
+
+  const recentActivities = [
+  {
+    title: "SOP Document Approved",
+    time: "2 hours ago",
+    type: "success",
+  },
+  {
+    title: "Applied to TU Munich",
+    time: "1 day ago",
+    type: "university",
+  },
+  {
+    title: "IELTS Score Uploaded",
+    time: "2 days ago",
+    type: "document",
+  },
+  {
+    title: "LOR Document Uploaded",
+    time: "3 days ago",
+    type: "upload",
+  },
+  {
+    title: "Fee Payment Initiated",
+    time: "3 days ago",
+    type: "payment",
+  },
+];
+
+const getActivityIcon = (type) => {
+  switch (type) {
+    case "success":
+      return {
+        icon: Check,
+        bg: "bg-green-500",
+        color: "text-white",
+      };
+
+    case "university":
+      return {
+        icon: Building2,
+        bg: "bg-blue-50",
+        color: "text-blue-600",
+      };
+
+    case "document":
+      return {
+        icon: FileText,
+        bg: "bg-purple-50",
+        color: "text-purple-600",
+      };
+
+    case "upload":
+      return {
+        icon: Upload,
+        bg: "bg-orange-50",
+        color: "text-orange-600",
+      };
+
+    case "payment":
+      return {
+        icon: Wallet,
+        bg: "bg-green-50",
+        color: "text-green-600",
+      };
+
+    default:
+      return {
+        icon: FileText,
+        bg: "bg-gray-50",
+        color: "text-gray-600",
+      };
+  }
+};
 
   const quickActions = [
     {
@@ -71,8 +155,8 @@ export const Rigthsidebar = () => {
       link: "/dashboard/scholarships",
     },
   ];
-  
-  
+
+
   useEffect(() => {
     const fetchUniversities = async () => {
       try {
@@ -93,103 +177,165 @@ export const Rigthsidebar = () => {
   return (
     <div className="space-y-6">
       {/* Counselor Card */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-lg text-gray-900">
-            Your Counselor
-          </h3>
+     <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm w-full">
+  {/* Header */}
+  <div className="flex items-center justify-between mb-5">
+    <h3 className="text-lg font-bold text-[#1E293B]">
+      Your Counselor
+    </h3>
 
-          <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-xs text-green-600 font-medium">
-              Online
-            </span>
-          </div>
-        </div>
+    <div className="flex items-center gap-1">
+      <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+      <span className="text-xs font-medium text-orange-600">
+        Online
+      </span>
+    </div>
+  </div>
 
-        <div className="flex items-center gap-4">
-          {profile?.assignto?.profileImage ? (
-            <Image
-              src={profile?.assignto?.profileImage}
-              alt="counselor"
-              width={64}
-              height={64}
-              className="rounded-full object-cover border-2 border-white shadow-md"
-            />
-          ) : (
-            <div className="rounded-full bg-gradient-to-br from-[#F26D44] to-[#F26D44]/80 text-white font-semibold flex items-center justify-center h-16 w-16 text-2xl shadow-md">
-              {profile?.assignto?.name?.charAt(0) || "C"}
-            </div>
-          )}
+  {/* Profile */}
+ <div className="flex items-center gap-4">
+  {/* Image */}
+  {profile?.assignto?.profileImage ? (
+    <Image
+      src={profile.assignto.profileImage}
+      alt="Counselor"
+      width={70}
+      height={70}
+      className="rounded-full object-cover border border-gray-200 flex-shrink-0"
+    />
+  ) : (
+    <div className="h-[70px] w-[70px] rounded-full bg-gray-200 flex items-center justify-center text-xl font-semibold text-gray-700 flex-shrink-0">
+      {profile?.assignto?.name?.charAt(0) || "P"}
+    </div>
+  )}
 
-          <div>
-            <h4 className="font-semibold text-gray-900">
-              {profile?.assignto?.name || "Sarah Johnson"}
-            </h4>
+  {/* Content */}
+  <div>
+    <h4 className="text-[16px] font-semibold text-[#1E293B]">
+      {profile?.assignto?.name || "Priya Mehta"}
+    </h4>
 
-            <p className="text-sm text-gray-500">
-              Senior Study Abroad Expert
-            </p>
+    <p className="text-xs text-gray-500 mt-0.5">
+      Study Abroad Expert
+    </p>
 
-            <p className="text-xs text-green-600 mt-1">
-              ⭐ 4.9 (128 reviews)
-            </p>
-          </div>
-        </div>
+    
+  </div>
+</div>
 
-        <div className="flex gap-3 mt-5">
-          <button className="flex-1 bg-[#F26D44] text-white py-2.5 rounded-xl font-medium text-sm hover:bg-[#F26D44]/90 transition-all flex items-center justify-center gap-2">
-            <MessageSquare className="w-4 h-4" />
-            Chat Now
-          </button>
+  {/* Action Icons */}
+  <div className="grid grid-cols-4 gap-3 mt-1">
+    <button className="h-11 w-11 mx-auto rounded-full bg-[#F7F8FC] hover:bg-[#EEF2FF] flex items-center justify-center transition">
+      <MessageCircle className="w-5 h-5 text-orange-500" />
+    </button>
 
-          <button className="flex-1 bg-white text-gray-700 py-2.5 rounded-xl font-medium text-sm hover:bg-gray-50 transition-all border border-gray-200 flex items-center justify-center gap-2">
-            <Video className="w-4 h-4" />
-            Meet
-          </button>
-        </div>
-      </div>
+    <button className="h-11 w-11 mx-auto rounded-full bg-[#F7F8FC] hover:bg-[#EEF2FF] flex items-center justify-center transition">
+      <Mail className="w-5 h-5 text-orange-500" />
+    </button>
+
+    <button className="h-11 w-11 mx-auto rounded-full bg-[#F7F8FC] hover:bg-[#EEF2FF] flex items-center justify-center transition">
+      <Phone className="w-5 h-5 text-orange-500" />
+    </button>
+
+    <button className="h-11 w-11 mx-auto rounded-full bg-[#F7F8FC] hover:bg-[#EEF2FF] flex items-center justify-center transition">
+      <CalendarDays className="w-5 h-5 text-orange-500" />
+    </button>
+  </div>
+
+  {/* Chat Button */}
+  <button className="w-full mt-6 h-11 rounded-lg bg-secondary/80 hover:bg-primary text-white font-medium text-sm transition">
+    Chat Now
+  </button>
+</div>
 
       {/* Upcoming Deadlines */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-[#F26D44]" />
-            Upcoming Deadlines
-          </h3>
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+  {/* Header */}
+  <div className="flex items-center justify-between px-5 py-4">
+    <h3 className="text-[18px] font-bold text-[#1E293B]">
+      Upcoming Deadlines
+    </h3>
 
-          <button className="text-xs text-[#F26D44] hover:underline">
-            View All
-          </button>
-        </div>
+    <button className="text-[13px] font-medium text-orange-500 hover:underline">
+      View all
+    </button>
+  </div>
 
-        <div className="space-y-3">
-          {upcomingDeadlines.map((deadline, i) => (
+  {/* List */}
+  <div className="px-5 pb-5">
+    <div className="space-y-5">
+      {upcomingDeadlines.map((deadline, i) => (
+        <div
+          key={i}
+          className="flex items-start justify-between gap-3"
+        >
+          {/* Left */}
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            {/* Icon Box */}
             <div
-              key={i}
-              className="flex items-center justify-between p-3 bg-gray-50 rounded-xl"
+              className={`
+                h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0
+                ${
+                  i === 0
+                    ? "bg-red-50"
+                    : i === 1
+                    ? "bg-green-50"
+                    : i === 2
+                    ? "bg-blue-50"
+                    : "bg-orange-50"
+                }
+              `}
             >
-              <div className="flex items-center gap-3">
-                <Clock className="w-4 h-4 text-gray-400" />
-
-                <div>
-                  <p className="font-medium text-gray-900 text-sm">
-                    {deadline.title}
-                  </p>
-
-                  <p className={`text-xs ${deadline.color}`}>
-                    {deadline.date}
-                  </p>
-                </div>
-              </div>
-
-              <button className="text-xs text-gray-400 hover:text-[#F26D44]">
-                Remind me
-              </button>
+              <Calendar
+                className={`
+                  h-4 w-4
+                  ${
+                    i === 0
+                      ? "text-red-500"
+                      : i === 1
+                      ? "text-green-500"
+                      : i === 2
+                      ? "text-blue-500"
+                      : "text-orange-500"
+                  }
+                `}
+              />
             </div>
-          ))}
+
+            {/* Content */}
+            <div className="min-w-0">
+              <h4 className="text-sm font-semibold text-[#1E293B] truncate">
+                {deadline.title}
+              </h4>
+
+              <p className="text-xs text-[#64748B] mt-1">
+                {deadline.date}
+              </p>
+            </div>
+          </div>
+
+          {/* Days Left */}
+          <div
+            className={`
+              text-sm font-semibold whitespace-nowrap
+              ${
+                i === 0
+                  ? "text-red-500"
+                  : i === 1
+                  ? "text-orange-500"
+                  : i === 2
+                  ? "text-blue-500"
+                  : "text-green-500"
+              }
+            `}
+          >
+            {deadline.daysLeft}
+          </div>
         </div>
-      </div>
+      ))}
+    </div>
+  </div>
+</div>
 
       {/* University Deadlines */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
@@ -260,37 +406,136 @@ export const Rigthsidebar = () => {
         </div>
       </div>
 
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+  {/* Header */}
+  <div className="flex items-center justify-between px-5 py-4">
+    <h3 className="text-[18px] font-bold text-[#1E293B]">
+      Recent Activity
+    </h3>
+
+    <button className="text-[13px] font-medium text-orange-500 hover:underline">
+      View all
+    </button>
+  </div>
+
+  {/* Activities */}
+  <div className="px-5 pb-5">
+    <div className="space-y-5">
+      {recentActivities.map((activity, index) => {
+        const {
+          icon: Icon,
+          bg,
+          color,
+        } = getActivityIcon(activity.type);
+
+        return (
+          <div
+            key={index}
+            className="flex items-start gap-3"
+          >
+            {/* Icon */}
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${bg}`}
+            >
+              <Icon
+                size={16}
+                className={color}
+              />
+            </div>
+
+            {/* Content */}
+            <div className="min-w-0 flex-1">
+              <h4 className="text-sm font-semibold text-[#1E293B] leading-tight">
+                {activity.title}
+              </h4>
+
+              <p className="text-xs text-[#64748B] mt-1">
+                {activity.time}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</div>
+
       {/* Quick Actions */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <h3 className="font-bold text-lg text-gray-900 mb-4 flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-[#F26D44]" />
-          Quick Actions
-        </h3>
+     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  {/* Header */}
+  <h3 className="text-lg font-bold text-[#1E293B] mb-4">
+    Quick Actions
+  </h3>
 
-        <div className="grid grid-cols-2 gap-3">
-          {quickActions.map((action, i) => {
-            const ActionIcon = action.icon;
+  {/* Actions */}
+  <div className="space-y-3">
+    {quickActions.map((action, i) => {
+      const ActionIcon = action.icon;
 
-            return (
-              <button
-                key={i}
-                onClick={() => router.push(action.link)}
-                className="group flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all"
-              >
-                <div
-                  className={`p-2.5 rounded-xl ${action.color} transition-all group-hover:scale-110`}
-                >
-                  <ActionIcon className="w-5 h-5" />
-                </div>
+      const rowColors = [
+        "bg-purple-50",
+        "bg-green-50",
+        "bg-blue-50",
+        "bg-pink-50",
+      ];
 
-                <span className="text-xs font-medium text-gray-700 text-center">
-                  {action.title}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      const iconColors = [
+        "text-purple-600",
+        "text-green-600",
+        "text-blue-600",
+        "text-pink-600",
+      ];
+
+      const arrowColors = [
+        "text-purple-500",
+        "text-green-500",
+        "text-blue-500",
+        "text-pink-500",
+      ];
+
+      return (
+        <button
+          key={i}
+          onClick={() => router.push(action.link)}
+          className={`
+            w-full
+            flex
+            items-center
+            justify-between
+            px-4
+            py-3
+            rounded-xl
+            transition-all
+            duration-200
+            hover:shadow-sm
+            hover:scale-[1.01]
+            ${rowColors[i]}
+          `}
+        >
+          {/* Left Side */}
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-white/80 flex items-center justify-center">
+              <ActionIcon
+                className={`w-4 h-4 ${iconColors[i]}`}
+              />
+            </div>
+
+            <span className="text-sm font-medium text-[#1E293B]">
+              {action.title}
+            </span>
+          </div>
+
+          {/* Arrow */}
+          <div
+            className={`text-lg font-bold ${arrowColors[i]}`}
+          >
+            →
+          </div>
+        </button>
+      );
+    })}
+  </div>
+</div>
     </div>
   );
 };
