@@ -133,7 +133,7 @@ export default function PrivacyPolicy() {
               </p>
 
               <p className="mt-1 font-medium text-[#f46c44]">
-                info@gatewayabroad.com
+                info@ooshasglobal.com
               </p>
             </div>
 

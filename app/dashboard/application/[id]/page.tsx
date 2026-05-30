@@ -7,129 +7,42 @@ import {
   Download,
   GraduationCap,
   MapPin,
-  Calendar,
-  DollarSign,
-  FileText,
   Upload,
   CheckCircle,
   AlertCircle,
   Clock,
   X,
-  ChevronRight,
-  Plus,
-  Search,
-  Filter,
   Eye,
-  Edit2,
-  Save,
-  Trash2,
   RefreshCw,
-  Mail,
-  MessageCircle,
   Award,
-  TrendingUp,
-  Star,
-  Flag,
-  Users,
   Briefcase,
-  BookOpen,
-  Home,
-  Settings,
   User,
   Mail as MailIcon,
-  ChevronDown,
-  ChevronUp,
-  FileCheck,
-  FileWarning,
-  FileX,
-  CircleDollarSign,
-  Shield,
-  Globe,
   Building2,
   BadgeCheck,
   Link as LinkIcon,
-  ExternalLink,
-  AlertTriangle,
-  Info,
-  CreditCard,
-  Banknote,
-  Landmark,
-  Percent,
-  CalendarDays,
-  ChevronLeft,
-  MoreHorizontal,
-  Copy,
-  Printer,
-  Bell,
-  BellRing,
-  Check,
-  HelpCircle,
-  FileSignature,
-  Bookmark,
-  Heart,
-  Share2,
-  Lock,
-  Unlock,
   EyeOff,
   Activity,
-  MessageSquare,
-  ClipboardList,
-  ThumbsUp,
-  ThumbsDown,
-  AlertOctagon,
-  CheckCheck,
-  FolderOpen,
-  FileUp,
-  FileDown,
-  RotateCcw,
-  ArrowRight,
-  Circle,
-  CircleCheck,
-  CircleDot,
-  CircleDashed,
-  CircleEllipsis,
-  Sparkles,
-  Layers,
-  Zap,
-  ShieldAlert,
-  FileStack,
-  FileCheck2,
-  FileX2,
-  FileClock,
   FileSearch,
-  FileMinus,
-  FilePlus,
   Paperclip,
   Link2,
   Image as ImageIcon,
-  Video,
-  Archive,
   File,
   Loader2,
   UploadCloud,
   XCircle,
-  Linkedin,
-  BanknoteIcon,
   School,
   Globe2,
   Link2Icon,
   Edit2Icon,
-  Send,
-  Mic,
-  Smile,
-  MoreVertical,
-  PhoneCall,
-  PhoneOff,
-  Voicemail,
-  PhoneIncoming,
-  PhoneOutgoing,
-  PhoneMissed,
-  Timer,
-  UserCheck,
-  UserX,
-  CheckBadge,
   Link2OffIcon,
-  SendHorizonal
+  SendHorizonal,
+  Play,
+  SquareAsterisk,
+  Ban,
+  CheckCircle2,
+  FileCheck2,
+  ArrowRight
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -140,18 +53,6 @@ import DynamicFormFields from "@/components/dashboard/application/dynamicform";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGlobal } from "@/src/statecontext";
-
-// Types
-interface Document {
-  id: string
-  name: string
-  description?: string
-  status: 'Pending' | 'Approved' | 'Rejected'
-  rejectReason?: string
-  docUrl?: string
-  docType?: string
-  uploadedAt?: string
-}
 
 interface ActivityLog {
   _id: string
@@ -166,69 +67,74 @@ interface ActivityLog {
   metadata?: Record<string, any>
 }
 
-interface Note {
-  id: string
-  content: string
-  user: string
-  userType: 'student' | 'ooshas' | 'admin'
-  createdAt: string
-  isPrivate?: boolean
-  attachments?: Array<{ name: string; url: string; type: string }>
-  isRead?: boolean
-}
-
-interface Message {
-  _id: string
-  content: string
-  sender: { name: string }
-  senderType: 'student' | 'ooshas' | 'admin'
-  createdAt: string
-  isRead: boolean
-  attachments?: Array<{ name: string; url: string; type: string }>
-}
-
-interface OoshasDocument {
-  _id: string
-  name: string
-  description: string
-  fileUrl: string
-  fileType: string
-  fileSize: number
-  uploadedAt: string
-  isRequired: boolean
-}
-
-interface BackupProgram {
-  _id: string
-  course: {
-    _id: string
-    name: string
-    slug: string
-    university?: {
-      _id: string
-      name: string
-      slug: string
-      uni_logo?: string
-    }
-  }
-  intake: string
-  order: number
-  status: 'pending' | 'processing' | 'accepted' | 'rejected'
-  applicationId?: string
-  submittedAt?: string
-}
-
 // Primary status steps configuration
-const PRIMARY_STATUS_STEPS = [
-  { key: 'Pending', label: 'Application Created', icon: Clock, color: 'text-yellow-600', bgColor: 'bg-yellow-100' },
-  { key: 'Started', label: 'Application Started', icon: Clock, color: 'text-yellow-600', bgColor: 'bg-yellow-100' },
-  { key: 'ReviewbyOoshas', label: 'Under OOSHAS Review', icon: FileSearch, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-  { key: 'SubmitToSchool', label: 'Submitting to School', icon: UploadCloud, color: 'text-purple-600', bgColor: 'bg-purple-100' },
-  { key: 'AwaitingSchoolResponse', label: 'Awaiting School Response', icon: Clock, color: 'text-orange-600', bgColor: 'bg-orange-100' },
-  { key: 'AdmissionProcessing', label: 'Admission Processing', icon: RefreshCw, color: 'text-indigo-600', bgColor: 'bg-indigo-100' },
-  { key: 'PreArrival', label: 'Pre-Arrival', icon: Briefcase, color: 'text-teal-600', bgColor: 'bg-teal-100' },
-  { key: 'Arrived', label: 'Arrived on Campus', icon: MapPin, color: 'text-green-600', bgColor: 'bg-green-100' }
-]
+const STATUS_CONFIG = {
+  Pending: {
+    key: 'Pending',
+    label: 'Application Created',
+    icon: Clock,
+  },
+  Started: {
+    key: 'Started',
+    label: 'Application Started',
+    icon: Play,
+  },
+  ReviewbyOoshas: {
+    key: 'ReviewbyOoshas',
+    label: 'Under OOSHAS Review',
+    icon: FileSearch,
+  },
+  SubmitToSchool: {
+    key: 'SubmitToSchool',
+    label: 'Submitted to School',
+    icon: UploadCloud,
+  },
+  AwaitingSchoolResponse: {
+    key: 'AwaitingSchoolResponse',
+    label: 'Awaiting School Response',
+    icon: Clock,
+  },
+  AdmissionProcessing: {
+    key: 'AdmissionProcessing',
+    label: 'Admission Processing',
+    icon: RefreshCw,
+  },
+  OfferReceived: {
+    key: 'OfferReceived',
+    label: 'Offer Received',
+    icon: Award,
+  },
+  Refused: {
+    key: 'Refused',
+    label: 'Application Refused',
+    icon: XCircle,
+  },
+  Withdrawn: {
+    key: 'Withdrawn',
+    label: 'Application Withdrawn',
+    icon: Ban,
+  },
+  VisaProcessing: {
+    key: 'VisaProcessing',
+    label: 'Visa Processing',
+    icon: SquareAsterisk,
+  },
+  PreArrival: {
+    key: 'PreArrival',
+    label: 'Pre Arrival',
+    icon: Briefcase,
+  },
+  Arrived: {
+    key: 'Arrived',
+    label: 'Arrived',
+    icon: MapPin,
+  },
+  Completed: {
+    key: 'Completed',
+    label: 'Completed',
+    icon: CheckCircle2,
+  },
+};
 
 export default function StudentDetailsPage() {
   const params = useParams();
@@ -249,7 +155,7 @@ export default function StudentDetailsPage() {
   const [activeDocTab, setActiveDocTab] = useState('All');
   let validateFormRef = useRef<any>(null);
   const messagesEndRef = useRef<any>(null);
-  const {profile} = useGlobal()
+  const { profile } = useGlobal()
 
   useEffect(() => {
     fetchApplication();
@@ -477,201 +383,237 @@ export default function StudentDetailsPage() {
         return 'bg-yellow-100 text-yellow-700 border-yellow-200'
     }
   };
-
-  const currentStepIndex = PRIMARY_STATUS_STEPS.findIndex(step => step.key === application?.primaryStatus);
-  const isStepCompleted = (index: number) => index < currentStepIndex;
-  const isStepCurrent = (index: number) => index === currentStepIndex;
-
-  
   // ==============================
-// STATES
-// ==============================
+  // STATES
+  // ==============================
 
-const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
 
-const [messageList, setMessageList] = useState([]);
+  const [messageList, setMessageList] = useState([]);
 
-const [messageText, setMessageText] = useState("");
+  const [messageText, setMessageText] = useState("");
 
-const [messageSubject, setMessageSubject] = useState("");
+  const [messageSubject, setMessageSubject] = useState("");
 
-const [messageAttachments, setMessageAttachments] = useState([]);
-// Stores: { name: string, url: string }
+  const [messageAttachments, setMessageAttachments] = useState([]);
+  // Stores: { name: string, url: string }
 
-const [isAttachmentUploading, setIsAttachmentUploading] = useState(false);
+  const [isAttachmentUploading, setIsAttachmentUploading] = useState(false);
 
-const [isCommentSubmitting, setIsCommentSubmitting] = useState(false);
+  const [isCommentSubmitting, setIsCommentSubmitting] = useState(false);
 
-const [selectedRecipient, setSelectedRecipient] = useState("");
+  const [selectedRecipient, setSelectedRecipient] = useState("");
 
-const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
 
-// ==============================
-// FILE UPLOAD
-// ==============================
+  // ==============================
+  // FILE UPLOAD
+  // ==============================
 
-const handleFileChange = async (e) => {
-  if (!e.target.files || e.target.files.length === 0) return;
+  const handleFileChange = async (e) => {
+    if (!e.target.files || e.target.files.length === 0) return;
 
-  const filesArray = Array.from(e.target.files);
+    const filesArray = Array.from(e.target.files);
 
-  setIsAttachmentUploading(true);
+    setIsAttachmentUploading(true);
 
-  try {
-    for (const file of filesArray) {
-      const formData = new FormData();
-      formData.append("file", file);
+    try {
+      for (const file of filesArray) {
+        const formData = new FormData();
+        formData.append("file", file);
 
-      const response = await axiosInstance.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+        const response = await axiosInstance.post("/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
-      if (response.data?.success && response.data?.docUrl) {
-        let fileUrl = response.data.docUrl;
+        if (response.data?.success && response.data?.docUrl) {
+          let fileUrl = response.data.docUrl;
 
-        // Validation
-        if (
-          fileUrl.includes("nofile") ||
-          fileUrl === "/uploads/docs/nofile" ||
-          (!fileUrl.startsWith("/uploads/") &&
-            !fileUrl.startsWith("http"))
-        ) {
-          throw new Error("Server returned an invalid file URL.");
+          // Validation
+          if (
+            fileUrl.includes("nofile") ||
+            fileUrl === "/uploads/docs/nofile" ||
+            (!fileUrl.startsWith("/uploads/") &&
+              !fileUrl.startsWith("http"))
+          ) {
+            throw new Error("Server returned an invalid file URL.");
+          }
+
+          // // Save uploaded file
+          // setMessageAttachments((prev) => [
+          //   ...prev,
+          //   {
+          //     name: file.name,
+          //     url: fileUrl,
+          //   },
+          // ]);
+
+          toast.success(`${file.name} uploaded successfully!`);
+        } else {
+          throw new Error(response.data?.message || "Upload failed");
         }
+      }
+    } catch (error) {
+      console.error("File upload error:", error);
 
-        // // Save uploaded file
-        // setMessageAttachments((prev) => [
-        //   ...prev,
-        //   {
-        //     name: file.name,
-        //     url: fileUrl,
-        //   },
-        // ]);
+      toast.error(error?.message || "Failed to upload file");
+    } finally {
+      setIsAttachmentUploading(false);
 
-        toast.success(`${file.name} uploaded successfully!`);
-      } else {
-        throw new Error(response.data?.message || "Upload failed");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
       }
     }
-  } catch (error) {
-    console.error("File upload error:", error);
+  };
 
-    toast.error(error?.message || "Failed to upload file");
-  } finally {
-    setIsAttachmentUploading(false);
+  const removeUploadedFile = (indexToRemove) => {
+    setMessageAttachments((prev) =>
+      prev.filter((_, index) => index !== indexToRemove)
+    );
+  };
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+
+  // ==============================
+  // MARK AS READ
+  // ==============================
+
+  const markMessagesAsRead = async () => {
+    try {
+      await axiosInstance.put(
+        `/communication/applications/${application._id}/messages/read`
+      );
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
     }
-  }
-};
+  };
 
 
-// ==============================
-// REMOVE FILE
-// ==============================
 
-const removeUploadedFile = (indexToRemove) => {
-  setMessageAttachments((prev) =>
-    prev.filter((_, index) => index !== indexToRemove)
+  const fetchMessages = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/communication/applications/${application._id}/messages`
+      );
+
+      setMessageList(response.data?.data?.reverse() || []);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchMessages();
+  }, [application]);
+
+
+  const getApplicationFlow = (status: string) => {
+    // Refused path
+    if (['Refused', 'Withdrawn'].includes(status)) {
+      return [
+        'Started',
+        'ReviewbyOoshas',
+        'SubmitToSchool',
+        'AwaitingSchoolResponse',
+        'AdmissionProcessing',
+        'OfferReceived',
+        'Refused',
+        'Withdrawn'
+      ];
+    }
+    return [
+      'Started',
+      'ReviewbyOoshas',
+      'SubmitToSchool',
+      'AwaitingSchoolResponse',
+      'AdmissionProcessing',
+      'OfferReceived',
+      'VisaProcessing',
+      'PreArrival',
+      'Arrived'
+    ];
+  };
+
+  const timelineSteps = getApplicationFlow(
+    application?.primaryStatus
+  ).map((key) => STATUS_CONFIG[key]);
+
+  const currentStepIndex = timelineSteps.findIndex(
+    (step) => step.key === application?.primaryStatus
   );
-};
 
+  const isStepCompleted = (index: number) =>
+    index < currentStepIndex;
 
-// ==============================
-// MARK AS READ
-// ==============================
+  const isStepCurrent = (index: number) =>
+    index === currentStepIndex;
 
-const markMessagesAsRead = async () => {
-  try {
-    await axiosInstance.put(
-      `/communication/applications/${application._id}/messages/read`
-    );
-  } catch (error) {
-    console.error("Error marking messages as read:", error);
-  }
-};
+  const sendMessage = async () => {
+    if (!messageText.trim()) return;
 
+    setIsCommentSubmitting(true);
 
+    try {
+      await axiosInstance.post(
+        `/communication/applications/${application._id}/messages`,
+        {
+          content: messageText.trim(),
 
-const fetchMessages = async () => {
-  try {
-    const response = await axiosInstance.get(
-      `/communication/applications/${application._id}/messages`
-    );
+          userId:
+            messageSubject === "Document Uploaded"
+              ? profile.role === "user"
+                ? profile._id
+                : selectedRecipient
+              : "",
 
-    setMessageList(response.data?.data?.reverse() || []);
-  } catch (error) {
-    console.error("Error fetching messages:", error);
-  }
-};
+          extra_content: {
+            subject: messageSubject || "General Update",
+            camsId: application._id,
+            recipient: "Ooshas",
+            attachments: messageAttachments,
+          },
+        }
+      );
 
+      // Reset form
+      setMessageText("");
+      setMessageSubject("");
+      setMessageAttachments([]);
 
-useEffect(() => {
-  fetchMessages();
-}, [application]);
+      setIsCommentModalOpen(false);
 
+      // await markMessagesAsRead();
 
+      await fetchMessages();
 
-const sendMessage = async () => {
-  if (!messageText.trim()) return;
+      fetchActivities();
 
-  setIsCommentSubmitting(true);
+      toast.success("Comment saved");
+    } catch (error) {
+      console.error("Error sending message:", error);
 
-  try {
-    await axiosInstance.post(
-      `/communication/applications/${application._id}/messages`,
-      {
-        content: messageText.trim(),
-
-        userId:
-          messageSubject === "Document Uploaded"
-            ? profile.role === "user"
-              ? profile._id
-              : selectedRecipient
-            : "",
-
-        extra_content: {
-          subject: messageSubject || "General Update",
-          camsId: application._id,
-          recipient: "Ooshas",
-          attachments: messageAttachments,
-        },
-      }
-    );
-
-    // Reset form
-    setMessageText("");
-    setMessageSubject("");
-    setMessageAttachments([]);
-
-    setIsCommentModalOpen(false);
-
-    // await markMessagesAsRead();
-
-    await fetchMessages();
-
-    fetchActivities();
-
-    toast.success("Comment saved");
-  } catch (error) {
-    console.error("Error sending message:", error);
-
-    toast.error("Failed to send message");
-  } finally {
-    setIsCommentSubmitting(false);
-  }
-};
+      toast.error("Failed to send message");
+    } finally {
+      setIsCommentSubmitting(false);
+    }
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f4f4f4] p-6">
+      <div className="min-h-screen p-6">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-64 mb-5"></div>
-          <div className="bg-white rounded-xl shadow-sm border overflow-hidden p-8">
+          <div className="bg-white rounded-xl shadow-sm border overflow-hidden p-8 mb-6">
+            <div className="space-y-4">
+              <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm border overflow-hidden p-8 mb-6">
             <div className="space-y-4">
               <div className="h-6 bg-gray-200 rounded w-3/4"></div>
               <div className="h-4 bg-gray-200 rounded w-1/2"></div>
@@ -684,29 +626,11 @@ const sendMessage = async () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fff] p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <h1 className="text-[24px] font-semibold text-black">
-          {application?.student?.name || "Student Name"}{" "}
-          <span className="text-gray-600 text-lg">
-            | Applicaion ID: {application?.applicationNumber || "N/A"}
-          </span>
-        </h1>
-
-        {/* <div className="flex gap-3">
-          <button className="bg-[#ff6a1a] hover:bg-[#f45f0d] text-white px-6 py-3 rounded-md font-medium text-sm">
-            MARK AS UNREAD
-          </button>
-
-        </div> */}
-      </div>
-
-      {/* Main Card */}
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+    <div className="min-h-screen p-4">
+      <div className="bg-white overflow-hidden">
         {/* Course Details */}
-        <div className="space-y-6 bg-white">
-          <div className="flex items-start justify-between p-8 pb-0">
+        <div className="space-y-3 bg-white">
+          <div className="flex items-start justify-between pb-0">
             <div className="flex items-top gap-3">
               {application?.course?.university?.uni_logo ? (
                 <img
@@ -721,11 +645,12 @@ const sendMessage = async () => {
               )}
               <div>
                 <div className="flex items-center gap-3 flex-wrap">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-xl font-medium text-gray-800">{application?.course?.name}</h1>
+                  <Link href={`/dashboard/programs/${application?.course?.slug}`} className="flex  items-center gap-1">
+                    <h1 className="text-2xl font-medium text-gray-800 hover:text-blue-900">{application?.course?.name}</h1>
                     <span className="inline-flex"><Link href={`/dashboard/programs/${application?.course?.slug}`} className="text-blue-500 underline"><Link2Icon className="w-6 h-6" /></Link></span>
-                  </div>
-                  {application?.paymentStatus == "Pending" && <span className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center gap-1.5 ${getPaymentStatusBadge(application?.paymentStatus)}`}>
+                  </Link>
+                  <span className="text-xl font-medium text-gray-600"> ({application?.applicationNumber})</span>
+                  {application.course?.applicationFee > 0 && application?.paymentStatus == "Pending" && <span className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center gap-1.5 ${getPaymentStatusBadge(application?.paymentStatus)}`}>
                     {application?.paymentStatus === 'Completed' ? <CheckCircle className="w-3.5 h-3.5" /> :
                       application?.paymentStatus === 'Failed' ? <XCircle className="w-3.5 h-3.5" /> :
                         <Clock className="w-3.5 h-3.5" />}
@@ -753,8 +678,8 @@ const sendMessage = async () => {
           </div>
 
 
-            {/* Staff Details */}
-            {/* <div className="mt-2 w-full border-t pt-5 px-8 grid grid-cols-3 gap-10 mt-8 pt-8 border-t">
+          {/* Staff Details */}
+          {/* <div className="mt-2 w-full border-t pt-5 px-8 grid grid-cols-3 gap-10 mt-8 pt-8 border-t">
               <div>
                 <h4 className="font-semibold underline text-gray-700 mb-3">Case Owner:</h4>
                 <div className="space-y-2 text-sm">
@@ -785,15 +710,15 @@ const sendMessage = async () => {
               </div>
             </div> */}
 
-          {/* <div className="mt-2 w-full border-t pt-5 px-8">
-            <div className="hidden md:block relative overflow-x-auto pb-4">
+          <div className="mt-2 w-full border-t pt-5 pb-2">
+            <div className="hidden md:block relative">
               <div className="relative flex justify-between items-start min-w-max pt-4">
-                {PRIMARY_STATUS_STEPS.map((step, index) => {
+                {timelineSteps.map((step, index) => {
                   const StepIcon = step.icon
                   const isCompleted = isStepCompleted(index)
                   const isCurrent = isStepCurrent(index)
-                  const isLast = index === PRIMARY_STATUS_STEPS.length - 1
-                  const nextStepCompleted = index < PRIMARY_STATUS_STEPS.length - 1 && isStepCompleted(index + 1)
+                  const isLast = index === timelineSteps.length - 1
+                  const nextStepCompleted = index < timelineSteps.length - 1 && isStepCompleted(index + 1)
                   return (
                     <div key={step.key} className="flex relative flex-col items-center relative flex-1 min-w-[120px]">
                       {!isLast && (
@@ -812,17 +737,31 @@ const sendMessage = async () => {
                           )}
                         </div>
                       </div>
-                      <p className={`text-[13px] font-medium text-center break-words whitespace-normal leading-tight max-w-[100px] ${isCurrent ? "text-orange-600" : isCompleted ? "text-emerald-600" : "text-slate-600"}`}>
+                      <div className={`text-[13px] font-medium text-center break-words whitespace-normal leading-tight max-w-[100px] ${isCurrent ? "text-orange-600" : isCompleted ? "text-emerald-600" : "text-slate-600"}`}>
                         {step.label}
-                      </p>
+                      </div>
+                      {isCurrent && (
+                        <div className="rounded-lg w-50 bg-black text-white z-50 mt-2 p-3">
+                          <h4 className="flex items-center gap-1 font-semibold text-sm">
+                            {step.label} <Link href={`/dashboard/applications/${application._id}/edit?step=${step.key}`} className="inline-flex border shadow-lg  rounded-full p-1 items-center text-xs text-orange-300 hover:text-orange-500">
+                              <ArrowRight className="w-3 h-3 " />
+                            </Link>
+                          </h4>
+                          <p className="text-xs mt-1">
+                            Your step is currently being updated.
+                          </p>
+
+                        </div>
+                      )}
                     </div>
+
                   )
                 })}
               </div>
             </div>
 
             <div className="md:hidden relative space-y-3 before:absolute before:left-[11px] before:top-2 before:h-full before:w-0.5 before:bg-slate-200">
-              {PRIMARY_STATUS_STEPS.map((step, index) => {
+              {timelineSteps.map((step, index) => {
                 const StepIcon = step.icon
                 const isCompleted = isStepCompleted(index)
                 const isCurrent = isStepCurrent(index)
@@ -848,14 +787,14 @@ const sendMessage = async () => {
                 )
               })}
             </div>
-          </div> */}
+          </div>
 
           {/* Tab Navigation - Only 3 tabs */}
-          <div className="border-b border-gray-200 overflow-x-auto no-scrollbar px-8">
+          <div className="border-b border-gray-200 overflow-x-auto no-scrollbar px-3">
             <div className="flex min-w-max">
               {[
                 { id: 'information', label: 'Information', icon: User },
-                // { id: 'documents', label: 'Documents', icon: FileCheck2 },
+                { id: 'documents', label: 'Documents', icon: FileCheck2 },
                 { id: 'activity', label: 'Comments', icon: Activity }
               ].map(tab => {
                 const TabIcon = tab.icon
@@ -864,9 +803,9 @@ const sendMessage = async () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`relative flex items-center gap-1.5 px-4 py-2 text-[15px] font-medium whitespace-nowrap transition-all duration-200 ${isActive ? 'text-orange-600' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'}`}
+                    className={`relative flex items-center gap-1.5 px-4 py-2 text-base font-medium whitespace-nowrap transition-all duration-200 ${isActive ? 'text-orange-600' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'}`}
                   >
-                    <TabIcon className="w-4 h-4" />
+                    {/* <TabIcon className="w-4 h-4" /> */}
                     {tab.label}
                     {tab.id === 'documents' && unreadCount > 0 && (
                       <span className="ml-1 px-1.5 py-0.5 bg-red-500 text-white text-xs rounded-full">{unreadCount}</span>
@@ -881,81 +820,106 @@ const sendMessage = async () => {
 
         {/* Information Tab Content */}
         {activeTab === 'information' && (
-          <div className="px-8 py-8">
-            <div className="grid grid-cols-4 gap-y-10 gap-x-10">
-              <DetailItem
-                label="Student Name"
-                value={application?.student?.name || "N/A"}
-              />
-              <DetailItem
-                label="Applicaion ID"
-                value={application?.applicationNumber || "N/A"}
-              />
-              <DetailItem
-                label="Student ID"
-                value={application?.student?._id || "-"}
-              />
-              <DetailItem
-                label="Date & Time Added"
-                value={application?.createdAt ? format(new Date(application.createdAt), 'dd/MM/yyyy hh:mm a') : "N/A"}
-              />
-              <DetailItem
-                label="Student Passport No."
-                value={application?.student?.passportNumber || "N/A"}
-              />
-              <EditableItem
-                label="Student Date of Birth"
-                value={application?.student?.dateOfBirth ? format(new Date(application.student.dateOfBirth), 'yyyy-MM-dd') :
-                   "N/A"}
-              />
-              <DetailItem
-                label="Student E-Mail"
-                value={application?.student?.email || "N/A"}
-              />
-              <DetailItem
-                label="Student Phone No"
-                value={application?.student?.phone || "N/A"}
-              />
+          <div className="px-3 py-8">
+            <div>
+
+              <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
+                Basic Details
+              </h2>
+              <div className="grid grid-cols-4 gap-6">
+                <DetailItem
+                  label="Full Name"
+                  value={application?.student?.name || "N/A"}
+                />
+                <DetailItem
+                  label="Gender"
+                  value={application?.student?.gender || "N/A"}
+                />
+                <DetailItem
+                  label="Nationality"
+                  value={application?.student?.nationality || "N/A"}
+                />
+                <DetailItem
+                  label="Date of Birth"
+                  value={application?.student?.dateOfBirth ? format(new Date(application.student.dateOfBirth), 'yyyy-MM-dd') :
+                    "N/A"}
+                />
+                <DetailItem
+                  label="Application ID"
+                  value={application?.applicationNumber || "N/A"}
+                />
+                <DetailItem
+                  label="E-Mail"
+                  value={application?.student?.email || "N/A"}
+                />
+                <DetailItem
+                  label="Passport No."
+                  value={application?.student?.passportNumber || "N/A"}
+                />
+                <DetailItem
+                  label="Created At"
+                  value={application?.createdAt ? format(new Date(application.createdAt), 'dd/MM/yyyy hh:mm a') : "N/A"}
+                />
+
+              </div>
             </div>
 
             {/* Course Details Section */}
-            <div className="mt-12 border-t pt-8">
+            <div className="mt-8 border-t pt-8">
               <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
                 Course Details
               </h2>
-              <div className="grid grid-cols-5 gap-10 items-center">
-                <div className="flex gap-4 items-center">
-                  <div className="w-16 h-16 relative">
-                    {application?.course?.university?.uni_logo ? (
-                      <img
-                        src={application.course.university.uni_logo}
-                        alt="University"
-                        className="object-contain w-full h-full"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <School className="w-8 h-8 text-gray-400" />
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 mb-1">University</p>
-                    <h3 className="font-medium text-gray-800">{application?.course?.university?.name || "N/A"}</h3>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Course Name</p>
-                  <h3 className="font-medium text-gray-800">{application?.course?.name || "N/A"}</h3>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Course Intake</p>
-                  <h3 className="font-medium text-gray-800">{application?.intake || "N/A"}</h3>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Tuition Fees</p>
-                  <h3 className="font-medium text-gray-800">{application?.course?.tuitionFee || "N/A"}</h3>
-                </div>
-              </div>
+              {application.course &&
+                (() => {
+                  const courseDetails = [
+                    {
+                      label: "Course Name",
+                      value: application?.course?.name,
+                    },
+                    {
+                      label: "University",
+                      value: application?.course?.university?.name,
+                    },
+                    {
+                      label: "Address",
+                      value: application?.course?.university?.address,
+                    },
+
+                    {
+                      label: "Course Intake",
+                      value: application?.intake,
+                    },
+                    {
+                      label: "Level",
+                      value: application?.course?.level,
+                    },
+                    {
+                      label: "Duration",
+                      value: application?.course?.duration,
+                    },
+                    {
+                      label: "Tuition Fee",
+                      value: `${application?.course?.currency || ""} ${application?.course?.tuitionFee || ""}`,
+                    },
+                    {
+                      label: "QS Ranking",
+                      value:
+                        application?.course?.university?.uni_rank?.find(
+                          (item) => item.type === "QS World"
+                        )?.rank || "N/A",
+                    },
+                  ];
+                  return (
+                    <div className="grid grid-cols-4 gap-6 items-center">
+                      {courseDetails.map((item, index) => (
+                        <div key={index}>
+                          <p className="text-sm font-medium text-gray-800 mb-1">{item.label}</p>
+                          <h3 className="font-medium text-gray-800">{item.value || "N/A"}</h3>
+                        </div>
+                      ))}
+                    </div>)
+                })()
+              }
             </div>
 
 
@@ -982,11 +946,11 @@ const sendMessage = async () => {
           </div>
         )}
 
-      {/* Documents Tab Content */}
-      {activeTab === "documents" && (
-        <div className="bg-[#fafafa] min-h-screen">
-          {/* Top Tabs */}
-          {/* <div className="border-b border-gray-200 bg-white px-6">
+        {/* Documents Tab Content */}
+        {activeTab === "documents" && (
+          <div className="min-h-screen">
+            {/* Top Tabs */}
+            {/* <div className="border-b border-gray-200 bg-white px-6">
             <div className="flex items-center gap-8 overflow-x-auto">
               {["All", "Pending", "Approved", "Rejected"].map((status) => (
                 <button
@@ -1013,629 +977,619 @@ const sendMessage = async () => {
             </div>
           </div> */}
 
-          {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-6 p-6">
-            
-            {/* Upload Section */}
-            <div className="bg-white border border-gray-200 rounded-2xl p-8 min-h-[520px] flex flex-col items-center justify-center text-center shadow-sm">
-              <div className="w-24 h-24 rounded-full bg-orange-50 flex items-center justify-center mb-6">
-                <Upload className="w-12 h-12 text-[#ff6a1a]" />
+            {/* Main Content */}
+            <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-6 p-6">
+
+              {/* Upload Section */}
+              <div className="bg-white border border-gray-200 rounded-2xl p-8 min-h-[520px] flex flex-col items-center justify-center text-center shadow-sm">
+                <div className="w-24 h-24 rounded-full bg-orange-50 flex items-center justify-center mb-6">
+                  <Upload className="w-12 h-12 text-[#ff6a1a]" />
+                </div>
+
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  Upload Documents
+                </h3>
+
+                <p className="text-sm text-gray-500 mb-6 max-w-[260px]">
+                  Please upload only color scan copies in PDF, DOC, or image format.
+                </p>
+
+                <button className="px-6 py-3 rounded-xl bg-[#ff6a1a] hover:bg-[#f45f0d] text-white font-medium shadow-md transition-all duration-200 flex items-center gap-2">
+                  <Upload className="w-4 h-4" />
+                  Upload File
+                </button>
               </div>
 
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                Upload Documents
-              </h3>
+              {/* Documents List */}
+              <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <div className="max-h-[520px] overflow-y-auto custom-scrollbar">
+                  {application?.documents?.filter((doc: any) => {
+                    if (activeDocTab === "All") return doc.type === "user";
+                    return (
+                      doc.status === activeDocTab && doc.type === "user"
+                    );
+                  }).length === 0 ? (
+                    <div className="text-center py-20">
+                      <div className="text-6xl mb-4">📄</div>
+                      <p className="text-gray-500 text-sm">
+                        No documents found
+                      </p>
+                    </div>
+                  ) : (
+                    application?.documents
+                      ?.filter((doc: any) => {
+                        if (activeDocTab === "All")
+                          return doc.type === "user";
 
-              <p className="text-sm text-gray-500 mb-6 max-w-[260px]">
-                Please upload only color scan copies in PDF, DOC, or image format.
-              </p>
+                        return (
+                          doc.status === activeDocTab &&
+                          doc.type === "user"
+                        );
+                      })
+                      .map((req: any, index: number) => (
+                        <motion.div
+                          key={req._id || index}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.25 }}
+                          whileHover={{ backgroundColor: "#fafafa" }}
+                          className="flex items-center justify-between gap-4 px-6 py-5 border-b border-gray-100 transition-all"
+                        >
+                          {/* Left */}
+                          <div className="flex items-center gap-4 flex-1 min-w-0">
+                            {/* Status Icon */}
+                            <div
+                              className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${req.status === "Approved"
+                                ? "bg-green-100 text-green-600"
+                                : req.status === "Rejected"
+                                  ? "bg-red-100 text-red-600"
+                                  : req.status === "inreview"
+                                    ? "bg-yellow-100 text-yellow-600"
+                                    : "bg-gray-100 text-gray-500"
+                                }`}
+                            >
+                              {getStatusIcon(req.status)}
+                            </div>
 
-              <button className="px-6 py-3 rounded-xl bg-[#ff6a1a] hover:bg-[#f45f0d] text-white font-medium shadow-md transition-all duration-200 flex items-center gap-2">
-                <Upload className="w-4 h-4" />
-                Upload File
+                            {/* File Details */}
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h4 className="text-sm font-medium text-gray-800 truncate">
+                                  {req.name}
+                                </h4>
+
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${req.required === "required"
+                                    ? "bg-red-50 text-red-700 border border-red-200"
+                                    : req.required === "optional"
+                                      ? "bg-gray-50 text-gray-700 border border-gray-200"
+                                      : "bg-purple-50 text-purple-700 border border-purple-200"
+                                    }`}
+                                >
+                                  {req.required === "required"
+                                    ? "Required"
+                                    : req.required === "optional"
+                                      ? "Optional"
+                                      : "Early Access"}
+                                </span>
+                              </div>
+
+                              <p className="text-xs text-gray-400 mt-1">
+                                Uploaded on{" "}
+                                {req.createdAt
+                                  ? new Date(req.createdAt).toDateString()
+                                  : "N/A"}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Right Actions */}
+                          <div className="flex items-center gap-4 shrink-0">
+                            {/* Status Badge */}
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(
+                                req.status
+                              )}`}
+                            >
+                              {req.status === "Rejected" && "Rejected"}
+                              {req.status === "inreview" && "In Review"}
+                              {req.status === "Approved" && "Approved"}
+                              {req.status === "Pending" && "Pending"}
+                            </span>
+
+                            {/* View */}
+                            <button className="text-[#ff6a1a] hover:scale-110 transition-all">
+                              <Eye className="w-5 h-5" />
+                            </button>
+
+                            {/* Download */}
+                            <button className="text-[#ff6a1a] hover:scale-110 transition-all">
+                              <Download className="w-5 h-5" />
+                            </button>
+
+                            {/* Answer */}
+                            {(req.status === "Pending" ||
+                              req.status === "Rejected") && (
+                                <button
+                                  onClick={() => {
+                                    setSelectedRequirement(req);
+                                    setIsDrawerOpen(true);
+                                  }}
+                                  className="px-4 py-2 bg-[#ff6a1a] hover:bg-[#f45f0d] text-white text-sm font-medium rounded-lg transition-all duration-200"
+                                >
+                                  Answer
+                                </button>
+                              )}
+                          </div>
+                        </motion.div>
+                      ))
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Activity Log Tab Content */}
+        {activeTab === 'activity' && (
+          <div className="bg-white">
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Ticket Communication History
+                </h3>
+                <p>Track all agent updates, internal discussions, and resolution milestones.</p>
+              </div>
+
+              <button
+                onClick={() => setIsCommentModalOpen(true)}
+                className="bg-[#F26D44] hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md transition-colors"
+              >
+                ADD COMMENTS
               </button>
             </div>
 
-            {/* Documents List */}
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-              <div className="max-h-[520px] overflow-y-auto custom-scrollbar">
-                {application?.documents?.filter((doc: any) => {
-                  if (activeDocTab === "All") return doc.type === "user";
-                  return (
-                    doc.status === activeDocTab && doc.type === "user"
-                  );
-                }).length === 0 ? (
-                  <div className="text-center py-20">
-                    <div className="text-6xl mb-4">📄</div>
-                    <p className="text-gray-500 text-sm">
-                      No documents found
-                    </p>
-                  </div>
-                ) : (
-                  application?.documents
-                    ?.filter((doc: any) => {
-                      if (activeDocTab === "All")
-                        return doc.type === "user";
-
-                      return (
-                        doc.status === activeDocTab &&
-                        doc.type === "user"
-                      );
-                    })
-                    .map((req: any, index: number) => (
-                      <motion.div
-                        key={req._id || index}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.25 }}
-                        whileHover={{ backgroundColor: "#fafafa" }}
-                        className="flex items-center justify-between gap-4 px-6 py-5 border-b border-gray-100 transition-all"
-                      >
-                        {/* Left */}
-                        <div className="flex items-center gap-4 flex-1 min-w-0">
-                          {/* Status Icon */}
-                          <div
-                            className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
-                              req.status === "Approved"
-                                ? "bg-green-100 text-green-600"
-                                : req.status === "Rejected"
-                                ? "bg-red-100 text-red-600"
-                                : req.status === "inreview"
-                                ? "bg-yellow-100 text-yellow-600"
-                                : "bg-gray-100 text-gray-500"
-                            }`}
-                          >
-                            {getStatusIcon(req.status)}
-                          </div>
-
-                          {/* File Details */}
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <h4 className="text-sm font-medium text-gray-800 truncate">
-                                {req.name}
-                              </h4>
-
-                              <span
-                                className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
-                                  req.required === "required"
-                                    ? "bg-red-50 text-red-700 border border-red-200"
-                                    : req.required === "optional"
-                                    ? "bg-gray-50 text-gray-700 border border-gray-200"
-                                    : "bg-purple-50 text-purple-700 border border-purple-200"
-                                }`}
-                              >
-                                {req.required === "required"
-                                  ? "Required"
-                                  : req.required === "optional"
-                                  ? "Optional"
-                                  : "Early Access"}
-                              </span>
-                            </div>
-
-                            <p className="text-xs text-gray-400 mt-1">
-                              Uploaded on{" "}
-                              {req.createdAt
-                                ? new Date(req.createdAt).toDateString()
-                                : "N/A"}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Right Actions */}
-                        <div className="flex items-center gap-4 shrink-0">
-                          {/* Status Badge */}
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(
-                              req.status
-                            )}`}
-                          >
-                            {req.status === "Rejected" && "Rejected"}
-                            {req.status === "inreview" && "In Review"}
-                            {req.status === "Approved" && "Approved"}
-                            {req.status === "Pending" && "Pending"}
-                          </span>
-
-                          {/* View */}
-                          <button className="text-[#ff6a1a] hover:scale-110 transition-all">
-                            <Eye className="w-5 h-5" />
-                          </button>
-
-                          {/* Download */}
-                          <button className="text-[#ff6a1a] hover:scale-110 transition-all">
-                            <Download className="w-5 h-5" />
-                          </button>
-
-                          {/* Answer */}
-                          {(req.status === "Pending" ||
-                            req.status === "Rejected") && (
-                            <button
-                              onClick={() => {
-                                setSelectedRequirement(req);
-                                setIsDrawerOpen(true);
-                              }}
-                              className="px-4 py-2 bg-[#ff6a1a] hover:bg-[#f45f0d] text-white text-sm font-medium rounded-lg transition-all duration-200"
-                            >
-                              Answer
-                            </button>
-                          )}
-                        </div>
-                      </motion.div>
-                    ))
-                )}
-              </div>
+            {/* Table Header */}
+            <div className="grid grid-cols-12 gap-4 bg-gray-100 px-8 py-4 text-sm font-semibold text-gray-700 border-b">
+              <div className="col-span-2">Details</div>
+              <div className="col-span-6">Comment</div>
+              <div className="col-span-3">Status</div>
+              <div className="col-span-1">Commented By</div>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Activity Log Tab Content */}
-      {activeTab === 'activity' && (
-        <div className="bg-white">
+            {/* Messages */}
+            <div className="max-h-[650px] overflow-y-auto divide-y divide-gray-200">
 
-        {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800">
-              Ticket Communication History
-            </h3>
-            <p>Track all agent updates, internal discussions, and resolution milestones.</p>
-          </div>
+              {messageList?.map((item, index) => (
 
-          <button
-            onClick={() => setIsCommentModalOpen(true)}
-            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md transition-colors"
-          >
-            ADD COMMENTS
-          </button>
-        </div>
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="grid grid-cols-12 gap-4 px-8 py-6 hover:bg-gray-50 transition-colors"
+                >
 
-        {/* Table Header */}
-        <div className="grid grid-cols-12 gap-4 bg-gray-100 px-8 py-4 text-sm font-semibold text-gray-700 border-b">
-          <div className="col-span-3">Details</div>
-          <div className="col-span-4">Comment</div>
-          <div className="col-span-3">Status</div>
-          <div className="col-span-2">Commented By</div>
-        </div>
+                  {/* Details */}
+                  <div className="col-span-2">
 
-        {/* Messages */}
-        <div className="max-h-[650px] overflow-y-auto divide-y divide-gray-200">
+                    <div className="text-sm text-gray-700 leading-6">
 
-          {messageList?.map((item, index) => (
+                      <p className="font-medium">
+                        {item?.createdAt.split("T")[0]}
+                      </p>
 
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="grid grid-cols-12 gap-4 px-8 py-6 hover:bg-gray-50 transition-colors"
-            >
+                      <div className="mt-4">
 
-              {/* Details */}
-              <div className="col-span-3">
+                        <p className="font-semibold text-gray-800">
+                          Subject:
+                        </p>
 
-                <div className="text-sm text-gray-700 leading-6">
-
-                  <p className="font-medium">
-                    {item?.createdAt.split("T")[0]}
-                  </p>
-
-                  <div className="mt-4">
-
-                    <p className="font-semibold text-gray-800">
-                      Subject:
-                    </p>
-
-                    <p className="font-semibold text-gray-900 mt-2">
-                      {item?.extra_content?.subject}
-                    </p>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-
-              {/* Comment */}
-              <div className="col-span-4">
-
-                <div className="space-y-3">
-
-                  <div className="text-gray-700 leading-7 text-[15px]">
-                    {item.content}
-                  </div>
-
-                  {item.extra_content?.attachments?.[0]?.name && (
-
-                    <a
-                      href={`https://api.ooshasglobal.com${item.extra_content?.attachments?.[0]?.url}`}
-                      target="_blank"
-                      className="flex items-center gap-2"
-                    >
-                      <Paperclip className="w-4 h-4 text-slate-400" />
-
-                      {item.extra_content?.attachments?.[0]?.name}
-
-                    </a>
-
-                  )}
-
-                </div>
-
-              </div>
-
-
-              {/* Status */}
-              <div className="col-span-3">
-
-                <div className="space-y-5 text-sm">
-
-                  <div>
-
-                    <p className="font-bold text-gray-800">
-                      Primary Status:
-                    </p>
-
-                    <p className="text-gray-700">
-                      {item.primaryStatus || "Application Processed"}
-                    </p>
-
-                  </div>
-
-                  <div>
-
-                    <p className="font-bold text-gray-800">
-                      Message Status:
-                    </p>
-
-                    <p className="text-gray-700">
-                      {item?.isRead ? "true" : "false"}
-                    </p>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-
-              {/* User */}
-              <div className="col-span-2 flex flex-col items-center justify-between">
-
-                <span className="text-gray-700 font-medium">
-                  {item.userType === "student" ? "Me" : item.userType }
-                </span>
-                      
-                {item.userType !== "student" && !item?.isRead && (
-                  <button
-                    onClick={() => {
-                      setIsCommentModalOpen(true); 
-                      setMessageSubject(item?.extra_content?.subject);
-                      markMessagesAsRead();
-                    }}
-                    className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-1 px-2 rounded-md transition-colors"
-                  >
-                    reply <SendHorizonal className="h-4" />
-                  </button>
-                )}
-
-              </div>
-            </motion.div>
-
-          ))}
-
-        </div>
-
-
-        {/* Modal */}
-        <AnimatePresence>
-
-          {isCommentModalOpen && (
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-end justify-end p-6"
-            >
-
-              <motion.div
-                initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                transition={{ type: "spring", duration: 0.4 }}
-                className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200"
-              >
-
-                {/* Header */}
-                <div className="bg-white border-b border-slate-100 px-5 py-4">
-
-                  <div className="flex items-center justify-between">
-
-                    <div>
-
-                      <h3 className="text-base font-bold text-slate-800">
-                        New Message
-                      </h3>
-
-                      <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
-
-                        <span>To</span>
-
-                        <span className="font-medium text-slate-700">
-                          Ooshas
-                        </span>
+                        <p className="font-semibold text-gray-900 mt-2">
+                          {item?.extra_content?.subject}
+                        </p>
 
                       </div>
 
                     </div>
 
-                    <button
-                      onClick={() => setIsCommentModalOpen(false)}
-                      className="text-slate-400 hover:text-slate-600 transition-colors"
-                    >
-
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-
-                    </button>
-
                   </div>
 
-                </div>
 
+                  {/* Comment */}
+                  <div className="col-span-6">
 
-                {/* Body */}
-                <div className="p-5 space-y-5">
+                    <div className="space-y-3">
 
-                  {/* Subject */}
-                  <div className="space-y-1.5">
+                      <div className="text-gray-700 leading-7 text-[15px]">
+                        {item.content}
+                      </div>
 
-                    <div className="flex items-center gap-2 text-sm">
+                      {item.extra_content?.attachments?.[0]?.name && (
 
-                      <label className="font-medium text-slate-600 w-16">
-                        Subject
-                      </label>
+                        <a
+                          href={`https://api.ooshasglobal.com${item.extra_content?.attachments?.[0]?.url}`}
+                          target="_blank"
+                          className="flex items-center gap-2"
+                        >
+                          <Paperclip className="w-4 h-4 text-slate-400" />
 
-                      <select
-                        value={messageSubject}
-                        onChange={(e) => setMessageSubject(e.target.value)}
-                        className="flex-1 bg-transparent border-b border-slate-200 py-1.5 text-sm text-slate-700 outline-none focus:border-orange-500"
-                      >
+                          {item.extra_content?.attachments?.[0]?.name}
 
-                        <option value="">
-                          Select a subject...
-                        </option>
+                        </a>
 
-                        <option value="Application Processed">
-                          Application Processed
-                        </option>
-
-                        <option value="Document Uploaded">
-                          Document Uploaded
-                        </option>
-
-                        <option value="University Update">
-                          University Update
-                        </option>
-
-                      </select>
+                      )}
 
                     </div>
 
                   </div>
 
 
-                  {/* Message */}
-                  <div className="space-y-1.5">
+                  {/* Status */}
+                  <div className="col-span-3">
 
-                    <textarea
-                      rows={5}
-                      value={messageText}
-                      onChange={(e) => setMessageText(e.target.value)}
-                      placeholder="Type your comment details here..."
-                      className="w-full p-3 outline-none resize-none text-sm text-slate-700 placeholder-slate-400 bg-slate-50 rounded-xl border border-slate-100 focus:border-orange-500 focus:bg-white transition-all"
-                    />
+                    <div className="space-y-5 text-sm">
+
+                      <div>
+
+                        <p className="font-bold text-gray-800">
+                          Primary Status:
+                        </p>
+
+                        <p className="text-gray-700">
+                          {item.primaryStatus || "Application Processed"}
+                        </p>
+
+                      </div>
+
+                      <div>
+
+                        <p className="font-bold text-gray-800">
+                          Message Status:
+                        </p>
+
+                        <p className="text-gray-700">
+                          {item?.isRead ? "true" : "false"}
+                        </p>
+
+                      </div>
+
+                    </div>
 
                   </div>
 
 
-                  {/* Attachments */}
-                  {messageAttachments.length > 0 && (
+                  {/* User */}
+                  <div className="col-span-1 flex flex-col items-center justify-between">
 
-                    <div className="space-y-2">
+                    <span className="text-gray-700 font-medium">
+                      {item.userType === "student" ? "Me" : item.userType}
+                    </span>
 
-                      <div className="flex flex-wrap gap-2">
+                    {item.userType !== "student" && !item?.isRead && (
+                      <button
+                        onClick={() => {
+                          setIsCommentModalOpen(true);
+                          setMessageSubject(item?.extra_content?.subject);
+                          markMessagesAsRead();
+                        }}
+                        className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-1 px-2 rounded-md transition-colors"
+                      >
+                        reply <SendHorizonal className="h-4" />
+                      </button>
+                    )}
 
-                        {messageAttachments.map((file, index) => (
+                  </div>
+                </motion.div>
 
-                          <div
-                            key={index}
-                            className="flex items-center gap-1.5 bg-slate-100 rounded-full px-3 py-1 text-xs text-slate-600"
+              ))}
+
+            </div>
+
+
+            {/* Modal */}
+            <AnimatePresence>
+
+              {isCommentModalOpen && (
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-50 flex items-end justify-end p-6"
+                >
+
+                  <motion.div
+                    initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                    transition={{ type: "spring", duration: 0.4 }}
+                    className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200"
+                  >
+
+                    {/* Header */}
+                    <div className="bg-white border-b border-slate-100 px-5 py-4">
+
+                      <div className="flex items-center justify-between">
+
+                        <div>
+
+                          <h3 className="text-base font-bold text-slate-800">
+                            New Message
+                          </h3>
+
+                          <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
+                            <span>To</span>
+                            <span className="font-medium text-slate-700">
+                              Ooshas
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setIsCommentModalOpen(false)}
+                          className="text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+
+                    {/* Body */}
+                    <div className="p-5 space-y-5">
+
+                      {/* Subject */}
+                      <div className="space-y-1.5">
+
+                        <div className="flex items-center gap-2 text-sm">
+
+                          <label className="font-medium text-slate-600 w-16">
+                            Subject
+                          </label>
+
+                          <select
+                            value={messageSubject}
+                            onChange={(e) => setMessageSubject(e.target.value)}
+                            className="flex-1 bg-transparent border-b border-slate-200 py-1.5 text-sm text-slate-700 outline-none focus:border-orange-500"
                           >
 
-                            <svg
-                              className="w-3 h-3 text-slate-400"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
+                            <option value="">
+                              Select a subject...
+                            </option>
 
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                              />
+                            <option value="Application Processed">
+                              Application Processed
+                            </option>
 
-                            </svg>
+                            <option value="Document Uploaded">
+                              Document Uploaded
+                            </option>
 
-                            <span className="max-w-[120px] truncate">
-                              {file.name}
-                            </span>
+                            <option value="University Update">
+                              University Update
+                            </option>
 
-                            <button
-                              type="button"
-                              onClick={() => removeUploadedFile(index)}
-                              className="text-slate-400 hover:text-rose-500 ml-1"
-                            >
-                              ×
-                            </button>
+                          </select>
+
+                        </div>
+
+                      </div>
+
+
+                      {/* Message */}
+                      <div className="space-y-1.5">
+
+                        <textarea
+                          rows={5}
+                          value={messageText}
+                          onChange={(e) => setMessageText(e.target.value)}
+                          placeholder="Type your comment details here..."
+                          className="w-full p-3 outline-none resize-none text-sm text-slate-700 placeholder-slate-400 bg-slate-50 rounded-xl border border-slate-100 focus:border-orange-500 focus:bg-white transition-all"
+                        />
+
+                      </div>
+
+
+                      {/* Attachments */}
+                      {messageAttachments.length > 0 && (
+
+                        <div className="space-y-2">
+
+                          <div className="flex flex-wrap gap-2">
+
+                            {messageAttachments.map((file, index) => (
+
+                              <div
+                                key={index}
+                                className="flex items-center gap-1.5 bg-slate-100 rounded-full px-3 py-1 text-xs text-slate-600"
+                              >
+
+                                <svg
+                                  className="w-3 h-3 text-slate-400"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                                  />
+
+                                </svg>
+
+                                <span className="max-w-[120px] truncate">
+                                  {file.name}
+                                </span>
+
+                                <button
+                                  type="button"
+                                  onClick={() => removeUploadedFile(index)}
+                                  className="text-slate-400 hover:text-rose-500 ml-1"
+                                >
+                                  ×
+                                </button>
+
+                              </div>
+
+                            ))}
 
                           </div>
 
-                        ))}
+                        </div>
+
+                      )}
+
+
+                      {/* Actions */}
+                      <div className="flex items-center justify-end gap-2 pt-2">
+
+                        {/* Upload */}
+                        <button
+                          type="button"
+                          disabled={
+                            messageSubject !== "Document Uploaded" ||
+                            isAttachmentUploading ||
+                            isCommentSubmitting
+                          }
+                          onClick={() => fileInputRef.current.click()}
+                          className="p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-50"
+                        >
+
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                            />
+
+                          </svg>
+
+                        </button>
+
+
+                        {/* Send */}
+                        <button
+                          type="button"
+                          onClick={sendMessage}
+                          disabled={
+                            isCommentSubmitting ||
+                            isAttachmentUploading ||
+                            !messageText.trim()
+                          }
+                          className="bg-orange-500 hover:bg-orange-600 disabled:bg-slate-200 disabled:text-slate-400 text-white font-medium px-5 py-2 rounded-full text-sm transition-all"
+                        >
+
+                          {isCommentSubmitting ? "Sending..." : "Send"}
+
+                        </button>
 
                       </div>
 
                     </div>
 
-                  )}
 
-
-                  {/* Actions */}
-                  <div className="flex items-center justify-end gap-2 pt-2">
-
-                    {/* Upload */}
-                    <button
-                      type="button"
+                    {/* Hidden File Input */}
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      multiple
                       disabled={
-                        messageSubject !== "Document Uploaded" ||
                         isAttachmentUploading ||
                         isCommentSubmitting
                       }
-                      onClick={() => fileInputRef.current.click()}
-                      className="p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-50"
-                    >
+                      className="hidden"
+                    />
 
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
+                  </motion.div>
 
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                        />
+                </motion.div>
 
-                      </svg>
+              )}
 
-                    </button>
+            </AnimatePresence>
 
-
-                    {/* Send */}
-                    <button
-                      type="button"
-                      onClick={sendMessage}
-                      disabled={
-                        isCommentSubmitting ||
-                        isAttachmentUploading ||
-                        !messageText.trim()
-                      }
-                      className="bg-orange-500 hover:bg-orange-600 disabled:bg-slate-200 disabled:text-slate-400 text-white font-medium px-5 py-2 rounded-full text-sm transition-all"
-                    >
-
-                      {isCommentSubmitting ? "Sending..." : "Send"}
-
-                    </button>
-
-                  </div>
-
-                </div>
-
-
-                {/* Hidden File Input */}
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  multiple
-                  disabled={
-                    isAttachmentUploading ||
-                    isCommentSubmitting
-                  }
-                  className="hidden"
-                />
-
-              </motion.div>
-
-            </motion.div>
-
-          )}
-
-        </AnimatePresence>
-
-      </div>
-      )}
-
+          </div>
+        )}
       </div>
 
       {/* Intake Modal */}
-      {showIntakeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-lg font-semibold">Change Intake</h2>
-              <button onClick={() => setShowIntakeModal(false)} className="p-1 hover:bg-gray-100 rounded">✖</button>
-            </div>
-            <div className="min-h-[200px]">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-6 overflow-y-auto max-h-[400px]">
-                {((application?.course?.university?.intakes || [])).map((item: string) => (
-                  <div
-                    key={item}
-                    onClick={() => setSelectedIntake(item)}
-                    className={`border rounded-lg p-3 cursor-pointer transition-all ${selectedIntake === item ? "border-blue-500 bg-blue-50 shadow-md" : "border-gray-200 hover:border-gray-400 hover:shadow-sm"}`}
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className={`w-4 h-4 rounded-full border-2 ${selectedIntake === item ? "border-blue-500 bg-blue-500" : "border-gray-300"}`}>
-                        {selectedIntake === item && <div className="w-2 h-2 rounded-full bg-white m-0.5"></div>}
+      {
+        showIntakeModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6">
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="text-lg font-semibold">Change Intake</h2>
+                <button onClick={() => setShowIntakeModal(false)} className="p-1 hover:bg-gray-100 rounded">✖</button>
+              </div>
+              <div className="min-h-[200px]">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-6 overflow-y-auto max-h-[400px]">
+                  {((application?.course?.university?.intakes || [])).map((item: string) => (
+                    <div
+                      key={item}
+                      onClick={() => setSelectedIntake(item)}
+                      className={`border rounded-lg p-3 cursor-pointer transition-all ${selectedIntake === item ? "border-blue-500 bg-blue-50 shadow-md" : "border-gray-200 hover:border-gray-400 hover:shadow-sm"}`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className={`w-4 h-4 rounded-full border-2 ${selectedIntake === item ? "border-blue-500 bg-blue-500" : "border-gray-300"}`}>
+                          {selectedIntake === item && <div className="w-2 h-2 rounded-full bg-white m-0.5"></div>}
+                        </div>
+                        <p className="font-medium text-sm">{item}</p>
                       </div>
-                      <p className="font-medium text-sm">{item}</p>
+                      <p className="text-xs text-gray-500 ml-6">Status: Open</p>
                     </div>
-                    <p className="text-xs text-gray-500 ml-6">Status: Open</p>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-4">
+                <button onClick={() => setShowIntakeModal(false)}
+                  className="px-3 py-2 text-sm border rounded-md hover:bg-gray-50">Cancel</button>
+                <button
+                  onClick={async () => {
+                    if (selectedIntake) {
+                      try {
+                        await axiosInstance.put(`/applications/update/${application._id}`, { intake: selectedIntake });
+                        toast.success("Intake updated successfully");
+                        fetchApplication();
+                        setShowIntakeModal(false);
+                      } catch (error) {
+                        toast.error("Failed to update intake");
+                      }
+                    }
+                  }}
+                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Submit
+                </button>
               </div>
             </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <button onClick={() => setShowIntakeModal(false)}
-               className="px-3 py-2 text-sm border rounded-md hover:bg-gray-50">Cancel</button>
-              <button
-                onClick={async () => {
-                  if (selectedIntake) {
-                    try {
-                      await axiosInstance.put(`/applications/update/${application._id}`, { intake: selectedIntake });
-                      toast.success("Intake updated successfully");
-                      fetchApplication();
-                      setShowIntakeModal(false);
-                    } catch (error) {
-                      toast.error("Failed to update intake");
-                    }
-                  }
-                }}
-                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Submit
-              </button>
-            </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Document Upload Drawer */}
       <AnimatePresence>
@@ -1771,7 +1725,7 @@ const sendMessage = async () => {
           </>
         )}
       </AnimatePresence>
-    </div>
+    </div >
   );
 }
 
@@ -1783,10 +1737,10 @@ type DetailProps = {
 function DetailItem({ label, value }: DetailProps) {
   return (
     <div>
-      <p className="text-sm font-semibold text-gray-700 mb-2">
+      <p className="text-sm font-semibold text-gray-800 mb-1">
         {label}
       </p>
-      <p className="text-gray-600 text-sm">{value}</p>
+      <p className="text-gray-700 font-medium text-sm">{value}</p>
     </div>
   );
 }
@@ -1798,7 +1752,7 @@ function EditableItem({ label, value }: DetailProps) {
         {label}
       </p>
       <div className="flex items-center gap-2">
-        <p className="text-gray-600 text-sm">{value}</p>
+        <p className="text-gray-700 font-medium text-sm">{value}</p>
         {/* <Pencil size={14} className="text-gray-500 cursor-pointer hover:text-[#ff6a1a]" /> */}
       </div>
     </div>
