@@ -94,7 +94,7 @@ const STATUS_CONFIG: Record<string, { bg: string; text: string; icon: any }> = {
   ReviewbyOoshas: { bg: "bg-purple-50", text: "text-purple-700", icon: Users },
   SubmitToSchool: { bg: "bg-indigo-50", text: "text-indigo-700", icon: Send },
   AwaitingSchoolResponse: { bg: "bg-cyan-50", text: "text-cyan-700", icon: Clock },
-  AdmissionProcessing: { bg: "bg-violet-50", text: "text-violet-700", icon: Activity },
+  AdmissionProcessing: { bg: "bg-violet-50", text: "text-[#fa6a1f]", icon: Activity },
   Refused: { bg: "bg-red-50", text: "text-red-700", icon: AlertCircle },
   Withdrawn: { bg: "bg-gray-50", text: "text-gray-600", icon: X },
   PreArrival: { bg: "bg-emerald-50", text: "text-emerald-700", icon: TrendingUp },
@@ -128,7 +128,7 @@ function ProgressBar({ sent, total }: { sent: number; total: number }) {
     <div className="flex items-center gap-2">
       <div className="w-20 bg-gray-100 rounded-full h-1.5">
         <div
-          className="bg-violet-600 h-1.5 rounded-full transition-all duration-300"
+          className="bg-[#fa6a1f] h-1.5 rounded-full transition-all duration-300"
           style={{ width: `${percentage}%` }}
         />
       </div>
@@ -194,7 +194,7 @@ function Pagination({
               onClick={() => onPageChange(page as number)}
               className={`min-w-[32px] h-8 rounded-lg text-sm font-medium transition ${
                 currentPage === page
-                  ? "bg-violet-600 text-white"
+                  ? "bg-[#fa6a1f] text-white"
                   : "border border-slate-200 text-slate-600 hover:bg-slate-50"
               }`}
             >
@@ -337,7 +337,7 @@ const fetchApplications = useCallback(
           </div>
           <button
             onClick={() => setView("add")}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold transition "
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#fa6a1f] hover:bg-[#fa6a1f] text-white text-sm font-semibold transition "
           >
             <Plus size={16} /> New Applicaion
           </button>
@@ -365,14 +365,14 @@ const fetchApplications = useCallback(
               onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition ${
                 showFilters || activeFilters > 0
-                  ? "border-violet-300 bg-violet-50 text-violet-700"
+                  ? "border-violet-300 bg-violet-50 text-[#fa6a1f]"
                   : "border-slate-200 text-slate-600 hover:bg-slate-50"
               }`}
             >
               <Filter size={15} />
               Filters
               {activeFilters > 0 && (
-                <span className="w-5 h-5 rounded-full bg-violet-600 text-white text-xs flex items-center justify-center">
+                <span className="w-5 h-5 rounded-full bg-[#fa6a1f] text-white text-xs flex items-center justify-center">
                   {activeFilters}
                 </span>
               )}
@@ -552,7 +552,7 @@ const fetchApplications = useCallback(
                           <td className="px-5 py-4 text-center">
                              <button
                             onClick={() => router.push(`/dashboard/application_details/${app._id}`)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-50 text-violet-700 hover:bg-violet-100 text-xs font-semibold transition"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-50 text-[#fa6a1f] hover:bg-violet-100 text-xs font-semibold transition"
                           >
                             <Eye size={13} /> View
                           </button>

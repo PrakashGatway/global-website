@@ -684,7 +684,7 @@ export default function CountryDetailPage() {
                 {/* Main Content Area */}
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Left Column - Main Content */}
-                    <div className="flex-1">
+                    <div className="flex-1 w-1/3">
                         {/* Tabs - Only show if there are sections */}
                         {(sections.length > 0 || hasVisa || hasFAQ || hasUniversities) && (
                             <div className="bg-white rounded-2xl shadow-sm mb-6 overflow-x-auto">

@@ -1263,7 +1263,7 @@ export default function StudentDetailsPage() {
 
                   {/* User */}
                   <div className="col-span-1 flex flex-col items-center justify-between">
-
+                                
                     <span className="text-gray-700 font-medium">
                       {item.userType === "student" ? "Me" : item.userType}
                     </span>

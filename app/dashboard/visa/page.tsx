@@ -90,7 +90,7 @@ import { Rigthsidebar } from "@/components/dashboard/application/rightsidebar";
 
 interface Step {
   title: string;
-  status: "Completed" | "Pending" | "In Progress" | "VisaProsessing" | "Approved";
+  status: "Completed" | "Pending" | "In Progress" | "VisaProcessing" | "Approved";
   completedAt: string | null;
   stepDetails?: { description: string }[];
 }
@@ -225,7 +225,7 @@ export default function VisaDecisionPage() {
       'Approved': 'bg-green-100 text-green-700 border-green-200',
       'Pending': 'bg-amber-100 text-amber-700 border-amber-200',
       'In Progress': 'bg-blue-100 text-blue-700 border-blue-200',
-      'VisaProsessing': 'bg-purple-100 text-purple-700 border-purple-200',
+      'VisaProcessing': 'bg-purple-100 text-purple-700 border-purple-200',
       'Verified': 'bg-emerald-100 text-emerald-700 border-emerald-200',
       'true': 'bg-emerald-100 text-emerald-700 border-emerald-200',
       'false': 'bg-red-100 text-red-700 border-red-200'
@@ -239,7 +239,7 @@ export default function VisaDecisionPage() {
       'Approved': CheckCircle2,
       'Pending': Clock,
       'In Progress': Loader2,
-      'VisaProsessing': Loader2,
+      'VisaProcessing': Loader2,
       'Verified': CheckCircle2,
       'true': CheckCircle2,
       'false': XCircle
@@ -310,7 +310,7 @@ export default function VisaDecisionPage() {
       'Completed': 'Your application step has been successfully completed.',
       'Pending': 'This step is pending and awaiting processing.',
       'In Progress': 'Your application is currently being processed.',
-      'VisaProsessing': 'Your visa application is under review by the embassy.',
+      'VisaProcessing': 'Your visa application is under review by the embassy.',
       'Approved': 'Your visa has been approved! Congratulations!'
     };
     return messageMap[status] || 'Status is currently being updated.';
@@ -359,7 +359,7 @@ export default function VisaDecisionPage() {
   }
 
   const progress = calculateProgress();
-  const isApproved = data.application.primaryStatus === 'VisaProsessing';
+  const isApproved = data.application.primaryStatus === 'VisaProcessing';
   const hasCompletedSteps = data.steps.some(step => step.status === 'Completed');
 
   return (
@@ -545,7 +545,7 @@ export default function VisaDecisionPage() {
                   
                   {data.steps.map((step, idx) => {
                     const isCompleted = step.status === 'Completed' || step.status === 'Approved';
-                    const isCurrent = step.status === 'In Progress' || step.status === 'VisaProsessing';
+                    const isCurrent = step.status === 'In Progress' || step.status === 'VisaProcessing';
                     const Icon = getStepIcon(step.title);
                     
                     return (

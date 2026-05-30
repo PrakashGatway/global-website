@@ -57,7 +57,7 @@ type ApplicationStatus =
   | "AdmissionProcessing"
   | "OfferReceived"
   | "Refused"
-  | "VisaProsessing"
+  | "VisaProcessing"
   | "Withdrawn"
   | "PreArrival"
   | "Arrived"
@@ -270,7 +270,7 @@ const STATUS_OPTIONS: ApplicationStatus[] = [
   "AdmissionProcessing",
   "OfferReceived",
   "Refused",
-  "VisaProsessing",
+  "VisaProcessing",
   "Withdrawn",
   "PreArrival",
   "Arrived",
@@ -589,7 +589,7 @@ function DocumentRequirementForm({
                 ],
               }))
             }
-            className="text-xs text-violet-600 hover:text-violet-800 font-medium"
+            className="text-xs text-[#fa6a1f] hover:text-violet-800 font-medium"
           >
             + Add Field
           </button>
@@ -605,7 +605,7 @@ function DocumentRequirementForm({
         </button>
         <button
           onClick={handleSubmit}
-          className="px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 text-sm font-medium"
+          className="px-3 py-1.5 rounded-lg bg-[#fa6a1f] text-white hover:bg-[#fa6a1f] text-sm font-medium"
         >
           Add Requirement
         </button>
@@ -937,7 +937,7 @@ function DocumentUploadModal({
                 <button
                   type="button"
                   onClick={handleAddField}
-                  className="text-xs text-violet-600 hover:text-violet-800 font-medium flex items-center gap-1"
+                  className="text-xs text-[#fa6a1f] hover:text-violet-800 font-medium flex items-center gap-1"
                 >
                   <Plus size={12} /> Add Field
                 </button>
@@ -1058,7 +1058,7 @@ function DocumentUploadModal({
           <button
             onClick={handleSubmit}
             disabled={uploading}
-            className="px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-sm font-medium flex items-center gap-2 disabled:opacity-60"
+            className="px-4 py-2 rounded-lg bg-[#fa6a1f] hover:bg-[#fa6a1f] text-white text-sm font-medium flex items-center gap-2 disabled:opacity-60"
           >
             {uploading ? (
               <RefreshCw size={15} className="animate-spin" />
@@ -1142,7 +1142,7 @@ function InlineDocEditor({
 
         <button
           onClick={() => doc._id && onEdit(doc._id)}
-          className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-all"
+          className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-slate-400 hover:text-[#fa6a1f] hover:bg-violet-50 transition-all"
           title="Edit document"
         >
           <Edit size={14} />
@@ -1296,7 +1296,7 @@ function StatsBar({ app, docs }: { app: Application; docs: AppDocument[] }) {
   ];
 
   const colorMap = {
-    violet: "bg-violet-50 text-violet-600",
+    violet: "bg-violet-50 text-[#fa6a1f]",
     amber: "bg-amber-50 text-amber-600",
     emerald: "bg-emerald-50 text-emerald-600",
     red: "bg-red-50 text-red-600",
@@ -1364,7 +1364,7 @@ function StatsBar({ app, docs }: { app: Application; docs: AppDocument[] }) {
                 </defs>
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-bold text-violet-600">
+                <span className="text-xs font-bold text-[#fa6a1f]">
                   {completionRate}%
                 </span>
               </div>
@@ -1930,7 +1930,7 @@ export default function ApplicationDetailPage() {
           </p>
           <button
             onClick={() => router.back()}
-            className="text-sm text-violet-600 hover:underline flex items-center gap-1 mx-auto"
+            className="text-sm text-[#fa6a1f] hover:underline flex items-center gap-1 mx-auto"
           >
             <ChevronLeft size={14} /> Go back
           </button>
@@ -1971,7 +1971,7 @@ export default function ApplicationDetailPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold transition disabled:opacity-60 shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#fa6a1f] hover:bg-[#fa6a1f] text-white text-sm font-semibold transition disabled:opacity-60 shadow-sm"
             >
               {saving ? (
                 <RefreshCw size={14} className="animate-spin" />
@@ -2094,7 +2094,7 @@ export default function ApplicationDetailPage() {
                     <div className="space-y-3 animate-in fade-in slide-in-from-left-2 duration-300 delay-100">
                       <div className="flex items-center gap-2">
                         <div className="p-1.5 rounded-lg bg-violet-100">
-                          <User size={12} className="text-violet-600" />
+                          <User size={12} className="text-[#fa6a1f]" />
                         </div>
                         <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider">
                           Student Details
@@ -2200,7 +2200,7 @@ export default function ApplicationDetailPage() {
                     <div className="grid grid-cols-2 gap-2 pt-2 animate-in fade-in slide-in-from-left-2 duration-300 delay-300">
                       <div className="bg-gradient-to-br from-violet-50 to-indigo-50 rounded-xl p-2 text-center">
                         <p className="text-[10px] text-slate-500">Documents</p>
-                        <p className="text-lg font-bold text-violet-600">
+                        <p className="text-lg font-bold text-[#fa6a1f]">
                           {formData.documents.length}
                         </p>
                       </div>
@@ -2246,7 +2246,7 @@ export default function ApplicationDetailPage() {
                     className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all border-b-2 -mb-px mr-1 
                       rounded-t-lg ${
                         activeTab === tab.id
-                          ? "border-violet-600 text-violet-700 bg-violet-50/60"
+                          ? "border-[#fa6a1f] text-[#fa6a1f] bg-violet-50/60"
                           : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"
                       }
                       `}
@@ -2254,7 +2254,7 @@ export default function ApplicationDetailPage() {
                     <tab.icon size={15} />
                     {tab.label}
                     {/* {tab.id === "documents" && formData.documents.length > 0 && (
-                      <span className="ml-0.5 text-xs bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded-full font-semibold">
+                      <span className="ml-0.5 text-xs bg-violet-100 text-[#fa6a1f] px-1.5 py-0.5 rounded-full font-semibold">
                         {formData.documents.length}
                       </span>
                     )} */}
@@ -2290,26 +2290,28 @@ export default function ApplicationDetailPage() {
                         </p>
                       </div>
 
-                      {/* <button
-          onClick={() => setShowRequirementForm(!showRequirementForm)}
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-sm ${
-            showRequirementForm
-              ? "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200"
-              : "bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:from-violet-700 hover:to-indigo-700 shadow-violet-200"
-          }`}
-        >
-          {showRequirementForm ? (
-            <>
-              <X size={16} />
-              Close Form
-            </>
-          ) : (
-            <>
-              <Plus size={16} />
-              Create Requirement
-            </>
-          )}
-        </button> */}
+                      
+                      <button
+                          onClick={() => setShowRequirementForm(!showRequirementForm)}
+                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-sm ${
+                            showRequirementForm
+                              ? "bg-slate-100 text-slate-600 hover:bg-slate-200 border border-slate-200"
+                              : "bg-gradient-to-r from-[#fa6a1f] to-indigo-600 text-white hover:from-[#fa6a1f] hover:to-indigo-700 shadow-violet-200"
+                          }`}
+                        >
+                          {showRequirementForm ? (
+                            <>
+                              <X size={16} />
+                              Close Form
+                            </>
+                          ) : (
+                            <>
+                              <Plus size={16} />
+                              Create Requirement
+                            </>
+                          )}
+                        </button> 
+                       
                     </div>
 
                     {showRequirementForm && (
@@ -2348,10 +2350,7 @@ export default function ApplicationDetailPage() {
         </div>
       )} */}
 
-                    <VisaApplicationManager
-                      data={Visainfo}
-                      applicaion={application}
-                    />
+                    <VisaApplicationManager data={Visainfo} applicaion={application} />
                   </div>
                 )}
 
@@ -3076,7 +3075,7 @@ function DocumentCard({ doc, onUpdateStatus, onEdit }: any) {
                       href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${doc.docUrl}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-violet-600 transition"
+                      className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-[#fa6a1f] transition"
                     >
                       <ExternalLink size={12} />
                       View
