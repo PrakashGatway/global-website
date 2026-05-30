@@ -345,7 +345,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
 
               {/* TAGS */}
               <div className="flex flex-wrap gap-2">
-                {blog.tags.map((tag, index) => (
+                {blog?.tags?.map((tag, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
