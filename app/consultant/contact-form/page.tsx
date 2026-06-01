@@ -109,11 +109,11 @@ export default function YesItalyLanding() {
                         </Link>
                     </div>
 
-                    <a href="tel:+918302092630">
+                    <a href="tel:+919875863347">
                         <button
                             className="inline-flex justify-center items-center gap-2 bg-[#f46c44] hover:bg-[#ea6c46] text-white font-semibold px-5 py-2.5 rounded shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.25)] transition-all"
                         >
-                            📞 <span>+91 8302092630</span>
+                            📞 <span>+91 9875863347</span>
                         </button>
                     </a>
                 </div>
