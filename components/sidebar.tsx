@@ -46,6 +46,7 @@ const menuItems = [
 const counsellor = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: FileText, label: "Application", href: "/dashboard/application_details" },
+  { icon: FileText, label: "Visa Prosessing", href: "/dashboard/visaDetails" },
   { icon: User2Icon, label: "Student", href: "/dashboard/user" },
   { icon: GiftIcon, label: "Offers", href: "/dashboard/offers/counsellor" },
   { icon: Headphones, label: "Support", href: "/dashboard/support/counsellor" },

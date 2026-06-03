@@ -1,0 +1,1071 @@
+// app/visa-journey/edit/page.js
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import {
+  Save, ArrowLeft, Trash2, Plus, ChevronDown, ChevronUp,
+  Edit3, CheckCircle, AlertCircle, Info, FileText, User,
+  Calendar, Building2, Globe, Briefcase, Clock, CreditCard,
+  FileCheck, MapPin, Phone, Mail, MessageCircle, Shield,
+  Award, BookOpen, HelpCircle, Download, Eye, UploadCloud,
+  X, Check, AlertTriangle, Fingerprint, Camera, Link as LinkIcon
+} from 'lucide-react';
+import axiosInstance, { fileBaseurl } from '@/app/axiosInstance';
+
+export default function VisaJourneyEditPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [uploadingFile, setUploadingFile] = useState({ stepId: null, isUploading: false });
+  const [formData, setFormData] = useState({
+    userId: "",
+    applicationId: "",
+    country: "",
+    course: "",
+    currentStep: 1,
+    steps: []
+  });
+  const search = useParams();
+  const dataId = search?.id as string;
+
+  // Fetch existing visa data
+  useEffect(() => {
+    const fetchVisaData = async (id: any) => {
+      try {
+        const response = await axiosInstance.get(`/visa/${id}`);
+        if (response.data.success && response.data.data) {
+          const apiData = response.data.data;
+          console.log(apiData, "data");
+          setFormData({
+            userId: apiData.user?.name || "123",
+            applicationId: apiData.applicationId || "",
+            country: apiData.country || "IT",
+            course: apiData.course?.name || "69871a5060ce62ab201683ad",
+            currentStep: apiData.currentStep || 1,
+            steps: apiData.steps ||  getDefaultSteps()
+          });
+        } else {
+          setFormData({
+            userId: "123",
+            applicationId: "OS1779510584408",
+            country: "IT",
+            course: "69871a5060ce62ab201683ad",
+            currentStep: 1,
+            steps: getDefaultSteps()
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching visa data:", error);
+        setFormData({
+          userId: "123",
+          applicationId: "123",
+          country: "IT",
+          course: "123",
+          currentStep: 1,
+          steps: getDefaultSteps()
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVisaData(dataId);
+  }, [dataId]);
+
+  const getDefaultSteps = () => [
+    {
+      id: 1,
+      label: "APS Applied",
+      route: "aps-applied",
+      page: {
+        title: "APS Application",
+        status: "In Progress",
+        subtitle: "Complete your APS process to proceed with visa application."
+      },
+      banner: {
+        type: "info",
+        title: "Your APS application is in progress.",
+        subtitle: "Complete your APS process to proceed with visa application.",
+        action: "View APS Application",
+        fileUrl: "",
+        fileName: ""
+      },
+      progress: 45,
+      sections: {
+        overview: {
+          title: "APS Application Overview",
+          updated: "09 Jul 2024",
+          details: [
+            { label: "APS Application No.", value: "APSI2416789", highlight: false },
+            { label: "Date of APS Application", value: "10 May 2024", highlight: false },
+            { label: "APS Status", value: "Under Review", highlight: true },
+            { label: "Evaluating Authority", value: "TU Munich", highlight: false },
+            { label: "Degree", value: "Bachelor's Degree", highlight: false },
+            { label: "University", value: "ABC University", highlight: false },
+            { label: "Program", value: "MS in Data Science", highlight: false },
+            { label: "Documents Submitted", value: "7 of 11", highlight: false },
+            { label: "Payment Status", value: "Paid", highlight: true },
+            { label: "Estimated Result Date", value: "25 Jun 2024", highlight: false }
+          ]
+        }
+      },
+      importantInfo: [],
+      progressSteps: [],
+      statusTimeline: []
+    },
+    {
+      id: 2,
+      label: "APS Approval",
+      route: "aps-approval",
+      page: {
+        title: "APS Approval",
+        status: "Pending",
+        subtitle: "Waiting for APS approval."
+      },
+      banner: {
+        type: "info",
+        title: "APS certificate pending approval.",
+        subtitle: "Your APS certificate is being processed.",
+        action: "Track Status",
+        fileUrl: "",
+        fileName: ""
+      },
+      progress: 0,
+      sections: {
+        overview: {
+          title: "APS Approval Details",
+          updated: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
+          details: [
+            { label: "Application Type", value: "Individual", highlight: false },
+            { label: "Reference ID", value: "APS123456789", highlight: false },
+            { label: "Certificate No.", value: "APS-DE-2024-001234", highlight: false },
+            { label: "Country", value: "Germany", highlight: false },
+            { label: "Date Applied", value: "10 May 2024", highlight: false },
+            { label: "Status", value: "Pending", highlight: true },
+            { label: "University", value: "TU Munich", highlight: false },
+            { label: "Approved By", value: "APS Germany", highlight: false }
+          ]
+        }
+      },
+      importantInfo: [],
+      progressSteps: [],
+      statusTimeline: []
+    },
+    {
+      id: 3,
+      label: "Visa Application",
+      route: "visa-application",
+      page: {
+        title: "Visa Application",
+        status: "Pending",
+        subtitle: "Complete and submit your visa application for processing."
+      },
+      banner: {
+        type: "info",
+        title: "Visa Application in Progress",
+        subtitle: "Please complete all sections and upload required documents.",
+        action: "Continue Application",
+        fileUrl: "",
+        fileName: ""
+      },
+      progress: 0,
+      sections: {
+        overview: {
+          title: "Visa Application Information",
+          updated: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
+          details: [
+            { label: "Visa Type", value: "Student Visa (D)", highlight: false },
+            { label: "Visa Category", value: "National Visa (D)", highlight: false },
+            { label: "Country", value: "Germany", highlight: false },
+            { label: "Purpose of Stay", value: "Higher Education", highlight: false },
+            { label: "Intake", value: "Fall 2026", highlight: false },
+            { label: "University", value: "TU Munich", highlight: false },
+            { label: "Program", value: "MS in Data Science", highlight: false },
+            { label: "Application Fee", value: "€750", highlight: true },
+            { label: "Payment Status", value: "Paid", highlight: true },
+            { label: "Application No.", value: "VA202406501001", highlight: false },
+            { label: "Current Status", value: "In Progress", highlight: true }
+          ]
+        }
+      },
+      importantInfo: [],
+      progressSteps: [],
+      statusTimeline: []
+    },
+    {
+      id: 4,
+      label: "Biometrics",
+      route: "biometrics",
+      page: {
+        title: "Biometrics Appointment",
+        status: "Pending",
+        subtitle: "Schedule your biometrics appointment"
+      },
+      banner: {
+        type: "info",
+        title: "Biometrics Appointment Required",
+        subtitle: "Please schedule and complete your biometrics appointment.",
+        action: "Book Appointment",
+        fileUrl: "",
+        fileName: ""
+      },
+      progress: 0,
+      sections: {
+        overview: {
+          title: "Biometrics Appointment Details",
+          updated: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
+          details: [
+            { label: "Appointment Date", value: "Not Scheduled", highlight: false },
+            { label: "Appointment Time", value: "Not Scheduled", highlight: false },
+            { label: "Center Name", value: "VFS Global", highlight: false },
+            { label: "Center Address", value: "To be confirmed", highlight: false },
+            { label: "Status", value: "Pending", highlight: true },
+            { label: "Fees Paid", value: "Not Paid", highlight: false }
+          ]
+        }
+      },
+      importantInfo: [],
+      progressSteps: [],
+      statusTimeline: []
+    },
+    {
+      id: 5,
+      label: "Visa Decision",
+      route: "visa-decision",
+      page: {
+        title: "Visa Decision",
+        status: "Pending"
+      },
+      banner: {
+        type: "info",
+        title: "Visa Under Review",
+        subtitle: "Your application is being processed by the embassy.",
+        action: "Track Status",
+        fileUrl: "",
+        fileName: ""
+      },
+      progress: 0,
+      sections: {
+        overview: {
+          title: "Visa Decision Tracking",
+          updated: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
+          details: [
+            { label: "Visa Type", value: "Student Visa (D)", highlight: false },
+            { label: "Application No.", value: "VA202406501001", highlight: false },
+            { label: "Status", value: "Under Review", highlight: true },
+            { label: "Application Received", value: "10 May 2024", highlight: false },
+            { label: "Estimated Decision Date", value: "To be determined", highlight: false },
+            { label: "Embassy", value: "German Embassy", highlight: false }
+          ]
+        }
+      },
+      importantInfo: [],
+      progressSteps: [],
+      statusTimeline: []
+    },
+    {
+      id: 6,
+      label: "Visa Approved",
+      route: "visa-approved",
+      page: {
+        title: "Visa Approved",
+        status: "Pending"
+      },
+      banner: {
+        type: "success",
+        title: "Visa Approved!",
+        subtitle: "Congratulations! Your visa has been approved.",
+        action: "Download Visa Letter",
+        fileUrl: "",
+        fileName: ""
+      },
+      progress: 0,
+      sections: {
+        overview: {
+          title: "Visa Approval Details",
+          updated: new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }),
+          details: [
+            { label: "Visa Status", value: "Approved", highlight: true },
+            { label: "Visa Type", value: "Student Visa (D)", highlight: false },
+            { label: "Visa Number", value: "VIS123456789", highlight: false },
+            { label: "Validity From", value: "To be updated", highlight: false },
+            { label: "Validity Till", value: "To be updated", highlight: false },
+            { label: "Number of Entries", value: "Multiple", highlight: false }
+          ]
+        }
+      },
+      importantInfo: [],
+      progressSteps: [],
+      statusTimeline: []
+    }
+  ];
+
+  const handleFileUpload = async (stepId, file) => {
+    if (!file) return;
+    
+    setUploadingFile({ stepId, isUploading: true });
+    
+    try {
+      const formDataFile = new FormData();
+      formDataFile.append('file', file);
+      
+      const response = await axiosInstance.post('/upload', formDataFile, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      if (response.data.success && response.data.docUrl ) {
+        setFormData((prev): any => ({
+          ...prev,
+          steps: prev.steps.map(step =>
+            step.id === stepId
+              ? { 
+                  ...step, 
+                  banner: { 
+                    ...step.banner, 
+                    fileUrl: response.data.docUrl,
+                    fileName: file.name
+                  } 
+                }
+              : step
+          )
+        }));
+        setSuccess(`File uploaded successfully for ${step.label}`);
+        setTimeout(() => setSuccess(null), 3000);
+      } else {
+        setError("File upload failed");
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setError("Error uploading file");
+    } finally {
+      setUploadingFile({ stepId: null, isUploading: false });
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleStepChange = (stepId, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      steps: prev.steps.map(step =>
+        step.id === stepId
+          ? { ...step, [field]: value }
+          : step
+      )
+    }));
+  };
+
+  const handleStepPageChange = (stepId, pageField, value) => {
+    setFormData(prev => ({
+      ...prev,
+      steps: prev.steps.map(step =>
+        step.id === stepId
+          ? { ...step, page: { ...step.page, [pageField]: value } }
+          : step
+      )
+    }));
+  };
+
+  const handleStepBannerChange = (stepId, bannerField, value) => {
+    setFormData(prev => ({
+      ...prev,
+      steps: prev.steps.map(step =>
+        step.id === stepId
+          ? { ...step, banner: { ...step.banner, [bannerField]: value } }
+          : step
+      )
+    }));
+  };
+
+  const handleStepProgressChange = (stepId, value) => {
+    setFormData(prev => ({
+      ...prev,
+      steps: prev.steps.map(step =>
+        step.id === stepId
+          ? { ...step, progress: parseInt(value) || 0 }
+          : step
+      )
+    }));
+  };
+
+  const handleSectionDetailChange = (stepId, sectionName, detailIndex, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      steps: prev.steps.map(step => {
+        if (step.id === stepId && step.sections && step.sections[sectionName]) {
+          const updatedDetails = [...step.sections[sectionName].details];
+          updatedDetails[detailIndex] = {
+            ...updatedDetails[detailIndex],
+            [field]: field === 'highlight' ? value : value
+          };
+          return {
+            ...step,
+            sections: {
+              ...step.sections,
+              [sectionName]: {
+                ...step.sections[sectionName],
+                details: updatedDetails
+              }
+            }
+          };
+        }
+        return step;
+      })
+    }));
+  };
+
+  const addSectionDetail = (stepId, sectionName) => {
+    setFormData(prev => ({
+      ...prev,
+      steps: prev.steps.map(step => {
+        if (step.id === stepId && step.sections && step.sections[sectionName]) {
+          return {
+            ...step,
+            sections: {
+              ...step.sections,
+              [sectionName]: {
+                ...step.sections[sectionName],
+                details: [
+                  ...step.sections[sectionName].details,
+                  { label: "New Field", value: "", highlight: false }
+                ]
+              }
+            }
+          };
+        }
+        return step;
+      })
+    }));
+  };
+
+  const removeSectionDetail = (stepId, sectionName, detailIndex) => {
+    setFormData(prev => ({
+      ...prev,
+      steps: prev.steps.map(step => {
+        if (step.id === stepId && step.sections && step.sections[sectionName]) {
+          const updatedDetails = step.sections[sectionName].details.filter((_, i) => i !== detailIndex);
+          return {
+            ...step,
+            sections: {
+              ...step.sections,
+              [sectionName]: {
+                ...step.sections[sectionName],
+                details: updatedDetails
+              }
+            }
+          };
+        }
+        return step;
+      })
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const payload = {
+        currentStep: formData.currentStep,
+        steps: formData.steps.map(step => ({
+          id: step.id,
+          label: step.label,
+          route: step.route,
+          page: step.page,
+          banner: step.banner,
+          progress: step.progress || 0,
+          sections: step.sections || {},
+          importantInfo: step.importantInfo || [],
+          progressSteps: step.progressSteps || [],
+          statusTimeline: step.statusTimeline || []
+        }))
+      };
+      
+      console.log(payload, "payload");
+      const response = await axiosInstance.put(`/visa/${dataId}`, payload);
+      
+      if (response.data.success) {
+        setSuccess("Visa journey data updated successfully!");
+        // setTimeout(() => {
+        //   router.push('/visaDetails');
+        // }, 2000);
+      } else {
+        setError(response.data.message || "Failed to update visa data");
+      }
+    } catch (error) {
+      console.error("Error saving visa data:", error);
+      setError(error.response?.data?.message || "An error occurred while saving");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'approved':
+      case 'completed':
+        return 'bg-green-100 text-green-700';
+      case 'in progress':
+        return 'bg-orange-100 text-orange-700';
+      case 'scheduled':
+        return 'bg-blue-100 text-blue-700';
+      case 'under review by embassy':
+        return 'bg-yellow-100 text-yellow-700';
+      default:
+        return 'bg-gray-100 text-gray-600';
+    }
+  };
+
+  const getBannerTypeColor = (type) => {
+    return type === 'success' ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200';
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f56e45] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading visa journey data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <main className="max-w-[1600px] mx-auto p-4 md:p-6">
+        {/* Header */}
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.back()}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <ArrowLeft size={20} className="text-gray-600" />
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Edit Visa Journey</h1>
+              <p className="text-sm text-gray-500 mt-1">Update visa application details and step information</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={() => router.push('/visaDetails')}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={saving}
+              className="px-4 py-2 bg-[#f56e45] text-white rounded-lg hover:bg-[#e55a35] transition-colors flex items-center gap-2 disabled:opacity-50"
+            >
+              {saving ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save size={16} />
+                  Save Changes
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Success/Error Messages */}
+        {success && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+            <CheckCircle size={18} className="text-green-600" />
+            <p className="text-green-700">{success}</p>
+          </div>
+        )}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+            <AlertCircle size={18} className="text-red-600" />
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Basic Information Section */}
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <h2 className="text-lg font-bold text-gray-800 mb-4">Basic Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">User Name</label>
+                <input
+                  type="text"
+                  name="userId"
+                  value={formData.userId}
+                  onChange={handleInputChange}
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Application ID</label>
+                <input
+                  type="text"
+                  name="applicationId"
+                  value={formData.applicationId}
+                  onChange={handleInputChange}
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Country</label>
+                <input
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleInputChange}
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Course</label>
+                <input
+                  type="text"
+                  name="course"
+                  value={formData.course}
+                  onChange={handleInputChange}
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Current Step</label>
+                <select
+                  name="currentStep"
+                  value={formData.currentStep}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#f56e45] focus:border-[#f56e45]"
+                >
+                  {[1, 2, 3, 4, 5, 6].map(step => (
+                    <option key={step} value={step}>Step {step}: {formData.steps.find(s => s.id === step)?.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Steps Section */}
+          <div className="space-y-6">
+            <h2 className="text-lg font-bold text-gray-800">Visa Journey Steps</h2>
+            {formData.steps.map((step) => (
+              <StepEditor
+                key={step.id}
+                step={step}
+                onStepChange={handleStepChange}
+                onPageChange={handleStepPageChange}
+                onBannerChange={handleStepBannerChange}
+                onProgressChange={handleStepProgressChange}
+                onSectionDetailChange={handleSectionDetailChange}
+                onAddSectionDetail={addSectionDetail}
+                onRemoveSectionDetail={removeSectionDetail}
+                onFileUpload={handleFileUpload}
+                uploadingFile={uploadingFile}
+                getStatusColor={getStatusColor}
+                getBannerTypeColor={getBannerTypeColor}
+              />
+            ))}
+          </div>
+        </form>
+      </main>
+    </div>
+  );
+}
+
+// Step Editor Component
+function StepEditor({ 
+  step, 
+  onStepChange, 
+  onPageChange, 
+  onBannerChange, 
+  onProgressChange,
+  onSectionDetailChange,
+  onAddSectionDetail,
+  onRemoveSectionDetail,
+  onFileUpload,
+  uploadingFile,
+  getStatusColor,
+  getBannerTypeColor
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState('basic'); // basic, page, banner, sections
+
+  const statusOptions = ["Pending", "In Progress", "Completed", "Approved", "Scheduled", "Under Review by Embassy"];
+  const bannerTypeOptions = ["info", "success"];
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      onFileUpload(step.id, file);
+    }
+  };
+  // console.log("step.banner?.fileUrl ", fileBaseurl(step.banner.fileUrl) )
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      {/* Step Header */}
+      <div 
+        className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between cursor-pointer
+         hover:bg-gray-100 transition-colors"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center gap-3">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+            step.id === 1 ? 'bg-orange-100' :
+            step.id === 2 ? 'bg-green-100' :
+            step.id === 3 ? 'bg-blue-100' :
+            step.id === 4 ? 'bg-purple-100' :
+            step.id === 5 ? 'bg-yellow-100' : 'bg-teal-100'
+          }`}>
+            <span className="text-sm font-bold">{step.id}</span>
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-800">{step.label}</h3>
+            <p className="text-xs text-gray-500">Route: {step.route}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className={`text-xs px-2 py-1 rounded ${getStatusColor(step.page?.status)}`}>
+            {step.page?.status || "Pending"}
+          </span>
+          {step.progress !== undefined && (
+            <span className="text-xs text-gray-500">Progress: {step.progress}%</span>
+          )}
+          {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+        </div>
+      </div>
+
+      {/* Step Content */}
+      {isExpanded && (
+        <div className="p-4 space-y-4">
+          {/* Tab Navigation */}
+          <div className="flex gap-2 border-b pb-2">
+            {['basic', 'page', 'banner', 'sections'].map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveTab(tab)}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                  activeTab === tab 
+                    ? 'bg-[#f56e45] text-white' 
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          {/* Basic Information Tab */}
+          {activeTab === 'basic' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Step ID</label>
+                <input
+                  type="number"
+                  value={step.id}
+                  onChange={(e) => onStepChange(step.id, "id", parseInt(e.target.value))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Route</label>
+                <input
+                  type="text"
+                  value={step.route}
+                  onChange={(e) => onStepChange(step.id, "route", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Label</label>
+                <input
+                  type="text"
+                  value={step.label}
+                  onChange={(e) => onStepChange(step.id, "label", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Progress (%)</label>
+                <input
+                  type="number"
+                  value={step.progress || 0}
+                  onChange={(e) => onProgressChange(step.id, e.target.value)}
+                  min="0"
+                  max="100"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Page Information Tab */}
+          {activeTab === 'page' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-xs font-medium text-gray-700 mb-1">Page Title</label>
+                <input
+                  type="text"
+                  value={step.page?.title || ""}
+                  onChange={(e) => onPageChange(step.id, "title", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Page Status</label>
+                <select
+                  value={step.page?.status || "Pending"}
+                  onChange={(e) => onPageChange(step.id, "status", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                >
+                  {statusOptions.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-medium text-gray-700 mb-1">Subtitle</label>
+                <input
+                  type="text"
+                  value={step.page?.subtitle || ""}
+                  onChange={(e) => onPageChange(step.id, "subtitle", e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Banner Information Tab */}
+          {activeTab === 'banner' && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Banner Type</label>
+                  <select
+                    value={step.banner?.type || "info"}
+                    onChange={(e) => onBannerChange(step.id, "type", e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  >
+                    {bannerTypeOptions.map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Banner Title</label>
+                  <input
+                    type="text"
+                    value={step.banner?.title || ""}
+                    onChange={(e) => onBannerChange(step.id, "title", e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Banner Subtitle</label>
+                  <input
+                    type="text"
+                    value={step.banner?.subtitle || ""}
+                    onChange={(e) => onBannerChange(step.id, "subtitle", e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Banner Action Text</label>
+                  <input
+                    type="text"
+                    value={step.banner?.action || ""}
+                    onChange={(e) => onBannerChange(step.id, "action", e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">File Upload (Optional)</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      onChange={handleFileSelect}
+                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                      className="hidden"
+                      id={`file-upload-${step.id}`}
+                    />
+                    <label
+                      htmlFor={`file-upload-${step.id}`}
+                      className="flex items-center gap-2 px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm cursor-pointer hover:bg-gray-200"
+                    >
+                      <UploadCloud size={16} />
+                      Choose File
+                    </label>
+                    {uploadingFile.stepId === step.id && uploadingFile.isUploading && (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#f56e45]"></div>
+                    )}
+                  </div>
+                  {step.banner?.fileName && (
+                    <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                      <CheckCircle size={12} />
+                      Uploaded: {step.banner.fileName}
+                    </p>
+                  )}
+                  {step.banner?.fileUrl && (
+                    <a
+                      href={fileBaseurl(step.banner.fileUrl)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-blue-600 hover:underline flex items-center gap-1 mt-1"
+                    >
+                      <LinkIcon size={12} />
+                      View Uploaded File
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Sections Overview Details Tab */}
+          {activeTab === 'sections' && step.sections?.overview?.details && (
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="font-medium text-gray-800 flex items-center gap-2">
+                  <Info size={16} /> Overview Details
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => onAddSectionDetail(step.id, "overview")}
+                  className="text-xs text-[#f56e45] hover:underline flex items-center gap-1"
+                >
+                  <Plus size={12} /> Add Detail
+                </button>
+              </div>
+              <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                {step.sections.overview.details.map((detail, idx) => (
+                  <div key={idx} className="flex gap-3 items-start p-3 bg-gray-50 rounded-lg">
+                    <div className="flex-1 grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        value={detail.label}
+                        onChange={(e) => onSectionDetailChange(step.id, "overview", idx, "label", e.target.value)}
+                        placeholder="Label"
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                      />
+                      <input
+                        type="text"
+                        value={detail.value}
+                        onChange={(e) => onSectionDetailChange(step.id, "overview", idx, "value", e.target.value)}
+                        placeholder="Value"
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <label className="flex items-center gap-1 text-xs whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          checked={detail.highlight || false}
+                          onChange={(e) => onSectionDetailChange(step.id, "overview", idx, "highlight", e.target.checked)}
+                        />
+                        Highlight
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => onRemoveSectionDetail(step.id, "overview", idx)}
+                        className="p-1 text-red-500 hover:bg-red-50 rounded"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Preview Section */}
+          <div className="border-t pt-4">
+            <h4 className="font-medium text-gray-800 mb-3 flex items-center gap-2">
+              <Eye size={16} /> Preview
+            </h4>
+            <div className={`p-4 rounded-lg ${getBannerTypeColor(step.banner?.type)} border`}>
+              <div className="flex items-start gap-3">
+                <div className={`rounded-full p-1 ${step.banner?.type === 'success' ? 'bg-green-600' : 'bg-orange-600'}`}>
+                  <CheckCircle size={14} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-sm">{step.banner?.title || "No banner title"}</h4>
+                  <p className="text-xs mt-0.5">{step.banner?.subtitle || "No banner subtitle"}</p>
+                  {step.banner?.fileUrl && (
+                    <a
+                      href={fileBaseurl(step.banner.fileUrl)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-blue-600 hover:underline flex items-center gap-1 mt-2"
+                    >
+                      <Download size={12} />
+                      Download Attached File
+                    </a>
+                  )}
+                </div>
+                {step.banner?.action && (
+                  <button className="text-xs font-medium text-[#f56e45] bg-white px-3 py-1 rounded border border-orange-200">
+                    {step.banner.action}
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+              <p className="text-xs text-gray-600">
+                <span className="font-medium">Status:</span> {step.page?.status || "Pending"}
+              </p>
+              {step.progress !== undefined && (
+                <div className="mt-2">
+                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                    <span>Progress</span>
+                    <span>{step.progress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-1.5">
+                    <div className="bg-[#f56e45] h-1.5 rounded-full" style={{ width: `${step.progress}%` }}></div>
+                  </div>
+                </div>
+              )}
+              {step.sections?.overview?.details && step.sections.overview.details.length > 0 && (
+                <div className="mt-3 pt-2 border-t border-gray-200">
+                  <p className="text-xs font-medium text-gray-700 mb-1">Overview Preview:</p>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                    {step.sections.overview.details.slice(0, 4).map((detail, idx) => (
+                      <div key={idx} className="flex justify-between text-xs">
+                        <span className="text-gray-500">{detail.label}:</span>
+                        <span className={detail.highlight ? "text-orange-600 font-medium" : "text-gray-700"}>
+                          {detail.value}
+                        </span>
+                      </div>
+                    ))}
+                    {step.sections.overview.details.length > 4 && (
+                      <p className="text-xs text-gray-400 col-span-2 text-center mt-1">
+                        +{step.sections.overview.details.length - 4} more items
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

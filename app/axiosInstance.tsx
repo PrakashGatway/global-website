@@ -16,6 +16,9 @@ export const serverInstance = axios.create({
   },
 })
 
+export const fileBaseurl =  (data) => {
+  return `${BASE_URL.split('/api')[0]}${data}`
+}
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
