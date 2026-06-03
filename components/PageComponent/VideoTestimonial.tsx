@@ -121,7 +121,6 @@ export default function VideoTestimonialsSlider({
               {title.split("||")[1]}
             </span>
           
-            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
           </Tagging>
 
 

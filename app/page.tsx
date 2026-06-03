@@ -21,6 +21,7 @@ const getHomePageData = async () => {
 export async function generateMetadata() {
   const { data } = await getHomePageData();
   const seo = data.seoMeta;
+  
 
   return {
     title: seo?.metaTitle?.trim() || "Home",

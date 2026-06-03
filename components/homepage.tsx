@@ -812,7 +812,6 @@ export default function Homepage({
               <br />
               <span className="text-primary font-bold relative lg:text-5xl">
                 {homePage?.topUniversities?.title?.split("||")[1]?.trim()}
-                <span className="absolute right-0 bottom-0  w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
               </span>
             </h2>
             <div
@@ -868,7 +867,6 @@ export default function Homepage({
             <span className="font-bold text-xl lg:text-5xl relative">
               {" "}
               {homePage.studyDestinations.title.split("||")[1]}
-              <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
             </span>
           </h2>
         </div>
@@ -1029,7 +1027,6 @@ export default function Homepage({
                   <span className="font-bold text-xl lg:text-2xl relative">
                     {" "}
                     {homePage?.servicesection?.title.split("||")[1]}
-                    <span className="absolute hidden sm:block sm:right-0 -bottom-2 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
                   </span>
                 </h2>
               </div>
@@ -1079,7 +1076,6 @@ export default function Homepage({
           <span className="font-bold text-xl lg:text-5xl relative">
             {" "}
             {homePage?.topUniversity?.title.split("||")[1]}
-            <span className="absolute right-0 -bottom-1 w-25 h-[2px] lg:h-1 bg-yellow-500"></span>
           </span>
         </h2>
         <UniversityCard university={unires} />
@@ -1095,7 +1091,6 @@ export default function Homepage({
             <span className="text-primary font-bold relative lg:text-4xl">
               {homePage?.blogs?.title.split("||")[1]}
 
-              <span className="absolute right-0 bottom-0  w-full lg:w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
             </span>
           </h2>
 
@@ -1175,13 +1170,13 @@ export default function Homepage({
         items={imageData}
       /> */}
 
-      <VideoTestimonialsSlider
+      {/* <VideoTestimonialsSlider
         title={homePage?.videoTestimonials?.title || "Video || Testimonials"}
         subtitle={homePage?.videoTestimonials?.subtitle}
         items={videoRes}
         tag={homePage?.videoTestimonials?.tag}
-      // Auto-play is enabled by default
-      />
+   
+      /> */}
 
       <StudentVisaStories
         stories={visacontent}

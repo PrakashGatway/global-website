@@ -6,14 +6,14 @@ import { Tag, Tagging } from "./tag";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
 const StudentVisaStories = ({
-  title="Visa || Stories",
+  title="Our Student || Visa Approvals",
   subtitle,
   stories,
   autoSlideInterval = 3000,
   tag = 1
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [slidesPerView, setSlidesPerView] = useState(3);
+  const [slidesPerView, setSlidesPerView] = useState(1);
  
 
 
@@ -22,7 +22,7 @@ const StudentVisaStories = ({
   useEffect(() => {
     const updateSlides = () => {
       if (window.innerWidth < 640) return setSlidesPerView(1);
-      if (window.innerWidth < 1024) return setSlidesPerView(3);
+      if (window.innerWidth < 1024) return setSlidesPerView(2);
       setSlidesPerView(4);
     };
     updateSlides();
@@ -36,7 +36,7 @@ const StudentVisaStories = ({
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
     slides: {
-      perView: slidesPerView,
+      perView: 3,
       spacing: 24,
     },
     slideChanged(slider) {
@@ -59,20 +59,20 @@ const StudentVisaStories = ({
   if (!stories?.length) return null;
 
   return (
-    <section className="w-full bg-white overflow-hidden">
+    <section className="w-full bg-white overflow-hidden py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+         
         {/* Header */}
-        <div className="text-left mb-12">
-          <Tagging data={tag} css="relative inline-block mb-4 sm:mb-6 block">
-            <span className="text-black text-2xl sm:text-3xl block font-medium mr-2">
-              {title&&title?.split("||")[0]}
+        <div className="text-left my-4">
+            <h2>
+            <span className="text-[#F46C44] text-2xl sm:text-4xl block font-light mr-2">
+              {title?.split("||")[0]}
             </span>
-            <span className="text-[#F46C44] text-2xl sm:text-3xl block font-semibold mr-2">
-              {title&&title?.split("||")[1]}
-            </span>
+            <span className="text-primary text-2xl sm:text-4xl block font-bold mr-2">
+              {title?.split("||")[1]}
+            </span></h2>
           
-            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
-          </Tagging>
+        
 
           {subtitle && (
             <p className="text-lg text-gray-600 max-w-2xl" dangerouslySetInnerHTML={{
@@ -104,9 +104,9 @@ const StudentVisaStories = ({
           )} */}
 
           {/* Slides */}
-          <div ref={sliderRef} className="keen-slider py-4">
+          <div ref={sliderRef} className="keen-slider ">
             {stories.map((story, idx) => (
-              <div key={idx} className="keen-slider__slide pb-4">
+              <div key={idx} className="keen-slider__slide ">
                 <StoryCard story={story} />
               </div>
             ))}

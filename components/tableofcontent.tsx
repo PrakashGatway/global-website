@@ -7,9 +7,9 @@ export default function TableOfContents({ toc }: any) {
 
     return (
         <div className="">
-            <h3 className="font-bold text-xl mb-2">
+            <p className="font-bold text-xl mb-2">
                 Table Of Contents
-            </h3>
+            </p>
 
             <ul className="space-y-2">
                 {toc.map((item: any, index: number) => (

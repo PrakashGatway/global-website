@@ -801,17 +801,17 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
             />
           )
         }
-        if (originalName === 'videoTestimonials' || name === 'videoTestimonials') {
-          return (
-            <VideoTestimonialsSlider
-              key={`${name}-${order}`}
-              items={videoRes?.data || []}
-              title={data?.title}
-              subtitle={data?.subtitle}
-              tag={data?.tag}
-            />
-          )
-        }
+        // if (originalName === 'videoTestimonials' || name === 'videoTestimonials') {
+        //   return (
+        //     <VideoTestimonialsSlider
+        //       key={`${name}-${order}`}
+        //       items={videoRes?.data || []}
+        //       title={data?.title}
+        //       subtitle={data?.subtitle}
+        //       tag={data?.tag}
+        //     />
+        //   )
+        // }
 
 
         if (originalName === 'imageTestimonials' || name === 'imageTestimonials') {
