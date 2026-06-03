@@ -163,7 +163,7 @@ export default function AboutUsPage({ aboutData }) {
       </section>
 
       {/* Succeed with the world's most trusted */}
-      <section className=" lg:py-5 mt-10 lg:mt-28 " style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
+      <section className="mt-10 lg:mt-4 " style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
         <div className="max-w-7xl mx-auto px-2">
           <div className="text-center mb-8">
             <h2 className="text-xl lg:text-[2.6rem] font-bold mb-2" style={{ color: '#FF6B35' }}>
@@ -304,10 +304,10 @@ export default function AboutUsPage({ aboutData }) {
         <div className="max-w-7xl mx-auto px-2">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h3 className="text-xl md:text-[2.6rem] font-bold text-[#616262] mb-2">
+              <h3 className="text-xl md:text-[2.6rem] font-bold text-[#616262] ">
                 {storyTitle.split("||")[0]}
               </h3>
-              <h3 className="text-xl md:text-[2.6rem] font-bold mb-6 underline" style={{ color: '#FF6B35' }}>
+              <h3 className="text-xl md:text-[2.6rem] font-bold mb-2 underline" style={{ color: '#FF6B35' }}>
                 {storyTitle.split("||")[1]}
               </h3>
               <div className="text-gray-600 text-sm lg:text-base leading-relaxed font-semibold space-y-4">
@@ -334,7 +334,7 @@ export default function AboutUsPage({ aboutData }) {
                 "
                 style={{
                   backgroundImage:
-                    "url('https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=1600')",
+                    "url('/about-university.jpeg')",
                   backgroundSize: "cover",
                   backgroundPosition: "center right",
                   WebkitMaskImage: "url('images/about-hero-shape-3.png')",
@@ -366,7 +366,7 @@ export default function AboutUsPage({ aboutData }) {
                 viewport={{ once: true, amount: 0.4 }}
                 style={{
                   backgroundImage:
-                    "url('https://img.freepik.com/premium-photo/cute-smiling-girl-student-holding-notebooks-looking-cheerful-camera-studying-college-university-standing-blue-background_1258-70144.jpg')",
+                    "url('/about-girl.jpeg')",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   WebkitMaskImage: "url('images/about-hero-shape-front-3.png')",
