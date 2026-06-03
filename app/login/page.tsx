@@ -1,44 +1,49 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Mail,
-  User,
-  Phone,
-  Key,
   ArrowLeft,
   CheckCircle,
+  Loader2,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import axiosInstance from "../axiosInstance"
 
 type AuthMode = "email" | "register" | "otp" | "success"
 
 export default function LoginPage() {
-
-
   const [mode, setMode] = useState<AuthMode>("email")
   const [email, setEmail] = useState("")
   const [otp, setOtp] = useState("")
   const [loading, setLoading] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(true)
+  const [referralCode, setReferralCode] = useState("")
 
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
   })
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get("code")
+
+    if (code) {
+      setReferralCode(code.toUpperCase())
+    }
+  }, [])
+
   /* ================= EMAIL VERIFY ================= */
   const checkEmail = async () => {
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      alert("Please enter a valid email address")
+      return
+    }
+
     try {
       setLoading(true)
-
-      const res = await axiosInstance.get(
-        `/auth/login?email=${email}`
-      )
+      const res = await axiosInstance.get(`/auth/login?email=${email}`)
 
       if (res.data.isExist) {
         setMode("otp")
@@ -54,18 +59,26 @@ export default function LoginPage() {
 
   /* ================= REGISTER ================= */
   const handleRegister = async () => {
+    if (!formData.name.trim()) {
+      alert("Please enter your full name")
+      return
+    }
+    if (!formData.phone.match(/^[0-9]{10}$/)) {
+      alert("Please enter a valid 10-digit phone number")
+      return
+    }
+
     try {
       setLoading(true)
-
       await axiosInstance.post("/auth/send-otp", {
         email,
         ...formData,
+        referalby: referralCode.trim() || null,
       })
 
-    
       setMode("otp")
-    } catch (err) {
-      alert("Registration failed")
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Registration failed")
     } finally {
       setLoading(false)
     }
@@ -73,9 +86,13 @@ export default function LoginPage() {
 
   /* ================= VERIFY OTP ================= */
   const verifyOtp = async () => {
+    if (!otp.match(/^[0-9]{6}$/)) {
+      alert("Please enter a valid 6-digit OTP")
+      return
+    }
+
     try {
       setLoading(true)
-
       const res = await axiosInstance.post("/auth/verify-otp", {
         email,
         otp,
@@ -83,6 +100,9 @@ export default function LoginPage() {
 
       if (res.data.token) {
         localStorage.setItem("token", res.data.token)
+        if (res.data.user) {
+          localStorage.setItem("user", JSON.stringify(res.data.user))
+        }
         setMode("success")
 
         setTimeout(() => {
@@ -96,352 +116,402 @@ export default function LoginPage() {
     }
   }
 
+  // Country flags data
+  const countries = [
+    { code: "DE", name: "Germany" },
+    { code: "GB", name: "UK" },
+    { code: "IT", name: "Italy" },
+    { code: "AU", name: "Australia" },
+    { code: "CA", name: "Canada" },
+    { code: "US", name: "USA" },
+    { code: "FR", name: "France" },
+    { code: "IE", name: "Ireland" },
+  ]
+
   return (
-    <main className="min-h-screen flex flex-col lg:flex-row overflow-hidden">
+    <main className="min-h-screen bg-white ">
+      {/* LEFT SECTION - Image and Landmarks */}
+      <div className="bg-white lg:p-[4vh]">
 
-      {/* LEFT IMAGE */}
-     <div className="relative w-full lg:w-1/2 min-h-[280px] lg:h-screen overflow-hidden">
-
-  {/* BACKGROUND IMAGE */}
-  <div
-    className="
-      absolute
-      inset-0
-      lg:-left-80 lg:-top-60
-      h-full
-      w-full lg:w-[130%]
-      lg:rotate-[10deg]
-      overflow-hidden
-      rounded-none lg:rounded-br-[170px]
-    "
-  >
-    <img
-      src="/images/login-img.jpeg"
-      className="w-full h-full object-cover"
-      alt=""
-    />
-    <div className="absolute inset-0 bg-black/40 lg:bg-black/25" />
-  </div>
-
-  {/* TEXT CONTENT */}
-  <div
-    className="
-      relative
-      z-10
-      px-6
-      pt-20
-      lg:absolute
-      lg:top-32
-      lg:left-16
-      text-white
-    "
-  >
-    <p className="text-lg sm:text-xl lg:text-2xl">
-      Your Gateway to
-    </p>
-
-    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
-      Global Education
-    </h1>
-  </div>
-
-</div>
-
-
-      {/* RIGHT CARD */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 relative ">
-      
-      <div className="absolute top-5 w-[180px] sm:w-[260px] lg:w-[600px] hidden lg:block">
-
-    <img src="/images/login-aero.png" alt="" />
-  </div>
-
-        <div
-  className="
-    relative
-    top-12
-    w-full
-    max-w-md
-    bg-white
-    rounded-tl-[80px] sm:rounded-tl-[100px] lg:rounded-tl-[120px]
-    p-5 sm:p-6 lg:p-8
-    h-auto lg:h-[550px]
-    sm:w-[500px]
-    shadow-[0_8px_1px_-6px_rgba(0,0,0,0.16)]
-  "
->
-
-  
-  <div className="absolute -top-5 left-18 w-[80px] sm:w-[100px] lg:w-[70px] hidden lg:block">
-   <motion.img
-  src="/images/login-girl-3.png"
-  alt=""
-  initial={{ y: 120, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{
-    duration: 1,
-    
-  }}
-/>
-</div>
-
-  <div className="absolute -left-40 -top-11  lg:w-[280px] hidden lg:block -z-10 ">
-
-     <motion.img
-  src="/images/login-girl-1.png"
-  alt=""
-  initial={{ y: 150, opacity: 1 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{
-    duration: 1,
-    
-  }}
-/>
-    
-  </div>
-  <div className="absolute -left-40 top-28 lg:w-[260px] hidden lg:block z-10">
-  <motion.img
-  src="/images/login-girl-2.png"
-  alt=""
-  initial={{ y: 150, opacity: 1 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{
-    duration: 1,
-   
-  }}
-/>
-
-</div>
-
-
-          <div className="flex justify-center mb-4">
-            <img src="/images/newlogo3.png" className="h-25" />
+        <div className="bg-[#fff0eb] flex flex-col lg:flex-row overflow-hidden">
+          <div
+            className="relative w-full hidden lg:block lg:w-1/2 min-h-[400px] lg:h-[92vh] overflow-hidden bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: "url('/login/lg.png')",
+            }}
+          >
+            <div className="absolute top-1/3 right-0">
+              <img
+                src="/login/pg.png"
+                alt="login airplane"
+                className="w-80 object-cover"
+              />
+            </div>
+            <div className="relative z-10 px-8 pt-16 lg:pt-24 lg:px-16">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <p className="text-white/90 text-xl lg:text-3xl font-light italic mb-1">
+                  Your Gateway to
+                </p>
+                <h1 className="text-white text-4xl lg:text-5xl font-semibold italic leading-tight">
+                  Global Education
+                </h1>
+              </motion.div>
+            </div>
           </div>
 
-         <div
-  className="
-    relative
-    lg:absolute
-    inset-0
-    lg:top-38
-    bg-white
-    rounded-tl-[60px] sm:rounded-tl-[70px] lg:rounded-tl-[90px]
-    px-4 sm:px-6
-    py-6 sm:py-8
-    border border-gray-100
-    shadow-[0_-8px_10px_-6px_rgba(0,0,0,0.16)]
-  "
->
-
-
-            <AnimatePresence mode="wait">
-
-              {/* EMAIL */}
-              {mode === "email" && (
-                <motion.div
-                  key="email"
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -40 }}
-                  className="space-y-6 py-10"
-                >
-                  <h2 className="text-xl text-orange-500 font-bold text-center">
-                    Welcome to Ooshas Global
-                  </h2>
-
-                  <p className="text-center text-gray-500">enter your email to get started</p>
-
-                  <div className="flex flex-col gap-3"> <Label>Email Address</Label>
-                    <Input
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      className="
-    !rounded-bl-[15px] 
-    rounded-[0px]
-    focus-visible:ring-2
-    focus-visible:ring-[#626363]
-    focus-visible:border-[#626363]
-  "
-                    />
-
-                  </div>
-                  {/* TERMS & CONDITIONS */}
-                  {/* TERMS & CONDITIONS */}
-                  <div className="flex items-start gap-3 bg-gray-100 rounded-md px-4 py-3 text-sm">
-
-                    {/* ROUND CHECKBOX */}
-                    <button
-                      type="button"
-                      onClick={() => setTermsAccepted(!termsAccepted)}
-                      className={`
-      w-5 h-5 mt-1  border-2 flex items-center justify-center
-      transition-all duration-200 rounded-full
-      ${termsAccepted
-                          ? "bg-orange-500 border-orange-500"
-                          : "border-gray-400 bg-white"
-                        }
-    `}
+          {/* RIGHT SECTION - Form Card */}
+          <div
+            // style={{
+            //   backgroundImage: "url('/login/lg.png')",
+            // }} 
+            className="w-full lg:w-1/2 bg-cover bg-center bg-no-repeat flex items-center h-[92vh] justify-center p-4 bg-[#fff0eb]">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="w-full max-w-lg"
+            >
+              <div className="bg-white p-8 overflow-hidden">
+                <AnimatePresence mode="wait">
+                  {/* EMAIL MODE */}
+                  {mode === "email" && (
+                    <motion.div
+                      key="email"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      className="space-y-4"
                     >
-                      {termsAccepted && (
-                        <svg
-                          className="w-3 h-3 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5 13l4 4L19 7"
+                      {/* Logo */}
+                      <div className="text-center mb-8">
+                        <img
+                          src="/images/newlogo3.png"
+                          alt="Ooshas Global"
+                          className="h-20 mx-auto"
+                        />
+                        <h2 className="text-2xl font-bold text-[#FF6B4A] mt-2 mb-2">
+                          Welcome to Ooshas Global
+                        </h2>
+                        <p className="text-gray-500 font-medium text-sm lg:text-base">
+                          Enter your email to get started
+                        </p>
+                      </div>
+
+                      {/* Email Input */}
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-700 block">
+                          Email Address
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email Address Email Address"
+                            className="w-full px-4 py-2.5 rounded-full border border-gray-200 bg-[#f3f3f3] focus:bg-white focus:border-[#FF6B4A] focus:ring-2 focus:ring-[#FF6B4A]/20 outline-none transition-all duration-300 text-gray-700 placeholder:text-gray-400"
+                            onKeyPress={(e) => e.key === "Enter" && checkEmail()}
                           />
-                        </svg>
-                      )}
-                    </button>
+                          <Mail className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                        </div>
+                      </div>
 
-                    {/* TEXT */}
-                    <p className="text-gray-600 leading-snug">
-                      I agree to the{" "}
-                      <a href="/terms-condition">
-                        <span className="text-orange-500 font-medium cursor-pointer hover:underline">
-                          Terms & Conditions
-                        </span>
-                      </a>
-                      {" "}
-                      and{" "}
-                      <a href="/privacy-policy">
-                        <span className="text-orange-500 font-medium cursor-pointer hover:underline">
-                          Privacy Policy
-                        </span></a>
+                      {/* Terms Checkbox */}
+                      <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+                        <button
+                          type="button"
+                          onClick={() => setTermsAccepted(!termsAccepted)}
+                          className={`
+                        w-5 h-5 rounded-full border-2 flex items-center justify-center
+                        transition-all duration-200 flex-shrink-0
+                        ${termsAccepted
+                              ? "bg-[#FF6B4A] border-[#FF6B4A] shadow-md"
+                              : "border-gray-300 bg-white"
+                            }
+                      `}
+                        >
+                          {termsAccepted && (
+                            <CheckCircle className="w-3 h-3 text-white" />
+                          )}
+                        </button>
+                        <p className="text-xs text-gray-600 leading-relaxed">
+                          I agree to the{" "}
+                          <a href="/terms-condition" className="text-[#FF6B4A] font-semibold hover:underline">
+                            Terms & Conditions
+                          </a>{" "}
+                          and{" "}
+                          <a href="/privacy-policy" className="text-[#FF6B4A] font-semibold hover:underline">
+                            Privacy Policy
+                          </a>
+                        </p>
+                      </div>
 
-                    </p>
-                  </div>
+                      {/* Continue Button */}
+                      <button
+                        onClick={checkEmail}
+                        disabled={loading || !termsAccepted || !email}
+                        className="w-full py-3 rounded-full bg-gradient-to-r from-[#FF8C6A] to-[#FF6B4A] hover:from-[#FF6B4A] hover:to-[#FF5733] text-white font-semibold shadow-lg shadow-[#FF6B4A]/30 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                      >
+                        {loading ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Wait...
+                          </span>
+                        ) : (
+                          "Continue"
+                        )}
+                      </button>
 
+                      {/* Country Flags */}
+                      <div className="pt-4">
+                        <div className="flex items-center justify-center gap-2 flex-wrap">
+                          {countries.map((country) => (
+                            <div
+                              key={country.code}
+                              className="w-8 h-6 overflow-hidden"
+                              title={country.name}
+                            >
+                              <img
+                                src={`https://flagcdn.com/w40/${country.code.toLowerCase()}.png`}
+                                alt={country.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
 
+                  {/* REGISTER MODE */}
+                  {mode === "register" && (
+                    <motion.div
+                      key="register"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      className="space-y-4"
+                    >
+                      <button
+                        onClick={() => setMode("email")}
+                        className="font-medium flex items-center gap-1 text-gray-500 hover:text-[#FF6B4A] transition-colors mb-2"
+                      >
+                        <ArrowLeft size={16} /> Back
+                      </button>
 
+                      {/* Logo */}
+                      <div className="text-center mb-6">
+                        <img
+                          src="/images/newlogo3.png"
+                          alt="Ooshas Global"
+                          className="h-16 mx-auto mb-2"
+                        />
+                        <h2 className="text-lg font-bold text-[#FF6B4A]">
+                          Complete Registration
+                        </h2>
+                      </div>
 
+                      <p className="text-sm font-medium text-gray-600">
+                        Email: <span className="font-semibold text-gray-800">{email}</span>
+                      </p>
 
-                  <Button
-                    className="
-    w-full
-    bg-[#626363]
-    !rounded-bl-[15px]
-    rounded-[0px]
-    hover:bg-[#f46c44]
-  "
-                    onClick={checkEmail}
-                    disabled={loading || !termsAccepted}
-                  >
-                    {loading ? "Checking..." : "Continue"}
-                  </Button>
+                      {/* Full Name */}
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-semibold text-gray-700 block">
+                          Full Name
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.name}
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
+                          placeholder="full name"
+                          className="w-full px-4 py-2.5 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:border-[#FF6B4A] focus:ring-2 focus:ring-[#FF6B4A]/20 outline-none transition-all duration-300 text-gray-700 placeholder:text-gray-400"
+                        />
+                      </div>
 
+                      {/* Phone */}
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-semibold text-gray-700 block">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              phone: e.target.value.replace(/[^0-9]/g, "").slice(0, 10),
+                            })
+                          }
+                          placeholder="9876543210"
+                          maxLength={10}
+                          className="w-full px-4 py-2.5 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:border-[#FF6B4A] focus:ring-2 focus:ring-[#FF6B4A]/20 outline-none transition-all duration-300 text-gray-700 placeholder:text-gray-400"
+                        />
+                      </div>
 
-                </motion.div>
-              )}
+                      {/* Referral Code */}
+                      <div className="space-y-1.5">
+                        <label className="text-sm font-semibold text-gray-700 block">
+                          Referral Code <span className="text-gray-400 font-normal">(Optional)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={referralCode}
+                          onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                          placeholder="Enter referral code"
+                          className="w-full px-4 py-2.5 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:border-[#FF6B4A] focus:ring-2 focus:ring-[#FF6B4A]/20 outline-none transition-all duration-300 text-gray-700 placeholder:text-gray-400 uppercase tracking-wide"
+                        />
+                      </div>
 
-              {/* REGISTER */}
-              {mode === "register" && (
-                <motion.div
-                  key="register"
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -40 }}
-                  className="space-y-4 lg:py-15"
-                >
-                  <button
-                    onClick={() => setMode("email")}
-                    className="text-sm flex items-center gap-1 text-gray-500"
-                  >
-                    <ArrowLeft size={16} /> Back
-                  </button>
+                      {/* Send OTP Button */}
+                      <button
+                        onClick={handleRegister}
+                        disabled={loading}
+                        className="w-full py-3 rounded-full bg-gradient-to-r from-[#FF8C6A] to-[#FF6B4A] hover:from-[#FF6B4A] hover:to-[#FF5733] text-white font-semibold shadow-lg shadow-[#FF6B4A]/30 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none mt-2"
+                      >
+                        {loading ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Sending OTP...
+                          </span>
+                        ) : (
+                          "Send OTP"
+                        )}
+                      </button>
+                    </motion.div>
+                  )}
 
-                  {/* EMAIL (auto-filled) */}
-                  <Label>Email Address : <span>{email}</span></Label>
+                  {/* OTP MODE */}
+                  {mode === "otp" && (
+                    <motion.div
+                      key="otp"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      className="space-y-6"
+                    >
+                      <button
+                        onClick={() => setMode("email")}
+                        className="font-medium flex items-center gap-1 text-gray-500 hover:text-[#FF6B4A] transition-colors mb-2"
+                      >
+                        <ArrowLeft size={16} /> Back
+                      </button>
+                      {/* Logo */}
+                      <div className="text-center mb-6">
+                        <img
+                          src="/images/newlogo3.png"
+                          alt="Ooshas Global"
+                          className="h-16 mx-auto mb-2"
+                        />
+                        <h2 className="text-xl font-bold text-[#FF6B4A]">
+                          Verify OTP
+                        </h2>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Enter the code sent to {email}
+                        </p>
+                      </div>
 
+                      {/* OTP Input */}
+                      <div className="space-y-2">
+                        <label className="text-sm font-semibold text-gray-700 block text-center">
+                          Enter 6-Digit OTP
+                        </label>
+                        <input
+                          type="text"
+                          value={otp}
+                          onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
+                          placeholder="000000"
+                          maxLength={6}
+                          className="w-full px-4 py-3 rounded-full border border-gray-200 bg-gray-50 focus:bg-white focus:border-[#FF6B4A] focus:ring-2 focus:ring-[#FF6B4A]/20 outline-none transition-all duration-300 text-center text-2xl tracking-[0.5em] font-mono text-gray-700 placeholder:text-gray-400"
+                        />
+                      </div>
 
-                  {/* FULL NAME */}
-                  <Label>Full Name</Label>
-                  <Input
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    placeholder="Enter your full name"
-                  />
+                      {/* Verify Button */}
+                      <button
+                        onClick={verifyOtp}
+                        disabled={loading || otp.length !== 6}
+                        className="w-full py-3 rounded-full bg-gradient-to-r from-[#FF8C6A] to-[#FF6B4A] hover:from-[#FF6B4A] hover:to-[#FF5733] text-white font-semibold shadow-lg shadow-[#FF6B4A]/30 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                      >
+                        {loading ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Verifying...
+                          </span>
+                        ) : (
+                          "Verify OTP"
+                        )}
+                      </button>
 
-                  {/* PHONE */}
-                  <Label>Phone Number</Label>
-                  <Input
-                    value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        phone: e.target.value,
-                      })
-                    }
-                    placeholder="Enter phone number"
-                  />
+                      <button
+                        onClick={() => setMode("register")}
+                        className="w-full text-sm text-[#FF6B4A] hover:underline mt-2 font-medium"
+                      >
+                        Didn't receive OTP? Resend
+                      </button>
+                    </motion.div>
+                  )}
 
-                  <Button
-                    className="w-full bg-red-600"
-                    onClick={handleRegister}
-                    disabled={loading}
-                  >
-                    {loading ? "Sending OTP..." : "Send OTP"}
-                  </Button>
-                </motion.div>
-              )}
+                  {/* SUCCESS MODE */}
+                  {mode === "success" && (
+                    <motion.div
+                      key="success"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="text-center space-y-6 py-4"
+                    >
+                      {/* Logo */}
+                      <div className="text-center mb-6">
+                        <img
+                          src="/images/newlogo3.png"
+                          alt="Ooshas Global"
+                          className="h-12 mx-auto mb-3"
+                        />
+                      </div>
 
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                        className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto"
+                      >
+                        <CheckCircle className="w-10 h-10 text-green-500" />
+                      </motion.div>
 
-              {/* OTP */}
-              {mode === "otp" && (
-                <motion.div
-                  key="otp"
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -40 }}
-                  className="space-y-6 py-30"
-                >
-                  <Label>Enter OTP</Label>
-                  <Input
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    placeholder="123456"
-                  />
+                      <div>
+                        <h2 className="text-2xl font-bold text-gray-800">
+                          Welcome! 🎉
+                        </h2>
+                        <p className="text-gray-600 mt-2">
+                          Authentication Successful
+                        </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Redirecting to dashboard...
+                        </p>
+                      </div>
 
-                  <Button
-                    className="w-full bg-red-600"
-                    onClick={verifyOtp}
-                    disabled={loading}
-                  >
-                    {loading ? "Verifying..." : "Verify"}
-                  </Button>
-                </motion.div>
-              )}
-
-              {/* SUCCESS */}
-              {mode === "success" && (
-                <motion.div
-                  key="success"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center space-y-6"
-                >
-                  <CheckCircle className="w-16 h-16 text-green-600 mx-auto" />
-                  <h2 className="text-xl font-bold">
-                    Authentication Successful
-                  </h2>
-                  <p className="text-gray-600">
-                    Redirecting to dashboard...
-                  </p>
-                </motion.div>
-              )}
-
-            </AnimatePresence>
+                      <div className="flex justify-center gap-1">
+                        <div className="w-2 h-2 bg-[#FF6B4A] rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-[#FF6B4A] rounded-full animate-bounce delay-100" />
+                        <div className="w-2 h-2 bg-[#FF6B4A] rounded-full animate-bounce delay-200" />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+              <p className="text-center text-gray-400 text-xs mt-6">
+                © 2026 Ooshas Global. All rights reserved.
+              </p>
+            </motion.div>
           </div>
         </div>
       </div>
+
+
     </main>
   )
 }

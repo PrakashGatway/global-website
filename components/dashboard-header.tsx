@@ -48,15 +48,15 @@ export function DashboardHeader({ profile, Logout }) {
 
   // console.log("profile", profile);
 
-  
+
   useEffect(() => {
     fetchNotifications();
   }, [])
 
-  
+
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-card border-b  border-border">
+    <header className="sticky top-0 z-40 w-full bg-card border-b  border-border">
       <div className="flex items-center justify-between px-2 md:px-4 py-2 gap-4">
         <div className="flex gap-3 w-[50%] items-center justify-start">
           <Menu className="text-gray-600" onClick={() => setShow(!show)} />
