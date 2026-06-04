@@ -955,72 +955,77 @@
       }
     ]
   },
-  "Document": {
-    "title": "Document Upload",
-    "type": "multi",
-    "sections": {
-      "documents": {
-        "title": "Required Documents",
-        "fields": [
-          {
-            "name": "Passport",
-            "label": "Passport",
-            "type": "file",
-            "required": true,
-            "helperText": "Upload your valid passport (PDF or image, max 5MB)",
-            "accept": ".pdf,.jpg,.jpeg,.png"
-          },
-          {
-            "name": "AcademicDocuments",
-            "label": "Academic Documents",
-            "type": "file",
-            "required": false,
-            "helperText": "Upload your academic transcripts and certificates (PDF format preferred)",
-            "accept": ".pdf,.jpg,.jpeg,.png"
-          },
-          {
-            "name": "UpdatedCV",
-            "label": "Updated CV/Resume",
-            "type": "file",
-            "required": false,
-            "helperText": "Upload your latest CV/Resume (PDF format)",
-            "accept": ".pdf,.jpg,.jpeg,.png"
-          },
-          {
-            "name": "ExperienceCertificate",
-            "label": "Experience Certificate",
-            "type": "file",
-            "required": false,
-            "helperText": "Upload work experience certificates if applicable",
-            "accept": ".pdf,.jpg,.jpeg,.png"
-          },
-          {
-            "name": "Photographs",
-            "label": "Passport Size Photographs",
-            "type": "file",
-            "required": true,
-            "helperText": "Upload recent passport size photographs (JPG/PNG)",
-            "accept": ".jpg,.jpeg,.png"
-          },
-          {
-            "name": "IELTSscorecard",
-            "label": "IELTS Scorecard",
-            "type": "file",
-            "required": false,
-            "helperText": "Upload your IELTS scorecard (PDF format)",
-            "accept": ".pdf,.jpg,.jpeg,.png"
-          },
-          {
-            "name": "LOR",
-            "label": "Letter of Recommendation",
-            "type": "file",
-            "required": false,
-            "helperText": "Upload letters of recommendation (PDF format)",
-            "accept": ".pdf,.jpg,.jpeg,.png"
-          }
-        ]
-      }
+"Document": {
+  "title": "Document Upload",
+  "type": "multi",
+  "sections": {
+    "academicDocuments": {
+      "title": "Academic Documents",
+      "fields": [
+        {
+          "name": "tenthMarksheet",
+          "label": "10th Marksheet/Certificate",
+          "type": "file",
+          "required": true,
+          "helperText": "Upload your 10th standard marksheet or certificate (PDF or image, max 5MB)",
+          "accept": ".pdf,.jpg,.jpeg,.png"
+        },
+        {
+          "name": "twelfthMarksheet",
+          "label": "12th Marksheet/Certificate",
+          "type": "file",
+          "required": true,
+          "helperText": "Upload your 12th standard marksheet or certificate (PDF or image, max 5MB)",
+          "accept": ".pdf,.jpg,.jpeg,.png"
+        }
+      ]
+    },
+    "otherDocuments": {
+      "title": "Other Documents",
+      "fields": [
+        {
+          "name": "UpdatedCV",
+          "label": "Updated CV/Resume",
+          "type": "file",
+          "required": false,
+          "helperText": "Upload your latest CV/Resume (PDF format)",
+          "accept": ".pdf,.jpg,.jpeg,.png"
+        },
+        {
+          "name": "ExperienceCertificate",
+          "label": "Experience Certificate",
+          "type": "file",
+          "required": false,
+          "helperText": "Upload work experience certificates if applicable",
+          "accept": ".pdf,.jpg,.jpeg,.png"
+        },
+        {
+          "name": "Photographs",
+          "label": "Passport Size Photographs",
+          "type": "file",
+          "required": true,
+          "helperText": "Upload recent passport size photographs (JPG/PNG)",
+          "accept": ".jpg,.jpeg,.png"
+        },
+        {
+          "name": "IELTSscorecard",
+          "label": "IELTS Scorecard",
+          "type": "file",
+          "required": false,
+          "helperText": "Upload your IELTS scorecard (PDF format)",
+          "accept": ".pdf,.jpg,.jpeg,.png"
+        },
+        {
+          "name": "LOR",
+          "label": "Letter of Recommendation",
+          "type": "file",
+          "required": false,
+          "helperText": "Upload letters of recommendation (PDF format)",
+          "accept": ".pdf,.jpg,.jpeg,.png"
+        }
+      ]
     }
   }
+}
 }
 

@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
 const StudentVisaStories = ({
   title="Our Student || Visa Approvals",
+  isSameLine = "no",
   subtitle,
   stories,
   autoSlideInterval = 3000,
@@ -34,16 +35,32 @@ const StudentVisaStories = ({
 
   // Keen slider setup
   const [sliderRef, instanceRef] = useKeenSlider({
-    loop: true,
-    slides: {
-      perView: 3,
-      spacing: 24,
+  loop: true,
+  slides: {
+    perView: 3,
+    spacing: 16,
+  },
+  breakpoints: {
+    "(max-width: 640px)": {
+      slides: {
+        perView: 1,
+        spacing: 12,
+      },
     },
-    slideChanged(slider) {
-      setCurrentSlide(slider.track.details.rel);
+    "(min-width: 641px) and (max-width: 768px)": {
+      slides: {
+        perView: 2,
+        spacing: 12,
+      },
     },
-   
-  });
+    "(min-width: 769px) and (max-width: 1024px)": {
+      slides: {
+        perView: 3,
+        spacing: 16,
+      },
+    },
+  },
+});
 
   // Auto slide
   useEffect(() => {
@@ -64,13 +81,20 @@ const StudentVisaStories = ({
          
         {/* Header */}
         <div className="text-left my-4">
-            <h2>
+           {isSameLine === "no" ? (
+             <h2>
             <span className="text-[#F46C44] text-2xl sm:text-4xl block font-light mr-2">
               {title?.split("||")[0]}
             </span>
             <span className="text-primary text-2xl sm:text-4xl block font-bold mr-2">
               {title?.split("||")[1]}
             </span></h2>
+           ):(
+              <h2>
+            <span className="text-primary text-2xl sm:text-4xl block font-bold mr-2">
+              {title?.split("||")[1]}
+            </span></h2>
+           )}
           
         
 
@@ -122,33 +146,22 @@ const StoryCard = ({ story }) => {
   
 
   return (
-    <div className="group bg-white  shadow-[0_0_20px_rgba(0,0,0,0.08)] overflow-hidden flex flex-col h-full">
-      {/* Image */}
-      <div className="relative h-75 overflow-hidden bg-gradient-to-br from-orange-400 to-red-500">
-        {story.image ? (
-          <>
-           
-            <img
-              src={story.image}
-              alt={story.name}
-             
-              className={`w-full h-full object-cover object-top transition opacity-100`}
-            />
-          </>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-white text-5xl font-bold">
-            {story.name?.charAt(0) || "S"}
-          </div>
-        )}
-
-        {/* Status */}
-        {/* {story.status && (
-          <div className="absolute top-3 right-3 bg-orange-500 text-white text-xs px-3 py-1 rounded-full">
-            {story.status}
-          </div>
-        )} */}
+   <div className="group bg-white shadow-[0_0_20px_rgba(0,0,0,0.08)] overflow-hidden flex flex-col h-full">
+  {/* Image */}
+  <div className="relative h-[250px] sm:h-[300px] md:h-[320px] lg:h-[300px] xl:h-[300px] overflow-hidden bg-gradient-to-br from-orange-400 to-red-500">
+    {story.image ? (
+      <img
+        src={story.image}
+        alt={story.name}
+        className="w-full h-full object-cover object-top transition-opacity duration-300 opacity-100"
+      />
+    ) : (
+      <div className="w-full h-full flex items-center justify-center text-white text-4xl md:text-5xl font-bold">
+        {story.name?.charAt(0) || "S"}
       </div>
-    </div>
+    )}
+  </div>
+</div>
   );
 };
 

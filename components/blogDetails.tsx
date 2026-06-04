@@ -155,7 +155,7 @@ useEffect(() => {
     <section className="bg-white min-h-screen ">
 
       {/* ================= BREADCRUMB NAVIGATION ================= */}
-     <div className="max-w-7xl mx-auto px-4 py-4 text-sm text-gray-600">
+     <div className="max-w-7xl mx-auto px-4 pt-4 text-sm text-gray-600">
   <nav className="flex items-center gap-2">
     <Link href="/" className="hover:text-orange-600">
       Home
@@ -175,37 +175,18 @@ useEffect(() => {
   </nav>
 </div>
 
-      {/* ================= HERO SECTION ================= */}
-      <div className="relative w-full h-[360px]">
-        <div className="absolute inset-0 bg-[#F46C44]  flex items-end">
+     
 
-          {/* Main container */}
-          <div className=" mx-auto w-full px-4 pb-4 flex items-start justify-between gap-6">
 
-            {/* LEFT SIDE — TEXT */}
-            <div className="text-white max-w-3xl px-20 mt-14">
-              <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold leading-tight mb-4 text-top">
+      {/* ================= MAIN CONTENT AREA ================= */}
+      <div className="max-w-7xl mx-auto px-1 py-6 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
+
+        {/* ================= LEFT CONTENT COLUMN ================= */}
+        <div className="space-y-4 max-w-5xl">
+           <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold leading-tight mb-4 text-top">
                 {blog.title}
               </h1>
-
-
-              {/* Tags */}
-              {blog.tags && blog.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {blog.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* RIGHT SIDE — IMAGE */}
-            <div className="relative w-140 h-86 shrink-0">
+             <div className="relative w-full h-30 lg:h-120 shrink-0">
               <Image
                 src={
                   blog?.coverImage && blog.coverImage.trim() !== ""
@@ -214,22 +195,11 @@ useEffect(() => {
                 }
                 alt={blog.title}
                 fill
-                className="object-fill rounded-br-[60px] rounded-bl-[60px]"
+                className="object-cover "
                 priority
                 sizes="160px"
               />
             </div>
-
-          </div>
-        </div>
-      </div>
-
-
-      {/* ================= MAIN CONTENT AREA ================= */}
-      <div className="max-w-7xl mx-auto px-1 py-6 grid grid-cols-1 lg:grid-cols-[1fr_328px] gap-3">
-
-        {/* ================= LEFT CONTENT COLUMN ================= */}
-        <div className="space-y-4 max-w-5xl">
 
           {/* SHORT DESCRIPTION SECTION */}
           {blog.shortDescription && (
@@ -283,6 +253,7 @@ useEffect(() => {
       font-size: 26px;
       margin: 28px 0 12px;
       font-weight: 700;
+      color: #00306a
     }
 
     .blog-html h3 {
@@ -338,21 +309,7 @@ useEffect(() => {
                 dangerouslySetInnerHTML={{ __html: htmlWithIds }}
               />
 
-               <div className="relative max-w-7xl  mx-auto pt-6">
-        <h2 className="text-xl   mb-2 ">
-          <span className="text-[#F46C44] lg:text-4xl font-light" >
-            Top universities 
-          </span>{" "} <br />
-          <span className="text-primary font-bold relative lg:text-4xl">
-            for Indian students
-          </span>
-
-
-
-        </h2>
-
-      </div>
-            <UniversityCard university= {uniblog.result} perView={2} />
+              
 
               <div
                 className="blog-html pt-10"
@@ -665,10 +622,24 @@ useEffect(() => {
                     </div>
                 </div>
             </div> */}
+
+             <div className="relative max-w-7xl  mx-auto pt-6">
+        <h2 className="text-xl   mb-2 ">
+          <span className="text-primary lg:text-4xl font-semibold" >
+            Top universities for Indian students
+          </span>
+       
+
+
+
+        </h2>
+
+      </div>
+            <UniversityCard university= {uniblog.result} perView={3} />
   
             {/* <VideoTestimonialsSlider items={videoData}/> */}
             <div className="py-10">
-            <StudentVisaStories stories={visacontent}/>
+            <StudentVisaStories stories={visacontent} isSameLine={"yes"}/>
 
             </div>
 

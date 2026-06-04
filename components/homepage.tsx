@@ -43,6 +43,16 @@ export default function Homepage({
   const [countries, setCountries] = useState([]);
   const router = useRouter()
 
+  const [playingVideo, setPlayingVideo] = useState(null);
+const [videoLoading, setVideoLoading] = useState(false);
+
+  const getYoutubeId = (url) => {
+  const regExp =
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/;
+  const match = url.match(regExp);
+  return match ? match[1] : "";
+};
+
   const goToBlog = (slug) => {
     router.push(`/blog/${slug}`);
   };
@@ -82,6 +92,8 @@ export default function Homepage({
     slider.on("animationEnded", nextTimeout);
     slider.on("updated", nextTimeout);
   }
+
+  console.log(videoRes)
 
   const [sliderRefblog] = useKeenSlider(
     {
@@ -1138,7 +1150,7 @@ export default function Homepage({
                     {/* CONTENT */}
                     <div className="p-4 pt-2 text-start">
 
-                      <h3 onClick={() => goToBlog(post.slug)} className="text-gray-900 hover:text-[#FF6B35] cursor-pointer text-lg font-medium mb-1 line-clamp-2">
+                      <h3 onClick={() => goToBlog(post.slug)} className="text-gray-900 hover:text-[#FF6B35] cursor-pointer text-lg font-medium mb-1 line-clamp-1">
                         {post.title}
                       </h3>
                       <p className="text-gray-600 text-sm font-medium mb-2 line-clamp-2">
@@ -1177,6 +1189,97 @@ export default function Homepage({
         tag={homePage?.videoTestimonials?.tag}
    
       /> */}
+
+      <section className="bg-white py-12 px-4 md:px-2">
+  <div className="max-w-7xl mx-auto bg-[#f46c44] px-2  p-6 md:p-12">
+
+    {/* Heading */}
+    <div className="mb-4">
+       <h2 className=" text-xl   mb-2 ">
+            <span className="text-white lg:text-4xl font-light">
+              {homePage?.videoTestimonials?.title.split("||")[0]}
+            </span>{" "}
+            <br />
+            <span className="text-primary font-bold relative lg:text-4xl">
+              {homePage?.videoTestimonials?.title.split("||")[1]}
+
+            </span>
+          </h2>
+
+      <p className="text-white text-sm md:text-base " dangerouslySetInnerHTML={{
+        __html : homePage?.videoTestimonials?.subtitle
+      }}>
+        
+      </p>
+    </div>
+
+    {/* Cards */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+  {videoRes?.map((item) => {
+    const videoId = getYoutubeId(item?.videoUrl);
+
+    return (
+      <div
+        key={item?._id}
+        className="relative overflow-hidden group h-[400px]"
+      >
+       {playingVideo === item?._id ? (
+  <div className="relative w-full h-full">
+    {videoLoading && (
+      <div className="absolute inset-0 bg-black flex items-center justify-center z-10">
+        <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+      </div>
+    )}
+
+    <iframe
+      className="w-full h-full"
+      src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+      title={item?.name}
+      allow="autoplay; encrypted-media"
+      allowFullScreen
+      onLoad={() => setVideoLoading(false)}
+    />
+  </div>
+) : (
+  <>
+    <img
+      src={item?.image}
+      alt={item?.name}
+      className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
+    />
+
+    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+
+    <div className="absolute bottom-6 left-6 z-10">
+      <button
+        onClick={() => {
+          setPlayingVideo(item?._id);
+          setVideoLoading(true);
+        }}
+        className="w-12 h-12 rounded-full border border-white/50 flex items-center justify-center mb-4 text-white backdrop-blur-sm"
+      >
+        ▶
+      </button>
+
+      <h3 className="text-white text-lg font-semibold">
+        {item?.name}
+      </h3>
+
+      <p className="text-white/70 text-sm">
+        {item?.designation}
+        {item?.university && `, ${item?.university}`}
+      </p>
+    </div>
+  </>
+)}
+      </div>
+    );
+  })}
+</div>
+
+
+  </div>
+</section>
 
       <StudentVisaStories
         stories={visacontent}
