@@ -4,7 +4,7 @@ import { AlertCircle, CheckCircle, CheckCircle2, Circle, ClipboardCheck, Clock3,
 
 
 
-export default function ReviewApplication(){
+export default function ReviewApplication({application,allProfile}){
 
       const checklist = [
     {
@@ -219,15 +219,17 @@ return(
                     </h3>
 
                     <div className="flex items-center gap-3 mb-5">
-                      <div className="w-12 h-12 bg-purple-100"></div>
+                      <div className="w-12 h-12 bg-purple-100">
+                        <img src={allProfile?.data?.assignto?.profileImage || ""} alt="" />
+                      </div>
 
                       <div>
                         <h4 className="font-semibold">
-                          Rahul Sharma
+                          {allProfile?.data?.assignto?.name}
                         </h4>
 
                         <p className="text-sm text-gray-500">
-                          Senior Admissions Advisor
+                         {allProfile?.data?.assignto?.role}
                         </p>
                       </div>
                     </div>
@@ -339,32 +341,32 @@ return(
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-500">Program</span>
                       <span className="font-medium text-right">
-                        Bachelor of Computer Science
+                        {application?.course?.name}
                       </span>
                     </div>
 
                     <div className="flex justify-between text-sm border-t pt-3">
                       <span className="text-slate-500">Application ID</span>
                       <span className="font-medium text-orange-600">
-                        OS1779706950795
+                        {application?.applicationNumber}
                       </span>
                     </div>
 
                     <div className="flex justify-between text-sm border-t pt-3">
                       <span className="text-slate-500">Intake</span>
-                      <span>March 2026</span>
+                      <span>{application?.intake}</span>
                     </div>
 
                     <div className="flex justify-between text-sm border-t pt-3">
                       <span className="text-slate-500">University</span>
                       <span className="text-right">
-                        University of Bologna
+                        {application?.course?.university?.name}
                       </span>
                     </div>
 
                     <div className="flex justify-between text-sm border-t pt-3">
                       <span className="text-slate-500">Country</span>
-                      <span>Italy</span>
+                      <span>{application?.country}</span>
                     </div>
                   </div>
                 </div>
