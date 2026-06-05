@@ -249,8 +249,8 @@ export default function VisaProcessingListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="max-w-[1600px] mx-auto p-4 md:p-6">
+    <div className="min-h-screen ">
+      <main className="max-w-[1600px] mx-auto p-4 ">
         {/* Header */}
         <div className="mb-6">
           <div className="flex justify-between items-center">
@@ -376,12 +376,12 @@ export default function VisaProcessingListPage() {
                 <option value="progress">Sort by Progress</option>
                 <option value="applicationId">Sort by Application ID</option>
               </select>
-              <button
+              {/* <button
                 onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                 className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
               >
                 {sortOrder === 'asc' ? '↑' : '↓'}
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

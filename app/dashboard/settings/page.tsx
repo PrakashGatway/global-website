@@ -558,9 +558,9 @@ export default function ProfilePage() {
         max: values.visaStudypermit?.budget?.max || 0,
       },
     },
-    // Include documents in the payload
-documents: {
-  ...(allProfile?.profile?.documents || {}),
+        // Include documents in the payload
+    documents: {
+      ...(allProfile?.profile?.documents || {}),
 
   ...Object.entries(values?.Document?.documents || {}).reduce(
     (acc, [key, value]) => {

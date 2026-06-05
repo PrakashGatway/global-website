@@ -45,7 +45,7 @@ export default function VisaJourneyEditPage() {
             country: apiData.country || "IT",
             course: apiData.course?.name || "69871a5060ce62ab201683ad",
             currentStep: apiData.currentStep || 1,
-            steps: apiData.steps ||  getDefaultSteps()
+            steps: apiData.steps || getDefaultSteps()
           });
         } else {
           setFormData({
@@ -351,7 +351,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleStepChange = (stepId, field, value) => {
-    setFormData(prev => ({
+    setFormData((prev): any => ({
       ...prev,
       steps: prev.steps.map(step =>
         step.id === stepId
@@ -362,7 +362,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleStepPageChange = (stepId, pageField, value) => {
-    setFormData(prev => ({
+    setFormData((prev): any => ({
       ...prev,
       steps: prev.steps.map(step =>
         step.id === stepId
@@ -373,7 +373,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleStepBannerChange = (stepId, bannerField, value) => {
-    setFormData(prev => ({
+    setFormData((prev): any => ({
       ...prev,
       steps: prev.steps.map(step =>
         step.id === stepId
@@ -384,7 +384,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleStepProgressChange = (stepId, value) => {
-    setFormData(prev => ({
+    setFormData((prev): any => ({
       ...prev,
       steps: prev.steps.map(step =>
         step.id === stepId
@@ -395,7 +395,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleSectionDetailChange = (stepId, sectionName, detailIndex, field, value) => {
-    setFormData(prev => ({
+    setFormData((prev): any => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId && step.sections && step.sections[sectionName]) {
@@ -421,7 +421,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const addSectionDetail = (stepId, sectionName) => {
-    setFormData(prev => ({
+    setFormData((prev): any => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId && step.sections && step.sections[sectionName]) {
@@ -445,7 +445,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const removeSectionDetail = (stepId, sectionName, detailIndex) => {
-    setFormData(prev => ({
+    setFormData((prev): any => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId && step.sections && step.sections[sectionName]) {
@@ -460,6 +460,141 @@ export default function VisaJourneyEditPage() {
               }
             }
           };
+        }
+        return step;
+      })
+    }));
+  };
+
+  // Important Info Handlers
+  const addImportantInfo = (stepId) => {
+    setFormData((prev): any => ({
+      ...prev,
+      steps: prev.steps.map(step =>
+        step.id === stepId
+          ? {
+              ...step,
+              importantInfo: [
+                ...(step.importantInfo || []),
+                { title: "New Important Info", description: "", type: "info" }
+              ]
+            }
+          : step
+      )
+    }));
+  };
+
+  const handleImportantInfoChange = (stepId, index, field, value) => {
+    setFormData((prev): any => ({
+      ...prev,
+      steps: prev.steps.map(step => {
+        if (step.id === stepId) {
+          const updatedInfo = [...(step.importantInfo || [])];
+          updatedInfo[index] = { ...updatedInfo[index], [field]: value };
+          return { ...step, importantInfo: updatedInfo };
+        }
+        return step;
+      })
+    }));
+  };
+
+  const removeImportantInfo = (stepId, index) => {
+    setFormData((prev): any => ({
+      ...prev,
+      steps: prev.steps.map(step => {
+        if (step.id === stepId) {
+          const updatedInfo = (step.importantInfo || []).filter((_, i) => i !== index);
+          return { ...step, importantInfo: updatedInfo };
+        }
+        return step;
+      })
+    }));
+  };
+
+  // Progress Steps Handlers
+  const addProgressStep = (stepId) => {
+    setFormData((prev): any => ({
+      ...prev,
+      steps: prev.steps.map(step =>
+        step.id === stepId
+          ? {
+              ...step,
+              progressSteps: [
+                ...(step.progressSteps || []),
+                { label: "New Step", status: "pending", date: "" }
+              ]
+            }
+          : step
+      )
+    }));
+  };
+
+  const handleProgressStepChange = (stepId, index, field, value) => {
+    setFormData((prev): any => ({
+      ...prev,
+      steps: prev.steps.map(step => {
+        if (step.id === stepId) {
+          const updatedSteps = [...(step.progressSteps || [])];
+          updatedSteps[index] = { ...updatedSteps[index], [field]: value };
+          return { ...step, progressSteps: updatedSteps };
+        }
+        return step;
+      })
+    }));
+  };
+
+  const removeProgressStep = (stepId, index) => {
+    setFormData((prev): any => ({
+      ...prev,
+      steps: prev.steps.map(step => {
+        if (step.id === stepId) {
+          const updatedSteps = (step.progressSteps || []).filter((_, i) => i !== index);
+          return { ...step, progressSteps: updatedSteps };
+        }
+        return step;
+      })
+    }));
+  };
+
+  // Status Timeline Handlers
+  const addStatusTimeline = (stepId) => {
+    setFormData((prev): any => ({
+      ...prev,
+      steps: prev.steps.map(step =>
+        step.id === stepId
+          ? {
+              ...step,
+              statusTimeline: [
+                ...(step.statusTimeline || []),
+                { date: "", status: "", description: "" }
+              ]
+            }
+          : step
+      )
+    }));
+  };
+
+  const handleStatusTimelineChange = (stepId, index, field, value) => {
+    setFormData((prev): any => ({
+      ...prev,
+      steps: prev.steps.map(step => {
+        if (step.id === stepId) {
+          const updatedTimeline = [...(step.statusTimeline || [])];
+          updatedTimeline[index] = { ...updatedTimeline[index], [field]: value };
+          return { ...step, statusTimeline: updatedTimeline };
+        }
+        return step;
+      })
+    }));
+  };
+
+  const removeStatusTimeline = (stepId, index) => {
+    setFormData((prev): any => ({
+      ...prev,
+      steps: prev.steps.map(step => {
+        if (step.id === stepId) {
+          const updatedTimeline = (step.statusTimeline || []).filter((_, i) => i !== index);
+          return { ...step, statusTimeline: updatedTimeline };
         }
         return step;
       })
@@ -494,9 +629,6 @@ export default function VisaJourneyEditPage() {
       
       if (response.data.success) {
         setSuccess("Visa journey data updated successfully!");
-        // setTimeout(() => {
-        //   router.push('/visaDetails');
-        // }, 2000);
       } else {
         setError(response.data.message || "Failed to update visa data");
       }
@@ -540,8 +672,8 @@ export default function VisaJourneyEditPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="max-w-[1600px] mx-auto p-4 md:p-6">
+    <div className="min-h-screen ">
+      <main className="max-w-[1600px] mx-auto p-4">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -678,6 +810,18 @@ export default function VisaJourneyEditPage() {
                 onRemoveSectionDetail={removeSectionDetail}
                 onFileUpload={handleFileUpload}
                 uploadingFile={uploadingFile}
+                // Important Info handlers
+                onAddImportantInfo={addImportantInfo}
+                onImportantInfoChange={handleImportantInfoChange}
+                onRemoveImportantInfo={removeImportantInfo}
+                // Progress Steps handlers
+                onAddProgressStep={addProgressStep}
+                onProgressStepChange={handleProgressStepChange}
+                onRemoveProgressStep={removeProgressStep}
+                // Status Timeline handlers
+                onAddStatusTimeline={addStatusTimeline}
+                onStatusTimelineChange={handleStatusTimelineChange}
+                onRemoveStatusTimeline={removeStatusTimeline}
                 getStatusColor={getStatusColor}
                 getBannerTypeColor={getBannerTypeColor}
               />
@@ -701,14 +845,24 @@ function StepEditor({
   onRemoveSectionDetail,
   onFileUpload,
   uploadingFile,
+  onAddImportantInfo,
+  onImportantInfoChange,
+  onRemoveImportantInfo,
+  onAddProgressStep,
+  onProgressStepChange,
+  onRemoveProgressStep,
+  onAddStatusTimeline,
+  onStatusTimelineChange,
+  onRemoveStatusTimeline,
   getStatusColor,
   getBannerTypeColor
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState('basic'); // basic, page, banner, sections
+  const [activeTab, setActiveTab] = useState('basic'); // basic, page, banner, sections, importantInfo, progressSteps, statusTimeline
 
   const statusOptions = ["Pending", "In Progress", "Completed", "Approved", "Scheduled", "Under Review by Embassy"];
   const bannerTypeOptions = ["info", "success"];
+  const importantInfoTypeOptions = ["info", "warning", "success", "requirement"];
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -716,13 +870,29 @@ function StepEditor({
       onFileUpload(step.id, file);
     }
   };
-  // console.log("step.banner?.fileUrl ", fileBaseurl(step.banner.fileUrl) )
+
+  const getImportantInfoTypeClass = (type) => {
+    switch (type) {
+      case 'warning': return 'bg-yellow-50 border-yellow-200 text-yellow-700';
+      case 'success': return 'bg-green-50 border-green-200 text-green-700';
+      case 'danger': return 'bg-red-50 border-red-200 text-red-700';
+      default: return 'bg-blue-50 border-blue-200 text-blue-700';
+    }
+  };
+
+  const getProgressStepStatusClass = (status) => {
+    switch (status) {
+      case 'completed': return 'bg-green-100 text-green-700';
+      case 'in-progress': return 'bg-blue-100 text-blue-700';
+      default: return 'bg-gray-100 text-gray-600';
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       {/* Step Header */}
       <div 
-        className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between cursor-pointer
-         hover:bg-gray-100 transition-colors"
+        className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-3">
@@ -755,8 +925,8 @@ function StepEditor({
       {isExpanded && (
         <div className="p-4 space-y-4">
           {/* Tab Navigation */}
-          <div className="flex gap-2 border-b pb-2">
-            {['basic', 'page', 'banner', 'sections'].map((tab) => (
+          <div className="flex gap-2 border-b pb-2 flex-wrap">
+            {['basic', 'page', 'banner', 'sections', 'importantInfo', 'progressSteps', 'statusTimeline'].map((tab) => (
               <button
                 key={tab}
                 type="button"
@@ -767,7 +937,10 @@ function StepEditor({
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {tab === 'importantInfo' ? 'Important Info' : 
+                 tab === 'progressSteps' ? 'Progress Steps' : 
+                 tab === 'statusTimeline' ? 'Status Timeline' :
+                 tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
             ))}
           </div>
@@ -995,6 +1168,208 @@ function StepEditor({
             </div>
           )}
 
+          {/* Important Info Tab */}
+          {activeTab === 'importantInfo' && (
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="font-medium text-gray-800 flex items-center gap-2">
+                  <AlertCircle size={16} /> Important Information
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => onAddImportantInfo(step.id)}
+                  className="text-xs text-[#f56e45] hover:underline flex items-center gap-1"
+                >
+                  <Plus size={12} /> Add Info
+                </button>
+              </div>
+              <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                {(step.importantInfo || []).map((info, idx) => (
+                  <div key={idx} className={`p-3 rounded-lg border ${getImportantInfoTypeClass(info.type)}`}>
+                    <div className="flex gap-3 items-start">
+                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <input
+                          type="text"
+                          value={info.title || ""}
+                          onChange={(e) => onImportantInfoChange(step.id, idx, "title", e.target.value)}
+                          placeholder="Title"
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs bg-white"
+                        />
+                        <input
+                          type="text"
+                          value={info.description || ""}
+                          onChange={(e) => onImportantInfoChange(step.id, idx, "description", e.target.value)}
+                          placeholder="Description"
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs bg-white md:col-span-1"
+                        />
+                        <select
+                          value={info.type || "info"}
+                          onChange={(e) => onImportantInfoChange(step.id, idx, "type", e.target.value)}
+                          className="px-2 py-1 border border-gray-300 rounded text-xs bg-white"
+                        >
+                          {importantInfoTypeOptions.map(opt => (
+                            <option key={opt} value={opt}>{opt.toUpperCase()}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => onRemoveImportantInfo(step.id, idx)}
+                        className="p-1 text-red-500 hover:bg-red-50 rounded flex-shrink-0"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {(!step.importantInfo || step.importantInfo.length === 0) && (
+                  <div className="text-center text-gray-400 py-3 text-sm">
+                    No important information added. Click "Add Info" to add.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Progress Steps Tab */}
+          {activeTab === 'progressSteps' && (
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="font-medium text-gray-800 flex items-center gap-2">
+                  <CheckCircle size={16} /> Progress Steps
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => onAddProgressStep(step.id)}
+                  className="text-xs text-[#f56e45] hover:underline flex items-center gap-1"
+                >
+                  <Plus size={12} /> Add Step
+                </button>
+              </div>
+              <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                {(step.progressSteps || []).map((progressStep, idx) => (
+                  <div key={idx} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex gap-3 items-start">
+                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <input
+                          type="text"
+                          value={progressStep.label || ""}
+                          onChange={(e) => onProgressStepChange(step.id, idx, "label", e.target.value)}
+                          placeholder="Step Label"
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                        />
+                        <select
+                          value={progressStep.status || "pending"}
+                          onChange={(e) => onProgressStepChange(step.id, idx, "status", e.target.value)}
+                          className="px-2 py-1 border border-gray-300 rounded text-xs"
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="in-progress">In Progress</option>
+                          <option value="completed">Completed</option>
+                        </select>
+                        <input
+                          type="date"
+                          value={progressStep.date || ""}
+                          onChange={(e) => onProgressStepChange(step.id, idx, "date", e.target.value)}
+                          className="px-2 py-1 border border-gray-300 rounded text-xs"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => onRemoveProgressStep(step.id, idx)}
+                        className="p-1 text-red-500 hover:bg-red-50 rounded flex-shrink-0"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    {progressStep.status && (
+                      <div className="mt-2">
+                        <span className={`text-xs px-2 py-0.5 rounded ${getProgressStepStatusClass(progressStep.status)}`}>
+                          {progressStep.status.replace('-', ' ').toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {(!step.progressSteps || step.progressSteps.length === 0) && (
+                  <div className="text-center text-gray-400 py-3 text-sm">
+                    No progress steps added. Click "Add Step" to add.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Status Timeline Tab */}
+          {activeTab === 'statusTimeline' && (
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="font-medium text-gray-800 flex items-center gap-2">
+                  <Clock size={16} /> Status Timeline
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => onAddStatusTimeline(step.id)}
+                  className="text-xs text-[#f56e45] hover:underline flex items-center gap-1"
+                >
+                  <Plus size={12} /> Add Event
+                </button>
+              </div>
+              <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                {(step.statusTimeline || []).map((event, idx) => (
+                  <div key={idx} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex gap-3 items-start">
+                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <input
+                          type="date"
+                          value={event.date || ""}
+                          onChange={(e) => onStatusTimelineChange(step.id, idx, "date", e.target.value)}
+                          className="px-2 py-1 border border-gray-300 rounded text-xs"
+                        />
+                        <select
+                          value={event.status || ""}
+                          onChange={(e) => onStatusTimelineChange(step.id, idx, "status", e.target.value)}
+                          className="px-2 py-1 border border-gray-300 rounded text-xs"
+                        >
+                          <option value="">Select Status</option>
+                          {statusOptions.map(opt => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                        </select>
+                        <input
+                          type="text"
+                          value={event.description || ""}
+                          onChange={(e) => onStatusTimelineChange(step.id, idx, "description", e.target.value)}
+                          placeholder="Description"
+                          className="px-2 py-1 border border-gray-300 rounded text-xs md:col-span-1"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => onRemoveStatusTimeline(step.id, idx)}
+                        className="p-1 text-red-500 hover:bg-red-50 rounded flex-shrink-0"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    {event.status && (
+                      <div className="mt-2">
+                        <span className={`text-xs px-2 py-0.5 rounded ${getStatusColor(event.status)}`}>
+                          {event.status}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {(!step.statusTimeline || step.statusTimeline.length === 0) && (
+                  <div className="text-center text-gray-400 py-3 text-sm">
+                    No timeline events added. Click "Add Event" to add.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Preview Section */}
           <div className="border-t pt-4">
             <h4 className="font-medium text-gray-800 mb-3 flex items-center gap-2">
@@ -1058,6 +1433,21 @@ function StepEditor({
                       <p className="text-xs text-gray-400 col-span-2 text-center mt-1">
                         +{step.sections.overview.details.length - 4} more items
                       </p>
+                    )}
+                  </div>
+                </div>
+              )}
+              {(step.importantInfo && step.importantInfo.length > 0) && (
+                <div className="mt-3 pt-2 border-t border-gray-200">
+                  <p className="text-xs font-medium text-gray-700 mb-1">Important Info Preview:</p>
+                  <div className="space-y-1">
+                    {step.importantInfo.slice(0, 2).map((info, idx) => (
+                      <div key={idx} className="text-xs">
+                        <span className="font-medium">{info.title}:</span> {info.description}
+                      </div>
+                    ))}
+                    {step.importantInfo.length > 2 && (
+                      <p className="text-xs text-gray-400">+{step.importantInfo.length - 2} more items</p>
                     )}
                   </div>
                 </div>
