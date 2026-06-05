@@ -58,9 +58,7 @@ export default function DashboardLayout({
       const permission = await Notification.requestPermission();
 
       if (permission === "granted") {
-        // Check if messaging is initialized
         if (!messaging) {
-          console.log('Firebase messaging not initialized');
           return;
         }
 

@@ -11,23 +11,20 @@ export function GlobalProvider({ children }) {
     const [profile, setProfile] = useState(null)
     const [allProfile, setallProfile] = useState(null)
     const [authToken, setauthToken] = useState(null)
-    const [show, setShow] = useState(false)
+    const [show, setShow] = useState(true)
     const [update, setupdate] = useState();
 
-    // Popup states
     const [isPopupOpen, setIsPopupOpen] = useState(false)
     const [popupCount, setPopupCount] = useState(0)
     const [hasInteracted, setHasInteracted] = useState(false)
 
-    // ✨ NEW: Track if form was submitted (not just closed)
     const [hasSubmittedForm, setHasSubmittedForm] = useState(false)
 
-    // Timer refs
     const timer1Ref = useRef(null);
     const timer2Ref = useRef(null);
     const hasInitializedTimers = useRef(false);
 
-      const [selectedCountries, setSelectedCountries] = useState([])
+    const [selectedCountries, setSelectedCountries] = useState([])
 
     const addCountry = (country) => {
 
@@ -52,13 +49,13 @@ export function GlobalProvider({ children }) {
             const res = await axiosInstance.get("/auth/me")
             setProfile(res.data.data)
             setallProfile(res.data)
+        
         } catch (err) {
             console.log("Not authorized")
         } finally {
             setLoading(false)
         }
     }
-  const pathname = usePathname();
 
 
     const updateProfile = async () => {
@@ -139,9 +136,6 @@ export function GlobalProvider({ children }) {
             showPopup();
             return;
         }
-
-        // Second popup: at 30s, only if count is 1 (first was shown/cancelled)
-        // Note: hasInteracted can be true here (from cancelling first popup)
         if (popupCount === 1) {
 
             showPopup();
@@ -233,12 +227,12 @@ export function GlobalProvider({ children }) {
             }
             setLoading(false)
         }
-    }, [pathname])
+    }, [])
 
-    useEffect(() => {
-        getProfile();
-    },[update])
-    
+    // useEffect(() => {
+    //     getProfile();
+    // },[update])
+
     return (
         <Globalcontext.Provider value={{
             profile,

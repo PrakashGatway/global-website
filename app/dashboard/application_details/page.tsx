@@ -1,32 +1,39 @@
 "use client";
 
-import axiosInstance from "@/app/axiosInstance";
-import { useGlobal } from "@/src/statecontext";
+import React, { useCallback, useEffect, useState } from "react";
 import {
-  Info,
-  Plus,
   Search,
+  ChevronDown,
+  Plus,
+  X,
   ChevronLeft,
+  PhoneCallIcon,
+  Edit,
   ChevronRight,
   Eye,
   RefreshCw,
-  Filter,
-  FileText,
-  X,
-  MoreHorizontal,
-  Send,
-  CheckCircle,
-  Clock,
-  AlertCircle,
-  TrendingUp,
-  Users,
-  Activity,
+  FileText
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import axiosInstance from "@/app/axiosInstance";
+import { useGlobal } from "@/src/statecontext";
+import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import Add_application from "@/components/dashboard/application/add_application";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Autocomplete,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import NewApplicationModal from "@/components/dashboard/application/add_application";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ─── Types ──────────────────────────────────────────────────────────
 
 type ApplicationStatus =
   | "Pending"
@@ -75,506 +82,661 @@ interface Application {
   updatedAt?: string;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+interface ApiResponse {
+  success: boolean;
+  data: Application[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+  results: number;
+}
 
+interface Country {
+  code: string;
+  name: string;
+}
+
+/* ─── Debounce Hook ────────────────────────────────────────────────── */
 function useDebounce<T>(value: T, delay: number): T {
-  const [debounced, setDebounced] = useState(value);
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
   useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), delay);
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
     return () => clearTimeout(timer);
   }, [value, delay]);
-  return debounced;
+
+  return debouncedValue;
 }
 
-// ── UI Components ─────────────────────────────────────────────────────────────
-
-const STATUS_CONFIG: Record<string, { bg: string; text: string; icon: any }> = {
-  Pending: { bg: "bg-orange-50", text: "text-orange-700", icon: Clock },
-  Started: { bg: "bg-blue-50", text: "text-blue-700", icon: Activity },
-  ReviewbyOoshas: { bg: "bg-purple-50", text: "text-purple-700", icon: Users },
-  SubmitToSchool: { bg: "bg-indigo-50", text: "text-indigo-700", icon: Send },
-  AwaitingSchoolResponse: { bg: "bg-cyan-50", text: "text-cyan-700", icon: Clock },
-  AdmissionProcessing: { bg: "bg-violet-50", text: "text-[#fa6a1f]", icon: Activity },
-  Refused: { bg: "bg-red-50", text: "text-red-700", icon: AlertCircle },
-  Withdrawn: { bg: "bg-gray-50", text: "text-gray-600", icon: X },
-  PreArrival: { bg: "bg-emerald-50", text: "text-emerald-700", icon: TrendingUp },
-  Arrived: { bg: "bg-green-50", text: "text-green-700", icon: CheckCircle },
-  Completed: { bg: "bg-teal-50", text: "text-teal-700", icon: CheckCircle },
+/* ─── Status Config ────────────────────────────────────────────────── */
+const STATUS_CONFIG: Record<string, { bg: string; text: string }> = {
+  Pending: { bg: "bg-orange-100", text: "text-orange-700" },
+  Started: { bg: "bg-blue-100", text: "text-blue-700" },
+  ReviewbyOoshas: { bg: "bg-purple-100", text: "text-purple-700" },
+  SubmitToSchool: { bg: "bg-indigo-100", text: "text-indigo-700" },
+  AwaitingSchoolResponse: { bg: "bg-cyan-100", text: "text-cyan-700" },
+  AdmissionProcessing: { bg: "bg-violet-100", text: "text-[#fa6a1f]" },
+  Refused: { bg: "bg-red-100", text: "text-red-700" },
+  Withdrawn: { bg: "bg-gray-100", text: "text-gray-700" },
+  PreArrival: { bg: "bg-emerald-100", text: "text-emerald-700" },
+  Arrived: { bg: "bg-green-100", text: "text-green-700" },
+  Completed: { bg: "bg-teal-100", text: "text-teal-700" },
 };
 
-function StatusPill({ status }: { status: string }) {
-  const cfg = STATUS_CONFIG[status] ?? { bg: "bg-slate-50", text: "text-slate-600", icon: Clock };
-  const Icon = cfg.icon;
-  return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium ${cfg.bg} ${cfg.text}`}>
-      <Icon size={12} />
-      {status}
-    </span>
-  );
-}
-
-function PaymentBadge({ status }: { status: PaymentStatus }) {
-  const map: Record<PaymentStatus, { bg: string; text: string }> = {
-    Pending: { bg: "bg-orange-50", text: "text-orange-700" },
-    Completed: { bg: "bg-emerald-50", text: "text-emerald-700" },
-    Failed: { bg: "bg-red-50", text: "text-red-700" },
-  };
-  return <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${map[status].bg} ${map[status].text}`}>{status}</span>;
-}
-
-function ProgressBar({ sent, total }: { sent: number; total: number }) {
-  const percentage = total > 0 ? (sent / total) * 100 : 0;
-  return (
-    <div className="flex items-center gap-2">
-      <div className="w-20 bg-gray-100 rounded-full h-1.5">
-        <div
-          className="bg-[#fa6a1f] h-1.5 rounded-full transition-all duration-300"
-          style={{ width: `${percentage}%` }}
-        />
-      </div>
-      <span className="text-xs text-gray-600 font-medium">
-        {sent} / {total}
-      </span>
-    </div>
-  );
-}
-
-function StatsDisplay({ sent, failed, delivered }: { sent: number; failed: number; delivered: number }) {
-  return (
-    <div className="flex items-center gap-3 text-xs">
-      <span className="text-emerald-600">Sent: {sent}</span>
-      <span className="text-red-600">Failed: {failed}</span>
-      <span className="text-blue-600">Delivered: {delivered}</span>
-    </div>
-  );
-}
-
-function Pagination({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}) {
-  if (totalPages <= 1) return null;
-  const pages: (number | "...")[] = [];
-  if (totalPages <= 7) {
-    for (let i = 1; i <= totalPages; i++) pages.push(i);
-  } else {
-    pages.push(1);
-    if (currentPage > 3) pages.push("...");
-    const start = Math.max(2, currentPage - 1);
-    const end = Math.min(totalPages - 1, currentPage + 1);
-    for (let i = start; i <= end; i++) pages.push(i);
-    if (currentPage < totalPages - 2) pages.push("...");
-    pages.push(totalPages);
-  }
-  return (
-    <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100">
-      <p className="text-xs text-slate-400">
-        Page <span className="font-semibold text-slate-600">{currentPage}</span> of{" "}
-        <span className="font-semibold text-slate-600">{totalPages}</span>
-      </p>
-      <div className="flex items-center gap-1">
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
-        >
-          <ChevronLeft size={15} />
-        </button>
-        {pages.map((page, idx) =>
-          page === "..." ? (
-            <span key={`e${idx}`} className="px-2 text-slate-400 text-sm">…</span>
-          ) : (
-            <button
-              key={page}
-              onClick={() => onPageChange(page as number)}
-              className={`min-w-[32px] h-8 rounded-lg text-sm font-medium transition ${
-                currentPage === page
-                  ? "bg-[#fa6a1f] text-white"
-                  : "border border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              {page}
-            </button>
-          )
-        )}
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
-        >
-          <ChevronRight size={15} />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// ── Page ──────────────────────────────────────────────────────────────────────
-
-const LIMIT = 10;
-const STATUS_OPTIONS: ApplicationStatus[] = [
-  "Pending", "Started", "ReviewbyOoshas", "SubmitToSchool", "AwaitingSchoolResponse",
-  "AdmissionProcessing", "Refused", "Withdrawn", "PreArrival", "Arrived", "Completed",
-];
+const PAYMENT_CONFIG: Record<string, { bg: string; text: string }> = {
+  Pending: { bg: "bg-orange-100", text: "text-orange-700" },
+  Completed: { bg: "bg-green-100", text: "text-green-700" },
+  Failed: { bg: "bg-red-100", text: "text-red-700" },
+};
 
 export default function Page() {
   const router = useRouter();
   const { profile } = useGlobal();
 
   const [view, setView] = useState<"list" | "add">("list");
-  const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
-  const debouncedQuery = useDebounce(query, 500);
 
+  // Pagination
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(25);
+  const [total, setTotal] = useState(0);
+
+  // Data
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
- const [startDateFilter, setStartDateFilter] = useState("");
-const [endDateFilter, setEndDateFilter] = useState("");
 
-const fetchApplications = useCallback(
-  async (page = 1) => {
-    setLoading(true);
+  // Filters
+  const [searchQuery, setSearchQuery] = useState("");
+  const [primaryStatus, setPrimaryStatus] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
+  const [intake, setIntake] = useState("");
+  const [country, setCountry] = useState("");
+  const [course, setCourse] = useState("");
+  const [studentFilter, setStudentFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState<Date | null>(null);
+  const [dateTo, setDateTo] = useState<Date | null>(new Date());
 
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
+  // Dropdown options
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [intakes] = useState<string[]>([
+    "Spring 2026",
+    "Fall 2026",
+    "Spring 2027",
+    "Fall 2027",
+    "Spring 2028",
+  ]);
+
+  // Fetch countries
+  const fetchCountries = useCallback(async () => {
     try {
-      const params = new URLSearchParams();
-
-      params.set("page", page.toString());
-      params.set("limit", LIMIT.toString());
-
-      if (debouncedQuery) {
-        params.set("search", debouncedQuery);
-      }
-
-      if (statusFilter) {
-        params.set("primaryStatus", statusFilter);
-      }
-
-      // Start Date Filter
-      if (startDateFilter) {
-        params.set("startDate", startDateFilter);
-      }
-
-      // End Date Filter
-      if (endDateFilter) {
-        params.set("endDate", endDateFilter);
-      }
-
-      const res = await axiosInstance.get(
-        `/applications/getApplicationsByCounsellor?${params.toString()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      const d = res.data;
-
-      setApplications(d.data || []);
-      setTotal(d.total || 0);
-      setTotalPages(
-        d.pages || Math.ceil((d.total || 0) / LIMIT) || 1
-      );
-
+      const res = await axiosInstance.get("/countries?limit=250");
+      setCountries(res.data.data || []);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching countries:", err);
+    }
+  }, []);
+
+  const fetchCourses = useCallback(async () => {
+    try {
+      const res = await axiosInstance.get("/courses?limit=500");
+      setCourses(res.data.data || []);
+    } catch (err) {
+      console.error("Error fetching courses:", err);
+    }
+  }, []);
+
+  const fetchStudents = useCallback(async () => {
+    // if (profile?.role !== "admin") return;
+    try {
+      const res = await axiosInstance.get("/users?role=user&status=Active&limit=500");
+      setStudents(res.data.data || []);
+    } catch (err) {
+      console.error("Error fetching students:", err);
+    }
+  }, [profile]);
+
+  // Fetch applications with filters
+  const fetchApplications = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params: Record<string, string> = {
+        page: page.toString(),
+        limit: limit.toString(),
+      };
+
+      if (debouncedSearchQuery && debouncedSearchQuery.length >= 3) {
+        params.search = debouncedSearchQuery;
+      }
+      if (primaryStatus) params.primaryStatus = primaryStatus;
+      if (paymentStatus) params.paymentStatus = paymentStatus;
+      if (intake) params.intake = intake;
+      if (country) params.country = country;
+      if (course) params.course = course;
+      if (studentFilter) params.student = studentFilter;
+
+      if (dateFrom) {
+        params.startDate = dateFrom.toISOString().split("T")[0];
+      }
+      if (dateTo) {
+        params.endDate = dateTo.toISOString().split("T")[0];
+      }
+
+      console.log("Fetching applications with params:", params);
+
+      const response = await axiosInstance.get<ApiResponse>(
+        "/applications/getApplicationsByCounsellor",
+        { params }
+      );
+
+      setApplications(response.data.data || []);
+      setTotal(response.data.total || 0);
+    } catch (err) {
+      console.error("Error fetching applications:", err);
+      toast.error("Failed to fetch applications");
       setApplications([]);
+      setTotal(0);
     } finally {
       setLoading(false);
     }
-  },
-  [
-    debouncedQuery,
-    statusFilter,
-    startDateFilter,
-    endDateFilter,
-  ]
-);
-  useEffect(() => { setCurrentPage(1); }, [debouncedQuery, statusFilter]);
-  useEffect(() => { fetchApplications(currentPage); }, [currentPage, fetchApplications]);
+  }, [
+    page,
+    limit,
+    debouncedSearchQuery,
+    primaryStatus,
+    paymentStatus,
+    intake,
+    country,
+    course,
+    studentFilter,
+    dateFrom,
+    dateTo,
+  ]);
 
+  // Initial load
+  useEffect(() => {
+    fetchCountries();
+    fetchCourses();
+    fetchStudents();
+  }, [fetchCountries, fetchCourses, fetchStudents]);
+
+  // Fetch applications on filter change
+  useEffect(() => {
+    fetchApplications();
+  }, [fetchApplications]);
+
+  // Format date
   const formatDate = (d?: string) =>
-    d ? new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+    d
+      ? new Date(d).toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+      : "—";
 
-  const activeFilters = [statusFilter].filter(Boolean).length;
+  // Reset filters
+  const handleResetFilters = () => {
+    setSearchQuery("");
+    setPrimaryStatus("");
+    setPaymentStatus("");
+    setIntake("");
+    setCountry("");
+    setCourse("");
+    setStudentFilter("");
+    setDateFrom(null);
+    setDateTo(new Date());
+    setPage(1);
+  };
 
-  if (view === "add") {
-    return (
-      <div className="min-h-screen bg-slate-50 p-6">
-        <button
-          onClick={() => setView("list")}
-          className="mb-4 flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800 transition"
-        >
-          <ChevronLeft size={16} /> Back to Applications
-        </button>
-        <Add_application />
-      </div>
-    );
-  }
+  // Pagination
+  const totalPages = Math.ceil(total / limit);
 
-  
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1);
+  };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-full mx-auto px-6 py-6 space-y-5">
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <div className="min-h-screen p-3 relative">
+        <motion.div
+          key="list"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          {/* Header */}
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-3">
+            <div>
+              <h1 className="text-xl font-bold text-gray-700">
+                Application Management
+              </h1>
+              <p className="text-gray-500 text-[13px]">
+                Manage and track all your applications
+              </p>
+            </div>
 
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Application Management</h1>
-            <p className="text-sm text-slate-500 mt-0.5">
-              Manage and track all your application
-            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setView("add")}
+                className="h-10 px-4 bg-[#F26D44] text-white rounded-lg font-medium hover:bg-[#F26D44]/70 transition flex items-center gap-2"
+              >
+                New Application
+                <Plus size={18} />
+              </button>
+            </div>
           </div>
-          <button
-            onClick={() => setView("add")}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#fa6a1f] hover:bg-[#fa6a1f] text-white text-sm font-semibold transition "
-          >
-            <Plus size={16} /> New Applicaion
-          </button>
-        </div>
 
-        {/* Search + Filter Bar */}
-        <div className="bg-white rounded-xl border border-slate-200  p-4">
-          <div className="flex gap-3">
-            <div className="relative flex-1">
-              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search campaigns..."
-                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition"
+          <NewApplicationModal isOpen={view === "add"} onClose={() => setView("list")} onSuccess={fetchApplications} />
+
+          <div className="bg-gray-50 border-[#F26D44]/40 p-4 border-2 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+              {/* Student Filter (Admin only) */}
+              {/* {profile?.role === "admin" && ( */}
+              <Autocomplete
+                options={students}
+                getOptionLabel={(option) => option?.name || ""}
+                value={students.find((s) => s._id === studentFilter) || null}
+                onChange={(event, newValue) => {
+                  setStudentFilter(newValue?._id || "");
+                  setPage(1);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Student"
+                    size="small"
+                  />
+                )}
               />
-              {query && (
-                <button onClick={() => setQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                  <X size={14} />
-                </button>
-              )}
+              {/* )} */}
+
+              {/* Date Range */}
+              <DatePicker
+                value={dateFrom}
+                onChange={(newValue) => {
+                  setDateFrom(newValue);
+                  setPage(1);
+                }}
+                slotProps={{
+                  textField: {
+                    size: "small",
+                    placeholder: "From",
+                    sx: {
+                      minWidth: 140,
+                    },
+                  },
+                }}
+              />
+
+              <div className="flex items-center gap-2">
+                <span className="flex items-center">to</span>
+                <DatePicker
+                  value={dateTo}
+                  onChange={(newValue) => {
+                    setDateTo(newValue);
+                    setPage(1);
+                  }}
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      placeholder: "To",
+                      sx: {
+                        minWidth: 140,
+                      },
+                    },
+                  }}
+                />
+              </div>
+
+              {/* Country */}
+              <Autocomplete
+                options={countries}
+                getOptionLabel={(option) => option?.name || ""}
+                value={countries.find((c) => c.code === country) || null}
+                onChange={(event, newValue) => {
+                  setCountry(newValue?.code || "");
+                  setPage(1);
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} placeholder="Country" size="small" />
+                )}
+              />
+
+              {/* Course */}
+              <Autocomplete
+                options={courses}
+                getOptionLabel={(option) => option?.name || ""}
+                value={courses.find((c) => c._id === course) || null}
+                onChange={(event, newValue) => {
+                  setCourse(newValue?._id || "");
+                  setPage(1);
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} placeholder="Course" size="small" />
+                )}
+              />
+
+              {/* Intake */}
+              <FormControl size="small">
+                <Select
+                  value={intake}
+                  onChange={(e) => {
+                    setIntake(e.target.value);
+                    setPage(1);
+                  }}
+                  displayEmpty
+                  placeholder="Intake"
+                >
+                  <MenuItem value="" disabled>
+                    Intake
+                  </MenuItem>
+                  {intakes.map((intakeOption) => (
+                    <MenuItem key={intakeOption} value={intakeOption}>
+                      {intakeOption}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {/* Primary Status */}
+              <FormControl size="small">
+                <Select
+                  value={primaryStatus}
+                  onChange={(e) => {
+                    setPrimaryStatus(e.target.value);
+                    setPage(1);
+                  }}
+                  displayEmpty
+                  placeholder="Primary Status"
+                >
+                  <MenuItem value="" disabled>
+                    Primary Status
+                  </MenuItem>
+                  <MenuItem value="Pending">Pending</MenuItem>
+                  <MenuItem value="Started">Started</MenuItem>
+                  <MenuItem value="ReviewbyOoshas">Review by Ooshas</MenuItem>
+                  <MenuItem value="SubmitToSchool">Submit to School</MenuItem>
+                  <MenuItem value="AwaitingSchoolResponse">
+                    Awaiting School Response
+                  </MenuItem>
+                  <MenuItem value="AdmissionProcessing">
+                    Admission Processing
+                  </MenuItem>
+                  <MenuItem value="Refused">Refused</MenuItem>
+                  <MenuItem value="Withdrawn">Withdrawn</MenuItem>
+                  <MenuItem value="PreArrival">Pre-Arrival</MenuItem>
+                  <MenuItem value="Arrived">Arrived</MenuItem>
+                  <MenuItem value="Completed">Completed</MenuItem>
+                </Select>
+              </FormControl>
+
+              {/* Payment Status */}
+              <FormControl size="small">
+                <Select
+                  value={paymentStatus}
+                  onChange={(e) => {
+                    setPaymentStatus(e.target.value);
+                    setPage(1);
+                  }}
+                  displayEmpty
+                  placeholder="Payment Status"
+                >
+                  <MenuItem value="" disabled>
+                    Payment Status
+                  </MenuItem>
+                  <MenuItem value="Pending">Pending</MenuItem>
+                  <MenuItem value="Completed">Completed</MenuItem>
+                  <MenuItem value="Failed">Failed</MenuItem>
+                </Select>
+              </FormControl>
             </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-sm font-medium transition ${
-                showFilters || activeFilters > 0
-                  ? "border-violet-300 bg-violet-50 text-[#fa6a1f]"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <Filter size={15} />
-              Filters
-              {activeFilters > 0 && (
-                <span className="w-5 h-5 rounded-full bg-[#fa6a1f] text-white text-xs flex items-center justify-center">
-                  {activeFilters}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => fetchApplications(currentPage)}
-              className="p-2.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 transition"
-            >
-              <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
-            </button>
+
+            {/* Search Bar */}
+            <div className="mt-4 flex gap-3">
+              <div className="flex-1 relative">
+                <Search
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
+                <input
+                  type="text"
+                  placeholder="Search by application number (min 3 characters)"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setPage(1);
+                  }}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#F26D44]/70"
+                />
+                {searchQuery.length > 0 && searchQuery.length < 3 && (
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[13px] text-gray-400">
+                    {3 - searchQuery.length} more
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={fetchApplications}
+                className="px-4 py-3 bg-[#F26D44] text-white rounded-lg font-medium hover:bg-[#F26D44]/70 transition"
+              >
+                Search
+              </button>
+              <button
+                onClick={handleResetFilters}
+                className="px-2 py-3 border cursor-pointer border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+              >
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
-          {showFilters && (
-  <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap gap-3 items-center">
-    
-    {/* Status Filter */}
-    <div className="flex items-center gap-2">
-      <label className="text-xs font-medium text-slate-500">
-        Status
-      </label>
-
-      <select
-        value={statusFilter}
-        onChange={(e) => setStatusFilter(e.target.value)}
-        className="text-sm rounded-lg border border-slate-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-400"
-      >
-        <option value="">All Statuses</option>
-
-        {STATUS_OPTIONS.map((s) => (
-          <option key={s} value={s}>
-            {s}
-          </option>
-        ))}
-      </select>
-    </div>
-
-    {/* Start Date */}
-    <div className="flex items-center gap-2">
-      <label className="text-xs font-medium text-slate-500">
-        Start Date
-      </label>
-
-      <input
-        type="date"
-        value={startDateFilter}
-        onChange={(e) => setStartDateFilter(e.target.value)}
-        className="text-sm rounded-lg border border-slate-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-400"
-      />
-    </div>
-
-    {/* End Date */}
-    <div className="flex items-center gap-2">
-      <label className="text-xs font-medium text-slate-500">
-        End Date
-      </label>
-
-      <input
-        type="date"
-        value={endDateFilter}
-        onChange={(e) => setEndDateFilter(e.target.value)}
-        className="text-sm rounded-lg border border-slate-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-violet-400"
-      />
-    </div>
-
-    {/* Clear Filters */}
-    {activeFilters > 0 && (
-      <button
-        onClick={() => {
-          setStatusFilter("");
-          setQuery("");
-          setStartDateFilter("");
-          setEndDateFilter("");
-        }}
-        className="text-xs text-rose-500 hover:text-rose-700 flex items-center gap-1"
-      >
-        <X size={12} /> Clear all
-      </button>
-    )}
-  </div>
-)}
-        </div>
-
-        {/* Table - Matching the reference design */}
-        <div className="bg-white rounded-xl border border-slate-200  overflow-hidden">
-          {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <div className="flex flex-col items-center gap-3">
-                <RefreshCw size={24} className="animate-spin text-violet-500" />
-                <p className="text-sm text-slate-400">Loading campaigns…</p>
-              </div>
+          {/* Loading State */}
+          {loading && (
+            <div className="flex justify-center items-center py-30">
+              <div className="w-8 h-8 border-4 border-[#F26D44] border-t-transparent rounded-full animate-spin" />
             </div>
-          ) : applications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center">
-                <FileText size={22} className="text-slate-400" />
-              </div>
-              <p className="text-sm font-medium text-slate-600">No campaigns found</p>
-              <p className="text-xs text-slate-400">Try adjusting your search or filters</p>
-            </div>
-          ) : (
-            <>
+          )}
+
+          {/* Table */}
+          {!loading && (
+            <div className="bg-gray-50 border-[#F26D44]/40 border-2 overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50/80">
-                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
-                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Country</th>
-                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Intake</th>
-                      <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Apllication No.</th>
-                        <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Payment Status</th>
-                          <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Primary Status</th>
-                          <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Phone</th>
-                          <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Created At</th>
-                          <th className="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Updated At</th>
-                  
-                     
-                      <th className="px-5 py-3.5 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                <table className="w-full">
+                  <thead className="bg-[#F26D44] !text-white border-b border-gray-200">
+                    <tr>
+                      <th className="text-left px-2 py-3 text-[13px] font-semibold">
+                        Student Name
+                      </th>
+                      <th className="text-left px-2 py-3 text-[13px] font-semibold">
+                        Application No.
+                      </th>
+                      <th className="text-left px-2 py-3 text-[13px] font-semibold">
+                        University
+                      </th>
+                      <th className="text-left px-2 py-3 text-[13px] font-semibold">
+                        Course
+                      </th>
+                      <th className="text-left px-2 py-3 text-[13px] font-semibold">
+                        Intake
+                      </th>
+                      <th className="text-left px-2 py-3 text-[13px] font-semibold">
+                        Payment Status
+                      </th>
+                      <th className="text-left px-2 py-3 text-[13px] font-semibold">
+                        Primary Status
+                      </th>
+                      <th className="text-left px-2 py-3 text-[13px] font-semibold">
+                        Created At
+                      </th>
+                      <th className="text-left px-2 py-3 text-[13px] font-semibold">
+                        Updated At
+                      </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-50">
-                    {applications.map((app: any, idx: number) => {
-                      // Mock data for the table columns matching the reference
-                      console.log(app)
-                      const campaignName = app?.student?.name || "Unnamed Campaign";
-                      const messageType = app?.country || "Unknown Country";
-                      const status = app?.intake;
-                      const schedule = app?.applicationNumber;
-                      const paymentStatus = app?.paymentStatus;
-                      const phone = app?.student?.phone || "—";
-                      const createdAt = formatDate(app?.createdAt);
-                      const primaryStatus = app?.primaryStatus || "—";
-                      const updatedAt = formatDate(app?.updatedAt);
-                    
-                      
-                      const statusColors: Record<string, string> = {
-                        "Sent": "text-emerald-600 bg-emerald-50",
-                        "Partial": "text-orange-600 bg-orange-50",
-                        "Pending": "text-amber-600 bg-amber-50",
-                        "Started": "text-blue-600 bg-blue-50",
-                      };
-                      
-                      return (
-                        <tr key={app._id} className="hover:bg-slate-50/60 transition-colors group">
-                          <td className="px-5 py-4">
-                            <span className="font-medium text-slate-800 text-sm">
-                              {campaignName.length > 30 ? campaignName.substring(0, 30) + "..." : campaignName}
+                  <tbody className="divide-y !text-[13px] divide-gray-100">
+                    {applications.map((app) => (
+                      <tr
+                        key={app._id}
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/application_details/${app._id}`
+                          )
+                        }
+                        className="hover:bg-gray-50 border-b-2 border-white text-medium capitalize cursor-pointer transition-colors"
+                      >
+                        <td className="px-2 py-3">
+                          <div className="flex items-center gap-3">
+
+                            <div>
+                              <span className="text-[13px] font-semibold text-gray-900 block">
+                                {app.student?.name || "N/A"}
+                              </span>
+                              {/* <span className="text-[13px] font-medium text-gray-500 block">
+                                {app.student?.email || ""}
+                              </span> */}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-2 py-3">
+                          <span className="text-[13px] font-medium text-gray-900">
+                            {app.applicationNumber || "—"}
+                          </span>
+                        </td>
+                        <td className="px-2 py-3">
+                          <span className="text-[13px] font-medium text-gray-600">
+                            {app.courseDetails?.university?.name.split("–")[0] || "—"}
+                          </span>
+                        </td>
+                        <td className="px-2 py-3">
+                          <div>
+                            <span className="text-[13px] font-medium text-gray-900 block">
+                              {app.courseDetails?.name || "—"}
                             </span>
-                          </td>
-                          <td className="px-5 py-4">
-                            <span className="text-slate-600 text-xs">{messageType}</span>
-                          </td>
-                          <td className="px-5 py-4">
-                            <span className={`inline-flex items-center  py-1 rounded-md text-xs font-medium ${statusColors[status] || " text-gray-600"}`}>
-                              {status}
-                            </span>
-                          </td>
-                          <td className="px-5 py-4">
-                            <span className="text-slate-600 text-xs">{schedule}</span>
-                          </td>
-                          <td className="px-5 py-4">
-                            <span className="text-slate-600 text-xs">{paymentStatus}</span>
-                          </td>
-                          <td className="px-5 py-4">
-                            <span className="text-slate-600 text-xs">{primaryStatus}</span>
-                          </td>
-                          <td className="px-5 py-4">
-                            <span className="text-slate-600 text-xs">{phone}</span>
-                          </td>
-                          <td className="px-5 py-4">
-                            <span className="text-slate-600 text-xs">{createdAt}</span>
-                          </td>
-                          <td className="px-5 py-4">
-                            <span className="text-slate-600 text-xs">{updatedAt}</span>
-                          </td>
-                        
-                         
-                          <td className="px-5 py-4 text-center">
-                             <button
-                            onClick={() => router.push(`/dashboard/application_details/${app._id}`)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-50 text-[#fa6a1f] hover:bg-violet-100 text-xs font-semibold transition"
+                          </div>
+                        </td>
+                        <td className="px-2 py-3">
+                          <span className="text-[13px] text-gray-600">
+                            {app.intake || "—"}
+                          </span>
+                        </td>
+                        <td className="px-2 py-3">
+                          <span
+                            className={`inline-flex px-3 py-1 rounded-full text-[13px] font-medium border shadow ${PAYMENT_CONFIG[app.paymentStatus]?.bg ||
+                              "bg-gray-100"
+                              } ${PAYMENT_CONFIG[app.paymentStatus]?.text ||
+                              "text-gray-700"
+                              }`}
                           >
-                            <Eye size={13} /> View
-                          </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                            {app.paymentStatus}
+                          </span>
+                        </td>
+                        <td className="px-2 py-3">
+                          <span
+                            className={`inline-flex px-3 py-1 rounded-full text-[13px] font-medium border shadow ${STATUS_CONFIG[app.primaryStatus]?.bg ||
+                              "bg-gray-100"
+                              } ${STATUS_CONFIG[app.primaryStatus]?.text ||
+                              "text-gray-700"
+                              }`}
+                          >
+                            {app.primaryStatus}
+                          </span>
+                        </td>
+
+                        <td className="px-2 py-3 text-[13px] font-medium text-gray-600">
+                          {formatDate(app.createdAt)}
+                        </td>
+                        <td className="px-2 py-3 text-[13px] font-medium text-gray-600">
+                          {formatDate(app.updatedAt)}
+                        </td>
+
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={(p) => {
-                  setCurrentPage(p);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-              />
-            </>
+
+              {/* Pagination */}
+              <div className="flex flex-col bg-[#F26D44]/20 font-medium text-black sm:flex-row items-center justify-between gap-4 px-2 py-3 border-t border-gray-200">
+                <div className="flex items-center gap-3">
+                  <span className="text-[13px] text-gray-600">Show</span>
+                  <select
+                    value={limit}
+                    onChange={(e) =>
+                      handleLimitChange(Number(e.target.value))
+                    }
+                    className="border border-gray-200 rounded px-2 py-1 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                  <span className="text-[13px] text-gray-600">Entries</span>
+                </div>
+
+                <div className="text-[13px] text-gray-600">
+                  Showing {applications.length > 0 ? (page - 1) * limit + 1 : 0}{" "}
+                  - {Math.min(page * limit, total)} of {total}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page === 1}
+                    className="p-2 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <span className="text-[13px] text-gray-600 px-2">
+                    Page {page} of {totalPages || 1}
+                  </span>
+                  <button
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page >= totalPages}
+                    className="p-2 border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ChevronRight size={16} className="transform" />
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
-        </div>
+
+          {/* Empty State */}
+          {!loading && applications.length === 0 && (
+            <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FileText className="text-gray-400" size={32} />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                No applications found
+              </h3>
+              <p className="text-gray-500 mb-4">
+                Try adjusting your search or filters
+              </p>
+              <button
+                onClick={handleResetFilters}
+                className="px-4 py-3 bg-[#F26D44] text-white rounded-lg hover:bg-[#F26D44]/70 transition"
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
+        </motion.div>
       </div>
-    </div>
+    </LocalizationProvider>
   );
 }

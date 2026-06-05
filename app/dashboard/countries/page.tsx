@@ -269,6 +269,7 @@ export default function CountriesPage() {
 
 
 
+
     const [hasMore, setHasMore] = useState(true)
 
     const observerTarget = useRef(null)
@@ -289,7 +290,7 @@ export default function CountriesPage() {
     });
 
     const limit = 30
-    const { allProfile } = useGlobal()
+    const { allProfile, updateProfile } = useGlobal()
 
 
 
@@ -329,15 +330,15 @@ export default function CountriesPage() {
                 );
 
         }
-        else{
-           
-             updatedCountries = [
+        else {
+
+            updatedCountries = [
                 ...shortlistedCountries,
                 country?.code,
             ];
         }
 
-   
+
 
         // frontend update
         setShortlistedCountries(
@@ -346,13 +347,18 @@ export default function CountriesPage() {
 
         try {
 
-            await axiosInstance.patch(
+            const res = await axiosInstance.patch(
                 "/auth/edit-doc",
                 {
                     countries_shortlist:
                         country?.code,
                 }
             );
+
+            if (res.data?.success) {
+                updateProfile()
+            }
+
 
             // toast condition
             if (alreadySelected) {
@@ -627,39 +633,38 @@ export default function CountriesPage() {
                     <p className="text-sm text-gray-500">
                         Showing {countries.length} of {totalCountries} countries
                     </p>
-                  
-                       
+
+
                 </div>
 
                 {shortlistedCountries.length > 0 && (
-    <div className="fixed bottom-5 right-5 z-50 bg-white rounded-xl shadow-2xl border p-4">
-        <div className="flex items-center justify-between gap-4">
-            <div>
-                <p className="text-sm font-semibold">
-                    Country Shortlist
-                </p>
-                <p className="text-xs text-gray-500">
-                    {shortlistedCountries.length}/3 countries selected
-                </p>
-            </div>
-                    <Link href={"/dashboard/programs"}>
-                   
-            <button
-                
-                className={`px-6 py-2 rounded-lg font-medium ${
-                    shortlistedCountries.length > 0
-                        ? "bg-[#2563EB] text-white"
-                        : "bg-gray-300 text-gray-500 cursor-pointer"
-                }`}
-            >
-                Continue
-            </button>
-             </Link>
-        </div>
-    </div>
-)}
+                    <div className="fixed bottom-5 right-5 z-50 bg-white rounded-xl shadow-2xl border p-4">
+                        <div className="flex items-center justify-between gap-4">
+                            <div>
+                                <p className="text-sm font-semibold">
+                                    Country Shortlist
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                    {shortlistedCountries.length}/3 countries selected
+                                </p>
+                            </div>
+                            <Link href={"/dashboard/programs"}>
 
-             
+                                <button
+
+                                    className={`px-6 py-2 rounded-lg font-medium ${shortlistedCountries.length > 0
+                                            ? "bg-[#2563EB] text-white"
+                                            : "bg-gray-300 text-gray-500 cursor-pointer"
+                                        }`}
+                                >
+                                    Continue
+                                </button>
+                            </Link>
+                        </div>
+                    </div>
+                )}
+
+
 
                 {/* Countries Grid/List */}
                 {/* {loading ? (
@@ -879,7 +884,7 @@ export default function CountriesPage() {
 
                                                         <input
                                                             type="checkbox"
-                                                            disabled= {shortlistedCountries.length === 3 && !shortlistedCountries.includes(item.code)}
+                                                            disabled={shortlistedCountries.length === 3 && !shortlistedCountries.includes(item.code)}
 
                                                             checked={shortlistedCountries.includes(
                                                                 item?.code

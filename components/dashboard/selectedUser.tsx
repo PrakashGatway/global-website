@@ -511,7 +511,6 @@ export default function StudentDetailsPage({
 
       {/* ================= HEADER ================= */}
       <div className="grid grid-cols-1 xl:grid-cols-14 gap-4">
-        {/* Student Card */}
         <div className="xl:col-span-3 bg-white rounded-2xl border p-5 shadow-sm">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">

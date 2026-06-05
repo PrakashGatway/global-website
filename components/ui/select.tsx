@@ -22,7 +22,7 @@ const AmazingSelect = ({
 
   // Filter options based on search
   const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(searchQuery.toLowerCase())
+    option.label.toLowerCase().includes(searchQuery?.toLowerCase())
   )
 
   // Get display value
@@ -302,9 +302,7 @@ export const ModernSelect = ({
   // Filter Options
   const filteredOptions = useMemo(() => {
     return options.filter((option: any) =>
-      option.label
-        .toLowerCase()
-        .includes(debouncedSearch.toLowerCase())
+      option?.label?.toLowerCase()?.includes(debouncedSearch?.toLowerCase())
     );
   }, [options, debouncedSearch]);
 

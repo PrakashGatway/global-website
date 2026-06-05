@@ -28,31 +28,8 @@
         "name": "nationality",
         "label": "Country of Citizenship",
         "type": "select",
-        "options": [
-          "India",
-          "Canada",
-          "USA",
-          "UK",
-          "Australia"
-        ],
         "optionsSource": "countries",
         "required": true
-      },
-      {
-        "name": "passportNumber",
-        "label": "Passport Number",
-        "type": "text",
-        "required": false,
-        "validation": {
-          "minLength": 6,
-          "message": "Invalid passport number"
-        }
-      },
-      {
-        "name": "passportExpiry",
-        "label": "Passport Expiry Date",
-        "type": "date",
-        "required": false
       },
       {
         "name": "maritalStatus",
@@ -89,33 +66,105 @@
           }
         ],
         "required": true
+      }
+    ]
+  },
+  "passport": {
+    "title": "Passport Information",
+    "fields": [
+      {
+        "name": "PassportNumber",
+        "label": "Passport Number",
+        "type": "text",
+        "required": true,
+        "validation": {
+          "minLength": 6,
+          "message": "Passport number too short"
+        },
+        "col": 2
       },
       {
-        "name" : "intake",
-        "label" : "Intake",
-        "type" : "select",
-        "options" : [
-          "june 2026",
-          "december 2026"
-        ]
-
+        "name": "PassportExpiry",
+        "label": "Passport Expiry Date",
+        "type": "date",
+        "required": true
       },
-       {
-        "name" : "tuitionfee",
-        "label" : "Budget (Tuition Fees)",
-        "type" : "text",
-        "default" : "INR",
-        "validation": {
-          "minLength": 5,
-          "message": "Invalid Budget"
-        }
-
-
+      {
+        "name": "issueDate",
+        "label": "Issue Date",
+        "type": "date",
+        "required": true
+      },
+      {
+        "name": "issueCountry",
+        "label": "Issue Country",
+        "type": "select",
+        "optionsSource": "countries",
+        "required": true
       }
     ]
   },
   "address": {
-    "title": "Address Details",
+    "title": "Mailing Address",
+    "fields": [
+      {
+        "name": "address1",
+        "label": "Address Line 1",
+        "type": "text",
+        "required": true,
+        "validation": {
+          "minLength": 5,
+          "message": "Address too short"
+        },
+        "col": 2
+      },
+      {
+        "name": "address2",
+        "label": "Address Line 2",
+        "type": "text",
+        "validation": {
+          "minLength": 5,
+          "message": "Address too short"
+        },
+        "col": 2
+      },
+      {
+        "name": "city",
+        "label": "City",
+        "type": "text",
+        "required": true
+      },
+      {
+        "name": "country",
+        "label": "Country",
+        "type": "select",
+        "optionsSource": "countries",
+        "options": [
+          "India",
+          "Canada",
+          "UK"
+        ],
+        "required": true
+      },
+      {
+        "name": "state",
+        "label": "State",
+        "type": "text",
+        "required": true
+      },
+      {
+        "name": "postalcode",
+        "label": "Postal Code",
+        "type": "text",
+        "validation": {
+          "pattern": "/^[0-9]{5,6}$/",
+          "message": "Invalid postal code"
+        }
+      }
+    ]
+  },
+  "permanentAddress": {
+    "title": "Permanent Address",
     "fields": [
       {
         "name": "address1",
