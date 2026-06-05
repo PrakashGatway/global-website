@@ -1190,10 +1190,9 @@ const [videoLoading, setVideoLoading] = useState(false);
    
       /> */}
 
-      <section className="bg-white py-12 px-4 md:px-2">
+      {/* <section className="bg-white py-12 px-4 md:px-2">
   <div className="max-w-7xl mx-auto bg-[#f46c44] px-2  p-6 md:p-12">
 
-    {/* Heading */}
     <div className="mb-4">
        <h2 className=" text-xl   mb-2 ">
             <span className="text-white lg:text-4xl font-light">
@@ -1213,7 +1212,6 @@ const [videoLoading, setVideoLoading] = useState(false);
       </p>
     </div>
 
-    {/* Cards */}
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
   {videoRes?.map((item) => {
     const videoId = getYoutubeId(item?.videoUrl);
@@ -1279,7 +1277,7 @@ const [videoLoading, setVideoLoading] = useState(false);
 
 
   </div>
-</section>
+</section> */}
 
       <StudentVisaStories
         stories={visacontent}

@@ -72,6 +72,7 @@ import { useGlobal } from "@/src/statecontext";
 import ApplicationFlow from "@/components/dashboard/application/applicationFlow";
 import ReviewApplication from "@/components/dashboard/application/reviewApllication";
 import SubmittedtoSchool from "@/components/dashboard/application/submittedtoSchool";
+import AdmissionProcessing from "@/components/dashboard/application/admissionProcessing";
 
 interface ActivityLog {
   _id: string
@@ -361,10 +362,10 @@ export default function StudentDetailsPage() {
       'Pending': 'bg-yellow-100 text-yellow-700 border-yellow-200',
       'Completed': 'bg-green-100 text-green-700 border-green-200',
       'Failed': 'bg-red-100 text-red-700 border-red-200',
-      'processing': 'bg-blue-100 text-blue-700 border-blue-200',
+      'processing': 'bg-orange-100 text-orange-700 border-orange-200',
       'submitted': 'bg-purple-100 text-purple-700 border-purple-200',
       'accepted': 'bg-emerald-100 text-emerald-700 border-emerald-200',
-      'in_review': 'bg-blue-100 text-blue-700 border-blue-200',
+      'in_review': 'bg-orange-100 text-orange-700 border-orange-200',
       'approved': 'bg-green-100 text-green-700 border-green-200',
       'rejected': 'bg-red-100 text-red-700 border-red-200',
       'pending': 'bg-yellow-100 text-yellow-700 border-yellow-200'
@@ -384,7 +385,7 @@ export default function StudentDetailsPage() {
         return <XCircle className="w-4 h-4 text-red-600" />
       case 'in_review':
       case 'processing':
-        return <RefreshCw className="w-4 h-4 text-blue-600 animate-spin" />
+        return <RefreshCw className="w-4 h-4 text-orange-600 animate-spin" />
       case 'submitted':
         return <UploadCloud className="w-4 h-4 text-purple-600" />
       default:
@@ -663,7 +664,7 @@ export default function StudentDetailsPage() {
     {
       id: 1,
       title: "Application Started",
-      status: "completed",
+      status: "current",
       subTitle: "In Progress",
       step: "Started",
       icon: FileText,
@@ -671,14 +672,14 @@ export default function StudentDetailsPage() {
     {
       id: 2,
       title: "Under OOSHAS Review",
-      status: "current",
+      status: "pending",
       step: "ReviewbyOoshas",
       icon: Clock,
     },
     {
       id: 3,
       title: "Submitted to School",
-      status: "pending",
+      status: "completed",
       subTitle: "In Progress",
       step: "SubmitToSchool",
       icon: Upload,
@@ -763,21 +764,21 @@ export default function StudentDetailsPage() {
                 <img
                   src={application.course.university.uni_logo}
                   alt={application.course.university.name}
-                  className="w-12 h-12 mt-1 rounded-xl object-cover"
+                  className="w-12 h-12 mt-1  object-cover"
                 />
               ) : (
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
+                <div className="w-12 h-12  bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
                   <GraduationCap className="w-6 h-6 text-orange-600" />
                 </div>
               )}
               <div>
                 <div className="flex items-center gap-3 flex-wrap">
                   <Link href={`/dashboard/programs/${application?.course?.slug}`} className="flex  items-center gap-1">
-                    <h1 className="text-2xl font-medium text-gray-800 hover:text-blue-900">{application?.course?.name}</h1>
-                    <span className="inline-flex"><Link href={`/dashboard/programs/${application?.course?.slug}`} className="text-blue-500 underline"><Link2Icon className="w-6 h-6" /></Link></span>
+                    <h1 className="text-2xl font-medium text-gray-800 hover:text-orange-900">{application?.course?.name}</h1>
+                    <span className="inline-flex"><Link href={`/dashboard/programs/${application?.course?.slug}`} className="text-orange-500 underline"><Link2Icon className="w-6 h-6" /></Link></span>
                   </Link>
                   <span className="text-xl font-medium text-gray-600"> ({application?.applicationNumber})</span>
-                  {application.course?.applicationFee > 0 && application?.paymentStatus == "Pending" && <span className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center gap-1.5 ${getPaymentStatusBadge(application?.paymentStatus)}`}>
+                  {application.course?.applicationFee > 0 && application?.paymentStatus == "Pending" && <span className={`px-3 py-1 text-xs font-medium border flex items-center gap-1.5 ${getPaymentStatusBadge(application?.paymentStatus)}`}>
                     {application?.paymentStatus === 'Completed' ? <CheckCircle className="w-3.5 h-3.5" /> :
                       application?.paymentStatus === 'Failed' ? <XCircle className="w-3.5 h-3.5" /> :
                         <Clock className="w-3.5 h-3.5" />}
@@ -787,7 +788,7 @@ export default function StudentDetailsPage() {
                 <div className="flex items-center gap-2 mt-1">
                   <Building2 className="w-4 h-4 text-gray-400" />
                   <span className="text-gray-600">{application?.course?.university?.name}  </span>
-                  <span className="inline-flex"><Link href={`/dashboard/universities/${application?.course?.university?.slug}`} className="text-blue-500 underline"><Link2Icon className="w-5 h-5" /></Link></span>
+                  <span className="inline-flex"><Link href={`/dashboard/universities/${application?.course?.university?.slug}`} className="text-orange-500 underline"><Link2Icon className="w-5 h-5" /></Link></span>
                   <span className="text-gray-300">•</span>
                   <Globe2 className="w-4 h-4 text-gray-400" />
                   <span className="text-gray-600">{application?.country}</span>
@@ -795,7 +796,7 @@ export default function StudentDetailsPage() {
                 <div className="flex items-center text-gray-700 text-sm gap-2 mt-1 flex-wrap">
                   <span>Application No: {application?.applicationNumber}</span> |
                   <span>Selected Intake: {application?.intake}</span>
-                  <button onClick={() => setShowIntakeModal(true)} className="inline-flex hover:text-blue-500 p-1 transition-colors">
+                  <button onClick={() => setShowIntakeModal(true)} className="inline-flex hover:text-orange-500 p-1 transition-colors">
                     <Edit2Icon className="w-4 h-4" />
                   </button> |
                   <span>Submission deadline: {application?.deadline || 'N/A'}</span>
@@ -858,9 +859,9 @@ export default function StudentDetailsPage() {
 
                         {/* Active Circle */}
                         <div className="relative z-20">
-                          <div className="absolute inset-0 rounded-full bg-orange-400/20 scale-125" />
+                          <div className="absolute inset-0  bg-orange-400/20 scale-125" />
 
-                          <div className="w-14 h-14 rounded-full border border-orange-500 bg-white flex items-center justify-center shadow-sm">
+                          <div className="w-14 h-14  border border-orange-500 bg-white flex items-center justify-center shadow-sm">
                             <FileText className="w-6 h-6 text-orange-500" />
                           </div>
                         </div>
@@ -917,7 +918,7 @@ export default function StudentDetailsPage() {
             <div className="grid grid-cols-12 gap-2">
             {/* Left Sidebar */}
             <div className="col-span-3">
-              <div className="bg-white border rounded-xl overflow-hidden">
+              <div className="bg-white border  overflow-hidden">
                 <div className="bg-green-50 border-l-4 border-green-500 px-5 py-4">
                   <span className="font-semibold text-green-700">
                     Overview
@@ -934,7 +935,7 @@ export default function StudentDetailsPage() {
                   ].map((item) => (
                     <div
                       key={item}
-                      className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50 cursor-pointer"
+                      className="flex items-center gap-3 px-3 py-3 hover:bg-gray-50 cursor-pointer"
                     >
                       <FileText className="w-4 h-4 text-gray-500" />
                       <span className="text-gray-700 text-sm">{item}</span>
@@ -951,7 +952,7 @@ export default function StudentDetailsPage() {
                     Contact our support team for assistance.
                   </p>
 
-                  <button className="mt-4 text-blue-600 font-medium">
+                  <button className="mt-4 text-orange-600 font-medium">
                     Contact Support →
                   </button>
                 </div>
@@ -961,7 +962,7 @@ export default function StudentDetailsPage() {
             {/* Main Content */}
             <div className="col-span-9 space-y-2">
               {/* Application Started Card */}
-              <div className="bg-white border rounded-xl p-8 flex justify-between">
+              <div className="bg-white border p-8 flex justify-between">
 
 
                 <div className="w-sm">
@@ -970,7 +971,7 @@ export default function StudentDetailsPage() {
                       Application Started
                     </h2>
 
-                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                    <span className="px-3 py-1 bg-green-100 text-green-700  text-sm font-medium">
                       In Progress
                     </span>
                   </div>
@@ -993,7 +994,7 @@ export default function StudentDetailsPage() {
                     </div>
                   </div>
 
-                  <button className="mt-6 border border-blue-500 text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-50">
+                  <button className="mt-6 border border-orange-500 text-orange-600 px-6 py-3  font-medium hover:bg-orange-50">
                     Continue Application
                   </button>
                 </div>
@@ -1013,7 +1014,7 @@ export default function StudentDetailsPage() {
 
 
                 {/* Application Tasks */}
-                <div className="bg-white border rounded-xl p-6">
+                <div className="bg-white border p-6">
                   <h3 className="text-xl font-semibold ">
                     Application Tasks
                   </h3>
@@ -1025,7 +1026,7 @@ export default function StudentDetailsPage() {
                     >
                       <div className="flex items-start gap-4 px-6">
                         <div
-                          className={`w-7 h-7 rounded-full border-2 flex items-center justify-center ${task.completed
+                          className={`w-7 h-7 border-2 flex items-center justify-center ${task.completed
                               ? "bg-green-500 border-green-500"
                               : "border-gray-300"
                             }`}
@@ -1047,11 +1048,11 @@ export default function StudentDetailsPage() {
                       </div>
 
                       {task.completed ? (
-                        <button className="text-blue-600 font-medium">
+                        <button className="text-orange-600 font-medium">
                           Continue →
                         </button>
                       ) : (
-                        <span className="px-3 py-1 border rounded-full text-sm text-gray-500">
+                        <span className="px-3 py-1 border text-sm text-gray-500">
                           Pending
                         </span>
                       )}
@@ -1063,7 +1064,7 @@ export default function StudentDetailsPage() {
 
                 {/* Right Panel */}
                 <div className="">
-                  <div className="bg-white border rounded-xl p-6">
+                  <div className="bg-white border p-6">
                     <h3 className="text-2xl font-semibold mb-6">
                       Helpful Information
                     </h3>
@@ -1084,7 +1085,7 @@ export default function StudentDetailsPage() {
                       </div>
 
                       <div className="flex gap-4">
-                        <FileText className="text-blue-600" />
+                        <FileText className="text-orange-600" />
 
                         <div>
                           <h4 className="font-semibold">
@@ -1116,7 +1117,7 @@ export default function StudentDetailsPage() {
                 </div>
               </div>
               {/* Tabs */}
-              <div className="bg-white border rounded-xl">
+              <div className="bg-white border">
                 <div className="border-b border-gray-200 overflow-x-auto no-scrollbar px-3">
                   <div className="flex min-w-max">
                     {[
@@ -1822,10 +1823,18 @@ export default function StudentDetailsPage() {
 
           {currentStep?.step === "ReviewbyOoshas" && (
             <ReviewApplication/>
-          )}
+          )  }
 
-          {currentStep?.step === "SubmitToSchool" && (
-            <SubmittedtoSchool/>
+          {currentStep?.step === "SubmitToSchool" ? (
+            <SubmittedtoSchool currentstep={currentStep}/>
+          ): currentStep?.step === "AwaitingSchoolResponse" ? (
+            <SubmittedtoSchool currentstep={currentStep}/>
+          ): currentStep?.step === "OfferReceived" ? (
+            <SubmittedtoSchool currentstep={currentStep}/>
+          ): null }
+
+          {currentStep?.step === "AdmissionProcessing" && (
+            <AdmissionProcessing/>
           )}
 
 
@@ -1850,10 +1859,10 @@ export default function StudentDetailsPage() {
                     <div
                       key={item}
                       onClick={() => setSelectedIntake(item)}
-                      className={`border rounded-lg p-3 cursor-pointer transition-all ${selectedIntake === item ? "border-blue-500 bg-blue-50 shadow-md" : "border-gray-200 hover:border-gray-400 hover:shadow-sm"}`}
+                      className={`border rounded-lg p-3 cursor-pointer transition-all ${selectedIntake === item ? "border-orange-500 bg-orange-50 shadow-md" : "border-gray-200 hover:border-gray-400 hover:shadow-sm"}`}
                     >
                       <div className="flex items-center gap-2 mb-2">
-                        <div className={`w-4 h-4 rounded-full border-2 ${selectedIntake === item ? "border-blue-500 bg-blue-500" : "border-gray-300"}`}>
+                        <div className={`w-4 h-4 rounded-full border-2 ${selectedIntake === item ? "border-orange-500 bg-orange-500" : "border-gray-300"}`}>
                           {selectedIntake === item && <div className="w-2 h-2 rounded-full bg-white m-0.5"></div>}
                         </div>
                         <p className="font-medium text-sm">{item}</p>
@@ -1879,7 +1888,7 @@ export default function StudentDetailsPage() {
                       }
                     }
                   }}
-                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 text-sm bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
                 >
                   Submit
                 </button>

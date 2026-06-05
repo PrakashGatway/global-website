@@ -110,7 +110,7 @@ return(
     <><div className="max-w-7xl mx-auto p-4 md:p-6 space-y-5 grid grid-cols-8 gap-2">
               {/* Top Status Card */}
               <div className="col-span-6">
-                <div className="bg-orange-50 border border-[#E5E7EB] rounded-2xl p-4 md:p-6 mb-2">
+                <div className="bg-orange-50 border border-[#E5E7EB] p-4 md:p-6 mb-2">
                   <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
 
                     <div className="flex items-start gap-4">
@@ -124,7 +124,7 @@ return(
                             Under OOSHAS Review
                           </h2>
 
-                          <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                          <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-700 ">
                             In Progress
                           </span>
                         </div>
@@ -135,7 +135,7 @@ return(
                         </p>
 
                         <div className="flex flex-col md:flex-row gap-4 mt-4">
-                          <div className="border rounded-xl px-4 py-3">
+                          <div className="border px-4 py-3">
                             <p className="text-xs text-gray-500">
                               Review started
                             </p>
@@ -144,7 +144,7 @@ return(
                             </p>
                           </div>
 
-                          <div className="border rounded-xl px-4 py-3">
+                          <div className="border px-4 py-3">
                             <p className="text-xs text-gray-500">
                               Expected completion
                             </p>
@@ -165,11 +165,11 @@ return(
                 </div>
                 {/* Checklist + Counselor */}
                 <div className="grid lg:grid-cols-2 gap-5 mb-2">
-                  <div className="bg-white border rounded-2xl p-5 ">
+                  <div className="bg-white border p-5 ">
                     <div className="flex justify-between items-center mb-5">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-                          <ClipboardCheck className="w-4 h-4 text-blue-600" />
+                        <div className="w-8 h-8 bg-orange-50 flex items-center justify-center">
+                          <ClipboardCheck className="w-4 h-4 text-orange-600" />
                         </div>
 
                         <h3 className="font-bold text-lg text-[#1E293B]">
@@ -177,7 +177,7 @@ return(
                         </h3>
                       </div>
 
-                      <button className="text-blue-600 font-medium">
+                      <button className="text-orange-600 font-medium">
                         View Details
                       </button>
                     </div>
@@ -203,7 +203,7 @@ return(
                           </div>
 
                           <span
-                            className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(
+                            className={`px-3 py-1 text-xs font-medium ${getStatusStyle(
                               item.status
                             )}`}
                           >
@@ -213,13 +213,13 @@ return(
                       ))}
                     </div>
                   </div>
-                  <div className="bg-white border rounded-2xl p-5">
+                  <div className="bg-white border p-5">
                     <h3 className="font-bold text-lg mb-5">
                       Counselor Update
                     </h3>
 
                     <div className="flex items-center gap-3 mb-5">
-                      <div className="w-12 h-12 rounded-full bg-purple-100"></div>
+                      <div className="w-12 h-12 bg-purple-100"></div>
 
                       <div>
                         <h4 className="font-semibold">
@@ -232,7 +232,7 @@ return(
                       </div>
                     </div>
 
-                    <div className="bg-[#F6F1FF] rounded-xl p-4">
+                    <div className="bg-[#F6F1FF] p-4">
                       <p className="text-gray-700">
                         We have verified your academic documents.
                         Please upload your latest passport copy for final verification.
@@ -245,7 +245,7 @@ return(
                   </div>
                 </div>
                 {/* Documents Table */}
-                <div className="bg-white border rounded-2xl p-5">
+                <div className="bg-white border p-5">
                   <h3 className="font-bold text-lg mb-5">
                     Document Verification
                   </h3>
@@ -267,7 +267,7 @@ return(
                             <td>{doc.name}</td>
                             <td className="py-3">
                               <span
-                                className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(
+                                className={`px-3 py-1  text-xs font-medium ${getStatusStyle(
                                   doc.status
                                 )}`}
                               >
@@ -278,13 +278,13 @@ return(
                             <td className="py-3">
                               <div className="flex items-center gap-2">
                                 {/* View Button */}
-                                <button className="flex items-center gap-1 px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 border border-blue-100 rounded-md hover:bg-blue-100 transition">
+                                <button className="flex items-center gap-1 px-3 py-1 text-xs font-medium text-orange-600 bg-orange-50 border border-orange-100 hover:bg-orange-100 transition">
                                   <Eye className="w-3 h-3" />
                                   View
                                 </button>
 
                                 {/* Replace Button */}
-                                <button className="flex items-center justify-center w-8 h-7 text-blue-600 border border-gray-200 rounded-md hover:bg-gray-50 transition">
+                                <button className="flex items-center justify-center w-8 h-7 text-orange-600 border border-gray-200  hover:bg-gray-50 transition">
                                   <Download className="w-3 h-3" />
                                 </button>
                               </div>
@@ -300,7 +300,7 @@ return(
                     {documents.map((doc) => (
                       <div
                         key={doc.id}
-                        className="border rounded-xl p-4"
+                        className="border p-4"
                       >
                         <h4 className="font-semibold">
                           {doc.name}
@@ -318,7 +318,7 @@ return(
                   </div>
 
                   <div className="text-center mt-5">
-                    <button className="text-blue-600 font-semibold">
+                    <button className="text-orange-600 font-semibold">
                       View All Documents →
                     </button>
                   </div>
@@ -327,9 +327,9 @@ return(
               </div>
               <div className="space-y-4 col-span-2">
                 {/* Application Summary */}
-                <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <div className="bg-white border border-slate-200 p-5 shadow-sm">
                   <div className="flex items-center gap-2 mb-4">
-                    <FileText className="w-5 h-5 text-blue-600" />
+                    <FileText className="w-5 h-5 text-orange-600" />
                     <h3 className="font-semibold text-slate-800">
                       Application Summary
                     </h3>
@@ -345,7 +345,7 @@ return(
 
                     <div className="flex justify-between text-sm border-t pt-3">
                       <span className="text-slate-500">Application ID</span>
-                      <span className="font-medium text-blue-600">
+                      <span className="font-medium text-orange-600">
                         OS1779706950795
                       </span>
                     </div>
@@ -370,7 +370,7 @@ return(
                 </div>
 
                 {/* Progress */}
-                <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <div className="bg-white border border-slate-200 p-5 shadow-sm">
                   <h3 className="font-semibold text-slate-800 mb-4">
                     Overall Review Progress
                   </h3>
@@ -379,13 +379,13 @@ return(
                     80% Complete
                   </p>
 
-                  <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-                    <div className="h-full w-[80%] bg-green-500 rounded-full" />
+                  <div className="w-full h-2 bg-slate-200 overflow-hidden">
+                    <div className="h-full w-[80%] bg-green-500" />
                   </div>
                 </div>
 
                 {/* Timeline */}
-                <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <div className="bg-white border border-slate-200 p-5 shadow-sm">
                   <div className="flex items-center gap-2 mb-5">
                     <Clock3 className="w-5 h-5 text-slate-600" />
                     <h3 className="font-semibold text-slate-800">
@@ -445,9 +445,9 @@ return(
                 </div>
 
                 {/* Help Card */}
-                <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                <div className="bg-white border border-slate-200 p-5 shadow-sm">
                   <div className="flex items-center gap-2 mb-3">
-                    <Info className="w-5 h-5 text-blue-600" />
+                    <Info className="w-5 h-5 text-orange-600" />
                     <h3 className="font-semibold text-slate-800">
                       Questions? We're here to help!
                     </h3>
@@ -458,11 +458,11 @@ return(
                   </p>
 
                   <div className="grid grid-cols-2 gap-2">
-                    <button className="border border-blue-200 text-blue-600 rounded-lg py-2 text-xs font-medium hover:bg-blue-50">
+                    <button className="border border-orange-200 text-orange-600 py-2 text-xs font-medium hover:bg-orange-50">
                       Chat with Advisor
                     </button>
 
-                    <button className="border border-blue-200 text-blue-600 rounded-lg py-2 text-xs font-medium hover:bg-blue-50">
+                    <button className="border border-orange-200 text-orange-600 py-2 text-xs font-medium hover:bg-orange-50">
                       Email Support
                     </button>
                   </div>
