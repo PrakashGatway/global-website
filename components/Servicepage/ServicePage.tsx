@@ -567,12 +567,13 @@ const ExamsSection = ({ data }) => {
 const VideoTestimonialsWrapper = ({ data, videoRes }) => {
   if (!data) return null;
   return (
-    <VideoTestimonialsSlider
-      title={data?.title || "Video || Testimonials"}
-      subtitle={data?.subtitle}
-      items={videoRes}
-      tag={data?.tag}
-    />
+    null
+    // <VideoTestimonialsSlider
+    //   title={data?.title || "Video || Testimonials"}
+    //   subtitle={data?.subtitle}
+    //   items={videoRes}
+    //   tag={data?.tag}
+    // />
   );
 };
 

@@ -30,7 +30,7 @@ export default function DashboardLayout({
   const isMobile = useIsMobile()
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile)
   const { profile, loading, Logout } = useGlobal();
-  
+
   // Add a ref to track if token has been requested/saved
   const tokenRequestedRef = useRef(false);
 
@@ -40,9 +40,7 @@ export default function DashboardLayout({
     }
   }, [router])
 
-  // Modified: Only request permission once when profile is available and not loading
   useEffect(() => {
-    // Only proceed if we have a profile, not loading, and haven't requested token yet
     if (profile && !loading && !tokenRequestedRef.current) {
       tokenRequestedRef.current = true; // Mark as requested immediately to prevent multiple calls
       requestPermission();
@@ -74,13 +72,11 @@ export default function DashboardLayout({
           await axiosInstance.post('/users/save-token', {
             token,
             userId: profile._id
-          });
-          console.log('FCM token saved successfully');
+          })
         }
       }
     } catch (error) {
       console.log('Error requesting notification permission:', error);
-      // If there's an error, allow retry on next profile change
       tokenRequestedRef.current = false;
     }
   };

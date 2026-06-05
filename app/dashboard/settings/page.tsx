@@ -107,13 +107,17 @@ const visaValidationSchema = z.object({
 
 const documentValidationSchema = z.object({
   Document: z.object({
-    Passport: z.string().optional(),
-    AcademicDocuments: z.string().optional(),
-    UpdatedCV: z.string().optional(),
-    ExperienceCertificate: z.string().optional(),
-    Photographs: z.string().optional(),
-    IELTSscorecard: z.string().optional(),
-    LOR: z.string().optional(),
+    academicDocuments: z.object({
+      tenthMarksheet: z.string().min(1, "10th marksheet is required"),
+      twelfthMarksheet: z.string().min(1, "12th marksheet is required"),
+    }),
+    otherDocuments: z.object({
+      UpdatedCV: z.string().optional(),
+      ExperienceCertificate: z.string().optional(),
+      Photographs: z.string().min(1, "Passport size photograph is required"),
+      IELTSscorecard: z.string().optional(),
+      LOR: z.string().optional(),
+    }),
   })
 });
 
@@ -184,7 +188,8 @@ export default function ProfilePage() {
       console.error('Error fetching countries:', error)
     }
   }, [])
-
+ 
+  console.log(allProfile)
   
   useEffect(() => {
     fetchCountries()
@@ -279,14 +284,18 @@ export default function ProfilePage() {
         visaDetails: ''
       },
       Document: {
-        Passport: "",
-        AcademicDocuments: "",
-        UpdatedCV: "",
-        ExperienceCertificate: "",
-        Photographs: "",
-        IELTSscorecard: "",
-        LOR: ""
-      }
+  academicDocuments: {
+    tenthMarksheet: "",
+    twelfthMarksheet: "",
+  },
+  otherDocuments: {
+    UpdatedCV: "",
+    ExperienceCertificate: "",
+    Photographs: "",
+    IELTSscorecard: "",
+    LOR: "",
+  }
+}
     },
     mode: "onChange"
   });
@@ -339,108 +348,113 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    if (!profile) return;
+  if (!profile) return;
 
-    const formatDate = (date: string) => {
-      return date ? date.split('T')[0] : '';
-    };
+  const formatDate = (date: string) => {
+    return date ? date.split('T')[0] : '';
+  };
 
-    reset({
-      profile: {
-        name: profile.name || '',
-        phone: profile.phone || '',
-        dateOfBirth: formatDate(profile.dateOfBirth),
-        nationality: profile.nationality || '',
-        gender: profile.gender || '',
-        firstLanguage: profile.firstLanguage || '',
-        maritalStatus: profile.maritalStatus || '',
-        passportExpiry: formatDate(profile.passportExpiry),
-        passportNumber: profile.passportNumber || '',
-        intake: profile.intake || '',
-        tuitionfee : profile.tuitionfee || ''
-      },
-      address: allProfile?.profile?.currentAddress && {
-        address1: allProfile.profile.currentAddress.addressLine1 || '',
-        address2: allProfile.profile.currentAddress.addressLine2 || '',
-        city: allProfile.profile.currentAddress.city || '',
-        state: allProfile.profile.currentAddress.state || '',
-        country: allProfile.profile.currentAddress.country || '',
-        postalcode: allProfile.profile.currentAddress.postalCode || ''
-      },
-      education: {
-        schools: allProfile?.profile?.educationHistory && allProfile.profile?.educationHistory.map((school: any) => ({
-          country: school.country || '',
-          institutionName: school.institutionName || '',
-          educationLevel: school.educationLevel || '',
-          gradingScheme: school.gradingScheme || '',
-          graduationDate: formatDate(school.graduationDate),
-          startDate: formatDate(school.startDate),
-          endDate: formatDate(school.endDate),
-          degreeName: school.degreeName || '',
-          address: school.address || '',
-          city: school.city || '',
-          state: school.state || '',
-          postalCode: school.postalCode || ''
-        })),
-        summary: allProfile?.profile?.highestAcademic && {
-          countryOfEducation: allProfile.profile.highestAcademic.countryOfEducation || '',
-          highestEducationLevel: allProfile.profile.highestAcademic.highestEducationLevel || '',
-          gradingScheme: allProfile.profile.highestAcademic.gradingScheme || '',
-          graduated: allProfile.profile.highestAcademic.graduated ? "yes" : 'no'
-        }
-      },
-      testscore: {
-        englishscore: {
-          englishStatus: allProfile.profile.englishProficiencyScore?.englishStatus || '',
-          englishTest: allProfile.profile.englishProficiencyScore?.englishTest || '',
-          reading: allProfile.profile.englishProficiencyScore?.reading || '',
-          listening: allProfile.profile.englishProficiencyScore?.listening || '',
-          writing: allProfile.profile.englishProficiencyScore?.writing || '',
-          speaking: allProfile.profile.englishProficiencyScore?.speaking || '',
-          examDate: formatDate(allProfile.profile.englishProficiencyScore?.examDate),
-          totalScore: allProfile.profile.englishProficiencyScore?.totalScore || ''
-        },
-        coursescore: {
-          hasGmat: allProfile.profile.hasGmat ? {
-            gmatTotal: { score: allProfile.profile.gmatScore?.totalScore?.score || '', rank: allProfile.profile.gmatScore?.totalScore?.rank || '' },
-            gmatVerbal: { score: allProfile.profile.gmatScore?.verbal?.score || '', rank: allProfile.profile.gmatScore?.verbal?.rank || '' },
-            gmatQuantitative: { score: allProfile.profile.gmatScore?.quantitative?.score || '', rank: allProfile.profile.gmatScore?.quantitative?.rank || '' },
-            gmatAwa: { score: allProfile.profile.gmatScore?.analyticalWriting?.score || '', rank: allProfile.profile.gmatScore?.analyticalWriting?.rank || '' },
-            gmatExamDate: formatDate(allProfile.profile.gmatScore?.examDate)
-          } : allProfile.profile.hasGmat,
-          hasGre: allProfile.profile.hasGre ? {
-            greTotal: { score: allProfile.profile.greScore?.totalScore?.score || '', rank: allProfile.profile.greScore?.totalScore?.rank || '' },
-            greVerbal: { score: allProfile.profile.greScore?.verbal?.score || '', rank: allProfile.profile.greScore?.verbal?.rank || '' },
-            greQuantitative: { score: allProfile.profile.greScore?.quantitative?.score || '', rank: allProfile.profile.greScore?.quantitative?.rank || '' },
-            greAwa: { score: allProfile.profile.greScore?.analyticalWriting?.score || '', rank: allProfile.profile.greScore?.analyticalWriting?.rank || '' },
-            greExamDate: formatDate(allProfile.profile.greScore?.examDate)
-          } : allProfile.profile.hasGre
-        }
-      },
-      visaStudypermit: {
-        preferredStudyLevel: allProfile.profile.preferences?.preferredStudyLevel || '',
-        preferredCountries: allProfile.profile.preferences?.preferredCountries || [],
-        preferredIntakes: allProfile.profile.preferences?.preferredIntakes || [],
-        budget: allProfile.profile.preferences?.budget || { min: 0, max: 0, currency: 'USD' },
-        visaRefused: allProfile.profile.visaRefused ? 'yes' : 'no',
-        validVisas: allProfile.profile.validVisas || [],
-        visaDetails: allProfile.profile.visaRefusedInfo || ''
-      },
-      Document: allProfile?.profile?.documents || {
-        Passport: "",
-        AcademicDocuments: "",
-        UpdatedCV: "",
-        ExperienceCertificate: "",
-        Photographs: "",
-        IELTSscorecard: "",
-        LOR: ""
+  reset({
+    profile: {
+      name: profile.name || '',
+      phone: profile.phone || '',
+      dateOfBirth: formatDate(profile.dateOfBirth),
+      nationality: profile.nationality || '',
+      gender: profile.gender || '',
+      firstLanguage: profile.firstLanguage || '',
+      maritalStatus: profile.maritalStatus || '',
+      passportExpiry: formatDate(profile.passportExpiry),
+      passportNumber: profile.passportNumber || '',
+      intake: profile.intake || '',
+      tuitionfee: profile.tuitionfee || ''
+    },
+    address: allProfile?.profile?.currentAddress && {
+      address1: allProfile.profile.currentAddress.addressLine1 || '',
+      address2: allProfile.profile.currentAddress.addressLine2 || '',
+      city: allProfile.profile.currentAddress.city || '',
+      state: allProfile.profile.currentAddress.state || '',
+      country: allProfile.profile.currentAddress.country || '',
+      postalcode: allProfile.profile.currentAddress.postalCode || ''
+    },
+    education: {
+      schools: allProfile?.profile?.educationHistory && allProfile.profile?.educationHistory.map((school: any) => ({
+        country: school.country || '',
+        institutionName: school.institutionName || '',
+        educationLevel: school.educationLevel || '',
+        gradingScheme: school.gradingScheme || '',
+        graduationDate: formatDate(school.graduationDate),
+        startDate: formatDate(school.startDate),
+        endDate: formatDate(school.endDate),
+        degreeName: school.degreeName || '',
+        address: school.address || '',
+        city: school.city || '',
+        state: school.state || '',
+        postalCode: school.postalCode || ''
+      })),
+      summary: allProfile?.profile?.highestAcademic && {
+        countryOfEducation: allProfile.profile.highestAcademic.countryOfEducation || '',
+        highestEducationLevel: allProfile.profile.highestAcademic.highestEducationLevel || '',
+        gradingScheme: allProfile.profile.highestAcademic.gradingScheme || '',
+        graduated: allProfile.profile.highestAcademic.graduated ? "yes" : 'no'
       }
-    });
+    },
+    testscore: {
+      englishscore: {
+        englishStatus: allProfile.profile.englishProficiencyScore?.englishStatus || '',
+        englishTest: allProfile.profile.englishProficiencyScore?.englishTest || '',
+        reading: allProfile.profile.englishProficiencyScore?.reading || '',
+        listening: allProfile.profile.englishProficiencyScore?.listening || '',
+        writing: allProfile.profile.englishProficiencyScore?.writing || '',
+        speaking: allProfile.profile.englishProficiencyScore?.speaking || '',
+        examDate: formatDate(allProfile.profile.englishProficiencyScore?.examDate),
+        totalScore: allProfile.profile.englishProficiencyScore?.totalScore || ''
+      },
+      coursescore: {
+        hasGmat: allProfile.profile.hasGmat ? {
+          gmatTotal: { score: allProfile.profile.gmatScore?.totalScore?.score || '', rank: allProfile.profile.gmatScore?.totalScore?.rank || '' },
+          gmatVerbal: { score: allProfile.profile.gmatScore?.verbal?.score || '', rank: allProfile.profile.gmatScore?.verbal?.rank || '' },
+          gmatQuantitative: { score: allProfile.profile.gmatScore?.quantitative?.score || '', rank: allProfile.profile.gmatScore?.quantitative?.rank || '' },
+          gmatAwa: { score: allProfile.profile.gmatScore?.analyticalWriting?.score || '', rank: allProfile.profile.gmatScore?.analyticalWriting?.rank || '' },
+          gmatExamDate: formatDate(allProfile.profile.gmatScore?.examDate)
+        } : allProfile.profile.hasGmat,
+        hasGre: allProfile.profile.hasGre ? {
+          greTotal: { score: allProfile.profile.greScore?.totalScore?.score || '', rank: allProfile.profile.greScore?.totalScore?.rank || '' },
+          greVerbal: { score: allProfile.profile.greScore?.verbal?.score || '', rank: allProfile.profile.greScore?.verbal?.rank || '' },
+          greQuantitative: { score: allProfile.profile.greScore?.quantitative?.score || '', rank: allProfile.profile.greScore?.quantitative?.rank || '' },
+          greAwa: { score: allProfile.profile.greScore?.analyticalWriting?.score || '', rank: allProfile.profile.greScore?.analyticalWriting?.rank || '' },
+          greExamDate: formatDate(allProfile.profile.greScore?.examDate)
+        } : allProfile.profile.hasGre
+      }
+    },
+    visaStudypermit: {
+      preferredStudyLevel: allProfile.profile.preferences?.preferredStudyLevel || '',
+      preferredCountries: allProfile.profile.preferences?.preferredCountries || [],
+      preferredIntakes: allProfile.profile.preferences?.preferredIntakes || [],
+      budget: allProfile.profile.preferences?.budget || { min: 0, max: 0, currency: 'USD' },
+      visaRefused: allProfile.profile.visaRefused ? 'yes' : 'no',
+      validVisas: allProfile.profile.validVisas || [],
+      visaDetails: allProfile.profile.visaRefusedInfo || ''
+    },
+    // FIXED: Updated Document structure to match new schema
+    Document: {
+      academicDocuments: {
+        tenthMarksheet: allProfile?.profile?.documents?.academic?.tenthMarksheet || "",
+        twelfthMarksheet: allProfile?.profile?.documents?.academic?.twelfthMarksheet || "",
+      },
+      otherDocuments: {
+        UpdatedCV: allProfile?.profile?.documents?.other?.cv || "",
+        ExperienceCertificate: allProfile?.profile?.documents?.other?.experience || "",
+        Photographs: allProfile?.profile?.documents?.other?.photograph || "",
+        IELTSscorecard: allProfile?.profile?.documents?.other?.ieltsScorecard || "",
+        LOR: allProfile?.profile?.documents?.other?.lor || "",
+      }
+    }
+  });
 
-    setEducations(allProfile.profile.educations || []);
-    setWorkExperiences(allProfile.profile.workExperiences || []);
-    setLoading(false);
-  }, [profile, allProfile, reset]);
+  setEducations(allProfile.profile.educations || []);
+  setWorkExperiences(allProfile.profile.workExperiences || []);
+  setLoading(false);
+}, [profile, allProfile, reset]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -465,8 +479,11 @@ export default function ProfilePage() {
   };
 
   
-  const buildProfilePayload = (values) => {
+ const buildProfilePayload = (values) => {
   console.log("Building payload with values:", values);
+  
+  // Get existing documents from allProfile to preserve them
+  const existingDocuments = allProfile?.profile?.documents || {};
   
   return {
     currentAddress: {
@@ -558,24 +575,23 @@ export default function ProfilePage() {
         max: values.visaStudypermit?.budget?.max || 0,
       },
     },
-        // Include documents in the payload
+    // Preserve existing documents and only update the ones being uploaded
     documents: {
-      ...(allProfile?.profile?.documents || {}),
-
-  ...Object.entries(values?.Document?.documents || {}).reduce(
-    (acc, [key, value]) => {
-      acc[key] = {
-        key: key, // ✅ send field name
-        url: value,
-        status: value ? "true" : "false",
-        
-      };
-
-      return acc;
-    },
-    {}
-  )
-}
+      // Preserve existing academic documents and update with new ones
+      academic: {
+        tenthMarksheet: values.Document?.academicDocuments?.tenthMarksheet || existingDocuments.academic?.tenthMarksheet || "",
+        twelfthMarksheet: values.Document?.academicDocuments?.twelfthMarksheet || existingDocuments.academic?.twelfthMarksheet || "",
+      },
+      // Preserve existing passport documents and update with new ones
+      // Preserve existing other documents and update with new ones
+      other: {
+        cv: values.Document?.otherDocuments?.UpdatedCV || existingDocuments.other?.cv || "",
+        experience: values.Document?.otherDocuments?.ExperienceCertificate || existingDocuments.other?.experience || "",
+        photograph: values.Document?.otherDocuments?.Photographs || existingDocuments.other?.photograph || "",
+        ieltsScorecard: values.Document?.otherDocuments?.IELTSscorecard || existingDocuments.other?.ieltsScorecard || "",
+        lor: values.Document?.otherDocuments?.LOR || existingDocuments.other?.lor || "",
+      }
+    }
   };
 };
 
@@ -644,7 +660,11 @@ export default function ProfilePage() {
         return !!(watch('visaStudypermit.validVisas') &&
           watch('visaStudypermit.validVisas')?.length > 0);
       case 'Document':
-        return !!(watch('Document.Passport') && watch('Document.AcademicDocuments'));
+        return !!(watch('Document.academicDocuments.tenthMarksheet') && 
+            watch('Document.academicDocuments.twelfthMarksheet') &&
+            watch('Document.passport.passportFront') &&
+            watch('Document.passport.passportBack') &&
+            watch('Document.otherDocuments.Photographs'));
       default:
         return false;
     }

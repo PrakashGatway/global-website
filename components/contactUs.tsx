@@ -451,7 +451,7 @@ export default function ContactUsPage({ contactData, Faqres }) {
       </section> */}
 
       {/* Map Section */}
-      <section className="py-12 bg-gray-100">
+      {/* <section className="py-12 bg-gray-100">
         <div className="max-w-7xl mx-auto px-2">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
@@ -487,7 +487,7 @@ export default function ContactUsPage({ contactData, Faqres }) {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       {/* <section className="py-20" style={{ backgroundColor: '#FF6B35' }}>

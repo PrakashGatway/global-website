@@ -15,6 +15,9 @@ import Link from "next/link"
 import { CreateApplicationModal } from "@/components/dashboard/applicationModel"
 import { useSearchParams } from 'next/navigation';
 
+import ProgramHeader from "./programHeader"
+import ProgramFilters from "./programFilter"
+
 // Debounce hook
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value)
@@ -108,6 +111,8 @@ export default function CoursesPage() {
     sort_by: "name",
     sort_order: "asc"
   })
+
+  console.log(filters)
 
   // Fetch filter options
   const fetchFilterOptions = useCallback(async () => {
@@ -295,30 +300,20 @@ export default function CoursesPage() {
     const key = level?.toLowerCase() || 'undergraduate'
     return styles[key as keyof typeof styles] || styles.undergraduate
   }
+     
+  
 
   return (
     <main className="flex-1 overflow-y-auto max-w-7xl mx-auto px-4">
+         
+        
       <div className="space-y-4">
+        
         {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-2xl bg-gradient-to-br from-primary/5 via-primary/10 to-transparent p-6 overflow-hidden"
-        >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-2xl" />
-          <div className="relative z-10">
-            <h1 className="text-lg font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Find Your Dream Program
-            </h1>
-            <p className="text-gray-800 text-sm">
-              Explore {courses.length}+ programs from top universities worldwide
-            </p>
-          </div>
-        </motion.div>
+    <ProgramHeader searchQuery ={searchQuery} setSearchQuery={setSearchQuery} />
 
         {/* Search & Filter Bar */}
-        <div className="flex flex-col sm:flex-row gap-4">
+        {/* <div className="flex flex-col sm:flex-row gap-4">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -342,197 +337,8 @@ export default function CoursesPage() {
             )}
           </motion.div>
 
-          {/* Filter Button */}
-          <div className="relative" ref={filterButtonRef}>
-            <motion.button
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-xl hover:shadow-lg transition-all duration-300 relative"
-            >
-              <Filter className="w-4 h-4" />
-              <span className="hidden sm:inline">Filters</span>
-              {getActiveFilterCount() > 0 && (
-                <span className="ml-1 px-2 py-0.5 text-xs bg-white/20 rounded-full animate-pulse">
-                  {getActiveFilterCount()}
-                </span>
-              )}
-              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`} />
-            </motion.button>
-
-            <AnimatePresence>
-              {showFilters && (
-                <>
-                  <motion.div
-                    initial={{ opacity: 1 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 1 }}
-                    onClick={() => setShowFilters(false)}
-                    className="fixed inset-0 z-40 bg-black/10 backdrop-blur-[1px]"
-                  />
-                  <motion.div
-                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    transition={{ duration: 0.1 }}
-                    className="absolute right-0 mt-2 w-80 bg-background border border-border rounded-xl shadow-2xl z-50 overflow-hidden"
-                  >
-                    <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary/5 to-transparent">
-                      <h2 className="font-semibold flex items-center gap-2">
-                        <Filter className="w-4 h-4 text-primary" />
-                        Filter Programs
-                      </h2>
-                      <button
-                        onClick={() => setShowFilters(false)}
-                        className="p-1 hover:bg-muted rounded-lg transition-colors"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-
-                    <div className="p-4 space-y-5 max-h-[50vh] overflow-y-auto">
-                      {/* Country Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium flex items-center gap-2 text-gray-800">
-                          <Globe className="w-4 h-4" />
-                          Country
-                        </label>
-                        <ModernSelect
-                          options={countries}
-                          value={filters.country}
-                          onChange={(value) => handleFilterChange('country', value)}
-                          placeholder="Select country"
-                          className="w-full"
-                        />
-                      </div>
-
-                      {/* University Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium flex items-center gap-2 text-gray-800">
-                          <Building2 className="w-4 h-4" />
-                          University
-                        </label>
-                        <ModernSelect
-                          options={universities}
-                          value={filters.university}
-                          onChange={(value) => handleFilterChange('university', value)}
-                          placeholder="Select university"
-                          className="w-full"
-                        />
-                      </div>
-
-                      {/* Category Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium flex items-center gap-2 text-gray-800">
-                          <BookOpen className="w-4 h-4" />
-                          Category
-                        </label>
-                        <ModernSelect
-                          options={categories}
-                          value={filters.category}
-                          onChange={(value) => handleFilterChange('category', value)}
-                          placeholder="Select category"
-                          className="w-full"
-                        />
-                      </div>
-
-                      {/* Study Mode Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium flex items-center gap-2 text-gray-800">
-                          <Briefcase className="w-4 h-4" />
-                          Study Mode
-                        </label>
-                        <div className="grid grid-cols-2 gap-2">
-                          {studyModes.map((mode) => (
-                            <button
-                              key={mode.value}
-                              onClick={() => handleFilterChange('studyMode', filters.studyMode === mode.value ? '' : mode.value)}
-                              className={`px-3 py-2 rounded-lg border text-sm transition-all duration-200 ${filters.studyMode === mode.value
-                                ? 'border-primary bg-primary/10 text-primary'
-                                : 'border-border hover:border-primary/50 hover:bg-muted'
-                                }`}
-                            >
-                              {mode.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Level Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium flex items-center gap-2 text-gray-800">
-                          <GraduationCap className="w-4 h-4" />
-                          Program Level
-                        </label>
-                        <div className="flex flex-wrap gap-2">
-                          {levels.map((level) => (
-                            <button
-                              key={level.value}
-                              onClick={() => handleFilterChange('level', filters.level === level.value ? '' : level.value)}
-                              className={`px-3 py-1.5 rounded-full border text-sm transition-all duration-200 ${filters.level === level.value
-                                ? 'border-primary bg-primary/10 text-primary'
-                                : 'border-border hover:border-primary/50 hover:bg-muted'
-                                }`}
-                            >
-                              {level.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Active Filters Display */}
-                      {getActiveFilterCount() > 0 && (
-                        <div className="pt-3 border-t border-border">
-                          <div className="flex flex-wrap gap-2">
-                            {filters.country && (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                                {countries.find(c => c.value === filters.country)?.label || filters.country}
-                                <button onClick={() => handleFilterChange('country', '')} className="hover:bg-primary/20 rounded-full p-0.5">
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </span>
-                            )}
-                            {filters.studyMode && (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                                {filters.studyMode}
-                                <button onClick={() => handleFilterChange('studyMode', '')}>
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </span>
-                            )}
-                            {filters.level && (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                                {filters.level}
-                                <button onClick={() => handleFilterChange('level', '')}>
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-between gap-2 p-4 border-t border-border bg-muted/30">
-                      <button
-                        onClick={clearFilters}
-                        className="px-4 py-2 text-sm text-gray-800 hover:text-foreground transition-colors"
-                      >
-                        Clear all
-                      </button>
-                      <button
-                        onClick={() => setShowFilters(false)}
-                        className="px-6 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                      >
-                        Apply Filters
-                      </button>
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
+       
+        </div> */}
 
         {/* Results Count */}
         {!loading && courses.length > 0 && (
@@ -547,227 +353,273 @@ export default function CoursesPage() {
           </motion.div>
         )}
 
+         
+
         {/* Courses Grid */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-        >
-          {loading ? (
-            // Enhanced Skeleton Loading
-            Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-card border border-border rounded-2xl overflow-hidden animate-pulse">
-                <div className="h-32 bg-gradient-to-br from-muted to-muted/50"></div>
-                <div className="p-6 space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 bg-muted rounded-xl"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 w-32 bg-muted rounded"></div>
-                      <div className="h-3 w-24 bg-muted rounded"></div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-3 w-full bg-muted rounded"></div>
-                    <div className="h-3 w-3/4 bg-muted rounded"></div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="h-12 bg-muted rounded-lg"></div>
-                    <div className="h-12 bg-muted rounded-lg"></div>
-                  </div>
-                  <div className="h-10 bg-muted rounded-lg"></div>
+       <div className="flex flex-col lg:flex-row gap-6 items-start">
+  {/* ================= LEFT SIDEBAR: FILTERS ================= */}
+ <ProgramFilters
+  filters={filters}
+  handleFilterChange={handleFilterChange}
+  clearFilters={clearFilters}
+  getActiveFilterCount={getActiveFilterCount}
+  countries={countries}
+  universities={universities}
+  categories={categories}
+  studyModes={studyModes}
+  levels={levels}
+  showFilters={showFilters}
+  setShowFilters={setShowFilters}
+/>
+
+  {/* ================= RIGHT CONTENT: COURSE GRID ================= */}
+  <div className="flex-1 w-full">
+    <motion.div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
+      {loading ? (
+        // Enhanced Skeleton Loading
+        Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="bg-card border border-border rounded-2xl overflow-hidden animate-pulse">
+            <div className="h-32 bg-gradient-to-br from-muted to-muted/50"></div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="w-12 h-12 bg-muted rounded-xl"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-32 bg-muted rounded"></div>
+                  <div className="h-3 w-24 bg-muted rounded"></div>
                 </div>
               </div>
-            ))
-          ) : courses.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="col-span-full text-center py-16"
-            >
-              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
-                <Search className="w-12 h-12 text-gray-800" />
+              <div className="space-y-2">
+                <div className="h-3 w-full bg-muted rounded"></div>
+                <div className="h-3 w-3/4 bg-muted rounded"></div>
               </div>
-              <h3 className="text-2xl font-bold mb-2">No programs found</h3>
-              <p className="text-gray-800">Try adjusting your search or filters to find what you're looking for</p>
-              <button
-                onClick={clearFilters}
-                className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all duration-300"
-              >
-                Clear all filters
-              </button>
-            </motion.div>
-          ) : (
-            courses.map((course, index) => {
-              const levelStyles = getLevelStyles(course.level)
-              return (
-                <motion.div
-                  key={course._id}
-                  className={`group relative flex flex-col h-full bg-gradient-to-b ${levelStyles.gradient} border rounded-2xl overflow-hidden`}
-                >
-                  {/* Header Section with Gradient Background */}
-                  <div className="p-6 px-4 relative flex flex-col flex-1">
-                    {/* University Logo and Name */}
-
-                    <div className="flex-1">
-                      <div className="flex items-start gap-2 mb-4">
-                        {course.university?.uni_logo ? (
-                          <img
-                            src={course.university?.uni_logo}
-                            alt={course.university?.name}
-                            className="w-20 h-auto max-h-16 object-fit bg-white shadow-lg border-2"
-                          />
-                        ) : (
-                          <Building2 className="w-full h-full text-gray-800" />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-base line-clamp-2 group-hover:text-primary transition-colors">
-                            {course.name}
-                          </h3>
-                          <p className="text-xs text-gray-800 truncate">
-                            {course.university?.name}
-                          </p>
-                          <p className="text-xs text-gray-800 flex items-center gap-1 mt-0.5">
-                            <MapPin className="w-3 h-3 flex-shrink-0" />
-                            <span className="truncate">{course.university?.city}, {course.university?.country}</span>
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Description */}
-                      {course.description && (
-                        <p className="text-foreground/80 text-sm mb-4 line-clamp-2" title={course.description}>
-                          {course.description}
-                        </p>
-                      )}
-
-                      {/* Key Details Grid */}
-                      <div className="space-y-1 mb-4 text-sm">
-                        <div className="flex items-center justify-between">
-                          <span className="inline-flex items-center gap-1.5 text-sm text-gray-800">
-                            <IndianRupeeIcon className="w-4 h-4" />
-                            Tuition Fee
-                          </span>
-                          <span className="font-medium">
-                            {formatCurrency(course.tuitionFee || 0, course.currency)}
-                            <span className="text-xs text-gray-800 ml-1">/year</span>
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="inline-flex items-center gap-1.5 text-sm text-gray-800">
-                            <Clock className="w-4 h-4" />
-                            Duration
-                          </span>
-                          <span className="font-medium">
-                            {course.duration || 'N/A'}
-                            {/* <span className="text-xs text-gray-800 ml-1">full time</span> */}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="inline-flex items-center gap-1.5 text-sm text-gray-800">
-                            <FileText className="w-4 h-4" />
-                            Application Fee
-                          </span>
-                          <span className="font-medium">
-                            {formatCurrency(course.applicationFee || 0, course.currency)}
-                            {/* <span className="text-xs text-gray-800 ml-1">one-time</span> */}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        {course.studyMode && (
-                          <div className="mb-3">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-muted/50 rounded-full text-xs font-medium border border-border/50">
-                              <Briefcase className="w-3 h-3" />
-                              {course.studyMode}
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Category */}
-                        {course.category?.name && (
-                          <div className="mb-3">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/5 rounded-full text-xs font-medium text-primary">
-                              <BookOpen className="w-3 h-3" />
-                              {course.category.name}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      {/* Study Mode Badge */}
-
-
-                      {/* Tags */}
-                      {course.tags && course.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 mb-4">
-                          {course.tags.slice(0, 3).map((tag, i) => (
-                            <span
-                              key={i}
-                              className="px-2 py-0.5 bg-muted/50 rounded-full text-xs text-gray-800 border border-border/50"
-                            >
-                              <Tag className="w-3 h-3 inline mr-1" />
-                              {tag}
-                            </span>
-                          ))}
-                          {course.tags.length > 3 && (
-                            <span className="px-2 py-0.5 bg-muted/50 rounded-full text-xs text-gray-800 border border-border/50">
-                              +{course.tags.length - 3}
-                            </span>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Intakes */}
-                      {course.university?.intakes && course.university.intakes.length > 0 && (
-                        <div className="mb-4">
-                          <p className="text-xs font-semibold text-gray-800 mb-2 flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            Intakes
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {course.university.intakes.slice(0, 3).map((intake, index) => (
-                              <span
-                                key={index}
-                                className="text-xs px-2.5 py-1 bg-primary/10 text-primary rounded-full font-medium"
-                              >
-                                📅 {intake}
-                              </span>
-                            ))}
-                            {course.university.intakes.length > 3 && (
-                              <span className="text-xs px-2.5 py-1 bg-muted text-gray-800 rounded-full">
-                                +{course.university.intakes.length - 3}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-3 mt-auto">
-                      <Link
-                        href={`/dashboard/programs/${course.slug}`}
-                        className="flex-1 p-2 lg:px-4 lg:py-2.5 bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center text-sm group-hover:scale-[1.02]"
-                      >
-                        View Details
-                      </Link>
-                      <button
-                        onClick={() => {
-                          setSelectedCourse(course)
-                          setIsModalOpen(true)
-                        }}
-                        className="flex-1 p-2 lg:px-4 lg:py-2.5 border-2 border-primary/20 text-primary rounded-lg hover:bg-primary hover:text-primary-foreground transition-all duration-300 font-medium text-sm group-hover:scale-[1.02]"
-                      >
-                        Apply Now
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Hover Effect Overlay */}
-                  <div className={`absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-500 pointer-events-none ${hoveredCard === course._id ? 'opacity-100' : ''}`} />
-                </motion.div>
-              )
-            })
-          )}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="h-12 bg-muted rounded-lg"></div>
+                <div className="h-12 bg-muted rounded-lg"></div>
+              </div>
+              <div className="h-10 bg-muted rounded-lg"></div>
+            </div>
+          </div>
+        ))
+      ) : courses.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="col-span-full text-center py-16"
+        >
+          <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+            <Search className="w-12 h-12 text-gray-800" />
+          </div>
+          <h3 className="text-2xl font-bold mb-2">No programs found</h3>
+          <p className="text-gray-800">Try adjusting your search or filters to find what you're looking for</p>
+          <button
+            onClick={clearFilters}
+            className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all duration-300"
+          >
+            Clear all filters
+          </button>
         </motion.div>
+      ) : (
+  courses.map((course, index) => {
+    const levelStyles = getLevelStyles(course.level)
+    return (
+      <motion.div
+        key={course._id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05 }}
+        whileHover={{ y: -8 }}
+        className="group relative"
+      >
+        {/* Main Card Container - Glass morphism effect */}
+        <div className="relative bg-white/90 backdrop-blur-sm border border-gray-200/80  overflow-hidden hover:shadow-2xl transition-all duration-500 hover:border-primary/30">
+          
+          {/* Premium Gradient Accent Line */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary/70 to-transparent" />
+          
+          {/* Content Wrapper */}
+          <div className="p-6">
+            
+            {/* University & Course Header */}
+            <div className="flex gap-4 mb-5">
+              {/* Logo Container with Glass Effect */}
+              <div className="relative flex-shrink-0">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent rounded-2xl blur-xl" />
+                <div className="relative w-20 h-20 bg-white rounded-2xl shadow-md border border-gray-100 flex items-center justify-center p-2 transition-all duration-300 group-hover:shadow-lg group-hover:border-primary/20">
+                  {course.university?.uni_logo ? (
+                    <img
+                      src={course.university?.uni_logo}
+                      alt={course.university?.name}
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <Building2 className="w-10 h-10 text-gray-400" />
+                  )}
+                </div>
+              </div>
+
+              {/* Course Info */}
+              <div className="flex-1 min-w-0 pt-1">
+                <h3 className="font-bold text-lg line-clamp-2 text-gray-900 group-hover:text-primary transition-colors duration-300 mb-1">
+                  {course.name}
+                </h3>
+                <p className="text-sm font-medium text-gray-700 truncate">
+                  {course.university?.name}
+                </p>
+                <div className="flex items-center gap-1 mt-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-primary/70" />
+                  <p className="text-xs text-gray-600 truncate">
+                    {course.university?.city}, {course.university?.country}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Description with Enhanced Styling */}
+            {course.description && (
+              <div className="relative mb-5">
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary/40 to-primary/10 rounded-full" />
+                <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 pl-3" title={course.description}>
+                  {course.description}
+                </p>
+              </div>
+            )}
+
+            {/* Key Details - Modern Card Grid */}
+            <div className="grid grid-cols-3 gap-3 mb-5">
+              {/* Tuition Fee */}
+              <div className="bg-gradient-to-br from-blue-50/50 to-transparent rounded-xl p-2.5 border border-blue-100/50">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <IndianRupeeIcon className="w-3.5 h-3.5 text-primary" />
+                  <span className="text-xs font-medium text-gray-600">Tuition</span>
+                </div>
+                <p className="font-bold text-primary-dark text-sm">
+                  {formatCurrency(course.tuitionFee || 0, course.currency)}
+                </p>
+                <p className="text-xs text-gray-500">/year</p>
+              </div>
+
+              {/* Duration */}
+              <div className="bg-gradient-to-br from-purple-50/50 to-transparent rounded-xl p-2.5 border border-purple-100/50">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Clock className="w-3.5 h-3.5 text-purple-600" />
+                  <span className="text-xs font-medium text-gray-600">Duration</span>
+                </div>
+                <p className="font-semibold text-gray-800 text-sm">
+                  {course.duration || 'N/A'}
+                </p>
+              </div>
+
+              {/* Application Fee */}
+              <div className="bg-gradient-to-br from-emerald-50/50 to-transparent rounded-xl p-2.5 border border-emerald-100/50">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <FileText className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="text-xs font-medium text-gray-600">App. Fee</span>
+                </div>
+                <p className="font-semibold text-gray-800 text-sm">
+                  {formatCurrency(course.applicationFee || 0, course.currency)}
+                </p>
+              </div>
+            </div>
+
+            {/* Study Mode & Category Tags */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {course.studyMode && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-blue-600/5 rounded-xl text-xs font-semibold text-blue-700 border border-blue-200/50">
+                  <Briefcase className="w-3.5 h-3.5" />
+                  {course.studyMode}
+                </span>
+              )}
+
+              {course.category?.name && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl text-xs font-semibold text-primary border border-primary/20">
+                  <BookOpen className="w-3.5 h-3.5" />
+                  {course.category.name}
+                </span>
+              )}
+            </div>
+
+            {/* Tags with Modern Styling */}
+            {course.tags && course.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-5">
+                {course.tags.slice(0, 3).map((tag, i) => (
+                  <span
+                    key={i}
+                    className="px-2.5 py-1 bg-gray-100/80 rounded-lg text-xs text-gray-700 border border-gray-200 font-medium hover:bg-gray-200/80 transition-colors cursor-default"
+                  >
+                    <Tag className="w-3 h-3 inline mr-1 text-gray-500" />
+                    {tag}
+                  </span>
+                ))}
+                {course.tags.length > 3 && (
+                  <span className="px-2.5 py-1 bg-gray-100/80 rounded-lg text-xs text-gray-600 border border-gray-200 font-medium">
+                    +{course.tags.length - 3} more
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Intakes with Premium Design */}
+            {course.university?.intakes && course.university.intakes.length > 0 && (
+              <div className="mb-5 p-3 bg-gradient-to-r from-amber-50/40 to-transparent rounded-xl border border-amber-100/50">
+                <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-amber-600" />
+                  Upcoming Intakes
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {course.university.intakes.slice(0, 3).map((intake, index) => (
+                    <span
+                      key={index}
+                      className="text-xs px-3 py-1.5 bg-gradient-to-r from-amber-500/10 to-amber-600/5 text-amber-700 rounded-full font-medium border border-amber-200/50"
+                    >
+                      📅 {intake}
+                    </span>
+                  ))}
+                  {course.university.intakes.length > 3 && (
+                    <span className="text-xs px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full font-medium border border-gray-200">
+                      +{course.university.intakes.length - 3}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons - Modern Design */}
+            <div className="flex items-center gap-3 mt-2">
+              <Link
+                href={`/dashboard/programs/${course.slug}`}
+                className="flex-1 relative overflow-hidden group/btn"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 rounded-xl opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
+                <div className="relative px-4 py-2.5 bg-primary rounded-xl text-white font-semibold text-sm text-center transition-all duration-300 group-hover/btn:shadow-lg group-hover/btn:scale-[1.02]">
+                  View Details
+                </div>
+              </Link>
+              
+              <button
+                onClick={() => {
+                  setSelectedCourse(course)
+                  setIsModalOpen(true)
+                }}
+                className="flex-1 px-4 py-2.5 bg-transparent border-2 border-primary/30 text-primary rounded-xl font-semibold text-sm transition-all duration-300 hover:bg-primary hover:text-white hover:border-primary hover:shadow-lg hover:scale-[1.02]"
+              >
+                Apply Now →
+              </button>
+            </div>
+          </div>
+
+          {/* Hover Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+          
+          {/* Subtle Border Glow on Hover */}
+          <div className="absolute inset-0 rounded-3xl pointer-events-none group-hover:shadow-[0_0_0_2px_rgba(37,99,235,0.2)] transition-shadow duration-300" />
+        </div>
+      </motion.div>
+    )
+  })
+)}
+    </motion.div>
+  </div>
+</div>
 
         {/* Infinite Scroll Loader */}
         <div ref={observerTarget} className="py-8">

@@ -225,7 +225,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
 
   const { allProfile } = useGlobal()
 
-  console.log(allProfile)
+  
 
   // Helper function to check if a file exists in form data (persisted after refresh)
   const hasFileInFormData = (fieldName: string): boolean => {
@@ -375,9 +375,35 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
 
   const fileFields = getAllFileFields(schema);
   // Count uploaded files by checking actual form data
- const uploadedFiles = Object.values(
-  allProfile?.profile?.documents || {}
-).filter((doc: any) => doc?.status === "true").length;
+// Method 1: Simple and accurate for your data structure
+const uploadedFiles = () => {
+  const docs = allProfile?.profile?.documents;
+  if (!docs) return 0;
+  
+  let count = 0;
+  
+  // Count academic documents (tenthMarksheet and twelfthMarksheet)
+  if (docs.academic) {
+    if (docs.academic.tenthMarksheet);
+    if (docs.academic.twelfthMarksheet);
+  }
+  
+
+  
+  // Count other documents
+  if (docs.other) {
+    if (docs.other.cv) count++;
+    if (docs.other.experience) count++;
+    if (docs.other.photograph) count++;
+    if (docs.other.ieltsScorecard) count++;
+    if (docs.other.lor) count++;
+  }
+  
+  return count;
+};
+
+// Usage
+const uploadedFilesCount = uploadedFiles(); // This will return 3 (tenthMarksheet, twelfthMarksheet, cv)
 
 
 
@@ -427,7 +453,7 @@ export default function FormRenderer({ schema, sectionKey = "", countries = [] }
     <>
       {/* File Upload Counter */}
       {fileFields.length > 0 && (
-        <FileUploadCounter uploadedFiles={uploadedFiles} totalFields={fileFields.length} />
+        <FileUploadCounter uploadedFiles={uploadedFilesCount} totalFields={fileFields.length} />
       )}
 
       <motion.div

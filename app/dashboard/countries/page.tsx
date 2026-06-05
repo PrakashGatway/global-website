@@ -329,16 +329,15 @@ export default function CountriesPage() {
                 );
 
         }
-
-        // ADD
-        else {
-
-            updatedCountries = [
+        else{
+           
+             updatedCountries = [
                 ...shortlistedCountries,
                 country?.code,
             ];
-
         }
+
+   
 
         // frontend update
         setShortlistedCountries(
@@ -378,7 +377,7 @@ export default function CountriesPage() {
 
     };
 
-    
+
     const fetchCountries = async () => {
         try {
             setLoading(true)
@@ -628,10 +627,39 @@ export default function CountriesPage() {
                     <p className="text-sm text-gray-500">
                         Showing {countries.length} of {totalCountries} countries
                     </p>
-                    {viewMode === 'grid' && (
-                        <p className="text-sm text-gray-400">Click on any country to explore details</p>
-                    )}
+                  
+                       
                 </div>
+
+                {shortlistedCountries.length > 0 && (
+    <div className="fixed bottom-5 right-5 z-50 bg-white rounded-xl shadow-2xl border p-4">
+        <div className="flex items-center justify-between gap-4">
+            <div>
+                <p className="text-sm font-semibold">
+                    Country Shortlist
+                </p>
+                <p className="text-xs text-gray-500">
+                    {shortlistedCountries.length}/3 countries selected
+                </p>
+            </div>
+                    <Link href={"/dashboard/programs"}>
+                   
+            <button
+                
+                className={`px-6 py-2 rounded-lg font-medium ${
+                    shortlistedCountries.length > 0
+                        ? "bg-[#2563EB] text-white"
+                        : "bg-gray-300 text-gray-500 cursor-pointer"
+                }`}
+            >
+                Continue
+            </button>
+             </Link>
+        </div>
+    </div>
+)}
+
+             
 
                 {/* Countries Grid/List */}
                 {/* {loading ? (
@@ -697,27 +725,27 @@ export default function CountriesPage() {
 
                             <thead className="bg-[#F8FAFC] border-b border-[#EEF2F7]">
                                 <tr>
-                                    <th className="px-6 py-4 text-left text-[12px] font-semibold text-[#667085]">
+                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
                                         Country
                                     </th>
 
-                                    <th className="px-6 py-4 text-left text-[12px] font-semibold text-[#667085]">
+                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
                                         Top Courses
                                     </th>
 
-                                    <th className="px-6 py-4 text-left text-[12px] font-semibold text-[#667085]">
+                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
                                         Avg. Tuition Fee
                                     </th>
 
-                                    <th className="px-6 py-4 text-left text-[12px] font-semibold text-[#667085]">
+                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
                                         PSW
                                     </th>
 
-                                    <th className="px-6 py-4 text-left text-[12px] font-semibold text-[#667085]">
+                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
                                         Key Highlights
                                     </th>
 
-                                    <th className="px-6 py-4 text-left text-[12px] font-semibold text-[#667085]">
+                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
                                         Action
                                     </th>
                                 </tr>
@@ -752,7 +780,7 @@ export default function CountriesPage() {
 
                                                     <div>
 
-                                                        <h3 className="text-[14px] font-semibold text-[#1F2937]">
+                                                        <h3 className="text-[14px] text-[#475467]">
                                                             {item?.name}
                                                         </h3>
 
@@ -792,7 +820,7 @@ export default function CountriesPage() {
                                             {/* Tuition */}
                                             <td className="px-6 py-5 align-top">
 
-                                                <div className="text-[13px] font-semibold text-[#344054]">
+                                                <div className="text-[13px] text-[#475467]">
                                                     {extra?.tuitionfee || "N/A"}
                                                 </div>
 
@@ -801,7 +829,7 @@ export default function CountriesPage() {
                                             {/* PSW */}
                                             <td className="px-6 py-5 align-top">
 
-                                                <div className="text-[13px] font-semibold text-[#344054]">
+                                                <div className="text-[13px] text-[#475467]">
                                                     {extra?.psw || "N/A"}
                                                 </div>
 
@@ -851,6 +879,7 @@ export default function CountriesPage() {
 
                                                         <input
                                                             type="checkbox"
+                                                            disabled= {shortlistedCountries.length === 3 && !shortlistedCountries.includes(item.code)}
 
                                                             checked={shortlistedCountries.includes(
                                                                 item?.code

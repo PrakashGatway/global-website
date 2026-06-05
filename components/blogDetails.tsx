@@ -10,7 +10,7 @@ import FAQSection from "./faqPage"
 import UniversityCard from "./UniversityCard"
 import StudentVisaStories from "./Studentvisa"
 import VideoTestimonialsSlider from "./PageComponent/VideoTestimonial"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 
 
@@ -22,18 +22,18 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
 
    const [visacontent, setVisaContent] = useState([]);
   
-    const fetchVisa = () => {
-      const filtervisa = imageData.filter((item) => item.target === "visa");
-      setVisaContent(filtervisa);
-      console.log(filtervisa)
-    }
-  
+    const fetchVisa = useCallback(() => {
+  const filtervisa = imageData.filter(
+    (item) => item.target === "visa"
+  );
+  setVisaContent(filtervisa);
+}, [imageData]);
 
-console.log(imageData)
-console.log(visacontent)
-useEffect(()=>{
-  fetchVisa()
-},[fetchVisa])
+useEffect(() => {
+  fetchVisa();
+}, [fetchVisa]);
+
+
   const onSubmit = async (data) => {
     try {
       const res = await axiosInstance.post("/contactus", {
@@ -100,7 +100,7 @@ useEffect(()=>{
   const addHeadingIds = (html: string) => {
     let index = 0
 
-    return html.replace(
+    return html?.replace(
       /<h([1-3])([^>]*)>(.*?)<\/h\1>/gi,
       (match, level, attrs, content) => {
         const id = `heading-${index++}`
@@ -147,80 +147,46 @@ useEffect(()=>{
   const toc = extractTOC(blog.description)
 
   const htmlWithIds = addHeadingIds(blog.description)
+  const htmlWithIds2 = addHeadingIds(blog.description2)
 
   const headings = extractHeadings(blog.description)
 
   return (
-    <section className="bg-white min-h-screen">
+    <section className="bg-white min-h-screen ">
 
       {/* ================= BREADCRUMB NAVIGATION ================= */}
-      <div className="max-w-7xl mx-auto px-4 py-4 text-sm text-gray-600">
-        <nav className="flex items-center gap-2">
-          <Link href={"/"} ><span className="hover:text-orange-600 cursor-pointer" >Home</span></Link>
+     <div className="max-w-7xl mx-auto px-4 pt-4 text-sm text-gray-600">
+  <nav className="flex items-center gap-2">
+    <Link href="/" className="hover:text-orange-600">
+      Home
+    </Link>
 
-          <span>›</span>
-          <Link href={"/blog"} ><span className="hover:text-orange-600 cursor-pointer" >Blogs</span></Link>
+    <span>›</span>
 
-          <span>›</span>
-          <span className="text-orange-600 font-medium">{blog.title}</span>
-        </nav>
-      </div>
+    <Link href="/blog" className="hover:text-orange-600">
+      Blogs
+    </Link>
 
-      {/* ================= HERO SECTION ================= */}
-      <div className="relative w-full h-[360px]">
-        <div className="absolute inset-0 bg-[#F46C44]  flex items-end">
+    <span>›</span>
 
-          {/* Main container */}
-          <div className=" mx-auto w-full px-4 pb-4 flex items-end justify-between gap-6">
+    <span className="text-orange-600 font-medium">
+      {blog.title}
+    </span>
+  </nav>
+</div>
 
-            {/* LEFT SIDE — TEXT */}
-            <div className="text-white max-w-3xl px-20">
-              <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold leading-tight mb-4">
+     
+
+
+      {/* ================= MAIN CONTENT AREA ================= */}
+      <div className="max-w-7xl mx-auto px-1 py-6 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
+
+        {/* ================= LEFT CONTENT COLUMN ================= */}
+        <div className="space-y-4 max-w-5xl">
+           <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold leading-tight mb-4 text-top">
                 {blog.title}
               </h1>
-
-              {/* Meta info */}
-              <div className="flex flex-wrap items-center gap-4 text-sm opacity-90">
-                <span>Last updated:</span>
-                <span>
-                  {new Date(blog.updatedAt).toLocaleDateString("en-IN", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </span>
-
-                <span>|</span>
-                <span>{blog.views} views</span>
-
-                {blog.isFeatured && (
-                  <span className="px-3 py-1 bg-orange-500 text-xs rounded-full">
-                    Featured
-                  </span>
-                )}
-
-                <span className="px-3 py-1 bg-orange-500 text-xs rounded-full">
-                  {blog.blogType}
-                </span>
-              </div>
-
-              {/* Tags */}
-              {blog.tags && blog.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {blog.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* RIGHT SIDE — IMAGE */}
-            <div className="relative w-140 h-86 shrink-0">
+             <div className="relative w-full h-30 lg:h-120 shrink-0">
               <Image
                 src={
                   blog?.coverImage && blog.coverImage.trim() !== ""
@@ -229,22 +195,11 @@ useEffect(()=>{
                 }
                 alt={blog.title}
                 fill
-                className="object-fill rounded-br-[60px] rounded-bl-[60px]"
+                className="object-cover "
                 priority
                 sizes="160px"
               />
             </div>
-
-          </div>
-        </div>
-      </div>
-
-
-      {/* ================= MAIN CONTENT AREA ================= */}
-      <div className="max-w-7xl mx-auto px-1 py-6 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5">
-
-        {/* ================= LEFT CONTENT COLUMN ================= */}
-        <div className="space-y-4">
 
           {/* SHORT DESCRIPTION SECTION */}
           {blog.shortDescription && (
@@ -298,6 +253,7 @@ useEffect(()=>{
       font-size: 26px;
       margin: 28px 0 12px;
       font-weight: 700;
+      color: #00306a
     }
 
     .blog-html h3 {
@@ -352,6 +308,13 @@ useEffect(()=>{
                 className="blog-html"
                 dangerouslySetInnerHTML={{ __html: htmlWithIds }}
               />
+
+              
+
+              <div
+                className="blog-html pt-10"
+                dangerouslySetInnerHTML={{ __html: htmlWithIds2 }}
+              />
             </div>
 
 
@@ -372,19 +335,8 @@ useEffect(()=>{
                 ))}
               </div>
 
-              <div className="flex justify-between">
-                {/* DATE */}
-                <p className="text-sm text-gray-500 mt-4">
-                  Published on:{" "}
-                  {new Date(blog.createdAt).toLocaleDateString("en-IN")}
-                  {blog.updatedAt !== blog.createdAt && (
-                    <span className="ml-4">
-                      Last updated:{" "}
-                      {new Date(blog.updatedAt).toLocaleDateString("en-IN")}
-                    </span>
-                  )}
-
-                </p>
+              <div className="flex justify-end">
+             
                 {/* PREV / NEXT NAVIGATION */}
                 <div className="flex justify-between gap-4">
 
@@ -580,9 +532,9 @@ useEffect(()=>{
 
           {/* ================= LATEST BLOGS ================= */}
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-            <h4 className="font-bold text-lg mb-5 text-gray-800">
+            <h3 className="font-bold text-lg mb-5 text-gray-800">
               Latest Blogs
-            </h4>
+            </h3>
 
             <div className="space-y-4">
               {latestBlogs.map((item: any) => (
@@ -606,9 +558,9 @@ useEffect(()=>{
 
                   {/* Content */}
                   <div className="flex flex-col">
-                    <h5 className="text-sm font-semibold text-gray-800 line-clamp-2 group-hover:text-orange-600 transition">
+                    <h4 className="text-sm font-semibold text-gray-800 line-clamp-2 group-hover:text-orange-600 transition">
                       {item.title}
-                    </h5>
+                    </h4>
 
                     <span className="text-xs text-gray-500 mt-1">
                       {new Date(item.createdAt).toLocaleDateString("en-IN", {
@@ -625,9 +577,9 @@ useEffect(()=>{
 
           {/* ================= BLOG CATEGORIES ================= */}
           <div className="bg-white p-5 rounded-xl border border-gray-200">
-            <h4 className="font-semibold text-lg mb-4 text-gray-800">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800">
               Categories
-            </h4>
+            </h3>
 
             <div className="flex flex-wrap gap-3">
               {blogCategory.map((cat: any) => (
@@ -671,9 +623,69 @@ useEffect(()=>{
                 </div>
             </div> */}
 
-            <UniversityCard university= {uniblog.result} />
-            <VideoTestimonialsSlider items={videoData}/>
-            <StudentVisaStories stories={visacontent}/>
+             <div className="relative max-w-7xl  mx-auto pt-6">
+        <h2 className="text-xl   mb-2 ">
+          <span className="text-primary lg:text-4xl font-semibold" >
+            Top universities for Indian students
+          </span>
+       
+
+
+
+        </h2>
+
+      </div>
+            <UniversityCard university= {uniblog.result} perView={3} />
+  
+            {/* <VideoTestimonialsSlider items={videoData}/> */}
+            <div className="py-10">
+            <StudentVisaStories stories={visacontent} isSameLine={"yes"}/>
+
+            </div>
+
+            <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-0">
+            
+                    {/* Text */}
+                    <div className="text-white relative z-10">
+                      <span className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight">{blog?.extraMetadata?.ctaTitle}</span>
+            
+                     <br /> <span
+                        className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
+                        
+                      >{blog?.extraMetadata?.ctaDescription}</span>
+                      <div className="mt-4">
+                        <a href="/contact">
+                          <button className="bg-secondary hover:bg-primary px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md hover:scale-105 transition text-xs sm:text-base">
+                            Contact US
+                          </button>
+                        </a>
+                      </div>
+                    </div>
+            
+                    {/* Decorative circle — only on lg */}
+                    <div className="hidden lg:flex relative h-[325px] items-center justify-center">
+                      <img
+                        src="/images/circle stand.png"
+                        alt=""
+                        className="absolute z-10 w-[90px] bottom-0"
+                        style={{ right: "calc(50% - 45px)" }}
+                      />
+                      <img
+                        src="/images/circle.png"
+                        alt=""
+                        className="w-80 xl:w-96 animate-spin [animation-duration:60s]"
+                      />
+                    </div>
+                  </div>
+            
+                  <img
+                    src="/images/country-building-img.png"
+                    alt=""
+                    className="absolute bottom-0 right-0 w-2/3 sm:w-1/2 object-contain pointer-events-none"
+                  />
+                  <div className="absolute bottom-0 left-0 w-full sm:w-1/2 h-2 sm:h-3 bg-yellow-400" />
+                </section>
             
       <FAQSection Faqres={blog?.faq || []} />
 
@@ -681,3 +693,4 @@ useEffect(()=>{
     </section>
   )
 }
+

@@ -90,7 +90,6 @@ export default function UniversitySliderClient({ universities }) {
           </span>{" "} <br />
           <span className="text-primary font-bold relative lg:text-5xl">
             {universities?.title?.split('||')[1] || null}
-            <span className="absolute right-0 -bottom-1 lg:bottom-0  w-25 h-[2px] lg:h-1 bg-[#F46C44]"></span>
 
 
 

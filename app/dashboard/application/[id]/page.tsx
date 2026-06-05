@@ -42,7 +42,23 @@ import {
   Ban,
   CheckCircle2,
   FileCheck2,
-  ArrowRight
+  ArrowRight,
+  Gift,
+  ClipboardCheck,
+  Hourglass,
+  FileText,
+  ShieldCheck,
+  Check,
+  Calendar,
+  Clock3,
+  Circle,
+  Info,
+  MessageCircle,
+  Mail,
+  BadgeDollarSign,
+  Globe,
+  CalendarDays,
+  Hash
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -53,6 +69,9 @@ import DynamicFormFields from "@/components/dashboard/application/dynamicform";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGlobal } from "@/src/statecontext";
+import ApplicationFlow from "@/components/dashboard/application/applicationFlow";
+import ReviewApplication from "@/components/dashboard/application/reviewApllication";
+import SubmittedtoSchool from "@/components/dashboard/application/submittedtoSchool";
 
 interface ActivityLog {
   _id: string
@@ -406,6 +425,25 @@ export default function StudentDetailsPage() {
 
   const fileInputRef = useRef(null);
 
+  const [showApplicationFlow, setShowApplicationFlow] = useState(true)
+
+  // Add this effect to check if application is already completed/submitted
+  // Modify this useEffect in your component
+  useEffect(() => {
+    if (application) {
+      // TEMPORARILY COMMENT THIS OUT TO SEE THE FLOW
+      // const completedStatuses = ['SubmitToSchool', 'AwaitingSchoolResponse', 'AdmissionProcessing', 'OfferReceived', 'Refused', 'Withdrawn', 'Completed']
+      // if (completedStatuses.includes(application?.primaryStatus)) {
+      //   setShowApplicationFlow(false)
+      // } else {
+      //   setShowApplicationFlow(true)
+      // }
+
+      // Force show the flow for testing
+      setShowApplicationFlow(true)
+    }
+  }, [application])
+
 
   // ==============================
   // FILE UPLOAD
@@ -514,14 +552,13 @@ export default function StudentDetailsPage() {
     // Refused path
     if (['Refused', 'Withdrawn'].includes(status)) {
       return [
-        'Started',
+        'Application Started',
         'ReviewbyOoshas',
         'SubmitToSchool',
         'AwaitingSchoolResponse',
         'AdmissionProcessing',
         'OfferReceived',
-        'Refused',
-        'Withdrawn'
+
       ];
     }
     return [
@@ -531,9 +568,6 @@ export default function StudentDetailsPage() {
       'AwaitingSchoolResponse',
       'AdmissionProcessing',
       'OfferReceived',
-      'VisaProcessing',
-      'PreArrival',
-      'Arrived'
     ];
   };
 
@@ -625,8 +659,101 @@ export default function StudentDetailsPage() {
     );
   }
 
+  const steps = [
+    {
+      id: 1,
+      title: "Application Started",
+      status: "completed",
+      subTitle: "In Progress",
+      step: "Started",
+      icon: FileText,
+    },
+    {
+      id: 2,
+      title: "Under OOSHAS Review",
+      status: "current",
+      step: "ReviewbyOoshas",
+      icon: Clock,
+    },
+    {
+      id: 3,
+      title: "Submitted to School",
+      status: "pending",
+      subTitle: "In Progress",
+      step: "SubmitToSchool",
+      icon: Upload,
+    },
+    {
+      id: 4,
+      title: "Awaiting School Response",
+      status: "pending",
+      subTitle: "In Progress",
+      step: "AwaitingSchoolResponse",
+      icon: Hourglass,
+    },
+    {
+      id: 5,
+      title: "Admission Processing",
+      subTitle: "In Progress",
+      status: "pending",
+      step: "AdmissionProcessing",
+      icon: ClipboardCheck,
+    },
+    {
+      id: 6,
+      title: "Offer Received",
+      subTitle: "In Progress",
+      status: "pending",
+      step: "OfferReceived",
+      icon: Gift,
+    },
+  ];
+
+
+  const tasks = [
+    {
+      title: "Fill Application Form",
+      description:
+        "Provide your personal details",
+      completed: true,
+      action: "Continue",
+    },
+    {
+      title: "Upload Documents",
+      description: "Upload required documents",
+      completed: false,
+      action: "Pending",
+    },
+    {
+      title: "Program Questions",
+      description: "Answer program specific questions",
+      completed: false,
+      action: "Pending",
+    },
+    {
+      title: "Review & Submit",
+      description: "Review your application and submit",
+      completed: false,
+      action: "Pending",
+    },
+  ];
+
+
+
+
+
+
+
+
+
+  const currentStep = steps.find(
+    (item) => item.status === "current"
+  );
+
+  
+
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen ">
       <div className="bg-white overflow-hidden">
         {/* Course Details */}
         <div className="space-y-3 bg-white">
@@ -710,247 +837,396 @@ export default function StudentDetailsPage() {
               </div>
             </div> */}
 
-          <div className="mt-2 w-full border-t pt-5 pb-2">
-            <div className="hidden md:block relative">
-              <div className="relative flex justify-between items-start min-w-max pt-4">
-                {timelineSteps.map((step, index) => {
-                  const StepIcon = step.icon
-                  const isCompleted = isStepCompleted(index)
-                  const isCurrent = isStepCurrent(index)
-                  const isLast = index === timelineSteps.length - 1
-                  const nextStepCompleted = index < timelineSteps.length - 1 && isStepCompleted(index + 1)
-                  return (
-                    <div key={step.key} className="flex relative flex-col items-center relative flex-1 min-w-[120px]">
-                      {!isLast && (
-                        <div className={`absolute top-5 w-full left-1/2 h-0.5 ${nextStepCompleted ? "bg-emerald-600" : "bg-slate-300"}`} style={{ width: 'calc(100% - 40px)', left: 'calc(50% + 20px)' }}></div>
-                      )}
-                      <div className="relative flex items-center justify-center mb-2">
-                        {isCurrent && <div className="absolute w-12 h-12 rounded-full bg-orange-400 animate-ping opacity-20" />}
-                        <div className={`relative w-10 h-10 rounded-full flex items-center justify-center shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)] border-2 transition-all duration-300 ${isCompleted ? "bg-emerald-500 border-emerald-100 text-white" : isCurrent ? "bg-white border-orange-500 text-orange-600 scale-105" : "bg-white border-slate-200 text-slate-600"}`}>
-                          <StepIcon className="w-5 h-5" />
-                          {isCompleted && (
-                            <div className="absolute p-1.5 bg-primary rounded-full shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)]">
-                              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                              </svg>
-                            </div>
+          <div className="w-full py-1">
+            <div className="relative flex items-start justify-between">
+
+              {/* Timeline Line */}
+              <div className="absolute top-7 left-0 right-0 h-[1px] bg-gray-300 z-0" />
+
+              {steps.map((step, index) => {
+                const isActive =
+                  step.status !== "completed" &&
+                  step.status !== "pending";
+
+                return (
+                  <div
+                    key={index}
+                    className="relative flex flex-col items-center z-10"
+                  >
+                    {isActive ? (
+                      <div className="relative flex flex-col items-center">
+
+                        {/* Active Circle */}
+                        <div className="relative z-20">
+                          <div className="absolute inset-0 rounded-full bg-orange-400/20 scale-125" />
+
+                          <div className="w-14 h-14 rounded-full border border-orange-500 bg-white flex items-center justify-center shadow-sm">
+                            <FileText className="w-6 h-6 text-orange-500" />
+                          </div>
+                        </div>
+
+                        {/* Active Card */}
+                        <div className="mt-[-6px] w-[170px] h-[115px] bg-orange-50 border border-orange-500 rounded-lg flex flex-col items-center justify-center px-2">
+                          <h3 className="text-lg font-semibold text-orange-600 text-center leading-6">
+                            {step.title}
+                          </h3>
+
+                          <p className="mt-1 text-xs text-orange-600">
+                            {step.status}
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        {/* Inactive Circle */}
+                        <div
+                          className={`w-14 h-14 rounded-full border flex items-center justify-center
+    ${step.status === "completed"
+                              ? "bg-green-500 border-green-500"
+                              : "bg-white border-gray-300"
+                            }
+  `}
+                        >
+                          {step.icon ? (
+                            <step.icon className={`w-5 h-5  ${step.status === "completed" ? "text-white" : "text-gray-500"}`} />
+                          ) : (
+                            <Clock className="w-5 h-5 text-gray-500" />
                           )}
                         </div>
-                      </div>
-                      <div className={`text-[13px] font-medium text-center break-words whitespace-normal leading-tight max-w-[100px] ${isCurrent ? "text-orange-600" : isCompleted ? "text-emerald-600" : "text-slate-600"}`}>
-                        {step.label}
-                      </div>
-                      {isCurrent && (
-                        <div className="rounded-lg w-50 bg-black text-white z-50 mt-2 p-3">
-                          <h4 className="flex items-center gap-1 font-semibold text-sm">
-                            {step.label} <Link href={`/dashboard/applications/${application._id}/edit?step=${step.key}`} className="inline-flex border shadow-lg  rounded-full p-1 items-center text-xs text-orange-300 hover:text-orange-500">
-                              <ArrowRight className="w-3 h-3 " />
-                            </Link>
-                          </h4>
-                          <p className="text-xs mt-1">
-                            Your step is currently being updated.
+
+                        {/* Title */}
+                        <h4 className="mt-2 text-center font-medium text-sm text-gray-700 max-w-[100px] leading-5">
+                          {step.title}
+                        </h4>
+
+                        {/* Status */}
+                        {step.status && (
+                          <p className={`text-xs  mt-1 ${step.status === "completed" ? "text-black" : "text-gray-500"}`}>
+                            {step.status}
                           </p>
+                        )}
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
-                        </div>
-                      )}
+          {currentStep?.step === "Started" && (
+            <div className="grid grid-cols-12 gap-2">
+            {/* Left Sidebar */}
+            <div className="col-span-3">
+              <div className="bg-white border rounded-xl overflow-hidden">
+                <div className="bg-green-50 border-l-4 border-green-500 px-5 py-4">
+                  <span className="font-semibold text-green-700">
+                    Overview
+                  </span>
+                </div>
+
+                <div className="space-y-1 p-2">
+                  {[
+                    "Application Form",
+                    "Program Questions",
+                    "Payment",
+                    "Communication",
+                    "Activity Log",
+                  ].map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50 cursor-pointer"
+                    >
+                      <FileText className="w-4 h-4 text-gray-500" />
+                      <span className="text-gray-700 text-sm">{item}</span>
                     </div>
+                  ))}
+                </div>
 
-                  )
-                })}
+                <div className="border-t p-6">
+                  <h3 className="font-semibold text-sm">
+                    Need Help?
+                  </h3>
+
+                  <p className="text-sm text-gray-500 mt-2">
+                    Contact our support team for assistance.
+                  </p>
+
+                  <button className="mt-4 text-blue-600 font-medium">
+                    Contact Support →
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div className="md:hidden relative space-y-3 before:absolute before:left-[11px] before:top-2 before:h-full before:w-0.5 before:bg-slate-200">
-              {timelineSteps.map((step, index) => {
-                const StepIcon = step.icon
-                const isCompleted = isStepCompleted(index)
-                const isCurrent = isStepCurrent(index)
-                return (
-                  <div key={step.key} className="relative flex items-start gap-1">
-                    <div className={`absolute -left-[38px] top-1 w-8 h-8 rounded-full border-3 shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)] flex items-center justify-center bg-white z-10 ${isCompleted ? "border-emerald-500 text-emerald-500" : isCurrent ? "border-orange-500 text-orange-500" : "border-slate-300 text-slate-300"}`}>
-                      {isCompleted ? (
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      ) : (
-                        <div className={`w-2 h-2 rounded-full ${isCurrent ? "bg-orange-500 animate-pulse" : "bg-slate-300"}`} />
-                      )}
-                    </div>
-                    <div className={`flex-1 shadow-[inset_0_2px_6px_rgba(0,0,0,0.25)] p-4 rounded-xl border transition-all ${isCurrent ? "bg-orange-50/50 border-orange-200 shadow-sm" : isCompleted ? "bg-emerald-50/30 border-emerald-100" : "bg-white border-slate-100 opacity-70"}`}>
-                      <div className="flex items-center gap-2 mb-1">
-                        <StepIcon className={`w-4 h-4 ${isCurrent ? "text-orange-600" : isCompleted ? "text-emerald-600" : "text-slate-400"}`} />
-                        <span className={`text-sm font-bold ${isCurrent ? "text-orange-900" : "text-slate-700"}`}>{step.label}</span>
-                      </div>
-                      {isCurrent && <p className="text-xs text-orange-700 mt-1 font-medium">In Progress</p>}
+            {/* Main Content */}
+            <div className="col-span-9 space-y-2">
+              {/* Application Started Card */}
+              <div className="bg-white border rounded-xl p-8 flex justify-between">
+
+
+                <div className="w-sm">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <h2 className="text-xl font-bold">
+                      Application Started
+                    </h2>
+
+                    <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                      In Progress
+                    </span>
+                  </div>
+
+                  <p className="mt-4 text-gray-600 w-xl text-lg">
+                    You have started your application for Bachelor of Computer Science at University of Bologna.
+                  </p>
+
+                  <div className="flex items-center gap-3 mt-6">
+                    <Calendar className="w-5 h-5 text-green-600" />
+
+                    <div>
+                      <p className="text-sm text-gray-500">
+                        Started On
+                      </p>
+
+                      <p className="font-semibold">
+                        20 May 2025, 10:30 AM
+                      </p>
                     </div>
                   </div>
-                )
-              })}
-            </div>
-          </div>
 
-          {/* Tab Navigation - Only 3 tabs */}
-          <div className="border-b border-gray-200 overflow-x-auto no-scrollbar px-3">
-            <div className="flex min-w-max">
-              {[
-                { id: 'information', label: 'Information', icon: User },
-                { id: 'documents', label: 'Documents', icon: FileCheck2 },
-                { id: 'activity', label: 'Comments', icon: Activity }
-              ].map(tab => {
-                const TabIcon = tab.icon
-                const isActive = activeTab === tab.id
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`relative flex items-center gap-1.5 px-4 py-2 text-base font-medium whitespace-nowrap transition-all duration-200 ${isActive ? 'text-orange-600' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'}`}
-                  >
-                    {/* <TabIcon className="w-4 h-4" /> */}
-                    {tab.label}
-                    {tab.id === 'documents' && unreadCount > 0 && (
-                      <span className="ml-1 px-1.5 py-0.5 bg-red-500 text-white text-xs rounded-full">{unreadCount}</span>
-                    )}
-                    {isActive && <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-orange-500 rounded-full" />}
+                  <button className="mt-6 border border-blue-500 text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-blue-50">
+                    Continue Application
                   </button>
-                )
-              })}
-            </div>
-          </div>
-        </div>
+                </div>
 
-        {/* Information Tab Content */}
-        {activeTab === 'information' && (
-          <div className="px-3 py-8">
-            <div>
-
-              <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
-                Basic Details
-              </h2>
-              <div className="grid grid-cols-4 gap-6">
-                <DetailItem
-                  label="Full Name"
-                  value={application?.student?.name || "N/A"}
-                />
-                <DetailItem
-                  label="Gender"
-                  value={application?.student?.gender || "N/A"}
-                />
-                <DetailItem
-                  label="Nationality"
-                  value={application?.student?.nationality || "N/A"}
-                />
-                <DetailItem
-                  label="Date of Birth"
-                  value={application?.student?.dateOfBirth ? format(new Date(application.student.dateOfBirth), 'yyyy-MM-dd') :
-                    "N/A"}
-                />
-                <DetailItem
-                  label="Application ID"
-                  value={application?.applicationNumber || "N/A"}
-                />
-                <DetailItem
-                  label="E-Mail"
-                  value={application?.student?.email || "N/A"}
-                />
-                <DetailItem
-                  label="Passport No."
-                  value={application?.student?.passportNumber || "N/A"}
-                />
-                <DetailItem
-                  label="Created At"
-                  value={application?.createdAt ? format(new Date(application.createdAt), 'dd/MM/yyyy hh:mm a') : "N/A"}
-                />
+                <div className="shrink-0">
+                  <img
+                    src="https://png.pngtree.com/png-vector/20260505/ourmid/pngtree-d-purple-clipboard-checklist-icon-with-yellow-pencil-for-task-management-png-image_19233480.webp"
+                    alt=""
+                    className="w-48 lg:w-60"
+                  />
+                </div>
 
               </div>
-            </div>
+              <div className="flex gap-6">
 
-            {/* Course Details Section */}
-            <div className="mt-8 border-t pt-8">
-              <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
-                Course Details
-              </h2>
-              {application.course &&
-                (() => {
-                  const courseDetails = [
-                    {
-                      label: "Course Name",
-                      value: application?.course?.name,
-                    },
-                    {
-                      label: "University",
-                      value: application?.course?.university?.name,
-                    },
-                    {
-                      label: "Address",
-                      value: application?.course?.university?.address,
-                    },
 
-                    {
-                      label: "Course Intake",
-                      value: application?.intake,
-                    },
-                    {
-                      label: "Level",
-                      value: application?.course?.level,
-                    },
-                    {
-                      label: "Duration",
-                      value: application?.course?.duration,
-                    },
-                    {
-                      label: "Tuition Fee",
-                      value: `${application?.course?.currency || ""} ${application?.course?.tuitionFee || ""}`,
-                    },
-                    {
-                      label: "QS Ranking",
-                      value:
-                        application?.course?.university?.uni_rank?.find(
-                          (item) => item.type === "QS World"
-                        )?.rank || "N/A",
-                    },
-                  ];
-                  return (
-                    <div className="grid grid-cols-4 gap-6 items-center">
-                      {courseDetails.map((item, index) => (
-                        <div key={index}>
-                          <p className="text-sm font-medium text-gray-800 mb-1">{item.label}</p>
-                          <h3 className="font-medium text-gray-800">{item.value || "N/A"}</h3>
+
+
+                {/* Application Tasks */}
+                <div className="bg-white border rounded-xl p-6">
+                  <h3 className="text-xl font-semibold ">
+                    Application Tasks
+                  </h3>
+
+                  {tasks.map((task, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between py-2 border-b last:border-b-0"
+                    >
+                      <div className="flex items-start gap-4 px-6">
+                        <div
+                          className={`w-7 h-7 rounded-full border-2 flex items-center justify-center ${task.completed
+                              ? "bg-green-500 border-green-500"
+                              : "border-gray-300"
+                            }`}
+                        >
+                          {task.completed && (
+                            <Check className="w-4 h-4 text-white" />
+                          )}
                         </div>
-                      ))}
-                    </div>)
-                })()
-              }
-            </div>
+
+                        <div>
+                          <h4 className="font-semibold">
+                            {task.title}
+                          </h4>
+
+                          <p className="text-gray-500 text-sm">
+                            {task.description}
+                          </p>
+                        </div>
+                      </div>
+
+                      {task.completed ? (
+                        <button className="text-blue-600 font-medium">
+                          Continue →
+                        </button>
+                      ) : (
+                        <span className="px-3 py-1 border rounded-full text-sm text-gray-500">
+                          Pending
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
 
 
-            {/* Document Downloads */}
-            {/* <div className="mt-12 border-t pt-8">
-              <h3 className="font-semibold text-gray-700 mb-5">Document Downloads</h3>
-              <div className="flex flex-wrap gap-4">
-                {[
-                  "CHANGE OF AGENT",
-                  "APPOINTMENT OF AGENT",
-                  "SPONSORSHIP LETTER",
-                  "NO OBJECTION LETTER",
-                ].map((item, index) => (
-                  <button
-                    key={index}
-                    className="bg-[#ff6a1a] hover:bg-[#f45f0d] text-white px-6 py-3 rounded-md text-sm font-medium flex items-center gap-2"
-                  >
-                    {item}
-                    <Download size={16} />
-                  </button>
-                ))}
+
+                {/* Right Panel */}
+                <div className="">
+                  <div className="bg-white border rounded-xl p-6">
+                    <h3 className="text-2xl font-semibold mb-6">
+                      Helpful Information
+                    </h3>
+
+                    <div className="space-y-8">
+                      <div className="flex gap-4">
+                        <Clock className="text-green-600" />
+
+                        <div>
+                          <h4 className="font-semibold">
+                            Estimated Time
+                          </h4>
+
+                          <p className="text-gray-500">
+                            20–30 minutes to complete
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-4">
+                        <FileText className="text-blue-600" />
+
+                        <div>
+                          <h4 className="font-semibold">
+                            Information Needed
+                          </h4>
+
+                          <p className="text-gray-500">
+                            Personal details, academic records,
+                            ID proof, etc.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-4">
+                        <ShieldCheck className="text-green-600" />
+
+                        <div>
+                          <h4 className="font-semibold">
+                            Save Progress
+                          </h4>
+
+                          <p className="text-gray-500">
+                            You can save progress and continue later.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div> */}
-          </div>
-        )}
+              {/* Tabs */}
+              <div className="bg-white border rounded-xl">
+                <div className="border-b border-gray-200 overflow-x-auto no-scrollbar px-3">
+                  <div className="flex min-w-max">
+                    {[
+                      { id: "information", label: "Information" },
+                      { id: "documents", label: "Documents" },
+                      { id: "activity", label: "Comments" }
+                    ].map((tab) => {
+                      const isActive = activeTab === tab.id;
 
-        {/* Documents Tab Content */}
-        {activeTab === "documents" && (
-          <div className="min-h-screen">
-            {/* Top Tabs */}
-            {/* <div className="border-b border-gray-200 bg-white px-6">
+                      return (
+                        <button
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id as any)}
+                          className={`relative px-4 py-3 text-base font-medium whitespace-nowrap transition-all duration-200 ${isActive
+                              ? "text-orange-600"
+                              : "text-gray-500 hover:text-gray-800"
+                            }`}
+                        >
+                          {tab.label}
+
+                          {isActive && (
+                            <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-orange-500 rounded-full" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+
+
+                {/* Information Tab Content */}
+                {activeTab === 'information' && (
+                  <div className="px-3 py-8">
+                    <div>
+                      <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
+                        Basic Details
+                      </h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <DetailItem
+                          label="Full Name"
+                          value={application?.student?.name || "N/A"}
+                        />
+                        <DetailItem
+                          label="Gender"
+                          value={application?.student?.gender || "N/A"}
+                        />
+                        <DetailItem
+                          label="Nationality"
+                          value={application?.student?.nationality || "N/A"}
+                        />
+                        <DetailItem
+                          label="Date of Birth"
+                          value={application?.student?.dateOfBirth ? format(new Date(application.student.dateOfBirth), 'yyyy-MM-dd') : "N/A"}
+                        />
+                        <DetailItem
+                          label="Application ID"
+                          value={application?.applicationNumber || "N/A"}
+                        />
+                        <DetailItem
+                          label="E-Mail"
+                          value={application?.student?.email || "N/A"}
+                        />
+                        <DetailItem
+                          label="Passport No."
+                          value={application?.student?.passportNumber || "N/A"}
+                        />
+                        <DetailItem
+                          label="Created At"
+                          value={application?.createdAt ? format(new Date(application.createdAt), 'dd/MM/yyyy hh:mm a') : "N/A"}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Course Details Section */}
+                    <div className="mt-8 border-t pt-8">
+                      <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
+                        Course Details
+                      </h2>
+                      {application.course && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                          {[
+                            { label: "Course Name", value: application?.course?.name },
+                            { label: "University", value: application?.course?.university?.name },
+                            { label: "Address", value: application?.course?.university?.address },
+                            { label: "Course Intake", value: application?.intake },
+                            { label: "Level", value: application?.course?.level },
+                            { label: "Duration", value: application?.course?.duration },
+                            { label: "Tuition Fee", value: `${application?.course?.currency || ""} ${application?.course?.tuitionFee || ""}` },
+                            { label: "QS Ranking", value: application?.course?.university?.uni_rank?.find((item: any) => item.type === "QS World")?.rank || "N/A" },
+                          ].map((item, index) => (
+                            <div key={index}>
+                              <p className="text-sm font-medium text-gray-800 mb-1">{item.label}</p>
+                              <h3 className="font-medium text-gray-800">{item.value || "N/A"}</h3>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+
+                  </div>
+                )}
+
+
+                {/* Documents Tab Content */}
+                {activeTab === "documents" && (
+                  <div className="min-h-screen">
+                    {/* Top Tabs */}
+                    {/* <div className="border-b border-gray-200 bg-white px-6">
             <div className="flex items-center gap-8 overflow-x-auto">
               {["All", "Pending", "Approved", "Rejected"].map((status) => (
                 <button
@@ -977,564 +1253,586 @@ export default function StudentDetailsPage() {
             </div>
           </div> */}
 
-            {/* Main Content */}
-            <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-6 p-6">
+                    {/* Main Content */}
+                    <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-6 p-6">
 
-              {/* Upload Section */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-8 min-h-[520px] flex flex-col items-center justify-center text-center shadow-sm">
-                <div className="w-24 h-24 rounded-full bg-orange-50 flex items-center justify-center mb-6">
-                  <Upload className="w-12 h-12 text-[#ff6a1a]" />
-                </div>
+                      {/* Upload Section */}
+                      <div className="bg-white border border-gray-200 rounded-2xl p-8 min-h-[520px] flex flex-col items-center justify-center text-center shadow-sm">
+                        <div className="w-24 h-24 rounded-full bg-orange-50 flex items-center justify-center mb-6">
+                          <Upload className="w-12 h-12 text-[#ff6a1a]" />
+                        </div>
 
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  Upload Documents
-                </h3>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                          Upload Documents
+                        </h3>
 
-                <p className="text-sm text-gray-500 mb-6 max-w-[260px]">
-                  Please upload only color scan copies in PDF, DOC, or image format.
-                </p>
+                        <p className="text-sm text-gray-500 mb-6 max-w-[260px]">
+                          Please upload only color scan copies in PDF, DOC, or image format.
+                        </p>
 
-                <button className="px-6 py-3 rounded-xl bg-[#ff6a1a] hover:bg-[#f45f0d] text-white font-medium shadow-md transition-all duration-200 flex items-center gap-2">
-                  <Upload className="w-4 h-4" />
-                  Upload File
-                </button>
-              </div>
+                        <button className="px-6 py-3 rounded-xl bg-[#ff6a1a] hover:bg-[#f45f0d] text-white font-medium shadow-md transition-all duration-200 flex items-center gap-2">
+                          <Upload className="w-4 h-4" />
+                          Upload File
+                        </button>
+                      </div>
 
-              {/* Documents List */}
-              <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                <div className="max-h-[520px] overflow-y-auto custom-scrollbar">
-                  {application?.documents?.filter((doc: any) => {
-                    if (activeDocTab === "All") return doc.type === "user";
-                    return (
-                      doc.status === activeDocTab && doc.type === "user"
-                    );
-                  }).length === 0 ? (
-                    <div className="text-center py-20">
-                      <div className="text-6xl mb-4">📄</div>
-                      <p className="text-gray-500 text-sm">
-                        No documents found
-                      </p>
-                    </div>
-                  ) : (
-                    application?.documents
-                      ?.filter((doc: any) => {
-                        if (activeDocTab === "All")
-                          return doc.type === "user";
-
-                        return (
-                          doc.status === activeDocTab &&
-                          doc.type === "user"
-                        );
-                      })
-                      .map((req: any, index: number) => (
-                        <motion.div
-                          key={req._id || index}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.25 }}
-                          whileHover={{ backgroundColor: "#fafafa" }}
-                          className="flex items-center justify-between gap-4 px-6 py-5 border-b border-gray-100 transition-all"
-                        >
-                          {/* Left */}
-                          <div className="flex items-center gap-4 flex-1 min-w-0">
-                            {/* Status Icon */}
-                            <div
-                              className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${req.status === "Approved"
-                                ? "bg-green-100 text-green-600"
-                                : req.status === "Rejected"
-                                  ? "bg-red-100 text-red-600"
-                                  : req.status === "inreview"
-                                    ? "bg-yellow-100 text-yellow-600"
-                                    : "bg-gray-100 text-gray-500"
-                                }`}
-                            >
-                              {getStatusIcon(req.status)}
-                            </div>
-
-                            {/* File Details */}
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <h4 className="text-sm font-medium text-gray-800 truncate">
-                                  {req.name}
-                                </h4>
-
-                                <span
-                                  className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${req.required === "required"
-                                    ? "bg-red-50 text-red-700 border border-red-200"
-                                    : req.required === "optional"
-                                      ? "bg-gray-50 text-gray-700 border border-gray-200"
-                                      : "bg-purple-50 text-purple-700 border border-purple-200"
-                                    }`}
-                                >
-                                  {req.required === "required"
-                                    ? "Required"
-                                    : req.required === "optional"
-                                      ? "Optional"
-                                      : "Early Access"}
-                                </span>
-                              </div>
-
-                              <p className="text-xs text-gray-400 mt-1">
-                                Uploaded on{" "}
-                                {req.createdAt
-                                  ? new Date(req.createdAt).toDateString()
-                                  : "N/A"}
+                      {/* Documents List */}
+                      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                        <div className="max-h-[520px] overflow-y-auto custom-scrollbar">
+                          {application?.documents?.filter((doc: any) => {
+                            if (activeDocTab === "All") return doc.type === "user";
+                            return (
+                              doc.status === activeDocTab && doc.type === "user"
+                            );
+                          }).length === 0 ? (
+                            <div className="text-center py-20">
+                              <div className="text-6xl mb-4">📄</div>
+                              <p className="text-gray-500 text-sm">
+                                No documents found
                               </p>
                             </div>
-                          </div>
+                          ) : (
+                            application?.documents
+                              ?.filter((doc: any) => {
+                                if (activeDocTab === "All")
+                                  return doc.type === "user";
 
-                          {/* Right Actions */}
-                          <div className="flex items-center gap-4 shrink-0">
-                            {/* Status Badge */}
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(
-                                req.status
-                              )}`}
-                            >
-                              {req.status === "Rejected" && "Rejected"}
-                              {req.status === "inreview" && "In Review"}
-                              {req.status === "Approved" && "Approved"}
-                              {req.status === "Pending" && "Pending"}
-                            </span>
-
-                            {/* View */}
-                            <button className="text-[#ff6a1a] hover:scale-110 transition-all">
-                              <Eye className="w-5 h-5" />
-                            </button>
-
-                            {/* Download */}
-                            <button className="text-[#ff6a1a] hover:scale-110 transition-all">
-                              <Download className="w-5 h-5" />
-                            </button>
-
-                            {/* Answer */}
-                            {(req.status === "Pending" ||
-                              req.status === "Rejected") && (
-                                <button
-                                  onClick={() => {
-                                    setSelectedRequirement(req);
-                                    setIsDrawerOpen(true);
-                                  }}
-                                  className="px-4 py-2 bg-[#ff6a1a] hover:bg-[#f45f0d] text-white text-sm font-medium rounded-lg transition-all duration-200"
+                                return (
+                                  doc.status === activeDocTab &&
+                                  doc.type === "user"
+                                );
+                              })
+                              .map((req: any, index: number) => (
+                                <motion.div
+                                  key={req._id || index}
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.25 }}
+                                  whileHover={{ backgroundColor: "#fafafa" }}
+                                  className="flex items-center justify-between gap-4 px-6 py-5 border-b border-gray-100 transition-all"
                                 >
-                                  Answer
-                                </button>
-                              )}
-                          </div>
-                        </motion.div>
-                      ))
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+                                  {/* Left */}
+                                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                                    {/* Status Icon */}
+                                    <div
+                                      className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${req.status === "Approved"
+                                        ? "bg-green-100 text-green-600"
+                                        : req.status === "Rejected"
+                                          ? "bg-red-100 text-red-600"
+                                          : req.status === "inreview"
+                                            ? "bg-yellow-100 text-yellow-600"
+                                            : "bg-gray-100 text-gray-500"
+                                        }`}
+                                    >
+                                      {getStatusIcon(req.status)}
+                                    </div>
 
-        {/* Activity Log Tab Content */}
-        {activeTab === 'activity' && (
-          <div className="bg-white">
+                                    {/* File Details */}
+                                    <div className="min-w-0 flex-1">
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        <h4 className="text-sm font-medium text-gray-800 truncate">
+                                          {req.name}
+                                        </h4>
 
-            {/* Header */}
-            <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Ticket Communication History
-                </h3>
-                <p>Track all agent updates, internal discussions, and resolution milestones.</p>
-              </div>
+                                        <span
+                                          className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${req.required === "required"
+                                            ? "bg-red-50 text-red-700 border border-red-200"
+                                            : req.required === "optional"
+                                              ? "bg-gray-50 text-gray-700 border border-gray-200"
+                                              : "bg-purple-50 text-purple-700 border border-purple-200"
+                                            }`}
+                                        >
+                                          {req.required === "required"
+                                            ? "Required"
+                                            : req.required === "optional"
+                                              ? "Optional"
+                                              : "Early Access"}
+                                        </span>
+                                      </div>
 
-              <button
-                onClick={() => setIsCommentModalOpen(true)}
-                className="bg-[#F26D44] hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md transition-colors"
-              >
-                ADD COMMENTS
-              </button>
-            </div>
+                                      <p className="text-xs text-gray-400 mt-1">
+                                        Uploaded on{" "}
+                                        {req.createdAt
+                                          ? new Date(req.createdAt).toDateString()
+                                          : "N/A"}
+                                      </p>
+                                    </div>
+                                  </div>
 
-            {/* Table Header */}
-            <div className="grid grid-cols-12 gap-4 bg-gray-100 px-8 py-4 text-sm font-semibold text-gray-700 border-b">
-              <div className="col-span-2">Details</div>
-              <div className="col-span-6">Comment</div>
-              <div className="col-span-3">Status</div>
-              <div className="col-span-1">Commented By</div>
-            </div>
+                                  {/* Right Actions */}
+                                  <div className="flex items-center gap-4 shrink-0">
+                                    {/* Status Badge */}
+                                    <span
+                                      className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(
+                                        req.status
+                                      )}`}
+                                    >
+                                      {req.status === "Rejected" && "Rejected"}
+                                      {req.status === "inreview" && "In Review"}
+                                      {req.status === "Approved" && "Approved"}
+                                      {req.status === "Pending" && "Pending"}
+                                    </span>
 
-            {/* Messages */}
-            <div className="max-h-[650px] overflow-y-auto divide-y divide-gray-200">
+                                    {/* View */}
+                                    <button className="text-[#ff6a1a] hover:scale-110 transition-all">
+                                      <Eye className="w-5 h-5" />
+                                    </button>
 
-              {messageList?.map((item, index) => (
+                                    {/* Download */}
+                                    <button className="text-[#ff6a1a] hover:scale-110 transition-all">
+                                      <Download className="w-5 h-5" />
+                                    </button>
 
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="grid grid-cols-12 gap-4 px-8 py-6 hover:bg-gray-50 transition-colors"
-                >
-
-                  {/* Details */}
-                  <div className="col-span-2">
-
-                    <div className="text-sm text-gray-700 leading-6">
-
-                      <p className="font-medium">
-                        {item?.createdAt.split("T")[0]}
-                      </p>
-
-                      <div className="mt-4">
-
-                        <p className="font-semibold text-gray-800">
-                          Subject:
-                        </p>
-
-                        <p className="font-semibold text-gray-900 mt-2">
-                          {item?.extra_content?.subject}
-                        </p>
-
+                                    {/* Answer */}
+                                    {(req.status === "Pending" ||
+                                      req.status === "Rejected") && (
+                                        <button
+                                          onClick={() => {
+                                            setSelectedRequirement(req);
+                                            setIsDrawerOpen(true);
+                                          }}
+                                          className="px-4 py-2 bg-[#ff6a1a] hover:bg-[#f45f0d] text-white text-sm font-medium rounded-lg transition-all duration-200"
+                                        >
+                                          Answer
+                                        </button>
+                                      )}
+                                  </div>
+                                </motion.div>
+                              ))
+                          )}
+                        </div>
                       </div>
-
                     </div>
-
                   </div>
+                )}
 
-
-                  {/* Comment */}
-                  <div className="col-span-6">
-
-                    <div className="space-y-3">
-
-                      <div className="text-gray-700 leading-7 text-[15px]">
-                        {item.content}
-                      </div>
-
-                      {item.extra_content?.attachments?.[0]?.name && (
-
-                        <a
-                          href={`https://api.ooshasglobal.com${item.extra_content?.attachments?.[0]?.url}`}
-                          target="_blank"
-                          className="flex items-center gap-2"
-                        >
-                          <Paperclip className="w-4 h-4 text-slate-400" />
-
-                          {item.extra_content?.attachments?.[0]?.name}
-
-                        </a>
-
-                      )}
-
-                    </div>
-
-                  </div>
-
-
-                  {/* Status */}
-                  <div className="col-span-3">
-
-                    <div className="space-y-5 text-sm">
-
-                      <div>
-
-                        <p className="font-bold text-gray-800">
-                          Primary Status:
-                        </p>
-
-                        <p className="text-gray-700">
-                          {item.primaryStatus || "Application Processed"}
-                        </p>
-
-                      </div>
-
-                      <div>
-
-                        <p className="font-bold text-gray-800">
-                          Message Status:
-                        </p>
-
-                        <p className="text-gray-700">
-                          {item?.isRead ? "true" : "false"}
-                        </p>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-
-                  {/* User */}
-                  <div className="col-span-1 flex flex-col items-center justify-between">
-                                
-                    <span className="text-gray-700 font-medium">
-                      {item.userType === "student" ? "Me" : item.userType}
-                    </span>
-
-                    {item.userType !== "student" && !item?.isRead && (
-                      <button
-                        onClick={() => {
-                          setIsCommentModalOpen(true);
-                          setMessageSubject(item?.extra_content?.subject);
-                          markMessagesAsRead();
-                        }}
-                        className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-1 px-2 rounded-md transition-colors"
-                      >
-                        reply <SendHorizonal className="h-4" />
-                      </button>
-                    )}
-
-                  </div>
-                </motion.div>
-
-              ))}
-
-            </div>
-
-
-            {/* Modal */}
-            <AnimatePresence>
-
-              {isCommentModalOpen && (
-
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="fixed inset-0 z-50 flex items-end justify-end p-6"
-                >
-
-                  <motion.div
-                    initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                    transition={{ type: "spring", duration: 0.4 }}
-                    className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200"
-                  >
+                {/* Activity Log Tab Content */}
+                {activeTab === 'activity' && (
+                  <div className="bg-white">
 
                     {/* Header */}
-                    <div className="bg-white border-b border-slate-100 px-5 py-4">
-
-                      <div className="flex items-center justify-between">
-
-                        <div>
-
-                          <h3 className="text-base font-bold text-slate-800">
-                            New Message
-                          </h3>
-
-                          <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
-                            <span>To</span>
-                            <span className="font-medium text-slate-700">
-                              Ooshas
-                            </span>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => setIsCommentModalOpen(false)}
-                          className="text-slate-400 hover:text-slate-600 transition-colors"
-                        >
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
+                    <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          Ticket Communication History
+                        </h3>
+                        <p>Track all agent updates, internal discussions, and resolution milestones.</p>
                       </div>
+
+                      <button
+                        onClick={() => setIsCommentModalOpen(true)}
+                        className="bg-[#F26D44] hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md transition-colors"
+                      >
+                        ADD COMMENTS
+                      </button>
+                    </div>
+
+                    {/* Table Header */}
+                    <div className="grid grid-cols-12 gap-4 bg-gray-100 px-8 py-4 text-sm font-semibold text-gray-700 border-b">
+                      <div className="col-span-2">Details</div>
+                      <div className="col-span-6">Comment</div>
+                      <div className="col-span-3">Status</div>
+                      <div className="col-span-1">Commented By</div>
+                    </div>
+
+                    {/* Messages */}
+                    <div className="max-h-[650px] overflow-y-auto divide-y divide-gray-200">
+
+                      {messageList?.map((item, index) => (
+
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className="grid grid-cols-12 gap-4 px-8 py-6 hover:bg-gray-50 transition-colors"
+                        >
+
+                          {/* Details */}
+                          <div className="col-span-2">
+
+                            <div className="text-sm text-gray-700 leading-6">
+
+                              <p className="font-medium">
+                                {item?.createdAt.split("T")[0]}
+                              </p>
+
+                              <div className="mt-4">
+
+                                <p className="font-semibold text-gray-800">
+                                  Subject:
+                                </p>
+
+                                <p className="font-semibold text-gray-900 mt-2">
+                                  {item?.extra_content?.subject}
+                                </p>
+
+                              </div>
+
+                            </div>
+
+                          </div>
+
+
+                          {/* Comment */}
+                          <div className="col-span-6">
+
+                            <div className="space-y-3">
+
+                              <div className="text-gray-700 leading-7 text-[15px]">
+                                {item.content}
+                              </div>
+
+                              {item.extra_content?.attachments?.[0]?.name && (
+
+                                <a
+                                  href={`https://api.ooshasglobal.com${item.extra_content?.attachments?.[0]?.url}`}
+                                  target="_blank"
+                                  className="flex items-center gap-2"
+                                >
+                                  <Paperclip className="w-4 h-4 text-slate-400" />
+
+                                  {item.extra_content?.attachments?.[0]?.name}
+
+                                </a>
+
+                              )}
+
+                            </div>
+
+                          </div>
+
+
+                          {/* Status */}
+                          <div className="col-span-3">
+
+                            <div className="space-y-5 text-sm">
+
+                              <div>
+
+                                <p className="font-bold text-gray-800">
+                                  Primary Status:
+                                </p>
+
+                                <p className="text-gray-700">
+                                  {item.primaryStatus || "Application Processed"}
+                                </p>
+
+                              </div>
+
+                              <div>
+
+                                <p className="font-bold text-gray-800">
+                                  Message Status:
+                                </p>
+
+                                <p className="text-gray-700">
+                                  {item?.isRead ? "true" : "false"}
+                                </p>
+
+                              </div>
+
+                            </div>
+
+                          </div>
+
+
+                          {/* User */}
+                          <div className="col-span-1 flex flex-col items-center justify-between">
+
+                            <span className="text-gray-700 font-medium">
+                              {item.userType === "student" ? "Me" : item.userType}
+                            </span>
+
+                            {item.userType !== "student" && !item?.isRead && (
+                              <button
+                                onClick={() => {
+                                  setIsCommentModalOpen(true);
+                                  setMessageSubject(item?.extra_content?.subject);
+                                  markMessagesAsRead();
+                                }}
+                                className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-1 px-2 rounded-md transition-colors"
+                              >
+                                reply <SendHorizonal className="h-4" />
+                              </button>
+                            )}
+
+                          </div>
+                        </motion.div>
+
+                      ))}
+
                     </div>
 
 
-                    {/* Body */}
-                    <div className="p-5 space-y-5">
+                    {/* Modal */}
+                    <AnimatePresence>
 
-                      {/* Subject */}
-                      <div className="space-y-1.5">
+                      {isCommentModalOpen && (
 
-                        <div className="flex items-center gap-2 text-sm">
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="fixed inset-0 z-50 flex items-end justify-end p-6"
+                        >
 
-                          <label className="font-medium text-slate-600 w-16">
-                            Subject
-                          </label>
-
-                          <select
-                            value={messageSubject}
-                            onChange={(e) => setMessageSubject(e.target.value)}
-                            className="flex-1 bg-transparent border-b border-slate-200 py-1.5 text-sm text-slate-700 outline-none focus:border-orange-500"
+                          <motion.div
+                            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                            transition={{ type: "spring", duration: 0.4 }}
+                            className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200"
                           >
 
-                            <option value="">
-                              Select a subject...
-                            </option>
+                            {/* Header */}
+                            <div className="bg-white border-b border-slate-100 px-5 py-4">
 
-                            <option value="Application Processed">
-                              Application Processed
-                            </option>
+                              <div className="flex items-center justify-between">
 
-                            <option value="Document Uploaded">
-                              Document Uploaded
-                            </option>
+                                <div>
 
-                            <option value="University Update">
-                              University Update
-                            </option>
+                                  <h3 className="text-base font-bold text-slate-800">
+                                    New Message
+                                  </h3>
 
-                          </select>
-
-                        </div>
-
-                      </div>
-
-
-                      {/* Message */}
-                      <div className="space-y-1.5">
-
-                        <textarea
-                          rows={5}
-                          value={messageText}
-                          onChange={(e) => setMessageText(e.target.value)}
-                          placeholder="Type your comment details here..."
-                          className="w-full p-3 outline-none resize-none text-sm text-slate-700 placeholder-slate-400 bg-slate-50 rounded-xl border border-slate-100 focus:border-orange-500 focus:bg-white transition-all"
-                        />
-
-                      </div>
-
-
-                      {/* Attachments */}
-                      {messageAttachments.length > 0 && (
-
-                        <div className="space-y-2">
-
-                          <div className="flex flex-wrap gap-2">
-
-                            {messageAttachments.map((file, index) => (
-
-                              <div
-                                key={index}
-                                className="flex items-center gap-1.5 bg-slate-100 rounded-full px-3 py-1 text-xs text-slate-600"
-                              >
-
-                                <svg
-                                  className="w-3 h-3 text-slate-400"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
+                                  <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
+                                    <span>To</span>
+                                    <span className="font-medium text-slate-700">
+                                      Ooshas
+                                    </span>
+                                  </div>
+                                </div>
+                                <button
+                                  onClick={() => setIsCommentModalOpen(false)}
+                                  className="text-slate-400 hover:text-slate-600 transition-colors"
                                 >
+                                  <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M6 18L18 6M6 6l12 12"
+                                    />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
 
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                                  />
 
-                                </svg>
+                            {/* Body */}
+                            <div className="p-5 space-y-5">
 
-                                <span className="max-w-[120px] truncate">
-                                  {file.name}
-                                </span>
+                              {/* Subject */}
+                              <div className="space-y-1.5">
 
+                                <div className="flex items-center gap-2 text-sm">
+
+                                  <label className="font-medium text-slate-600 w-16">
+                                    Subject
+                                  </label>
+
+                                  <select
+                                    value={messageSubject}
+                                    onChange={(e) => setMessageSubject(e.target.value)}
+                                    className="flex-1 bg-transparent border-b border-slate-200 py-1.5 text-sm text-slate-700 outline-none focus:border-orange-500"
+                                  >
+
+                                    <option value="">
+                                      Select a subject...
+                                    </option>
+
+                                    <option value="Application Processed">
+                                      Application Processed
+                                    </option>
+
+                                    <option value="Document Uploaded">
+                                      Document Uploaded
+                                    </option>
+
+                                    <option value="University Update">
+                                      University Update
+                                    </option>
+
+                                  </select>
+
+                                </div>
+
+                              </div>
+
+
+                              {/* Message */}
+                              <div className="space-y-1.5">
+
+                                <textarea
+                                  rows={5}
+                                  value={messageText}
+                                  onChange={(e) => setMessageText(e.target.value)}
+                                  placeholder="Type your comment details here..."
+                                  className="w-full p-3 outline-none resize-none text-sm text-slate-700 placeholder-slate-400 bg-slate-50 rounded-xl border border-slate-100 focus:border-orange-500 focus:bg-white transition-all"
+                                />
+
+                              </div>
+
+
+                              {/* Attachments */}
+                              {messageAttachments.length > 0 && (
+
+                                <div className="space-y-2">
+
+                                  <div className="flex flex-wrap gap-2">
+
+                                    {messageAttachments.map((file, index) => (
+
+                                      <div
+                                        key={index}
+                                        className="flex items-center gap-1.5 bg-slate-100 rounded-full px-3 py-1 text-xs text-slate-600"
+                                      >
+
+                                        <svg
+                                          className="w-3 h-3 text-slate-400"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                                          />
+
+                                        </svg>
+
+                                        <span className="max-w-[120px] truncate">
+                                          {file.name}
+                                        </span>
+
+                                        <button
+                                          type="button"
+                                          onClick={() => removeUploadedFile(index)}
+                                          className="text-slate-400 hover:text-rose-500 ml-1"
+                                        >
+                                          ×
+                                        </button>
+
+                                      </div>
+
+                                    ))}
+
+                                  </div>
+
+                                </div>
+
+                              )}
+
+
+                              {/* Actions */}
+                              <div className="flex items-center justify-end gap-2 pt-2">
+
+                                {/* Upload */}
                                 <button
                                   type="button"
-                                  onClick={() => removeUploadedFile(index)}
-                                  className="text-slate-400 hover:text-rose-500 ml-1"
+                                  disabled={
+                                    messageSubject !== "Document Uploaded" ||
+                                    isAttachmentUploading ||
+                                    isCommentSubmitting
+                                  }
+                                  onClick={() => fileInputRef.current.click()}
+                                  className="p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-50"
                                 >
-                                  ×
+
+                                  <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                                    />
+
+                                  </svg>
+
+                                </button>
+
+
+                                {/* Send */}
+                                <button
+                                  type="button"
+                                  onClick={sendMessage}
+                                  disabled={
+                                    isCommentSubmitting ||
+                                    isAttachmentUploading ||
+                                    !messageText.trim()
+                                  }
+                                  className="bg-orange-500 hover:bg-orange-600 disabled:bg-slate-200 disabled:text-slate-400 text-white font-medium px-5 py-2 rounded-full text-sm transition-all"
+                                >
+
+                                  {isCommentSubmitting ? "Sending..." : "Send"}
+
                                 </button>
 
                               </div>
 
-                            ))}
+                            </div>
 
-                          </div>
 
-                        </div>
+                            {/* Hidden File Input */}
+                            <input
+                              type="file"
+                              ref={fileInputRef}
+                              onChange={handleFileChange}
+                              multiple
+                              disabled={
+                                isAttachmentUploading ||
+                                isCommentSubmitting
+                              }
+                              className="hidden"
+                            />
+
+                          </motion.div>
+
+                        </motion.div>
 
                       )}
 
+                    </AnimatePresence>
 
-                      {/* Actions */}
-                      <div className="flex items-center justify-end gap-2 pt-2">
-
-                        {/* Upload */}
-                        <button
-                          type="button"
-                          disabled={
-                            messageSubject !== "Document Uploaded" ||
-                            isAttachmentUploading ||
-                            isCommentSubmitting
-                          }
-                          onClick={() => fileInputRef.current.click()}
-                          className="p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-50"
-                        >
-
-                          <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                            />
-
-                          </svg>
-
-                        </button>
+                  </div>
+                )}
+              </div>
+            </div>
 
 
-                        {/* Send */}
-                        <button
-                          type="button"
-                          onClick={sendMessage}
-                          disabled={
-                            isCommentSubmitting ||
-                            isAttachmentUploading ||
-                            !messageText.trim()
-                          }
-                          className="bg-orange-500 hover:bg-orange-600 disabled:bg-slate-200 disabled:text-slate-400 text-white font-medium px-5 py-2 rounded-full text-sm transition-all"
-                        >
 
-                          {isCommentSubmitting ? "Sending..." : "Send"}
-
-                        </button>
-
-                      </div>
-
-                    </div>
-
-
-                    {/* Hidden File Input */}
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      multiple
-                      disabled={
-                        isAttachmentUploading ||
-                        isCommentSubmitting
-                      }
-                      className="hidden"
-                    />
-
-                  </motion.div>
-
-                </motion.div>
-
-              )}
-
-            </AnimatePresence>
 
           </div>
         )}
+
+          {currentStep?.step === "ReviewbyOoshas" && (
+            <ReviewApplication/>
+          )}
+
+          {currentStep?.step === "SubmitToSchool" && (
+            <SubmittedtoSchool/>
+          )}
+
+
+        </div>
+
+
+
       </div>
 
       {/* Intake Modal */}

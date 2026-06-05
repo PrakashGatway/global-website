@@ -406,7 +406,7 @@ useEffect(() => {
       </div>
 
       {/* The Ivy Coach Daily */}
-      <section ref={ivyCoachDailyRef} id="ivy-coach-daily" className="py-12 bg-[#f5f1f0] overflow-visible">
+      {/* <section ref={ivyCoachDailyRef} id="ivy-coach-daily" className="py-12 bg-[#f5f1f0] overflow-visible">
         <div className="max-w-7xl mx-auto px-4 overflow-visible">
           <div className="text-center mb-8">
             <h2 className="text-[2.6rem] font-bold uppercase" style={{ color: '#f46c44', fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial', letterSpacing: 'normal' }}>
@@ -444,12 +444,9 @@ useEffect(() => {
             </button>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* Offers Slider */}
-      <div ref={offersSliderRef} id="offers-slider">
-        <OffersSlider />
-      </div>
+      
 
       {/* Why Special Section */}
       <section ref={whySpecialRef} id="why-special" className="mx-auto bg-[#fff9f4] py-20 px-5">
@@ -494,20 +491,9 @@ useEffect(() => {
         <ScholarshipRequirements scholarshipData={data.sections.scholarships} />
       </div>
 
-      {/* Testimonials */}
-      <div ref={testimonialsRef} id="testimonials">
-        <ImageTestimonial
-          title={sections?.bottomTestimonial?.title}
-          subtitle={sections?.bottomTestimonial?.subtitle}
-          font={true}
-          items={imageRes}
-        />
-      </div>
+    
 
-      {/* Case Studies */}
-      <div ref={caseStudiesRef} id="case-studies">
-        <CaseStudy font={true} caseStudydata={sections.caseStudies} caseStudy={caseStudy} />
-      </div>
+   
 
       {/* Final CTA */}
       <section className="py-24" style={{ backgroundColor: '#f46c44' }}>

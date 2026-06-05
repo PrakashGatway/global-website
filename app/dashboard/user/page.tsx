@@ -394,7 +394,7 @@
 //   onClose: () => void;
 //   applications: Application[];
 // }) {
-  
+
 //   const {allProfile,update,setupdate} = useGlobal()
 //   const [profile,setprofile] = useState(user.profile || allProfile?.profile);
 //   // Get documents from profile
@@ -450,7 +450,7 @@
 //     );
 
 //     if (response.data.success) {
-     
+
 //       setupdate(!update);
 //       console.log(update)
 //       toast.success(
@@ -477,12 +477,12 @@
 //     setPreviewUrl(url);
 //   };
 
-  
+
 //   useEffect(() => {
 //     setprofile(user.profile || allProfile?.profile)
-    
+
 //   },[update,allProfile])
-  
+
 //   // Document statistics
 //   const totalDocuments = Object.keys(documents).length;
 //   const approvedDocs = Object.values(documents).filter(doc => doc.status === 'approved').length;
@@ -1066,6 +1066,7 @@ import {
   Trash2,
   X,
   ChevronLeft,
+  SearchIcon,
 } from "lucide-react";
 import axiosInstance from "@/app/axiosInstance";
 import { useGlobal } from "@/src/statecontext";
@@ -1075,6 +1076,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 // ─── Import the Student Details Page Component ───────────────────────
 import StudentDetailsPage from "@/components/dashboard/selectedUser";
+import { Autocomplete, Button, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 
 /* ─── Types ────────────────────────────────────────────────────────── */
 interface EducationHistory {
@@ -1208,7 +1210,8 @@ function useDebounce<T>(value: T, delay: number): T {
 
 /* ─── Main Page ────────────────────────────────────────────────────── */
 export default function StudentsPage() {
-  const filters = ["Country", "Year", "Status"];
+  const filters = ["Country", "Status"];
+  const [countries, setcountries] = useState([])
   const { profile } = useGlobal();
 
   /* Search state */
@@ -1217,14 +1220,20 @@ export default function StudentsPage() {
 
   /* Referral list state */
   const [referralList, setReferralList] = useState<ReferralUser[]>([]);
+  const [allreferralList, setallreferralList] = useState("")
   const [loading, setLoading] = useState(false);
 
   /* ─── NEW: Detail view state ───────────────────────────────────── */
   const [selectedUser, setSelectedUser] = useState<ReferralUser | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [status, setStatus] = useState("");
+
+  const [Country, setCountry] = useState()
 
   const router = useRouter();
+
+  console.log(referralList)
 
   /* Debounced API call */
   const fetchReferrals = useCallback(async (code: string, id: string) => {
@@ -1237,6 +1246,8 @@ export default function StudentsPage() {
       const response = await axiosInstance.get(`/users/code/${code}/${id}`);
       const data: ReferralUser[] = response.data.data ?? [];
       setReferralList(Array.isArray(data) ? data : [data]);
+      console.log("Search api Running");
+      setallreferralList(data)
     } catch (err) {
       console.error("Error fetching referrals:", err);
       setReferralList([]);
@@ -1244,6 +1255,22 @@ export default function StudentsPage() {
       setLoading(false);
     }
   }, []);
+
+  const fetchcountries = async () => {
+    try {
+      const res = await axiosInstance.get("/countries?limit=50")
+      console.log(res.data)
+      setcountries(res.data.data)
+
+    }
+    catch (err) {
+      toast.error(err)
+    }
+  }
+
+  useEffect(() => {
+    fetchcountries()
+  }, [])
 
   /* Fetch applications for a student */
   const fetchApplications = useCallback(async (userId: string) => {
@@ -1258,7 +1285,7 @@ export default function StudentsPage() {
 
   useEffect(() => {
     fetchReferrals(debouncedQuery || profile?.referalCode || "", profile?._id || "");
-  }, [debouncedQuery, profile?.referalCode, fetchReferrals]);
+  }, [ profile?.referalCode, fetchReferrals]);
 
   /* ─── NEW: Handle row click → open detail view ─────────────────── */
   const handleSelectUser = async (student: ReferralUser) => {
@@ -1313,32 +1340,93 @@ export default function StudentsPage() {
 
             {/* Search */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8  text-sm">
-              {filters.map((item) => (
-                <button
-                  key={item}
-                  className="bg-white h-12 border border-gray-200 rounded-lg px-4 flex items-center 
-                  justify-between text-gray-600 hover:border-gray-300"
-                >
-                  <span className="truncate">{item}</span>
-                  <ChevronDown size={18} />
-                </button>
-              ))}
-              <div className="relative flex-1 max-w-full sm:max-w-md">
-                <Search
-                  size={20}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                />
-                <input
-                  type="text"
-                  placeholder="Search by keyword"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="w-full h-12  pl-12 pr-4 rounded-lg border border-gray-200 bg-white outline-none focus:ring-2 focus:ring-blue-100"
-                />
+
+              <Autocomplete
+                options={countries}
+                getOptionLabel={(option) => option?.name || ""}
+                value={Country}
+                sx={{ width: 200 }}
+                onChange={(event, newValue) => {
+                  setCountry(newValue);
+
+                  if (!newValue) {
+                    setReferralList(allreferralList);
+                    return;
+                  }
+
+                  const filtered = allreferralList.filter(
+                    (item) => item.nationality === newValue.code
+                  );
+
+                  console.log(filtered);
+
+                  setReferralList(filtered);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Country"
+                    placeholder="Search country..."
+                  />
+                )}
+              />
+              <FormControl sx={{ width: 100 }}>
+  <InputLabel>Status</InputLabel>
+
+  <Select
+    value={status}
+    label="Status"
+    onChange={(e) => {
+      const value = e.target.value;
+
+      setStatus(value);
+
+      if (!value) {
+        setReferralList(allreferralList);
+        return;
+      }
+
+      const filtered = allreferralList.filter(
+        (item) => item.status === value
+      );
+
+      setReferralList(filtered);
+    }}
+  >
+    <MenuItem value="">All</MenuItem>
+    <MenuItem value="Active">Active</MenuItem>
+    <MenuItem value="Inactive">Inactive</MenuItem>
+  </Select>
+</FormControl>
+
+              <div className="flex gap-3 items-center">
+                <TextField
+  value={query}
+  sx={{ width: 400 }}
+  onChange={(e) => {
+    const value = e.target.value;
+
+    setQuery(value);
+    console.log("Search Filter Running");
+
+    if (!value.trim()) {
+      setReferralList(allreferralList);
+      return;
+    }
+
+    const filtered = allreferralList.filter((item) =>
+      item?.fullName?.toLowerCase().includes(value.toLowerCase()) ||
+      item?.email?.toLowerCase().includes(value.toLowerCase()) ||
+      item?.phone?.toString().includes(value)
+    );
+
+    setReferralList(filtered);
+  }}
+  placeholder="Search by name, email, phone"
+/>
+
+               
               </div>
-              <button className="h-12  px-8 bg-[#f56e45] text-white rounded-lg font-semibold hover:bg-[#fa6a3f]">
-                Search
-              </button>
             </div>
 
             {/* Loading State */}
@@ -1391,35 +1479,35 @@ export default function StudentsPage() {
                           <td className="px-4 py-6 font-medium text-gray-800">
                             <div className="flex items-center gap-3">
                               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#f56e45] to-orange-600 flex items-center justify-center text-white text-sm font-bold">
-                                {student.name?.[0]?.toUpperCase() ?? "?"}
+                                {student?.name?.[0]?.toUpperCase() ?? "?"}
                               </div>
-                              {student.name}
+                              {student?.name}
                             </div>
                           </td>
                           <td className="px-4 py-6">
                             <div className="flex items-center gap-2 text-gray-600">
                               <Mail size={16} className="text-[#f56e45]" />
-                              {student.email}
+                              {student?.email}
                             </div>
                           </td>
                           <td className="px-4 py-6 text-gray-600">
-                            {student.createdAt?.split("T")[0]}
+                            {student?.createdAt?.split("T")[0]}
                           </td>
                           <td className="px-4 py-6 text-gray-600">
-                            {student.updatedAt?.split("T")[0]}
+                            {student?.updatedAt?.split("T")[0]}
                           </td>
                           <td className="px-4 py-6">
                             <div className="flex items-center gap-2 text-gray-600">
                               <Phone size={16} className="text-[#f56e45]" />
-                              {student.phone}
+                              {student?.phone}
                             </div>
                           </td>
                           <td className="px-4 py-6 text-gray-600">
-                            {student.nationality || "N/A"}
+                            {student?.nationality || "N/A"}
                           </td>
                           <td className="px-4 py-6">
                             <span className="px-4 py-2 rounded-lg bg-blue-50 text-[#fa6a3f] text-sm font-medium">
-                              {student.status}
+                              {student?.status}
                             </span>
                           </td>
                           <td className="px-4 py-6">
@@ -1430,6 +1518,7 @@ export default function StudentsPage() {
                           </td>
                         </tr>
                       ))}
+
                     </tbody>
                   </table>
                 </div>
@@ -1446,7 +1535,7 @@ export default function StudentsPage() {
                     <span className="text-gray-500">Entries</span>
                   </div>
                   <div className="text-gray-500">
-                    Showing {referralList.length} students
+                    Showing {referralList?.length} students
                   </div>
                 </div>
               </div>
@@ -1464,32 +1553,32 @@ export default function StudentsPage() {
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#f56e45] to-orange-600 flex items-center justify-center text-white font-bold">
-                          {student.name?.[0]?.toUpperCase() ?? "?"}
+                          {student?.name?.[0]?.toUpperCase() ?? "?"}
                         </div>
                         <div>
                           <h3 className="font-semibold text-lg">{student.name}</h3>
                           <p className="text-sm text-gray-500">
-                            {student.createdAt?.split("T")[0]}
+                            {student?.createdAt?.split("T")[0]}
                           </p>
                         </div>
                       </div>
                       <span className="px-3 py-1 rounded-lg bg-blue-50 text-[#fa6a3f] text-xs font-medium">
-                        {student.status}
+                        {student?.status}
                       </span>
                     </div>
 
                     <div className="mt-5 space-y-3 text-sm">
                       <div className="flex items-center gap-2 break-all text-gray-600">
                         <Mail size={16} className="text-[#f56e45]" />
-                        {student.email}
+                        {student?.email}
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <Phone size={16} className="text-[#f56e45]" />
-                        {student.phone}
+                        {student?.phone}
                       </div>
                       <div className="text-gray-600">
                         <span className="text-gray-400">Nationality:</span>{" "}
-                        {student.nationality || "N/A"}
+                        {student?.nationality || "N/A"}
                       </div>
                     </div>
                   </div>
