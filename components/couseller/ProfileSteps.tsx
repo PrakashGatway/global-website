@@ -1,748 +1,1111 @@
-// components/dashboard/profile/ProfileFormContainer.tsx
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "react-hot-toast";
-import {
-  User,
-  GraduationCap,
-  Briefcase,
-  FileText,
-  Save,
-  Loader2,
-  CheckCircle,
-} from "lucide-react";
+import { User, GraduationCap, Briefcase, FileCheck, Edit2, Save, Loader2 } from "lucide-react";
 import axiosInstance from "@/app/axiosInstance";
+import { toast } from "sonner";
 
-interface ProfileFormContainerProps {
-  userId: string;
-  onComplete?: () => void;
+interface ProfileTabsProps {
+  studentId: string;
+  user: any;
+  profile: any;
+  countriesList: any[];
+  onUpdate: () => void; // Callback to refresh parent data
 }
 
-type TabType = "basic" | "academic" | "work" | "test";
+const TABS = [
+  { id: "personal", label: "Personal Information", icon: User },
+  { id: "academic", label: "Academic Qualifications", icon: GraduationCap },
+  { id: "work", label: "Work Experience", icon: Briefcase },
+  { id: "tests", label: "Tests", icon: FileCheck },
+];
 
-export default function ProfileFormContainer({
-  userId,
-  onComplete,
-}: ProfileFormContainerProps) {
-  const [activeTab, setActiveTab] = useState<TabType>("basic");
-  const [loading, setLoading] = useState(true);
+export default function ProfileTabs({ studentId, user, profile, countriesList, onUpdate }: ProfileTabsProps) {
+  const [activeInnerTab, setActiveInnerTab] = useState("personal");
+  const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [profileData, setProfileData] = useState<any>(null);
-  const [countries, setCountries] = useState<any[]>([]);
+  const [formData, setFormData] = useState<any>({});
+  const TAB_ORDER = ["personal", "academic", "work", "tests"];
+  const goToNextStep = () => {
+    const currentIndex = TAB_ORDER.indexOf(activeInnerTab);
 
-  // Fetch countries
-  const fetchCountries = useCallback(async () => {
-    try {
-      const res = await axiosInstance.get("/countries?limit=300");
-      setCountries(res.data.data || []);
-    } catch (err) {
-      console.error("Error fetching countries:", err);
-    }
-  }, []);
-
-  // Fetch profile data
-  const fetchProfile = useCallback(async () => {
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get(`/users/${userId}`);
-      const userData = res.data.data || res.data;
-      setProfileData({
-        user: userData,
-        profile: userData.profile || {},
-      });
-    } catch (err) {
-      console.error("Error fetching profile:", err);
-      toast.error("Failed to load profile");
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
-
-  useEffect(() => {
-    fetchCountries();
-    fetchProfile();
-  }, [fetchCountries, fetchProfile]);
-
-  // Save handler
-  const handleSave = async (tabData: any) => {
-    setSaving(true);
-    try {
-      let payload: any = {};
-
-      switch (activeTab) {
-        case "basic":
-          // Update user fields
-          await axiosInstance.put(`/users/${userId}`, {
-            name: tabData.name,
-            phone: tabData.phone,
-            dateOfBirth: tabData.dateOfBirth,
-            gender: tabData.gender,
-            maritalStatus: tabData.maritalStatus,
-            firstLanguage: tabData.firstLanguage,
-            nationality: tabData.nationality,
-          });
-
-          // Update address
-          if (tabData.currentAddress) {
-            payload.currentAddress = tabData.currentAddress;
-          }
-          if (tabData.permanentAddress) {
-            payload.permanentAddress = tabData.permanentAddress;
-          }
-          break;
-
-        case "academic":
-          payload.highestAcademic = tabData.highestAcademic;
-          payload.educationHistory = tabData.educationHistory;
-          break;
-
-        case "work":
-          payload.otherDetails = {
-            ...profileData?.profile?.otherDetails,
-            workExperience: tabData.workExperience,
-          };
-          break;
-
-        case "test":
-          payload.englishProficiencyScore = tabData.englishProficiencyScore;
-          payload.hasGmat = tabData.hasGmat;
-          payload.gmatScore = tabData.gmatScore;
-          payload.hasGre = tabData.hasGre;
-          payload.greScore = tabData.greScore;
-          payload.satScore = tabData.satScore;
-          break;
-      }
-
-      // Save profile info if there's payload
-      if (Object.keys(payload).length > 0) {
-        await axiosInstance.post(`/auth/profile_info`, payload);
-      }
-
-      toast.success("Profile updated successfully!");
-      await fetchProfile();
-      onComplete?.();
-    } catch (err: any) {
-      console.error("Error saving:", err);
-      toast.error(err.response?.data?.message || "Failed to save");
-    } finally {
-      setSaving(false);
+    if (currentIndex < TAB_ORDER.length - 1) {
+      setActiveInnerTab(TAB_ORDER[currentIndex + 1]);
     }
   };
 
-  const tabs = [
-    { id: "basic", label: "Basic Details", icon: User },
-    { id: "academic", label: "Academic Details", icon: GraduationCap },
-    { id: "work", label: "Work Experience", icon: Briefcase },
-    { id: "test", label: "Test Information", icon: FileText },
-  ];
+  const goToPreviousStep = () => {
+    const currentIndex = TAB_ORDER.indexOf(activeInnerTab);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-[#F26D44]" />
-      </div>
-    );
-  }
+    if (currentIndex > 0) {
+      setActiveInnerTab(TAB_ORDER[currentIndex - 1]);
+    }
+  };
+
+
+  useEffect(() => {
+    if (isEditing) {
+      setFormData({
+        personal: {
+          name: user?.name || "",
+          email: user?.email || "",
+          phone: user?.phone || "",
+          dateOfBirth: user?.dateOfBirth || "",
+          gender: user?.gender || "",
+          maritalStatus: user?.maritalStatus || "",
+          firstLanguage: user?.firstLanguage || "",
+          nationality: user?.nationality || "",
+        },
+        academic: {
+          highestAcademic: profile?.highestAcademic || {},
+          educationHistory: profile?.educationHistory || [],
+        },
+        work: profile?.workExperience || []
+
+      });
+    }
+  }, [isEditing, user, profile]);
+
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-      {/* Tab Navigation */}
-      <div className="border-b border-gray-200 bg-gray-50">
-        <div className="flex overflow-x-auto hide-scrollbar">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as TabType)}
-              className={`flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all whitespace-nowrap ${
-                activeTab === tab.id
-                  ? "bg-white text-[#F26D44] border-b-2 border-[#F26D44]"
-                  : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+    <div className="bg-white border-2 border-gray-200 overflow-hidden">
+      <div className="flex items-center justify-start gap-2 overflow-x-auto hide-scrollbar border-b bg-gray-50 p-1">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => {
+              setActiveInnerTab(tab.id);
+              setIsEditing(false);
+            }}
+            className={`flex items-center gap-2 px-4 py-2.5 cursor-pointer transition-all whitespace-nowrap ${activeInnerTab === tab.id
+              ? "bg-[#F26D44] text-white shadow"
+              : "text-gray-600 hover:bg-gray-200"
               }`}
-            >
-              <tab.icon size={18} />
-              {tab.label}
-            </button>
-          ))}
-        </div>
+          >
+            <span className="text-sm font-medium">{tab.label}</span>
+          </button>
+        ))}
       </div>
 
-      {/* Tab Content */}
-      <div className="p-6">
+      {/* Tab Content Area */}
+      <div className="p-4 min-h-[400px]">
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, x: 20 }}
+            key={activeInnerTab}
+            initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            exit={{ opacity: 0, x: -10 }}
             transition={{ duration: 0.2 }}
           >
-            {activeTab === "basic" && (
-              <BasicDetailsTab
-                data={profileData}
-                countries={countries}
-                onSave={handleSave}
-                saving={saving}
+            {activeInnerTab === "personal" && (
+              <PersonalInfoTab
+                user={user}
+                profile={profile}
+                countriesList={countriesList}
+                onSave={async (data) => {
+                  const payload = {
+                    name: data.name,
+                    phone: data.phone,
+                    dateOfBirth: data.dateOfBirth,
+                    gender: data.gender,
+                    maritalStatus: data.maritalStatus,
+                    firstLanguage: data.firstLanguage,
+                    nationality: data.nationality,
+                    currentAddress: data.currentAddress,
+                    permanentAddress: data.permanentAddress,
+                    passportNumber: data.passportNumber,
+                    passportDetail: {
+                      issueDate: data.passportIssueDate,
+                      expiryDate: data.passportExpiry,
+                      issueCountry: data.passportIssueCountry
+                    }
+                  };
+                  await axiosInstance.put(`/users/${studentId}`, payload);
+                  toast.success("Personal information updated");
+                  onUpdate();
+                }}
               />
             )}
-            {activeTab === "academic" && (
-              <AcademicDetailsTab
-                data={profileData}
-                countries={countries}
-                onSave={handleSave}
-                saving={saving}
+
+            {activeInnerTab === "academic" && (
+              <AcademicQualificationTab
+                profileData={profile}
+                countries={countriesList}
+                onSave={async (payload) => {
+                  await axiosInstance.put(`/users/${studentId}`, payload);
+                  toast.success("Education information saved");
+                  onUpdate(); // Refresh parent data
+                }}
               />
             )}
-            {activeTab === "work" && (
+
+            {activeInnerTab === "work" && (
               <WorkExperienceTab
-                data={profileData}
-                onSave={handleSave}
-                saving={saving}
+                data={profile?.workExperience || []}
+                onSave={async (val) => {
+                  await axiosInstance.put(`/users/${studentId}`, {
+                    "workExperience": val
+                  });
+                  toast.success("Work experience saved");
+                  onUpdate();
+                }}
               />
             )}
-            {activeTab === "test" && (
-              <TestInformationTab
-                data={profileData}
-                onSave={handleSave}
-                saving={saving}
+
+            {activeInnerTab === "tests" && (
+              <TestsTab
+                data={{
+                  ielts: JSON.parse(profile?.ielts) || {},
+                  toefl: JSON.parse(profile?.toefl) || {},
+                  gre: JSON.parse(profile?.gre) || {},
+                  sat: JSON.parse(profile?.sat) || {},
+                  gmat: JSON.parse(profile?.gmat) || {},
+                  pte: JSON.parse(profile?.pte) || {},
+                }}
+                onSave={async (val) => {
+                  await axiosInstance.put(`/users/${studentId}`, {
+                    "ielts": val.ielts,
+                    "toefl": val.toefl,
+                    "gre": val.gre,
+                    "sat": val.sat,
+                    "gmat": val.gmat,
+                    "pte": val.pte
+                  });
+                  toast.success("Test scores saved");
+                  onUpdate();
+                }}
               />
             )}
           </motion.div>
+          <div className="flex justify-between mt-3 pt-4 ">
+            <button
+              onClick={goToPreviousStep}
+              disabled={activeInnerTab === TAB_ORDER[0]}
+              className="px-4 py-2 bg-gray-100 text-gray-700 disabled:opacity-50"
+            >
+              Previous
+            </button>
+
+            <button
+              onClick={goToNextStep}
+              disabled={activeInnerTab === TAB_ORDER[TAB_ORDER.length - 1]}
+              className="px-4 py-2 bg-[#F26D44] text-white hover:bg-[#e45f35] disabled:opacity-50"
+            >
+              Continue to Next
+            </button>
+          </div>
         </AnimatePresence>
       </div>
     </div>
   );
 }
 
+import { useMemo } from "react";
 
-
-import { Mail, Phone, Calendar, Flag, Home, MapPin } from "lucide-react";
-import { Autocomplete, TextField, InputAdornment } from "@mui/material";
-
-interface BasicDetailsTabProps {
-  data: any;
+interface Props {
+  profileData: any;
   countries: any[];
-  onSave: (data: any) => void;
-  saving: boolean;
+  onSave: (data: any) => Promise<void>;
 }
 
-export function BasicDetailsTab({
-  data,
-  countries,
-  onSave,
-  saving,
-}: BasicDetailsTabProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    dateOfBirth: "",
-    gender: "",
-    maritalStatus: "",
-    firstLanguage: "",
-    nationality: "",
-    currentAddress: {
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      state: "",
-      country: "",
-      postalCode: "",
-    },
-    permanentAddress: {
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      state: "",
-      country: "",
-      postalCode: "",
-    },
-  });
+export function AcademicQualificationTab({ profileData, countries, onSave }: Props) {
+  const [formData, setFormData] = useState<any>({});
+  const [editingSections, setEditingSections] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    if (data) {
-      const user = data.user || {};
-      const profile = data.profile || {};
-      setFormData({
-        name: user.name || "",
-        email: user.email || "",
-        phone: user.phone || "",
-        dateOfBirth: user.dateOfBirth?.split("T")[0] || "",
-        gender: user.gender || "",
-        maritalStatus: user.maritalStatus || "",
-        firstLanguage: user.firstLanguage || "",
-        nationality: user.nationality || "",
-        currentAddress: {
-          addressLine1: profile.currentAddress?.addressLine1 || "",
-          addressLine2: profile.currentAddress?.addressLine2 || "",
-          city: profile.currentAddress?.city || "",
-          state: profile.currentAddress?.state || "",
-          country: profile.currentAddress?.country || "",
-          postalCode: profile.currentAddress?.postalCode || "",
-        },
-        permanentAddress: {
-          addressLine1: profile.permanentAddress?.addressLine1 || "",
-          addressLine2: profile.permanentAddress?.addressLine2 || "",
-          city: profile.permanentAddress?.city || "",
-          state: profile.permanentAddress?.state || "",
-          country: profile.permanentAddress?.country || "",
-          postalCode: profile.permanentAddress?.postalCode || "",
-        },
-      });
-    }
-  }, [data]);
+    setFormData({
+      highestAcademic: profileData?.highestAcademic || {},
+      educationHistory: profileData?.educationHistory || [],
+    });
+  }, [profileData]);
 
-  const handleChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const highestLevel = formData?.highestAcademic?.highestEducationLevel || "";
+
+  const educationFlow = useMemo(
+    () => ({
+      Postgraduate: ["Postgraduate", "Undergraduate", "Grade 12", "Grade 10"],
+      Undergraduate: ["Undergraduate", "Grade 12", "Grade 10"],
+      Diploma: ["UG Diploma / Certificate", "Grade 12", "Grade 10"],
+      "Grade 12": ["Grade 12", "Grade 10"],
+      "Grade 10": ["Grade 10"],
+    }),
+    []
+  );
+
+  const visibleSections = educationFlow[highestLevel as keyof typeof educationFlow] || [];
+
+  const handleSectionSave = async (sectionName: string, sectionData: any) => {
+    let payload: any = {};
+
+    if (sectionName === 'summary') {
+      payload = { "highestAcademic": sectionData };
+    } else if (sectionName === 'education') {
+      payload = { "educationHistory": sectionData };
+    }
+
+    await onSave(payload);
+    setEditingSections(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(sectionName);
+      return newSet;
+    });
   };
 
-  const handleAddressChange = (
-    type: "currentAddress" | "permanentAddress",
-    field: string,
-    value: string
-  ) => {
-    setFormData((prev) => ({
+  const toggleEditSection = (sectionName: string) => {
+    setEditingSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(sectionName)) {
+        newSet.delete(sectionName);
+      } else {
+        newSet.add(sectionName);
+      }
+      return newSet;
+    });
+  };
+
+  const updateHighestAcademic = (field: string, value: any) => {
+    let educationHistory = formData.educationHistory;
+
+    if (field === "highestEducationLevel") {
+      const levels =
+        educationFlow[value as keyof typeof educationFlow] || [];
+
+      educationHistory = levels.map((level) => {
+        const existing = formData.educationHistory.find(
+          (e: any) => e.educationLevel === level
+        );
+
+        return (
+          existing || {
+            educationLevel: level,
+            institutionName: "",
+            degreeName: "",
+            country: "",
+            state: "",
+            city: "",
+            gradingScheme: "",
+            startDate: "",
+            endDate: "",
+          }
+        );
+      });
+    }
+
+    setFormData((prev: any) => ({
       ...prev,
-      [type]: {
-        ...prev[type],
+      highestAcademic: {
+        ...prev.highestAcademic,
         [field]: value,
       },
+      educationHistory,
     }));
   };
 
+  const updateEducation = (
+    educationLevel: string,
+    field: string,
+    value: any
+  ) => {
+    setFormData((prev: any) => {
+      const history = [...prev.educationHistory];
+
+      const existingIndex = history.findIndex(
+        (edu: any) => edu.educationLevel === educationLevel
+      );
+
+      if (existingIndex >= 0) {
+        history[existingIndex] = {
+          ...history[existingIndex],
+          [field]: value,
+        };
+      } else {
+        history.push({
+          educationLevel,
+          [field]: value,
+        });
+      }
+
+      return {
+        ...prev,
+        educationHistory: history,
+      };
+    });
+  };
+
+  const MAX_CUSTOM_EDUCATION = 2;
+
+  const addNewEducation = () => {
+    const customCount = formData.educationHistory.filter(
+      (e) => !visibleSections.includes(e.educationLevel)
+    ).length;
+
+    if (customCount >= MAX_CUSTOM_EDUCATION) {
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      educationHistory: [
+        ...prev.educationHistory,
+        {
+          educationLevel: "Other Certificate",
+          isNew: true,
+        },
+      ],
+    }));
+  };
+
+  const removeEducation = (index: number) => {
+    const newHistory = [...formData.educationHistory];
+    newHistory.splice(index, 1);
+    setFormData((prev: any) => ({ ...prev, educationHistory: newHistory }));
+  };
+
+  const SectionHeader = ({ title, sectionName }: { title: string; sectionName: string }) => (
+    <div className="flex justify-between items-center mb-4">
+      <div className="flex items-center gap-2">
+        <h3 className="font-semibold text-gray-800">{title}</h3>
+      </div>
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => {
+          if (editingSections.has(sectionName)) {
+            let sectionData: any = {};
+            if (sectionName === 'summary') {
+              sectionData = formData.highestAcademic;
+            } else if (sectionName === 'education') {
+              const validData = formData.educationHistory.filter(
+                (edu: any) => edu.institutionName || edu.degreeName
+              );
+              sectionData = validData;
+            }
+            handleSectionSave(sectionName, sectionData);
+          } else {
+            toggleEditSection(sectionName);
+          }
+        }}
+        className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium transition-all  ${editingSections.has(sectionName)
+          ? "bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-lg shadow-[#F26D44]/25"
+          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
+      >
+        {editingSections.has(sectionName) ? (
+          <><Save size={14} /> Save</>
+        ) : (
+          <><Edit2 size={14} /> Edit</>
+        )}
+      </motion.button>
+    </div>
+  );
+
   return (
-    <div className="space-y-6">
-      {/* Personal Information */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <User size={20} className="text-[#F26D44]" />
-          Personal Information
-        </h3>
+    <div className="space-y-3">
+      {/* Summary Section */}
+      <div className="bg-gray-50 p-4  border border-gray-200">
+        <SectionHeader title="Education Summary" sectionName="summary" />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Full Name
+          <div>
+            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+              Country Of Education
             </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => handleChange("name", e.target.value)}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
+            {editingSections.has("summary") ? (
+              <select
+                className="w-full border border-gray-300  p-2.5 text-sm focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] outline-none"
+                value={formData?.highestAcademic?.countryOfEducation || ""}
+                onChange={(e) => updateHighestAcademic("countryOfEducation", e.target.value)}
+              >
+                <option value="">Select Country</option>
+                {countries.map((c: any) => (
+                  <option key={c._id || c.name} value={c.name}>{c.name}</option>
+                ))}
+              </select>
+            ) : (
+              <div className="w-full bg-white border border-gray-200  p-2.5 text-sm text-gray-700">
+                {formData?.highestAcademic?.countryOfEducation || "N/A"}
+              </div>
+            )}
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Email Address
+          <div>
+            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+              Highest Level Of Education
             </label>
-            <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-xl">
-              <Mail size={16} className="text-gray-400" />
-              <span className="text-sm text-gray-800">{formData.email}</span>
+            {editingSections.has("summary") ? (
+              <select
+                className="w-full border border-gray-300  p-2.5 text-sm focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] outline-none"
+                value={highestLevel}
+                onChange={(e) => updateHighestAcademic("highestEducationLevel", e.target.value)}
+              >
+                <option value="">Select Level</option>
+                <option>Postgraduate</option>
+                <option>Undergraduate</option>
+                <option>Diploma</option>
+                <option>Grade 12</option>
+                <option>Grade 10</option>
+              </select>
+            ) : (
+              <div className="w-full bg-white border border-gray-200  p-2.5 text-sm text-gray-700 capitalize">
+                {highestLevel || "N/A"}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-4  border border-gray-200">
+        <SectionHeader title="Education History" sectionName="education" />
+        <div className="space-y-4">
+          {visibleSections.map((level, index) => {
+            const education = formData?.educationHistory?.find(
+              (e: any) => e?.educationLevel === level
+            ) || { educationLevel: level };
+
+            return (
+              <EducationCard
+                key={level}
+                level={level}
+                education={education}
+                isEditing={editingSections.has("education")}
+                countries={countries}
+                onChange={(field, val) =>
+                  updateEducation(level, field, val)
+                }
+                onRemove={() => removeEducation(index)}
+                canRemove={formData?.educationHistory?.length > 1}
+              />
+            );
+          })}
+          {editingSections.has("education") && formData?.educationHistory?.map((edu: any, idx: number) => {
+            if (!edu.educationLevel || visibleSections.includes(edu.educationLevel)) return null;
+            return (
+              <EducationCard
+                key={`custom-${idx}`}
+                level={edu.educationLevel || "Additional Education"}
+                education={edu}
+                isEditing={true}
+                countries={countries}
+                onChange={(field, val) => updateEducation(idx, field, val)}
+                onRemove={() => removeEducation(idx)}
+                canRemove={true}
+              />
+            );
+          })}
+
+          {!editingSections.has("education") && formData?.educationHistory?.length === 0 && (
+            <div className="text-center py-12 border-2 border-dashed border-gray-200 ">
+              <GraduationCap className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500 font-medium">No education records added</p>
             </div>
-          </div>
+          )}
+        </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => handleChange("phone", e.target.value)}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
+        {editingSections.has("education") && (
+          <div className="flex justify-center items-center border-2 mt-3 border-dashed border-gray-200 p-4">
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Date of Birth
-            </label>
-            <input
-              type="date"
-              value={formData.dateOfBirth}
-              onChange={(e) => handleChange("dateOfBirth", e.target.value)}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Gender
-            </label>
-            <select
-              value={formData.gender}
-              onChange={(e) => handleChange("gender", e.target.value)}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
+            <button
+              onClick={addNewEducation}
+              className="flex items-center gap-2 px-3 py-1.5 text-base font-medium bg-gray-200 text-gray-700  hover:bg-gray-200 transition"
             >
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
+              <Plus size={14} /> Add Education
+            </button>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Marital Status
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// --- Sub-component for individual education entry ---
+function EducationCard({ level, education, isEditing, countries, onChange, onRemove, canRemove }: any) {
+  const isSchool = level === "Grade 12" || level === "Grade 10";
+
+  const fields = [
+    { label: isSchool ? "School Name" : "Institution Name", key: "institutionName" },
+    { label: isSchool ? "Board" : "Degree Awarded", key: "degreeName" },
+    { label: "Country", key: "country", type: "country-select" },
+    { label: "State", key: "state" },
+    { label: "City", key: "city" },
+    ...(!isSchool ? [{ label: "Grading Scheme", key: "gradingScheme" }] : []),
+    { label: isSchool ? "Percentage" : "Percentage", key: "percentage" },
+    { label: "Start Date", key: "startDate", type: "month" },
+    { label: "End Date", key: "endDate", type: "month" },
+  ];
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "long" });
+  };
+
+  return (
+    <div className="border border-gray-200  overflow-hidden relative group">
+      <div className="bg-gray-50 px-4 py-3 border-b flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h4 className="font-medium text-gray-800">{level}</h4>
+        </div>
+        {isEditing && canRemove && (
+          <button
+            onClick={onRemove}
+            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50  transition"
+          >
+            <Trash2 size={14} />
+          </button>
+        )}
+      </div>
+
+      <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {fields.map((f: any) => (
+          <div key={f.key}>
+            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+              {f.label}
             </label>
+
+            {isEditing ? (
+              f.type === "country-select" ? (
+                <select
+                  className="w-full border border-gray-300  p-2.5 text-sm focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] outline-none"
+                  value={education[f.key] || ""}
+                  onChange={(e) => onChange(f.key, e.target.value)}
+                >
+                  <option value="">Select Country</option>
+                  {countries.map((c: any) => (
+                    <option key={c._id || c.name} value={c.name}>{c.name}</option>
+                  ))}
+                </select>
+              ) :
+                f.type == "month" ?
+                  <input
+                    type="month"
+                    className="w-full border border-gray-300  p-2.5 text-sm focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] outline-none"
+
+                    value={
+                      education[f.key]
+                        ? new Date(education[f.key]).toISOString().slice(0, 7)
+                        : ""
+                    }
+                    onChange={(e) => onChange(f.key, e.target.value)}
+                  /> : (
+                    <input
+                      type={f.type || "text"}
+                      className="w-full border border-gray-300  p-2.5 text-sm focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] outline-none"
+                      value={education[f.key] || ""}
+                      onChange={(e) => onChange(f.key, e.target.value)}
+                      placeholder={`Enter ${f.label.toLowerCase()}`}
+                    />
+                  )
+            ) : (
+              <div className="w-full bg-gray-50 border border-gray-200  p-2.5 text-sm text-gray-700 min-h-[42px]">
+                {f.type === "month" ? formatDate(education[f.key]) : (education[f.key] || "N/A")}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+import {
+  Mail, Phone, Calendar, Heart, Languages, Globe,
+  Home, MapPin, Hash, CreditCard, CalendarDays
+} from "lucide-react";
+
+const Field = ({ label, editingSections, formatDate, displayValue, formData, value, icon: Icon, type = "text", options, disabled = false, onChange, fieldKey, section }: any) => {
+  const getFieldValue = (fieldKey: string) => {
+    if (fieldKey.includes(".")) {
+      const [parent, child] = fieldKey.split(".");
+      return formData?.[parent]?.[child] || "";
+    }
+
+    return formData?.[fieldKey] || "";
+  }
+  return (
+    <div key={fieldKey} className="space-y-2">
+      <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</label>
+      <div className="relative">
+        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
+
+        {editingSections.has(section) ? (
+          type === "select" ? (
             <select
-              value={formData.maritalStatus}
-              onChange={(e) => handleChange("maritalStatus", e.target.value)}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
+              value={getFieldValue(fieldKey) || ""}
+              onChange={(e) => onChange(fieldKey, e.target.value)}
+              disabled={disabled}
+              className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] transition-all text-sm `}
             >
-              <option value="">Select Status</option>
-              <option value="single">Single</option>
-              <option value="married">Married</option>
-              <option value="divorced">Divorced</option>
-              <option value="widowed">Widowed</option>
+              <option value="">Select {label}</option>
+              {options?.map((opt: string) => (
+                <option key={opt} value={opt} className="capitalize">{opt}</option>
+              ))}
             </select>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              First Language
-            </label>
+          ) : (
             <input
-              type="text"
-              value={formData.firstLanguage}
-              onChange={(e) => handleChange("firstLanguage", e.target.value)}
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
+              type={type}
+              value={getFieldValue(fieldKey) || ""}
+              onChange={(e) => onChange(fieldKey, e.target.value)}
+              disabled={disabled}
+              className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] transition-all text-sm `}
             />
+          )
+        ) : (
+          <div className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-gray-50/50 border border-gray-200/60 text-sm text-gray-800 capitalize  min-h-[42px] flex items-center`}>
+            {type === "date" ? formatDate(value) : displayValue(value)}
           </div>
+        )}
+      </div>
+    </div>
+  )
+};
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Nationality
-            </label>
-            <Autocomplete
-              options={countries}
-              getOptionLabel={(option) => option?.name || ""}
-              value={
-                countries.find((c) => c.name === formData.nationality) || null
-              }
-              onChange={(_, newValue) =>
-                handleChange("nationality", newValue?.name || "")
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <>
-                        <InputAdornment position="start">
-                          <Flag size={16} className="text-gray-400" />
-                        </InputAdornment>
-                        {params?.InputProps?.startAdornment}
-                      </>
-                    ),
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      height: "46px",
-                      backgroundColor: "#F9FAFB",
-                      borderRadius: "12px",
-                    },
-                  }}
-                />
-              )}
-            />
-          </div>
+export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
+  const [formData, setFormData] = useState<any>({});
+  const [editingSections, setEditingSections] = useState<Set<string>>(new Set());
+
+  console.log("currentAddress", user);
+
+
+  useEffect(() => {
+    setFormData({
+      name: user?.name || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      dateOfBirth: user?.dateOfBirth
+        ? new Date(user.dateOfBirth).toISOString().split("T")[0]
+        : "",
+      gender: user?.gender || "",
+      maritalStatus: user?.maritalStatus || "",
+      firstLanguage: user?.firstLanguage || "",
+      nationality: user?.nationality || "",
+      currentAddress: profile.currentAddress,
+      permanentAddress: profile.permanentAddress,
+      passportNumber: user?.passportNumber || "",
+      passportExpiry: user?.passportDetail?.expiryDate || "",
+      passportIssueDate: user?.passportDetail?.issueDate || "",
+      passportIssueCountry: user?.passportDetail?.issueCountry || ""
+    });
+  }, [user, profile]);
+
+  const handleSectionSave = async (sectionName: string, sectionData: any) => {
+    await onSave(sectionData);
+    setEditingSections(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(sectionName);
+      return newSet;
+    });
+  };
+
+  const toggleEditSection = (sectionName: string) => {
+    setEditingSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(sectionName)) {
+        newSet.delete(sectionName);
+      } else {
+        newSet.add(sectionName);
+      }
+      return newSet;
+    });
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  };
+
+  const displayValue = (val: any) => val == null || val == undefined || val == "" ? "N/A" : val;
+
+  const updateNested = (section: string, field: string, value: any) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      [section]: { ...prev[section], [field]: value }
+    }));
+  };
+  const SectionHeader = ({ title, sectionName }: { title: string; sectionName: string }) => (
+    <div className="flex justify-between items-center mb-4">
+      <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => {
+          if (editingSections.has(sectionName)) {
+            let sectionData: any = {};
+            if (sectionName === 'personal') {
+              sectionData = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                dateOfBirth: formData.dateOfBirth,
+                gender: formData.gender,
+                maritalStatus: formData.maritalStatus,
+                firstLanguage: formData.firstLanguage,
+                nationality: formData.nationality,
+              };
+            } else if (sectionName === 'currentAddress') {
+              sectionData = { currentAddress: formData.currentAddress };
+            } else if (sectionName === 'permanentAddress') {
+              sectionData = { permanentAddress: formData.permanentAddress };
+            } else if (sectionName === 'passport') {
+              sectionData = {
+                passportNumber: formData.passportNumber,
+                passportExpiry: formData.passportExpiry,
+                passportIssueDate: formData.passportIssueDate,
+                passportIssueCountry: formData.passportIssueCountry,
+              };
+            }
+            handleSectionSave(sectionName, sectionData);
+          } else {
+            toggleEditSection(sectionName);
+          }
+        }}
+        className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium transition-all  ${editingSections.has(sectionName)
+          ? "bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-lg shadow-[#F26D44]/25"
+          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
+      >
+        {editingSections.has(sectionName) ? (
+          <><Save size={14} /> Save</>
+        ) : (
+          <><Edit2 size={14} /> Edit</>
+        )}
+      </motion.button>
+    </div>
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="p-4 bg-white border border-gray-200">
+        <SectionHeader title="Personal Information" sectionName="personal" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Field
+            label="Full Name"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.name}
+            icon={User}
+            fieldKey="name"
+            section="personal"
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+          <Field
+            label="Email"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.email}
+            icon={Mail}
+            fieldKey="email"
+            section="personal"
+            disabled
+            type="email"
+            onChange={() => { }}
+          />
+          <Field
+            label="Phone"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.phone}
+            icon={Phone}
+            fieldKey="phone"
+            section="personal"
+            type="tel"
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+          <Field
+            label="Date of Birth"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.dateOfBirth}
+            icon={Calendar}
+            fieldKey="dateOfBirth"
+            section="personal"
+            type="date"
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+          <Field
+            label="Gender"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.gender}
+            icon={User}
+            fieldKey="gender"
+            section="personal"
+            type="select"
+            options={["male", "female", "other"]}
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+          <Field
+            label="Marital Status"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.maritalStatus}
+            icon={Heart}
+            fieldKey="maritalStatus"
+            section="personal"
+            type="select"
+            options={["single", "married", "divorced", "widowed"]}
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+          <Field
+            label="First Language"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.firstLanguage}
+            icon={Languages}
+            fieldKey="firstLanguage"
+            section="personal"
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+          <Field
+            label="Nationality"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.nationality}
+            icon={Globe}
+            fieldKey="nationality"
+            section="personal"
+            type="select"
+            options={countriesList.map((c: any) => c.name)}
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
         </div>
       </div>
 
-      {/* Current Address */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <Home size={20} className="text-[#F26D44]" />
-          Current Address
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-span-2 space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Address Line 1
-            </label>
-            <input
-              type="text"
-              value={formData.currentAddress.addressLine1}
-              onChange={(e) =>
-                handleAddressChange(
-                  "currentAddress",
-                  "addressLine1",
-                  e.target.value
-                )
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="md:col-span-2 space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Address Line 2
-            </label>
-            <input
-              type="text"
-              value={formData.currentAddress.addressLine2}
-              onChange={(e) =>
-                handleAddressChange(
-                  "currentAddress",
-                  "addressLine2",
-                  e.target.value
-                )
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              City
-            </label>
-            <input
-              type="text"
-              value={formData.currentAddress.city}
-              onChange={(e) =>
-                handleAddressChange("currentAddress", "city", e.target.value)
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              State
-            </label>
-            <input
-              type="text"
-              value={formData.currentAddress.state}
-              onChange={(e) =>
-                handleAddressChange("currentAddress", "state", e.target.value)
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Country
-            </label>
-            <Autocomplete
-              options={countries}
-              getOptionLabel={(option) => option?.name || ""}
-              value={
-                countries.find(
-                  (c) => c.name === formData.currentAddress.country
-                ) || null
-              }
-              onChange={(_, newValue) =>
-                handleAddressChange(
-                  "currentAddress",
-                  "country",
-                  newValue?.name || ""
-                )
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{
-                    ...params?.InputProps,
-                    startAdornment: (
-                      <>
-                        <InputAdornment position="start">
-                          <MapPin size={16} className="text-gray-400" />
-                        </InputAdornment>
-                        {params?.InputProps?.startAdornment}
-                      </>
-                    ),
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      height: "46px",
-                      backgroundColor: "#F9FAFB",
-                      borderRadius: "12px",
-                    },
-                  }}
-                />
-              )}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Postal Code
-            </label>
-            <input
-              type="text"
-              value={formData.currentAddress.postalCode}
-              onChange={(e) =>
-                handleAddressChange(
-                  "currentAddress",
-                  "postalCode",
-                  e.target.value
-                )
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
+      {/* Section 2: Current Address */}
+      <div className="p-4 bg-white border border-gray-200 ">
+        <SectionHeader title="Current Address" sectionName="currentAddress" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Field
+            label="Address Line 1"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.currentAddress?.addressLine1}
+            icon={Home}
+            fieldKey="currentAddress.addressLine1"
+            section="currentAddress"
+            onChange={(k: string, v: any) => updateNested("currentAddress", "addressLine1", v)}
+          />
+          <Field
+            label="Address Line 2"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.currentAddress?.addressLine2}
+            icon={Home}
+            fieldKey="currentAddress.addressLine2"
+            section="currentAddress"
+            onChange={(k: string, v: any) => updateNested("currentAddress", "addressLine2", v)}
+          />
+          <Field
+            label="City"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.currentAddress?.city}
+            icon={MapPin}
+            fieldKey="currentAddress.city"
+            section="currentAddress"
+            onChange={(k: string, v: any) => updateNested("currentAddress", "city", v)}
+          />
+          <Field
+            label="State"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.currentAddress?.state}
+            icon={MapPin}
+            fieldKey="currentAddress.state"
+            section="currentAddress"
+            onChange={(k: string, v: any) => updateNested("currentAddress", "state", v)}
+          />
+          <Field
+            label="Postal Code"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.currentAddress?.postalCode}
+            icon={Hash}
+            fieldKey="currentAddress.postalCode"
+            section="currentAddress"
+            onChange={(k: string, v: any) => updateNested("currentAddress", "postalCode", v)}
+          />
+          <Field
+            label="Country"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.currentAddress?.country}
+            icon={Globe}
+            fieldKey="currentAddress.country"
+            section="currentAddress"
+            type="select"
+            options={countriesList.map((c: any) => c.name)}
+            onChange={(k: string, v: any) => updateNested("currentAddress", "country", v)}
+          />
         </div>
       </div>
 
-      {/* Permanent Address */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <Home size={20} className="text-[#F26D44]" />
-          Permanent Address
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-span-2 space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Address Line 1
-            </label>
-            <input
-              type="text"
-              value={formData.permanentAddress.addressLine1}
-              onChange={(e) =>
-                handleAddressChange(
-                  "permanentAddress",
-                  "addressLine1",
-                  e.target.value
-                )
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="md:col-span-2 space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Address Line 2
-            </label>
-            <input
-              type="text"
-              value={formData.permanentAddress.addressLine2}
-              onChange={(e) =>
-                handleAddressChange(
-                  "permanentAddress",
-                  "addressLine2",
-                  e.target.value
-                )
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              City
-            </label>
-            <input
-              type="text"
-              value={formData.permanentAddress.city}
-              onChange={(e) =>
-                handleAddressChange(
-                  "permanentAddress",
-                  "city",
-                  e.target.value
-                )
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              State
-            </label>
-            <input
-              type="text"
-              value={formData.permanentAddress.state}
-              onChange={(e) =>
-                handleAddressChange(
-                  "permanentAddress",
-                  "state",
-                  e.target.value
-                )
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Country
-            </label>
-            <Autocomplete
-              options={countries}
-              getOptionLabel={(option) => option?.name || ""}
-              value={
-                countries.find(
-                  (c) => c.name === formData.permanentAddress.country
-                ) || null
-              }
-              onChange={(_, newValue) =>
-                handleAddressChange(
-                  "permanentAddress",
-                  "country",
-                  newValue?.name || ""
-                )
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <>
-                        <InputAdornment position="start">
-                          <MapPin size={16} className="text-gray-400" />
-                        </InputAdornment>
-                        {params?.InputProps?.startAdornment}
-                      </>
-                    ),
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      height: "46px",
-                      backgroundColor: "#F9FAFB",
-                      borderRadius: "12px",
-                    },
-                  }}
-                />
-              )}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Postal Code
-            </label>
-            <input
-              type="text"
-              value={formData.permanentAddress.postalCode}
-              onChange={(e) =>
-                handleAddressChange(
-                  "permanentAddress",
-                  "postalCode",
-                  e.target.value
-                )
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
+      {/* Section 3: Permanent Address */}
+      <div className="p-4 bg-white border border-gray-200 ">
+        <SectionHeader title="Permanent Address" sectionName="permanentAddress" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Field
+            label="Address Line 1"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.permanentAddress?.addressLine1}
+            icon={Home}
+            fieldKey="permanentAddress.addressLine1"
+            section="permanentAddress"
+            onChange={(k: string, v: any) => updateNested("permanentAddress", "addressLine1", v)}
+          />
+          <Field
+            label="Address Line 2"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.permanentAddress?.addressLine2}
+            icon={Home}
+            fieldKey="permanentAddress.addressLine2"
+            section="permanentAddress"
+            onChange={(k: string, v: any) => updateNested("permanentAddress", "addressLine2", v)}
+          />
+          <Field
+            label="City"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.permanentAddress?.city}
+            icon={MapPin}
+            fieldKey="permanentAddress.city"
+            section="permanentAddress"
+            onChange={(k: string, v: any) => updateNested("permanentAddress", "city", v)}
+          />
+          <Field
+            label="State"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.permanentAddress?.state}
+            icon={MapPin}
+            fieldKey="permanentAddress.state"
+            section="permanentAddress"
+            onChange={(k: string, v: any) => updateNested("permanentAddress", "state", v)}
+          />
+          <Field
+            label="Postal Code"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.permanentAddress?.postalCode}
+            icon={Hash}
+            fieldKey="permanentAddress.postalCode"
+            section="permanentAddress"
+            onChange={(k: string, v: any) => updateNested("permanentAddress", "postalCode", v)}
+          />
+          <Field
+            label="Country"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={profile?.permanentAddress?.country}
+            icon={Globe}
+            fieldKey="permanentAddress.country"
+            section="permanentAddress"
+            type="select"
+            options={countriesList.map((c: any) => c.name)}
+            onChange={(k: string, v: any) => updateNested("permanentAddress", "country", v)}
+          />
         </div>
       </div>
 
-      {/* Save Button */}
-      <div className="flex justify-end pt-6 border-t border-gray-200">
-        <button
-          onClick={() => onSave(formData)}
-          disabled={saving}
-          className="px-6 py-2.5 bg-gradient-to-r from-[#F26D44] to-orange-600 text-white rounded-xl hover:from-[#E05D34] hover:to-orange-700 transition-all text-sm font-medium flex items-center gap-2 shadow-md disabled:opacity-50"
-        >
-          {saving && <Loader2 size={16} className="animate-spin" />}
-          <Save size={16} />
-          Save Changes
-        </button>
+      {/* Section 4: Passport Information */}
+      <div className="p-4 bg-white border border-gray-200 ">
+        <SectionHeader title="Passport Information" sectionName="passport" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Field
+            label="Passport Number"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.passportNumber}
+            icon={CreditCard}
+            fieldKey="passportNumber"
+            section="passport"
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+          <Field
+            label="Issue Date"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.passportDetail?.issueDate}
+            icon={Calendar}
+            fieldKey="passportIssueDate"
+            section="passport"
+            type="date"
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+          <Field
+            label="Expiry Date"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.passportDetail?.expiryDate}
+            icon={CalendarDays}
+            fieldKey="passportExpiry"
+            section="passport"
+            type="date"
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+          <Field
+            label="Issue Country"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.passportDetail?.issueCountry}
+            icon={Globe}
+            fieldKey="passportIssueCountry"
+            section="passport"
+            type="select"
+            options={countriesList.map((c: any) => c.name)}
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+        </div>
       </div>
     </div>
   );
@@ -750,1161 +1113,736 @@ export function BasicDetailsTab({
 
 import { Plus, Trash2 } from "lucide-react";
 
-interface AcademicDetailsTabProps {
-  data: any;
-  countries: any[];
-  onSave: (data: any) => void;
-  saving: boolean;
-}
-
-export function AcademicDetailsTab({
-  data,
-  countries,
-  onSave,
-  saving,
-}: AcademicDetailsTabProps) {
-  const [highestAcademic, setHighestAcademic] = useState({
-    countryOfEducation: "",
-    highestEducationLevel: "",
-    gradingScheme: "",
-    gradeAverage: "",
-    graduated: false,
-  });
-
-  const [educationHistory, setEducationHistory] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (data?.profile) {
-      const profile = data.profile;
-      setHighestAcademic({
-        countryOfEducation: profile.highestAcademic?.countryOfEducation || "",
-        highestEducationLevel:
-          profile.highestAcademic?.highestEducationLevel || "",
-        gradingScheme: profile.highestAcademic?.gradingScheme || "",
-        gradeAverage: profile.highestAcademic?.gradeAverage || "",
-        graduated: profile.highestAcademic?.graduated || false,
-      });
-      setEducationHistory(profile.educationHistory || []);
-    }
-  }, [data]);
-
-  const addEducation = () => {
-    setEducationHistory([
-      ...educationHistory,
-      {
-        educationLevel: "",
-        institutionName: "",
-        gradingScheme: "",
-        startDate: "",
-        endDate: "",
-        degreeName: "",
-        address: "",
-        city: "",
-        state: "",
-        country: "",
-        postalCode: "",
-      },
-    ]);
-  };
-
-  const removeEducation = (index: number) => {
-    setEducationHistory(educationHistory.filter((_, i) => i !== index));
-  };
-
-  const updateEducation = (index: number, field: string, value: any) => {
-    const updated = [...educationHistory];
-    updated[index] = { ...updated[index], [field]: value };
-    setEducationHistory(updated);
-  };
-
-  return (
-    <div className="space-y-6">
-      {/* Highest Academic Qualification */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <GraduationCap size={20} className="text-[#F26D44]" />
-          Highest Academic Qualification
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Country of Education
-            </label>
-            <Autocomplete
-              options={countries}
-              getOptionLabel={(option) => option?.name || ""}
-              value={
-                countries.find(
-                  (c) => c.name === highestAcademic.countryOfEducation
-                ) || null
-              }
-              onChange={(_, newValue) =>
-                setHighestAcademic({
-                  ...highestAcademic,
-                  countryOfEducation: newValue?.name || "",
-                })
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <>
-                        <InputAdornment position="start">
-                          <MapPin size={16} className="text-gray-400" />
-                        </InputAdornment>
-                        {params?.InputProps?.startAdornment}
-                      </>
-                    ),
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      height: "46px",
-                      backgroundColor: "#F9FAFB",
-                      borderRadius: "12px",
-                    },
-                  }}
-                />
-              )}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Education Level
-            </label>
-            <select
-              value={highestAcademic.highestEducationLevel}
-              onChange={(e) =>
-                setHighestAcademic({
-                  ...highestAcademic,
-                  highestEducationLevel: e.target.value,
-                })
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            >
-              <option value="">Select Level</option>
-              <option value="high_school">High School</option>
-              <option value="bachelor">Bachelor's Degree</option>
-              <option value="master">Master's Degree</option>
-              <option value="phd">PhD</option>
-              <option value="diploma">Diploma</option>
-            </select>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Grading Scheme
-            </label>
-            <input
-              type="text"
-              value={highestAcademic.gradingScheme}
-              onChange={(e) =>
-                setHighestAcademic({
-                  ...highestAcademic,
-                  gradingScheme: e.target.value,
-                })
-              }
-              placeholder="e.g., GPA, Percentage, CGPA"
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Grade Average
-            </label>
-            <input
-              type="text"
-              value={highestAcademic.gradeAverage}
-              onChange={(e) =>
-                setHighestAcademic({
-                  ...highestAcademic,
-                  gradeAverage: e.target.value,
-                })
-              }
-              placeholder="e.g., 3.8, 85%, 9.2"
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase cursor-pointer">
-              <input
-                type="checkbox"
-                checked={highestAcademic.graduated}
-                onChange={(e) =>
-                  setHighestAcademic({
-                    ...highestAcademic,
-                    graduated: e.target.checked,
-                  })
-                }
-                className="w-4 h-4 text-[#F26D44] rounded"
-              />
-              Graduated
-            </label>
-          </div>
-        </div>
-      </div>
-
-      {/* Education History */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <GraduationCap size={20} className="text-[#F26D44]" />
-            Education History
-          </h3>
-          <button
-            onClick={addEducation}
-            className="px-4 py-2 bg-[#F26D44] text-white rounded-lg text-sm font-medium hover:bg-[#E05D34] transition flex items-center gap-2"
-          >
-            <Plus size={16} />
-            Add Education
-          </button>
-        </div>
-
-        <div className="space-y-4">
-          {educationHistory.map((edu, index) => (
-            <div
-              key={index}
-              className="p-4 bg-gray-50 rounded-xl border border-gray-200"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-gray-800">
-                  Education #{index + 1}
-                </h4>
-                <button
-                  onClick={() => removeEducation(index)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Education Level
-                  </label>
-                  <select
-                    value={edu.educationLevel}
-                    onChange={(e) =>
-                      updateEducation(index, "educationLevel", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  >
-                    <option value="">Select Level</option>
-                    <option value="high_school">High School</option>
-                    <option value="bachelor">Bachelor's</option>
-                    <option value="master">Master's</option>
-                    <option value="phd">PhD</option>
-                    <option value="diploma">Diploma</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Institution Name
-                  </label>
-                  <input
-                    type="text"
-                    value={edu.institutionName}
-                    onChange={(e) =>
-                      updateEducation(index, "institutionName", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Degree Name
-                  </label>
-                  <input
-                    type="text"
-                    value={edu.degreeName}
-                    onChange={(e) =>
-                      updateEducation(index, "degreeName", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Grading Scheme
-                  </label>
-                  <input
-                    type="text"
-                    value={edu.gradingScheme}
-                    onChange={(e) =>
-                      updateEducation(index, "gradingScheme", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    value={edu.startDate?.split("T")[0] || ""}
-                    onChange={(e) =>
-                      updateEducation(index, "startDate", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    value={edu.endDate?.split("T")[0] || ""}
-                    onChange={(e) =>
-                      updateEducation(index, "endDate", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  />
-                </div>
-
-                <div className="md:col-span-2 space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Address
-                  </label>
-                  <input
-                    type="text"
-                    value={edu.address}
-                    onChange={(e) =>
-                      updateEducation(index, "address", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    City
-                  </label>
-                  <input
-                    type="text"
-                    value={edu.city}
-                    onChange={(e) =>
-                      updateEducation(index, "city", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    State
-                  </label>
-                  <input
-                    type="text"
-                    value={edu.state}
-                    onChange={(e) =>
-                      updateEducation(index, "state", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Country
-                  </label>
-                  <Autocomplete
-                    options={countries}
-                    getOptionLabel={(option) => option?.name || ""}
-                    value={
-                      countries.find((c) => c.name === edu.country) || null
-                    }
-                    onChange={(_, newValue) =>
-                      updateEducation(index, "country", newValue?.name || "")
-                    }
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        InputProps={{
-                          ...params.InputProps,
-                          startAdornment: (
-                            <>
-                              <InputAdornment position="start">
-                                <MapPin size={16} className="text-gray-400" />
-                              </InputAdornment>
-                              {params?.InputProps?.startAdornment}
-                            </>
-                          ),
-                        }}
-                        sx={{
-                          "& .MuiOutlinedInput-root": {
-                            height: "46px",
-                            backgroundColor: "#FFFFFF",
-                            borderRadius: "12px",
-                          },
-                        }}
-                      />
-                    )}
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Postal Code
-                  </label>
-                  <input
-                    type="text"
-                    value={edu.postalCode}
-                    onChange={(e) =>
-                      updateEducation(index, "postalCode", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Save Button */}
-      <div className="flex justify-end pt-6 border-t border-gray-200">
-        <button
-          onClick={() =>
-            onSave({ highestAcademic, educationHistory })
-          }
-          disabled={saving}
-          className="px-6 py-2.5 bg-gradient-to-r from-[#F26D44] to-orange-600 text-white rounded-xl hover:from-[#E05D34] hover:to-orange-700 transition-all text-sm font-medium flex items-center gap-2 shadow-md disabled:opacity-50"
-        >
-          {saving && <Loader2 size={16} className="animate-spin" />}
-          <Save size={16} />
-          Save Changes
-        </button>
-      </div>
-    </div>
-  );
-}
-
-import {Building } from "lucide-react";
-
 interface WorkExperienceTabProps {
-  data: any;
-  onSave: (data: any) => void;
-  saving: boolean;
+  data: any[];
+  onSave: (data: any[]) => Promise<void>;
 }
 
-export function WorkExperienceTab({
-  data,
-  onSave,
-  saving,
-}: WorkExperienceTabProps) {
-  const [workExperience, setWorkExperience] = useState<any[]>([]);
+export function WorkExperienceTab({ data, onSave }: WorkExperienceTabProps) {
+  const [workList, setWorkList] = useState<any[]>([]);
+  const [editingSections, setEditingSections] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    if (data?.profile?.otherDetails?.workExperience) {
-      setWorkExperience(data.profile.otherDetails.workExperience);
+    if (editingSections.size > 0 || data !== workList) {
+      setWorkList(data && data.length > 0 ? [...data] : [{ isNew: true }]);
     }
-  }, [data]);
+  }, [data, editingSections]);
 
-  const addWork = () => {
-    setWorkExperience([
-      ...workExperience,
-      {
-        company: "",
-        position: "",
-        startDate: "",
-        endDate: "",
-        description: "",
-        currentlyWorking: false,
-      },
-    ]);
+  const handleSectionSave = async () => {
+    const validData = workList.filter(w => w.companyName || w.designation);
+    await onSave(validData);
+    setEditingSections(new Set());
   };
 
-  const removeWork = (index: number) => {
-    setWorkExperience(workExperience.filter((_, i) => i !== index));
+  const toggleEditSection = () => {
+    setEditingSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has("work")) {
+        newSet.delete("work");
+      } else {
+        newSet.add("work");
+      }
+      return newSet;
+    });
   };
 
-  const updateWork = (index: number, field: string, value: any) => {
-    const updated = [...workExperience];
-    updated[index] = { ...updated[index], [field]: value };
-    setWorkExperience(updated);
+  const addNew = () => setWorkList([...workList, { isNew: true }]);
+
+  const removeEntry = (index: number) => {
+    setWorkList(workList.filter((_, i) => i !== index));
+  };
+
+  const updateField = (index: number, field: string, value: any) => {
+    const newList = [...workList];
+    newList[index] = { ...newList[index], [field]: value };
+    setWorkList(newList);
+  };
+
+  // Format YYYY-MM-DD to "Mon YYYY" for display
+  const formatDate = (d?: string) => {
+    if (!d) return "Present";
+    try {
+      return new Date(d).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    } catch {
+      return d;
+    }
+  };
+
+  // Convert YYYY-MM-DD to YYYY-MM for <input type="month">
+  const toMonthInputValue = (d?: string) => {
+    if (!d) return "";
+    try {
+      return d.slice(0, 7); // "2024-06"
+    } catch {
+      return "";
+    }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-          <Briefcase size={20} className="text-[#F26D44]" />
-          Work Experience
-        </h3>
-        <button
-          onClick={addWork}
-          className="px-4 py-2 bg-[#F26D44] text-white rounded-lg text-sm font-medium hover:bg-[#E05D34] transition flex items-center gap-2"
-        >
-          <Plus size={16} />
-          Add Experience
-        </button>
-      </div>
-
-      {workExperience.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-          <Briefcase size={48} className="mx-auto mb-3 text-gray-400" />
-          <p className="text-gray-600 font-medium">No work experience added</p>
-          <p className="text-sm text-gray-500 mt-1">
-            Click "Add Experience" to get started
-          </p>
+    <div className="space-y-3">
+      {/* Section Header with Edit/Save Toggle */}
+      <div className="bg-white p-4 border border-gray-200 ">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-2">
+            <Briefcase className="w-5 h-5 text-[#F26D44]" />
+            <h3 className="text-lg font-medium text-gray-900">Work Experience</h3>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              if (editingSections.has("work")) {
+                handleSectionSave();
+              } else {
+                toggleEditSection();
+              }
+            }}
+            className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium transition-all  ${editingSections.has("work")
+              ? "bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-lg shadow-[#F26D44]/25"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+          >
+            {editingSections.has("work") ? (
+              <><Save size={14} /> Save</>
+            ) : (
+              <><Edit2 size={14} /> Edit</>
+            )}
+          </motion.button>
         </div>
-      ) : (
-        <div className="space-y-4">
-          {workExperience.map((work, index) => (
-            <div
-              key={index}
-              className="p-4 bg-gray-50 rounded-xl border border-gray-200"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-gray-800">
-                  Experience #{index + 1}
-                </h4>
-                <button
-                  onClick={() => removeWork(index)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Company Name
-                  </label>
-                  <div className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl">
-                    <Building size={16} className="text-gray-400" />
+        {/* Work Entries List */}
+        <div className="space-y-4">
+          {workList.map((work, idx) => (
+            <div key={idx} className="p-4 bg-gray-50 border border-gray-200  relative group">
+              {/* Remove Button (only visible in edit mode) */}
+              {editingSections.has("work") && workList.length > 1 && (
+                <button
+                  onClick={() => removeEntry(idx)}
+                  className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition"
+                >
+                  <Trash2 size={14} />
+                </button>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Company Name */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">Company / Organization</label>
+                  {editingSections.has("work") ? (
                     <input
-                      type="text"
-                      value={work.company}
-                      onChange={(e) =>
-                        updateWork(index, "company", e.target.value)
-                      }
+                      value={work.companyName || ""}
+                      onChange={(e) => updateField(idx, "companyName", e.target.value)}
                       placeholder="Enter company name"
-                      className="flex-1 outline-none bg-transparent"
+                      className="w-full px-4 py-2.5 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm "
                     />
+                  ) : (
+                    <div className="w-full px-4 py-2.5 bg-white border border-gray-200 text-sm text-gray-800 font-medium  min-h-[42px] flex items-center">
+                      {work.companyName || "N/A"}
+                    </div>
+                  )}
+                </div>
+
+                {/* Designation (matches schema key) */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">Designation</label>
+                  {editingSections.has("work") ? (
+                    <input
+                      value={work.designation || ""}
+                      onChange={(e) => updateField(idx, "designation", e.target.value)}
+                      placeholder="Enter designation"
+                      className="w-full px-4 py-2.5 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm "
+                    />
+                  ) : (
+                    <div className="w-full px-4 py-2.5 bg-white border border-gray-200 text-sm text-gray-800  min-h-[42px] flex items-center">
+                      {work.designation || "N/A"}
+                    </div>
+                  )}
+                </div>
+
+                {/* Location (Optional visual field, not in schema but useful) */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">Location</label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    {editingSections.has("work") ? (
+                      <input
+                        value={work.location || ""}
+                        onChange={(e) => updateField(idx, "location", e.target.value)}
+                        placeholder="City, Country"
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm "
+                      />
+                    ) : (
+                      <div className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 text-sm text-gray-800  min-h-[42px] flex items-center">
+                        {work.location || "N/A"}
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Position/Title
-                  </label>
-                  <input
-                    type="text"
-                    value={work.position}
-                    onChange={(e) =>
-                      updateWork(index, "position", e.target.value)
-                    }
-                    placeholder="Enter your position"
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  />
+                {/* From Date (matches schema key) */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">From</label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    {editingSections.has("work") ? (
+                      <input
+                        type="month"
+                        value={toMonthInputValue(work.from)}
+                        onChange={(e) => updateField(idx, "from", e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm "
+                      />
+                    ) : (
+                      <div className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 text-sm text-gray-800  min-h-[42px] flex items-center">
+                        {formatDate(work.from)}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    value={work.startDate?.split("T")[0] || ""}
-                    onChange={(e) =>
-                      updateWork(index, "startDate", e.target.value)
-                    }
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    End Date
-                  </label>
-                  <input
-                    type="date"
-                    value={work.endDate?.split("T")[0] || ""}
-                    onChange={(e) =>
-                      updateWork(index, "endDate", e.target.value)
-                    }
-                    disabled={work.currentlyWorking}
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] disabled:opacity-50"
-                  />
-                </div>
-
-                <div className="md:col-span-2 space-y-1.5">
-                  <label className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={work.currentlyWorking}
-                      onChange={(e) =>
-                        updateWork(
-                          index,
-                          "currentlyWorking",
-                          e.target.checked
-                        )
-                      }
-                      className="w-4 h-4 text-[#F26D44] rounded"
-                    />
-                    Currently Working Here
-                  </label>
-                </div>
-
-                <div className="md:col-span-2 space-y-1.5">
-                  <label className="text-xs font-medium text-gray-500 uppercase">
-                    Description
-                  </label>
-                  <textarea
-                    value={work.description}
-                    onChange={(e) =>
-                      updateWork(index, "description", e.target.value)
-                    }
-                    rows={3}
-                    placeholder="Describe your responsibilities and achievements..."
-                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] resize-none"
-                  />
+                {/* To Date (matches schema key) */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide">To</label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    {editingSections.has("work") ? (
+                      <input
+                        type="month"
+                        value={toMonthInputValue(work.to)}
+                        onChange={(e) => updateField(idx, "to", e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm "
+                      />
+                    ) : (
+                      <div className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 text-sm text-gray-800  min-h-[42px] flex items-center">
+                        {work.to ? formatDate(work.to) : "Present"}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           ))}
-        </div>
-      )}
 
-      {/* Save Button */}
-      <div className="flex justify-end pt-6 border-t border-gray-200">
-        <button
-          onClick={() => onSave({ workExperience })}
-          disabled={saving}
-          className="px-6 py-2.5 bg-gradient-to-r from-[#F26D44] to-orange-600 text-white rounded-xl hover:from-[#E05D34] hover:to-orange-700 transition-all text-sm font-medium flex items-center gap-2 shadow-md disabled:opacity-50"
-        >
-          {saving && <Loader2 size={16} className="animate-spin" />}
-          <Save size={16} />
-          Save Changes
-        </button>
+          {/* Empty State */}
+          {!editingSections.has("work") && workList.length === 0 && (
+            <div className="text-center py-12 border-2 border-dashed border-gray-200 ">
+              <Briefcase className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500 font-medium">No work experience recorded</p>
+            </div>
+          )}
+
+          {/* Add New Button (only in edit mode) */}
+          {editingSections.has("work") && (
+            <button
+              onClick={addNew}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 text-gray-600 hover:border-[#F26D44] hover:text-[#F26D44]  transition font-medium"
+            >
+              <Plus size={16} /> Add Work Experience
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
+import { Award } from "lucide-react";
+import {
+  ChevronDown, FileText, Info,
+  CheckCircle2, Circle
+} from "lucide-react";
 
+const TEST_CONFIGS = [
+  {
+    id: "ielts",
+    label: "IELTS",
+    icon: FileText,
+    fields: [
+      { key: "ielts.overall", label: "Overall Score*", placeholder: "Overall Score", span: "md:col-span-1" },
+      { key: "ielts.trfNo", label: "TRF No", placeholder: "T: TRF No.", span: "md:col-span-1" },
+      { key: "ielts.examDate", label: "Date of Examination", placeholder: "Dt. of Examination", type: "date", span: "md:col-span-1" },
+      { key: "ielts.listening", label: "Listening*", placeholder: "L:", span: "md:col-span-1" },
+      { key: "ielts.reading", label: "Reading*", placeholder: "R:", span: "md:col-span-1" },
+      { key: "ielts.writing", label: "Writing*", placeholder: "W:", span: "md:col-span-1" },
+      { key: "ielts.speaking", label: "Speaking*", placeholder: "S:", span: "md:col-span-1" },
+    ],
+    extraFields: [
+      { key: "ielts.yetToReceive", label: "Yet to Receive?", type: "boolean-toggle", options: ["No", "Yes"] },
+      { key: "ielts.resultDate", label: "Test Result Date*", placeholder: "Enter Test Result Date", type: "date" },
+      {
+        key: "ielts.waiver", label: "IELTS Waiver", type: "waiver-group", waiverOptions: ["No", "Yes"],
+        waiverExtras: [
+          { key: "ielts.waiver12thMarks", label: "12th English Marks", placeholder: "Out of 100" },
+          { key: "ielts.moi", label: "Medium of Instruction (MOI)", type: "checkbox" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "toefl",
+    label: "TOEFL",
+    icon: FileText,
+    fields: [
+      { key: "toefl.overall", label: "Overall Score*", placeholder: "Overall Score", span: "md:col-span-1" },
+      { key: "toefl.examDate", label: "Date of Examination", placeholder: "Dt. of Examination", type: "date", span: "md:col-span-1" },
+      { key: "toefl.reading", label: "Reading*", placeholder: "R:", span: "md:col-span-1" },
+      { key: "toefl.listening", label: "Listening*", placeholder: "L:", span: "md:col-span-1" },
+      { key: "toefl.speaking", label: "Speaking*", placeholder: "S:", span: "md:col-span-1" },
+      { key: "toefl.writing", label: "Writing*", placeholder: "W:", span: "md:col-span-1" },
+    ],
+    extraFields: [
+      { key: "toefl.yetToReceive", label: "Yet to Receive?", type: "boolean-toggle", options: ["No", "Yes"] },
+      { key: "toefl.resultDate", label: "Test Result Date*", placeholder: "Enter Test Result Date", type: "date" },
+      {
+        key: "toefl.waiver", label: "TOEFL Waiver", type: "waiver-group", waiverOptions: ["No", "Yes"],
+        waiverExtras: [
+          { key: "toefl.waiver12thMarks", label: "12th English Marks", placeholder: "Out of 100" },
+          { key: "toefl.moi", label: "Medium of Instruction (MOI)", type: "checkbox" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "gre",
+    label: "GRE",
+    icon: FileText,
+    fields: [
+      { key: "gre.overall", label: "Overall Score*", placeholder: "Overall Score", span: "md:col-span-1" },
+      { key: "gre.examDate", label: "Date of Examination", placeholder: "Dt. of Examination", type: "date", span: "md:col-span-1" },
+      { key: "gre.quantitative", label: "Quantitative*", placeholder: "Q:", span: "md:col-span-1" },
+      { key: "gre.verbal", label: "Verbal*", placeholder: "V:", span: "md:col-span-1" },
+      { key: "gre.analyticalWriting", label: "Analytical Writing*", placeholder: "AW:", span: "md:col-span-1" },
+    ],
+    extraFields: []
+  },
+  {
+    id: "pte",
+    label: "PTE",
+    icon: FileText,
+    fields: [
+      { key: "pte.overall", label: "Overall Score*", placeholder: "Overall Score", span: "md:col-span-1" },
+      { key: "pte.registrationNo", label: "Registration No", placeholder: "Registration No.", span: "md:col-span-1" },
+      { key: "pte.examDate", label: "Date of Examination", placeholder: "Dt. of Examination", type: "date", span: "md:col-span-1" },
+      { key: "pte.listening", label: "Listening*", placeholder: "Listening", span: "md:col-span-1" },
+      { key: "pte.reading", label: "Reading*", placeholder: "Reading", span: "md:col-span-1" },
+      { key: "pte.writing", label: "Writing*", placeholder: "Writing", span: "md:col-span-1" },
+      { key: "pte.speaking", label: "Speaking*", placeholder: "Speaking", span: "md:col-span-1" },
+    ],
+    extraFields: [
+      {
+        key: "pte.yetToReceive",
+        label: "Yet to Receive?",
+        type: "boolean-toggle",
+        options: ["No", "Yes"]
+      },
+      {
+        key: "pte.resultDate",
+        label: "Test Result Date*",
+        placeholder: "Enter Test Result Date",
+        type: "date"
+      },
+      {
+        key: "pte.waiver",
+        label: "PTE Waiver",
+        type: "waiver-group",
+        waiverOptions: ["No", "Yes"],
+        waiverExtras: [
+          {
+            key: "pte.waiver12thMarks",
+            label: "12th English Marks",
+            placeholder: "Out of 100"
+          },
+          {
+            key: "pte.moi",
+            label: "Medium of Instruction (MOI)",
+            type: "checkbox"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "gmat",
+    label: "GMAT",
+    icon: FileText,
+    fields: [
+      { key: "gmat.overall", label: "Overall Score*", placeholder: "Overall Score", span: "md:col-span-1" },
+      { key: "gmat.examDate", label: "Date of Examination", placeholder: "Dt. of Examination", type: "date", span: "md:col-span-1" },
+      { key: "gmat.quantitative", label: "Quantitative*", placeholder: "Q:", span: "md:col-span-1" },
+      { key: "gmat.verbal", label: "Verbal*", placeholder: "V:", span: "md:col-span-1" },
+      { key: "gmat.analyticalWriting", label: "Analytical Writing*", placeholder: "AW:", span: "md:col-span-1" },
+      { key: "gmat.integratedReasoning", label: "Integrated Reasoning*", placeholder: "IR:", span: "md:col-span-1" },
+    ],
+    extraFields: []
+  },
+  {
+    id: "sat",
+    label: "SAT",
+    icon: FileText,
+    fields: [
+      {
+        key: "sat.overall",
+        label: "Overall Score*",
+        placeholder: "Overall Score",
+        span: "md:col-span-1",
+      },
+      {
+        key: "sat.examDate",
+        label: "Date of Examination",
+        placeholder: "Dt. of Examination",
+        type: "date",
+        span: "md:col-span-1",
+      },
+      {
+        key: "sat.readingWriting",
+        label: "Reading & Writing*",
+        placeholder: "RW:",
+        span: "md:col-span-1",
+      },
+      {
+        key: "sat.math",
+        label: "Math*",
+        placeholder: "M:",
+        span: "md:col-span-1",
+      },
+      {
+        key: "sat.essay",
+        label: "Essay",
+        placeholder: "E:",
+        span: "md:col-span-1",
+      },
+    ],
+    extraFields: [],
+  }
+];
 
-interface TestInformationTabProps {
-  data: any;
-  onSave: (data: any) => void;
-  saving: boolean;
-}
+export function TestsTab({ data, onSave }: TestsTabProps) {
+  const [formData, setFormData] = useState<any>({});
+  const [editingSections, setEditingSections] = useState<Set<string>>(new Set());
+  const [expandedAccordions, setExpandedAccordions] = useState<Set<string>>(new Set());
 
-export function TestInformationTab({
-  data,
-  onSave,
-  saving,
-}: TestInformationTabProps) {
-  const [englishProficiencyScore, setEnglishProficiencyScore] = useState({
-    englishStatus: "",
-    englishTest: "",
-    reading: "",
-    listening: "",
-    writing: "",
-    speaking: "",
-    examDate: "",
-  });
+  // Helper to get nested values safely
+  const getNestedValue = (obj: any, path: string) => {
+    return path.split('.').reduce((acc, part) => acc?.[part], obj);
+  };
 
-  const [hasGmat, setHasGmat] = useState(false);
-  const [gmatScore, setGmatScore] = useState({
-    totalScore: { score: "", rank: "" },
-    verbal: { score: "", rank: "" },
-    quantitative: { score: "", rank: "" },
-    analyticalWriting: { score: "", rank: "" },
-    examDate: "",
-  });
+  // Helper to set nested values immutably
+  const setNestedValue = (path: string, value: any) => {
+    setFormData((prev: any) => {
+      const newObj = JSON.parse(JSON.stringify(prev || {}));
+      const keys = path.split('.');
+      let current: any = newObj;
+      for (let i = 0; i < keys.length - 1; i++) {
+        if (!current[keys[i]]) current[keys[i]] = {};
+        current = current[keys[i]];
+      }
+      current[keys[keys.length - 1]] = value;
+      return newObj;
+    });
+  };
 
-  const [hasGre, setHasGre] = useState(false);
-  const [greScore, setGreScore] = useState({
-    totalScore: { score: "", rank: "" },
-    verbal: { score: "", rank: "" },
-    quantitative: { score: "", rank: "" },
-    analyticalWriting: { score: "", rank: "" },
-    examDate: "",
-  });
-
-  const [satScore, setSatScore] = useState({
-    totalScore: { score: "", rank: "" },
-    verbal: { score: "", rank: "" },
-    quantitative: { score: "", rank: "" },
-    analyticalWriting: { score: "", rank: "" },
-    examDate: "",
-  });
-
+  // Initialize data and auto-expand sections with existing data
   useEffect(() => {
-    if (data?.profile) {
-      const profile = data.profile;
-      setEnglishProficiencyScore({
-        englishStatus: profile.englishProficiencyScore?.englishStatus || "",
-        englishTest: profile.englishProficiencyScore?.englishTest || "",
-        reading: profile.englishProficiencyScore?.reading || "",
-        listening: profile.englishProficiencyScore?.listening || "",
-        writing: profile.englishProficiencyScore?.writing || "",
-        speaking: profile.englishProficiencyScore?.speaking || "",
-        examDate:
-          profile.englishProficiencyScore?.examDate?.split("T")[0] || "",
+    setFormData(data || {});
+
+    // In view mode, auto-expand only sections that have actual data
+    if (editingSections.size === 0 && data) {
+      const expanded = new Set<string>();
+      TEST_CONFIGS.forEach(config => {
+        const hasData = config.fields.some((f: any) => {
+          const val = getNestedValue(data, f.key);
+          return val !== undefined && val !== null && val !== "";
+        });
+        if (hasData) expanded.add(config.id);
       });
-      setHasGmat(profile.hasGmat || false);
-      setGmatScore({
-        totalScore: {
-          score: profile.gmatScore?.totalScore?.score?.toString() || "",
-          rank: profile.gmatScore?.totalScore?.rank?.toString() || "",
-        },
-        verbal: {
-          score: profile.gmatScore?.verbal?.score?.toString() || "",
-          rank: profile.gmatScore?.verbal?.rank?.toString() || "",
-        },
-        quantitative: {
-          score: profile.gmatScore?.quantitative?.score?.toString() || "",
-          rank: profile.gmatScore?.quantitative?.rank?.toString() || "",
-        },
-        analyticalWriting: {
-          score:
-            profile.gmatScore?.analyticalWriting?.score?.toString() || "",
-          rank: profile.gmatScore?.analyticalWriting?.rank?.toString() || "",
-        },
-        examDate: profile.gmatScore?.examDate?.split("T")[0] || "",
-      });
-      setHasGre(profile.hasGre || false);
-      setGreScore({
-        totalScore: {
-          score: profile.greScore?.totalScore?.score?.toString() || "",
-          rank: profile.greScore?.totalScore?.rank?.toString() || "",
-        },
-        verbal: {
-          score: profile.greScore?.verbal?.score?.toString() || "",
-          rank: profile.greScore?.verbal?.rank?.toString() || "",
-        },
-        quantitative: {
-          score: profile.greScore?.quantitative?.score?.toString() || "",
-          rank: profile.greScore?.quantitative?.rank?.toString() || "",
-        },
-        analyticalWriting: {
-          score:
-            profile.greScore?.analyticalWriting?.score?.toString() || "",
-          rank: profile.greScore?.analyticalWriting?.rank?.toString() || "",
-        },
-        examDate: profile.greScore?.examDate?.split("T")[0] || "",
-      });
-      setSatScore({
-        totalScore: {
-          score: profile.satScore?.totalScore?.score?.toString() || "",
-          rank: profile.satScore?.totalScore?.rank?.toString() || "",
-        },
-        verbal: {
-          score: profile.satScore?.verbal?.score?.toString() || "",
-          rank: profile.satScore?.verbal?.rank?.toString() || "",
-        },
-        quantitative: {
-          score: profile.satScore?.quantitative?.score?.toString() || "",
-          rank: profile.satScore?.quantitative?.rank?.toString() || "",
-        },
-        analyticalWriting: {
-          score:
-            profile.satScore?.analyticalWriting?.score?.toString() || "",
-          rank: profile.satScore?.analyticalWriting?.rank?.toString() || "",
-        },
-        examDate: profile.satScore?.examDate?.split("T")[0] || "",
-      });
+      setExpandedAccordions(expanded);
     }
-  }, [data]);
+  }, [data, editingSections]);
 
-  const ScoreSection = ({
-    title,
-    scores,
-    setScores,
-    enabled,
-    setEnabled,
-  }: any) => (
-    <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="font-medium text-gray-800">{title}</h4>
-        <label className="flex items-center gap-2 text-xs font-medium text-gray-500 uppercase cursor-pointer">
-          <input
-            type="checkbox"
-            checked={enabled}
-            onChange={(e) => setEnabled(e.target.checked)}
-            className="w-4 h-4 text-[#F26D44] rounded"
-          />
-          Taken this test
-        </label>
-      </div>
+  const toggleEditSection = (testId: string) => {
+    setEditingSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(testId)) {
+        newSet.delete(testId);
+      } else {
+        newSet.add(testId);
+        // Auto-expand when entering edit mode
+        setExpandedAccordions(e => new Set(e).add(testId));
+      }
+      return newSet;
+    });
+  };
 
-      {enabled && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Total Score
-            </label>
-            <input
-              type="number"
-              value={scores.totalScore.score}
-              onChange={(e) =>
-                setScores({
-                  ...scores,
-                  totalScore: {
-                    ...scores.totalScore,
-                    score: e.target.value,
-                  },
-                })
-              }
-              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
+  const handleSaveSection = async (testId: string) => {
+    await onSave(formData);
+    setEditingSections(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(testId);
+      return newSet;
+    });
+  };
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Percentile Rank
-            </label>
-            <input
-              type="number"
-              value={scores.totalScore.rank}
-              onChange={(e) =>
-                setScores({
-                  ...scores,
-                  totalScore: {
-                    ...scores.totalScore,
-                    rank: e.target.value,
-                  },
-                })
-              }
-              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Verbal Score
-            </label>
-            <input
-              type="number"
-              value={scores.verbal.score}
-              onChange={(e) =>
-                setScores({
-                  ...scores,
-                  verbal: { ...scores.verbal, score: e.target.value },
-                })
-              }
-              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Verbal Rank
-            </label>
-            <input
-              type="number"
-              value={scores.verbal.rank}
-              onChange={(e) =>
-                setScores({
-                  ...scores,
-                  verbal: { ...scores.verbal, rank: e.target.value },
-                })
-              }
-              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Quantitative Score
-            </label>
-            <input
-              type="number"
-              value={scores.quantitative.score}
-              onChange={(e) =>
-                setScores({
-                  ...scores,
-                  quantitative: {
-                    ...scores.quantitative,
-                    score: e.target.value,
-                  },
-                })
-              }
-              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Quantitative Rank
-            </label>
-            <input
-              type="number"
-              value={scores.quantitative.rank}
-              onChange={(e) =>
-                setScores({
-                  ...scores,
-                  quantitative: {
-                    ...scores.quantitative,
-                    rank: e.target.value,
-                  },
-                })
-              }
-              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Analytical Writing Score
-            </label>
-            <input
-              type="number"
-              value={scores.analyticalWriting.score}
-              onChange={(e) =>
-                setScores({
-                  ...scores,
-                  analyticalWriting: {
-                    ...scores.analyticalWriting,
-                    score: e.target.value,
-                  },
-                })
-              }
-              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Analytical Writing Rank
-            </label>
-            <input
-              type="number"
-              value={scores.analyticalWriting.rank}
-              onChange={(e) =>
-                setScores({
-                  ...scores,
-                  analyticalWriting: {
-                    ...scores.analyticalWriting,
-                    rank: e.target.value,
-                  },
-                })
-              }
-              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="md:col-span-2 space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Exam Date
-            </label>
-            <input
-              type="date"
-              value={scores.examDate}
-              onChange={(e) =>
-                setScores({ ...scores, examDate: e.target.value })
-              }
-              className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  const toggleAccordion = (testId: string) => {
+    setExpandedAccordions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(testId)) newSet.delete(testId);
+      else newSet.add(testId);
+      return newSet;
+    });
+  };
+  const visibleTests = TEST_CONFIGS;
 
   return (
-    <div className="space-y-6">
-      {/* English Proficiency */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <FileText size={20} className="text-[#F26D44]" />
-          English Proficiency
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Status
-            </label>
-            <select
-              value={englishProficiencyScore.englishStatus}
-              onChange={(e) =>
-                setEnglishProficiencyScore({
-                  ...englishProficiencyScore,
-                  englishStatus: e.target.value,
-                })
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            >
-              <option value="">Select Status</option>
-              <option value="taken">Test Taken</option>
-              <option value="not_taken">Not Taken Yet</option>
-              <option value="waived">Waived</option>
-            </select>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Test Type
-            </label>
-            <select
-              value={englishProficiencyScore.englishTest}
-              onChange={(e) =>
-                setEnglishProficiencyScore({
-                  ...englishProficiencyScore,
-                  englishTest: e.target.value,
-                })
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            >
-              <option value="">Select Test</option>
-              <option value="ielts">IELTS</option>
-              <option value="toefl">TOEFL</option>
-              <option value="pte">PTE</option>
-              <option value="duolingo">Duolingo</option>
-            </select>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Reading Score
-            </label>
-            <input
-              type="text"
-              value={englishProficiencyScore.reading}
-              onChange={(e) =>
-                setEnglishProficiencyScore({
-                  ...englishProficiencyScore,
-                  reading: e.target.value,
-                })
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Listening Score
-            </label>
-            <input
-              type="text"
-              value={englishProficiencyScore.listening}
-              onChange={(e) =>
-                setEnglishProficiencyScore({
-                  ...englishProficiencyScore,
-                  listening: e.target.value,
-                })
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Writing Score
-            </label>
-            <input
-              type="text"
-              value={englishProficiencyScore.writing}
-              onChange={(e) =>
-                setEnglishProficiencyScore({
-                  ...englishProficiencyScore,
-                  writing: e.target.value,
-                })
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Speaking Score
-            </label>
-            <input
-              type="text"
-              value={englishProficiencyScore.speaking}
-              onChange={(e) =>
-                setEnglishProficiencyScore({
-                  ...englishProficiencyScore,
-                  speaking: e.target.value,
-                })
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-500 uppercase">
-              Exam Date
-            </label>
-            <input
-              type="date"
-              value={englishProficiencyScore.examDate}
-              onChange={(e) =>
-                setEnglishProficiencyScore({
-                  ...englishProficiencyScore,
-                  examDate: e.target.value,
-                })
-              }
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-            />
-          </div>
+    <div className="space-y-3">
+      {/* Global Save Button (appears when multiple sections are being edited) */}
+      {editingSections.size > 1 && (
+        <div className="flex justify-end mb-2 sticky top-0 z-10 bg-white/95 backdrop-blur p-2  border border-gray-200 shadow-sm">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => onSave(formData)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-lg shadow-[#F26D44]/25  transition-all"
+          >
+            <Save size={14} /> Save All Changes
+          </motion.button>
         </div>
-      </div>
+      )}
 
-      {/* GMAT */}
-      <ScoreSection
-        title="GMAT Score"
-        scores={gmatScore}
-        setScores={setGmatScore}
-        enabled={hasGmat}
-        setEnabled={setHasGmat}
-      />
+      {visibleTests.map((config) => {
+        const Icon = config.icon;
+        const isEditing = editingSections.has(config.id);
+        const isExpanded = expandedAccordions.has(config.id);
 
-      {/* GRE */}
-      <ScoreSection
-        title="GRE Score"
-        scores={greScore}
-        setScores={setGreScore}
-        enabled={hasGre}
-        setEnabled={setHasGre}
-      />
+        return (
+          <div key={config.id} className="border border-gray-200  overflow-hidden bg-white">
+            <button
+              onClick={() => toggleAccordion(config.id)}
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-orange-600" />
+                </div>
+                <span className="font-semibold text-orange-600">{config.label}</span>
 
-      {/* SAT */}
-      <ScoreSection
-        title="SAT Score"
-        scores={satScore}
-        setScores={setSatScore}
-        enabled={true}
-        setEnabled={() => {}}
-      />
+                {/* Optional: Show a small badge if data exists */}
+                {config.fields.some((f: any) => getNestedValue(formData, f.key)) && (
+                  <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded-full">
+                    Completed
+                  </span>
+                )}
+              </div>
 
-      {/* Save Button */}
-      <div className="flex justify-end pt-6 border-t border-gray-200">
-        <button
-          onClick={() =>
-            onSave({
-              englishProficiencyScore,
-              hasGmat,
-              gmatScore,
-              hasGre,
-              greScore,
-              satScore,
-            })
-          }
-          disabled={saving}
-          className="px-6 py-2.5 bg-gradient-to-r from-[#F26D44] to-orange-600 text-white rounded-xl hover:from-[#E05D34] hover:to-orange-700 transition-all text-sm font-medium flex items-center gap-2 shadow-md disabled:opacity-50"
-        >
-          {saving && <Loader2 size={16} className="animate-spin" />}
-          <Save size={16} />
-          Save Changes
-        </button>
-      </div>
+              <div className="flex items-center gap-2">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent accordion toggle
+                    if (isEditing) {
+                      handleSaveSection(config.id);
+                    } else {
+                      toggleEditSection(config.id);
+                    }
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium  transition-all ${isEditing
+                      ? "bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-md"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                >
+                  {isEditing ? <><Save size={12} /> Save</> : <><Edit2 size={12} /> Edit</>}
+                </motion.button>
+
+                <ChevronDown
+                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                />
+              </div>
+            </button>
+
+            {/* Accordion Body */}
+            <AnimatePresence>
+              {isExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden "
+                >
+                  <div className="p-4 pt-0 space-y-4 border-t pt-6 border-gray-100">
+                    {/* Main Fields Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {config.fields.map((field: any) => {
+                        const value = getNestedValue(formData, field.key);
+                        return (
+                          <div key={field.key} className={`${field.span || ""}`}>
+                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
+                              {field.label}
+                            </label>
+                            {isEditing ? (
+                              <input
+                                type={field.type === "date" ? "date" : "text"}
+                                value={value || ""}
+                                onChange={(e) => setNestedValue(field.key, e.target.value)}
+                                placeholder={field.placeholder}
+                                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm  transition-all"
+                              />
+                            ) : (
+                              <div className="w-full px-3 py-2.5 bg-gray-50/70 border border-gray-200/60 text-sm text-gray-700  min-h-[42px] flex items-center">
+                                {value || <span className="text-gray-400 italic">{field.placeholder}</span>}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Extra Fields (Waivers, Toggles, etc.) */}
+                    {config.extraFields.length > 0 && (
+                      <div className="space-y-4 pt-2 border-t border-dashed border-gray-200">
+                        {config.extraFields.map((extra: any) => {
+                          // Boolean Toggle Renderer
+                          if (extra.type === "boolean-toggle") {
+                            const value = getNestedValue(formData, extra.key);
+                            return (
+                              <div key={extra.key} className="flex items-center gap-4">
+                                <label className="text-sm font-medium text-gray-700">{extra.label}</label>
+                                <div className="flex items-center gap-3">
+                                  {extra.options.map((opt: string) => {
+                                    const isSelected = (opt === "Yes" && value === true) || (opt === "No" && value === false) || (opt === "No" && value === undefined);
+                                    return (
+                                      <button
+                                        key={opt}
+                                        disabled={!isEditing}
+                                        onClick={() => setNestedValue(extra.key, opt === "Yes")}
+                                        className={`flex items-center gap-1.5 text-sm transition-all ${isSelected ? "text-[#F26D44] font-medium" : "text-gray-400"
+                                          } ${!isEditing ? "cursor-default" : "cursor-pointer"}`}
+                                      >
+                                        {isSelected ? <CheckCircle2 className="w-4 h-4 fill-current" /> : <Circle className="w-4 h-4" />}
+                                        {opt}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          }
+
+                          // Date Renderer
+                          if (extra.type === "date") {
+                            const value = getNestedValue(formData, extra.key);
+                            return (
+                              <div key={extra.key}>
+                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">{extra.label}</label>
+                                {isEditing ? (
+                                  <input
+                                    type="date"
+                                    value={value || ""}
+                                    onChange={(e) => setNestedValue(extra.key, e.target.value)}
+                                    className="w-full md:w-64 px-3 py-2.5 bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm  transition-all"
+                                  />
+                                ) : (
+                                  <div className="w-full md:w-64 px-3 py-2.5 bg-gray-50/70 border border-gray-200/60 text-sm text-gray-700  min-h-[42px] flex items-center">
+                                    {value || <span className="text-gray-400 italic">{extra.placeholder}</span>}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          }
+
+                          // Waiver Group Renderer
+                          if (extra.type === "waiver-group") {
+                            const waiverValue = getNestedValue(formData, extra.key);
+                            const isWaived = waiverValue === true;
+
+                            return (
+                              <div key={extra.key} className="space-y-3">
+                                <div className="flex items-center gap-4 flex-wrap">
+                                  <div className="flex items-center gap-1.5">
+                                    <Info className="w-3.5 h-3.5 text-blue-500" />
+                                    <label className="text-sm font-medium text-gray-700">{extra.label}</label>
+                                  </div>
+                                  <div className="flex items-center gap-3">
+                                    {extra.waiverOptions.map((opt: string) => {
+                                      const isSelected = (opt === "Yes" && isWaived) || (opt === "No" && !isWaived);
+                                      return (
+                                        <button
+                                          key={opt}
+                                          disabled={!isEditing}
+                                          onClick={() => setNestedValue(extra.key, opt === "Yes")}
+                                          className={`flex items-center gap-1.5 text-sm transition-all ${isSelected ? "text-[#F26D44] font-medium" : "text-gray-400"
+                                            } ${!isEditing ? "cursor-default" : "cursor-pointer"}`}
+                                        >
+                                          {isSelected ? <CheckCircle2 className="w-4 h-4 fill-current" /> : <Circle className="w-4 h-4" />}
+                                          {opt}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+
+                                {/* Conditional Waiver Extras */}
+                                {(isWaived || isEditing) && (
+                                  <div className="pl-8 flex flex-wrap items-center gap-4">
+                                    {extra.waiverExtras.map((we: any) => {
+                                      if (we.type === "checkbox") {
+                                        const checked = !!getNestedValue(formData, we.key);
+                                        return (
+                                          <label key={we.key} className={`flex items-center gap-2 text-sm text-gray-600 ${!isEditing ? "opacity-60" : ""}`}>
+                                            <input
+                                              type="checkbox"
+                                              checked={checked}
+                                              disabled={!isEditing}
+                                              onChange={(e) => setNestedValue(we.key, e.target.checked)}
+                                              className="w-4 h-4 accent-[#F26D44] "
+                                            />
+                                            {we.label}
+                                          </label>
+                                        );
+                                      }
+                                      const val = getNestedValue(formData, we.key);
+                                      return (
+                                        <div key={we.key} className="flex items-center gap-2">
+                                          <label className="text-sm text-gray-600">{we.label}</label>
+                                          {isEditing ? (
+                                            <input
+                                              type="text"
+                                              value={val || ""}
+                                              onChange={(e) => setNestedValue(we.key, e.target.value)}
+                                              placeholder={we.placeholder}
+                                              className="px-3 py-1.5 bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm  w-28"
+                                            />
+                                          ) : (
+                                            <div className="px-3 py-1.5 bg-gray-50/70 border border-gray-200/60 text-sm text-gray-700  min-h-[34px] flex items-center">
+                                              {val || <span className="text-gray-400 italic">{we.placeholder}</span>}
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          }
+                          return null;
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        );
+      })}
+
+      {/* Empty State - Only shown if literally NO test configs exist (unlikely) */}
+      {visibleTests.length === 0 && (
+        <div className="text-center py-16 border-2 border-dashed border-gray-200  bg-white">
+          <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-500 font-medium">No test types configured</p>
+        </div>
+      )}
     </div>
   );
 }

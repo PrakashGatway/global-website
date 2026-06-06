@@ -35,10 +35,13 @@ import {
     User2,
     PhoneCall,
     DollarSign,
+    Target,
+    Hash,
+    CalendarDays,
 } from "lucide-react";
 import axiosInstance from "@/app/axiosInstance";
 import { useParams, useRouter } from "next/navigation";
-import ProfileFormContainer from "@/components/couseller/ProfileSteps";
+import ProfileTabs from "@/components/couseller/ProfileSteps";
 
 // ─── Types ─────────────────────────────────────────
 interface Document {
@@ -172,14 +175,7 @@ export default function StudentProfilePage() {
     const [profile, setProfile] = useState<Profile | null>(null);
     const [applications, setApplications] = useState<Application[]>([]);
     const [activeTab, setActiveTab] = useState<"profile" | "applications" | "documents">("profile");
-    const [editingSection, setEditingSection] = useState<string | null>(null);
-    const [saving, setSaving] = useState(false);
     const [countriesList, setCountriesList] = useState<Country[]>([]);
-
-    // Edit states for different sections
-    const [personalInfo, setPersonalInfo] = useState<any>({});
-    const [mailingAddress, setMailingAddress] = useState<any>({});
-    const [passportInfo, setPassportInfo] = useState<any>({});
 
     // Fetch student data
     useEffect(() => {
@@ -219,95 +215,6 @@ export default function StudentProfilePage() {
         });
     };
 
-    const handleEditToggle = (section: string) => {
-        if (editingSection === section) {
-            setEditingSection(null);
-        } else {
-            setEditingSection(section);
-            switch (section) {
-                case "personal":
-                    setPersonalInfo({
-                        name: user?.name || "",
-                        email: user?.email || "",
-                        phone: user?.phone || "",
-                        dateOfBirth: user?.dateOfBirth || "",
-                        gender: user?.gender || "",
-                        maritalStatus: user?.maritalStatus || "",
-                        firstLanguage: user?.firstLanguage || "",
-                        nationality: user?.nationality || "",
-                    });
-                    break;
-                case "mailing":
-                    setMailingAddress({
-                        addressLine1: profile?.currentAddress?.addressLine1 || "",
-                        addressLine2: profile?.currentAddress?.addressLine2 || "",
-                        city: profile?.currentAddress?.city || user?.city || "",
-                        state: profile?.currentAddress?.state || user?.state || "",
-                        country: profile?.currentAddress?.country || user?.country || "",
-                        postalCode: profile?.currentAddress?.postalCode || "",
-                    });
-                    break;
-                case "passport":
-                    setPassportInfo({
-                        passportNumber: user?.passportNumber || "",
-                        passportExpiry: user?.passportExpiry || "",
-                    });
-                    break;
-            }
-        }
-    };
-
-    // Handle save
-    const handleSave = async (section: string) => {
-        setSaving(true);
-        try {
-            let updatePayload: any = {};
-
-            switch (section) {
-                case "personal":
-                    updatePayload = {
-                        name: personalInfo.name,
-                        phone: personalInfo.phone,
-                        dateOfBirth: personalInfo.dateOfBirth,
-                        gender: personalInfo.gender,
-                        maritalStatus: personalInfo.maritalStatus,
-                        firstLanguage: personalInfo.firstLanguage,
-                        nationality: personalInfo.nationality,
-                    };
-                    break;
-                case "mailing":
-                    updatePayload = {
-                        "profile.currentAddress": mailingAddress,
-                        city: mailingAddress.city,
-                        state: mailingAddress.state,
-                        country: mailingAddress.country,
-                    };
-                    break;
-                case "passport":
-                    updatePayload = {
-                        passportNumber: passportInfo.passportNumber,
-                        passportExpiry: passportInfo.passportExpiry,
-                    };
-                    break;
-            }
-
-            await axiosInstance.patch(`/users/${studentId}`, updatePayload);
-            toast.success("Information updated successfully");
-            setEditingSection(null);
-
-            // Refresh data
-            const userRes = await axiosInstance.get(`/users/${studentId}`);
-            setUser(userRes.data.data || userRes.data);
-            setProfile(userRes.data.data?.profile || userRes.data?.profile);
-        } catch (error) {
-            console.error("Error updating:", error);
-            toast.error("Failed to update information");
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    // Calculate profile completion
     const calculateCompletion = useCallback(() => {
         if (!user && !profile) return 0;
         let completed = 0;
@@ -549,7 +456,6 @@ export default function StudentProfilePage() {
                     </div>
 
                     <div className="flex-1 space-y-3">
-                        {/* Tab Navigation */}
                         <div className="bg-white p-1 border-2 border-gray-200">
                             <div className="flex items-center justify-start gap-2 overflow-x-auto hide-scrollbar">
                                 {[
@@ -571,23 +477,25 @@ export default function StudentProfilePage() {
                                 ))}
                             </div>
                         </div>
-
-                        {/* Main Content Area */}
                         <AnimatePresence mode="wait">
-                            {/* Profile Tab */}
                             {activeTab === "profile" && (
                                 <motion.div
                                     key="profile"
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.2 }}
+                                    transition={{ duration: 0.25 }}
                                 >
-                                    <ProfileFormContainer
-                                        userId={studentId}
-                                        onComplete={() => {
-                                            null
-                                            // Refresh 
+                                    <ProfileTabs
+                                        studentId={studentId}
+                                        user={user}
+                                        profile={profile}
+                                        countriesList={countriesList}
+                                        onUpdate={() => {
+                                            axiosInstance.get(`/users/${studentId}`).then(res => {
+                                                setUser(res.data.data || res.data);
+                                                setProfile(res.data.data?.profile || res.data?.profile);
+                                            });
                                         }}
                                     />
                                 </motion.div>
