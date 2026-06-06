@@ -37,11 +37,14 @@ import {
     DollarSign,
     Target,
     Hash,
-    CalendarDays,
+    CalendarDays,ChevronLeft
 } from "lucide-react";
 import axiosInstance from "@/app/axiosInstance";
 import { useParams, useRouter } from "next/navigation";
 import ProfileTabs from "@/components/couseller/ProfileSteps";
+ 
+import ProfileFormContainer from "@/components/couseller/ProfileSteps";
+import ApplicationCreate from "@/components/couseller/ApplicaionCreate";
 
 // ─── Types ─────────────────────────────────────────
 interface Document {
@@ -176,6 +179,8 @@ export default function StudentProfilePage() {
     const [applications, setApplications] = useState<Application[]>([]);
     const [activeTab, setActiveTab] = useState<"profile" | "applications" | "documents">("profile");
     const [countriesList, setCountriesList] = useState<Country[]>([]);
+    const [aps,setaps] = useState<Boolean>();
+    const [program,setprogram] = useState<Boolean>();
 
     // Fetch student data
     useEffect(() => {
@@ -184,7 +189,7 @@ export default function StudentProfilePage() {
                 setLoading(true);
                 const [userRes, applicationsRes, countriesRes] = await Promise.all([
                     axiosInstance.get(`/users/${studentId}`),
-                    axiosInstance.get(`/applications?userId=${studentId}`),
+                    axiosInstance.get(`/applications?studentid=${studentId}`),
                     axiosInstance.get("/countries?limit=250"),
                 ]);
 
@@ -406,7 +411,7 @@ export default function StudentProfilePage() {
                                             <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Preferred Countries</p>
                                             <div className="flex flex-wrap gap-1.5">
                                                 {profile.preferences.preferredCountries.map((country, i) => (
-                                                    <span key={i} className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs">
+                                                    <span key={i} className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded-full text-xs">
                                                         {country}
                                                     </span>
                                                 ))}
@@ -511,84 +516,7 @@ export default function StudentProfilePage() {
                                     transition={{ duration: 0.2 }}
                                     className="space-y-6"
                                 >
-                                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-                                        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                                                    <FileText className="w-5 h-5 text-[#F26D44]" />
-                                                </div>
-                                                <div>
-                                                    <h2 className="text-lg font-semibold text-gray-900">Applications</h2>
-                                                    <p className="text-xs text-gray-500">Total {applications.length} applications</p>
-                                                </div>
-                                            </div>
-                                            <button
-                                                onClick={() => router.push(`/dashboard/application_details/${studentId}`)}
-                                                className="px-5 py-2.5 bg-gradient-to-r from-[#F26D44] to-orange-600 text-white rounded-xl hover:from-[#E05D34] hover:to-orange-700 transition-all text-sm font-medium flex items-center gap-2 shadow-md"
-                                            >
-                                                <FileText size={16} />
-                                                Add New
-                                            </button>
-                                        </div>
-
-                                        {applications.length === 0 ? (
-                                            <div className="text-center py-12">
-                                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                                    <FileText size={32} className="text-gray-400" />
-                                                </div>
-                                                <h3 className="text-base font-semibold text-gray-900 mb-1">No Applications Yet</h3>
-                                                <p className="text-sm text-gray-500 mb-4">Create your first application to get started</p>
-                                                <button
-                                                    onClick={() => router.push(`/dashboard/application_details/${studentId}`)}
-                                                    className="px-5 py-2 bg-gradient-to-r from-[#F26D44] to-orange-600 text-white rounded-xl text-sm font-medium"
-                                                >
-                                                    Create Application
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="space-y-3">
-                                                {applications.map((app, idx) => (
-                                                    <motion.div
-                                                        key={app._id || idx}
-                                                        initial={{ opacity: 0, y: 10 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        transition={{ delay: idx * 0.05 }}
-                                                        onClick={() => router.push(`/dashboard/application_details/${app._id}`)}
-                                                        className="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:shadow-md transition-all cursor-pointer group"
-                                                    >
-                                                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                                                            <div className="flex-1">
-                                                                <div className="flex items-center gap-3 flex-wrap">
-                                                                    <h3 className="font-semibold text-gray-900 group-hover:text-[#F26D44] transition">
-                                                                        {app.applicationNumber || `Application #${idx + 1}`}
-                                                                    </h3>
-                                                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${app.primaryStatus === "approved" ? "bg-green-100 text-green-700" :
-                                                                        app.primaryStatus === "pending" ? "bg-amber-100 text-amber-700" :
-                                                                            "bg-gray-100 text-gray-700"
-                                                                        }`}>
-                                                                        {app.primaryStatus || "Pending"}
-                                                                    </span>
-                                                                </div>
-                                                                <p className="text-sm text-gray-700 mt-1">{app.course?.name || "Course not specified"}</p>
-                                                                <p className="text-xs text-gray-500">{app.course?.university?.name || "University not specified"}</p>
-                                                                <div className="flex items-center gap-4 mt-2 text-xs text-gray-400 flex-wrap">
-                                                                    <span className="flex items-center gap-1">
-                                                                        <Calendar size={12} />
-                                                                        {app.intake || "Intake not set"}
-                                                                    </span>
-                                                                    <span className="flex items-center gap-1">
-                                                                        <Clock size={12} />
-                                                                        Updated {formatDate(app.updatedAt)}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <ChevronRight size={18} className="text-gray-400 group-hover:text-[#F26D44] transition self-center" />
-                                                        </div>
-                                                    </motion.div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
+                                    <ApplicationCreate applicationData={applications} />
                                 </motion.div>
                             )}
 
@@ -615,7 +543,7 @@ export default function StudentProfilePage() {
 
                                         {/* Stats Cards */}
                                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                                            <div className="bg-blue-50 rounded-xl p-3 text-center">
+                                            <div className="bg-orange-50 rounded-xl p-3 text-center">
                                                 <FileText className="w-5 h-5 text-[#F26D44] mx-auto mb-1" />
                                                 <p className="text-xl font-bold text-[#F26D44]">
                                                     {Object.keys(profile?.documents || {}).length}

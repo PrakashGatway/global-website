@@ -51,6 +51,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: any;
 }>) {
+  
   const [feature, countryres, unicat,footerRes] = await Promise.all([
     serverInstance.get("/page-information/navbar?isNavbar=true"),
     serverInstance.get("/page-information/navbar?isFeatured=true&type=country"),

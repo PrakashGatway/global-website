@@ -13,7 +13,8 @@ import {
   Calendar as CalendarIcon, FileOutput, Clock as ClockIcon, CheckCheck,
   RefreshCw, EyeOff, ThumbsUp, Search, FileSearch, FileSignature,
   FileDigit, FileBox, Award, Ticket, Bookmark, ShieldIcon, Files,
-  FileInput, FileClock, CheckCheckIcon, Sparkles, Star, LayoutDashboard
+  FileInput, FileClock, CheckCheckIcon, Sparkles, Star, LayoutDashboard,
+  LinkIcon
 } from 'lucide-react';
 import axiosInstance, { fileBaseurl } from '@/app/axiosInstance';
 
@@ -647,11 +648,62 @@ const Step1APSApplied = ({ data, currentStepId, apiData }) => {
                 <div className="mb-3"><IconComp className="text-orange-400" size={28} /></div>
                 <h4 className="font-bold text-xs text-gray-800 mb-1">{card.title}</h4>
                 <p className="text-[10px] text-gray-500 mb-4 leading-relaxed">{card.desc}</p>
-                <button className="text-[#f56e45] text-[10px] font-bold border border-orange-200 bg-orange-50 px-3 py-1 rounded hover:bg-orange-100">{card.btnText}</button>
+                {/* <button className="text-[#f56e45] text-[10px] font-bold border border-orange-200 bg-orange-50 px-3 py-1 rounded hover:bg-orange-100">{card.btnText}</button> */}
               </div>
             );
           })}
         </div>
+
+        
+      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mt-2">
+        <h3 className="font-bold text-gray-800 mb-4">Visa Details</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
+          {(stepData?.importantInfo || [
+            { label: "Visa Number", value: "GER-VISA-2026-12345" },
+            { label: "Passport Number", value: "P12345678" },
+            { label: "Duration", value: "24 Months" },
+            { label: "Work Permit", value: "120 full days / 240 half days" }
+          ]).map((item, idx) => (
+            <div key={idx} className='space-y-2'>
+              <p className="text-[10px] text-gray-500">{item.title}</p>
+              <p className="text-sm font-medium text-gray-800">{item.description}</p>
+              
+                {item.type === "requirement" && <div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      // onChange={handleFileSelect}
+                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                      className="hidden"
+                      id={`file-upload-${item.title}`}
+                    />
+                    <label
+                      htmlFor={`file-upload-${item.title}`}
+                      className="flex items-center gap-2 px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm cursor-pointer hover:bg-gray-200"
+                    >
+                      <UploadCloud size={16} />
+                      Choose File
+                    </label>
+                  </div>
+
+                  {/* 
+                  {item.description. && (
+                    <a
+                      href={fileBaseurl(item.description)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-blue-600 hover:underline flex items-center gap-1 mt-1"
+                    >
+                      <LinkIcon size={12} />
+                      View Uploaded File
+                    </a>
+                  )} */}
+                </div>
+                }
+            </div>
+          ))}
+        </div>
+      </div>
       </div>
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
@@ -1905,9 +1957,8 @@ export default function VisaJourneyPage() {
   const progressSteps = data.steps || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Main Content */}
-      <main className="max-w-[1600px] mx-auto p-6">
+    <div className="min-h-screen">
+      <main className="max-w-[1600px] mx-auto p-4">
         
         {/* Page Title */}
         <div className="mb-6">

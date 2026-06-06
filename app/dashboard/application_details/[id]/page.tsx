@@ -1415,7 +1415,7 @@ export default function ApplicationDetailPage() {
 
   const [formData, setFormData] = useState({
     primaryStatus: "Pending" as ApplicationStatus,
-    documents: [] as AppDocument[],
+    documents: [] as any,
     backups: [] as BackupCourse[],
     rejectionReason: [] as RejectionReason[],
   });
@@ -1650,28 +1650,76 @@ export default function ApplicationDetailPage() {
   };
 
   const handleUpdateDocStatus = async (
-    idx: number,
-    status: AppDocument["status"],
-    rejectReason?: string,
-  ) => {
-    try {
-      const docs = [...formData.documents];
-      docs[idx] = { ...docs[idx], status, rejectReason };
-      const res = await axiosInstance.put(
-        `/applications/${id}`,
-        { documents: docs },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        },
-      );
-      if (res.data.success) {
-        setFormData((p) => ({ ...p, documents: docs }));
-        setSuccess("Status updated");
-      }
-    } catch {
-      setError("Failed to update status");
+  docId: string,
+  status: AppDocument["status"],
+  rejectReason?: string,
+) => {
+  try {
+    // Find the document to update
+    const docIndex = formData.documents.findIndex(doc => doc._id === docId);
+    
+    if (docIndex === -1) {
+      setError("Document not found");
+      return;
     }
-  };
+
+    // Create updated document
+    const updatedDoc = {
+      ...formData.documents[docIndex],
+      status,
+      ...(rejectReason !== undefined && { rejectReason })
+    };
+
+    // Update local state first for immediate feedback
+    const updatedDocuments = [...formData.documents];
+    updatedDocuments[docIndex] = updatedDoc;
+    setFormData(prev => ({ ...prev, documents: updatedDocuments }));
+
+    const response = await axiosInstance.put(
+      `/applications/documents/${id}/${docId}`,
+      {
+        status,
+        rejectReason: rejectReason || updatedDoc.rejectReason
+      },
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      }
+    );
+
+    if (response.data.success) {
+      const serverUpdatedDoc = response.data.data;
+      const finalDocuments = [...updatedDocuments];
+      finalDocuments[docIndex] = { ...finalDocuments[docIndex], ...serverUpdatedDoc };
+      setFormData(prev => ({ ...prev, documents: finalDocuments }));
+      
+      setSuccess(`Document ${status} successfully`);
+      setTimeout(() => setSuccess(""), 2000);
+      
+      await fetchActivities();
+    } else {
+      setFormData(prev => ({ ...prev, documents: formData.documents }));
+      setError("Failed to update document status");
+    }
+  } catch (error: any) {
+    console.error("Error updating document status:", error);
+    setFormData(prev => ({ ...prev, documents: formData.documents }));
+    setError(error.response?.data?.message || "Failed to update document status");
+  }
+};
+
+  // const handleUpdateDocStatus = async (
+  //   idx: number,
+  //   status: AppDocument["status"],
+  //   rejectReason?: string,
+  // ) => {
+  //   try {
+  //     const docs = [...formData.documents];
+  //     docs[idx] = { ...docs[idx], status, rejectReason };
+  //     setFormData((p) => ({ ...p, documents: docs }));
+  //   } catch {
+  //     setError("Failed to update status");
+  //   }
+  // };
 
   const addBackup = () => {
     setFormData((prev) => ({
@@ -1942,7 +1990,7 @@ export default function ApplicationDetailPage() {
   const tabs = [
     { id: "message", label: "Comments ", icon: MessageCircle },
     { id: "backups", label: "Backups", icon: BookOpen },
-    { id: "visa", label: "Visa Prosessing", icon: FileText },
+    { id: "document", label: "Documents", icon: FileText },
     { id: "activity", label: "Activity", icon: Activity },
   ];
 
@@ -2273,7 +2321,7 @@ export default function ApplicationDetailPage() {
 
               <div className="p-6">
                 {/* DOCUMENTS TAB */}
-                {activeTab === "visa" && (
+                {activeTab === "document" && (
                   <div className="animate-in fade-in slide-in-from-right-2 duration-300">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                       <div>
@@ -2282,11 +2330,11 @@ export default function ApplicationDetailPage() {
                             <FileText size={14} className="text-white" />
                           </div>
                           <h3 className="text-lg font-semibold text-slate-800">
-                            Visa Requirements
+                            Document Requirements
                           </h3>
                         </div>
                         <p className="text-sm text-slate-400 ml-8">
-                          Manage student visa requirements in one place
+                          Manage student Documents requirements in one place
                         </p>
                       </div>
 
@@ -2323,7 +2371,7 @@ export default function ApplicationDetailPage() {
                       </div>
                     )}
 
-                    {/* {formData.documents.length === 0 ? (
+                    {formData.documents.length === 0 ? (
         <div className="text-center py-20 bg-gradient-to-br from-slate-50 to-white rounded-2xl border-2 border-dashed border-slate-200">
           <div className="w-24 h-24 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner">
             <FolderOpen size={40} className="text-slate-300" />
@@ -2348,9 +2396,9 @@ export default function ApplicationDetailPage() {
             />
           ))}
         </div>
-      )} */}
+      )}
 
-                    <VisaApplicationManager data={Visainfo} applicaion={application} />
+                    {/* <VisaApplicationManager data={Visainfo} applicaion={application} />  */}
                   </div>
                 )}
 
@@ -3023,6 +3071,7 @@ export default function ApplicationDetailPage() {
 function DocumentCard({ doc, onUpdateStatus, onEdit }: any) {
   const [showReason, setShowReason] = useState(false);
   const [rejectReason, setRejectReason] = useState(doc.rejectReason || "");
+  const [status,setstatus] = useState(doc.status || "")
   const statusConfig = {
     Pending: {
       bg: "bg-amber-100",
@@ -3115,22 +3164,45 @@ function DocumentCard({ doc, onUpdateStatus, onEdit }: any) {
               {/* Status Selector */}
               <div className="shrink-0">
                 <div className="relative">
-                  <select
-                    value={doc.status}
+
+                  {/* <select
+                    value={status}
                     onChange={(e) => {
+                      console.log(e.target.value, doc);
                       if (e.target.value === "Rejected") {
                         setShowReason(true);
                       } else {
+                        setShowReason(false);
                         onUpdateStatus(doc._id, e.target.value);
+                        setstatus(e.target.value);
                       }
                     }}
                     className={`text-xs px-3 py-1.5 rounded-lg border focus:outline-none appearance-none cursor-pointer pr-7 ${currentStatus.bg} ${currentStatus.text} border-${currentStatus.text.split("-")[1]}-200 font-medium`}
                   >
-                    <option value="Pending">Pending</option>
-                    <option value="inreview">In Review</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
-                  </select>
+                    {['Pending', 'inreview', 'Approved', 'Rejected'].map(ele => (
+                      <option value={ele} >{ele}</option>
+                    ))}
+                  </select> */}
+                  <select
+  value={status}
+  onChange={(e) => {
+    const newStatus = e.target.value as AppDocument["status"];
+    if (newStatus === "Rejected") {
+      setShowReason(true);
+    } else {
+      setShowReason(false);
+      onUpdateStatus(doc._id, newStatus);
+      setstatus(newStatus);
+    }
+  }}
+  className={`text-xs px-3 py-1.5 rounded-lg border focus:outline-none appearance-none cursor-pointer pr-7 ${currentStatus.bg} ${currentStatus.text} border-${currentStatus.text.split("-")[1]}-200 font-medium`}
+>
+  <option value="Pending">Pending</option>
+  <option value="inreview">In Review</option>
+  <option value="Approved">Approved</option>
+  <option value="Rejected">Rejected</option>
+</select>
+
                   <StatusIcon
                     size={12}
                     className={`absolute right-2 top-1/2 -translate-y-1/2 ${currentStatus.text}`}
