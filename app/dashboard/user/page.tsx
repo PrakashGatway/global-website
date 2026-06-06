@@ -672,34 +672,7 @@ const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
                 </div>
               )}
             </motion.div>
-            <motion.div
-              key="detail"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
-              transition={{ duration: 0.3 }}
-            >
-              <button
-                onClick={handleCloseDetail}
-                className="mb-4 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition"
-              >
-                <ChevronLeft size={20} />
-                <span className="font-medium">Back to Students</span>
-              </button>
 
-              {detailLoading ? (
-                <div className="bg-white rounded-lg shadow-sm p-20 text-center">
-                  <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
-                  <p className="text-gray-500 mt-4">Loading student details...</p>
-                </div>
-              ) : (
-                <StudentDetailsPage
-                  user={selectedUser}
-                  applications={[]}
-                  onClose={handleCloseDetail}
-                />
-              )}
-            </motion.div>
         </AnimatePresence>
       </div>
     </LocalizationProvider>
