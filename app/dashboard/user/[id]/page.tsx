@@ -37,12 +37,12 @@ import {
     DollarSign,
     Target,
     Hash,
-    CalendarDays,ChevronLeft
+    CalendarDays, ChevronLeft
 } from "lucide-react";
 import axiosInstance from "@/app/axiosInstance";
 import { useParams, useRouter } from "next/navigation";
 import ProfileTabs from "@/components/couseller/ProfileSteps";
- 
+
 import ProfileFormContainer from "@/components/couseller/ProfileSteps";
 import ApplicationCreate from "@/components/couseller/ApplicaionCreate";
 
@@ -179,8 +179,8 @@ export default function StudentProfilePage() {
     const [applications, setApplications] = useState<Application[]>([]);
     const [activeTab, setActiveTab] = useState<"profile" | "applications" | "documents">("profile");
     const [countriesList, setCountriesList] = useState<Country[]>([]);
-    const [aps,setaps] = useState<Boolean>();
-    const [program,setprogram] = useState<Boolean>();
+    const [aps, setaps] = useState<Boolean>();
+    const [program, setprogram] = useState<Boolean>();
 
     // Fetch student data
     useEffect(() => {
@@ -265,13 +265,13 @@ export default function StudentProfilePage() {
     }
 
     const InfoRow = ({ icon, label, value }: any) => (
-        <div className="flex items-start gap-2">
+        <div className="flex items-center gap-1">
             <div className="w-8 h-8 flex items-center justify-center shrink-0 text-gray-500">
                 {icon}
             </div>
 
-            <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-gray-500">{label}</p>
+            <div className="flex items-center gap-2  min-w-0">
+                <p className="text-sm text-gray-500">{label} : </p>
                 <p className="text-sm font-medium text-gray-800 break-words">
                     {value || "N/A"}
                 </p>
@@ -299,19 +299,19 @@ export default function StudentProfilePage() {
                 <div className="flex flex-col lg:flex-row gap-3">
                     <div className="lg:w-80 space-y-3">
                         <div className="bg-white border-2 border-gray-200 overflow-hidden sticky top-3">
-                            <div className="relative bg-[#F26D44]/90 p-4">
+                            <div className="relative bg-[#F26D44]/90 p-4 px-6">
                                 <button
                                     onClick={() => router.back()}
-                                    className="p-2 px-2.5 hover:bg-gray-100 absolute top-0 left-0 bg-white rounded-br-2xl shadow-sm hover:shadow-md transition-all"
+                                    className="p-1.5 hover:bg-gray-100 absolute top-0 left-0 bg-white rounded-br-xl shadow-sm hover:shadow-md transition-all"
                                 >
-                                    <ArrowLeft size={20} className="text-gray-600" />
+                                    <ArrowLeft size={16} className="text-gray-800" />
                                 </button>
-                                <div className="flex items-start justify-start gap-3 mt-6">
+                                <div className="flex items-start justify-start gap-3">
                                     <div className="p-2 px-4 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-xl shadow-lg">
                                         {user?.name?.[0]?.toUpperCase() ?? "?"}
                                     </div>
                                     <div className="flex-1 font-medium">
-                                        <h2 className="text-white font-semibold mb-1 text-lg leading-tight">
+                                        <h2 className="text-white font-medium mb-1 text-lg leading-tight">
                                             {user?.name}
                                         </h2>
                                         <p className="flex items-center gap-2 mb-0.5 text-white/80 text-sm">
@@ -324,7 +324,8 @@ export default function StudentProfilePage() {
                                 </div>
                             </div>
 
-                            <div className="space-y-2 p-4 overflow-y-auto hide-scrollbar" style={{ maxHeight: "calc(100vh - 200px)" }}>
+                            <div className="space-y-[1px] p-4 py-2 overflow-y-auto hide-scrollbar" style={{ maxHeight: "calc(100vh - 200px)" }}>
+                                <h3 className="font-medium text-gray-800">Basic Information</h3>
                                 <InfoRow
                                     icon={<Mail size={20} />}
                                     label="Email"
@@ -395,69 +396,68 @@ export default function StudentProfilePage() {
                                     }
                                 />
 
+                                {profile?.preferences && (
+                                    <div className="bg-white pt-2 ">
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <SlidersHorizontal size={18} className="text-[#F26D44]" />
+                                            <h3 className="font-semibold text-gray-800">Student Preferences</h3>
+                                        </div>
+                                        <div className="space-y-3">
+                                            {profile.preferences.preferredCountries && profile.preferences.preferredCountries.length > 0 && (
+                                                <div>
+                                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Preferred Countries</p>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {profile.preferences.preferredCountries.map((country, i) => (
+                                                            <span key={i} className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded-full text-xs">
+                                                                {country}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {profile.preferences.preferredIntake && profile.preferences.preferredIntake.length > 0 && (
+                                                <div>
+                                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Preferred Intake</p>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {profile.preferences.preferredIntake.map((intake, i) => (
+                                                            <span key={i} className="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs">
+                                                                {intake}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {profile.preferences.preferredCourse && profile.preferences.preferredCourse.length > 0 && (
+                                                <div>
+                                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Preferred Courses</p>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {profile.preferences.preferredCourse.slice(0, 2).map((course, i) => (
+                                                            <span key={i} className="px-2 py-0.5 bg-purple-50 text-purple-700 rounded-full text-xs">
+                                                                {course}
+                                                            </span>
+                                                        ))}
+                                                        {profile.preferences.preferredCourse.length > 2 && (
+                                                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">
+                                                                +{profile.preferences.preferredCourse.length - 2}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {profile.preferences.budgetRange && (profile.preferences.budgetRange.min || profile.preferences.budgetRange.max) && (
+                                                <div>
+                                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Budget Range</p>
+                                                    <p className="text-sm text-gray-700">
+                                                        {profile.preferences.budgetRange.currency || "USD"} {profile.preferences.budgetRange.min?.toLocaleString() || "0"} - {profile.preferences.budgetRange.max?.toLocaleString() || "Unlimited"}
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
                             </div>
                         </div>
-
-                        {/* Preferences Card */}
-                        {profile?.preferences && (
-                            <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-200">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <SlidersHorizontal size={18} className="text-[#F26D44]" />
-                                    <h3 className="font-semibold text-gray-800">Student Preferences</h3>
-                                </div>
-                                <div className="space-y-3">
-                                    {profile.preferences.preferredCountries && profile.preferences.preferredCountries.length > 0 && (
-                                        <div>
-                                            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Preferred Countries</p>
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {profile.preferences.preferredCountries.map((country, i) => (
-                                                    <span key={i} className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded-full text-xs">
-                                                        {country}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                    {profile.preferences.preferredIntake && profile.preferences.preferredIntake.length > 0 && (
-                                        <div>
-                                            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Preferred Intake</p>
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {profile.preferences.preferredIntake.map((intake, i) => (
-                                                    <span key={i} className="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs">
-                                                        {intake}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                    {profile.preferences.preferredCourse && profile.preferences.preferredCourse.length > 0 && (
-                                        <div>
-                                            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Preferred Courses</p>
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {profile.preferences.preferredCourse.slice(0, 2).map((course, i) => (
-                                                    <span key={i} className="px-2 py-0.5 bg-purple-50 text-purple-700 rounded-full text-xs">
-                                                        {course}
-                                                    </span>
-                                                ))}
-                                                {profile.preferences.preferredCourse.length > 2 && (
-                                                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">
-                                                        +{profile.preferences.preferredCourse.length - 2}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    )}
-                                    {profile.preferences.budgetRange && (profile.preferences.budgetRange.min || profile.preferences.budgetRange.max) && (
-                                        <div>
-                                            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Budget Range</p>
-                                            <p className="text-sm text-gray-700">
-                                                {profile.preferences.budgetRange.currency || "USD"} {profile.preferences.budgetRange.min?.toLocaleString() || "0"} - {profile.preferences.budgetRange.max?.toLocaleString() || "Unlimited"}
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
                     </div>
 
                     <div className="flex-1 space-y-3">

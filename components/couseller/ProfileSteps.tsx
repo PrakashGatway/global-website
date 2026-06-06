@@ -116,11 +116,13 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
                     permanentAddress: data.permanentAddress,
                     passportNumber: data.passportNumber,
                     passportDetail: {
-                      issueDate: data.passportIssueDate,
-                      expiryDate: data.passportExpiry,
-                      issueCountry: data.passportIssueCountry
+                      issueDate: data.passportIssueDate || user.passportDetail?.issueDate,
+                      expiryDate: data.passportExpiry || user.passportDetail?.expiryDate,
+                      issueCountry: data.passportIssueCountry || user.passportDetail?.issueCountry
                     }
                   };
+
+                  console.log(payload);
                   await axiosInstance.put(`/users/${studentId}`, payload);
                   toast.success("Personal information updated");
                   onUpdate();
