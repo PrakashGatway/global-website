@@ -121,8 +121,6 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
                       issueCountry: data.passportIssueCountry || user.passportDetail?.issueCountry
                     }
                   };
-
-                  console.log(payload);
                   await axiosInstance.put(`/users/${studentId}`, payload);
                   toast.success("Personal information updated");
                   onUpdate();

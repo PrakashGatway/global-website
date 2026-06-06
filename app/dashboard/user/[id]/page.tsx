@@ -45,6 +45,7 @@ import ProfileTabs from "@/components/couseller/ProfileSteps";
 
 import ProfileFormContainer from "@/components/couseller/ProfileSteps";
 import ApplicationCreate from "@/components/couseller/ApplicaionCreate";
+import Documents from "@/components/couseller/Documents";
 
 // ─── Types ─────────────────────────────────────────
 interface Document {
@@ -299,26 +300,26 @@ export default function StudentProfilePage() {
                 <div className="flex flex-col lg:flex-row gap-3">
                     <div className="lg:w-80 space-y-3">
                         <div className="bg-white border-2 border-gray-200 overflow-hidden sticky top-3">
-                            <div className="relative bg-[#F26D44]/90 p-4 px-6">
+                            <div className="relative p-4 px-6 border-b-2">
                                 <button
                                     onClick={() => router.back()}
                                     className="p-1.5 hover:bg-gray-100 absolute top-0 left-0 bg-white rounded-br-xl shadow-sm hover:shadow-md transition-all"
                                 >
                                     <ArrowLeft size={16} className="text-gray-800" />
                                 </button>
-                                <div className="flex items-start justify-start gap-3">
-                                    <div className="p-2 px-4 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                                <div className="flex items-start justify-between gap-2">
+                                    <div className="p-2 px-4 mt-1 rounded-full bg-gray-800 backdrop-blur-sm flex items-center justify-center text-white font-semibold text-xl shadow-lg">
                                         {user?.name?.[0]?.toUpperCase() ?? "?"}
                                     </div>
                                     <div className="flex-1 font-medium">
-                                        <h2 className="text-white font-medium mb-1 text-lg leading-tight">
+                                        <h2 className="text-gray-900 font-medium text-lg leading-tight">
                                             {user?.name}
                                         </h2>
-                                        <p className="flex items-center gap-2 mb-0.5 text-white/80 text-sm">
-                                            <Mail size={16} className="text-white" /> {user?.email || "Student"}
+                                        <p className="flex items-center gap-2 mb-0.5 text-gray-800 text-[14px]">
+                                            <Mail size={16} className="text-gray-700" /> {user?.email || "Student"}
                                         </p>
-                                        <p className="flex items-center gap-2 text-white/80 text-sm">
-                                            <PhoneCall size={16} className="text-white" /> {user?.phone || "Student"}
+                                        <p className="flex items-center gap-2 text-gray-800 text-[13px]">
+                                            <PhoneCall size={16} className="text-gray-700" /> {user?.phone || "Student"}
                                         </p>
                                     </div>
                                 </div>
@@ -522,98 +523,17 @@ export default function StudentProfilePage() {
 
                             {/* Documents Tab */}
                             {activeTab === "documents" && (
-                                <motion.div
-                                    key="documents"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
-                                    transition={{ duration: 0.2 }}
-                                    className="space-y-6"
-                                >
-                                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
-                                        <div className="flex items-center gap-3 mb-6">
-                                            <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-                                                <FileCheck className="w-5 h-5 text-[#F26D44]" />
-                                            </div>
-                                            <div>
-                                                <h2 className="text-lg font-semibold text-gray-900">Documents</h2>
-                                                <p className="text-xs text-gray-500">Student uploaded documents</p>
-                                            </div>
-                                        </div>
-
-                                        {/* Stats Cards */}
-                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                                            <div className="bg-orange-50 rounded-xl p-3 text-center">
-                                                <FileText className="w-5 h-5 text-[#F26D44] mx-auto mb-1" />
-                                                <p className="text-xl font-bold text-[#F26D44]">
-                                                    {Object.keys(profile?.documents || {}).length}
-                                                </p>
-                                                <p className="text-xs text-gray-600">Total</p>
-                                            </div>
-                                            <div className="bg-green-50 rounded-xl p-3 text-center">
-                                                <CheckCircle className="w-5 h-5 text-green-600 mx-auto mb-1" />
-                                                <p className="text-xl font-bold text-green-600">
-                                                    {Object.values(profile?.documents || {}).filter((d: any) => d.status === "approved").length}
-                                                </p>
-                                                <p className="text-xs text-gray-600">Approved</p>
-                                            </div>
-                                            <div className="bg-amber-50 rounded-xl p-3 text-center">
-                                                <Clock className="w-5 h-5 text-amber-600 mx-auto mb-1" />
-                                                <p className="text-xl font-bold text-amber-600">
-                                                    {Object.values(profile?.documents || {}).filter((d: any) => d.status === "pending").length}
-                                                </p>
-                                                <p className="text-xs text-gray-600">Pending</p>
-                                            </div>
-                                            <div className="bg-red-50 rounded-xl p-3 text-center">
-                                                <X className="w-5 h-5 text-red-600 mx-auto mb-1" />
-                                                <p className="text-xl font-bold text-red-600">
-                                                    {Object.values(profile?.documents || {}).filter((d: any) => d.status === "rejected").length}
-                                                </p>
-                                                <p className="text-xs text-gray-600">Rejected</p>
-                                            </div>
-                                        </div>
-
-                                        {/* Documents List */}
-                                        <div className="space-y-3">
-                                            {Object.entries(profile?.documents || {}).length === 0 ? (
-                                                <div className="text-center py-8">
-                                                    <FileText size={40} className="text-gray-300 mx-auto mb-2" />
-                                                    <p className="text-sm text-gray-500">No documents uploaded yet</p>
-                                                </div>
-                                            ) : (
-                                                Object.entries(profile?.documents || {}).map(([docName, doc]: [string, any]) => (
-                                                    <div key={docName} className="bg-gray-50 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                                                                <FileText size={18} className="text-[#F26D44]" />
-                                                            </div>
-                                                            <div>
-                                                                <h4 className="font-medium text-sm text-gray-800">{docName.replace(/_/g, " ")}</h4>
-                                                                <p className="text-xs text-gray-400">{formatDate(doc.uploadedAt)}</p>
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${doc.status === "approved" ? "bg-green-100 text-green-700" :
-                                                                doc.status === "pending" ? "bg-amber-100 text-amber-700" :
-                                                                    "bg-red-100 text-red-700"
-                                                                }`}>
-                                                                {doc.status || "Pending"}
-                                                            </span>
-                                                            {doc.url && (
-                                                                <button
-                                                                    onClick={() => window.open(doc.url, "_blank")}
-                                                                    className="px-3 py-1.5 bg-white text-[#F26D44] rounded-lg hover:bg-gray-100 transition text-xs font-medium border border-gray-200"
-                                                                >
-                                                                    View
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                ))
-                                            )}
-                                        </div>
-                                    </div>
-                                </motion.div>
+                                <Documents
+                                    profile={profile}
+                                    user={user}
+                                    studentId={studentId}
+                                    onUpdate={() => {
+                                        axiosInstance.get(`/users/${studentId}`).then(res => {
+                                            setUser(res.data.data || res.data);
+                                            setProfile(res.data.data?.profile || res.data?.profile);
+                                        });
+                                    }}
+                                />
                             )}
                         </AnimatePresence>
                     </div>
