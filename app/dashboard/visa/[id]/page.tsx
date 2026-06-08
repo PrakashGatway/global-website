@@ -1785,7 +1785,7 @@ const visaJourneyData = {
             { icon: "Building2", label: "University", value: "TU Munich" },
             { icon: "FileText", label: "Program", value: "MS in Data Science" },
             { icon: "Clock", label: "Duration of Stay", value: "24 Months" },
-            { icon: "CreditCard", label: "Application Fee", value: "€750", isHighlight: true },
+            { icon: "CreditCard", label: "Application Fee", value: "420", isHighlight: true },
             { icon: "CheckCircle", label: "Payment Status", value: "Paid" },
             { icon: "FileCheck", label: "Application No.", value: "VA202406501001" },
             { icon: "User", label: "Tracking ID", value: "APS123456789" },

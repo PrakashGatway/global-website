@@ -249,7 +249,7 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
     <div>
       <Toaster />
       {!aps ? (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+        <div className="bg-white  p-4 shadow-sm border border-gray-200">
 
           {/* <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
             <div className="flex items-center gap-3">

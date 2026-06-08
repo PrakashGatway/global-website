@@ -1,18 +1,5 @@
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 "use client";
 
 import axiosInstance from "@/app/axiosInstance";
@@ -68,6 +55,9 @@ import {
   Users,
   Target,
   Trophy,
+  Briefcase,
+  ArrowRight,
+  Info,
 } from "lucide-react";
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
@@ -393,6 +383,9 @@ export default function ApplicationDetailPage() {
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
   const [studentData, setStudentData] = useState<any | null>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [description, setdescription] = useState(); 
+  const [statusDescription, setStatusDescription] = useState("");
+  const [showpopup,setShowpopup] = useState<Boolean>();
 
   const [formData, setFormData] = useState({
     primaryStatus: "Pending" as ApplicationStatus,
@@ -448,7 +441,8 @@ export default function ApplicationDetailPage() {
       const res = await axiosInstance.get(`/users/${studentId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      setStudentData(res.data.data || res.data);
+      console.log(res.data , "res.data", studentId);
+      setStudentData(res.data || res.data);
     } catch (err) {
       console.error("Failed to fetch student data:", err);
     }
@@ -493,6 +487,11 @@ export default function ApplicationDetailPage() {
     fetchCourses();
   }, [application?.course?.university?.code]);
 
+  useEffect(() => {
+    console.log(formData.primaryStatus,"lwjeflkadjoij");
+    setShowpopup(true);
+  },[formData.primaryStatus])
+
   const handleSave = async () => {
     setSaving(true);
     setError("");
@@ -502,6 +501,7 @@ export default function ApplicationDetailPage() {
         rejectionReason: formData.rejectionReason,
         backups: formData.backups,
         documents: formData.documents,
+        description: statusDescription || ""
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -734,7 +734,7 @@ export default function ApplicationDetailPage() {
   // Premium Tabs
   const tabs = [
     { id: "overview", label: "Overview", icon: TrendingUp, color: "text-emerald-600" },
-    { id: "offers", label: "Offers", icon: Trophy, color: "text-amber-600" },
+    // { id: "offers", label: "Offers", icon: Trophy, color: "text-amber-600" },
     { id: "documents", label: "Documents", icon: FileText, color: "text-orange-600" },
     { id: "backups", label: "Backups", icon: Layers, color: "text-purple-600" },
     { id: "activity", label: "Activity", icon: Activity, color: "text-orange-600" },
@@ -743,6 +743,199 @@ export default function ApplicationDetailPage() {
 
   const offerLetters = formData.documents.filter((doc: AppDocument) => doc.docType === "offer letter" && doc.type === "ooshas");
 
+  
+  // Status Description Popup - Modern Form UI
+const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () => void; onSubmit: (description: string) => void; status: string }) => {
+  const [description, setDescription] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [characterCount, setCharacterCount] = useState(0);
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const text = e.target.value;
+    setDescription(text);
+    setCharacterCount(text.length);
+  };
+
+  const handleSubmit = async () => {
+    if (!description.trim()) {
+      toast.error("Please enter a description");
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      await onSubmit(description);
+      toast.success(`Status updated to ${status}`);
+      onCancel();
+    } catch (error) {
+      toast.error("Failed to update status");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Get status color scheme for accent
+  const getStatusAccent = () => {
+    const config = STATUS_CONFIG[status] || STATUS_CONFIG["Pending"];
+    return {
+      bg: config.bg,
+      text: config.text,
+      border: config.border,
+      gradient: config.gradient,
+      dot: config.dot,
+    };
+  };
+
+  const accent = getStatusAccent();
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onCancel}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
+        className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header with gradient accent */}
+        <div className={`relative px-6 pt-6 pb-4 border-b ${accent.border} bg-gradient-to-r ${accent.gradient} bg-opacity-5`}>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+          <div className="flex items-center justify-between relative z-10">
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-xl ${accent.bg} flex items-center justify-center shadow-md`}>
+                <Activity size={20} className={accent.text} />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-800">Update Application Status</h3>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs text-slate-500">Changing status to</span>
+                  <StatusPill status={status} size="sm" />
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={onCancel}
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-5">
+          {/* Status change visual indicator */}
+          <div className="flex items-center justify-between py-2 px-4 bg-slate-50 rounded-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
+                <span className="text-xs font-bold text-slate-500">←</span>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400">Previous Status</p>
+                <p className="text-sm font-medium text-slate-600">—</p>
+              </div>
+            </div>
+            <ArrowRight size={20} className="text-slate-300" />
+            <div className="flex items-center gap-3">
+              <div className={`w-8 h-8 rounded-full ${accent.bg} flex items-center justify-center`}>
+                <div className={`w-2 h-2 rounded-full ${accent.dot} animate-pulse`} />
+              </div>
+              <div>
+                <p className="text-xs text-slate-400">New Status</p>
+                <p className={`text-sm font-semibold ${accent.text}`}>{status}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Description field */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <FileText size={14} className="text-slate-400" />
+                Status Description / Remarks
+                <span className="text-rose-500 text-xs">*</span>
+              </label>
+              <span className={`text-xs ${characterCount > 500 ? "text-rose-500" : "text-slate-400"}`}>
+                {characterCount}/500
+              </span>
+            </div>
+            <textarea
+              rows={5}
+              value={description}
+              onChange={handleDescriptionChange}
+              maxLength={500}
+              placeholder="Please provide detailed remarks about this status update. Include any relevant information, next steps, or notes for the student..."
+              className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 resize-none ${
+                characterCount > 500
+                  ? "border-rose-300 focus:border-rose-400 focus:ring-rose-200"
+                  : "border-slate-200 focus:border-orange-300 focus:ring-orange-200"
+              }`}
+            />
+            <p className="text-xs text-slate-400 flex items-center gap-1 mt-1">
+              <Info size={10} />
+              This description will be added to the activity log and visible to the student
+            </p>
+          </div>
+
+          {/* Preview card - shows how it will appear in activity log */}
+          {description.trim() && (
+            <div className="mt-4 pt-4 border-t border-slate-100">
+              <p className="text-xs font-medium text-slate-400 mb-2 flex items-center gap-1">
+                <Eye size={12} />
+                Preview in Activity Log
+              </p>
+              <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center">
+                    <User size={10} className="text-white" />
+                  </div>
+                  <span className="text-xs font-medium text-slate-700">System Update</span>
+                  <span className="text-xs text-slate-400">just now</span>
+                </div>
+                <p className="text-sm text-slate-600 pl-8">
+                  Status changed to <span className={`font-semibold ${accent.text}`}>{status}</span>
+                </p>
+                <p className="text-sm text-slate-500 pl-8 mt-1 italic">"{description.substring(0, 100)}"</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer actions */}
+        <div className="flex justify-end gap-3 p-5 bg-slate-50/50 border-t border-slate-100">
+          <button
+            onClick={onCancel}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-700 hover:bg-slate-100 transition-all duration-200"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting || !description.trim()}
+            className={`px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 shadow-md flex items-center gap-2 ${
+              isSubmitting || !description.trim()
+                ? "bg-slate-300 cursor-not-allowed shadow-none"
+                : `bg-gradient-to-r ${accent.gradient} hover:shadow-lg hover:-translate-y-0.5`
+            }`}
+          >
+            {isSubmitting ? (
+              <>
+                <RefreshCw size={16} className="animate-spin" />
+                Updating...
+              </>
+            ) : (
+              <>
+                <Check size={16} />
+                Update Status
+              </>
+            )}
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+  
   if (pageLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex items-center justify-center">
@@ -775,6 +968,14 @@ export default function ApplicationDetailPage() {
     );
   }
 
+//   if(showpopup){
+//     return (
+// <>
+// <StatusDescriptionPopup  status={formData.primaryStatus} onCancel={() => setShowpopup(false)}/>
+// </>
+//     )
+//   }
+
   // Stats for overview
   const stats = [
     { label: "Total Documents", value: formData.documents.length, icon: FileText, color: "from-orange-500 to-cyan-500" },
@@ -787,7 +988,7 @@ export default function ApplicationDetailPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
       {/* Premium Header */}
       <div className="relative overflow-hidden bg-white border-b border-slate-100 shadow-sm">
-        <div className="absolute inset-0 " />
+        {/* <div className="absolute inset-0 " /> */}
         <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -840,7 +1041,7 @@ export default function ApplicationDetailPage() {
                     : "text-slate-500 hover:text-slate-700"
                 }`}
               >
-                <tab.icon size={16} className={activeTab === tab.id ? tab.color : "text-slate-400 group-hover:text-slate-600"} />
+                {/* <tab.icon size={16} className={activeTab === tab.id ? tab.color : "text-slate-400 group-hover:text-slate-600"} /> */}
                 {tab.label}
                 {activeTab === tab.id && (
                   <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full" />
@@ -870,140 +1071,348 @@ export default function ApplicationDetailPage() {
         {/* OVERVIEW TAB */}
         {activeTab === "overview" && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-              {stats.map((stat, idx) => (
-                <PremiumCard key={idx} className="p-5" glow>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{stat.label}</p>
-                      <p className="text-3xl font-bold text-slate-800 mt-1">{stat.value}</p>
-                    </div>
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-md`}>
-                      <stat.icon size={22} className="text-white" />
-                    </div>
-                  </div>
-                </PremiumCard>
-              ))}
-            </div>
-
-            {/* Student Profile & Application Info */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Student Profile Card */}
-              <PremiumCard className="lg:col-span-1 overflow-hidden">
-                <div className="relative h-32 bg-gradient-to-r from-orange-600 via-[#f26d44] to-orange-600">
-                  <div className="absolute -bottom-12 left-6">
-                    <div className="w-24 h-24 rounded bg-white shadow-xl flex items-center justify-center border-4 border-white">
+          
+          {/* Student Profile & Application Info */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Student Profile Card */}
+            <PremiumCard className="lg:col-span-1 overflow-hidden">
+              <div className="relative h-20 bg-gradient-to-r from-orange-600 via-[#f26d44] to-orange-600">
+                <div className="absolute -bottom-12 left-6">
+                  <div className="w-24 h-24 rounded bg-white shadow-xl flex items-center justify-center border-4 border-white">
+                    {studentData?.data?.profileImage ? (
+                      <img 
+                        src={studentData?.data.profileImage} 
+                        alt="Profile"
+                        className="w-full h-full object-cover rounded"
+                      />
+                    ) : (
                       <span className="text-3xl font-bold text-orange-600">
-                        {studentData?.name?.[0]?.toUpperCase() || application.student?.name?.[0]?.toUpperCase() || "?"}
+                        {studentData?.data?.name?.[0]?.toUpperCase() || application.student?.name?.[0]?.toUpperCase() || "?"}
                       </span>
-                    </div>
+                    )}
                   </div>
                 </div>
-                <div className="pt-14 p-6">
-                  <h3 className="text-xl font-bold text-slate-800 capitalize">{studentData?.name || application.student?.name}</h3>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Mail size={12} className="text-slate-400" />
-                    <span className="text-xs text-slate-500">{studentData?.email || application.student?.email}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 mt-5 pt-4 border-t border-slate-100">
-                    <div>
-                      <p className="text-xs text-slate-400">Phone</p>
-                      <p className="text-sm font-medium text-slate-700">{studentData?.phone || "—"}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-400">Nationality</p>
-                      <p className="text-sm font-medium text-slate-700">{studentData?.nationality || "—"}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-400">Passport</p>
-                      <p className="text-sm font-medium text-slate-700">{studentData?.passportNumber || "—"}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-400">Joined</p>
-                      <p className="text-sm font-medium text-slate-700">{formatDate(application.createdAt)}</p>
-                    </div>
-                  </div>
+              </div>
+              <div className="pt-14 p-6">
+                <h3 className="text-xl font-bold text-slate-800 capitalize">{studentData?.data?.name || application.student?.name || "--"}</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <Mail size={12} className="text-slate-400" />
+                  <span className="text-xs text-slate-500">{studentData?.data?.email || application.student?.email || "--"}</span>
                 </div>
-              </PremiumCard>
-
-              {/* Application Details Card */}
-              <PremiumCard className="lg:col-span-2">
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-5">
-                    <div className="p-2 rounded-xl bg-orange-100">
-                      <GraduationCap size={18} className="text-orange-600" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-800">Application Details</h3>
+                
+                {/* Basic Information */}
+                <div className="grid grid-cols-2 gap-4 mt-5 pt-4 border-t border-slate-100">
+                  <div>
+                    <p className="text-xs text-slate-400">Phone</p>
+                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.phone || "--"}</p>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="space-y-3">
-                      <div className="flex justify-between py-2 border-b border-slate-100">
-                        <span className="text-sm text-slate-500">Country</span>
-                        <span className="text-sm font-medium text-slate-700">{application.country || "—"}</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b border-slate-100">
-                        <span className="text-sm text-slate-500">University</span>
-                        <span className="text-sm font-medium text-slate-700">{application.course?.university?.name || "—"}</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b border-slate-100">
-                        <span className="text-sm text-slate-500">Course</span>
-                        <span className="text-sm font-medium text-slate-700">{application.course?.name || "—"}</span>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex justify-between py-2 border-b border-slate-100">
-                        <span className="text-sm text-slate-500">Intake</span>
-                        <span className="text-sm font-medium text-slate-700">{application.intake || "—"}</span>
-                      </div>
-                      <div className="flex justify-between py-2 border-b border-slate-100">
-                        <span className="text-sm text-slate-500">Payment Status</span>
-                        <PaymentBadge status={application.paymentStatus} />
-                      </div>
-                      <div className="flex justify-between py-2 border-b border-slate-100">
-                        <span className="text-sm text-slate-500">Status</span>
-                        <select
-                          value={formData.primaryStatus}
-                          onChange={(e) => setFormData(p => ({ ...p, primaryStatus: e.target.value as ApplicationStatus }))}
-                          className="text-sm px-3 py-1 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
-                        >
-                          {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
-                      </div>
-                    </div>
+                  <div>
+                    <p className="text-xs text-slate-400">Gender</p>
+                    <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.gender || "--"}</p>
                   </div>
-                </div>
-              </PremiumCard>
-            </div>
-
-            {/* Recent Activity Preview */}
-            <PremiumCard>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-xl bg-orange-100">
-                      <History size={18} className="text-orange-600" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-800">Recent Activity</h3>
+                  <div>
+                    <p className="text-xs text-slate-400">Marital Status</p>
+                    <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.maritalStatus || "--"}</p>
                   </div>
-                  <button onClick={() => setActiveTab("activity")} className="text-sm text-orange-600 hover:text-orange-700 font-medium">View all →</button>
-                </div>
-                <div className="space-y-3">
-                  {activityLogs.slice(0, 3).map((log, idx) => (
-                    <div key={log._id} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50/80 hover:bg-slate-50 transition">
-                      <div className={`w-2 h-2 rounded-full mt-2 ${STATUS_CONFIG[log.status]?.dot || "bg-slate-400"}`} />
-                      <div className="flex-1">
-                        <p className="text-sm text-slate-700">{log.description}</p>
-                        <p className="text-xs text-slate-400 mt-1">{new Date(log.createdAt).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                  ))}
-                  {activityLogs.length === 0 && (
-                    <p className="text-sm text-slate-400 text-center py-8">No activity yet</p>
-                  )}
+                  <div>
+                    <p className="text-xs text-slate-400">Date of Birth</p>
+                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.dateOfBirth ? formatDate(studentData?.data.dateOfBirth) : "--"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400">Nationality</p>
+                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.nationality || "--"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400">First Language</p>
+                    <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.firstLanguage || "--"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400">Passport Number</p>
+                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.passportNumber || "--"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400">Passport Expiry</p>
+                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.passportExpiry ? formatDate(studentData?.data.passportExpiry) : "--"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400">Referral Code</p>
+                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.referalCode || "--"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400">Wallet Balance</p>
+                    <p className="text-sm font-medium text-slate-700">${studentData?.data?.wallet || "0"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400">Joined</p>
+                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.createdAt ? formatDate(studentData?.data.createdAt) : "--"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-400">Status</p>
+                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.status || "--"}</p>
+                  </div>
                 </div>
               </div>
             </PremiumCard>
+
+            {/* Application Details Card */}
+            <PremiumCard className="lg:col-span-2">
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="p-2 rounded-xl bg-orange-100">
+                    <GraduationCap size={18} className="text-orange-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-800">Application Details</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-3">
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Country</span>
+                      <span className="text-sm font-medium text-slate-700">{application.country || "--"}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">University</span>
+                      <span className="text-sm font-medium text-slate-700">{application.course?.university?.name || "--"}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Course</span>
+                      <span className="text-sm font-medium text-slate-700">{application.course?.name || "--"}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Intake (Application)</span>
+                      <span className="text-sm font-medium text-slate-700">{application.intake || "--"}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Student Intake</span>
+                      <span className="text-sm font-medium text-slate-700">{studentData?.data?.intake || "--"}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Tuition Fee</span>
+                      <span className="text-sm font-medium text-slate-700">{studentData?.data?.tuitionfee || "--"}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Payment Status</span>
+                      <PaymentBadge status={application.paymentStatus} />
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Application Status</span>
+                      <select
+                        value={formData.primaryStatus}
+                        onChange={(e) => {
+                          setFormData(p => ({ ...p, primaryStatus: e.target.value as ApplicationStatus }));
+                        }}
+                        className="text-sm px-3 py-1 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
+                      >
+                        {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Assigned To</span>
+                      <span className="text-sm font-medium text-slate-700">{studentData?.data?.assignto || "--"}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Last Login</span>
+                      <span className="text-sm font-medium text-slate-700">{studentData?.data?.lastLogin ? formatDate(studentData?.data.lastLogin) : "--"}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Passport Details Section */}
+                {studentData?.data?.passportDetail && (
+                  <div className="mt-6 pt-4 border-t border-slate-100">
+                    <h4 className="text-sm font-semibold text-slate-700 mb-3">Passport Details</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-xs text-slate-400">Issue Date</p>
+                        <p className="text-sm font-medium text-slate-700">{formatDate(studentData?.data.passportDetail.issueDate)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400">Expiry Date</p>
+                        <p className="text-sm font-medium text-slate-700">{formatDate(studentData?.data.passportDetail.expiryDate)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400">Issue Country</p>
+                        <p className="text-sm font-medium text-slate-700">{studentData?.data.passportDetail.issueCountry}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </PremiumCard>
+          </div>
+
+          {/* Education History Section */}
+          {studentData?.profile?.educationHistory && studentData?.profile.educationHistory.length > 0 && (
+            <PremiumCard className="mt-6">
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="p-2 rounded-xl bg-orange-100">
+                    <GraduationCap size={18} className="text-orange-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-800">Education History</h3>
+                </div>
+                <div className="space-y-4">
+                  {studentData?.profile.educationHistory.map((edu, index) => (
+                    <div key={index} className="border-b border-slate-100 last:border-0 pb-4 last:pb-0">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-slate-400">Education Level</p>
+                          <p className="text-sm font-medium text-slate-700">{edu.educationLevel || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Degree Name</p>
+                          <p className="text-sm font-medium text-slate-700">{edu.degreeName || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Institution</p>
+                          <p className="text-sm font-medium text-slate-700">{edu.institutionName || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Percentage</p>
+                          <p className="text-sm font-medium text-slate-700">{edu.percentage ? `${edu.percentage}%` : "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Duration</p>
+                          <p className="text-sm font-medium text-slate-700">
+                            {edu.startDate && edu.endDate 
+                              ? `${formatDate(edu.startDate)} - ${formatDate(edu.endDate)}`
+                              : "--"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Location</p>
+                          <p className="text-sm font-medium text-slate-700">
+                            {[edu.city, edu.state, edu.country].filter(Boolean).join(", ") || "--"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </PremiumCard>
+          )}
+
+          {/* Work Experience Section */}
+          {studentData?.profile?.workExperience && studentData?.profile.workExperience.length > 0 && (
+            <PremiumCard className="mt-6">
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="p-2 rounded-xl bg-orange-100">
+                    <Briefcase size={18} className="text-orange-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-800">Work Experience</h3>
+                </div>
+                <div className="space-y-4">
+                  {studentData?.profile.workExperience.map((work, index) => (
+                    <div key={index} className="border-b border-slate-100 last:border-0 pb-4 last:pb-0">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-slate-400">Company</p>
+                          <p className="text-sm font-medium text-slate-700">{work.companyName || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Designation</p>
+                          <p className="text-sm font-medium text-slate-700">{work.designation || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Location</p>
+                          <p className="text-sm font-medium text-slate-700">{work.location || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Duration</p>
+                          <p className="text-sm font-medium text-slate-700">
+                            {work.from && work.to 
+                              ? `${formatDate(work.from)} - ${formatDate(work.to)}`
+                              : "--"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </PremiumCard>
+          )}
+
+          {/* Address Information */}
+          {(studentData?.profile?.currentAddress || studentData?.profile?.permanentAddress) && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+              {studentData?.profile?.currentAddress && (
+                <PremiumCard>
+                  <div className="p-6">
+                    <h3 className="text-lg font-semibold text-slate-800 mb-4">Current Address</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs text-slate-400">Address Line 1</p>
+                        <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.addressLine1 || "--"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400">Address Line 2</p>
+                        <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.addressLine2 || "--"}</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-xs text-slate-400">City</p>
+                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.city || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">State</p>
+                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.state || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Postal Code</p>
+                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.postalCode || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Country</p>
+                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.country || "--"}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </PremiumCard>
+              )}
+              
+              {studentData?.profile?.permanentAddress && (
+                <PremiumCard>
+                  <div className="p-6">
+                    <h3 className="text-lg font-semibold text-slate-800 mb-4">Permanent Address</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs text-slate-400">Address Line 1</p>
+                        <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.addressLine1 || "--"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400">Address Line 2</p>
+                        <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.addressLine2 || "--"}</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-xs text-slate-400">City</p>
+                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.city || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">State</p>
+                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.state || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Postal Code</p>
+                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.postalCode || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Country</p>
+                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.country || "--"}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </PremiumCard>
+              )}
+            </div>
+          )}
+
           </motion.div>
         )}
 
@@ -1251,6 +1660,17 @@ export default function ApplicationDetailPage() {
           <CommentsSection application={application} profile={profile} />
         )}
       </div>
+
+{showpopup && (
+  <StatusDescriptionPopup 
+    status={formData.primaryStatus} 
+    onCancel={() => setShowpopup(false)}
+    onSubmit={(description) => {
+      setStatusDescription(description);
+      handleSave(); // This will save with the description
+    }}
+  />
+)}
 
       {/* Document Upload Modal */}
       <DocumentUploadModal
