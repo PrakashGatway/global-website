@@ -63,6 +63,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
+import Documents from "@/components/couseller/Documents";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -976,20 +977,13 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
 //     )
 //   }
 
-  // Stats for overview
-  const stats = [
-    { label: "Total Documents", value: formData.documents.length, icon: FileText, color: "from-orange-500 to-cyan-500" },
-    { label: "Backup Courses", value: application.backups.length, icon: Layers, color: "from-purple-500 to-pink-500" },
-    { label: "Activities", value: activityLogs.length, icon: Activity, color: "from-orange-500 to-red-500" },
-    { label: "Offers", value: offerLetters.length, icon: Trophy, color: "from-emerald-500 to-teal-500" },
-  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen ">
       {/* Premium Header */}
-      <div className="relative overflow-hidden bg-white border-b border-slate-100 shadow-sm">
+      <div className="relative overflow-hidden ">
         {/* <div className="absolute inset-0 " /> */}
-        <div className="max-w-7xl mx-auto px-6 py-5">
+        <div className=" px-6 py-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <button onClick={() => router.back()} className="group flex items-center gap-2 text-slate-500 hover:text-orange-600 transition-all duration-200">
@@ -1029,7 +1023,7 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
         </div>
 
         {/* Premium Tab Navigation */}
-        <div className="max-w-7xl mx-auto px-6">
+        <div className=" px-6">
           <div className="flex gap-1 overflow-x-auto pb-0">
             {tabs.map((tab) => (
               <button
@@ -1052,8 +1046,7 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Alerts */}
+      <div className="px-6 py-8">
         <AnimatePresence>
           {error && (
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-rose-50 to-red-50 border border-rose-200 text-rose-700 text-sm mb-6">
@@ -1501,36 +1494,8 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
 
         {/* DOCUMENTS TAB */}
         {activeTab === "documents" && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h3 className="text-lg font-semibold text-slate-800">Document Requirements</h3>
-                <p className="text-sm text-slate-400">Manage all student documents in one place</p>
-              </div>
-              <button onClick={() => setShowRequirementForm(!showRequirementForm)} className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition ${showRequirementForm ? "bg-slate-100 text-slate-600" : "bg-gradient-to-r from-orange-600 to-[#f26d44] text-white shadow-md"}`}>
-                {showRequirementForm ? <><X size={16} /> Close</> : <><Plus size={16} /> Create Requirement</>}
-              </button>
-            </div>
-
-            {showRequirementForm && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <DocumentRequirementForm onAdd={handleAddRequirement} onCancel={() => setShowRequirementForm(false)} />
-              </motion.div>
-            )}
-
-            {formData.documents.filter((doc: AppDocument) => doc.docType !== "offer letter").length === 0 ? (
-              <div className="text-center py-20 bg-white rounded border-2 border-dashed border-slate-200">
-                <FolderOpen size={40} className="text-slate-300 mx-auto mb-4" />
-                <p className="text-slate-600 font-medium">No documents yet</p>
-                <p className="text-sm text-slate-400 mt-1">Click "Create Requirement" to get started</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                {formData.documents.filter((doc: AppDocument) => doc.docType !== "offer letter").map((doc: AppDocument) => (
-                  <DocumentCard key={doc._id} doc={doc} onUpdateStatus={handleUpdateDocStatus} onEdit={(id: string) => { setEditingDocId(id); setShowDocUpload(true); }} />
-                ))}
-              </div>
-            )}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+            <Documents application={application} onUpdate={fetchApplication}/>
           </motion.div>
         )}
 

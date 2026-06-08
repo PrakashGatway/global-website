@@ -520,7 +520,7 @@ export default function AboutUsPage({ aboutData }) {
         </div>
       </section>
 
-      <UniversitiesSlider />
+      {/* <UniversitiesSlider /> */}
 
       {/* Book Your Online Counselling Session */}
       <section className="py-8 lg:py-12 bg-gray-600 relative overflow-hidden">

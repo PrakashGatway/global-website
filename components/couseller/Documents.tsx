@@ -6,9 +6,6 @@ import {
     FileCheck,
     FileText,
     CheckCircle,
-    Upload,
-    Trash2,
-    Eye,
     AlertCircle,
     Clock,
     X,
@@ -21,6 +18,7 @@ import {
 } from 'lucide-react';
 import axiosInstance from '@/app/axiosInstance';
 import toast from 'react-hot-toast';
+import { useGlobal } from '@/src/statecontext';
 
 // ─── Types ─────────────────────────────────────────
 interface DocumentData {
@@ -69,45 +67,27 @@ const NON_MANDATORY_DOCUMENTS = [
     { key: 'other_certificates', name: 'Other Certificates', institution: 'Optional', description: 'Any additional supporting documents' },
 ];
 
-const OOSHAS_DOCUMENTS = [
-    { key: 'application_form', name: 'Application Form', description: 'Signed application form prepared by OOSHAS' },
-    { key: 'counseling_report', name: 'Counseling Report', description: 'Detailed counseling summary' },
-    { key: 'university_shortlist', name: 'University Shortlist', description: 'Finalized university list' },
-    { key: 'offer_letters', name: 'Offer Letters', description: 'Received offer letters from universities' },
-    { key: 'visa_guidance', name: 'Visa Guidance Document', description: 'Visa application support documents' },
-];
 
-interface DocumentSectionProps {
-    title: string;
-    icon: React.ReactNode;
-    documents: Array<{
-        key: string;
-        name: string;
-        institution?: string;
-        description?: string;
-        data?: DocumentData;
-        isMandatory: boolean;
-    }>;
-    onUpload: (docKey: string, docName: string) => void;
-    onView: (docUrl: string) => void;
-    onDelete: (docKey: string, docName: string) => void;
-    isExpanded: boolean;
-    onToggle: () => void;
-    uploadingDoc: string | null;
-}
-
-const DocumentSection: React.FC<DocumentSectionProps> = ({
+const DocumentSection: React.FC<any> = ({
     title,
-    icon,
     documents,
     onUpload,
     onView,
-    onDelete,
     isExpanded,
     onToggle,
     uploadingDoc,
+    handleStatusChange,
+    updatingStatus,
+    statusModal,
+    setStatusModal,
+    remarks,
+    setRemarks,
+
 }) => {
     const completedCount = documents.filter(d => d.data?.url).length;
+
+    const { profile } = useGlobal()
+
 
     return (
         <div className="bg-white border border-gray-200 overflow-hidden">
@@ -153,7 +133,7 @@ const DocumentSection: React.FC<DocumentSectionProps> = ({
                                         <div className="absolute top-1 bottom-1 left-0 bg-orange-500 rounded-r-full w-1.5 shadow-xl flex items-center justify-center" />
                                         <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
                                             <div className="flex-1 w-full">
-                                                <div className="flex items-center gap-2 mb-2">
+                                                <div className="flex items-center gap-2 mb-1">
                                                     {doc.data?.url ? (
                                                         doc.data.status === 'approved' ? (
                                                             <CheckCircle className="w-5 h-5 text-green-600 shrink-0" />
@@ -171,7 +151,7 @@ const DocumentSection: React.FC<DocumentSectionProps> = ({
                                                     </h4>
                                                 </div>
 
-                                                <div className="space-y-1">
+                                                <div className="space-y-1 font-medium">
                                                     {doc.description && (
                                                         <p className="text-xs text-gray-500">{doc.description}</p>
                                                     )}
@@ -181,72 +161,125 @@ const DocumentSection: React.FC<DocumentSectionProps> = ({
                                                             <span className="font-medium text-gray-700">{doc.institution}</span>
                                                         </div>
                                                     )}
-                                                    {doc.data?.uploadedAt && (
-                                                        <div className="flex items-center gap-2 text-xs">
-                                                            <span className="text-gray-500">Uploaded:</span>
-                                                            <span className="text-gray-700">
-                                                                {new Date(doc.data.uploadedAt).toLocaleDateString('en-US', {
-                                                                    year: 'numeric',
-                                                                    month: 'short',
-                                                                    day: 'numeric',
-                                                                    hour: '2-digit',
-                                                                    minute: '2-digit',
-                                                                })}
-                                                            </span>
+                                                    {doc.data?.status === "rejected" && doc.data?.remarks && (
+                                                        <div className=" py-1">
+                                                            <div className="flex items-start gap-1">
+                                                                <AlertCircle className="w-4 h-4 text-red-600 mt-0.5" />
+                                                                <div>
+                                                                    <p className="text-xs text-red-500">
+                                                                        {doc?.data?.remarks}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     )}
                                                     {doc.data?.url && (
-                                                        <div className="flex items-center gap-2 mt-2">
-                                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-lg max-w-full">
-                                                                <File className="w-4 h-4 text-[#F26D44] shrink-0" />
-                                                                <span className="text-xs text-gray-700 truncate max-w-[150px] sm:max-w-[200px]">
-                                                                    {doc.data.originalName || doc.data.fileName || `${doc.key}.pdf`}
-                                                                </span>
-                                                                <button
-                                                                    onClick={() => onDelete(doc.key, doc.name)}
-                                                                    className="ml-1 text-red-400 hover:text-red-600 transition-colors shrink-0"
-                                                                    title="Delete"
+                                                        <>
+                                                            <div className="flex items-center gap-2">
+                                                                <span
+                                                                    className={`px-3 py-1 rounded-full text-xs font-medium ${doc.data.status === "approved"
+                                                                        ? "bg-green-100 text-green-700"
+                                                                        : doc.data.status === "rejected"
+                                                                            ? "bg-red-100 text-red-700"
+                                                                            : "bg-amber-100 text-amber-700"
+                                                                        }`}
                                                                 >
-                                                                    <Trash2 className="w-3.5 h-3.5" />
-                                                                </button>
+                                                                    {(doc.data.status || "pending")
+                                                                        .charAt(0)
+                                                                        .toUpperCase() +
+                                                                        (doc.data.status || "pending").slice(1)}
+                                                                </span>
+
+
+                                                                {doc.data.status === "pending" && (profile?.role == "admin" || profile?.role == "counsellor") && (
+                                                                    <div className="flex gap-2">
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                setStatusModal({
+                                                                                    open: true,
+                                                                                    docKey: doc.key,
+                                                                                    status: "approved",
+                                                                                })
+                                                                            }
+                                                                            className="px-3 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-700"
+                                                                        >
+                                                                            Approve
+                                                                        </button>
+
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                setStatusModal({
+                                                                                    open: true,
+                                                                                    docKey: doc.key,
+                                                                                    status: "rejected",
+                                                                                })
+                                                                            }
+                                                                            className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700"
+                                                                        >
+                                                                            Reject
+                                                                        </button>
+                                                                    </div>
+                                                                )}
                                                             </div>
-                                                        </div>
+                                                        </>
                                                     )}
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-row sm:flex-col items-center sm:items-end gap-2 w-full sm:w-auto">
-                                                {doc.data?.url && (
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${doc.data.status === 'approved' ? 'bg-green-100 text-green-700' :
-                                                        doc.data.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                                                            'bg-amber-100 text-amber-700'
-                                                        }`}>
-                                                        {(doc.data.status || 'pending').charAt(0).toUpperCase() + (doc.data.status || 'pending').slice(1)}
-                                                    </span>
-                                                )}
+                                            <div className="flex flex-col my-auto justify-center items-center sm:items-end gap-2 w-full sm:w-auto">
 
                                                 {isUploading ? (
-                                                    <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg">
+                                                    <div className="flex items-center gap-2 px-4 py-1.5 bg-gray-100 rounded-lg">
                                                         <Loader2 className="w-4 h-4 animate-spin text-[#F26D44]" />
                                                         <span className="text-xs font-medium text-gray-600">Uploading...</span>
                                                     </div>
                                                 ) : !doc.data?.url ? (
                                                     <button
+                                                        className="px-3 py-1.5 bg-[#F26D44] text-white rounded-lg"
                                                         onClick={() => onUpload(doc.key, doc.name)}
-                                                        className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-[#F26D44] text-[#F26D44] rounded-lg hover:bg-orange-50 transition-colors font-medium text-xs sm:text-sm"
                                                     >
-                                                        <Upload className="w-4 h-4" />
                                                         Upload
                                                     </button>
+                                                ) : doc.data.status === "rejected" ? (
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => onView(doc.data!.url)}
+                                                            className="px-3 py-1.5 bg-gray-100 rounded-lg"
+                                                        >
+                                                            View
+                                                        </button>
+
+                                                        <button
+                                                            onClick={() => onUpload(doc.key, doc.name)}
+                                                            className="px-3 py-1.5 bg-[#F26D44] text-white rounded-lg"
+                                                        >
+                                                            Re-upload
+                                                        </button>
+                                                    </div>
                                                 ) : (
                                                     <button
-                                                        onClick={() => onView(doc.data.url)}
-                                                        className="flex items-center gap-2 px-4 py-2 bg-[#F26D44] text-white rounded-lg hover:bg-[#E55A33] transition-colors font-medium text-xs sm:text-sm"
+                                                        className="px-3 py-1.5 bg-gray-100 rounded-lg"
+
+                                                        onClick={() => onView(doc.data!.url)}
                                                     >
-                                                        <Eye className="w-4 h-4" />
                                                         View
                                                     </button>
                                                 )}
+                                                {doc.data?.uploadedAt && (
+                                                    <div className="flex items-center gap-2 text-xs font-medium">
+                                                        <span className="text-gray-500">Uploaded:</span>
+                                                        <span className="text-gray-700">
+                                                            {new Date(doc.data.uploadedAt).toLocaleDateString('en-US', {
+                                                                year: 'numeric',
+                                                                month: 'short',
+                                                                day: 'numeric',
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                            })}
+                                                        </span>
+                                                    </div>
+                                                )}
+
                                             </div>
                                         </div>
                                     </div>
@@ -256,12 +289,100 @@ const DocumentSection: React.FC<DocumentSectionProps> = ({
                     </motion.div>
                 )}
             </AnimatePresence>
+            <AnimatePresence>
+                {statusModal.open && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0.95 }}
+                            className="bg-white w-full max-w-lg p-6 font-medium"
+                        >
+                            <h3 className="text-lg text-gray-700 font-bold mb-1">
+                                Confirm Document Review
+                            </h3>
+
+                            <p className="text-sm text-gray-600 mb-4">
+                                Are you sure you want to{" "}
+                                <span
+                                    className={`font-semibold ${statusModal.status === "approved"
+                                        ? "text-green-600"
+                                        : "text-red-600"
+                                        }`}
+                                >
+                                    {statusModal.status}
+                                </span>{" "}
+                                this document?
+                            </p>
+
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium mb-2">
+                                    Comment
+                                    {statusModal.status === "rejected" && (
+                                        <span className="text-red-500 ml-1">
+                                            *
+                                        </span>
+                                    )}
+                                </label>
+
+                                <textarea
+                                    value={remarks}
+                                    onChange={(e) =>
+                                        setRemarks(e.target.value)
+                                    }
+                                    rows={4}
+                                    placeholder={
+                                        statusModal.status === "approved"
+                                            ? "Optional comment..."
+                                            : "Enter rejection reason..."
+                                    }
+                                    className="w-full border p-3 text-sm"
+                                />
+                            </div>
+
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={() => {
+                                        setStatusModal({
+                                            open: false,
+                                            docKey: "",
+                                            status: "",
+                                        });
+                                        setRemarks("");
+                                    }}
+                                    className="px-4 py-1.5 border hover:bg-green-800 cursor-pointer"
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    onClick={handleStatusChange}
+                                    disabled={updatingStatus}
+                                    className={`px-4 py-1.5 hover:bg-green-800 cursor-pointer text-white ${statusModal.status === "approved"
+                                        ? "bg-green-600"
+                                        : "bg-red-600"
+                                        }`}
+                                >
+                                    {updatingStatus
+                                        ? "Processing..."
+                                        : `Confirm ${statusModal.status}`}
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
 
 // ─── Main Documents Component ─────────────────────
-const Documents: React.FC<DocumentsProps> = ({ profile, studentId, onUpdate }) => {
+const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, onUpdate }) => {
     const [activeTab, setActiveTab] = useState<'your-documents' | 'ooshas-documents'>('your-documents');
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'approved' | 'rejected' | 'not-uploaded'>('all');
@@ -271,6 +392,14 @@ const Documents: React.FC<DocumentsProps> = ({ profile, studentId, onUpdate }) =
         'non-mandatory': false,
         ooshas: true,
     });
+    const [statusModal, setStatusModal] = useState({
+        open: false,
+        docKey: "",
+        status: "" as "approved" | "rejected" | "",
+    });
+
+    const [remarks, setRemarks] = useState("");
+    const [updatingStatus, setUpdatingStatus] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [currentUploadKey, setCurrentUploadKey] = useState<string | null>(null);
     const [currentUploadName, setCurrentUploadName] = useState<string | null>(null);
@@ -314,6 +443,50 @@ const Documents: React.FC<DocumentsProps> = ({ profile, studentId, onUpdate }) =
         fileInputRef.current?.click();
     };
 
+    const handleStatusChange = async () => {
+        try {
+            if (
+                statusModal.status === "rejected" &&
+                !remarks.trim()
+            ) {
+                toast.error("Please enter rejection reason");
+                return;
+            }
+
+            setUpdatingStatus(true);
+
+            await axiosInstance.patch(
+                `/users/docs?student=${studentId}`,
+                {
+                    docKey: statusModal.docKey,
+                    status: statusModal.status,
+                    remarks,
+                }
+            );
+
+            toast.success(
+                `Document ${statusModal.status} successfully`
+            );
+
+            setStatusModal({
+                open: false,
+                docKey: "",
+                status: "",
+            });
+
+            setRemarks("");
+
+            onUpdate?.();
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to update document status"
+            );
+        } finally {
+            setUpdatingStatus(false);
+        }
+    };
+
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file || !currentUploadKey) return;
@@ -353,7 +526,7 @@ const Documents: React.FC<DocumentsProps> = ({ profile, studentId, onUpdate }) =
     };
 
     const handleView = (docUrl: string) => {
-        window.open(docUrl, '_blank');
+        window.open(`https://api.ooshasglobal.com${docUrl}`, '_blank');
     };
 
     const handleDelete = async (docKey: string, docName: string) => {
@@ -419,6 +592,12 @@ const Documents: React.FC<DocumentsProps> = ({ profile, studentId, onUpdate }) =
                         isExpanded={expandedSections['mandatory']}
                         onToggle={() => toggleSection('mandatory')}
                         uploadingDoc={uploadingDoc}
+                        handleStatusChange={handleStatusChange}
+                        updatingStatus={updatingStatus}
+                        statusModal={statusModal}
+                        setStatusModal={setStatusModal}
+                        remarks={remarks}
+                        setRemarks={setRemarks}
                     />
 
                     {/* Non-Mandatory Documents */}
@@ -432,6 +611,12 @@ const Documents: React.FC<DocumentsProps> = ({ profile, studentId, onUpdate }) =
                         isExpanded={expandedSections['non-mandatory']}
                         onToggle={() => toggleSection('non-mandatory')}
                         uploadingDoc={uploadingDoc}
+                        handleStatusChange={handleStatusChange}
+                        updatingStatus={updatingStatus}
+                        statusModal={statusModal}
+                        setStatusModal={setStatusModal}
+                        remarks={remarks}
+                        setRemarks={setRemarks}
                     />
                 </>
             )}
