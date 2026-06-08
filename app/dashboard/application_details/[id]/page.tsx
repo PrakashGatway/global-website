@@ -202,11 +202,11 @@ const STATUS_CONFIG: Record<
     gradient: "from-slate-500 to-gray-500",
   },
   AwaitingSchoolResponse: {
-    bg: "bg-[#f26d44]",
-    text: "text-[#f26d44]",
-    dot: "bg-[#f26d44]",
-    border: "border-[#f26d44]",
-    gradient: "from-[#f26d44] to-orange-500",
+    bg: "bg-rose-50",
+    text: "text-rose-700",
+    dot: "bg-rose-400",
+    border: "border-rose-200",
+    gradient: "from-rose-500 to-red-500",
   },
   AdmissionProcessing: {
     bg: "bg-cyan-50",
@@ -230,11 +230,11 @@ const STATUS_CONFIG: Record<
     gradient: "from-rose-500 to-red-500",
   },
   VisaProcessing: {
-    bg: "bg-[#f26d44]",
-    text: "text-[#f26d44]",
-    dot: "bg-[#f26d44]",
-    border: "border-[#f26d44]",
-    gradient: "from-[#f26d44] to-purple-500",
+    bg: "bg-rose-50",
+    text: "text-rose-700",
+    dot: "bg-rose-400",
+    border: "border-rose-200",
+    gradient: "from-rose-500 to-red-500",
   },
   Withdrawn: {
     bg: "bg-gray-50",
@@ -389,7 +389,7 @@ export default function ApplicationDetailPage() {
   const [showpopup,setShowpopup] = useState<Boolean>();
 
   const [formData, setFormData] = useState({
-    primaryStatus: "Pending" as ApplicationStatus,
+    primaryStatus: "" as ApplicationStatus,
     documents: [] as any,
     backups: [] as BackupCourse[],
     rejectionReason: [] as RejectionReason[],
@@ -488,10 +488,12 @@ export default function ApplicationDetailPage() {
     fetchCourses();
   }, [application?.course?.university?.code]);
 
-  useEffect(() => {
-    console.log(formData.primaryStatus,"lwjeflkadjoij");
-    setShowpopup(true);
-  },[formData.primaryStatus])
+  // useEffect(() => {
+  //    console.log(formData.primaryStatus,"lwjeflkadjoij");
+  //   if(formData.primaryStatus === application?.paymentStatus){
+  //     setShowpopup(true);
+  //   }
+  // },[formData.primaryStatus])
 
   const handleSave = async () => {
     setSaving(true);
@@ -746,10 +748,57 @@ export default function ApplicationDetailPage() {
 
   
   // Status Description Popup - Modern Form UI
-const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () => void; onSubmit: (description: string) => void; status: string }) => {
+const StatusDescriptionPopup = ({ 
+  onAdd, 
+  onCancel, 
+  onSubmit, 
+  status,
+  application 
+}: { 
+  onAdd: (doc: any) => void;  
+  onCancel: () => void; 
+  onSubmit: (description: string) => void; 
+  status: string;
+  application?: { primaryStatus: string };
+}) => {
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [characterCount, setCharacterCount] = useState(0);
+
+  const [form, setForm] = useState({ 
+    type: "ooshas", 
+    name: "",
+    description: description, 
+    required: "required" as "required" | "optional", 
+    docUrl: "",
+    docType: "offer letter",
+  });
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { 
+      toast.error("Max 5MB"); 
+      return; 
+    }
+    setUploading(true);
+    try {
+      const fd = new FormData(); 
+      fd.append("file", file);
+      const res = await axiosInstance.post(`/upload`, fd, { 
+        headers: { "Content-Type": "multipart/form-data" } 
+      });
+      if (res.data.success) { 
+        setForm(p => ({ ...p, docUrl: res.data.docUrl })); 
+        toast.success("Uploaded"); 
+      }
+    } catch { 
+      toast.error("Upload failed"); 
+    } finally { 
+      setUploading(false); 
+    }
+  };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
@@ -774,7 +823,34 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
     }
   };
 
-  // Get status color scheme for accent
+  const handleOfferLetterSubmit = async () => {
+    if (!description.trim()) {
+      toast.error("Please enter a description");
+      return;
+    }
+    if (!form.docUrl) {
+      toast.error("Please upload the offer letter");
+      return;
+    }
+    if (!form.name.trim()) {
+      toast.error("Please enter an offer letter title");
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      await onAdd({
+        ...form,
+        description: description,
+      });
+      toast.success("Offer letter added successfully");
+      onCancel();
+    } catch (error) {
+      toast.error("Failed to add offer letter");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const getStatusAccent = () => {
     const config = STATUS_CONFIG[status] || STATUS_CONFIG["Pending"];
     return {
@@ -787,6 +863,7 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
   };
 
   const accent = getStatusAccent();
+  const isOfferReceived = status === 'OfferReceived';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onCancel}>
@@ -795,15 +872,15 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.2 }}
-        className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden"
+        className="w-full max-w-4xl bg-white shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header with gradient accent */}
-        <div className={`relative px-6 pt-6 pb-4 border-b ${accent.border} bg-gradient-to-r ${accent.gradient} bg-opacity-5`}>
+        <div className={`relative px-6 pt-6 pb-4 border-b ${accent.border} bg-gray-300 bg-opacity-5`}>
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
           <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl ${accent.bg} flex items-center justify-center shadow-md`}>
+              <div className={`w-10 h-10 ${accent.bg} flex items-center justify-center shadow-md`}>
                 <Activity size={20} className={accent.text} />
               </div>
               <div>
@@ -816,7 +893,7 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
             </div>
             <button
               onClick={onCancel}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200"
+              className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200"
             >
               <X size={18} />
             </button>
@@ -825,14 +902,14 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
 
         <div className="p-6 space-y-5">
           {/* Status change visual indicator */}
-          <div className="flex items-center justify-between py-2 px-4 bg-slate-50 rounded-xl">
+          <div className="flex items-center justify-between py-2 px-4 bg-slate-50 rounded-lg">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">
                 <span className="text-xs font-bold text-slate-500">←</span>
               </div>
               <div>
                 <p className="text-xs text-slate-400">Previous Status</p>
-                <p className="text-sm font-medium text-slate-600">—</p>
+                <p className="text-sm font-medium text-slate-600">{application?.primaryStatus || "Current"}</p>
               </div>
             </div>
             <ArrowRight size={20} className="text-slate-300" />
@@ -847,7 +924,55 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
             </div>
           </div>
 
-          {/* Description field */}
+          {/* Conditional: Offer Letter Upload Section */}
+          {isOfferReceived && (
+            <div className="space-y-4 p-4 bg-emerald-50/30 rounded-lg border border-emerald-100">
+              <h4 className="text-sm font-semibold text-emerald-800 flex items-center gap-2">
+                <FileText size={16} />
+                Offer Letter Details
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input 
+                  type="text" 
+                  value={form.name} 
+                  onChange={e => setForm(p => ({ ...p, name: e.target.value }))} 
+                  placeholder="Offer Letter Title" 
+                  className="w-full px-4 py-2.5 border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white rounded-lg" 
+                />
+                <select 
+                  value={form.required} 
+                  onChange={e => setForm(p => ({ ...p, required: e.target.value as "required" | "optional" }))} 
+                  className="w-full px-4 py-2.5 border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white rounded-lg"
+                >
+                  <option value="required">Conditional Offer</option>
+                  <option value="optional">Unconditional Offer</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Upload PDF *</label>
+                <input 
+                  type="file" 
+                  accept=".pdf" 
+                  onChange={handleFileUpload}
+                  disabled={uploading} 
+                  className="w-full text-sm border border-emerald-200 rounded-lg p-2.5 bg-white" 
+                />
+                {uploading && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <RefreshCw size={16} className="animate-spin text-emerald-500" />
+                    <span className="text-xs text-emerald-600">Uploading...</span>
+                  </div>
+                )}
+                {form.docUrl && !uploading && (
+                  <p className="mt-2 text-xs text-emerald-600 flex items-center gap-1">
+                    <Check size={12} /> File uploaded successfully
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Description Section */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
@@ -865,7 +990,7 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
               onChange={handleDescriptionChange}
               maxLength={500}
               placeholder="Please provide detailed remarks about this status update. Include any relevant information, next steps, or notes for the student..."
-              className={`w-full px-4 py-3 rounded-xl border-2 focus:outline-none focus:ring-2 transition-all duration-200 resize-none ${
+              className={`w-full px-4 py-3 border-2 focus:outline-none focus:ring-2 transition-all duration-200 resize-none rounded-lg ${
                 characterCount > 500
                   ? "border-rose-300 focus:border-rose-400 focus:ring-rose-200"
                   : "border-slate-200 focus:border-orange-300 focus:ring-orange-200"
@@ -876,44 +1001,25 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
               This description will be added to the activity log and visible to the student
             </p>
           </div>
-
-          {/* Preview card - shows how it will appear in activity log */}
-          {description.trim() && (
-            <div className="mt-4 pt-4 border-t border-slate-100">
-              <p className="text-xs font-medium text-slate-400 mb-2 flex items-center gap-1">
-                <Eye size={12} />
-                Preview in Activity Log
-              </p>
-              <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center">
-                    <User size={10} className="text-white" />
-                  </div>
-                  <span className="text-xs font-medium text-slate-700">System Update</span>
-                  <span className="text-xs text-slate-400">just now</span>
-                </div>
-                <p className="text-sm text-slate-600 pl-8">
-                  Status changed to <span className={`font-semibold ${accent.text}`}>{status}</span>
-                </p>
-                <p className="text-sm text-slate-500 pl-8 mt-1 italic">"{description.substring(0, 100)}"</p>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Footer actions */}
         <div className="flex justify-end gap-3 p-5 bg-slate-50/50 border-t border-slate-100">
           <button
             onClick={onCancel}
-            className="px-5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-700 hover:bg-slate-100 transition-all duration-200"
+            className="px-5 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-700 hover:bg-slate-100 transition-all duration-200"
           >
             Cancel
           </button>
           <button
-            onClick={handleSubmit}
-            disabled={isSubmitting || !description.trim()}
-            className={`px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 shadow-md flex items-center gap-2 ${
-              isSubmitting || !description.trim()
+            onClick={isOfferReceived ? handleOfferLetterSubmit : handleSubmit}
+            disabled={
+              isSubmitting || 
+              !description.trim() || 
+              (isOfferReceived && (!form.docUrl || !form.name.trim()))
+            }
+            className={`px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all duration-200 shadow-md flex items-center gap-2 ${
+              isSubmitting || !description.trim() || (isOfferReceived && (!form.docUrl || !form.name.trim()))
                 ? "bg-slate-300 cursor-not-allowed shadow-none"
                 : `bg-gradient-to-r ${accent.gradient} hover:shadow-lg hover:-translate-y-0.5`
             }`}
@@ -921,12 +1027,12 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
             {isSubmitting ? (
               <>
                 <RefreshCw size={16} className="animate-spin" />
-                Updating...
+                {isOfferReceived ? "Adding..." : "Updating..."}
               </>
             ) : (
               <>
                 <Check size={16} />
-                Update Status
+                {isOfferReceived ? "Add Offer Letter" : "Update Status"}
               </>
             )}
           </button>
@@ -935,7 +1041,6 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
     </div>
   );
 };
-
   
   if (pageLoading) {
     return (
@@ -969,13 +1074,6 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
     );
   }
 
-//   if(showpopup){
-//     return (
-// <>
-// <StatusDescriptionPopup  status={formData.primaryStatus} onCancel={() => setShowpopup(false)}/>
-// </>
-//     )
-//   }
 
 
   return (
@@ -990,11 +1088,11 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
                 <ChevronLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
                 <span className="text-sm font-medium">Back</span>
               </button>
-              <div className="h-6 w-px bg-slate-200" />
-              <div>
+              {/* <div className="h-6 w-px bg-slate-200" /> */}
+              {/* <div>
                 <div className="flex items-center gap-3 flex-wrap">
                   <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-[#f26d44] flex items-center justify-center shadow-lg">
+                    <div className="w-10 h-10  bg-gradient-to-br from-orange-500 to-[#f26d44] flex items-center justify-center shadow-lg">
                       <GraduationCap size={18} className="text-white" />
                     </div>
                     <div>
@@ -1008,11 +1106,11 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
                   </div>
                   <StatusPill status={application.primaryStatus} size="md" />
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="flex items-center gap-3">
               <button onClick={handleSave}  
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 
+              className="inline-flex items-center gap-2 px-5 py-2.5  bg-gradient-to-r from-orange-600 
               to-[#f26d44] hover:from-orange-700 hover:to-[#f26d44] text-white text-sm font-semibold transition-all 
               duration-200 shadow-md shadow-orange-200 disabled:opacity-60">
                 {saving ? <RefreshCw size={16} className="animate-spin" /> : <Save size={16} />}
@@ -1049,365 +1147,371 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
       <div className="px-6 py-8">
         <AnimatePresence>
           {error && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-rose-50 to-red-50 border border-rose-200 text-rose-700 text-sm mb-6">
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-3 p-4  bg-gradient-to-r from-rose-50 to-red-50 border border-rose-200 text-rose-700 text-sm mb-6">
               <AlertCircle size={18} /> {error}
               <button onClick={() => setError("")} className="ml-auto p-1 rounded-lg hover:bg-rose-100 transition">×</button>
             </motion.div>
           )}
           {success && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 text-emerald-700 text-sm mb-6">
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex items-center gap-3 p-4  bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 text-emerald-700 text-sm mb-6">
               <CheckCircle size={18} /> {success}
             </motion.div>
           )}
         </AnimatePresence>
+ {/* Student Profile & Application Info */}
+     {activeTab === "overview" && (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Student Profile Card - Sidebar with ALL student info */}
+        <PremiumCard className="lg:col-span-1 overflow-hidden ">
+          <div className="relative h-32 bg-gradient-to-r from-orange-600 via-[#f26d44] to-orange-600">
+            <div className="absolute -bottom-12 left-6">
+              <div className="w-24 h-24 rounded bg-white shadow-xl flex items-center justify-center border-4 border-white">
+                {studentData?.data?.profileImage ? (
+                  <img 
+                    src={studentData?.data.profileImage} 
+                    alt="Profile"
+                    className="w-full h-full object-cover rounded"
+                  />
+                ) : (
+                  <span className="text-3xl font-bold text-orange-600">
+                    {studentData?.data?.name?.[0]?.toUpperCase() || application.student?.name?.[0]?.toUpperCase() || "?"}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="pt-14 p-6 overflow-auto h-[100vh]">
+            <h3 className="text-xl font-bold text-slate-800 capitalize">{studentData?.data?.name || application.student?.name || "--"}</h3>
+            <div className="flex items-center gap-2 mt-1">
+              <Mail size={12} className="text-slate-400" />
+              <span className="text-xs text-slate-500">{studentData?.data?.email || application.student?.email || "--"}</span>
+            </div>
+            
+            {/* Basic Information */}
+            <div className="mt-5 pt-4 border-t border-slate-100">
+              <h4 className="text-sm font-semibold text-slate-700 mb-3">Basic Information</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-slate-400">Phone</p>
+                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.phone || "--"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Gender</p>
+                  <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.gender || "--"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Marital Status</p>
+                  <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.maritalStatus || "--"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Date of Birth</p>
+                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.dateOfBirth ? formatDate(studentData?.data.dateOfBirth) : "--"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Nationality</p>
+                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.nationality || "--"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">First Language</p>
+                  <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.firstLanguage || "--"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Referral Code</p>
+                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.referalCode || "--"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Wallet Balance</p>
+                  <p className="text-sm font-medium text-slate-700">${studentData?.data?.wallet || "0"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Joined</p>
+                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.createdAt ? formatDate(studentData?.data.createdAt) : "--"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Status</p>
+                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.status || "--"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Last Login</p>
+                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.lastLogin ? formatDate(studentData?.data.lastLogin) : "--"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Assigned To</p>
+                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.assignto || "--"}</p>
+                </div>
+              </div>
+            </div>
 
-        {/* OVERVIEW TAB */}
-        {activeTab === "overview" && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-          
-          {/* Student Profile & Application Info */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Student Profile Card */}
-            <PremiumCard className="lg:col-span-1 overflow-hidden">
-              <div className="relative h-20 bg-gradient-to-r from-orange-600 via-[#f26d44] to-orange-600">
-                <div className="absolute -bottom-12 left-6">
-                  <div className="w-24 h-24 rounded bg-white shadow-xl flex items-center justify-center border-4 border-white">
-                    {studentData?.data?.profileImage ? (
-                      <img 
-                        src={studentData?.data.profileImage} 
-                        alt="Profile"
-                        className="w-full h-full object-cover rounded"
-                      />
-                    ) : (
-                      <span className="text-3xl font-bold text-orange-600">
-                        {studentData?.data?.name?.[0]?.toUpperCase() || application.student?.name?.[0]?.toUpperCase() || "?"}
-                      </span>
-                    )}
+            {/* Passport Details */}
+            {studentData?.data?.passportDetail && (
+              <div className="mt-5 pt-4 border-t border-slate-100">
+                <h4 className="text-sm font-semibold text-slate-700 mb-3">Passport Details</h4>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-slate-400">Passport Number</p>
+                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.passportNumber || "--"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Passport Expiry</p>
+                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.passportExpiry ? formatDate(studentData?.data.passportExpiry) : "--"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Issue Date</p>
+                      <p className="text-sm font-medium text-slate-700">{formatDate(studentData?.data.passportDetail.issueDate)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Expiry Date</p>
+                      <p className="text-sm font-medium text-slate-700">{formatDate(studentData?.data.passportDetail.expiryDate)}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-xs text-slate-400">Issue Country</p>
+                      <p className="text-sm font-medium text-slate-700">{studentData?.data.passportDetail.issueCountry}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="pt-14 p-6">
-                <h3 className="text-xl font-bold text-slate-800 capitalize">{studentData?.data?.name || application.student?.name || "--"}</h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <Mail size={12} className="text-slate-400" />
-                  <span className="text-xs text-slate-500">{studentData?.data?.email || application.student?.email || "--"}</span>
+            )}
+
+            {/* Education History */}
+            {studentData?.profile?.educationHistory && studentData?.profile.educationHistory.length > 0 && (
+              <div className="mt-5 pt-4 border-t border-slate-100">
+                <h4 className="text-sm font-semibold text-slate-700 mb-3">Education History</h4>
+                <div className="space-y-4">
+                  {studentData?.profile.educationHistory.map((edu, index) => (
+                    <div key={index} className="bg-slate-50 p-3 rounded-lg">
+                      <p className="text-xs font-semibold text-orange-600 mb-2">{edu.educationLevel || "--"}</p>
+                      <div className="space-y-1">
+                        <p className="text-xs text-slate-500">
+                          <span className="font-medium">Degree:</span> {edu.degreeName || "--"}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          <span className="font-medium">Institution:</span> {edu.institutionName || "--"}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          <span className="font-medium">Percentage:</span> {edu.percentage ? `${edu.percentage}%` : "--"}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          <span className="font-medium">Duration:</span> {edu.startDate && edu.endDate 
+                            ? `${formatDate(edu.startDate)} - ${formatDate(edu.endDate)}`
+                            : "--"}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          <span className="font-medium">Location:</span> {[edu.city, edu.state, edu.country].filter(Boolean).join(", ") || "--"}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
+              </div>
+            )}
+
+            {/* Work Experience */}
+            {studentData?.profile?.workExperience && studentData?.profile.workExperience.length > 0 && (
+              <div className="mt-5 pt-4 border-t border-slate-100">
+                <h4 className="text-sm font-semibold text-slate-700 mb-3">Work Experience</h4>
+                <div className="space-y-4">
+                  {studentData?.profile.workExperience.map((work, index) => (
+                    <div key={index} className="bg-slate-50 p-3 rounded-lg">
+                      <p className="text-xs font-semibold text-orange-600 mb-2">{work.designation || "--"}</p>
+                      <div className="space-y-1">
+                        <p className="text-xs text-slate-500">
+                          <span className="font-medium">Company:</span> {work.companyName || "--"}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          <span className="font-medium">Location:</span> {work.location || "--"}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          <span className="font-medium">Duration:</span> {work.from && work.to 
+                            ? `${formatDate(work.from)} - ${formatDate(work.to)}`
+                            : "--"}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Address Information */}
+            {(studentData?.profile?.currentAddress || studentData?.profile?.permanentAddress) && (
+              <div className="mt-5 pt-4 border-t border-slate-100">
+                <h4 className="text-sm font-semibold text-slate-700 mb-3">Address Information</h4>
                 
-                {/* Basic Information */}
-                <div className="grid grid-cols-2 gap-4 mt-5 pt-4 border-t border-slate-100">
-                  <div>
-                    <p className="text-xs text-slate-400">Phone</p>
-                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.phone || "--"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Gender</p>
-                    <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.gender || "--"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Marital Status</p>
-                    <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.maritalStatus || "--"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Date of Birth</p>
-                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.dateOfBirth ? formatDate(studentData?.data.dateOfBirth) : "--"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Nationality</p>
-                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.nationality || "--"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">First Language</p>
-                    <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.firstLanguage || "--"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Passport Number</p>
-                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.passportNumber || "--"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Passport Expiry</p>
-                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.passportExpiry ? formatDate(studentData?.data.passportExpiry) : "--"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Referral Code</p>
-                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.referalCode || "--"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Wallet Balance</p>
-                    <p className="text-sm font-medium text-slate-700">${studentData?.data?.wallet || "0"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Joined</p>
-                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.createdAt ? formatDate(studentData?.data.createdAt) : "--"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Status</p>
-                    <p className="text-sm font-medium text-slate-700">{studentData?.data?.status || "--"}</p>
-                  </div>
-                </div>
-              </div>
-            </PremiumCard>
-
-            {/* Application Details Card */}
-            <PremiumCard className="lg:col-span-2">
-              <div className="p-6">
-                <div className="flex items-center gap-2 mb-5">
-                  <div className="p-2 rounded-xl bg-orange-100">
-                    <GraduationCap size={18} className="text-orange-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-slate-800">Application Details</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-3">
-                    <div className="flex justify-between py-2 border-b border-slate-100">
-                      <span className="text-sm text-slate-500">Country</span>
-                      <span className="text-sm font-medium text-slate-700">{application.country || "--"}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-slate-100">
-                      <span className="text-sm text-slate-500">University</span>
-                      <span className="text-sm font-medium text-slate-700">{application.course?.university?.name || "--"}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-slate-100">
-                      <span className="text-sm text-slate-500">Course</span>
-                      <span className="text-sm font-medium text-slate-700">{application.course?.name || "--"}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-slate-100">
-                      <span className="text-sm text-slate-500">Intake (Application)</span>
-                      <span className="text-sm font-medium text-slate-700">{application.intake || "--"}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-slate-100">
-                      <span className="text-sm text-slate-500">Student Intake</span>
-                      <span className="text-sm font-medium text-slate-700">{studentData?.data?.intake || "--"}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-slate-100">
-                      <span className="text-sm text-slate-500">Tuition Fee</span>
-                      <span className="text-sm font-medium text-slate-700">{studentData?.data?.tuitionfee || "--"}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex justify-between py-2 border-b border-slate-100">
-                      <span className="text-sm text-slate-500">Payment Status</span>
-                      <PaymentBadge status={application.paymentStatus} />
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-slate-100">
-                      <span className="text-sm text-slate-500">Application Status</span>
-                      <select
-                        value={formData.primaryStatus}
-                        onChange={(e) => {
-                          setFormData(p => ({ ...p, primaryStatus: e.target.value as ApplicationStatus }));
-                        }}
-                        className="text-sm px-3 py-1 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
-                      >
-                        {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-slate-100">
-                      <span className="text-sm text-slate-500">Assigned To</span>
-                      <span className="text-sm font-medium text-slate-700">{studentData?.data?.assignto || "--"}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-slate-100">
-                      <span className="text-sm text-slate-500">Last Login</span>
-                      <span className="text-sm font-medium text-slate-700">{studentData?.data?.lastLogin ? formatDate(studentData?.data.lastLogin) : "--"}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Passport Details Section */}
-                {studentData?.data?.passportDetail && (
-                  <div className="mt-6 pt-4 border-t border-slate-100">
-                    <h4 className="text-sm font-semibold text-slate-700 mb-3">Passport Details</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      <div>
-                        <p className="text-xs text-slate-400">Issue Date</p>
-                        <p className="text-sm font-medium text-slate-700">{formatDate(studentData?.data.passportDetail.issueDate)}</p>
+                {studentData?.profile?.currentAddress && (
+                  <div className="mb-4">
+                    <p className="text-xs font-medium text-slate-600 mb-2">Current Address</p>
+                    <div className="bg-slate-50 p-3 rounded-lg">
+                      <div className="space-y-1">
+                        <p className="text-xs text-slate-500">{studentData?.profile.currentAddress.addressLine1 || "--"}</p>
+                        {studentData?.profile.currentAddress.addressLine2 && (
+                          <p className="text-xs text-slate-500">{studentData?.profile.currentAddress.addressLine2}</p>
+                        )}
+                        <p className="text-xs text-slate-500">
+                          {[
+                            studentData?.profile.currentAddress.city,
+                            studentData?.profile.currentAddress.state,
+                            studentData?.profile.currentAddress.postalCode
+                          ].filter(Boolean).join(", ")}
+                        </p>
+                        <p className="text-xs text-slate-500">{studentData?.profile.currentAddress.country || "--"}</p>
                       </div>
-                      <div>
-                        <p className="text-xs text-slate-400">Expiry Date</p>
-                        <p className="text-sm font-medium text-slate-700">{formatDate(studentData?.data.passportDetail.expiryDate)}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-400">Issue Country</p>
-                        <p className="text-sm font-medium text-slate-700">{studentData?.data.passportDetail.issueCountry}</p>
+                    </div>
+                  </div>
+                )}
+                
+                {studentData?.profile?.permanentAddress && (
+                  <div>
+                    <p className="text-xs font-medium text-slate-600 mb-2">Permanent Address</p>
+                    <div className="bg-slate-50 p-3 rounded-lg">
+                      <div className="space-y-1">
+                        <p className="text-xs text-slate-500">{studentData?.profile.permanentAddress.addressLine1 || "--"}</p>
+                        {studentData?.profile.permanentAddress.addressLine2 && (
+                          <p className="text-xs text-slate-500">{studentData?.profile.permanentAddress.addressLine2}</p>
+                        )}
+                        <p className="text-xs text-slate-500">
+                          {[
+                            studentData?.profile.permanentAddress.city,
+                            studentData?.profile.permanentAddress.state,
+                            studentData?.profile.permanentAddress.postalCode
+                          ].filter(Boolean).join(", ")}
+                        </p>
+                        <p className="text-xs text-slate-500">{studentData?.profile.permanentAddress.country || "--"}</p>
                       </div>
                     </div>
                   </div>
                 )}
               </div>
-            </PremiumCard>
+            )}
           </div>
+        </PremiumCard>
 
-          {/* Education History Section */}
-          {studentData?.profile?.educationHistory && studentData?.profile.educationHistory.length > 0 && (
-            <PremiumCard className="mt-6">
-              <div className="p-6">
-                <div className="flex items-center gap-2 mb-5">
-                  <div className="p-2 rounded-xl bg-orange-100">
-                    <GraduationCap size={18} className="text-orange-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-slate-800">Education History</h3>
-                </div>
-                <div className="space-y-4">
-                  {studentData?.profile.educationHistory.map((edu, index) => (
-                    <div key={index} className="border-b border-slate-100 last:border-0 pb-4 last:pb-0">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-xs text-slate-400">Education Level</p>
-                          <p className="text-sm font-medium text-slate-700">{edu.educationLevel || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Degree Name</p>
-                          <p className="text-sm font-medium text-slate-700">{edu.degreeName || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Institution</p>
-                          <p className="text-sm font-medium text-slate-700">{edu.institutionName || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Percentage</p>
-                          <p className="text-sm font-medium text-slate-700">{edu.percentage ? `${edu.percentage}%` : "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Duration</p>
-                          <p className="text-sm font-medium text-slate-700">
-                            {edu.startDate && edu.endDate 
-                              ? `${formatDate(edu.startDate)} - ${formatDate(edu.endDate)}`
-                              : "--"}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Location</p>
-                          <p className="text-sm font-medium text-slate-700">
-                            {[edu.city, edu.state, edu.country].filter(Boolean).join(", ") || "--"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+        {/* Application Details Card - Main Section (Only Application Info) */}
+        <PremiumCard className="lg:col-span-2">
+          <div className="p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="p-2 rounded-xl bg-orange-100">
+                <GraduationCap size={18} className="text-orange-600" />
               </div>
-            </PremiumCard>
-          )}
-
-          {/* Work Experience Section */}
-          {studentData?.profile?.workExperience && studentData?.profile.workExperience.length > 0 && (
-            <PremiumCard className="mt-6">
-              <div className="p-6">
-                <div className="flex items-center gap-2 mb-5">
-                  <div className="p-2 rounded-xl bg-orange-100">
-                    <Briefcase size={18} className="text-orange-600" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-slate-800">Work Experience</h3>
-                </div>
-                <div className="space-y-4">
-                  {studentData?.profile.workExperience.map((work, index) => (
-                    <div key={index} className="border-b border-slate-100 last:border-0 pb-4 last:pb-0">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-xs text-slate-400">Company</p>
-                          <p className="text-sm font-medium text-slate-700">{work.companyName || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Designation</p>
-                          <p className="text-sm font-medium text-slate-700">{work.designation || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Location</p>
-                          <p className="text-sm font-medium text-slate-700">{work.location || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Duration</p>
-                          <p className="text-sm font-medium text-slate-700">
-                            {work.from && work.to 
-                              ? `${formatDate(work.from)} - ${formatDate(work.to)}`
-                              : "--"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </PremiumCard>
-          )}
-
-          {/* Address Information */}
-          {(studentData?.profile?.currentAddress || studentData?.profile?.permanentAddress) && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-              {studentData?.profile?.currentAddress && (
-                <PremiumCard>
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold text-slate-800 mb-4">Current Address</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-xs text-slate-400">Address Line 1</p>
-                        <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.addressLine1 || "--"}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-400">Address Line 2</p>
-                        <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.addressLine2 || "--"}</p>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <p className="text-xs text-slate-400">City</p>
-                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.city || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">State</p>
-                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.state || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Postal Code</p>
-                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.postalCode || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Country</p>
-                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.currentAddress.country || "--"}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </PremiumCard>
-              )}
-              
-              {studentData?.profile?.permanentAddress && (
-                <PremiumCard>
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold text-slate-800 mb-4">Permanent Address</h3>
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-xs text-slate-400">Address Line 1</p>
-                        <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.addressLine1 || "--"}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-400">Address Line 2</p>
-                        <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.addressLine2 || "--"}</p>
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <p className="text-xs text-slate-400">City</p>
-                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.city || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">State</p>
-                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.state || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Postal Code</p>
-                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.postalCode || "--"}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-slate-400">Country</p>
-                          <p className="text-sm font-medium text-slate-700">{studentData?.profile.permanentAddress.country || "--"}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </PremiumCard>
-              )}
+              <h3 className="text-lg font-semibold text-slate-800">Application Details</h3>
             </div>
-          )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
+              <div className="space-y-3">
+                <div className="flex justify-between py-2 border-b border-slate-100">
+                  <span className="text-sm text-slate-500">Country</span>
+                  <span className="text-sm font-medium text-slate-700">{application.country || "--"}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-slate-100">
+                  <span className="text-sm text-slate-500 pr-2">University</span>
+                  <span className="text-sm font-medium text-slate-700">{"  "}{application.course?.university?.name || "--"}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-slate-100">
+                  <span className="text-sm text-slate-500">Course</span>
+                  <span className="text-sm font-medium text-slate-700">{application.course?.name || "--"}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-slate-100">
+                  <span className="text-sm text-slate-500">Intake (Application)</span>
+                  <span className="text-sm font-medium text-slate-700">{application.intake || "--"}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-slate-100">
+                  <span className="text-sm text-slate-500">Student Intake</span>
+                  <span className="text-sm font-medium text-slate-700">{studentData?.data?.intake || "--"}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-slate-100">
+                  <span className="text-sm text-slate-500">Tuition Fee</span>
+                  <span className="text-sm font-medium text-slate-700">{studentData?.data?.tuitionfee || "--"}</span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between py-2 border-b border-slate-100">
+                  <span className="text-sm text-slate-500">Payment Status</span>
+                  <PaymentBadge status={application.paymentStatus} />
+                </div>
+                <div className="flex justify-between py-2 border-b border-slate-100">
+                  <span className="text-sm text-slate-500">Application Status</span>
+                  <select
+                    value={formData.primaryStatus}
+                    onChange={(e) => {
+                      setShowpopup(true)
+                      setFormData(p => ({ ...p, primaryStatus: e.target.value as ApplicationStatus }))
+                    }}
+                    className="text-sm px-3 py-1 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
+                  >
+                    {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
 
-          </motion.div>
-        )}
+            <div className="space-y-3">
+
+                {offerLetters.length > 0 ? (
+                    offerLetters.map((offer: AppDocument) => (
+                      <PremiumCard key={offer._id}  className="overflow-hidden">
+                        <div className="relative">
+                          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-full blur-3xl" />
+                          <div className="p-6 md:p-8">
+                            <div className="flex flex-wrap items-start justify-between gap-4">
+                              <div className="flex items-start gap-4">
+                                <div className="w-14 h-14 rounded bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg">
+                                  <Trophy size={28} className="text-white" />
+                                </div>
+                                <div>
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <Sparkles size={14} className="text-emerald-500" />
+                                    <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Offer Received</span>
+                                  </div>
+                                  <h2 className="text-2xl font-bold text-slate-800">{offer.name}</h2>
+                                  <p className="text-slate-500 text-sm mt-1 max-w-lg">{offer.description || "Congratulations! You've been offered admission to this program."}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                {offer.docUrl && (
+                                  <>
+                                    <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${offer.docUrl}`} target="_blank" className="inline-flex items-center gap-2 px-4 py-2  bg-emerald-600 text-white hover:bg-emerald-700 transition text-sm font-medium shadow-md">
+                                      <Eye size={16} /> View Offer
+                                    </a>
+                                    <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${offer.docUrl}`} download className="inline-flex items-center gap-2 px-4 py-2  border border-slate-200 text-slate-700 hover:bg-slate-50 transition">
+                                      <Download size={16} /> Download
+                                    </a>
+                                  </>
+                                )}
+                                <button onClick={() => { setEditingDocId(offer._id); setShowDocUpload(true); }} className="p-2  text-slate-400 hover:text-orange-600 hover:bg-orange-50 transition">
+                                  <Edit size={16} />
+                                </button>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-4 border-t border-slate-100">
+                              <div className="flex items-center gap-2">
+                                <Calendar size={14} className="text-emerald-600" />
+                                <span className="text-xs text-slate-500">Offer Date: {formatDate(offer.createdAt)}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Clock size={14} className="text-amber-600" />
+                                <span className="text-xs text-amber-700 font-medium">{offer.required === "required" ? "Conditional Offer" : "Unconditional Offer"}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <StatusPill status={offer.status || "Pending"} size="sm" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </PremiumCard>
+                    ))
+                  ) : (
+                    <div className="text-center py-20 bg-white rounded border-2 border-dashed border-slate-200">
+                      <div className="w-20 h-20 bg-slate-100 rounded flex items-center justify-center mx-auto mb-4">
+                        <Trophy size={36} className="text-slate-300" />
+                      </div>
+                      <p className="text-base font-semibold text-slate-600">No Offers Yet</p>
+                      <p className="text-sm text-slate-400 mt-1">Click below to send an admission offer</p>
+                    </div>
+                  )}
+            </div>
+          </div>
+        </PremiumCard>
+      </div>)}
 
         {/* OFFERS TAB - Premium Design */}
         {activeTab === "offers" && (
@@ -1435,15 +1539,15 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
                         <div className="flex items-center gap-3">
                           {offer.docUrl && (
                             <>
-                              <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${offer.docUrl}`} target="_blank" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition text-sm font-medium shadow-md">
+                              <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${offer.docUrl}`} target="_blank" className="inline-flex items-center gap-2 px-4 py-2  bg-emerald-600 text-white hover:bg-emerald-700 transition text-sm font-medium shadow-md">
                                 <Eye size={16} /> View Offer
                               </a>
-                              <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${offer.docUrl}`} download className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition">
+                              <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${offer.docUrl}`} download className="inline-flex items-center gap-2 px-4 py-2  border border-slate-200 text-slate-700 hover:bg-slate-50 transition">
                                 <Download size={16} /> Download
                               </a>
                             </>
                           )}
-                          <button onClick={() => { setEditingDocId(offer._id); setShowDocUpload(true); }} className="p-2 rounded-xl text-slate-400 hover:text-orange-600 hover:bg-orange-50 transition">
+                          <button onClick={() => { setEditingDocId(offer._id); setShowDocUpload(true); }} className="p-2  text-slate-400 hover:text-orange-600 hover:bg-orange-50 transition">
                             <Edit size={16} />
                           </button>
                         </div>
@@ -1478,7 +1582,7 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
 
             <div className="flex justify-end">
               <button onClick={() => setShowRequirementForm1(!showRequirementForm1)}
-               className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all 
+               className={`inline-flex items-center gap-2 px-5 py-2.5  font-medium transition-all 
                duration-200 shadow-md ${showRequirementForm1 ? "bg-orange-100 text-orange-600" : "bg-gradient-to-r from-orange-600 to-orange-600 text-white hover:from-orange-700 hover:to-orange-700"}`}>
                 {showRequirementForm1 ? <><X size={18} /> Close</> : <><Plus size={18} /> Send Offer Letter</>}
               </button>
@@ -1507,21 +1611,21 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
               <div className="p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
                   <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-xl bg-purple-100"><Layers size={18} className="text-purple-600" /></div>
+                    <div className="p-2  bg-purple-100"><Layers size={18} className="text-purple-600" /></div>
                     <h3 className="text-lg font-semibold text-slate-800">Backup Courses</h3>
                   </div>
-                  <button onClick={addBackup} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-[#f26d44] hover:from-orange-700 hover:to-[#f26d44] text-white text-sm font-semibold transition-all duration-200 shadow-md shadow-orange-200 disabled:opacity-60">
+                  <button onClick={addBackup} className="inline-flex items-center gap-2 px-5 py-2.5  bg-gradient-to-r from-orange-600 to-[#f26d44] hover:from-orange-700 hover:to-[#f26d44] text-white text-sm font-semibold transition-all duration-200 shadow-md shadow-orange-200 disabled:opacity-60">
                     <Plus size={16} /> Add Backup
                   </button>
                 </div>
                 {formData.backups.length === 0 ? (
-                  <div className="text-center py-12 bg-slate-50 rounded-xl">
+                  <div className="text-center py-12 bg-slate-50 ">
                     <p className="text-sm text-slate-500">No backup courses added</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {formData.backups.map((bk, idx) => (
-                      <div key={idx} className="flex flex-wrap items-end gap-3 p-4 bg-slate-50 rounded-xl group">
+                      <div key={idx} className="flex flex-wrap items-end gap-3 p-4 bg-slate-50  group">
                         <div className="flex-1 min-w-[180px]">
                           <label className="text-xs font-medium text-slate-500">Course</label>
                           <select value={bk.course} onChange={(e) => updateBackup(idx, "course", e.target.value)} className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white">
@@ -1555,21 +1659,21 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
               <div className="p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
                   <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-xl bg-rose-100"><AlertCircle size={18} className="text-rose-600" /></div>
+                    <div className="p-2  bg-rose-100"><AlertCircle size={18} className="text-rose-600" /></div>
                     <h3 className="text-lg font-semibold text-slate-800">Rejection Reasons</h3>
                   </div>
-                  <button onClick={addRejection} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-[#f26d44] hover:from-orange-700 hover:to-[#f26d44] text-white text-sm font-semibold transition-all duration-200 shadow-md shadow-orange-200 disabled:opacity-60">
+                  <button onClick={addRejection} className="inline-flex items-center gap-2 px-5 py-2.5  bg-gradient-to-r from-orange-600 to-[#f26d44] hover:from-orange-700 hover:to-[#f26d44] text-white text-sm font-semibold transition-all duration-200 shadow-md shadow-orange-200 disabled:opacity-60">
                     <Plus size={16} /> Add Reason
                   </button>
                 </div>
                 {formData.rejectionReason.length === 0 ? (
-                  <div className="text-center py-12 bg-slate-50 rounded-xl">
+                  <div className="text-center py-12 bg-slate-50 ">
                     <p className="text-sm text-slate-500">No rejection reasons recorded</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {formData.rejectionReason.map((rr, idx) => (
-                      <div key={idx} className="flex flex-wrap items-end gap-3 p-4 bg-rose-50 rounded-xl group">
+                      <div key={idx} className="flex flex-wrap items-end gap-3 p-4 bg-rose-50  group">
                         <div className="flex-1">
                           <label className="text-xs font-medium text-slate-500">Course</label>
                           <select value={rr.course} onChange={(e) => updateRejection(idx, "course", e.target.value)} className="w-full px-3 py-2 text-sm rounded-lg border border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-white">
@@ -1599,7 +1703,7 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
             <PremiumCard>
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-6">
-                  <div className="p-2 rounded-xl bg-orange-100"><History size={18} className="text-orange-600" /></div>
+                  <div className="p-2  bg-orange-100"><History size={18} className="text-orange-600" /></div>
                   <h3 className="text-lg font-semibold text-slate-800">Activity Timeline</h3>
                 </div>
                 {activityLogs.length === 0 ? (
@@ -1626,16 +1730,17 @@ const StatusDescriptionPopup = ({ onCancel, onSubmit, status }: { onCancel: () =
         )}
       </div>
 
-{showpopup && (
-  <StatusDescriptionPopup 
-    status={formData.primaryStatus} 
-    onCancel={() => setShowpopup(false)}
-    onSubmit={(description) => {
-      setStatusDescription(description);
-      handleSave(); // This will save with the description
-    }}
-  />
-)}
+    {showpopup && (
+      <StatusDescriptionPopup 
+        status={formData.primaryStatus} 
+        onCancel={() => setShowpopup(false)}
+        onAdd={handleAddRequirement1}
+        onSubmit={(description) => {
+          setStatusDescription(description);
+          handleSave(); // This will save with the description
+        }}
+      />
+    )}
 
       {/* Document Upload Modal */}
       <DocumentUploadModal
@@ -1739,10 +1844,10 @@ function CommentsSection({ application, profile }: { application: Application | 
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-pink-100"><MessageCircle size={18} className="text-pink-600" /></div>
+            <div className="p-2  bg-pink-100"><MessageCircle size={18} className="text-pink-600" /></div>
             <h3 className="text-lg font-semibold text-slate-800">Communication History</h3>
           </div>
-          <button onClick={() => setIsCommentModalOpen(true)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-[#f26d44] hover:from-orange-700 hover:to-[#f26d44] text-white text-sm font-semibold transition-all duration-200 shadow-md shadow-orange-200 disabled:opacity-60">
+          <button onClick={() => setIsCommentModalOpen(true)} className="inline-flex items-center gap-2 px-5 py-2.5  bg-gradient-to-r from-orange-600 to-[#f26d44] hover:from-orange-700 hover:to-[#f26d44] text-white text-sm font-semibold transition-all duration-200 shadow-md shadow-orange-200 disabled:opacity-60">
             + Add Comment
           </button>
         </div>
@@ -1755,7 +1860,7 @@ function CommentsSection({ application, profile }: { application: Application | 
             </div>
           ) : (
             messageList.map((item: any, index: number) => (
-              <div key={item._id || index} className="p-4 rounded-xl bg-slate-50 hover:bg-slate-100 transition">
+              <div key={item._id || index} className="p-4  bg-slate-50 hover:bg-slate-100 transition">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center">
@@ -1793,7 +1898,7 @@ function CommentsSection({ application, profile }: { application: Application | 
                     <option value="University Update">University Update</option>
                     <option value="Offer Letter">Offer Letter</option>
                   </select>
-                  <textarea rows={4} value={messageText} onChange={(e) => setMessageText(e.target.value)} placeholder="Type your comment here..." className="w-full p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none" />
+                  <textarea rows={4} value={messageText} onChange={(e) => setMessageText(e.target.value)} placeholder="Type your comment here..." className="w-full p-3  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none" />
                   {messageAttachments.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {messageAttachments.map((file: any, idx: number) => (
@@ -1808,7 +1913,7 @@ function CommentsSection({ application, profile }: { application: Application | 
                     <button type="button" onClick={() => fileInputRef.current?.click()} className="p-2 rounded-full text-slate-500 hover:bg-slate-100" disabled={isAttachmentUploading}>
                       <Paperclip size={18} />
                     </button>
-                    <button onClick={sendMessage} disabled={isCommentSubmitting || !messageText.trim()} className="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-medium px-5 py-2 rounded-xl transition">
+                    <button onClick={sendMessage} disabled={isCommentSubmitting || !messageText.trim()} className="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-medium px-5 py-2  transition">
                       {isCommentSubmitting ? "Sending..." : "Send Comment"}
                     </button>
                   </div>
@@ -1832,7 +1937,7 @@ function TimelineItem({ log, isLast }: { log: ActivityLog; isLast: boolean }) {
       <div className={`absolute left-0 top-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center ${cfg.bg} ${cfg.border} transition-transform group-hover:scale-110`}>
         <div className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
       </div>
-      <div className="bg-white rounded-xl border border-slate-100 p-4 hover:shadow-md hover:border-orange-100 transition-all duration-200 ml-2">
+      <div className="bg-white  border border-slate-100 p-4 hover:shadow-md hover:border-orange-100 transition-all duration-200 ml-2">
         <div className="flex items-start justify-between gap-3 mb-2 flex-wrap">
           <div className="flex items-center gap-2 flex-wrap">
             <h4 className="font-semibold text-sm text-slate-800">{log.action.replace(/_/g, " ")}</h4>
@@ -1942,7 +2047,7 @@ function DocTypeIcon({ type }: { type: string }) {
   const colors: Record<string, string> = { document: "from-orange-500 to-cyan-500", form: "from-purple-500 to-pink-500", picture: "from-pink-500 to-rose-500", "offer letter": "from-emerald-500 to-teal-500", other: "from-slate-500 to-gray-500" };
   const Icon = icons[type] || File;
   const gradient = colors[type] || colors.other;
-  return <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-md`}><Icon size={18} className="text-white" /></div>;
+  return <div className={`w-10 h-10  bg-gradient-to-br ${gradient} flex items-center justify-center shadow-md`}><Icon size={18} className="text-white" /></div>;
 }
 
 // ── Offer Letter Form ────────────────────────────────────────────────────────
@@ -1976,21 +2081,23 @@ function OfferLetterForm({ onAdd, onCancel, id }: { onAdd: (doc: Partial<AppDocu
         <button onClick={onCancel} className="p-1 rounded-lg hover:bg-slate-200"><X size={18} /></button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Offer Letter Title" className="w-full px-4 py-2.5 rounded-xl border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white" />
-        <select value={form.required} onChange={e => setForm(p => ({ ...p, required: e.target.value as "required" | "optional" }))} className="w-full px-4 py-2.5 rounded-xl border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"><option value="required">Conditional Offer</option><option value="optional">Unconditional Offer</option></select>
+        <input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Offer Letter Title" className="w-full px-4 py-2.5  border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white" />
+        <select value={form.required} onChange={e => setForm(p => ({ ...p, required: e.target.value as "required" | "optional" }))} className="w-full px-4 py-2.5  border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white"><option value="required">Conditional Offer</option><option value="optional">Unconditional Offer</option></select>
       </div>
-      <textarea rows={2} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Additional notes..." className="w-full px-4 py-2.5 rounded-xl border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white mb-4" />
       <div className="mb-4">
         <label className="block text-sm font-medium text-slate-700 mb-2">Upload PDF *</label>
         <input type="file" accept=".pdf" 
         onChange={handleFileUpload}
-         disabled={uploading} className="w-full text-sm border border-emerald-200 rounded-xl p-2.5 bg-white" />
+         disabled={uploading} className="w-full text-sm border border-emerald-200  p-2.5 bg-white" />
          {uploading && <RefreshCw size={16} className="animate-spin mt-2 text-emerald-500" />}
          {form.docUrl && <p className="mt-2 text-xs text-emerald-600 flex items-center gap-1"><Check size={12} /> Uploaded</p>}
         </div>
+
+      <textarea rows={2} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Additional notes..." className="w-full px-4 py-2.5  border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white mb-4" />
+      
       <div className="flex justify-end gap-3 pt-3">
-        <button onClick={onCancel} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</button>
-        <button onClick={handleSubmit} className="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-600 to-orange-600 text-white font-medium shadow-md">Send Offer Letter</button></div>
+        <button onClick={onCancel} className="px-4 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</button>
+        <button onClick={handleSubmit} className="px-5 py-2  bg-gradient-to-r from-orange-600 to-orange-600 text-white font-medium shadow-md">Send Offer Letter</button></div>
     </div>
   );
 }
@@ -2019,13 +2126,13 @@ function DocumentRequirementForm({ onAdd, onCancel }: { onAdd: (doc: Partial<App
     <div className="rounded border border-orange-200 p-6 animate-in slide-in-from-top-2 shadow-lg">
       <div className="flex items-center justify-between mb-5"><h4 className="font-semibold text-slate-800 flex items-center gap-2"><Plus size={18} className="text-orange-600" />Create Requirement</h4><button onClick={onCancel} className="p-1 rounded-lg hover:bg-slate-200"><X size={18} /></button></div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <select value={form.required} onChange={e => setForm(p => ({ ...p, required: e.target.value as "required" | "optional" }))} className="w-full px-4 py-2.5 rounded-xl border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"><option value="required">Required</option><option value="optional">Optional</option></select>
-        <input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Document Name" className="w-full px-4 py-2.5 rounded-xl border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white" />
+        <select value={form.required} onChange={e => setForm(p => ({ ...p, required: e.target.value as "required" | "optional" }))} className="w-full px-4 py-2.5  border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"><option value="required">Required</option><option value="optional">Optional</option></select>
+        <input type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="Document Name" className="w-full px-4 py-2.5  border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white" />
       </div>
-      <textarea rows={2} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Description" className="w-full px-4 py-2.5 rounded-xl border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white mb-4" />
+      <textarea rows={2} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Description" className="w-full px-4 py-2.5  border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white mb-4" />
       {form.type === "ooshas" && form.docType !== "form" && (<div className="mb-4"><input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileUpload} disabled={uploading} className="w-full text-sm" />{uploading && <RefreshCw size={14} className="animate-spin mt-2" />}{form.docUrl && <p className="mt-1 text-xs text-emerald-600 flex items-center gap-1"><Check size={12} /> Uploaded</p>}</div>)}
-      {form.docType === "form" && (<div className="mb-4"><label className="block text-sm font-medium text-slate-700 mb-2">Form Fields</label>{(Array.isArray(form.extra) ? form.extra : []).map((field, i) => (<div key={i} className="grid grid-cols-4 gap-2 mb-2 bg-white p-3 rounded-xl border border-orange-200"><input type="text" placeholder="Label" value={field.label} onChange={e => handleFieldChange(i, "label", e.target.value)} className="px-3 py-2 text-sm rounded-lg border border-slate-200" /><select value={field.type} onChange={e => handleFieldChange(i, "type", e.target.value)} className="px-3 py-2 text-sm rounded-lg border border-slate-200"><option value="text">Text</option><option value="email">Email</option><option value="number">Number</option><option value="date">Date</option></select><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={field.required} onChange={e => handleFieldChange(i, "required", e.target.checked)} />Required</label><button onClick={() => { const arr = (form.extra as DocumentExtraField[]).filter((_, j) => j !== i); setForm(p => ({ ...p, extra: arr })); }} className="text-rose-500"><Trash2 size={16} /></button></div>))}<button onClick={() => setForm(p => ({ ...p, extra: [...(Array.isArray(p.extra) ? p.extra : []), { label: "", type: "text", required: false, validation: "" }] }))} className="text-sm text-orange-600 font-medium">+ Add Field</button></div>)}
-      <div className="flex justify-end gap-3 pt-3"><button onClick={onCancel} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</button><button onClick={handleSubmit} className="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-600 to-[#f26d44] text-white font-medium shadow-md">Add Requirement</button></div>
+      {form.docType === "form" && (<div className="mb-4"><label className="block text-sm font-medium text-slate-700 mb-2">Form Fields</label>{(Array.isArray(form.extra) ? form.extra : []).map((field, i) => (<div key={i} className="grid grid-cols-4 gap-2 mb-2 bg-white p-3  border border-orange-200"><input type="text" placeholder="Label" value={field.label} onChange={e => handleFieldChange(i, "label", e.target.value)} className="px-3 py-2 text-sm rounded-lg border border-slate-200" /><select value={field.type} onChange={e => handleFieldChange(i, "type", e.target.value)} className="px-3 py-2 text-sm rounded-lg border border-slate-200"><option value="text">Text</option><option value="email">Email</option><option value="number">Number</option><option value="date">Date</option></select><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={field.required} onChange={e => handleFieldChange(i, "required", e.target.checked)} />Required</label><button onClick={() => { const arr = (form.extra as DocumentExtraField[]).filter((_, j) => j !== i); setForm(p => ({ ...p, extra: arr })); }} className="text-rose-500"><Trash2 size={16} /></button></div>))}<button onClick={() => setForm(p => ({ ...p, extra: [...(Array.isArray(p.extra) ? p.extra : []), { label: "", type: "text", required: false, validation: "" }] }))} className="text-sm text-orange-600 font-medium">+ Add Field</button></div>)}
+      <div className="flex justify-end gap-3 pt-3"><button onClick={onCancel} className="px-4 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</button><button onClick={handleSubmit} className="px-5 py-2  bg-gradient-to-r from-orange-600 to-[#f26d44] text-white font-medium shadow-md">Add Requirement</button></div>
     </div>
   );
 }
@@ -2057,16 +2164,16 @@ function DocumentUploadModal({ visible, onClose, onUpload, onUpdateDocument, upl
       <div className="w-full max-w-lg bg-white rounded shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between p-5 border-b border-slate-100 sticky top-0 bg-white"><h3 className="font-semibold text-slate-800">{isEditing ? "Edit Document" : "Upload Document"}</h3><button onClick={onClose} className="p-1 rounded-lg hover:bg-slate-100"><X size={18} /></button></div>
         <div className="p-5 space-y-4">
-          {err && <div className="p-3 rounded-xl bg-rose-50 text-rose-600 text-sm flex items-center gap-2"><AlertCircle size={14} />{err}</div>}
-          <div><label className="block text-sm font-medium text-slate-700 mb-1">Select Document *</label><select value={selectedDocId} onChange={e => handleDocSelect(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400"><option value="">-- Select a document --</option>{existingDocs.map((doc: any) => <option key={doc._id} value={doc._id}>{doc.name} ({doc.type}) — {doc.status}</option>)}</select></div>
-          <div><label className="block text-sm font-medium text-slate-700 mb-1">Document Name *</label><input type="text" value={docName} onChange={e => setDocName(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400" /></div>
-          <div className="grid grid-cols-2 gap-3"><div><label className="block text-sm font-medium text-slate-700 mb-1">Category</label><select value={docCategory} onChange={e => setDocCategory(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400"><option value="document">Document</option><option value="form">Form</option><option value="picture">Picture</option><option value="offer letter">Offer Letter</option></select></div><div><label className="block text-sm font-medium text-slate-700 mb-1">Response By</label><select value={docType} onChange={e => setDocType(e.target.value as "user" | "ooshas")} className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400"><option value="user">Student</option><option value="ooshas">Ooshas</option></select></div></div>
-          <div><label className="block text-sm font-medium text-slate-700 mb-1">Required</label><select value={docRequired} onChange={e => setDocRequired(e.target.value as "required" | "optional")} className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400"><option value="required">Required</option><option value="optional">Optional</option></select></div>
-          <div><label className="block text-sm font-medium text-slate-700 mb-1">Description</label><textarea rows={2} value={docDescription} onChange={e => setDocDescription(e.target.value)} className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none" /></div>
-          {docCategory === "form" && (<div className="bg-slate-50 p-4 rounded-xl"><div className="flex justify-between mb-2"><h4 className="text-xs font-semibold text-slate-500">Form Fields</h4><button onClick={() => setExtraFields([...extraFields, { label: "", type: "text", required: false, validation: "" }])} className="text-xs text-orange-600">+ Add Field</button></div>{extraFields.map((field, i) => (<div key={i} className="bg-white p-3 rounded-lg border border-slate-200 mb-2"><div className="grid grid-cols-3 gap-2 mb-2"><input type="text" placeholder="Label" value={field.label} onChange={e => { const arr = [...extraFields]; arr[i].label = e.target.value; setExtraFields(arr); }} className="px-2 py-1 text-sm rounded border" /><select value={field.type} onChange={e => { const arr = [...extraFields]; arr[i].type = e.target.value; setExtraFields(arr); }} className="px-2 py-1 text-sm rounded border"><option value="text">Text</option><option value="email">Email</option><option value="number">Number</option><option value="date">Date</option></select><div className="flex items-center justify-between"><label className="flex items-center gap-1"><input type="checkbox" checked={field.required} onChange={e => { const arr = [...extraFields]; arr[i].required = e.target.checked; setExtraFields(arr); }} />Required</label><button onClick={() => setExtraFields(extraFields.filter((_, j) => j !== i))} className="text-rose-500"><Trash2 size={14} /></button></div></div>{isEditing && field.label && (<div><label className="text-xs text-slate-500">Answer</label><input type={field.type} value={answers[field.label] || ""} onChange={e => setAnswers(prev => ({ ...prev, [field.label]: e.target.value }))} className="w-full px-2 py-1 text-sm rounded border" /></div>)}</div>))}</div>)}
+          {err && <div className="p-3  bg-rose-50 text-rose-600 text-sm flex items-center gap-2"><AlertCircle size={14} />{err}</div>}
+          <div><label className="block text-sm font-medium text-slate-700 mb-1">Select Document *</label><select value={selectedDocId} onChange={e => handleDocSelect(e.target.value)} className="w-full px-3 py-2  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400"><option value="">-- Select a document --</option>{existingDocs.map((doc: any) => <option key={doc._id} value={doc._id}>{doc.name} ({doc.type}) — {doc.status}</option>)}</select></div>
+          <div><label className="block text-sm font-medium text-slate-700 mb-1">Document Name *</label><input type="text" value={docName} onChange={e => setDocName(e.target.value)} className="w-full px-3 py-2  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400" /></div>
+          <div className="grid grid-cols-2 gap-3"><div><label className="block text-sm font-medium text-slate-700 mb-1">Category</label><select value={docCategory} onChange={e => setDocCategory(e.target.value)} className="w-full px-3 py-2  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400"><option value="document">Document</option><option value="form">Form</option><option value="picture">Picture</option><option value="offer letter">Offer Letter</option></select></div><div><label className="block text-sm font-medium text-slate-700 mb-1">Response By</label><select value={docType} onChange={e => setDocType(e.target.value as "user" | "ooshas")} className="w-full px-3 py-2  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400"><option value="user">Student</option><option value="ooshas">Ooshas</option></select></div></div>
+          <div><label className="block text-sm font-medium text-slate-700 mb-1">Required</label><select value={docRequired} onChange={e => setDocRequired(e.target.value as "required" | "optional")} className="w-full px-3 py-2  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400"><option value="required">Required</option><option value="optional">Optional</option></select></div>
+          <div><label className="block text-sm font-medium text-slate-700 mb-1">Description</label><textarea rows={2} value={docDescription} onChange={e => setDocDescription(e.target.value)} className="w-full px-3 py-2  border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none" /></div>
+          {docCategory === "form" && (<div className="bg-slate-50 p-4 "><div className="flex justify-between mb-2"><h4 className="text-xs font-semibold text-slate-500">Form Fields</h4><button onClick={() => setExtraFields([...extraFields, { label: "", type: "text", required: false, validation: "" }])} className="text-xs text-orange-600">+ Add Field</button></div>{extraFields.map((field, i) => (<div key={i} className="bg-white p-3 rounded-lg border border-slate-200 mb-2"><div className="grid grid-cols-3 gap-2 mb-2"><input type="text" placeholder="Label" value={field.label} onChange={e => { const arr = [...extraFields]; arr[i].label = e.target.value; setExtraFields(arr); }} className="px-2 py-1 text-sm rounded border" /><select value={field.type} onChange={e => { const arr = [...extraFields]; arr[i].type = e.target.value; setExtraFields(arr); }} className="px-2 py-1 text-sm rounded border"><option value="text">Text</option><option value="email">Email</option><option value="number">Number</option><option value="date">Date</option></select><div className="flex items-center justify-between"><label className="flex items-center gap-1"><input type="checkbox" checked={field.required} onChange={e => { const arr = [...extraFields]; arr[i].required = e.target.checked; setExtraFields(arr); }} />Required</label><button onClick={() => setExtraFields(extraFields.filter((_, j) => j !== i))} className="text-rose-500"><Trash2 size={14} /></button></div></div>{isEditing && field.label && (<div><label className="text-xs text-slate-500">Answer</label><input type={field.type} value={answers[field.label] || ""} onChange={e => setAnswers(prev => ({ ...prev, [field.label]: e.target.value }))} className="w-full px-2 py-1 text-sm rounded border" /></div>)}</div>))}</div>)}
           {docCategory !== "form" && (<div><label className="block text-sm font-medium text-slate-700 mb-1">{isEditing ? "Update File (Optional)" : "File *"}</label><input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={e => { const f = e.target.files?.[0]; if (f && f.size > 5 * 1024 * 1024) setErr("Max 5MB"); else { setFile(f || null); setErr(""); } }} className="w-full text-sm" /></div>)}
         </div>
-        <div className="flex justify-end gap-3 p-5 border-t border-slate-100"><button onClick={onClose} className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</button><button onClick={handleSubmit} disabled={uploading} className="px-5 py-2 rounded-xl bg-gradient-to-r from-orange-600 to-[#f26d44] text-white font-medium shadow-md disabled:opacity-60">{uploading ? <RefreshCw size={15} className="animate-spin" /> : (isEditing ? <Save size={15} /> : <Upload size={15} />)} {isEditing ? "Save" : "Upload"}</button></div>
+        <div className="flex justify-end gap-3 p-5 border-t border-slate-100"><button onClick={onClose} className="px-4 py-2  border border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</button><button onClick={handleSubmit} disabled={uploading} className="px-5 py-2  bg-gradient-to-r from-orange-600 to-[#f26d44] text-white font-medium shadow-md disabled:opacity-60">{uploading ? <RefreshCw size={15} className="animate-spin" /> : (isEditing ? <Save size={15} /> : <Upload size={15} />)} {isEditing ? "Save" : "Upload"}</button></div>
       </div>
     </div>
   );
@@ -2077,24 +2184,3 @@ function DocumentUploadModal({ visible, onClose, onUpload, onUpdateDocument, upl
 //   return <div className={`bg-white rounded border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 
 //     ${className}`}>{children}</div>;
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
