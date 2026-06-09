@@ -1,9 +1,10 @@
 "ues client"
 
-import { BadgeDollarSign, Bell, Calendar, CalendarDays, Check, CheckCircle2, Clock3, FileText, Globe, GraduationCap, Hash, Hourglass, Info, Mail, MessageCircle, Phone, User, Users } from "lucide-react";
+import { AlertCircle, BadgeDollarSign, Bell, Building2, Calendar, CalendarDays, Check, CheckCircle2, Clock3, Download, FileCheck, FileText, Globe, GraduationCap, Hash, Hourglass, Info, Mail, MessageCircle, Phone, Share2, User, Users } from "lucide-react";
+import Comments from "./comments";
 
 
-export default function SubmittedtoSchool({currentstep}){
+export default function SubmittedtoSchool({currentstep,application,profile,allProfile}){
 
       const counselor = {
   name: "Rahul Sharma",
@@ -272,9 +273,33 @@ const importantDates = [
   },
 ];
 
+  const details = [
+    { label: "Student Name", value: "Rohit Kumar" },
+    { label: "Date of Birth", value: "15 Jan 2004" },
+    { label: "Nationality", value: "India" },
+    { label: "Passport No.", value: "Z5678901" },
+    { label: "Program", value: "Bachelor of computer science" },
+    { label: "Start Date", value: "15 September 2026" },
+    { label: "End Date", value: "14 September 2029" },
+    { label: "CAS Issue Date", value: "06 June 2025" },
+    { label: "CAS Expiry Date", value: "06 September 2025" },
+    { label: "Tuition Fee (per year)", value: "€2,345" },
+    { label: "CAS Number", value: "E4G6-3F8H-9L2K-7L1M" },
+    { label: "Sponsor Licence Number", value: "L2G34H15" },
+  ];
+
+    const Parsedocuments =
+    typeof allProfile?.profile?.documents === "string"
+      ? JSON.parse(allProfile.profile.documents)
+      : allProfile.profile.documents;
+
+  console.log(Parsedocuments);
+
+  const documentList = Object.values(Parsedocuments || {});
+
     return(
         <>
-        <div className="max-w-7xl mx-auto  md:py-6">
+        <div className="  md:py-6">
   <div className="grid grid-cols-1 xl:grid-cols-12 gap-2">
 
     {/* LEFT CONTENT */}
@@ -282,20 +307,112 @@ const importantDates = [
         <div className="xl:col-span-9 space-y-5">
 
       {/* Top Status Card */}
+      {currentstep.step === "ConfirmmationLetter" ? ( <div className="w-full bg-white border border-slate-200 rounded-2xl p-4 md:p-2 shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-4">
+        {/* Left Illustration */}
+        <div className="flex justify-center lg:justify-start">
+          <div className="w-40 h-40 md:w-52 md:h-52 bg-orange-50 rounded-2xl flex items-center justify-center">
+            <FileCheck className="w-20 h-20 md:w-20 md:h-20 text-orange-500" />
+          </div>
+        </div>
+
+        {/* Right Content */}
+        <div className="flex-1">
+          {/* Heading */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+            <h2 className="text-xl md:text-lg font-bold text-slate-900">
+              Congratulations! Your Confirmation Letter is Ready
+            </h2>
+
+            <span className="inline-flex items-center w-fit px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
+              Received
+            </span>
+          </div>
+
+          {/* Description */}
+          <div className="space-y-2 text-slate-600 text-sm md:text-sm">
+            <p>
+              Your Confirmation of Acceptance for Studies (CAS) has been
+              issued by the University of Bologna.
+            </p>
+
+            <p>
+              You can download your CAS letter below and start your visa
+              application process.
+            </p>
+          </div>
+
+          {/* Details Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mt-8">
+            <div className="border border-slate-200 rounded-xl p-4">
+              <p className="text-sm text-slate-500 mb-2">
+                Document Type
+              </p>
+
+              <h4 className="font-semibold text-slate-800 leading-6 text-sm">
+                CAS 
+              </h4>
+            </div>
+
+            <div className="border border-slate-200 rounded-xl p-4">
+              <p className="text-sm text-slate-500 mb-2">
+                CAS Number
+              </p>
+
+              <h4 className="font-semibold text-orange-600 break-all text-sm">
+                E4G6-3F8H-9J2K-7L1M
+              </h4>
+            </div>
+
+            <div className="border border-slate-200 rounded-xl p-4">
+              <p className="text-sm text-slate-500 mb-2">
+                Issued On
+              </p>
+
+              <h4 className="font-semibold text-slate-800 text-sm">
+                06 June 2025
+              </h4>
+            </div>
+
+            <div className="border border-slate-200 rounded-xl p-4">
+              <p className="text-sm text-slate-500 mb-2">
+                Valid Until
+              </p>
+
+              <h4 className="font-semibold text-slate-800 text-sm">
+                06 September 2025
+              </h4>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 mt-8">
+            <button className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 text-sm">
+              <Download size={18} />
+              Download CAS Letter
+            </button>
+
+            <button className="flex items-center justify-center gap-2 border-2 border-orange-500 text-orange-600 hover:bg-orange-50 font-medium px-6 py-3 rounded-xl transition-all duration-300 text-sm">
+              <Share2 size={18} />
+              Share with Counselor
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    ) : currentstep?.step === "SubmitToSchool" ? (
       <div className="bg-white border border-slate-200 p-6">
   <div className="flex flex-col lg:flex-row gap-5">
 
-    <div className="w-24 h-24 shrink-0">
-      <img
-        src="/school-icon.png"
-        alt=""
-        className="w-full"
-      />
-    </div>
+    <div className="flex justify-center lg:justify-start">
+          <div className="w-32 h-32 md:w-40 md:h-40  flex items-center justify-center">
+            <img src="/school-icon.png" alt="" />
+          </div>
+        </div>
 
     <div className="flex-1">
       <div className="flex flex-wrap items-center gap-3 mb-2">
-        <h2 className="font-bold text-2xl text-slate-800">
+        <h2 className="font-bold text-lg text-slate-800">
           Application Submitted to School
         </h2>
 
@@ -304,35 +421,128 @@ const importantDates = [
         </span>
       </div>
 
-      <p className="text-slate-500">
+      <p className="text-slate-500 text-sm">
         Your application has been successfully submitted
         to the University of Bologna.
       </p>
 
-      <div className="grid md:grid-cols-2 gap-4 mt-5">
-        <div className="border  p-3">
-          <p className="text-xs text-slate-500">
-            Submitted on
-          </p>
+       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            
+            {/* Submitted On */}
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
+                <CalendarDays className="w-6 h-6 text-orange-500" />
+              </div>
 
-          <p className="font-semibold">
-            22 May 2025, 02:45 PM
-          </p>
+              <div>
+                <p className="text-sm text-slate-500 mb-1">
+                  Submitted on
+                </p>
+
+                <h4 className="font-semibold text-slate-900">
+                  22 May 2025, 02:45 PM
+                </h4>
+              </div>
+            </div>
+
+            {/* Submitted To */}
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-orange-500" />
+              </div>
+
+              <div>
+                <p className="text-sm text-slate-500 mb-1">
+                  Submitted to
+                </p>
+
+                <h4 className="font-semibold text-slate-900">
+                  University of Bologna, Italy
+                </h4>
+              </div>
+            </div>
+
+          </div>
+    </div>
+  </div>
+</div>) : currentstep?.step === "AwaitingSchoolResponse" ? (
+   <div className="w-full bg-white border border-slate-200 rounded-2xl p-4 md:p-6 lg:p-8 shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+        
+        {/* Left Illustration */}
+        <div className="flex justify-center lg:justify-start">
+          <div className="w-32 h-32 md:w-40 md:h-40  flex items-center justify-center">
+            <img src="https://cdn-icons-png.flaticon.com/512/9727/9727531.png" alt="" />
+          </div>
         </div>
 
-        <div className="border  p-3">
-          <p className="text-xs text-slate-500">
-            Submitted to
-          </p>
+        {/* Content */}
+        <div className="flex-1">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+            <h2 className="text-xl md:text-lg font-bold text-slate-900">
+              Awaiting School Response
+            </h2>
 
-          <p className="font-semibold">
-            University of Bologna, Italy
-          </p>
+            <span className="inline-flex items-center w-fit px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-medium">
+              In Progress
+            </span>
+          </div>
+
+          {/* Description */}
+          <div className="space-y-1 text-slate-600 text-sm">
+            <p>
+              Your application has been received by the University of Bologna.
+            </p>
+
+            <p>
+              The admissions team is currently reviewing your application and
+              supporting documents.
+            </p>
+          </div>
+
+          {/* Information Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            
+            {/* Submitted On */}
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
+                <CalendarDays className="w-6 h-6 text-orange-500" />
+              </div>
+
+              <div>
+                <p className="text-sm text-slate-500 mb-1">
+                  Submitted on
+                </p>
+
+                <h4 className="font-semibold text-slate-900">
+                  22 May 2025, 02:45 PM
+                </h4>
+              </div>
+            </div>
+
+            {/* Submitted To */}
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-orange-500" />
+              </div>
+
+              <div>
+                <p className="text-sm text-slate-500 mb-1">
+                  Submitted to
+                </p>
+
+                <h4 className="font-semibold text-slate-900">
+                  University of Bologna, Italy
+                </h4>
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+) : null}
       {/* Alert */}
       <div className="bg-orange-50 border border-orange-100  px-4 py-3 flex items-center gap-3">
   <Info className="w-5 h-5 text-orange-600" />
@@ -343,7 +553,75 @@ const importantDates = [
   </p>
 </div>
       {/* Details + Timeline */}
-      <div className="grid lg:grid-cols-2 gap-5">
+     {currentstep.step === "ConfirmmationLetter" ? (
+      <>
+       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      {/* Tabs */}
+      <div className="border-b border-gray-200">
+        <div className="flex overflow-x-auto">
+          <button className="px-6 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
+            CAS Details
+          </button>
+
+          <button className="px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">
+            Important Information
+          </button>
+
+          <button className="px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">
+            What You Can Do Next
+          </button>
+        </div>
+      </div>
+
+      <div className="p-4 md:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8">
+          {/* Left Side */}
+          <div>
+            <div className="space-y-5">
+              {details.map((item, index) => (
+                <div
+                  key={index}
+                  className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4"
+                >
+                  <p className="text-sm font-semibold text-gray-800">
+                    {item.label}
+                  </p>
+
+                  <p className="text-sm text-gray-600">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Side */}
+          <div>
+            <div className="border border-gray-200 rounded-lg bg-white p-3 shadow-sm">
+              <div className="aspect-[3/4] overflow-hidden rounded">
+                <img
+                  src="https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=1200"
+                  alt="CAS Document"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Info Box */}
+            <div className="mt-4 border border-blue-200 bg-blue-50 rounded-lg p-4 flex gap-3">
+              <div className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                i
+              </div>
+
+              <p className="text-sm text-gray-700 leading-relaxed">
+                Please verify all details in your CAS letter. In case of any
+                discrepancies, contact your admissions counselor immediately.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></>
+    ) :
+    ( <div className="grid lg:grid-cols-2 gap-5">
         <div className="bg-white border border-slate-200  overflow-hidden">
   <div className="border-b">
     <div className="flex">
@@ -355,41 +633,85 @@ const importantDates = [
 
   <div className="p-5 space-y-4">
   {currentstep?.step === "SubmitToSchool" ? (
-    submissionDetails.map((item, index) => {
-      const Icon = item.icon;
+    <div className="space-y-4">
+  {/* Application ID */}
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      <Hash className="w-4 h-4 text-slate-500" />
+      <span className="text-sm text-slate-600">
+        Application ID
+      </span>
+    </div>
 
-      return (
-        <div
-          key={index}
-          className="flex items-center justify-between gap-4"
-        >
-          <div className="flex items-center gap-3">
-            <Icon className="w-4 h-4 text-slate-500" />
-            <span className="text-sm text-slate-600">
-              {item.label}
-            </span>
-          </div>
+    <span className="text-sm font-medium text-slate-800">
+      {application?.applicationNumber}
+    </span>
+  </div>
 
-          <div className="text-right">
-            {item.status ? (
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-1  text-xs font-medium bg-green-100 text-green-700">
-                  Paid
-                </span>
+  {/* Program */}
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      <GraduationCap className="w-4 h-4 text-slate-500" />
+      <span className="text-sm text-slate-600">
+        Program
+      </span>
+    </div>
 
-                <span className="text-sm font-medium">
-                  €90
-                </span>
-              </div>
-            ) : (
-              <span className="text-sm font-medium text-slate-800">
-                {item.value}
-              </span>
-            )}
-          </div>
-        </div>
-      );
-    })
+    <span className="text-sm font-medium text-slate-800">
+      {application?.course?.name}
+    </span>
+  </div>
+
+  {/* Intake */}
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      <Calendar className="w-4 h-4 text-slate-500" />
+      <span className="text-sm text-slate-600">
+        Intake
+      </span>
+    </div>
+
+    <span className="text-sm font-medium text-slate-800">
+      {application?.intake}
+    </span>
+  </div>
+
+  {/* Submission Date */}
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      <CalendarDays className="w-4 h-4 text-slate-500" />
+      <span className="text-sm text-slate-600">
+        Submission Date
+      </span>
+    </div>
+
+    <span className="text-sm font-medium text-slate-800">
+      {new Date(application?.createdAt).toLocaleString("en-IN")}
+    </span>
+  </div>
+
+
+
+  {/* Application Fee */}
+  <div className="flex items-center justify-between">
+    <div className="flex items-center gap-3">
+      <BadgeDollarSign className="w-4 h-4 text-slate-500" />
+      <span className="text-sm text-slate-600">
+        Application Fee
+      </span>
+    </div>
+
+    <div className="flex items-center gap-2">
+      <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+        Paid
+      </span>
+
+      <span className="text-sm font-medium text-slate-800">
+        €{application?.course?.applicationFee}
+      </span>
+    </div>
+  </div>
+</div>
   ) : currentstep?.step === "AwaitingSchoolResponse" ? (
     <div className="space-y-6">
       {applicationTimeline.map((item, index) => (
@@ -485,7 +807,7 @@ const importantDates = [
         </div>
 
         <div>
-          <h4 className="font-semibold text-xs text-slate-800">
+          <h4 className="font-semibold text-sm text-slate-800">
             {step.title}
           </h4>
 
@@ -535,11 +857,11 @@ const importantDates = [
       </p>
     </div>
   </div></>
-    ) : null}
+    ) :null}
     
   </div>
 </div>
-      </div>
+      </div>)}
       {/* Update Section */}
       <div className="bg-white border border-slate-200  p-5">
   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -824,38 +1146,13 @@ const importantDates = [
 
   </div>
 </div>
-    ) }
+    )  }
     
 
     {/* RIGHT SIDEBAR */}
     <div className="xl:col-span-3 space-y-5">
       {/* Summary */}
-      <div className="bg-white border border-slate-200  p-5">
-  <h3 className="text-sm font-semibold text-slate-800 mb-4">
-    Application Summary
-  </h3>
-
-  <div className="space-y-4">
-    {applicationSummary.map((item, index) => (
-      <div
-        key={index}
-        className={`flex justify-between gap-4 ${
-          index !== applicationSummary.length - 1
-            ? "border-b border-slate-100 pb-3"
-            : ""
-        }`}
-      >
-        <span className="text-sm text-slate-500">
-          {item.label}
-        </span>
-
-        <span className="text-sm font-medium text-slate-800 text-right max-w-[180px]">
-          {item.value}
-        </span>
-      </div>
-    ))}
-  </div>
-</div>
+     <Comments application={application} profile={profile}/>
       {/* Documents */}
       <div className="bg-white border border-slate-200  p-5">
   <div className="flex items-center justify-between mb-5">
@@ -863,28 +1160,46 @@ const importantDates = [
       Documents Submitted
     </h3>
 
-    <button className="text-orange-600 text-xs font-medium hover:text-orange-700">
-      View All
-    </button>
+  
   </div>
 
   <div className="space-y-3">
-    {submittedDocuments.map((doc) => (
-      <div
-        key={doc.id}
-        className="flex items-center justify-between"
-      >
-        <div className="flex items-center gap-3">
-          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+    <div className="space-y-3">
+  {documentList.map((doc) => (
+    <div
+      key={doc.docKey}
+      className="flex items-center justify-between"
+    >
+      <div className="flex items-center gap-3">
+        {doc.status === "approved" ? (
+          <CheckCircle2 className="w-4 h-4 text-green-500" />
+        ) : doc.status === "pending" ? (
+          <Clock3 className="w-4 h-4 text-orange-500" />
+        ) : doc.status === "rejected" ? (
+          <AlertCircle className="w-4 h-4 text-red-500" />
+        ) : (
+          <FileText className="w-4 h-4 text-gray-400" />
+        )}
 
-          <span className="text-sm text-slate-700">
-            {doc.name}
-          </span>
-        </div>
-
-        <FileText className="w-4 h-4 text-slate-400" />
+        <span className="text-sm text-slate-700">
+          {doc.docName}
+        </span>
       </div>
-    ))}
+
+      <span
+        className={`text-xs font-medium capitalize ${
+          doc.status === "approved"
+            ? "text-green-600"
+            : doc.status === "pending"
+            ? "text-orange-600"
+            : "text-red-600"
+        }`}
+      >
+        {doc.status}
+      </span>
+    </div>
+  ))}
+</div>
   </div>
 </div>
       {/* Counselor */}
@@ -894,33 +1209,31 @@ const importantDates = [
     Your Counselor
   </h3>
 
-  <div className="flex items-center gap-4">
+  <div className="flex items-center ">
     <img
-      src={counselor.image}
-      alt={counselor.name}
+      src={allProfile?.data?.assignto?.image}
+      alt={allProfile?.data?.assignto?.name}
       className="w-14 h-14  object-cover"
     />
 
     <div>
       <h4 className="font-semibold text-slate-800">
-        {counselor.name}
+        {allProfile?.data?.assignto?.name}
       </h4>
 
-      <p className="text-sm text-slate-500">
-        {counselor.designation}
-      </p>
+     
     </div>
   </div>
 
   <div className="mt-5 space-y-3">
     <div className="flex items-center gap-3 text-sm text-slate-600">
       <Mail className="w-4 h-4 text-slate-400" />
-      {counselor.email}
+      {allProfile?.data?.assignto?.email}
     </div>
 
     <div className="flex items-center gap-3 text-sm text-slate-600">
       <Phone className="w-4 h-4 text-slate-400" />
-      {counselor.phone}
+      {allProfile?.data?.assignto?.phone}
     </div>
   </div>
 

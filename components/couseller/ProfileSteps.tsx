@@ -22,6 +22,7 @@ const TABS = [
 ];
 
 export default function ProfileTabs({ studentId, user, profile, countriesList, onUpdate }: ProfileTabsProps) {
+
   const [activeInnerTab, setActiveInnerTab] = useState("personal");
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
