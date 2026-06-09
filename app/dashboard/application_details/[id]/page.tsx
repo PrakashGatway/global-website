@@ -1599,7 +1599,7 @@ const StatusDescriptionPopup = ({
         {/* DOCUMENTS TAB */}
         {activeTab === "documents" && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-            <Documents application={application} onUpdate={fetchApplication}/>
+            <Documents application={application} profile={studentData.profile} studentId={typeof application.student === "string" ? application.student : application.student._id}  onUpdate={fetchApplication}/>
           </motion.div>
         )}
 

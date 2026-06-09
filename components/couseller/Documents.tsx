@@ -161,6 +161,12 @@ const DocumentSection: React.FC<any> = ({
                                                             <span className="font-medium text-gray-700">{doc.institution}</span>
                                                         </div>
                                                     )}
+                                                    {doc.applicationId && (
+                                                        <div className="flex items-center gap-2 text-xs">
+                                                            <span className="text-gray-500">Required for:</span>
+                                                            <span className="font-medium text-gray-700">{doc.applicationId}</span>
+                                                        </div>
+                                                    )}
                                                     {doc.data?.status === "rejected" && doc.data?.remarks && (
                                                         <div className=" py-1">
                                                             <div className="flex items-start gap-1">
@@ -392,6 +398,20 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
         'non-mandatory': false,
         ooshas: true,
     });
+
+
+    console.log(profile?.documents && JSON.parse(profile?.documents), "profile");
+
+    const { profile: user } = useGlobal();
+
+    const [requirementModal, setRequirementModal] = useState(false);
+    const [requirementForm, setRequirementForm] = useState({
+        docName: "",
+        description: "",
+        isMandatory: true
+    });
+
+
     const [statusModal, setStatusModal] = useState({
         open: false,
         docKey: "",
@@ -404,7 +424,6 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
     const [currentUploadKey, setCurrentUploadKey] = useState<string | null>(null);
     const [currentUploadName, setCurrentUploadName] = useState<string | null>(null);
 
-    // Map profile documents to our structure
     const mapDocuments = (docList: typeof MANDATORY_DOCUMENTS, isMandatory: boolean) => {
         return docList.map(doc => ({
             ...doc,
@@ -432,6 +451,42 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
             return matchesSearch && matchesFilter;
         });
     };
+
+    const parsedDocuments = profile?.documents
+        ? JSON.parse(profile.documents)
+        : {};
+
+
+    const predefinedKeys = [
+        ...MANDATORY_DOCUMENTS.map(doc => doc.key),
+        ...NON_MANDATORY_DOCUMENTS.map(doc => doc.key),
+    ];
+
+    const customDocuments = Object.values(parsedDocuments).filter(
+        (doc: any) => !predefinedKeys.includes(doc.docKey)
+    );
+
+    const customMandatoryDocs = customDocuments
+        .filter((doc: any) => (doc.type == "mandatory" || !doc.type))
+        .map((doc: any) => ({
+            key: doc.docKey,
+            name: doc.docName,
+            description: doc.description,
+            applicationId: doc.applicationId,
+            isMandatory: true,
+            data: doc
+        }));
+
+    const customNonMandatoryDocs = customDocuments
+        .filter((doc: any) => doc.type === "non-mandatory")
+        .map((doc: any) => ({
+            key: doc.docKey,
+            name: doc.docName,
+            description: doc.description,
+            applicationId: doc.applicationId,
+            isMandatory: false,
+            data: doc
+        }));
 
     const toggleSection = (section: string) => {
         setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -525,6 +580,45 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
         }
     };
 
+    const createDocumentRequirement = async () => {
+        try {
+            if (!requirementForm.docName.trim()) {
+                return toast.error("Document name is required");
+            }
+
+            await axiosInstance.put(
+                `/users/requirement?student=${studentId}`,
+                {
+                    docKey: requirementForm.docName
+                        .toLowerCase()
+                        .replace(/\s+/g, "_"),
+
+                    docName: requirementForm.docName,
+                    description: requirementForm.description,
+                    applicationId: application?.applicationNumber,
+                    isMandatory: requirementForm.isMandatory
+                }
+            );
+
+            toast.success("Document requirement created");
+
+            setRequirementForm({
+                docName: "",
+                description: "",
+                isMandatory: true
+            });
+
+            setRequirementModal(false);
+
+            onUpdate?.();
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to create requirement"
+            );
+        }
+    };
+
     const handleView = (docUrl: string) => {
         window.open(`https://api.ooshasglobal.com${docUrl}`, '_blank');
     };
@@ -541,9 +635,15 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
         }
     };
 
-    const filteredMandatory = filterDocs(yourMandatoryDocs);
-    const filteredNonMandatory = filterDocs(yourNonMandatoryDocs);
+    const filteredMandatory = filterDocs([
+        ...yourMandatoryDocs,
+        ...customMandatoryDocs,
+    ]);
 
+    const filteredNonMandatory = filterDocs([
+        ...yourNonMandatoryDocs,
+        ...customNonMandatoryDocs,
+    ]);
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -559,6 +659,7 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
                 onChange={handleFileChange}
                 className="hidden"
             />
+
             <div className="flex justify-center border-b border-gray-200">
                 <button
                     onClick={() => setActiveTab('your-documents')}
@@ -579,7 +680,16 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
                     OOSHAS Documents
                 </button>
             </div>
-
+            {(user?.role === "admin" || user?.role === "counsellor") && (
+                <div className="flex justify-end">
+                    <button
+                        onClick={() => setRequirementModal(true)}
+                        className="px-4 py-2 bg-[#F26D44] text-white text-sm"
+                    >
+                        + Request Document
+                    </button>
+                </div>
+            )}
             {activeTab === 'your-documents' && (
                 <>
                     <DocumentSection
@@ -620,6 +730,130 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
                     />
                 </>
             )}
+
+            <AnimatePresence>
+                {requirementModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95 }}
+                            animate={{ scale: 1 }}
+                            exit={{ scale: 0.95 }}
+                            className="bg-white w-full max-w-lg p-6"
+                        >
+                            <h3 className="text-lg font-bold mb-4">
+                                Request New Document
+                            </h3>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">
+                                        Document Name
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        value={requirementForm.docName}
+                                        onChange={(e) =>
+                                            setRequirementForm((prev) => ({
+                                                ...prev,
+                                                docName: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="Bank Statement"
+                                        className="w-full border p-3"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-2">
+                                        Document Type
+                                    </label>
+
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setRequirementForm((prev) => ({
+                                                    ...prev,
+                                                    isMandatory: true,
+                                                }))
+                                            }
+                                            className={`py-2 px-4 border text-sm font-medium transition-all ${requirementForm.isMandatory
+                                                ? "bg-[#F26D44] text-white border-[#F26D44]"
+                                                : "bg-white text-gray-700 border-gray-300"
+                                                }`}
+                                        >
+                                            Mandatory
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setRequirementForm((prev) => ({
+                                                    ...prev,
+                                                    isMandatory: false,
+                                                }))
+                                            }
+                                            className={`py-2 px-4 border text-sm font-medium transition-all ${!requirementForm.isMandatory
+                                                ? "bg-[#F26D44] text-white border-[#F26D44]"
+                                                : "bg-white text-gray-700 border-gray-300"
+                                                }`}
+                                        >
+                                            Non-Mandatory
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">
+                                        Description
+                                    </label>
+
+                                    <textarea
+                                        rows={4}
+                                        value={requirementForm.description}
+                                        onChange={(e) =>
+                                            setRequirementForm((prev) => ({
+                                                ...prev,
+                                                description: e.target.value,
+                                            }))
+                                        }
+                                        placeholder="Upload last 6 months bank statement"
+                                        className="w-full border p-3"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-3 mt-6">
+                                <button
+                                    onClick={() => {
+                                        setRequirementModal(false);
+
+                                        setRequirementForm({
+                                            docName: "",
+                                            description: "",
+                                        });
+                                    }}
+                                    className="px-4 py-2 border"
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    onClick={createDocumentRequirement}
+                                    className="px-4 py-2 bg-[#F26D44] text-white"
+                                >
+                                    Create Requirement
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {activeTab === "ooshas-documents" && (
                 <div className="bg-white border border-gray-200 rounded-lg p-12">
