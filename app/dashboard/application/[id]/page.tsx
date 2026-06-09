@@ -207,13 +207,8 @@ export default function StudentDetailsPage() {
       setApplication(applicationData);
 
       if (applicationData?.student?._id) {
-        const userRes = await axiosInstance.get(
-          `/users/${applicationData.student._id}`
-        );
-        setProfile(userRes.data.data?.profile || userRes.data?.profile);
-
-
-        setUser(userRes.data?.data || userRes.data);
+        setProfile(allProfile?.profile);
+        setUser(profile);
       }
     } catch (error) {
       console.error("Error fetching application details:", error);
