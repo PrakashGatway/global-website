@@ -54,7 +54,7 @@ const ModalFieldRenderer = ({ field, value, onChange, options = [] }) => {
             <select value={value || ""} onChange={(e) => onChange(e.target.value)} className={baseClass}>
                 <option value="">Select {field.label}</option>
                 {selectOptions.map((opt, idx) => (
-                    <option className="capitalize" key={idx} value={opt.value || opt.label}>{opt.label}</option>
+                    <option key={idx} value={ field.name == "nationality" ? opt.label : opt.value}>{opt.label}</option>
                 ))}
             </select>
         );
@@ -226,7 +226,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
         if (formData.destinationCountry) {
             axiosInstance.get(`/universities?country=${formData.destinationCountry}`)
                 .then(res => {
-                    const data = res.data.data || res.data || [];
+                    const data = res.data.result || res.data || [];
                     setUniversities(data.map((u: any) => ({ label: u.name, value: u._id })));
                 })
                 .catch(err => setUniversities([]));
@@ -252,7 +252,6 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
 
 const handleSelectExisting = (student) => {
     setSelectedStudent(student);
-    console.log("selected student:", student);
 
     setFormData(prev => ({
         ...prev,
@@ -268,7 +267,6 @@ const handleSelectExisting = (student) => {
 };
 
     const handleNewUserSuccess = (newStudent: any) => {
-        // IMPORTANT: Ensure your RegisterStudentModal passes the created student object to onSuccess(studentData)
         if (newStudent) {
             setSelectedStudent(newStudent);
             setFormData(prev => ({
@@ -302,8 +300,6 @@ const handleSelectExisting = (student) => {
                 studentId: selectedStudent._id,
                 ...formData
             };
-
-            // Adjust API endpoint as needed
             await axiosInstance.post('/applications', payload);
             toast.success("Application submitted successfully!");
             onSuccess();
