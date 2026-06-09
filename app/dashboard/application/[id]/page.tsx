@@ -535,8 +535,8 @@ export default function StudentDetailsPage() {
     application?.primaryStatus
   ).map((key) => STATUS_CONFIG[key]);
 
-  const currentStepIndex = timelineSteps.findIndex(
-    (step) => step.key === application?.primaryStatus
+  const currentStepIndex = timelineSteps?.findIndex(
+    (step) => step?.key === application?.primaryStatus
   );
 
   const isStepCompleted = (index: number) =>
@@ -571,11 +571,11 @@ export default function StudentDetailsPage() {
     );
   }
 
+
   const steps = [
     {
       id: 1,
       title: "Application Started",
-      status: "current",
       subTitle: "In Progress",
       step: "Started",
       icon: FileText,
@@ -583,14 +583,12 @@ export default function StudentDetailsPage() {
     {
       id: 2,
       title: "Under OOSHAS Review",
-      status: "pending",
       step: "ReviewbyOoshas",
       icon: Clock,
     },
     {
       id: 3,
       title: "Submitted to School",
-      status: "completed",
       subTitle: "In Progress",
       step: "SubmitToSchool",
       icon: Upload,
@@ -598,7 +596,6 @@ export default function StudentDetailsPage() {
     {
       id: 4,
       title: "Awaiting School Response",
-      status: "pending",
       subTitle: "In Progress",
       step: "AwaitingSchoolResponse",
       icon: Hourglass,
@@ -607,7 +604,6 @@ export default function StudentDetailsPage() {
       id: 5,
       title: "Offer Received",
       subTitle: "In Progress",
-      status: "pending",
       step: "OfferReceived",
       icon: Gift,
     },
@@ -615,7 +611,6 @@ export default function StudentDetailsPage() {
       id: 6,
       title: "Pay Enrollenment Deposit",
       subTitle: "In Progress",
-      status: "pending",
       step: "PayEnrollenmentDeposit",
       icon: ClipboardCheck,
     },
@@ -623,7 +618,6 @@ export default function StudentDetailsPage() {
       id: 7,
       title: "Confirmmation Letter",
       subTitle: "In Progress",
-      status: "pending",
       step: "ConfirmmationLetter",
       icon: ClipboardCheck,
     },
@@ -665,9 +659,10 @@ export default function StudentDetailsPage() {
     }
   };
 
+  const currentprimarystep = application.primaryStatus
 
   const currentStep = steps.find(
-    (item) => item.step === stepchange
+    (item) => item.step === currentprimarystep
   );
 
 
@@ -759,15 +754,23 @@ export default function StudentDetailsPage() {
             </div> */}
 
           <div className="w-full py-1">
-            <div className="relative flex items-start justify-between">
 
-              {/* Timeline Line */}
-              <div className="absolute top-7 left-14 right-5 h-[1px] bg-gray-300 z-0 " />
+
+            <div className="relative flex justify-between items-start">
+              <div className="absolute top-7 left-14 right-5 h-[1px] bg-gray-300 z-0" />
 
               {steps.map((step, index) => {
-                const isActive =
-                  step.status !== "completed" &&
-                  step.status !== "pending";
+                const currentIndex = steps.findIndex(
+                  (item) => item.step === application?.primaryStatus
+                );
+                const status =
+                  index < currentIndex
+                    ? "completed"
+                    : index === currentIndex
+                      ? "current"
+                      : "pending";
+
+                const isActive = status === "current";
 
                 return (
                   <div
@@ -776,24 +779,30 @@ export default function StudentDetailsPage() {
                   >
                     {isActive ? (
                       <div className="relative flex flex-col items-center">
-
                         {/* Active Circle */}
                         <div className="relative z-20">
-                          <div className="absolute inset-0  bg-orange-400/20 scale-125" />
+                          <div className="absolute inset-0 bg-orange-400/20 scale-125" />
 
-                          <div className="w-14 h-14  border border-orange-500 bg-white flex items-center justify-center shadow-sm">
-                            <FileText className="w-6 h-6 text-orange-500" />
+                          <div className="w-14 h-14 border border-orange-500 bg-white flex items-center justify-center shadow-sm">
+                            {step.icon ? (
+                              <step.icon className="w-6 h-6 text-orange-500" />
+                            ) : (
+                              <FileText className="w-6 h-6 text-orange-500" />
+                            )}
                           </div>
                         </div>
 
                         {/* Active Card */}
-                        <div onClick={() => setstepchange(step.step)} className="mt-[-6px] w-[170px] h-[115px] bg-orange-50 border border-orange-500 rounded-lg flex flex-col items-center justify-center px-2">
+                        <div
+                          onClick={() => setstepchange(step.step)}
+                          className="mt-[-6px] w-[170px] h-[115px] bg-orange-50 border border-orange-500 rounded-lg flex flex-col items-center justify-center px-2 cursor-pointer"
+                        >
                           <h3 className="text-lg font-semibold text-orange-600 text-center leading-6">
                             {step.title}
                           </h3>
 
                           <p className="mt-1 text-xs text-orange-600">
-                            {step.status}
+                            {status}
                           </p>
                         </div>
                       </div>
@@ -802,30 +811,40 @@ export default function StudentDetailsPage() {
                         {/* Inactive Circle */}
                         <div
                           className={`w-14 h-14 rounded-full border flex items-center justify-center
-    ${step.status === "completed"
+                ${status === "completed"
                               ? "bg-green-500 border-green-500"
                               : "bg-white border-gray-300"
-                            }
-  `}
+                            }`}
                         >
                           {step.icon ? (
-                            <step.icon className={`w-5 h-5  ${step.status === "completed" ? "text-white" : "text-gray-500"}`} />
+                            <step.icon
+                              className={`w-5 h-5 ${status === "completed"
+                                ? "text-white"
+                                : "text-gray-500"
+                                }`}
+                            />
                           ) : (
                             <Clock className="w-5 h-5 text-gray-500" />
                           )}
                         </div>
 
                         {/* Title */}
-                        <h4 onClick={() => setstepchange(step.step)} className="mt-2 text-center font-medium text-sm text-gray-700 max-w-[200px] leading-5">
+                        <h4
+                          onClick={() => setstepchange(step.step)}
+                          className="mt-2 text-center font-medium text-sm text-gray-700 max-w-[200px] leading-5 cursor-pointer"
+                        >
                           {step.title}
                         </h4>
 
                         {/* Status */}
-                        {step.status && (
-                          <p className={`text-xs  mt-1 ${step.status === "completed" ? "text-black" : "text-gray-500"}`}>
-                            {step.status}
-                          </p>
-                        )}
+                        <p
+                          className={`text-xs mt-1 ${status === "completed"
+                            ? "text-black"
+                            : "text-gray-500"
+                            }`}
+                        >
+                          {status}
+                        </p>
                       </>
                     )}
                   </div>
@@ -1514,412 +1533,7 @@ export default function StudentDetailsPage() {
                                 </div>
                               )}
 
-                              {/* Activity Log Tab Content */}
-                              {activeTab === 'activity' && (
-                                // <div className="bg-white">
-
-                                //   {/* Header */}
-                                //   <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
-                                //     <div>
-                                //       <h3 className="text-lg font-semibold text-gray-800">
-                                //         Ticket Communication History
-                                //       </h3>
-                                //       <p>Track all agent updates, internal discussions, and resolution milestones.</p>
-                                //     </div>
-
-                                //     <button
-                                //       onClick={() => setIsCommentModalOpen(true)}
-                                //       className="bg-[#F26D44] hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md transition-colors"
-                                //     >
-                                //       ADD COMMENTS
-                                //     </button>
-                                //   </div>
-
-                                //   {/* Table Header */}
-                                //   <div className="grid grid-cols-12 gap-4 bg-gray-100 px-8 py-4 text-sm font-semibold text-gray-700 border-b">
-                                //     <div className="col-span-2">Details</div>
-                                //     <div className="col-span-6">Comment</div>
-                                //     <div className="col-span-3">Status</div>
-                                //     <div className="col-span-1">Commented By</div>
-                                //   </div>
-
-                                //   {/* Messages */}
-                                //   <div className="max-h-[650px] overflow-y-auto divide-y divide-gray-200">
-
-                                //     {messageList?.map((item, index) => (
-
-                                //       <motion.div
-                                //         key={index}
-                                //         initial={{ opacity: 0, y: 15 }}
-                                //         animate={{ opacity: 1, y: 0 }}
-                                //         transition={{ delay: index * 0.05 }}
-                                //         className="grid grid-cols-12 gap-4 px-8 py-6 hover:bg-gray-50 transition-colors"
-                                //       >
-
-                                //         {/* Details */}
-                                //         <div className="col-span-2">
-
-                                //           <div className="text-sm text-gray-700 leading-6">
-
-                                //             <p className="font-medium">
-                                //               {item?.createdAt.split("T")[0]}
-                                //             </p>
-
-                                //             <div className="mt-4">
-
-                                //               <p className="font-semibold text-gray-800">
-                                //                 Subject:
-                                //               </p>
-
-                                //               <p className="font-semibold text-gray-900 mt-2">
-                                //                 {item?.extra_content?.subject}
-                                //               </p>
-
-                                //             </div>
-
-                                //           </div>
-
-                                //         </div>
-
-
-                                //         {/* Comment */}
-                                //         <div className="col-span-6">
-
-                                //           <div className="space-y-3">
-
-                                //             <div className="text-gray-700 leading-7 text-[15px]">
-                                //               {item.content}
-                                //             </div>
-
-                                //             {item.extra_content?.attachments?.[0]?.name && (
-
-                                //               <a
-                                //                 href={`https://api.ooshasglobal.com${item.extra_content?.attachments?.[0]?.url}`}
-                                //                 target="_blank"
-                                //                 className="flex items-center gap-2"
-                                //               >
-                                //                 <Paperclip className="w-4 h-4 text-slate-400" />
-
-                                //                 {item.extra_content?.attachments?.[0]?.name}
-
-                                //               </a>
-
-                                //             )}
-
-                                //           </div>
-
-                                //         </div>
-
-
-                                //         {/* Status */}
-                                //         <div className="col-span-3">
-
-                                //           <div className="space-y-5 text-sm">
-
-                                //             <div>
-
-                                //               <p className="font-bold text-gray-800">
-                                //                 Primary Status:
-                                //               </p>
-
-                                //               <p className="text-gray-700">
-                                //                 {item.primaryStatus || "Application Processed"}
-                                //               </p>
-
-                                //             </div>
-
-                                //             <div>
-
-                                //               <p className="font-bold text-gray-800">
-                                //                 Message Status:
-                                //               </p>
-
-                                //               <p className="text-gray-700">
-                                //                 {item?.isRead ? "true" : "false"}
-                                //               </p>
-
-                                //             </div>
-
-                                //           </div>
-
-                                //         </div>
-
-
-                                //         {/* User */}
-                                //         <div className="col-span-1 flex flex-col items-center justify-between">
-
-                                //           <span className="text-gray-700 font-medium">
-                                //             {item.userType === "student" ? "Me" : item.userType}
-                                //           </span>
-
-                                //           {item.userType !== "student" && !item?.isRead && (
-                                //             <button
-                                //               onClick={() => {
-                                //                 setIsCommentModalOpen(true);
-                                //                 setMessageSubject(item?.extra_content?.subject);
-                                //                 markMessagesAsRead();
-                                //               }}
-                                //               className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-1 px-2 rounded-md transition-colors"
-                                //             >
-                                //               reply <SendHorizonal className="h-4" />
-                                //             </button>
-                                //           )}
-
-                                //         </div>
-                                //       </motion.div>
-
-                                //     ))}
-
-                                //   </div>
-
-
-                                //   {/* Modal */}
-                                //   <AnimatePresence>
-
-                                //     {isCommentModalOpen && (
-
-                                //       <motion.div
-                                //         initial={{ opacity: 0 }}
-                                //         animate={{ opacity: 1 }}
-                                //         exit={{ opacity: 0 }}
-                                //         className="fixed inset-0 z-50 flex items-end justify-end p-6"
-                                //       >
-
-                                //         <motion.div
-                                //           initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                                //           animate={{ scale: 1, opacity: 1, y: 0 }}
-                                //           exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                                //           transition={{ type: "spring", duration: 0.4 }}
-                                //           className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200"
-                                //         >
-
-                                //           {/* Header */}
-                                //           <div className="bg-white border-b border-slate-100 px-5 py-4">
-
-                                //             <div className="flex items-center justify-between">
-
-                                //               <div>
-
-                                //                 <h3 className="text-base font-bold text-slate-800">
-                                //                   New Message
-                                //                 </h3>
-
-                                //                 <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
-                                //                   <span>To</span>
-                                //                   <span className="font-medium text-slate-700">
-                                //                     Ooshas
-                                //                   </span>
-                                //                 </div>
-                                //               </div>
-                                //               <button
-                                //                 onClick={() => setIsCommentModalOpen(false)}
-                                //                 className="text-slate-400 hover:text-slate-600 transition-colors"
-                                //               >
-                                //                 <svg
-                                //                   className="w-5 h-5"
-                                //                   fill="none"
-                                //                   stroke="currentColor"
-                                //                   viewBox="0 0 24 24"
-                                //                 >
-                                //                   <path
-                                //                     strokeLinecap="round"
-                                //                     strokeLinejoin="round"
-                                //                     strokeWidth={2}
-                                //                     d="M6 18L18 6M6 6l12 12"
-                                //                   />
-                                //                 </svg>
-                                //               </button>
-                                //             </div>
-                                //           </div>
-
-
-                                //           {/* Body */}
-                                //           <div className="p-5 space-y-5">
-
-                                //             {/* Subject */}
-                                //             <div className="space-y-1.5">
-
-                                //               <div className="flex items-center gap-2 text-sm">
-
-                                //                 <label className="font-medium text-slate-600 w-16">
-                                //                   Subject
-                                //                 </label>
-
-                                //                 <select
-                                //                   value={messageSubject}
-                                //                   onChange={(e) => setMessageSubject(e.target.value)}
-                                //                   className="flex-1 bg-transparent border-b border-slate-200 py-1.5 text-sm text-slate-700 outline-none focus:border-orange-500"
-                                //                 >
-
-                                //                   <option value="">
-                                //                     Select a subject...
-                                //                   </option>
-
-                                //                   <option value="Application Processed">
-                                //                     Application Processed
-                                //                   </option>
-
-                                //                   <option value="Document Uploaded">
-                                //                     Document Uploaded
-                                //                   </option>
-
-                                //                   <option value="University Update">
-                                //                     University Update
-                                //                   </option>
-
-                                //                 </select>
-
-                                //               </div>
-
-                                //             </div>
-
-
-                                //             {/* Message */}
-                                //             <div className="space-y-1.5">
-
-                                //               <textarea
-                                //                 rows={5}
-                                //                 value={messageText}
-                                //                 onChange={(e) => setMessageText(e.target.value)}
-                                //                 placeholder="Type your comment details here..."
-                                //                 className="w-full p-3 outline-none resize-none text-sm text-slate-700 placeholder-slate-400 bg-slate-50 rounded-xl border border-slate-100 focus:border-orange-500 focus:bg-white transition-all"
-                                //               />
-
-                                //             </div>
-
-
-                                //             {/* Attachments */}
-                                //             {messageAttachments.length > 0 && (
-
-                                //               <div className="space-y-2">
-
-                                //                 <div className="flex flex-wrap gap-2">
-
-                                //                   {messageAttachments.map((file, index) => (
-
-                                //                     <div
-                                //                       key={index}
-                                //                       className="flex items-center gap-1.5 bg-slate-100 rounded-full px-3 py-1 text-xs text-slate-600"
-                                //                     >
-
-                                //                       <svg
-                                //                         className="w-3 h-3 text-slate-400"
-                                //                         fill="none"
-                                //                         stroke="currentColor"
-                                //                         viewBox="0 0 24 24"
-                                //                       >
-
-                                //                         <path
-                                //                           strokeLinecap="round"
-                                //                           strokeLinejoin="round"
-                                //                           strokeWidth={2}
-                                //                           d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                                //                         />
-
-                                //                       </svg>
-
-                                //                       <span className="max-w-[120px] truncate">
-                                //                         {file.name}
-                                //                       </span>
-
-                                //                       <button
-                                //                         type="button"
-                                //                         onClick={() => removeUploadedFile(index)}
-                                //                         className="text-slate-400 hover:text-rose-500 ml-1"
-                                //                       >
-                                //                         ×
-                                //                       </button>
-
-                                //                     </div>
-
-                                //                   ))}
-
-                                //                 </div>
-
-                                //               </div>
-
-                                //             )}
-
-
-                                //             {/* Actions */}
-                                //             <div className="flex items-center justify-end gap-2 pt-2">
-
-                                //               {/* Upload */}
-                                //               <button
-                                //                 type="button"
-                                //                 disabled={
-                                //                   messageSubject !== "Document Uploaded" ||
-                                //                   isAttachmentUploading ||
-                                //                   isCommentSubmitting
-                                //                 }
-                                //                 onClick={() => fileInputRef.current.click()}
-                                //                 className="p-2 rounded-full text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-50"
-                                //               >
-
-                                //                 <svg
-                                //                   className="w-5 h-5"
-                                //                   fill="none"
-                                //                   stroke="currentColor"
-                                //                   viewBox="0 0 24 24"
-                                //                 >
-
-                                //                   <path
-                                //                     strokeLinecap="round"
-                                //                     strokeLinejoin="round"
-                                //                     strokeWidth={2}
-                                //                     d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                                //                   />
-
-                                //                 </svg>
-
-                                //               </button>
-
-
-                                //               {/* Send */}
-                                //               <button
-                                //                 type="button"
-                                //                 onClick={sendMessage}
-                                //                 disabled={
-                                //                   isCommentSubmitting ||
-                                //                   isAttachmentUploading ||
-                                //                   !messageText.trim()
-                                //                 }
-                                //                 className="bg-orange-500 hover:bg-orange-600 disabled:bg-slate-200 disabled:text-slate-400 text-white font-medium px-5 py-2 rounded-full text-sm transition-all"
-                                //               >
-
-                                //                 {isCommentSubmitting ? "Sending..." : "Send"}
-
-                                //               </button>
-
-                                //             </div>
-
-                                //           </div>
-
-
-                                //           {/* Hidden File Input */}
-                                //           <input
-                                //             type="file"
-                                //             ref={fileInputRef}
-                                //             onChange={handleFileChange}
-                                //             multiple
-                                //             disabled={
-                                //               isAttachmentUploading ||
-                                //               isCommentSubmitting
-                                //             }
-                                //             className="hidden"
-                                //           />
-
-                                //         </motion.div>
-
-                                //       </motion.div>
-
-                                //     )}
-
-                                //   </AnimatePresence>
-
-                                // </div>
-                                <Comments application={application} profile={profile}/>
-                              )}
+                           
                             </div>
                           </>
                         )}
@@ -1980,25 +1594,25 @@ export default function StudentDetailsPage() {
             )}
 
             {currentStep?.step === "ReviewbyOoshas" && (
-              <ReviewApplication application={application} allProfile={allProfile} profile = {profile} />
-  )}
+              <ReviewApplication application={application} allProfile={allProfile} profile={profile} activity={activityLogs} />
+            )}
 
             {currentStep?.step === "SubmitToSchool" ? (
-              <SubmittedtoSchool application={application} allProfile={allProfile} profile = {profile} currentstep={currentStep} />
+              <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs} />
             ) : currentStep?.step === "AwaitingSchoolResponse" ? (
-              <SubmittedtoSchool application={application} allProfile={allProfile} profile = {profile} currentstep={currentStep} />
+              <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs}/>
             ) : currentStep?.step === "OfferReceived" ? (
-              <SubmittedtoSchool application={application} allProfile={allProfile} profile = {profile} currentstep={currentStep} />
-            ) : currentStep?.step === "ConfirmmationLetter"? (
-              <SubmittedtoSchool application={application} allProfile={allProfile} profile = {profile} currentstep={currentStep}/>
-            ):null}
+              <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs} />
+            ) : currentStep?.step === "ConfirmmationLetter" ? (
+              <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} />
+            ) : null}
 
             {currentStep?.step === "AdmissionProcessing" && (
-              <AdmissionProcessing application={application} profile = {profile}/>
+              <AdmissionProcessing application={application} profile={profile} />
             )}
 
             {currentStep?.step === "PayEnrollenmentDeposit" && (
-              <EnrollmentDeposit/>
+              <EnrollmentDeposit />
             )}
 
           </div>

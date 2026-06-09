@@ -9,30 +9,16 @@ import toast from "react-hot-toast";
 
 
 
-export default function ReviewApplication({ application, allProfile, profile }) {
+export default function ReviewApplication({ application, allProfile, profile, activity }) {
   const [previewImage, setPreviewImage] = useState(null);
 
-
-const fetchActivity = async ()=>{
-  try{
-    const res = await axiosInstance.get(`/communication/applications/${application?._id}/activities`)
-    console.log(res)
-  }
-  catch{
-    toast.error("error")
-  }
-}
-
-useEffect(()=>{
-  fetchActivity()
-},[])
 
   const Parsedocuments =
     typeof allProfile?.profile?.documents === "string"
       ? JSON.parse(allProfile.profile.documents)
-      : allProfile.profile.documents;
+      : allProfile?.profile?.documents;
 
-  console.log(Parsedocuments);
+  console.log(activity);
 
   const documentList = Object.values(Parsedocuments || {});
 
@@ -86,7 +72,20 @@ useEffect(()=>{
                       Review started
                     </p>
                     <p className="font-semibold">
-                      20 May 2025, 11:45 AM
+                      {
+                        activity?.map((item) =>
+                          item.newValue === "ReviewbyOoshas" ? (
+                            <p key={item._id}>{new Date(item.createdAt).toLocaleString("en-IN", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            })}</p>
+                          ) : null
+                        )
+                      }
                     </p>
                   </div>
 
@@ -217,62 +216,63 @@ useEffect(()=>{
 
               <tbody>
                 {documentList.map((doc) => {
-                   if (
-                  doc.applicationId &&
-                  doc.applicationId !== application?.applicationNumber
-                ) {
-                  return null;
-                }
-                  return(
-                  <tr key={doc.docKey} className="border-t text-sm">
-                    <td className="py-3">{doc.docName}</td>
+                  if (
+                    doc.applicationId &&
+                    doc.applicationId !== application?.applicationNumber
+                  ) {
+                    return null;
+                  }
+                  return (
+                    <tr key={doc.docKey} className="border-t text-sm">
+                      <td className="py-3">{doc.docName}</td>
 
-                    <td className="py-3">
-                      <span
-                        className={`px-3 py-1 text-xs font-medium ${getStatusStyle(
-                          doc.status
-                        )}`}
-                      >
-                        {doc.status}
-                      </span>
-                    </td>
-
-                    <td className="py-3">
-                      {new Date(doc.updatedAt || doc.uploadedAt).toLocaleString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      })}
-                    </td>
-
-                    <td className="py-3">
-                      <div className="flex items-center gap-2">
-                        {/* View */}
-                        <button
-                          onClick={() => setPreviewImage(`${fileBaseurl(doc.url)}`)}
-                          className="flex items-center gap-1 px-3 py-1 text-xs font-medium text-orange-600 bg-orange-50 border border-orange-100 hover:bg-orange-100 transition"
+                      <td className="py-3">
+                        <span
+                          className={`px-3 py-1 text-xs font-medium ${getStatusStyle(
+                            doc.status
+                          )}`}
                         >
-                          <Eye className="w-3 h-3" />
-                          View
-                        </button>
+                          {doc.status}
+                        </span>
+                      </td>
 
-                        {/* Download */}
-                       {doc?.status === "approved" && <a
-                          href={`${fileBaseurl(doc.url)}`}
-                          download
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center justify-center w-8 h-7 text-orange-600 border border-gray-200 hover:bg-gray-50 transition"
-                        >
-                          <Download className="w-3 h-3" />
-                        </a>}
-                      </div>
-                    </td>
-                  </tr>
-                )})}
+                      <td className="py-3">
+                        {new Date(doc.updatedAt || doc.uploadedAt).toLocaleString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </td>
+
+                      <td className="py-3">
+                        <div className="flex items-center gap-2">
+                          {/* View */}
+                          <button
+                            onClick={() => setPreviewImage(`${fileBaseurl(doc.url)}`)}
+                            className="flex items-center gap-1 px-3 py-1 text-xs font-medium text-orange-600 bg-orange-50 border border-orange-100 hover:bg-orange-100 transition"
+                          >
+                            <Eye className="w-3 h-3" />
+                            View
+                          </button>
+
+                          {/* Download */}
+                          {doc?.status === "approved" && <a
+                            href={`${fileBaseurl(doc.url)}`}
+                            download
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center w-8 h-7 text-orange-600 border border-gray-200 hover:bg-gray-50 transition"
+                          >
+                            <Download className="w-3 h-3" />
+                          </a>}
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
@@ -389,53 +389,42 @@ useEffect(()=>{
           </div>
 
           <div className="space-y-5">
-            <div className="flex gap-3">
-              <CheckCircle2 className="w-5 h-5 text-green-500 mt-1" />
-              <div>
-                <p className="font-medium text-sm">
-                  20 May 2025, 10:30 AM
-                </p>
-                <p className="text-slate-500 text-sm">
-                  Application Started
-                </p>
-              </div>
-            </div>
+            {activity?.length > 0 ? (
+              activity.map((item, index) => (
+                <div key={item._id || index} className="flex gap-3">
+                  {item.action === "STATUS_CHANGED" ? (
+                    <CheckCircle2 className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
+                  ) : (
+                    <Clock3 className="w-5 h-5 text-orange-500 mt-1 flex-shrink-0" />
+                  )}
 
-            <div className="flex gap-3">
-              <CheckCircle2 className="w-5 h-5 text-green-500 mt-1" />
-              <div>
-                <p className="font-medium text-sm">
-                  20 May 2025, 11:45 AM
-                </p>
-                <p className="text-slate-500 text-sm">
-                  Submitted to OOSHAS
-                </p>
-              </div>
-            </div>
+                  <div>
+                    <p className="font-medium text-sm">
+                      {new Date(item.createdAt).toLocaleString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
 
-            <div className="flex gap-3">
-              <Clock3 className="w-5 h-5 text-orange-500 mt-1" />
-              <div>
-                <p className="font-medium text-sm">
-                  21 May 2025, 04:30 PM
-                </p>
-                <p className="text-slate-500 text-sm">
-                  Documents Under Review
-                </p>
+                    <p className="text-slate-500 text-sm">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex gap-3">
+                <Circle className="w-5 h-5 text-slate-300 mt-1" />
+                <div>
+                  <p className="font-medium text-sm text-slate-400">
+                    No Activity Found
+                  </p>
+                </div>
               </div>
-            </div>
-
-            <div className="flex gap-3">
-              <Circle className="w-5 h-5 text-slate-300 mt-1" />
-              <div>
-                <p className="font-medium text-sm text-slate-400">
-                  Pending
-                </p>
-                <p className="text-slate-400 text-sm">
-                  Application Submission
-                </p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
