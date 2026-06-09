@@ -2,19 +2,41 @@
 
 
 
-export const Tag = ({ data, css, text }: { data?: any, css?: any, text?: any }) => {
-  const Tag = `h${data || 2}`;
+export const Tag = ({
+  data,
+  css,
+  text,
+}: {
+  data?: number | string;
+  css?: string;
+  text?: string;
+}) => {
+  const TagName =
+    data === "p"
+      ? "p"
+      : (`h${data || 2}`);
+
   return (
-    <Tag className={css}  >
-      <span  dangerouslySetInnerHTML={{ __html: text || "" }}></span>
-      {/* {text} */}
-    </Tag>
-  )
-}
+    <TagName className={css}>
+      <span dangerouslySetInnerHTML={{ __html: text || "" }} />
+    </TagName>
+  );
+};
 
 
-export const NewTag = ({ data, css, children }: any) => {
-  const TagName = `h${data || 2}` as any;
+export const NewTag = ({
+  data,
+  css,
+  children,
+}: {
+  data?: number | string;
+  css?: string;
+  children?: React.ReactNode;
+}) => {
+  const TagName =
+    data === "p"
+      ? "p"
+      : (`h${data || 2}`);
 
   return <TagName className={css}>{children}</TagName>;
 };
@@ -26,6 +48,10 @@ export const Tagging = ({ data, css, text, children }: {
   text?: string;
   children?: React.ReactNode
 }) => {
-  const Heading = `h${data || 2}`;
-  return <Heading className={css}>{children || text}</Heading>;
+  const Tag =
+    data != "p"
+      ? (`h${data}` as keyof JSX.IntrinsicElements)
+      : (data || "h2");
+
+  return <Tag className={css}>{children || text}</Tag>;
 };

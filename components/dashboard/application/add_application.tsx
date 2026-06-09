@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-    X, Search, UserPlus, Users, Loader2, ArrowLeft, ArrowRight, CheckCircle2 
+import {
+    X, Search, UserPlus, Users, Loader2, ArrowLeft, ArrowRight, CheckCircle2
 } from "lucide-react";
 import axiosInstance from "@/app/axiosInstance";
 import { toast } from "react-hot-toast";
@@ -28,17 +28,7 @@ const APP_STEPS = [
             { name: "phone", label: "Phone", type: "text", required: true },
             { name: "dateOfBirth", label: "Date of Birth", type: "date" },
             { name: "nationality", label: "Nationality", type: "select" },
-            { name: "gender", label: "Gender", type: "select", options: ["Male", "Female", "Other"] },
-        ]
-    },
-    {
-        name: "Address",
-        fields: [
-            { name: "address1", label: "Address Line 1", type: "text", required: true },
-            { name: "city", label: "City", type: "text", required: true },
-            { name: "state", label: "State", type: "text" },
-            { name: "country", label: "Country", type: "select" },
-            { name: "postalcode", label: "Postal Code", type: "text" },
+            { name: "gender", label: "Gender", type: "select", options: ["male", "female", "other"] },
         ]
     },
     {
@@ -64,36 +54,42 @@ const ModalFieldRenderer = ({ field, value, onChange, options = [] }) => {
             <select value={value || ""} onChange={(e) => onChange(e.target.value)} className={baseClass}>
                 <option value="">Select {field.label}</option>
                 {selectOptions.map((opt, idx) => (
-                    <option key={idx} value={opt.value}>{opt.label}</option>
+                    <option className="capitalize" key={idx} value={opt.value || opt.label}>{opt.label}</option>
                 ))}
             </select>
         );
     }
 
     return (
-        <input 
-            type={field.type || 'text'} 
-            value={value || ""} 
-            onChange={(e) => onChange(e.target.value)} 
+        <input
+            type={field.type || 'text'}
+            value={
+                field.type === "date"
+                    ? value
+                        ? new Date(value).toISOString().split("T")[0]
+                        : ""
+                    : value || ""
+            }
+            onChange={(e) => onChange(e.target.value)}
             placeholder={field.placeholder || `Enter ${field.label}`}
-            className={baseClass} 
+            className={baseClass}
         />
     );
 };
 
 const SelectionView = ({ onExisting, onNew }) => (
-    <motion.div 
-        initial={{ opacity: 0, y: 20 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        exit={{ opacity: 0, y: -20 }} 
+    <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
         className="h-full flex flex-col items-center justify-center gap-6 p-4"
     >
         <p className="text-gray-500 text-center max-w-md text-lg">
             Is this application for an already registered student, or do you need to create a new student profile first?
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
-            <button 
-                onClick={onExisting} 
+            <button
+                onClick={onExisting}
                 className="p-6 border-2 border-gray-200 rounded-2xl hover:border-[#F26D44] hover:bg-orange-50 transition-all group text-left"
             >
                 <div className="w-12 h-12 bg-orange-100 text-[#F26D44] rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#F26D44] group-hover:text-white transition-colors">
@@ -102,8 +98,8 @@ const SelectionView = ({ onExisting, onNew }) => (
                 <h3 className="text-lg font-bold text-gray-800 group-hover:text-[#F26D44]">Existing Student</h3>
                 <p className="text-sm text-gray-500 mt-1">Search and select from registered students.</p>
             </button>
-            <button 
-                onClick={onNew} 
+            <button
+                onClick={onNew}
                 className="p-6 border-2 border-gray-200 rounded-2xl hover:border-[#F26D44] hover:bg-orange-50 transition-all group text-left"
             >
                 <div className="w-12 h-12 bg-orange-100 text-[#F26D44] rounded-xl flex items-center justify-center mb-4 group-hover:bg-[#F26D44] group-hover:text-white transition-colors">
@@ -117,15 +113,15 @@ const SelectionView = ({ onExisting, onNew }) => (
 );
 
 const SearchView = ({ searchTerm, setSearchTerm, results, isSearching, onSelect, onBack }) => (
-    <motion.div 
-        initial={{ opacity: 0, x: 20 }} 
-        animate={{ opacity: 1, x: 0 }} 
-        exit={{ opacity: 0, x: -20 }} 
+    <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
         className="h-full flex flex-col p-6"
     >
         <div className="relative mb-6">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input 
+            <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -135,7 +131,7 @@ const SearchView = ({ searchTerm, setSearchTerm, results, isSearching, onSelect,
             />
             {isSearching && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#F26D44] animate-spin" />}
         </div>
-        
+
         <div className="flex-1 overflow-y-auto space-y-3">
             {results.length === 0 && !isSearching && searchTerm && (
                 <p className="text-center text-gray-400 py-10">No students found.</p>
@@ -144,7 +140,7 @@ const SearchView = ({ searchTerm, setSearchTerm, results, isSearching, onSelect,
                 <p className="text-center text-gray-400 py-10">Start typing to search for students...</p>
             )}
             {results.map(student => (
-                <button 
+                <button
                     key={student._id}
                     onClick={() => onSelect(student)}
                     className="w-full text-left p-4 border-2 border-gray-200 rounded-xl hover:border-[#F26D44] hover:bg-orange-50 transition-all flex items-center justify-between group"
@@ -157,7 +153,7 @@ const SearchView = ({ searchTerm, setSearchTerm, results, isSearching, onSelect,
                 </button>
             ))}
         </div>
-        
+
         <div className="pt-4 border-t border-gray-100 mt-4">
             <button onClick={onBack} className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl transition-all font-medium flex items-center gap-2">
                 <ArrowLeft className="w-4 h-4" /> Back
@@ -172,7 +168,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
     const [flowStep, setFlowStep] = useState<FlowStep>('selection');
     const [selectedStudent, setSelectedStudent] = useState<any>(null);
     const [showRegisterModal, setShowRegisterModal] = useState(false);
-    
+
     // Search state
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -214,6 +210,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
 
     // Fetch countries for application form
     useEffect(() => {
+
         if (flowStep === 'application_form') {
             axiosInstance.get('/countries?limit=250')
                 .then(res => {
@@ -253,16 +250,22 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
         }
     }, [formData.university]);
 
-    const handleSelectExisting = (student: any) => {
-        setSelectedStudent(student);
-        setFormData(prev => ({
-            ...prev,
-            name: student.name,
-            email: student.email,
-            phone: student.phone,
-        }));
-        setFlowStep('application_form');
-    };
+const handleSelectExisting = (student) => {
+    setSelectedStudent(student);
+    console.log("selected student:", student);
+
+    setFormData(prev => ({
+        ...prev,
+        name: student.name || "",
+        email: student.email || "",
+        phone: student.phone || "",
+        dateOfBirth: student.dateOfBirth || "",
+        nationality: student.nationality || "",
+        gender: student.gender || "",
+    }));
+
+    setFlowStep("application_form");
+};
 
     const handleNewUserSuccess = (newStudent: any) => {
         // IMPORTANT: Ensure your RegisterStudentModal passes the created student object to onSuccess(studentData)
@@ -299,7 +302,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
                 studentId: selectedStudent._id,
                 ...formData
             };
-            
+
             // Adjust API endpoint as needed
             await axiosInstance.post('/applications', payload);
             toast.success("Application submitted successfully!");
@@ -344,23 +347,23 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
         <>
             {/* Main Modal */}
             <AnimatePresence>
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     className="fixed inset-0 z-50 flex items-center justify-center p-4"
                 >
                     {/* Backdrop */}
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-black/40 backdrop-blur-px" 
-                        onClick={handleClose} 
+                        className="absolute inset-0 bg-black/40 backdrop-blur-px"
+                        onClick={handleClose}
                     />
-                    
+
                     {/* Modal Content */}
-                    <motion.div 
+                    <motion.div
                         initial={{ scale: 0.9, opacity: 0, y: 20 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -383,14 +386,14 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
                         <div className="flex-1 overflow-hidden flex flex-col">
                             <AnimatePresence mode="wait">
                                 {flowStep === 'selection' && (
-                                    <SelectionView 
+                                    <SelectionView
                                         key="selection"
                                         onExisting={() => setFlowStep('search_existing')}
                                         onNew={() => setShowRegisterModal(true)}
                                     />
                                 )}
                                 {flowStep === 'search_existing' && (
-                                    <SearchView 
+                                    <SearchView
                                         key="search"
                                         searchTerm={searchTerm}
                                         setSearchTerm={setSearchTerm}
@@ -401,11 +404,11 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
                                     />
                                 )}
                                 {flowStep === 'application_form' && (
-                                    <motion.div 
+                                    <motion.div
                                         key="app_form"
-                                        initial={{ opacity: 0, x: 20 }} 
-                                        animate={{ opacity: 1, x: 0 }} 
-                                        exit={{ opacity: 0, x: -20 }} 
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -20 }}
                                         className="h-full flex flex-col"
                                     >
                                         {/* Stepper */}
@@ -419,11 +422,10 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
                                             <div className="flex items-center relative z-10 justify-between">
                                                 {APP_STEPS.map((step, idx) => (
                                                     <div key={idx} className="flex items-center gap-2">
-                                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
-                                                            appStep >= idx 
-                                                            ? "bg-gradient-to-br from-[#F26D44] to-orange-600 text-white shadow-md" 
-                                                            : "bg-slate-200 text-slate-500"
-                                                        }`}>
+                                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${appStep >= idx
+                                                                ? "bg-gradient-to-br from-[#F26D44] to-orange-600 text-white shadow-md"
+                                                                : "bg-slate-200 text-slate-500"
+                                                            }`}>
                                                             {appStep > idx ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
                                                         </div>
                                                         <span className={`text-sm font-medium hidden sm:block ${appStep >= idx ? "text-[#F26D44]" : "text-slate-400"}`}>
@@ -446,9 +448,9 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
                                                         <label className="text-sm font-medium text-gray-700">
                                                             {field.label} {field.required && <span className="text-red-500">*</span>}
                                                         </label>
-                                                        <ModalFieldRenderer 
-                                                            field={field} 
-                                                            value={formData[field.name]} 
+                                                        <ModalFieldRenderer
+                                                            field={field}
+                                                            value={formData[field.name]}
                                                             onChange={(val) => setFormData(prev => ({ ...prev, [field.name]: val }))}
                                                             options={getOptionsForField(field.name)}
                                                         />
@@ -459,29 +461,29 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
 
                                         {/* Footer */}
                                         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
-                                            <button 
+                                            <button
                                                 onClick={() => {
                                                     if (appStep === 0) {
                                                         setFlowStep('search_existing'); // Go back to search
                                                     } else {
                                                         setAppStep(prev => prev - 1);
                                                     }
-                                                }} 
+                                                }}
                                                 className="px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl transition-all font-medium flex items-center gap-2"
                                             >
-                                                <ArrowLeft className="w-4 h-4" /> 
+                                                <ArrowLeft className="w-4 h-4" />
                                                 {appStep === 0 ? "Change Student" : "Previous"}
                                             </button>
                                             <div className="flex items-center gap-3">
                                                 {appStep < APP_STEPS.length - 1 ? (
-                                                    <button 
-                                                        onClick={() => setAppStep(prev => prev + 1)} 
+                                                    <button
+                                                        onClick={() => setAppStep(prev => prev + 1)}
                                                         className="px-6 py-2.5 bg-gradient-to-r from-[#F26D44] to-orange-600 text-white rounded-xl hover:from-[#E05D34] hover:to-orange-700 transition-all font-medium flex items-center gap-2 shadow-lg shadow-[#F26D44]/25"
                                                     >
                                                         Next <ArrowRight className="w-4 h-4" />
                                                     </button>
                                                 ) : (
-                                                    <button 
+                                                    <button
                                                         onClick={handleSubmitApplication}
                                                         disabled={isSubmitting}
                                                         className="px-6 py-2.5 bg-gradient-to-r from-[#F26D44] to-orange-600 text-white rounded-xl hover:from-[#E05D34] hover:to-orange-700 disabled:from-gray-400 disabled:to-gray-500 transition-all font-medium flex items-center gap-2 shadow-lg shadow-[#F26D44]/25"
@@ -501,10 +503,10 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
 
             {/* Nested Register Student Modal */}
             {showRegisterModal && (
-                <RegisterStudentModal 
+                <RegisterStudentModal
                     isOpen={showRegisterModal}
                     onClose={() => setShowRegisterModal(false)}
-                    onSuccess={handleNewUserSuccess} 
+                    onSuccess={handleNewUserSuccess}
                 />
             )}
         </>

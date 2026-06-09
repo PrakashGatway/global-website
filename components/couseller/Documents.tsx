@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     FileCheck,
@@ -423,7 +423,8 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [currentUploadKey, setCurrentUploadKey] = useState<string | null>(null);
     const [currentUploadName, setCurrentUploadName] = useState<string | null>(null);
-
+    const [ooshasDocuments, setOoshasDocuments] = useState<any[]>([]);
+    const [loadingOoshasDocs, setLoadingOoshasDocs] = useState(false);
     const mapDocuments = (docList: typeof MANDATORY_DOCUMENTS, isMandatory: boolean) => {
         return docList.map(doc => ({
             ...doc,
@@ -580,6 +581,51 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
         }
     };
 
+    const fetchOoshasDocuments = async () => {
+        try {
+            setLoadingOoshasDocs(true);
+
+            let url = `/applications/documents/${studentId}`;
+
+            if (application?.applicationNumber) {
+                url += `?applicationNumber=${application.applicationNumber}`;
+            }
+
+            const { data } = await axiosInstance.get(url);
+
+            setOoshasDocuments(data.data || []);
+        } catch (error: any) {
+            toast.error(
+                error?.response?.data?.message ||
+                "Failed to load documents"
+            );
+        } finally {
+            setLoadingOoshasDocs(false);
+        }
+    };
+
+    useEffect(() => {
+        if (studentId) {
+            fetchOoshasDocuments();
+        }
+    }, [studentId, application?.applicationNumber]);
+
+    const groupedOoshasDocuments = ooshasDocuments.reduce(
+        (acc: any, doc: any) => {
+            const appNumber =
+                doc.applicationNumber || "General Documents";
+
+            if (!acc[appNumber]) {
+                acc[appNumber] = [];
+            }
+
+            acc[appNumber].push(doc);
+
+            return acc;
+        },
+        {}
+    );
+
     const createDocumentRequirement = async () => {
         try {
             if (!requirementForm.docName.trim()) {
@@ -680,18 +726,19 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
                     OOSHAS Documents
                 </button>
             </div>
-            {(user?.role === "admin" || user?.role === "counsellor") && (
-                <div className="flex justify-end">
-                    <button
-                        onClick={() => setRequirementModal(true)}
-                        className="px-4 py-2 bg-[#F26D44] text-white text-sm"
-                    >
-                        + Request Document
-                    </button>
-                </div>
-            )}
+
             {activeTab === 'your-documents' && (
                 <>
+                    {(user?.role === "admin" || user?.role === "counsellor") && (
+                        <div className="flex justify-end">
+                            <button
+                                onClick={() => setRequirementModal(true)}
+                                className="px-4 py-2 bg-[#F26D44] text-white text-sm"
+                            >
+                                + Request Document
+                            </button>
+                        </div>
+                    )}
                     <DocumentSection
                         title="Mandatory Documents"
                         icon={<FileCheck className="w-5 h-5 text-[#F26D44]" />}
@@ -856,21 +903,90 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
             </AnimatePresence>
 
             {activeTab === "ooshas-documents" && (
-                <div className="bg-white border border-gray-200 rounded-lg p-12">
-                    <div className="flex flex-col items-center justify-center text-center">
-                        <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                            <FileX className="w-10 h-10 text-gray-400" />
+                <div className="space-y-4">
+                    {loadingOoshasDocs ? (
+                        <div className="flex justify-center py-10">
+                            <Loader2 className="w-6 h-6 animate-spin" />
                         </div>
+                    ) : Object.keys(groupedOoshasDocuments).length > 0 ? (
+                        Object.entries(groupedOoshasDocuments).map(
+                            ([applicationNumber, docs]: any) => (
+                                <div
+                                    key={applicationNumber}
+                                    className="bg-white border border-gray-200 overflow-hidden"
+                                >
+                                    {/* Application Header */}
+                                    <div className="px-5 py-3 bg-gray-50 border-b">
+                                        <h3 className="font-semibold text-gray-800">
+                                            Application: {applicationNumber}
+                                        </h3>
+                                    </div>
 
-                        <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                            No Documents Available
-                        </h3>
+                                    {/* Documents */}
+                                    <div className="divide-y">
+                                        {docs.map((doc: any, index: number) => (
+                                            <div
+                                                key={`${applicationNumber}-${index}`}
+                                                className="p-4 flex justify-between items-center"
+                                            >
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <FileText className="w-4 h-4 text-gray-500" />
 
-                        <p className="text-sm text-gray-500 max-w-md">
-                            There are currently no Ooshas documents available for this student.
-                            Documents will appear here once they are uploaded or generated.
-                        </p>
-                    </div>
+                                                        <h4 className="font-medium text-gray-800">
+                                                            {doc.name}
+                                                        </h4>
+                                                    </div>
+
+                                                    {doc.description && (
+                                                        <p className="text-sm text-gray-500 mt-1">
+                                                            {doc.description}
+                                                        </p>
+                                                    )}
+
+                                                    <div className="mt-2">
+                                                        <span
+                                                            className={`px-2 py-1 text-xs rounded-full ${doc.status === "Approved"
+                                                                    ? "bg-green-100 text-green-700"
+                                                                    : doc.status === "Rejected"
+                                                                        ? "bg-red-100 text-red-700"
+                                                                        : "bg-amber-100 text-amber-700"
+                                                                }`}
+                                                        >
+                                                            {doc.status}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                {doc.docUrl && (
+                                                    <button
+                                                        onClick={() => handleView(doc.docUrl)}
+                                                        className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded"
+                                                    >
+                                                        View
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )
+                        )
+                    ) : (
+                        <div className="bg-white border border-gray-200 rounded-lg p-12">
+                            <div className="flex flex-col items-center justify-center text-center">
+                                <FileX className="w-10 h-10 text-gray-400 mb-3" />
+
+                                <h3 className="text-lg font-semibold text-gray-800">
+                                    No Documents Available
+                                </h3>
+
+                                <p className="text-sm text-gray-500">
+                                    No OOSHAS documents found.
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </motion.div>

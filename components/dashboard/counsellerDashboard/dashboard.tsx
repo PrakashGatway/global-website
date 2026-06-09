@@ -1,16 +1,19 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
 import {
   Users,
-  IndianRupee,
   AlertCircle,
-  Timer,
-  CheckCheck,
-  TrendingUp,
-  BarChart3,
+  MessageSquare,
+  FileText,
   Sparkles,
+  Globe,
+  TrendingUp,
+  Activity,
+  CheckCircle2,
+  Clock,
+  XCircle,
 } from "lucide-react"
 import {
   BarChart,
@@ -21,661 +24,399 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts"
+import axiosInstance from "@/app/axiosInstance" // Adjust path if needed
 
-
-import Link from "next/link"
-import { StatCard } from "./stat-card"
-import { ProgressRing } from "./process-ring"
-import { AnimatedMetricBar, ApplicationItem, TicketItem } from "./animated-element"
-import axiosInstance from "@/app/axiosInstance"
-
-
-
-interface CounsellorData {
-  users?: {
-    total?: number
-    active?: number
-    activeLast7Days?: number
-    newUsers?: { thisWeek?: number }
-  }
-  applications?: {
-    total?: number
-    pending?: number
-    inProgress?: number
-    offerReceived?: number
-    completed?: number
-    refused?: number
-    newApplications?: { today?: number; thisWeek?: number }
-    recent?: Array<{
-      _id: string
-      student: { name: string; email: string; phone: string }
-      course: { name: string }
-      country: string
-      primaryStatus: string
-      intake: string
-      createdAt: string
-    }>
-  }
-  metrics?: {
-    completionRate?: number
-    applicationConversionRate?: number
-    offerRate?: number
-    supportResolutionRate?: number
-  }
-  revenue?: {
-    total?: number
-    today?: number
-    thisWeek?: number
-    thisMonth?: number
-    completedPurchases?: number
-  }
-  support?: {
-    total?: number
-    open?: number
-    pending?: number
-    resolved?: number
-  }
+// --- INTERFACES ---
+interface DashboardData {
+  overview: {
+    totalAssignedUsers: number;
+    activeUsers: number;
+    totalApplications: number;
+    totalRevenue: number;
+    openTickets: number;
+    unreadMessages: number;
+  };
+  users: {
+    total: number;
+    active: number;
+    byStatus: Record<string, number>;
+    newUsers: { today: number; thisWeek: number; thisMonth: number };
+    activeLast7Days: number;
+  };
+  applications: {
+    total: number;
+    byStatus: {
+      pending: number;
+      inProgress: number;
+      offerReceived: number;
+      visaProcessing: number;
+      completed: number;
+      refused: number;
+      withdrawn: number;
+    };
+    rawStatusCounts: Record<string, number>;
+    topCountries: { _id: string; count: number }[];
+    newApplications: { today: number; thisWeek: number; thisMonth: number };
+    recent: any[];
+  };
+  support: {
+    total: number;
+    byStatus: { open: number; pending: number; resolved: number; closed: number };
+    byPriority: Record<string, number>;
+    recent: any[];
+  };
+  visaProcessing: {
+    total: number;
+    byCountry: Record<string, number>;
+  };
+  communications: {
+    total: number;
+    unread: number;
+    recent: any[];
+  };
+  revenue: {
+    total: number;
+    today: number;
+    thisWeek: number;
+    thisMonth: number;
+    completedPurchases: number;
+    recentPurchases: any[];
+  };
+  metrics: {
+    applicationConversionRate: string;
+    offerRate: string;
+    completionRate: string;
+    supportResolutionRate: string;
+    activeUserRate: string;
+  };
 }
 
-const COLORS = {
-  purple: "#8b5cf6",
-  teal: "#14b8a6",
-  pink: "#ec4899",
-  blue: "#3b82f6",
-  green: "#22c55e",
-  emerald: "#10b981",
+// --- HELPER COMPONENTS (Sharp Borders Only) ---
+function StatCard({ title, value, icon: Icon, color }: any) {
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white border border-slate-200 p-6 flex items-center justify-between border-2"
+    >
+      <div>
+        <p className="text-sm font-medium text-slate-500">{title}</p>
+        <h3 className="text-3xl font-bold text-slate-900 mt-2">{value}</h3>
+      </div>
+      <div className={`p-3 ${color} text-white`}>
+        <Icon className="w-6 h-6" />
+      </div>
+    </motion.div>
+  )
 }
 
-// Container animation variants
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
-    },
-  },
+function MetricBar({ label, value }: any) {
+  const numValue = parseFloat(value) || 0;
+  return (
+    <div>
+      <div className="flex justify-between text-sm mb-2">
+        <span className="font-medium text-slate-700">{label}</span>
+        <span className="font-bold text-slate-900">{value}%</span>
+      </div>
+      <div className="w-full bg-slate-100 h-2">
+        <motion.div 
+          initial={{ width: 0 }}
+          animate={{ width: `${Math.min(numValue, 100)}%` }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="bg-orange-600 h-2" 
+        />
+      </div>
+    </div>
+  )
 }
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
-  },
-}
-
+// --- MAIN DASHBOARD COMPONENT ---
 export default function DashboardCounsellor() {
-  const [cousellorData, setCounsollerdata] = useState<CounsellorData | null>(null)
+  const [data, setData] = useState<DashboardData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [filterType, setFilterType] = useState("all")
-  const [sortType, setSortType] = useState("default")
 
-  const counsellorres = async () => {
+  const fetchDashboard = async () => {
     try {
       setIsLoading(true)
       const res = await axiosInstance.get("/dashboard/counsellor")
-      setCounsollerdata(res?.data?.data)
-    } catch {
-      console.error("something went wrong...")
+      setData(res?.data?.data)
+    } catch (error) {
+      console.error("Error fetching dashboard:", error)
     } finally {
       setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    counsellorres()
+    fetchDashboard()
   }, [])
 
-  const applicationStats = [
-    { name: "Pending", value: cousellorData?.applications?.pending || 0, color: COLORS.purple },
-    { name: "In Progress", value: cousellorData?.applications?.inProgress || 0, color: COLORS.teal },
-    { name: "Completed", value: cousellorData?.applications?.completed || 0, color: COLORS.pink },
-    { name: "Refused", value: cousellorData?.applications?.refused || 0, color: COLORS.blue },
-    { name: "Offers", value: cousellorData?.applications?.offerReceived || 0, color: COLORS.green },
-  ]
-
-  let filteredData = [...applicationStats]
-
-  if (filterType !== "all") {
-    filteredData = filteredData.filter((item) => item.name === filterType)
-  }
-
-  if (sortType === "high") {
-    filteredData.sort((a, b) => b.value - a.value)
-  }
-
-  if (sortType === "low") {
-    filteredData.sort((a, b) => a.value - b.value)
-  }
-
-  const recentApplications = cousellorData?.applications?.recent || []
-
-  // Weekly data calculation
-  const getWeekNumber = (date: Date) => {
-    const firstDay = new Date(date.getFullYear(), 0, 1)
-    const pastDays = (date.getTime() - firstDay.getTime()) / 86400000
-    return Math.ceil((pastDays + firstDay.getDay() + 1) / 7)
-  }
-
-  const currentWeek = getWeekNumber(new Date())
-
-  const weeklyData: Record<string, number> = {
-    [`Week ${currentWeek - 3}`]: 0,
-    [`Week ${currentWeek - 2}`]: 0,
-    [`Week ${currentWeek - 1}`]: 0,
-    [`Week ${currentWeek}`]: 0,
-  }
-
-  recentApplications.forEach((app) => {
-    const appDate = new Date(app.createdAt)
-    const appWeek = getWeekNumber(appDate)
-    if (weeklyData[`Week ${appWeek}`] !== undefined) {
-      weeklyData[`Week ${appWeek}`] += 1
-    }
-  })
-
-  const maxApplications = Math.max(...Object.values(weeklyData), 1)
-
-  const applicationChartData = Object.entries(weeklyData).map(([week, value]) => ({
-    week,
-    applications: Math.round((value / maxApplications) * 100),
-    total: value,
-  }))
-
-  // Loading skeleton
-  if (isLoading) {
+  if (isLoading || !data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 p-6">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-            {[1, 2].map((i) => (
-              <div key={i} className="h-32 animate-pulse rounded-2xl bg-white/50" />
-            ))}
-          </div>
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="h-96 animate-pulse rounded-3xl bg-white/50 lg:col-span-2" />
-            <div className="h-96 animate-pulse rounded-3xl bg-white/50" />
-          </div>
+      <div className="min-h-screen p-8 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-orange-600 border-t-transparent animate-spin"></div>
+          <p className="text-slate-600 font-medium">Loading Dashboard...</p>
         </div>
       </div>
     )
   }
 
+  const statusColors: Record<string, string> = {
+    pending: "bg-yellow-500",
+    inProgress: "bg-blue-500",
+    offerReceived: "bg-purple-500",
+    visaProcessing: "bg-indigo-500",
+    completed: "bg-emerald-500",
+    refused: "bg-red-500",
+    withdrawn: "bg-slate-500",
+  };
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 overflow-hidden"
-    >
-      <main className="mx-auto max-w-7xl p-6">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 flex items-center justify-between"
-        >
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
-            <p className="mt-1 text-gray-500">Welcome back! Here&apos;s what&apos;s happening today.</p>
-          </div>
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", delay: 0.3 }}
-            className="flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 text-white shadow-lg"
-          >
-            <Sparkles className="h-4 w-4" />
-            <span className="text-sm font-medium">Live Data</span>
-          </motion.div>
-        </motion.div>
+    <div className="min-h-screen p-4">
+      <div className="max-w-[1600px] mx-auto">
+    
+        {/* Row 1: Overview Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+          <StatCard title="Total Students" value={data.overview.totalAssignedUsers} icon={Users} color="bg-blue-600" />
+          <StatCard title="Total Applications" value={data.overview.totalApplications} icon={FileText} color="bg-orange-600" />
+          <StatCard title="Open Tickets" value={data.overview.openTickets} icon={AlertCircle} color="bg-red-600" />
+          <StatCard title="Unread Messages" value={data.overview.unreadMessages} icon={MessageSquare} color="bg-emerald-600" />
+        </div>
 
-        {/* Top Stats Row */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2"
-        >
-          <StatCard
-            title="Total Users"
-            value={cousellorData?.users?.total?.toLocaleString()}
-            change={{ value: "15.8%", type: "increase" }}
-            icon={Users}
-            iconBgColor="bg-[#6d1901]"
-            iconColor="text-white"
-            bgColor="bg-gradient-to-br from-orange-500 to-rose-500"
-            textcolor="white"
-            index={0}
-          />
-          <StatCard
-            title="Total Revenue"
-            value={
-              cousellorData?.revenue?.total
-                ? `₹${cousellorData.revenue.total.toLocaleString()}`
-                : undefined
-            }
-            change={{ value: "34.0%", type: "increase" }}
-            icon={IndianRupee}
-            iconBgColor="bg-emerald-100"
-            iconColor="text-emerald-600"
-            index={1}
-            
-          />
-        </motion.div>
-
-        {/* Main Content Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 gap-6 lg:grid-cols-3"
-        >
-          {/* Applications Overview Chart */}
-          <motion.div
-            variants={itemVariants}
-            className="overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 shadow-sm lg:col-span-2"
-          >
-            {/* Header */}
-            <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        {/* Row 2: Chart & Students Overview */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
+          {/* Applications by Country */}
+          <div className="lg:col-span-2 bg-white border border-slate-200 p-6 border-2">
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <div className="flex items-center gap-2">
-                  <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                  >
-                    <BarChart3 className="h-5 w-5 text-indigo-500" />
-                  </motion.div>
-                  <h3 className="text-xl font-bold text-gray-800">Applications Overview</h3>
-                </div>
-                <p className="mt-1 text-sm text-gray-500">Track applications & performance</p>
+                <h3 className="text-base font-bold text-slate-900">Applications by Country</h3>
+                <p className="text-sm text-slate-500">Top destination countries for your students</p>
               </div>
+              <Globe className="w-5 h-5 text-orange-600" />
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={data.applications.topCountries} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis dataKey="_id" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} />
+                <Tooltip 
+                  cursor={{ fill: '#f1f5f9' }}
+                  contentStyle={{ 
+                    backgroundColor: '#fff', 
+                    border: '1px solid #e2e8f0', 
+                    borderRadius: '0px', 
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' 
+                  }} 
+                />
+                <Bar dataKey="count" fill="#ea580c" barSize={40} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
 
-              {/* Actions */}
-              <div className="flex flex-wrap items-center gap-3 ">
-                <motion.select
-                  whileFocus={{ scale: 1.02 }}
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm outline-none transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                >
-                  <option value="all">All</option>
-                  <option value="Pending">Pending</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Refused">Refused</option>
-                  <option value="Offers">Offers</option>
-                </motion.select>
-
-                <motion.select
-                  whileFocus={{ scale: 1.02 }}
-                  value={sortType}
-                  onChange={(e) => setSortType(e.target.value)}
-                  className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm outline-none transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                >
-                  <option value="default">Default</option>
-                  <option value="high">Highest First</option>
-                  <option value="low">Lowest First</option>
-                </motion.select>
+          {/* Students Overview */}
+          <div className="bg-white border border-slate-200 p-6 border-2">
+            <h3 className="text-base font-bold text-slate-900 mb-6">Students Overview</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-slate-50 border border-slate-200">
+                <p className="text-xs text-slate-500 uppercase font-medium">Total</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{data.users.total}</p>
+              </div>
+              <div className="p-4 bg-slate-50 border border-slate-200">
+                <p className="text-xs text-slate-500 uppercase font-medium">Active</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{data.users.active}</p>
+              </div>
+              <div className="p-4 bg-slate-50 border border-slate-200">
+                <p className="text-xs text-slate-500 uppercase font-medium">New (Week)</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{data.users.newUsers.thisWeek}</p>
+              </div>
+              <div className="p-4 bg-slate-50 border border-slate-200">
+                <p className="text-xs text-slate-500 uppercase font-medium">Active (7D)</p>
+                <p className="text-2xl font-bold text-slate-900 mt-1">{data.users.activeLast7Days}</p>
               </div>
             </div>
+            
+            <div className="mt-6 pt-6 border-t border-slate-200">
+              <h4 className="text-sm font-bold text-slate-900 mb-3">New Applications</h4>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Today</span>
+                <span className="font-bold text-orange-600">{data.applications.newApplications.today}</span>
+              </div>
+              <div className="flex justify-between text-sm mt-2">
+                <span className="text-slate-600">This Week</span>
+                <span className="font-bold text-orange-600">{data.applications.newApplications.thisWeek}</span>
+              </div>
+              <div className="flex justify-between text-sm mt-2">
+                <span className="text-slate-600">This Month</span>
+                <span className="font-bold text-orange-600">{data.applications.newApplications.thisMonth}</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            {/* Top Stats */}
-            <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-3">
-              {[
-                {
-                  label: "Total Applications",
-                  value: cousellorData?.applications?.total,
-                  bg: "bg-gray-50",
-                  color: "text-gray-800",
-                },
-                {
-                  label: "Today",
-                  value: cousellorData?.applications?.newApplications?.today,
-                  bg: "bg-indigo-50",
-                  color: "text-indigo-600",
-                },
-                {
-                  label: "This Week",
-                  value: cousellorData?.applications?.newApplications?.thisWeek,
-                  bg: "bg-blue-50",
-                  color: "text-blue-600",
-                },
-              ].map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.1 + 0.3 }}
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  className={`rounded-2xl ${stat.bg} p-4 transition-shadow hover:shadow-md`}
-                >
-                  <p className={`text-sm ${stat.color} opacity-70`}>{stat.label}</p>
-                  <motion.h2
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: index * 0.1 + 0.5 }}
-                    className={`mt-3 text-2xl font-bold ${stat.color}`}
-                  >
-                    {stat.value ?? "—"}
-                  </motion.h2>
-                </motion.div>
+        {/* Row 3: Status, Metrics, Revenue & Visa */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
+          {/* Application Status Breakdown */}
+          <div className="bg-white border border-slate-200 p-6 border-2">
+            <h3 className="text-base font-bold text-slate-900 mb-6">Application Status</h3>
+            <div className="space-y-4">
+              {Object.entries(data.applications.byStatus).map(([status, count]) => {
+                const percentage = data.applications.total > 0 ? ((count as number / data.applications.total) * 100) : 0;
+                return (
+                  <div key={status}>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="font-medium text-slate-700 capitalize">{status.replace(/([A-Z])/g, ' $1').trim()}</span>
+                      <span className="font-bold text-slate-900">{count as number}</span>
+                    </div>
+                    <div className="w-full bg-slate-100 h-2">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${percentage}%` }}
+                        transition={{ duration: 1 }}
+                        className={`${statusColors[status] || 'bg-orange-500'} h-2`} 
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Performance Metrics */}
+          <div className="bg-white border border-slate-200 p-6 border-2">
+            <div className="flex items-center gap-2 mb-6">
+              <TrendingUp className="w-5 h-5 text-orange-600" />
+              <h3 className="text-base font-bold text-slate-900">Performance Metrics</h3>
+            </div>
+            <div className="space-y-6">
+              <MetricBar label="Application Conversion" value={data.metrics.applicationConversionRate} />
+              <MetricBar label="Offer Rate" value={data.metrics.offerRate} />
+              <MetricBar label="Completion Rate" value={data.metrics.completionRate} />
+              <MetricBar label="Support Resolution" value={data.metrics.supportResolutionRate} />
+              <MetricBar label="Active User Rate" value={data.metrics.activeUserRate} />
+            </div>
+          </div>
+
+          {/* Revenue & Visa */}
+          <div className="bg-white border border-slate-200 p-6 border-2 flex flex-col justify-between">
+            <div>
+              <h3 className="text-base font-bold text-slate-900 mb-4">Revenue & Visa</h3>
+              <div className="space-y-3 mb-6">
+                <div className="flex justify-between items-center p-3 bg-slate-50 border border-slate-200">
+                  <span className="text-sm font-medium text-slate-600">Total Revenue</span>
+                  <span className="text-base font-bold text-slate-900">₹{data.revenue.total.toLocaleString()}</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="p-2 bg-slate-50 border border-slate-200 text-center">
+                    <p className="text-xs text-slate-500">Today</p>
+                    <p className="font-bold text-slate-900 text-sm">₹{data.revenue.today.toLocaleString()}</p>
+                  </div>
+                  <div className="p-2 bg-slate-50 border border-slate-200 text-center">
+                    <p className="text-xs text-slate-500">Week</p>
+                    <p className="font-bold text-slate-900 text-sm">₹{data.revenue.thisWeek.toLocaleString()}</p>
+                  </div>
+                  <div className="p-2 bg-slate-50 border border-slate-200 text-center">
+                    <p className="text-xs text-slate-500">Month</p>
+                    <p className="font-bold text-slate-900 text-sm">₹{data.revenue.thisMonth.toLocaleString()}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="border-t border-slate-200 pt-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Globe className="w-4 h-4 text-orange-600" />
+                <h4 className="font-bold text-slate-900">Visa Processing</h4>
+                <span className="ml-auto text-sm font-bold text-slate-900 bg-orange-100 px-2 py-0.5 border border-orange-200">{data.visaProcessing.total}</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(data.visaProcessing.byCountry).length > 0 ? (
+                  Object.entries(data.visaProcessing.byCountry).map(([country, count]) => (
+                    <span key={country} className="text-xs font-medium px-2 py-1 bg-slate-100 text-slate-700 border border-slate-200">
+                      {country}: {count as number}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-xs text-slate-500">No active visa processing</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Row 4: Recent Activities */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+          {/* Recent Applications */}
+          <div className="bg-white border border-slate-200 p-6 border-2">
+            <h3 className="text-base font-bold text-slate-900 mb-4">Recent Applications</h3>
+            <div className="space-y-3">
+              {data.applications.recent.slice(0, 5).map((app: any) => (
+                <div key={app._id} className="flex items-center justify-between p-3 border border-slate-100 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-sm border border-orange-200">
+                      {app.student.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900 text-sm">{app.student.name}</p>
+                      <p className="text-xs text-slate-500">{app.course.name}</p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-medium px-2 py-1 bg-slate-100 text-slate-700 border border-slate-200">
+                    {app.primaryStatus}
+                  </span>
+                </div>
               ))}
             </div>
+          </div>
 
-            {/* Chart */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="h-[180px] w-full"
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={applicationChartData} barSize={50}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                  <XAxis
-                    dataKey="week"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                  />
-                  <YAxis
-                    domain={[0, 100]}
-                    axisLine={false}
-                    tickLine={false}
-                    tickFormatter={(v) => `${v}%`}
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                  />
-                  <Tooltip
-                    formatter={(value, name, props) => [
-                      `${props.payload.total} Applications`,
-                      props.payload.week,
-                    ]}
-                    contentStyle={{
-                      background: "#fff",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "12px",
-                      fontSize: "12px",
-                      boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
-                    }}
-                  />
-                  <Bar dataKey="applications" fill={COLORS.emerald} radius={[12, 12, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </motion.div>
-
-            {/* Legend */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              className="mt-4 flex flex-wrap items-center gap-4"
-            >
-              <AnimatePresence mode="popLayout">
-                {filteredData.map((item, index) => (
-                  <motion.div
-                    key={item.name}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    transition={{ delay: index * 0.05 }}
-                    whileHover={{ scale: 1.05 }}
-                    className="flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1.5"
-                  >
-                    <div
-                      className="h-3 w-3 rounded-full"
-                      style={{ backgroundColor: item.color }}
-                    />
-                    <span className="text-xs text-gray-600">{item.name}</span>
-                    <span
-                      className="text-xs font-bold"
-                      style={{ color: item.color }}
-                    >
-                      {item.value}
-                    </span>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </motion.div>
-          </motion.div>
-
-          {/* Project Progress */}
-          <motion.div
-            variants={itemVariants}
-            className="rounded-3xl border border-gray-100 bg-white p-7 shadow-sm"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <h2 className="text-xl font-semibold text-slate-900">Project Progress</h2>
-                <p className="mt-1 text-sm text-slate-500">Overall completion status</p>
-              </div>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", delay: 0.4 }}
-                className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700"
-              >
-                Active
-              </motion.div>
-            </div>
-
-            <div className="mt-8 flex justify-center">
-              <ProgressRing
-                progress={cousellorData?.metrics?.completionRate || 0}
-                color="#16a34a"
-              />
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Second Row */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3"
-        >
-          {/* Performance Analytics */}
-          <motion.div
-            variants={itemVariants}
-            className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm"
-          >
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-semibold text-gray-800">Performance Analytics</h3>
-                <p className="mt-1 text-sm text-gray-500">Weekly counsellor performance</p>
-              </div>
-              <motion.div
-                whileHover={{ rotate: 10, scale: 1.1 }}
-                className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg"
-              >
-                <TrendingUp className="h-6 w-6" />
-              </motion.div>
-            </div>
-
-            <div className="flex items-end justify-between gap-4 pt-8">
-              <AnimatedMetricBar
-                label="Conversion"
-                sublabel="Applications"
-                value={cousellorData?.metrics?.applicationConversionRate || 0}
-                color={COLORS.emerald}
-                index={0}
-              />
-              <AnimatedMetricBar
-                label="Offers"
-                sublabel="Received"
-                value={cousellorData?.metrics?.offerRate || 0}
-                color={COLORS.teal}
-                index={1}
-              />
-              <AnimatedMetricBar
-                label="Completed"
-                sublabel="Success rate"
-                value={cousellorData?.metrics?.completionRate || 0}
-                color="#166534"
-                index={2}
-              />
-              <AnimatedMetricBar
-                label="Support"
-                sublabel="Resolution"
-                value={cousellorData?.metrics?.supportResolutionRate || 0}
-                color="#9ca3af"
-                index={3}
-              />
-            </div>
-          </motion.div>
-
-          {/* Support Tickets */}
-          <motion.div
-            variants={itemVariants}
-            className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm"
-          >
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-semibold text-gray-800">Support Tickets</h3>
-                <p className="mt-1 text-sm text-gray-500">Track requests & resolutions</p>
-              </div>
-              <Link href="/dashboard/support/counsellor">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="rounded-full border border-gray-200 px-4 py-2 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
-                >
-                  View All
-                </motion.button>
-              </Link>
-            </div>
-
-            <div className="space-y-4">
-              <TicketItem
-                icon={AlertCircle}
-                iconBg="bg-red-50"
-                iconColor="text-red-500"
-                title="Open Tickets"
-                subtitle="Requires attention"
-                value={cousellorData?.support?.open ?? 0}
-                valueColor="text-red-500"
-                statusText="Active issues"
-                index={0}
-              />
-              <TicketItem
-                icon={Timer}
-                iconBg="bg-amber-50"
-                iconColor="text-amber-500"
-                title="Pending Tickets"
-                subtitle="Waiting for response"
-                value={cousellorData?.support?.pending ?? 0}
-                valueColor="text-amber-500"
-                statusText="In progress"
-                index={1}
-              />
-              <TicketItem
-                icon={CheckCheck}
-                iconBg="bg-emerald-50"
-                iconColor="text-emerald-600"
-                title="Resolved Tickets"
-                subtitle="Successfully completed"
-                value={cousellorData?.support?.resolved ?? 0}
-                valueColor="text-emerald-600"
-                statusText="Completed"
-                index={2}
-              />
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4"
-            >
-              <div>
-                <p className="text-sm text-gray-500">Total Tickets</p>
-                <h3 className="mt-1 text-2xl font-bold text-gray-900">
-                  {cousellorData?.support?.total ?? 0}
-                </h3>
-              </div>
-              <div className="flex gap-2">
-                {["red", "amber", "emerald"].map((color, i) => (
-                  <motion.div
-                    key={color}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.9 + i * 0.1 }}
-                    className={`rounded-full bg-${color}-100 px-3 py-1 text-xs font-medium text-${color}-600`}
-                  >
-                    {color === "red" ? "Open" : color === "amber" ? "Pending" : "Resolved"}
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Recent Applications */}
-          <motion.div
-            variants={itemVariants}
-            className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm"
-          >
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-semibold text-gray-800">Recent Applications</h3>
-                <p className="mt-1 text-sm text-gray-500">Latest student activities</p>
-              </div>
-              <Link href="/dashboard/application_details">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="rounded-full border border-gray-200 px-4 py-2 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
-                >
-                  View All
-                </motion.button>
-              </Link>
-            </div>
-
-            <div className="space-y-2">
-              {recentApplications.length > 0 ? (
-                recentApplications.slice(0, 2).map((app, index) => (
-                  <ApplicationItem
-                    key={app._id}
-                    name={app.student.name}
-  
-                    phone={app.student.phone}
-                    country={app.country}
-                    course={app.course.name}
-                    status={app.primaryStatus}
-                 
-                
-                    index={index}
-                  />
-                ))
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex h-40 items-center justify-center rounded-2xl border border-dashed border-gray-200"
-                >
-                  <div className="text-center">
-                    <motion.div
-                      animate={{ y: [0, -10, 0] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="text-5xl"
-                    >
-                      📄
-                    </motion.div>
-                    <h4 className="mt-3 text-lg font-semibold text-gray-700">
-                      No Applications Found
-                    </h4>
-                    <p className="mt-1 text-sm text-gray-400">
-                      Recent applications will appear here
-                    </p>
+          {/* Recent Support Tickets */}
+          <div className="bg-white border border-slate-200 p-6 border-2">
+            <h3 className="text-base font-bold text-slate-900 mb-4">Recent Tickets</h3>
+            <div className="space-y-3">
+              {data.support.recent.slice(0, 5).map((ticket: any) => (
+                <div key={ticket._id} className="flex items-center justify-between p-3 border border-slate-100 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 flex items-center justify-center border ${ticket.status === 'open' ? 'bg-red-100 text-red-600 border-red-200' : 'bg-emerald-100 text-emerald-600 border-emerald-200'}`}>
+                      {ticket.status === 'open' ? <AlertCircle className="w-5 h-5" /> : <CheckCircle2 className="w-5 h-5" />}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900 text-sm">{ticket.subject}</p>
+                      <p className="text-xs text-slate-500">{ticket.user.name}</p>
+                    </div>
                   </div>
-                </motion.div>
-              )}
+                  <span className={`text-xs font-medium px-2 py-1 border ${ticket.status === 'open' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`}>
+                    {ticket.status}
+                  </span>
+                </div>
+              ))}
             </div>
-          </motion.div>
-        </motion.div>
-      </main>
-    </motion.div>
+          </div>
+
+          {/* Recent Communications */}
+          <div className="bg-white border border-slate-200 p-6 border-2">
+            <h3 className="text-base font-bold text-slate-900 mb-4">Recent Messages</h3>
+            <div className="space-y-3">
+              {data.communications.recent.slice(0, 5).map((comm: any) => (
+                <div key={comm._id} className="flex items-center justify-between p-3 border border-slate-100 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm border border-blue-200">
+                      {comm.user.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900 text-sm">{comm.user.name}</p>
+                      <p className="text-xs text-slate-500 truncate max-w-[150px]">{comm.content || comm.description}</p>
+                    </div>
+                  </div>
+                  <span className="text-xs text-slate-400">
+                    {new Date(comm.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
   )
 }

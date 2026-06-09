@@ -620,22 +620,21 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 sm:gap-x-16 gap-y-4 sm:gap-y-6 mt-6 sm:mt-10">
-          {[leftScholarships, rightScholarships].map((list, col) => (
-            <div key={col} className="space-y-4 sm:space-y-6">
-              {list.map((item, i) => (
-                <div key={i} className="flex items-center gap-3 sm:gap-4">
-                  <div className="bg-yellow-400 text-black rounded-full p-1.5 sm:p-2 flex-shrink-0">
-                    <DynamicLucideIcon name="CircleDollarSign" size={16} className="sm:w-5 sm:h-5" />
-                  </div>
-                  <span className="border-b border-white pb-1 hover:opacity-80 cursor-pointer text-xs sm:text-base" dangerouslySetInnerHTML={{
-                    __html: item
-                  }}>
+          {data.items?.map((item, i) => {
+            return (
 
-                  </span>
+              <div key={i} className="flex items-center gap-3 sm:gap-4">
+                <div className="bg-yellow-400 text-black rounded-full p-1.5 sm:p-2 flex-shrink-0">
+                  <DynamicLucideIcon name={item.icon} size={16} className="sm:w-5 sm:h-5" />
                 </div>
-              ))}
-            </div>
-          ))}
+                <span className="border-b border-white pb-1 hover:opacity-80 cursor-pointer text-xs sm:text-base" dangerouslySetInnerHTML={{
+                  __html: item.title
+                }}>
+
+                </span>
+              </div>
+            )
+          })}
         </div>
 
         <div className="flex justify-center mt-6 sm:mt-8">
