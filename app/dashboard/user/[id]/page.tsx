@@ -292,7 +292,6 @@ export default function StudentProfilePage() {
         return value;
     };
 
-    const completionPercentage = calculateCompletion();
 
     return (
         <div className="min-h-screen bg-white">
@@ -399,17 +398,16 @@ export default function StudentProfilePage() {
 
                                 {profile?.preferences && (
                                     <div className="bg-white pt-2 ">
-                                        <div className="flex items-center gap-2 mb-4">
-                                            <SlidersHorizontal size={18} className="text-[#F26D44]" />
-                                            <h3 className="font-semibold text-gray-800">Student Preferences</h3>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <h3 className="font-semibold text-gray-800">Preferences</h3>
                                         </div>
-                                        <div className="space-y-3">
+                                        <div className="space-y-3 font-semibold ps-2 mb-4">
                                             {profile.preferences.preferredCountries && profile.preferences.preferredCountries.length > 0 && (
                                                 <div>
-                                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Preferred Countries</p>
+                                                    <p className="text-[13px] text-gray-600 uppercase tracking-wide mb-1">Preferred Countries</p>
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {profile.preferences.preferredCountries.map((country, i) => (
-                                                            <span key={i} className="px-2 py-0.5 bg-orange-50 text-orange-700 rounded-full text-xs">
+                                                            <span key={i} className="px-2 py-0.5 bg-orange-100 text-orange-700  text-[14px]">
                                                                 {country}
                                                             </span>
                                                         ))}
@@ -418,10 +416,10 @@ export default function StudentProfilePage() {
                                             )}
                                             {profile.preferences.preferredIntake && profile.preferences.preferredIntake.length > 0 && (
                                                 <div>
-                                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Preferred Intake</p>
+                                                    <p className="text-[13px] text-gray-600 uppercase tracking-wide mb-1">Preferred Intake</p>
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {profile.preferences.preferredIntake.map((intake, i) => (
-                                                            <span key={i} className="px-2 py-0.5 bg-green-50 text-green-700 rounded-full text-xs">
+                                                            <span key={i} className="px-2 py-0.5 bg-green-100 text-green-700 text-[14px]">
                                                                 {intake}
                                                             </span>
                                                         ))}
@@ -430,10 +428,10 @@ export default function StudentProfilePage() {
                                             )}
                                             {profile.preferences.preferredCourse && profile.preferences.preferredCourse.length > 0 && (
                                                 <div>
-                                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Preferred Courses</p>
+                                                    <p className="text-[13px] text-gray-600 uppercase tracking-wide mb-1">Preferred Courses</p>
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {profile.preferences.preferredCourse.slice(0, 2).map((course, i) => (
-                                                            <span key={i} className="px-2 py-0.5 bg-purple-50 text-purple-700 rounded-full text-xs">
+                                                            <span key={i} className="px-2 py-0.5 bg-purple-100 text-purple-700 text-[14px]">
                                                                 {course}
                                                             </span>
                                                         ))}
@@ -447,9 +445,9 @@ export default function StudentProfilePage() {
                                             )}
                                             {profile.preferences.budgetRange && (profile.preferences.budgetRange.min || profile.preferences.budgetRange.max) && (
                                                 <div>
-                                                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Budget Range</p>
+                                                    <p className="text-[13px] text-gray-600 uppercase tracking-wide mb-1">Budget Range</p>
                                                     <p className="text-sm text-gray-700">
-                                                        {profile.preferences.budgetRange.currency || "USD"} {profile.preferences.budgetRange.min?.toLocaleString() || "0"} - {profile.preferences.budgetRange.max?.toLocaleString() || "Unlimited"}
+                                                        {profile.preferences.budgetRange.currency || ""} {profile.preferences.budgetRange.min?.toLocaleString() || "0"} ₹ - {profile.preferences.budgetRange.max?.toLocaleString() || "Unlimited"} ₹
                                                     </p>
                                                 </div>
                                             )}

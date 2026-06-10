@@ -399,9 +399,6 @@ const Documents: React.FC<DocumentsProps> = ({ application, profile, studentId, 
         ooshas: true,
     });
 
-
-    console.log(profile?.documents && JSON.parse(profile?.documents), "profile");
-
     const { profile: user } = useGlobal();
 
     const [requirementModal, setRequirementModal] = useState(false);

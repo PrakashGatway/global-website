@@ -28,8 +28,6 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
-// ─── Import the Student Details Page Component ───────────────────────
-import StudentDetailsPage from "@/components/dashboard/selectedUser";
 import RegisterStudentModal from "@/components/couseller/NewUser";
 
 /* ─── Types ────────────────────────────────────────────────────────── */

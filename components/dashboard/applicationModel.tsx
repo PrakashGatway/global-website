@@ -46,7 +46,7 @@ interface CreateApplicationModalProps {
 const steps = [
   { id: 'intakes', title: 'Intakes', icon: Calendar },
   { id: 'prerequisites', title: 'Prerequisites', icon: BookOpen },
-  { id: 'backups', title: 'Backup Programs', icon: GraduationCap },
+  // { id: 'backups', title: 'Backup Programs', icon: GraduationCap },
   { id: 'expectations', title: 'What to Expect', icon: AlertCircle },
 ]
 
@@ -203,14 +203,6 @@ export function CreateApplicationModal({
         )
       case 2:
         return (
-          <BackupsForm
-            program={program}
-            formData={formData}
-            setFormData={setFormData}
-          />
-        )
-      case 3:
-        return (
           <ExpectationsForm
             program={program}
             formData={formData}
@@ -236,7 +228,6 @@ export function CreateApplicationModal({
             className="fixed inset-0 top-0 bottom-0 h-screen bg-black/20 backdrop-blur-[1px] z-40"
           />
 
-          {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}

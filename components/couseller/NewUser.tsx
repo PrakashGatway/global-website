@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, AnyActionArg } from "react";
+import React, { useState, useEffect, useRef, AnyActionArg, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     X,
@@ -76,6 +76,8 @@ const RegisterStudentModal: React.FC<RegisterStudentModalProps> = ({
     const [showSuccess, setShowSuccess] = useState(false);
     const [countriesLoading, setCountriesLoading] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const [categories, setCategories] = useState([])
+
 
     const [formData, setFormData] = useState<any>({
         name: "",
@@ -86,17 +88,28 @@ const RegisterStudentModal: React.FC<RegisterStudentModalProps> = ({
         dateOfBirth: "",
         gender: "",
         nationality: "",
-        intake: "",
-        role: "user",
-        tuitionfee: "",
-        passportNumber: "",
-        passportExpiry: "",
         firstLanguage: "",
         maritalStatus: "single",
         assignedTo: "",
     });
 
     const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+
+
+    const fetchCategories = useCallback(async () => {
+        try {
+            const response = await axiosInstance.get('/courses/categories?limit=300')
+            const data = response.data.data
+            let formatData = data.map(category => ({ label: category.name, value: category.slug, icon: category.icon, description: category.description }))
+            setCategories(formatData)
+        } catch (error) {
+            console.error('Error fetching categories:', error)
+        }
+    }, [])
+
+    useEffect(() => {
+        fetchCategories()
+    }, [fetchCategories])
 
     // Fetch countries and counsellors on mount
     useEffect(() => {
@@ -185,12 +198,6 @@ const RegisterStudentModal: React.FC<RegisterStudentModalProps> = ({
             setErrors((prev) => ({ ...prev, [name]: undefined }));
         }
     };
-
-    const handleCountrySelect = (country: Country) => {
-        setFormData((prev) => ({ ...prev, countryCode: country.dialCode }));
-        setShowCountryDropdown(false);
-    };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -206,18 +213,22 @@ const RegisterStudentModal: React.FC<RegisterStudentModalProps> = ({
                 name: formData.name.trim(),
                 email: formData.email.toLowerCase().trim(),
                 phone: `${formData.phone}`,
-                password: formData.password,
                 dateOfBirth: formData.dateOfBirth || undefined,
                 gender: formData.gender || undefined,
                 nationality: formData.nationality || undefined,
                 intake: formData.intake || undefined,
-                role: formData.role,
-                status: "Active",
-                tuitionfee: formData.tuitionfee || undefined,
-                passportNumber: formData.passportNumber || undefined,
-                passportExpiry: formData.passportExpiry || undefined,
                 firstLanguage: formData.firstLanguage || undefined,
                 maritalStatus: formData.maritalStatus || "single",
+                preferences: {
+                    preferredCountries: formData.preferredCountries || [],
+                    preferredIntake: formData.preferredIntake || [],
+                    preferredCourse: formData.preferredCourse || [],
+                    level: formData.level || "",
+                    budgetRange: {
+                        min: Number(formData.budgetMin) || 0,
+                        max: Number(formData.budgetMax) || 0,
+                    },
+                },
                 hasAcceptedTerms: true,
             };
 
@@ -252,11 +263,6 @@ const RegisterStudentModal: React.FC<RegisterStudentModalProps> = ({
             dateOfBirth: "",
             gender: "",
             nationality: "",
-            intake: "",
-            role: "user",
-            tuitionfee: "",
-            passportNumber: "",
-            passportExpiry: "",
             firstLanguage: "",
             maritalStatus: "single",
             assignedTo: "",
@@ -265,6 +271,13 @@ const RegisterStudentModal: React.FC<RegisterStudentModalProps> = ({
         setCurrentStep(1);
         setShowSuccess(false);
     };
+
+    const currentYear = new Date().getFullYear();
+
+    const yearOptions = Array.from(
+        { length: 8 },
+        (_, index) => currentYear + index
+    );
 
     const handleClose = () => {
         resetForm();
@@ -668,104 +681,175 @@ const RegisterStudentModal: React.FC<RegisterStudentModalProps> = ({
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-medium text-gray-700">
-                                                    Intake
-                                                </label>
-                                                <select
-                                                    name="intake"
-                                                    value={formData.intake}
-                                                    onChange={handleInputChange}
-                                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] transition-all"
-                                                >
-                                                    <option value="">Select Intake</option>
-                                                    <option value="Spring 2025">Spring 2025</option>
-                                                    <option value="Fall 2025">Fall 2025</option>
-                                                    <option value="Spring 2026">Spring 2026</option>
-                                                    <option value="Fall 2026">Fall 2026</option>
-                                                    <option value="Spring 2027">Spring 2027</option>
-                                                    <option value="Fall 2027">Fall 2027</option>
-                                                    <option value="Spring 2028">Spring 2028</option>
-                                                    <option value="Fall 2028">Fall 2028</option>
-                                                </select>
-                                            </div>
 
+                                            {/* Preferred Country */}
                                             <div className="space-y-2">
                                                 <label className="text-sm font-medium text-gray-700">
-                                                    Tuition Fee (USD)
+                                                    Preferred Country
                                                 </label>
-                                                <input
-                                                    type="text"
-                                                    name="tuitionfee"
-                                                    value={formData.tuitionfee}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Enter Tuition Fee"
-                                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] transition-all"
+
+                                                <Autocomplete
+                                                    options={countriesList}
+                                                    getOptionLabel={(option) => option?.name || ""}
+                                                    value={
+                                                        countriesList.find(
+                                                            (country) =>
+                                                                country.name === formData.preferredCountries?.[0]
+                                                        ) || null
+                                                    }
+                                                    sx={{
+                                                        "& .MuiOutlinedInput-root": {
+                                                            height: "46px",
+                                                            backgroundColor: "#F9FAFB",
+                                                            borderRadius: "6px",
+
+                                                            "& fieldset": {
+                                                                borderColor: "#E5E7EB",
+                                                            },
+
+                                                            "&:hover fieldset": {
+                                                                borderColor: "#F26D44",
+                                                            },
+
+                                                            "&.Mui-focused fieldset": {
+                                                                borderColor: "#F26D44",
+                                                                borderWidth: "1.5px",
+                                                            },
+                                                        },
+
+                                                        "& .MuiInputBase-input": {
+                                                            paddingX: "8px !important",
+                                                            fontSize: "16px",
+                                                        },
+                                                    }}
+                                                    onChange={(event, newValue) => {
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            preferredCountries: newValue ? [newValue.name] : [],
+                                                        }));
+                                                    }}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            placeholder="Select Country"
+                                                        />
+                                                    )}
                                                 />
                                             </div>
 
+                                            {/* Intake */}
                                             <div className="space-y-2">
                                                 <label className="text-sm font-medium text-gray-700">
-                                                    Passport Number
+                                                    Preferred Intake Year
                                                 </label>
-                                                <input
-                                                    type="text"
-                                                    name="passportNumber"
-                                                    value={formData.passportNumber}
-                                                    onChange={handleInputChange}
-                                                    placeholder="Enter Passport Number"
-                                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] transition-all"
-                                                />
-                                            </div>
 
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-medium text-gray-700">
-                                                    Passport Expiry Date
-                                                </label>
-                                                <input
-                                                    type="date"
-                                                    name="passportExpiry"
-                                                    value={formData.passportExpiry}
-                                                    onChange={handleInputChange}
-                                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] transition-all"
-                                                />
-                                            </div>
-
-                                            {/* <div className="space-y-2">
-                                                <label className="text-sm font-medium text-gray-700">
-                                                    Role
-                                                </label>
                                                 <select
-                                                    name="role"
-                                                    value={formData.role}
-                                                    onChange={handleInputChange}
-                                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] transition-all"
+                                                    value={formData.preferredIntake?.[0] || ""}
+                                                    onChange={(e) =>
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            preferredIntake: [e.target.value],
+                                                        }))
+                                                    }
+                                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded"
                                                 >
-                                                    <option value="user">Student</option>
-                                                    <option value="counsellor">Counsellor</option>
-                                                    <option value="manager">Manager</option>
-                                                    <option value="admin">Admin</option>
-                                                </select>
-                                            </div>
+                                                    <option value="">Select Year</option>
 
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-medium text-gray-700">
-                                                    Assigned To (Counsellor)
-                                                </label>
-                                                <select
-                                                    name="assignedTo"
-                                                    value={formData.assignedTo}
-                                                    onChange={handleInputChange}
-                                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] transition-all"
-                                                >
-                                                    <option value="">Select Counsellor</option>
-                                                    {counsellors.map((counsellor) => (
-                                                        <option key={counsellor._id} value={counsellor._id}>
-                                                            {counsellor.name}
+                                                    {yearOptions.map((year) => (
+                                                        <option key={year} value={year}>
+                                                            {year}
                                                         </option>
                                                     ))}
                                                 </select>
-                                            </div> */}
+                                            </div>
+
+                                            {/* Preferred Course */}
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium text-gray-700">
+                                                    Preferred Course
+                                                </label>
+
+                                                <select
+                                                    value={formData.preferredCourse?.[0] || ""}
+                                                    onChange={(e) =>
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            preferredCourse: [e.target.value],
+                                                        }))
+                                                    }
+                                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded"
+                                                >
+                                                    <option value="">Select Year</option>
+
+                                                    {categories.map((item) => (
+                                                        <option key={item.value} value={item.value}>
+                                                            {item.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            {/* Study Level */}
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium text-gray-700">
+                                                    Study Level
+                                                </label>
+
+                                                <select
+                                                    value={formData.level}
+                                                    onChange={(e) =>
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            level: e.target.value,
+                                                        }))
+                                                    }
+                                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded"
+                                                >
+                                                    <option value="">Select Level</option>
+                                                    <option value="undergraduate">Undergraduate</option>
+                                                    <option value="postgraduate">Postgraduate</option>
+                                                    <option value="diploma">Diploma</option>
+                                                    <option value="certificate">Certificate</option>
+                                                </select>
+                                            </div>
+
+                                            {/* Budget Min */}
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium text-gray-700">
+                                                    Budget Min ( ₹ )
+                                                </label>
+
+                                                <input
+                                                    type="number"
+                                                    value={formData.budgetMin}
+                                                    onChange={(e) =>
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            budgetMin: e.target.value,
+                                                        }))
+                                                    }
+                                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded"
+                                                />
+                                            </div>
+
+                                            {/* Budget Max */}
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium text-gray-700">
+                                                    Budget Max ( ₹ )
+                                                </label>
+
+                                                <input
+                                                    type="number"
+                                                    value={formData.budgetMax}
+                                                    onChange={(e) =>
+                                                        setFormData((prev) => ({
+                                                            ...prev,
+                                                            budgetMax: e.target.value,
+                                                        }))
+                                                    }
+                                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 )}

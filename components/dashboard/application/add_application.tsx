@@ -54,7 +54,7 @@ const ModalFieldRenderer = ({ field, value, onChange, options = [] }) => {
             <select value={value || ""} onChange={(e) => onChange(e.target.value)} className={baseClass}>
                 <option value="">Select {field.label}</option>
                 {selectOptions.map((opt, idx) => (
-                    <option key={idx} value={ field.name == "nationality" ? opt.label : opt.value}>{opt.label}</option>
+                    <option key={idx} value={field.name == "nationality" ? opt.label : opt.value}>{opt.label}</option>
                 ))}
             </select>
         );
@@ -183,6 +183,11 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
     const [countries, setCountries] = useState<any[]>([]);
     const [universities, setUniversities] = useState<any[]>([]);
     const [courses, setCourses] = useState<any[]>([]);
+    const [intakes, setIntakes] = useState([]);
+
+
+    console.log(intakes)
+
 
     // Debounced search effect
     useEffect(() => {
@@ -242,7 +247,13 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
             axiosInstance.get(`/courses?university=${formData.university}`)
                 .then(res => {
                     const data = res.data.data || res.data || [];
-                    setCourses(data.map((c: any) => ({ label: c.name, value: c._id })));
+                    setCourses(
+                        data.map((c) => ({
+                            label: c.name,
+                            value: c._id,
+                            university: c.university,
+                        }))
+                    );
                 })
                 .catch(err => setCourses([]));
         } else {
@@ -250,21 +261,44 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
         }
     }, [formData.university]);
 
-const handleSelectExisting = (student) => {
-    setSelectedStudent(student);
+    const handleSelectExisting = (student) => {
+        setSelectedStudent(student);
 
-    setFormData(prev => ({
-        ...prev,
-        name: student.name || "",
-        email: student.email || "",
-        phone: student.phone || "",
-        dateOfBirth: student.dateOfBirth || "",
-        nationality: student.nationality || "",
-        gender: student.gender || "",
-    }));
+        setFormData(prev => ({
+            ...prev,
+            name: student.name || "",
+            email: student.email || "",
+            phone: student.phone || "",
+            dateOfBirth: student.dateOfBirth || "",
+            nationality: student.nationality || "",
+            gender: student.gender || "",
+        }));
 
-    setFlowStep("application_form");
-};
+        setFlowStep("application_form");
+    };
+
+    useEffect(() => {
+        if (!formData.course) {
+            setIntakes([]);
+            return;
+        }
+
+        const selectedCourse = courses.find(
+            (course) => course.value === formData.course
+        );
+
+        if (selectedCourse) {
+            console.log(selectedCourse)
+            const intakeOptions = (selectedCourse?.university?.intakes || []).map(
+                (intake) => ({
+                    label: intake,
+                    value: intake,
+                })
+            );
+
+            setIntakes(intakeOptions);
+        }
+    }, [formData.course, courses]);
 
     const handleNewUserSuccess = (newStudent: any) => {
         if (newStudent) {
@@ -278,7 +312,6 @@ const handleSelectExisting = (student) => {
             setFlowStep('application_form');
             toast.success("Student created! Now fill the application details.");
         } else {
-            // Fallback if RegisterStudentModal doesn't pass data
             toast.success("Student created! Please search for them to continue.");
             setFlowStep('search_existing');
         }
@@ -297,10 +330,12 @@ const handleSelectExisting = (student) => {
         setIsSubmitting(true);
         try {
             const payload = {
-                studentId: selectedStudent._id,
-                ...formData
+                student: selectedStudent._id,
+                destinationCountry: formData.destinationCountry,
+                destinationcourse: formData.course,
+                intake: formData.intake
             };
-            await axiosInstance.post('/applications', payload);
+            await axiosInstance.post('/applications/existing_user', payload);
             toast.success("Application submitted successfully!");
             onSuccess();
             handleClose();
@@ -332,6 +367,9 @@ const handleSelectExisting = (student) => {
         if (fieldName === 'nationality' || fieldName === 'country' || fieldName === 'destinationCountry') return countries;
         if (fieldName === 'university') return universities;
         if (fieldName === 'course') return courses;
+        if (fieldName === "intake") {
+            return intakes;
+        }
         return [];
     };
 
@@ -419,8 +457,8 @@ const handleSelectExisting = (student) => {
                                                 {APP_STEPS.map((step, idx) => (
                                                     <div key={idx} className="flex items-center gap-2">
                                                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${appStep >= idx
-                                                                ? "bg-gradient-to-br from-[#F26D44] to-orange-600 text-white shadow-md"
-                                                                : "bg-slate-200 text-slate-500"
+                                                            ? "bg-gradient-to-br from-[#F26D44] to-orange-600 text-white shadow-md"
+                                                            : "bg-slate-200 text-slate-500"
                                                             }`}>
                                                             {appStep > idx ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
                                                         </div>

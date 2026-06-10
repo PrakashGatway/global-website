@@ -84,7 +84,6 @@ export default function LoginPage() {
     }
   }
 
-  /* ================= VERIFY OTP ================= */
   const verifyOtp = async () => {
     if (!otp.match(/^[0-9]{6}$/)) {
       alert("Please enter a valid 6-digit OTP")
@@ -97,17 +96,12 @@ export default function LoginPage() {
         email,
         otp,
       })
-
       if (res.data.token) {
         localStorage.setItem("token", res.data.token)
-        if (res.data.user) {
-          localStorage.setItem("user", JSON.stringify(res.data.user))
-        }
         setMode("success")
-
         setTimeout(() => {
-          window.location.href = "/dashboard"
-        }, 1200)
+          window.location.href = !res.data.hasPreference ? "/onboarding" : "/dashboard"
+        }, 1000)
       }
     } catch (err) {
       alert("Invalid OTP")
@@ -116,7 +110,6 @@ export default function LoginPage() {
     }
   }
 
-  // Country flags data
   const countries = [
     { code: "DE", name: "Germany" },
     { code: "GB", name: "UK" },
@@ -130,7 +123,6 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-white ">
-      {/* LEFT SECTION - Image and Landmarks */}
       <div className="bg-white lg:p-[4vh]">
 
         <div className="bg-[#fff0eb] flex flex-col lg:flex-row overflow-hidden">
