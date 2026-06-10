@@ -3,7 +3,8 @@
 import { AlertCircle, BadgeDollarSign, Bell, Building2, Calendar, CalendarDays, Check, CheckCircle2, Clock3, Download, FileCheck, FileText, Globe, GraduationCap, Hash, Hourglass, Info, Mail, MessageCircle, Phone, Share2, User, Users } from "lucide-react";
 import Comments from "./comments";
 import { useState } from "react";
-import { baseUrl, fileBaseurl, imageBaseUrl } from "@/app/axiosInstance";
+import axiosInstance, { baseUrl, fileBaseurl, imageBaseUrl } from "@/app/axiosInstance";
+import toast from "react-hot-toast";
 
 
 export default function SubmittedtoSchool({ currentstep, application, profile, allProfile, activity }) {
@@ -33,62 +34,30 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
   };
 
 
+  const submitStatus = async () => {
+    try {
+      const documentId = application?.documents?.[0]?._id;
+      const payload = {
+        status: actionType === "approve" ? "Approved" : "Rejected",
+        rejectReason:
+          actionType === "reject" ? rejectionReason : "",
+      };
 
-  const offerDetails = [
-    {
-      label: "Program",
-      value: "Bachelor of Computer Science",
-    },
-    {
-      label: "Faculty/School",
-      value: "School of Engineering",
-    },
-    {
-      label: "Start Date",
-      value: "15 September 2026",
-    },
-    {
-      label: "Duration",
-      value: "3 Years",
-    },
-    {
-      label: "Tuition Fee (per year)",
-      value: "€2,345",
-    },
-    {
-      label: "Offer Type",
-      value: "Full Time",
-    },
-    {
-      label: "Conditions",
-      value: "No conditions",
-    },
-  ];
+      const res = await axiosInstance.put(
+        `/applications/documents/${application?._id}/${documentId}`,
+        payload
+      );
 
-  const importantDates = [
-    {
-      title: "Offer Received",
-      date: "04 June 2025",
-      status: "completed",
-    },
-    {
-      title: "Respond By",
-      date: "18 June 2025",
-      status: "current",
-      extra: "14 Days Left",
-    },
-    {
-      title: "Enrollment Deposit Deadline",
-      date: "02 July 2025",
-      status: "pending",
-    },
-    {
-      title: "Program Start Date",
-      date: "15 September 2026",
-      status: "pending",
-    },
-  ];
+      console.log(documentId)
 
+      toast.success("Document status updated successfully");
+      setShowActionModal(false);
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message || "Something went wrong"
+      );
+    }
+  };
   const details = [
     { label: "Student Name", value: "Rohit Kumar" },
     { label: "Date of Birth", value: "15 Jan 2004" },
@@ -139,6 +108,26 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
     },
   ];
 
+  const statusDetail = JSON.parse(application?.statusDetails)
+  const completeDetail = statusDetail.find((item) =>
+    item.status === "Completed"
+  )
+
+
+  const downloadCASLetter = () => {
+    const fileUrl = completeDetail?.metadata?.completed?.offerLetterDocUrl;
+
+    if (!fileUrl) return toast.error("CAS Letter not found");
+
+    const link = document.createElement("a");
+    link.href = `${fileBaseurl}${fileUrl}`;
+    link.download = fileUrl.split("/").pop();
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
 
   return (
@@ -151,7 +140,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
             <div className="xl:col-span-9 space-y-5">
 
               {/* Top Status Card */}
-              {currentstep.step === "ConfirmmationLetter" ? (<div className="w-full bg-white border border-slate-200 rounded-2xl p-4 md:p-2 shadow-sm">
+              {currentstep.step === "Completed" ? (<div className="w-full bg-white border border-slate-200 rounded-2xl p-4 md:p-2 shadow-sm">
                 <div className="flex flex-col lg:flex-row gap-4">
                   {/* Left Illustration */}
                   <div className="flex justify-center lg:justify-start">
@@ -204,7 +193,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                         </p>
 
                         <h4 className="font-semibold text-orange-600 break-all text-sm">
-                          E4G6-3F8H-9J2K-7L1M
+                          {completeDetail?.metadata?.completed?.casNumber}
                         </h4>
                       </div>
 
@@ -214,7 +203,8 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                         </p>
 
                         <h4 className="font-semibold text-slate-800 text-sm">
-                          06 June 2025
+                          {completeDetail?.metadata?.completed?.issuedOn}
+
                         </h4>
                       </div>
 
@@ -224,14 +214,15 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                         </p>
 
                         <h4 className="font-semibold text-slate-800 text-sm">
-                          06 September 2025
+                          {completeDetail?.metadata?.completed?.validUntil}
+
                         </h4>
                       </div>
                     </div>
 
                     {/* Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                      <button className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 text-sm">
+                      <button onClick={downloadCASLetter} className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 text-sm">
                         <Download size={18} />
                         Download CAS Letter
                       </button>
@@ -404,7 +395,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                 </p>
               </div>
               {/* Details + Timeline */}
-              {currentstep.step === "ConfirmmationLetter" ? (
+              {currentstep.step === "Completed" ? (
                 <>
                   <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                     {/* Tabs */}
@@ -414,59 +405,84 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           CAS Details
                         </button>
 
-                        <button className="px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                          Important Information
-                        </button>
 
-                        <button className="px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                          What You Can Do Next
-                        </button>
                       </div>
                     </div>
 
                     <div className="p-4 md:p-6">
-                      <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8">
+                      <div className="grid grid-cols-1 lg:grid-cols-[50%_50%] gap-8">
                         {/* Left Side */}
                         <div>
                           <div className="space-y-5">
-                            {details.map((item, index) => (
-                              <div
-                                key={index}
-                                className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4"
-                              >
-                                <p className="text-sm font-semibold text-gray-800">
-                                  {item.label}
-                                </p>
+                            <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
+                              <p className="text-sm font-semibold text-gray-800">Student Name</p>
+                              <p className="text-sm text-gray-600">{allProfile?.data?.name}</p>
+                            </div>
 
-                                <p className="text-sm text-gray-600">{item.value}</p>
-                              </div>
-                            ))}
+                            <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
+                              <p className="text-sm font-semibold text-gray-800">Date of Birth</p>
+                              <p className="text-sm text-gray-600">{allProfile?.data?.dateOfBirth}</p>
+                            </div>
+
+                            <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
+                              <p className="text-sm font-semibold text-gray-800">Nationality</p>
+                              <p className="text-sm text-gray-600">{allProfile?.data?.nationality}</p>
+                            </div>
+
+                            <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
+                              <p className="text-sm font-semibold text-gray-800">Passport No.</p>
+                              <p className="text-sm text-gray-600">{allProfile?.data?.passportNumber}</p>
+                            </div>
+
+                            <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
+                              <p className="text-sm font-semibold text-gray-800">Program</p>
+                              <p className="text-sm text-gray-600">{application?.course?.name}</p>
+                            </div>
+
+                            <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
+                              <p className="text-sm font-semibold text-gray-800">Start Date</p>
+                              <p className="text-sm text-gray-600">15 September 2026</p>
+                            </div>
+
+                            <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
+                              <p className="text-sm font-semibold text-gray-800">End Date</p>
+                              <p className="text-sm text-gray-600">14 September 2029</p>
+                            </div>
+
+                            <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
+                              <p className="text-sm font-semibold text-gray-800">CAS Issue Date</p>
+                              <p className="text-sm text-gray-600">{completeDetail?.metadata?.completed?.issuedOn}</p>
+                            </div>
+
+                            <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
+                              <p className="text-sm font-semibold text-gray-800">CAS Expiry Date</p>
+                              <p className="text-sm text-gray-600">{completeDetail?.metadata?.completed?.validUntil}</p>
+                            </div>
+
+
+
+                            <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
+                              <p className="text-sm font-semibold text-gray-800">CAS Number</p>
+                              <p className="text-sm text-gray-600">{completeDetail?.metadata?.completed?.casNumber}</p>
+                            </div>
+
+
                           </div>
                         </div>
 
                         {/* Right Side */}
                         <div>
                           <div className="border border-gray-200 rounded-lg bg-white p-3 shadow-sm">
-                            <div className="aspect-[3/4] overflow-hidden rounded">
+                            <div className="h-95 overflow-hidden rounded">
                               <img
-                                src="https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=1200"
+                                src={`/${fileBaseurl(completeDetail?.metadata?.completed?.offerLetterDocUrl)}`}
                                 alt="CAS Document"
                                 className="w-full h-full object-cover"
                               />
                             </div>
                           </div>
 
-                          {/* Info Box */}
-                          <div className="mt-4 border border-blue-200 bg-blue-50 rounded-lg p-4 flex gap-3">
-                            <div className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
-                              i
-                            </div>
 
-                            <p className="text-sm text-gray-700 leading-relaxed">
-                              Please verify all details in your CAS letter. In case of any
-                              discrepancies, contact your admissions counselor immediately.
-                            </p>
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -895,7 +911,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                     <p className="font-semibold">
                       18 June 2025 <span className="text-orange-500 text-sm"> (14 Days Left)</span>
                     </p>
-                   
+
                   </div>
 
                   <div className="border p-4">
@@ -905,7 +921,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                     <p className="font-semibold">
                       Admissions Office
                     </p>
-                  
+
                   </div>
 
                 </div>
@@ -1296,6 +1312,10 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   </button>
 
                   <button
+                    onClick={submitStatus}
+                    disabled={
+                      actionType === "reject" && !rejectionReason.trim()
+                    }
                     className={`px-5 py-2 text-white ${actionType === "approve"
                       ? "bg-green-600"
                       : "bg-red-600"

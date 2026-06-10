@@ -77,6 +77,7 @@ import ApplicationForm from "@/components/dashboard/application/applicationForm"
 import ProfileTabs from "@/components/couseller/ProfileSteps";
 import Comments from "@/components/dashboard/application/comments";
 import EnrollmentDeposit from "@/components/dashboard/application/enrollmentDeposit";
+import Documents from "@/components/couseller/Documents";
 
 interface ActivityLog {
   _id: string
@@ -179,7 +180,7 @@ export default function StudentDetailsPage() {
   const [activeDocTab, setActiveDocTab] = useState('All');
   let validateFormRef = useRef<any>(null);
   const messagesEndRef = useRef<any>(null);
-  const { profile, allProfile } = useGlobal()
+  const { profile, allProfile, updateProfile } = useGlobal()
   const [activeMenu, setActiveMenu] = useState("Overview");
 
   console.log(allProfile)
@@ -221,7 +222,7 @@ export default function StudentDetailsPage() {
 
   const fetchActivities = async () => {
     try {
-      const response = await axiosInstance.get(`/communication/applications/${application._id}/activities?limit=100`);
+      const response = await axiosInstance.get(`/communication/applications/${application._id}/activities?limit=100&status=STATUS_CHANGED`);
       const activities = response.data?.data || [];
       const formattedActivities = activities.map((activity: any) => ({
         ...activity,
@@ -373,43 +374,7 @@ export default function StudentDetailsPage() {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    const styles: { [key: string]: string } = {
-      'Approved': 'bg-green-100 text-green-700 border-green-200',
-      'Rejected': 'bg-red-100 text-red-700 border-red-200',
-      'Pending': 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      'Completed': 'bg-green-100 text-green-700 border-green-200',
-      'Failed': 'bg-red-100 text-red-700 border-red-200',
-      'processing': 'bg-orange-100 text-orange-700 border-orange-200',
-      'submitted': 'bg-purple-100 text-purple-700 border-purple-200',
-      'accepted': 'bg-emerald-100 text-emerald-700 border-emerald-200',
-      'in_review': 'bg-orange-100 text-orange-700 border-orange-200',
-      'approved': 'bg-green-100 text-green-700 border-green-200',
-      'rejected': 'bg-red-100 text-red-700 border-red-200',
-      'pending': 'bg-yellow-100 text-yellow-700 border-yellow-200'
-    };
-    return styles[status] || styles.pending;
-  };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'Approved':
-      case 'approved':
-      case 'completed':
-        return <CheckCircle className="w-4 h-4 text-green-600" />
-      case 'Rejected':
-      case 'rejected':
-      case 'failed':
-        return <XCircle className="w-4 h-4 text-red-600" />
-      case 'in_review':
-      case 'processing':
-        return <RefreshCw className="w-4 h-4 text-orange-600 animate-spin" />
-      case 'submitted':
-        return <UploadCloud className="w-4 h-4 text-purple-600" />
-      default:
-        return <Clock className="w-4 h-4 text-yellow-600" />
-    }
-  };
 
   const getPaymentStatusBadge = (status: string) => {
     switch (status) {
@@ -461,6 +426,8 @@ export default function StudentDetailsPage() {
       completed: false,
     },
   ]);
+
+
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -618,10 +585,29 @@ export default function StudentDetailsPage() {
       id: 7,
       title: "Confirmmation Letter",
       subTitle: "In Progress",
-      step: "ConfirmmationLetter",
+      step: "Completed",
       icon: ClipboardCheck,
     },
   ];
+
+
+  const timelinesteps =
+    application?.primaryStatus === "Refused"
+      ? [
+        ...steps.filter(
+          (item) =>
+            item.step !== "PayEnrollenmentDeposit" &&
+            item.step !== "Completed"
+        ),
+        {
+          id: 8,
+          title: "Rejection Overview",
+          subTitle: "Rejected",
+          step: "Refused",
+          icon: FileText,
+        },
+      ]
+      : steps;
 
 
 
@@ -661,9 +647,12 @@ export default function StudentDetailsPage() {
 
   const currentprimarystep = application.primaryStatus
 
-  const currentStep = steps.find(
+  const currentStep = timelinesteps.find(
     (item) => item.step === currentprimarystep
   );
+
+
+  console.log(currentStep)
 
 
 
@@ -759,10 +748,16 @@ export default function StudentDetailsPage() {
             <div className="relative flex justify-between items-start">
               <div className="absolute top-7 left-14 right-5 h-[1px] bg-gray-300 z-0" />
 
-              {steps.map((step, index) => {
-                const currentIndex = steps.findIndex(
-                  (item) => item.step === application?.primaryStatus
+              {timelinesteps.map((step, index) => {
+                const currentStatus =
+                  application?.primaryStatus
+
+                const currentIndex = timelinesteps.findIndex(
+                  item => item.step === currentStatus
                 );
+
+
+
                 const status =
                   index < currentIndex
                     ? "completed"
@@ -1350,190 +1345,17 @@ export default function StudentDetailsPage() {
 
 
                               {/* Documents Tab Content */}
-                              {activeTab === "documents" && (
-                                <div className="min-h-screen">
-                                  {/* Top Tabs */}
-                                  {/* <div className="border-b border-gray-200 bg-white px-6">
-            <div className="flex items-center gap-8 overflow-x-auto">
-              {["All", "Pending", "Approved", "Rejected"].map((status) => (
-                <button
-                  key={status}
-                  onClick={() =>
-                    setActiveDocTab(status === "All" ? "All" : status)
-                  }
-                  className={`relative py-4 text-sm font-medium whitespace-nowrap transition-all duration-200 ${
-                    activeDocTab === status
-                      ? "text-[#ff6a1a]"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
-                >
-                  {status}
-
-                  {activeDocTab === status && (
-                    <motion.div
-                      layoutId="docTab"
-                      className="absolute left-0 bottom-0 h-[2px] w-full bg-[#ff6a1a]"
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div> */}
-
-                                  {/* Main Content */}
-                                  <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-6 p-6">
-
-                                    {/* Upload Section */}
-                                    <div className="bg-white border border-gray-200 rounded-2xl p-8 min-h-[520px] flex flex-col items-center justify-center text-center shadow-sm">
-                                      <div className="w-24 h-24 rounded-full bg-orange-50 flex items-center justify-center mb-6">
-                                        <Upload className="w-12 h-12 text-[#ff6a1a]" />
-                                      </div>
-
-                                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                                        Upload Documents
-                                      </h3>
-
-                                      <p className="text-sm text-gray-500 mb-6 max-w-[260px]">
-                                        Please upload only color scan copies in PDF, DOC, or image format.
-                                      </p>
-
-                                      <button className="px-6 py-3 rounded-xl bg-[#ff6a1a] hover:bg-[#f45f0d] text-white font-medium shadow-md transition-all duration-200 flex items-center gap-2">
-                                        <Upload className="w-4 h-4" />
-                                        Upload File
-                                      </button>
-                                    </div>
-
-                                    {/* Documents List */}
-                                    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                                      <div className="max-h-[520px] overflow-y-auto custom-scrollbar">
-                                        {application?.documents?.filter((doc: any) => {
-                                          if (activeDocTab === "All") return doc.type === "user";
-                                          return (
-                                            doc.status === activeDocTab && doc.type === "user"
-                                          );
-                                        }).length === 0 ? (
-                                          <div className="text-center py-20">
-                                            <div className="text-6xl mb-4">📄</div>
-                                            <p className="text-gray-500 text-sm">
-                                              No documents found
-                                            </p>
-                                          </div>
-                                        ) : (
-                                          application?.documents
-                                            ?.filter((doc: any) => {
-                                              if (activeDocTab === "All")
-                                                return doc.type === "user";
-
-                                              return (
-                                                doc.status === activeDocTab &&
-                                                doc.type === "user"
-                                              );
-                                            })
-                                            .map((req: any, index: number) => (
-                                              <motion.div
-                                                key={req._id || index}
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ duration: 0.25 }}
-                                                whileHover={{ backgroundColor: "#fafafa" }}
-                                                className="flex items-center justify-between gap-4 px-6 py-5 border-b border-gray-100 transition-all"
-                                              >
-                                                {/* Left */}
-                                                <div className="flex items-center gap-4 flex-1 min-w-0">
-                                                  {/* Status Icon */}
-                                                  <div
-                                                    className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${req.status === "Approved"
-                                                      ? "bg-green-100 text-green-600"
-                                                      : req.status === "Rejected"
-                                                        ? "bg-red-100 text-red-600"
-                                                        : req.status === "inreview"
-                                                          ? "bg-yellow-100 text-yellow-600"
-                                                          : "bg-gray-100 text-gray-500"
-                                                      }`}
-                                                  >
-                                                    {getStatusIcon(req.status)}
-                                                  </div>
-
-                                                  {/* File Details */}
-                                                  <div className="min-w-0 flex-1">
-                                                    <div className="flex items-center gap-2 flex-wrap">
-                                                      <h4 className="text-sm font-medium text-gray-800 truncate">
-                                                        {req.name}
-                                                      </h4>
-
-                                                      <span
-                                                        className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${req.required === "required"
-                                                          ? "bg-red-50 text-red-700 border border-red-200"
-                                                          : req.required === "optional"
-                                                            ? "bg-gray-50 text-gray-700 border border-gray-200"
-                                                            : "bg-purple-50 text-purple-700 border border-purple-200"
-                                                          }`}
-                                                      >
-                                                        {req.required === "required"
-                                                          ? "Required"
-                                                          : req.required === "optional"
-                                                            ? "Optional"
-                                                            : "Early Access"}
-                                                      </span>
-                                                    </div>
-
-                                                    <p className="text-xs text-gray-400 mt-1">
-                                                      Uploaded on{" "}
-                                                      {req.createdAt
-                                                        ? new Date(req.createdAt).toDateString()
-                                                        : "N/A"}
-                                                    </p>
-                                                  </div>
-                                                </div>
-
-                                                {/* Right Actions */}
-                                                <div className="flex items-center gap-4 shrink-0">
-                                                  {/* Status Badge */}
-                                                  <span
-                                                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(
-                                                      req.status
-                                                    )}`}
-                                                  >
-                                                    {req.status === "Rejected" && "Rejected"}
-                                                    {req.status === "inreview" && "In Review"}
-                                                    {req.status === "Approved" && "Approved"}
-                                                    {req.status === "Pending" && "Pending"}
-                                                  </span>
-
-                                                  {/* View */}
-                                                  <button className="text-[#ff6a1a] hover:scale-110 transition-all">
-                                                    <Eye className="w-5 h-5" />
-                                                  </button>
-
-                                                  {/* Download */}
-                                                  <button className="text-[#ff6a1a] hover:scale-110 transition-all">
-                                                    <Download className="w-5 h-5" />
-                                                  </button>
-
-                                                  {/* Answer */}
-                                                  {(req.status === "Pending" ||
-                                                    req.status === "Rejected") && (
-                                                      <button
-                                                        onClick={() => {
-                                                          setSelectedRequirement(req);
-                                                          setIsDrawerOpen(true);
-                                                        }}
-                                                        className="px-4 py-2 bg-[#ff6a1a] hover:bg-[#f45f0d] text-white text-sm font-medium rounded-lg transition-all duration-200"
-                                                      >
-                                                        Answer
-                                                      </button>
-                                                    )}
-                                                </div>
-                                              </motion.div>
-                                            ))
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
+                              {activeTab === "documents" && profile && allProfile && (
+                                <Documents application={application} profile={allProfile.profile} studentId={profile?._id} onUpdate={() => updateProfile()} />
                               )}
 
-                           
+                              {
+                                activeMenu === "Communication" && (
+                                  <Comments application={application} profile={profile} />
+                                )
+                              }
+
+
                             </div>
                           </>
                         )}
@@ -1600,10 +1422,10 @@ export default function StudentDetailsPage() {
             {currentStep?.step === "SubmitToSchool" ? (
               <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs} />
             ) : currentStep?.step === "AwaitingSchoolResponse" ? (
-              <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs}/>
+              <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs} />
             ) : currentStep?.step === "OfferReceived" ? (
               <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs} />
-            ) : currentStep?.step === "ConfirmmationLetter" ? (
+            ) : currentStep?.step === "Completed" && currentprimarystep !== "Refused" ? (
               <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} />
             ) : null}
 
@@ -1612,8 +1434,197 @@ export default function StudentDetailsPage() {
             )}
 
             {currentStep?.step === "PayEnrollenmentDeposit" && (
-              <EnrollmentDeposit />
+              <EnrollmentDeposit application = {application} allprofile = {allProfile} />
             )}
+
+            {
+              currentStep?.step === "Refused" && (
+                <div className="w-full bg-white border border-red-100  shadow-sm overflow-hidden">
+
+
+
+                  {/* Body */}
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+
+                      {/* Header */}
+                      <div className="">
+
+                        {/* Left Small Card */}
+                        <div className="space-y-4 mb-4">
+                          <div className="bg-red-50 border border-red-200 p-5">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 bg-red-100 flex items-center justify-center">
+                                <XCircle className="w-6 h-6 text-red-600" />
+                              </div>
+
+                              <div>
+                                <h2 className="text-lg font-semibold text-red-700">
+                                  Application Rejected
+                                </h2>
+                              </div>
+                            </div>
+
+                            <div className="mt-4 bg-white border border-red-100  p-3">
+                              <p className="text-xs font-semibold uppercase text-red-700">
+                                Rejection Reason
+                              </p>
+
+                              <p className="text-sm text-slate-600 mt-2">
+                                {application?.documents?.[0]?.rejectReason ||
+                                  "No rejection reason provided."}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right Large Card */}
+                        <div className="bg-slate-50 border border-slate-200  p-5 h-120 overflow-y-auto">
+                          <div className="space-y-6">
+                            {activityLogs?.map((item, index) => (
+                              <div key={item._id} className="relative flex gap-4">
+                                {index !== activityLogs.length - 1 && (
+                                  <div className="absolute left-[10px] top-6 h-full w-[2px] bg-slate-200" />
+                                )}
+
+                                <div className="z-10">
+                                  {item.action === "STATUS_CHANGED" ? (
+                                    <div className="w-5 h-5 border-2 border-green-500 bg-white flex items-center justify-center">
+                                      <Check className="w-3 h-3 text-green-500" />
+                                    </div>
+                                  ) : item.action === "APPLICATION_UPDATED" ? (
+                                    <div className="w-5 h-5 bg-orange-600 flex items-center justify-center">
+                                      <Hourglass className="w-3 h-3 text-white" />
+                                    </div>
+                                  ) : (
+                                    <div className="w-5 h-5 border-2 border-slate-300 bg-white" />
+                                  )}
+                                </div>
+
+                                <div>
+                                  <p className="text-xs text-slate-500 mb-1">
+                                    {new Date(item.createdAt).toLocaleString("en-IN", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                      hour12: true,
+                                    })}
+                                  </p>
+
+                                  <h4 className="font-medium text-sm text-slate-800">
+                                    {item.newValue || item.action.replaceAll("_", " ")}
+                                  </h4>
+
+                                  <p
+                                    className={`text-sm mt-1 ${item.action === "STATUS_CHANGED"
+                                      ? "text-green-600 font-medium"
+                                      : "text-slate-400"
+                                      }`}
+                                  >
+                                    {item.description}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                      </div>
+
+
+                      {/* Application Details */}
+                      <div className="bg-slate-50 border border-slate-200 p-5">
+                        <div className="px-3 py-8">
+                          <div>
+                            <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
+                              Basic Details
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                              <DetailItem
+                                label="Full Name"
+                                value={application?.student?.name || "N/A"}
+                              />
+                              <DetailItem
+                                label="Gender"
+                                value={application?.student?.gender || "N/A"}
+                              />
+                              <DetailItem
+                                label="Nationality"
+                                value={application?.student?.nationality || "N/A"}
+                              />
+                              <DetailItem
+                                label="Date of Birth"
+                                value={application?.student?.dateOfBirth ? format(new Date(application.student.dateOfBirth), 'yyyy-MM-dd') : "N/A"}
+                              />
+                              <DetailItem
+                                label="Application ID"
+                                value={application?.applicationNumber || "N/A"}
+                              />
+                              <DetailItem
+                                label="E-Mail"
+                                value={application?.student?.email || "N/A"}
+                              />
+                              <DetailItem
+                                label="Passport No."
+                                value={application?.student?.passportNumber || "N/A"}
+                              />
+                              <DetailItem
+                                label="Created At"
+                                value={application?.createdAt ? format(new Date(application.createdAt), 'dd/MM/yyyy hh:mm a') : "N/A"}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Course Details Section */}
+                          <div className="mt-8 border-t pt-8">
+                            <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
+                              Course Details
+                            </h2>
+                            {application.course && (
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {[
+                                  { label: "Course Name", value: application?.course?.name },
+                                  { label: "University", value: application?.course?.university?.name },
+                                  { label: "Address", value: application?.course?.university?.address },
+                                  { label: "Course Intake", value: application?.intake },
+                                  { label: "Level", value: application?.course?.level },
+                                  { label: "Duration", value: application?.course?.duration },
+                                  { label: "Tuition Fee", value: `${application?.course?.currency || ""} ${application?.course?.tuitionFee || ""}` },
+                                  { label: "QS Ranking", value: application?.course?.university?.uni_rank?.find((item: any) => item.type === "QS World")?.rank || "N/A" },
+                                ].map((item, index) => (
+                                  <div key={index}>
+                                    <p className="text-sm font-medium text-gray-800 mb-1">{item.label}</p>
+                                    <h3 className="font-medium text-gray-800">{item.value || "N/A"}</h3>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Timeline Message */}
+                    <div className="mt-6 bg-amber-50 border border-amber-200 p-4">
+                      <h4 className="font-semibold text-amber-800">
+                        What's Next?
+                      </h4>
+
+                      <p className="text-sm text-amber-700 mt-2 leading-6">
+                        Please review the rejection reason carefully. You may contact your
+                        education consultant for alternative course options, backup
+                        applications, or guidance on reapplying in a future intake.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            }
 
           </div>
 

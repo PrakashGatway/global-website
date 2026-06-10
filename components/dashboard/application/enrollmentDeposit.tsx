@@ -1,7 +1,38 @@
 "use client"
 
 
-const EnrollmentDeposit = () => {
+const EnrollmentDeposit = ({ application,allprofile }) => {
+
+  const parsedStatusDetails = application?.statusDetails
+    ? JSON.parse(application?.statusDetails)
+    : [];
+
+  const depositData = parsedStatusDetails.find(
+    (item) => item.status === "PayEnrollenmentDeposit"
+  );
+
+  const metadata = depositData?.metadata?.deposit
+
+  const paymentDeadline = metadata?.paymentDeadline;
+
+  const daysLeft = paymentDeadline
+    ? Math.ceil(
+      (new Date(paymentDeadline) - new Date()) /
+      (1000 * 60 * 60 * 24)
+    )
+    : 0;
+
+
+
+  const offerdateleft = metadata?.offerDeadline
+    ? Math.ceil((
+      new Date(metadata?.offerDeadline) - new Date()) /
+      (1000 * 60 * 60 * 24))
+    : 0;
+
+  console.log(depositData)
+
+
   return (
     <div className="p-4 md:p-6 bg-white min-h-screen">
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
@@ -37,34 +68,54 @@ const EnrollmentDeposit = () => {
 
                   <div className="border  p-3">
                     <p className="text-xs text-gray-500">Deposit Amount</p>
-                    <h4 className="font-bold mt-1">€1,200</h4>
+                    <h4 className="font-bold mt-1">{metadata?.amount}</h4>
                     <p className="text-xs text-gray-400">
                       Non-refundable
                     </p>
                   </div>
 
-                  <div className="border p-3">
+                  <div className="border p-3 rounded-lg">
                     <p className="text-xs text-gray-500">Payment Deadline</p>
-                    <h4 className="font-bold mt-1">18 Jun 2025</h4>
-                    <p className="text-xs text-orange-600">
-                      14 Days Left
+
+                    <h4 className="font-bold mt-1">
+                      {metadata?.paymentDeadline}
+                    </h4>
+
+                    <p
+                      className={`text-xs mt-1 ${daysLeft <= 3
+                        ? "text-red-600"
+                        : daysLeft <= 7
+                          ? "text-orange-600"
+                          : "text-green-600"
+                        }`}
+                    >
+                      {daysLeft > 0
+                        ? `${daysLeft} Day${daysLeft > 1 ? "s" : ""} Left`
+                        : "Deadline Expired"}
                     </p>
                   </div>
 
                   <div className="border p-3">
                     <p className="text-xs text-gray-500">Offer Deadline</p>
-                    <h4 className="font-bold mt-1">18 Jun 2025</h4>
-                    <p className="text-xs text-orange-600">
-                      14 Days Left
+                    <h4 className="font-bold mt-1">{metadata?.offerDeadline}</h4>
+                    <p
+                      className={`text-xs mt-1 ${offerdateleft <= 3
+                        ? "text-red-600"
+                        : offerdateleft <= 7
+                          ? "text-orange-600"
+                          : "text-green-600"
+                        }`}
+                    >
+                      {offerdateleft > 0
+                        ? `${offerdateleft} Day${offerdateleft > 1 ? "s" : ""} Left`
+                        : "Deadline Expired"}
                     </p>
                   </div>
 
                   <div className="border p-3">
                     <p className="text-xs text-gray-500">Currency</p>
-                    <h4 className="font-bold mt-1">EUR</h4>
-                    <p className="text-xs text-gray-400">
-                      Euro
-                    </p>
+                    <h4 className="font-bold mt-1">{metadata?.currency}</h4>
+
                   </div>
 
                 </div>
@@ -82,17 +133,7 @@ const EnrollmentDeposit = () => {
                 Payment Details
               </button>
 
-              <button className="pb-3 text-gray-500">
-                Payment Methods
-              </button>
 
-              <button className="pb-3 text-gray-500">
-                Instructions
-              </button>
-
-              <button className="pb-3 text-gray-500">
-                Transaction History
-              </button>
             </div>
 
             {/* Content */}
@@ -103,33 +144,33 @@ const EnrollmentDeposit = () => {
 
                 <div className="flex justify-between">
                   <span className="text-gray-500">Program</span>
-                  <span>Bachelor of Computer Science</span>
+                  <span>{metadata?.program}</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-gray-500">Faculty</span>
-                  <span>School of Engineering</span>
+                  <span>{metadata?.faculty}</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-gray-500">Start Date</span>
-                  <span>15 Sept 2026</span>
+                  <span>{metadata?.startDate}</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-gray-500">Duration</span>
-                  <span>3 Years</span>
+                  <span>{metadata?.duration}</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-gray-500">Tuition Fee</span>
-                  <span>€2,345</span>
+                  <span>{metadata?.tuitionFee}</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-gray-500">Deposit</span>
                   <span className="font-semibold">
-                    €1,200
+                    {metadata?.amount}
                   </span>
                 </div>
 
@@ -208,12 +249,6 @@ const EnrollmentDeposit = () => {
         {/* RIGHT SECTION */}
         <div className="xl:col-span-4 space-y-4">
 
-          {/* Application Summary */}
-          <div className="bg-white border p-5">
-            <h3 className="font-semibold mb-4">
-              Application Summary
-            </h3>
-          </div>
 
           {/* Payment Summary */}
           <div className="bg-white  border p-5">
@@ -223,18 +258,20 @@ const EnrollmentDeposit = () => {
 
             <div className="flex justify-between">
               <span>Tuition Fee</span>
-              <span>€2,345</span>
+              <span>{metadata?.tuitionFee}</span>
             </div>
 
             <div className="flex justify-between mt-2">
               <span>Enrollment Deposit</span>
-              <span>€1,200</span>
+              <span>{metadata?.amount}</span>
             </div>
 
             <div className="border-t mt-4 pt-4 flex justify-between font-bold text-orange-600">
               <span>Total Payable</span>
-              <span>€1,200</span>
-            </div>
+              <span>
+                {(Number(metadata?.tuitionFee) || 0) -
+                  (Number(metadata?.amount) || 0)}
+              </span>            </div>
           </div>
 
           {/* Counselor */}
@@ -244,15 +281,15 @@ const EnrollmentDeposit = () => {
             </h3>
 
             <div className="flex items-center gap-3 mt-4">
-              <div className="w-14 h-14 bg-gray-200" />
+              <img className="w-10 h-10" src={allprofile?.data?.assignto?.image||"https://cdn-icons-png.flaticon.com/512/9131/9131478.png"} alt="" />
 
               <div>
                 <h4 className="font-semibold">
-                  Rahul Sharma
+                  {allprofile?.data?.assignto?.name}
                 </h4>
 
                 <p className="text-sm text-gray-500">
-                  Senior Admission Advisor
+                 {allprofile?.data?.assignto?.role}
                 </p>
               </div>
             </div>
