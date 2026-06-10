@@ -129,7 +129,7 @@ interface AppDocument {
   status: "Pending" | "inreview" | "Approved" | "Rejected";
   rejectReason?: string;
   answer?: string;
-  extra?: DocumentExtraField[] | string;
+  extra?: DocumentExtraField[] | string | Record<string, any>;
   createdAt?: string;
 }
 
@@ -524,6 +524,17 @@ export default function ApplicationDetailPage() {
           ? existingStatusDetails 
           : JSON.stringify(existingStatusDetails);
       }
+
+      if(formData.primaryStatus  === "Completed"){
+        const response = await axiosInstance.post(`http://localhost:5000/api/visa`,{
+          "userId": application?.student?._id || "" ,
+          "applicationId": application?.applicationNumber || "",
+          "country": application?.country || "",
+          "course": application?.course?._id || "",
+          "extra": application?.statusDetails  || {}
+        })
+        console.log(response.data, "response ")
+      }
       
       const res = await axiosInstance.put(`/applications/${id}`, {
         primaryStatus: formData.primaryStatus,
@@ -535,6 +546,8 @@ export default function ApplicationDetailPage() {
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
+
+      
       
       if (res.data.success) {
         setSuccess("Saved successfully!");
@@ -768,7 +781,7 @@ export default function ApplicationDetailPage() {
   const tabs = [
     { id: "overview", label: "Overview", icon: TrendingUp, color: "text-emerald-600" },
     { id: "documents", label: "Documents", icon: FileText, color: "text-orange-600" },
-    { id: "backups", label: "Backups", icon: Layers, color: "text-purple-600" },
+    // { id: "backups", label: "Backups", icon: Layers, color: "text-purple-600" },
     { id: "activity", label: "Activity", icon: Activity, color: "text-orange-600" },
     { id: "comments", label: "Comments", icon: MessageCircle, color: "text-pink-600" },
   ];
@@ -868,364 +881,364 @@ export default function ApplicationDetailPage() {
             </motion.div>
           )}
         </AnimatePresence>
-        
-     {activeTab === "overview" && (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Student Profile Card - Sidebar with ALL student info */}
-        <PremiumCard className="lg:col-span-1 overflow-hidden ">
-          <div className="relative h-32 bg-gradient-to-r from-orange-600 via-[#f26d44] to-orange-600">
-            <div className="absolute -bottom-12 left-6">
-              <div className="w-24 h-24 rounded bg-white shadow-xl flex items-center justify-center border-4 border-white">
-                {studentData?.data?.profileImage ? (
-                  <img 
-                    src={studentData?.data.profileImage} 
-                    alt="Profile"
-                    className="w-full h-full object-cover rounded"
-                  />
-                ) : (
-                  <span className="text-3xl font-bold text-orange-600">
-                    {studentData?.data?.name?.[0]?.toUpperCase() || application.student?.name?.[0]?.toUpperCase() || "?"}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="pt-14 p-6 overflow-auto h-[100vh]">
-            <h3 className="text-xl font-bold text-slate-800 capitalize">{studentData?.data?.name || application.student?.name || "--"}</h3>
-            <div className="flex items-center gap-2 mt-1">
-              <Mail size={12} className="text-slate-400" />
-              <span className="text-xs text-slate-500">{studentData?.data?.email || application.student?.email || "--"}</span>
-            </div>
             
-            {/* Basic Information */}
-            <div className="mt-5 pt-4 border-t border-slate-100">
-              <h4 className="text-sm font-semibold text-slate-700 mb-3">Basic Information</h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-slate-400">Phone</p>
-                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.phone || "--"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">Gender</p>
-                  <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.gender || "--"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">Marital Status</p>
-                  <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.maritalStatus || "--"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">Date of Birth</p>
-                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.dateOfBirth ? formatDate(studentData?.data.dateOfBirth) : "--"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">Nationality</p>
-                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.nationality || "--"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">First Language</p>
-                  <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.firstLanguage || "--"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">Referral Code</p>
-                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.referalCode || "--"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">Wallet Balance</p>
-                  <p className="text-sm font-medium text-slate-700">${studentData?.data?.wallet || "0"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">Joined</p>
-                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.createdAt ? formatDate(studentData?.data.createdAt) : "--"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">Status</p>
-                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.status || "--"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">Last Login</p>
-                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.lastLogin ? formatDate(studentData?.data.lastLogin) : "--"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400">Assigned To</p>
-                  <p className="text-sm font-medium text-slate-700">{studentData?.data?.assignto || "--"}</p>
+        {activeTab === "overview" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Student Profile Card - Sidebar with ALL student info */}
+            <PremiumCard className="lg:col-span-1 overflow-hidden ">
+              <div className="relative h-32 bg-gradient-to-r from-orange-600 via-[#f26d44] to-orange-600">
+                <div className="absolute -bottom-12 left-6">
+                  <div className="w-24 h-24 rounded bg-white shadow-xl flex items-center justify-center border-4 border-white">
+                    {studentData?.data?.profileImage ? (
+                      <img 
+                        src={studentData?.data.profileImage} 
+                        alt="Profile"
+                        className="w-full h-full object-cover rounded"
+                      />
+                    ) : (
+                      <span className="text-3xl font-bold text-orange-600">
+                        {studentData?.data?.name?.[0]?.toUpperCase() || application.student?.name?.[0]?.toUpperCase() || "?"}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Passport Details */}
-            {studentData?.data?.passportDetail && (
-              <div className="mt-5 pt-4 border-t border-slate-100">
-                <h4 className="text-sm font-semibold text-slate-700 mb-3">Passport Details</h4>
-                <div className="space-y-3">
+              <div className="pt-14 p-6 overflow-auto h-[100vh]">
+                <h3 className="text-xl font-bold text-slate-800 capitalize">{studentData?.data?.name || application.student?.name || "--"}</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <Mail size={12} className="text-slate-400" />
+                  <span className="text-xs text-slate-500">{studentData?.data?.email || application.student?.email || "--"}</span>
+                </div>
+                
+                {/* Basic Information */}
+                <div className="mt-5 pt-4 border-t border-slate-100">
+                  <h4 className="text-sm font-semibold text-slate-700 mb-3">Basic Information</h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs text-slate-400">Passport Number</p>
-                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.passportNumber || "--"}</p>
+                      <p className="text-xs text-slate-400">Phone</p>
+                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.phone || "--"}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-400">Passport Expiry</p>
-                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.passportExpiry ? formatDate(studentData?.data.passportExpiry) : "--"}</p>
+                      <p className="text-xs text-slate-400">Gender</p>
+                      <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.gender || "--"}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-400">Issue Date</p>
-                      <p className="text-sm font-medium text-slate-700">{formatDate(studentData?.data.passportDetail.issueDate)}</p>
+                      <p className="text-xs text-slate-400">Marital Status</p>
+                      <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.maritalStatus || "--"}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-400">Expiry Date</p>
-                      <p className="text-sm font-medium text-slate-700">{formatDate(studentData?.data.passportDetail.expiryDate)}</p>
+                      <p className="text-xs text-slate-400">Date of Birth</p>
+                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.dateOfBirth ? formatDate(studentData?.data.dateOfBirth) : "--"}</p>
                     </div>
-                    <div className="col-span-2">
-                      <p className="text-xs text-slate-400">Issue Country</p>
-                      <p className="text-sm font-medium text-slate-700">{studentData?.data.passportDetail.issueCountry}</p>
+                    <div>
+                      <p className="text-xs text-slate-400">Nationality</p>
+                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.nationality || "--"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">First Language</p>
+                      <p className="text-sm font-medium text-slate-700 capitalize">{studentData?.data?.firstLanguage || "--"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Referral Code</p>
+                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.referalCode || "--"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Wallet Balance</p>
+                      <p className="text-sm font-medium text-slate-700">${studentData?.data?.wallet || "0"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Joined</p>
+                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.createdAt ? formatDate(studentData?.data.createdAt) : "--"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Status</p>
+                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.status || "--"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Last Login</p>
+                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.lastLogin ? formatDate(studentData?.data.lastLogin) : "--"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400">Assigned To</p>
+                      <p className="text-sm font-medium text-slate-700">{studentData?.data?.assignto || "--"}</p>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
 
-            {/* Education History */}
-            {studentData?.profile?.educationHistory && studentData?.profile.educationHistory.length > 0 && (
-              <div className="mt-5 pt-4 border-t border-slate-100">
-                <h4 className="text-sm font-semibold text-slate-700 mb-3">Education History</h4>
-                <div className="space-y-4">
-                  {studentData?.profile.educationHistory.map((edu: any, index: number) => (
-                    <div key={index} className="bg-slate-50 p-3 rounded-lg">
-                      <p className="text-xs font-semibold text-orange-600 mb-2">{edu.educationLevel || "--"}</p>
-                      <div className="space-y-1">
-                        <p className="text-xs text-slate-500">
-                          <span className="font-medium">Degree:</span> {edu.degreeName || "--"}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          <span className="font-medium">Institution:</span> {edu.institutionName || "--"}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          <span className="font-medium">Percentage:</span> {edu.percentage ? `${edu.percentage}%` : "--"}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          <span className="font-medium">Duration:</span> {edu.startDate && edu.endDate 
-                            ? `${formatDate(edu.startDate)} - ${formatDate(edu.endDate)}`
-                            : "--"}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          <span className="font-medium">Location:</span> {[edu.city, edu.state, edu.country].filter(Boolean).join(", ") || "--"}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Work Experience */}
-            {studentData?.profile?.workExperience && studentData?.profile.workExperience.length > 0 && (
-              <div className="mt-5 pt-4 border-t border-slate-100">
-                <h4 className="text-sm font-semibold text-slate-700 mb-3">Work Experience</h4>
-                <div className="space-y-4">
-                  {studentData?.profile.workExperience.map((work: any, index: number) => (
-                    <div key={index} className="bg-slate-50 p-3 rounded-lg">
-                      <p className="text-xs font-semibold text-orange-600 mb-2">{work.designation || "--"}</p>
-                      <div className="space-y-1">
-                        <p className="text-xs text-slate-500">
-                          <span className="font-medium">Company:</span> {work.companyName || "--"}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          <span className="font-medium">Location:</span> {work.location || "--"}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          <span className="font-medium">Duration:</span> {work.from && work.to 
-                            ? `${formatDate(work.from)} - ${formatDate(work.to)}`
-                            : "--"}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Address Information */}
-            {(studentData?.profile?.currentAddress || studentData?.profile?.permanentAddress) && (
-              <div className="mt-5 pt-4 border-t border-slate-100">
-                <h4 className="text-sm font-semibold text-slate-700 mb-3">Address Information</h4>
-                
-                {studentData?.profile?.currentAddress && (
-                  <div className="mb-4">
-                    <p className="text-xs font-medium text-slate-600 mb-2">Current Address</p>
-                    <div className="bg-slate-50 p-3 rounded-lg">
-                      <div className="space-y-1">
-                        <p className="text-xs text-slate-500">{studentData?.profile.currentAddress.addressLine1 || "--"}</p>
-                        {studentData?.profile.currentAddress.addressLine2 && (
-                          <p className="text-xs text-slate-500">{studentData?.profile.currentAddress.addressLine2}</p>
-                        )}
-                        <p className="text-xs text-slate-500">
-                          {[
-                            studentData?.profile.currentAddress.city,
-                            studentData?.profile.currentAddress.state,
-                            studentData?.profile.currentAddress.postalCode
-                          ].filter(Boolean).join(", ")}
-                        </p>
-                        <p className="text-xs text-slate-500">{studentData?.profile.currentAddress.country || "--"}</p>
+                {/* Passport Details */}
+                {studentData?.data?.passportDetail && (
+                  <div className="mt-5 pt-4 border-t border-slate-100">
+                    <h4 className="text-sm font-semibold text-slate-700 mb-3">Passport Details</h4>
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-slate-400">Passport Number</p>
+                          <p className="text-sm font-medium text-slate-700">{studentData?.data?.passportNumber || "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Passport Expiry</p>
+                          <p className="text-sm font-medium text-slate-700">{studentData?.data?.passportExpiry ? formatDate(studentData?.data.passportExpiry) : "--"}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Issue Date</p>
+                          <p className="text-sm font-medium text-slate-700">{formatDate(studentData?.data.passportDetail.issueDate)}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-400">Expiry Date</p>
+                          <p className="text-sm font-medium text-slate-700">{formatDate(studentData?.data.passportDetail.expiryDate)}</p>
+                        </div>
+                        <div className="col-span-2">
+                          <p className="text-xs text-slate-400">Issue Country</p>
+                          <p className="text-sm font-medium text-slate-700">{studentData?.data.passportDetail.issueCountry}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
-                
-                {studentData?.profile?.permanentAddress && (
-                  <div>
-                    <p className="text-xs font-medium text-slate-600 mb-2">Permanent Address</p>
-                    <div className="bg-slate-50 p-3 rounded-lg">
-                      <div className="space-y-1">
-                        <p className="text-xs text-slate-500">{studentData?.profile.permanentAddress.addressLine1 || "--"}</p>
-                        {studentData?.profile.permanentAddress.addressLine2 && (
-                          <p className="text-xs text-slate-500">{studentData?.profile.permanentAddress.addressLine2}</p>
-                        )}
-                        <p className="text-xs text-slate-500">
-                          {[
-                            studentData?.profile.permanentAddress.city,
-                            studentData?.profile.permanentAddress.state,
-                            studentData?.profile.permanentAddress.postalCode
-                          ].filter(Boolean).join(", ")}
-                        </p>
-                        <p className="text-xs text-slate-500">{studentData?.profile.permanentAddress.country || "--"}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </PremiumCard>
 
-        {/* Application Details Card - Main Section (Only Application Info) */}
-        <PremiumCard className="lg:col-span-2">
-          <div className="p-6">
-            <div className="flex items-center gap-2 mb-5">
-              <div className="p-2 rounded-xl bg-orange-100">
-                <GraduationCap size={18} className="text-orange-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-slate-800">Application Details</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
-              <div className="space-y-3">
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-sm text-slate-500">Country</span>
-                  <span className="text-sm font-medium text-slate-700">{application.country || "--"}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-sm text-slate-500 pr-2">University</span>
-                  <span className="text-sm font-medium text-slate-700">{"  "}{application.course?.university?.name || "--"}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-sm text-slate-500">Course</span>
-                  <span className="text-sm font-medium text-slate-700">{application.course?.name || "--"}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-sm text-slate-500">Intake (Application)</span>
-                  <span className="text-sm font-medium text-slate-700">{application.intake || "--"}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-sm text-slate-500">Student Intake</span>
-                  <span className="text-sm font-medium text-slate-700">{studentData?.data?.intake || "--"}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-sm text-slate-500">Tuition Fee</span>
-                  <span className="text-sm font-medium text-slate-700">{studentData?.data?.tuitionfee || "--"}</span>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-sm text-slate-500">Application Number</span>
-                  <span className="text-sm font-medium text-slate-700">{application.applicationNumber}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-sm text-slate-500">Payment Status</span>
-                  <PaymentBadge status={application.paymentStatus} />
-                </div>
-                <div className="flex justify-between py-2 border-b border-slate-100">
-                  <span className="text-sm text-slate-500">Application Status</span>
-                  <select
-                    value={formData.primaryStatus}
-                    onChange={(e) => {
-                      setFormData(p => ({ ...p, primaryStatus: e.target.value as ApplicationStatus }));
-                      setShowpopup(true);
-                    }}
-                    className="text-sm px-3 py-1 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
-                  >
-                    {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-                {offerLetters.length > 0 ? (
-                    offerLetters.map((offer: AppDocument) => (
-                      <PremiumCard key={offer._id}  className="overflow-hidden">
-                        <div className="relative">
-                          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-full blur-3xl" />
-                          <div className="p-6 md:p-8">
-                            <div className="flex flex-wrap items-start justify-between gap-4">
-                              <div className="flex items-start gap-4">
-                                <div className="w-14 h-14 rounded bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg">
-                                  <Trophy size={28} className="text-white" />
-                                </div>
-                                <div>
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <Sparkles size={14} className="text-emerald-500" />
-                                    <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Offer Received</span>
-                                  </div>
-                                  <h2 className="text-2xl font-bold text-slate-800">{offer.name}</h2>
-                                  <p className="text-slate-500 text-sm mt-1 max-w-lg">{offer.description || "Congratulations! You've been offered admission to this program."}</p>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                {offer.docUrl && (
-                                  <>
-                                    <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${offer.docUrl}`} target="_blank" className="inline-flex items-center gap-2 px-4 py-2  bg-emerald-600 text-white hover:bg-emerald-700 transition text-sm font-medium shadow-md">
-                                      <Eye size={16} /> View Offer
-                                    </a>
-                                    <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${offer.docUrl}`} download className="inline-flex items-center gap-2 px-4 py-2  border border-slate-200 text-slate-700 hover:bg-slate-50 transition">
-                                      <Download size={16} /> Download
-                                    </a>
-                                  </>
-                                )}
-                                <button onClick={() => { setEditingDocId(offer._id); setShowDocUpload(true); }} className="p-2  text-slate-400 hover:text-orange-600 hover:bg-orange-50 transition">
-                                  <Edit size={16} />
-                                </button>
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-4 border-t border-slate-100">
-                              <div className="flex items-center gap-2">
-                                <Calendar size={14} className="text-emerald-600" />
-                                <span className="text-xs text-slate-500">Offer Date: {formatDate(offer.createdAt)}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Clock size={14} className="text-amber-600" />
-                                <span className="text-xs text-amber-700 font-medium">{offer.required === "required" ? "Conditional Offer" : "Unconditional Offer"}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <StatusPill status={offer.status || "Pending"} size="sm" />
-                              </div>
-                            </div>
+                {/* Education History */}
+                {studentData?.profile?.educationHistory && studentData?.profile.educationHistory.length > 0 && (
+                  <div className="mt-5 pt-4 border-t border-slate-100">
+                    <h4 className="text-sm font-semibold text-slate-700 mb-3">Education History</h4>
+                    <div className="space-y-4">
+                      {studentData?.profile.educationHistory.map((edu: any, index: number) => (
+                        <div key={index} className="bg-slate-50 p-3 rounded-lg">
+                          <p className="text-xs font-semibold text-orange-600 mb-2">{edu.educationLevel || "--"}</p>
+                          <div className="space-y-1">
+                            <p className="text-xs text-slate-500">
+                              <span className="font-medium">Degree:</span> {edu.degreeName || "--"}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              <span className="font-medium">Institution:</span> {edu.institutionName || "--"}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              <span className="font-medium">Percentage:</span> {edu.percentage ? `${edu.percentage}%` : "--"}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              <span className="font-medium">Duration:</span> {edu.startDate && edu.endDate 
+                                ? `${formatDate(edu.startDate)} - ${formatDate(edu.endDate)}`
+                                : "--"}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              <span className="font-medium">Location:</span> {[edu.city, edu.state, edu.country].filter(Boolean).join(", ") || "--"}
+                            </p>
                           </div>
                         </div>
-                      </PremiumCard>
-                    ))
-                  ) : (
-                    <div className="text-center py-20 bg-white rounded border-2 border-dashed border-slate-200">
-                      <div className="w-20 h-20 bg-slate-100 rounded flex items-center justify-center mx-auto mb-4">
-                        <Trophy size={36} className="text-slate-300" />
-                      </div>
-                      <p className="text-base font-semibold text-slate-600">No Offers Yet</p>
-                      <p className="text-sm text-slate-400 mt-1">Click below to send an admission offer</p>
+                      ))}
                     </div>
-                  )}
-            </div>
+                  </div>
+                )}
+
+                {/* Work Experience */}
+                {studentData?.profile?.workExperience && studentData?.profile.workExperience.length > 0 && (
+                  <div className="mt-5 pt-4 border-t border-slate-100">
+                    <h4 className="text-sm font-semibold text-slate-700 mb-3">Work Experience</h4>
+                    <div className="space-y-4">
+                      {studentData?.profile.workExperience.map((work: any, index: number) => (
+                        <div key={index} className="bg-slate-50 p-3 rounded-lg">
+                          <p className="text-xs font-semibold text-orange-600 mb-2">{work.designation || "--"}</p>
+                          <div className="space-y-1">
+                            <p className="text-xs text-slate-500">
+                              <span className="font-medium">Company:</span> {work.companyName || "--"}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              <span className="font-medium">Location:</span> {work.location || "--"}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              <span className="font-medium">Duration:</span> {work.from && work.to 
+                                ? `${formatDate(work.from)} - ${formatDate(work.to)}`
+                                : "--"}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Address Information */}
+                {(studentData?.profile?.currentAddress || studentData?.profile?.permanentAddress) && (
+                  <div className="mt-5 pt-4 border-t border-slate-100">
+                    <h4 className="text-sm font-semibold text-slate-700 mb-3">Address Information</h4>
+                    
+                    {studentData?.profile?.currentAddress && (
+                      <div className="mb-4">
+                        <p className="text-xs font-medium text-slate-600 mb-2">Current Address</p>
+                        <div className="bg-slate-50 p-3 rounded-lg">
+                          <div className="space-y-1">
+                            <p className="text-xs text-slate-500">{studentData?.profile.currentAddress.addressLine1 || "--"}</p>
+                            {studentData?.profile.currentAddress.addressLine2 && (
+                              <p className="text-xs text-slate-500">{studentData?.profile.currentAddress.addressLine2}</p>
+                            )}
+                            <p className="text-xs text-slate-500">
+                              {[
+                                studentData?.profile.currentAddress.city,
+                                studentData?.profile.currentAddress.state,
+                                studentData?.profile.currentAddress.postalCode
+                              ].filter(Boolean).join(", ")}
+                            </p>
+                            <p className="text-xs text-slate-500">{studentData?.profile.currentAddress.country || "--"}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {studentData?.profile?.permanentAddress && (
+                      <div>
+                        <p className="text-xs font-medium text-slate-600 mb-2">Permanent Address</p>
+                        <div className="bg-slate-50 p-3 rounded-lg">
+                          <div className="space-y-1">
+                            <p className="text-xs text-slate-500">{studentData?.profile.permanentAddress.addressLine1 || "--"}</p>
+                            {studentData?.profile.permanentAddress.addressLine2 && (
+                              <p className="text-xs text-slate-500">{studentData?.profile.permanentAddress.addressLine2}</p>
+                            )}
+                            <p className="text-xs text-slate-500">
+                              {[
+                                studentData?.profile.permanentAddress.city,
+                                studentData?.profile.permanentAddress.state,
+                                studentData?.profile.permanentAddress.postalCode
+                              ].filter(Boolean).join(", ")}
+                            </p>
+                            <p className="text-xs text-slate-500">{studentData?.profile.permanentAddress.country || "--"}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </PremiumCard>
+
+            {/* Application Details Card - Main Section (Only Application Info) */}
+            <PremiumCard className="lg:col-span-2">
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="p-2 rounded-xl bg-orange-100">
+                    <GraduationCap size={18} className="text-orange-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-800">Application Details</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
+                  <div className="space-y-3">
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Country</span>
+                      <span className="text-sm font-medium text-slate-700">{application.country || "--"}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500 pr-2">University</span>
+                      <span className="text-sm font-medium text-slate-700">{"  "}{application.course?.university?.name || "--"}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Course</span>
+                      <span className="text-sm font-medium text-slate-700">{application.course?.name || "--"}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Intake (Application)</span>
+                      <span className="text-sm font-medium text-slate-700">{application.intake || "--"}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Student Intake</span>
+                      <span className="text-sm font-medium text-slate-700">{studentData?.data?.intake || "--"}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Tuition Fee</span>
+                      <span className="text-sm font-medium text-slate-700">{studentData?.data?.tuitionfee || "--"}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Application Number</span>
+                      <span className="text-sm font-medium text-slate-700">{application.applicationNumber}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Payment Status</span>
+                      <PaymentBadge status={application.paymentStatus} />
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-slate-100">
+                      <span className="text-sm text-slate-500">Application Status</span>
+                      <select
+                        value={formData.primaryStatus}
+                        onChange={(e) => {
+                          setFormData(p => ({ ...p, primaryStatus: e.target.value as ApplicationStatus }));
+                          setShowpopup(true);
+                        }}
+                        className="text-sm px-3 py-1 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-400 bg-white"
+                      >
+                        {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                    {offerLetters.length > 0 ? (
+                        offerLetters.map((offer: AppDocument) => (
+                          <PremiumCard key={offer._id}  className="overflow-hidden">
+                            <div className="relative">
+                              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-full blur-3xl" />
+                              <div className="p-6 md:p-8">
+                                <div className="flex flex-wrap items-start justify-between gap-4">
+                                  <div className="flex items-start gap-4">
+                                    <div className="w-14 h-14 rounded bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg">
+                                      <Trophy size={28} className="text-white" />
+                                    </div>
+                                    <div>
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <Sparkles size={14} className="text-emerald-500" />
+                                        <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Offer Received</span>
+                                      </div>
+                                      <h2 className="text-2xl font-bold text-slate-800">{offer.name}</h2>
+                                      <p className="text-slate-500 text-sm mt-1 max-w-lg">{offer.description || "Congratulations! You've been offered admission to this program."}</p>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-3">
+                                    {offer.docUrl && (
+                                      <>
+                                        <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${offer.docUrl}`} target="_blank" className="inline-flex items-center gap-2 px-4 py-2  bg-emerald-600 text-white hover:bg-emerald-700 transition text-sm font-medium shadow-md">
+                                          <Eye size={16} /> View Offer
+                                        </a>
+                                        <a href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}${offer.docUrl}`} download className="inline-flex items-center gap-2 px-4 py-2  border border-slate-200 text-slate-700 hover:bg-slate-50 transition">
+                                          <Download size={16} /> Download
+                                        </a>
+                                      </>
+                                    )}
+                                    <button onClick={() => { setEditingDocId(offer._id); setShowDocUpload(true); }} className="p-2  text-slate-400 hover:text-orange-600 hover:bg-orange-50 transition">
+                                      <Edit size={16} />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-4 border-t border-slate-100">
+                                  <div className="flex items-center gap-2">
+                                    <Calendar size={14} className="text-emerald-600" />
+                                    <span className="text-xs text-slate-500">Offer Expiry: {offer?.extra?.endDate}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Clock size={14} className="text-amber-600" />
+                                    <span className="text-xs text-amber-700 font-medium">{offer.required === "required" ? "Conditional Offer" : "Unconditional Offer"}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <StatusPill status={offer.status || "Pending"} size="sm" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </PremiumCard>
+                        ))
+                      ) : (
+                        <div className="text-center py-20 bg-white rounded border-2 border-dashed border-slate-200">
+                          <div className="w-20 h-20 bg-slate-100 rounded flex items-center justify-center mx-auto mb-4">
+                            <Trophy size={36} className="text-slate-300" />
+                          </div>
+                          <p className="text-base font-semibold text-slate-600">No Offers Yet</p>
+                          <p className="text-sm text-slate-400 mt-1">Click below to send an admission offer</p>
+                        </div>
+                      )}
+                </div>
+              </div>
+            </PremiumCard>
           </div>
-        </PremiumCard>
-      </div>
-    )}
+        )}
 
         {/* DOCUMENTS TAB */}
         {activeTab === "documents" && (
@@ -1370,10 +1383,10 @@ export default function ApplicationDetailPage() {
             // setFormData(p => ({ ...p, primaryStatus: application?.primaryStatus || "Started" }));
           }}
           onAdd={handleAddRequirement1}
-          // application={{ 
-          //   primaryStatus: application?.primaryStatus || "Started",
-          //   _id: id 
-          // }}
+          application={{ 
+            primaryStatus: application?.primaryStatus || "Started",
+            _id: id 
+          }}
           onStatusDataCollect={(status, description, metadata) => {      
             setStatusDescription(description);
             setStatusMetadata(metadata);
@@ -1434,22 +1447,28 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
     paymentDeadline: "",
     currency: "USD",
     offerDeadline: "",
-    program: "",
-    faculty: "",
-    startDate: "",
-    duration: "",
-    tuitionFee: "",
+    // program: "",
+    // faculty: "",
+    // startDate: "",
+    // duration: "",
+    // tuitionFee: "",
   });
 
-  // Completed specific state
-  const [completedDetails, setCompletedDetails] = useState({
+    const [completedDetails, setCompletedDetails] = useState({
     documentType: "",
     casNumber: "",
-    issuedOn: "",
-    validUntil: "",
     offerLetterTitle: "",
     offerLetterDocUrl: "",
+    documentIssuedOn: "",
+    documentValidUntil: "",
+    visaType: "",
+    visaNumber: "",
+    passportNumber: "",
+    countryOfIssue: "",
+    visaIssuedOn: "",
+    visaValidUntil: "",
   });
+
 
   const [uploadingCompletedOffer, setUploadingCompletedOffer] = useState(false);
 
@@ -1542,21 +1561,27 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
           paymentDeadline: depositDetails.paymentDeadline,
           currency: depositDetails.currency,
           offerDeadline: depositDetails.offerDeadline,
-          program: depositDetails.program,
-          faculty: depositDetails.faculty,
-          startDate: depositDetails.startDate,
-          duration: depositDetails.duration,
-          tuitionFee: depositDetails.tuitionFee,
+          // program: depositDetails.program,
+          // faculty: depositDetails.faculty,
+          // startDate: depositDetails.startDate,
+          // duration: depositDetails.duration,
+          // tuitionFee: depositDetails.tuitionFee,
         };
         break;
       case "Completed":
         metadata.completed = {
           documentType: completedDetails.documentType,
           casNumber: completedDetails.casNumber,
-          issuedOn: completedDetails.issuedOn,
-          validUntil: completedDetails.validUntil,
+          issuedOn: completedDetails.documentIssuedOn,
+          validUntil: completedDetails.documentValidUntil,
           offerLetterTitle: completedDetails.offerLetterTitle,
           offerLetterDocUrl: completedDetails.offerLetterDocUrl,
+          visaType: completedDetails.visaType,
+          visaNumber: completedDetails.visaNumber,
+          passportNumber: completedDetails.passportNumber,
+          countryOfIssue: completedDetails.countryOfIssue,
+          visaIssuedOn: completedDetails.visaIssuedOn,
+          visaValidUntil: completedDetails.visaValidUntil,
         };
         break;
     }
@@ -1593,11 +1618,11 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
         "depositAmount",
         "paymentDeadline",
         "offerDeadline",
-        "program",
-        "faculty",
-        "startDate",
-        "duration",
-        "tuitionFee",
+        // "program",
+        // "faculty",
+        // "startDate",
+        // "duration",
+        // "tuitionFee",
       ];
       const missing = required.find((field) => !depositDetails[field as keyof typeof depositDetails]?.trim());
       if (missing) {
@@ -1615,21 +1640,14 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
         toast.error("Please enter CAS number");
         return;
       }
-      if (!completedDetails.issuedOn) {
-        toast.error("Please select issued on date");
-        return;
-      }
-      if (!completedDetails.validUntil) {
-        toast.error("Please select valid until date");
-        return;
-      }
+      
     }
 
     setIsSubmitting(true);
     try {
       const metadata = buildMetadata();
       onStatusDataCollect(status, description, metadata);
-      toast.success(`Status data collected for ${status}`);
+      // toast.success(`Status data collected for ${status}`);
       onCancel();
     } catch (error) {
       toast.error("Failed to collect status data");
@@ -1814,17 +1832,17 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
                   onChange={(e) => setDepositDetails((p) => ({ ...p, depositAmount: e.target.value }))} 
                   className="px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" 
                 />
-                <select 
+                <input 
                   value={depositDetails.currency} 
                   onChange={(e) => setDepositDetails((p) => ({ ...p, currency: e.target.value }))} 
                   className="px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                >
-                  <option value="USD">USD</option>
+                />
+                  {/* <option value="USD">USD</option>
                   <option value="GBP">GBP</option>
                   <option value="EUR">EUR</option>
                   <option value="AUD">AUD</option>
                   <option value="CAD">CAD</option>
-                </select>
+                </select> */}
                 <DateInput 
                   label="Payment Deadline" 
                   value={depositDetails.paymentDeadline} 
@@ -1835,6 +1853,7 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
                   value={depositDetails.offerDeadline} 
                   onChange={(val: string) => setDepositDetails((p) => ({ ...p, offerDeadline: val }))} 
                 />
+                {/*
                 <input 
                   type="text" 
                   placeholder="Program *" 
@@ -1842,7 +1861,7 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
                   onChange={(e) => setDepositDetails((p) => ({ ...p, program: e.target.value }))} 
                   className="px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" 
                 />
-                <input 
+                 <input 
                   type="text" 
                   placeholder="Faculty *" 
                   value={depositDetails.faculty} 
@@ -1867,66 +1886,186 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
                   value={depositDetails.tuitionFee} 
                   onChange={(e) => setDepositDetails((p) => ({ ...p, tuitionFee: e.target.value }))} 
                   className="px-3 py-2 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" 
-                />
+                /> */}
               </div>
             </div>
           )}
 
-          {/* Completed Form */}
-          {status === "Completed" && (
-            <div className="space-y-4 p-4 bg-purple-50/30 rounded-lg border border-purple-100">
-              <h4 className="text-sm font-semibold text-purple-800">Completion & CAS Details</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input 
-                  type="text" 
-                  placeholder="Document Type *" 
-                  value={completedDetails.documentType} 
-                  onChange={(e) => setCompletedDetails((p) => ({ ...p, documentType: e.target.value }))} 
-                  className="px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" 
-                />
-                <input 
-                  type="text" 
-                  placeholder="CAS Number *" 
-                  value={completedDetails.casNumber} 
-                  onChange={(e) => setCompletedDetails((p) => ({ ...p, casNumber: e.target.value }))} 
-                  className="px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" 
-                />
-                <DateInput 
-                  label="Issued On" 
-                  value={completedDetails.issuedOn} 
-                  onChange={(val: string) => setCompletedDetails((p) => ({ ...p, issuedOn: val }))} 
-                />
-                <DateInput 
-                  label="Valid Until" 
-                  value={completedDetails.validUntil} 
-                  onChange={(val: string) => setCompletedDetails((p) => ({ ...p, validUntil: val }))} 
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Final Offer Letter (Optional)</label>
-                <input 
-                  type="text" 
-                  placeholder="Offer Letter Title" 
-                  value={completedDetails.offerLetterTitle} 
-                  onChange={(e) => setCompletedDetails((p) => ({ ...p, offerLetterTitle: e.target.value }))} 
-                  className="w-full mb-2 px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" 
-                />
-                <input 
-                  type="file" 
-                  accept=".pdf" 
-                  onChange={handleCompletedOfferUpload} 
-                  disabled={uploadingCompletedOffer} 
-                  className="w-full text-sm border border-purple-200 rounded-lg p-2 bg-white" 
-                />
-                {uploadingCompletedOffer && <p className="mt-2 text-xs text-purple-600">Uploading...</p>}
-                {completedDetails.offerLetterDocUrl && !uploadingCompletedOffer && (
+        {status === "Completed" && (
+          <div className="space-y-4 p-4 bg-purple-50/30 rounded-lg border border-purple-100">
+            <h4 className="text-sm font-semibold text-purple-800">
+              Completion & CAS Details
+            </h4>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                type="text"
+                placeholder="Document Type *"
+                value={completedDetails.documentType}
+                onChange={(e) =>
+                  setCompletedDetails((p) => ({
+                    ...p,
+                    documentType: e.target.value,
+                  }))
+                }
+                className="px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+              />
+
+              <input
+                type="text"
+                placeholder="CAS Number *"
+                value={completedDetails.casNumber}
+                onChange={(e) =>
+                  setCompletedDetails((p) => ({
+                    ...p,
+                    casNumber: e.target.value,
+                  }))
+                }
+                className="px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+              />
+
+              <DateInput
+                label="Issued On"
+                value={completedDetails.documentIssuedOn}
+                onChange={(val: string) =>
+                  setCompletedDetails((p) => ({
+                    ...p,
+                    documentIssuedOn: val,
+                  }))
+                }
+              />
+
+              <DateInput
+                label="Valid Until"
+                value={completedDetails.documentValidUntil}
+                onChange={(val: string) =>
+                  setCompletedDetails((p) => ({
+                    ...p,
+                    documentValidUntil: val,
+                  }))
+                }
+              />
+
+              <select
+                value={completedDetails.visaType}
+                onChange={(e) =>
+                  setCompletedDetails((p) => ({
+                    ...p,
+                    visaType: e.target.value,
+                  }))
+                }
+                className="px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+              >
+                <option value="">Select Visa Status</option>
+                <option value="true">I Have Visa</option>
+                <option value="false">Apply For Visa</option>
+              </select>
+
+              {completedDetails.visaType === "true" && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Visa Number"
+                    value={completedDetails.visaNumber}
+                    onChange={(e) =>
+                      setCompletedDetails((p) => ({
+                        ...p,
+                        visaNumber: e.target.value,
+                      }))
+                    }
+                    className="px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Passport Number"
+                    value={completedDetails.passportNumber}
+                    onChange={(e) =>
+                      setCompletedDetails((p) => ({
+                        ...p,
+                        passportNumber: e.target.value,
+                      }))
+                    }
+                    className="px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Country Of Issue"
+                    value={completedDetails.countryOfIssue}
+                    onChange={(e) =>
+                      setCompletedDetails((p) => ({
+                        ...p,
+                        countryOfIssue: e.target.value,
+                      }))
+                    }
+                    className="px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  />
+
+                  <DateInput
+                    label="Visa Issued On"
+                    value={completedDetails.visaIssuedOn}
+                    onChange={(val: string) =>
+                      setCompletedDetails((p) => ({
+                        ...p,
+                        visaIssuedOn: val,
+                      }))
+                    }
+                  />
+
+                  <DateInput
+                    label="Visa Valid Until"
+                    value={completedDetails.visaValidUntil}
+                    onChange={(val: string) =>
+                      setCompletedDetails((p) => ({
+                        ...p,
+                        visaValidUntil: val,
+                      }))
+                    }
+                  />
+                </>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                Final Offer Letter (Optional)
+              </label>
+
+              <input
+                type="text"
+                placeholder="Offer Letter Title"
+                value={completedDetails.offerLetterTitle}
+                onChange={(e) =>
+                  setCompletedDetails((p) => ({
+                    ...p,
+                    offerLetterTitle: e.target.value,
+                  }))
+                }
+                className="w-full mb-2 px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+              />
+
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={handleCompletedOfferUpload}
+                disabled={uploadingCompletedOffer}
+                className="w-full text-sm border border-purple-200 rounded-lg p-2 bg-white"
+              />
+
+              {uploadingCompletedOffer && (
+                <p className="mt-2 text-xs text-purple-600">Uploading...</p>
+              )}
+
+              {completedDetails.offerLetterDocUrl &&
+                !uploadingCompletedOffer && (
                   <p className="mt-2 text-xs text-purple-600 flex items-center gap-1">
                     <Check size={12} /> File uploaded
                   </p>
                 )}
-              </div>
             </div>
-          )}
+          </div>
+        )}
 
           {/* Description Section (common) */}
           <div className="space-y-2">
@@ -1975,7 +2114,11 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
                   description: description,
                   required: offerLetter.required as "required" | "optional",
                   docUrl: offerLetter.docUrl,
-                  docType: "offer letter"
+                  docType: "offer letter",
+                  extra : {
+                   "endDate" :  offerLetter.endDate,
+                   "issuedBy" : offerLetter.issuedBy
+                  }
                 });
                 // onStatusDataCollect(status, description, metadata);
                 validateAndSubmit();
