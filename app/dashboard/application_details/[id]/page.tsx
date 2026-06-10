@@ -1558,10 +1558,7 @@ export default function ApplicationDetailPage() {
           }}
 
           onAdd={handleAddRequirement1}
-          application={{ 
-            primaryStatus: application?.primaryStatus || "Started",
-            _id: id 
-          }}
+          application={application}
           onStatusDataCollect={(status, description, metadata) => {      
             setStatusDescription(description);
             setStatusMetadata(metadata);
