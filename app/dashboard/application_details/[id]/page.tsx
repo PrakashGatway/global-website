@@ -539,6 +539,8 @@ export default function ApplicationDetailPage() {
   const [description, setdescription] = useState(); 
   const [statusDescription, setStatusDescription] = useState("");
   const [showpopup,setShowpopup] = useState<Boolean>();
+  const [showpopup1,setShowpopup1] = useState<any>();
+
 
   // Add state for status metadata
   const [statusMetadata, setStatusMetadata] = useState<any>(null);
@@ -960,7 +962,21 @@ export default function ApplicationDetailPage() {
     { id: "comments", label: "Comments", icon: MessageCircle, color: "text-pink-600" },
   ];
 
-  const offerLetters = formData.documents.filter((doc: AppDocument) => doc.docType === "offer letter" && doc.type === "ooshas");
+  const offerLetters = formData.documents
+  // .filter((doc: AppDocument) => doc.docType === "offer letter" && doc.type === "ooshas");
+  async function handleOfferStatusChange(id,value){
+    try {
+      const res = await axiosInstance.put(`/applications/documents/${application?._id}/${id}`, { status: value })
+        if (res.data.success) {
+          setSuccess("Offer letter status updated!");
+          setTimeout(() => setSuccess(""), 2000);
+          await fetchApplication();
+          await fetchActivities();
+        }
+    } catch (error) {
+      setError("Failed to update offer letter status");
+    }
+  }
 
   if (pageLoading) {
     return (
@@ -1376,9 +1392,10 @@ export default function ApplicationDetailPage() {
                                         </a>
                                       </>
                                     )}
-                                    <button onClick={() => { setEditingDocId(offer._id); setShowDocUpload(true); }} className="p-2  text-slate-400 hover:text-orange-600 hover:bg-orange-50 transition">
+                                    {showpopup1 !== offer._id  &&
+                                    <button onClick={() => {setShowpopup1(offer._id) }} className="p-2 z-9 text-slate-400 hover:text-orange-600 hover:bg-orange-50 transition">
                                       <Edit size={16} />
-                                    </button>
+                                    </button>}
                                   </div>
                                 </div>
 
@@ -1391,9 +1408,23 @@ export default function ApplicationDetailPage() {
                                     <Clock size={14} className="text-amber-600" />
                                     <span className="text-xs text-amber-700 font-medium">{offer.required === "required" ? "Conditional Offer" : "Unconditional Offer"}</span>
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    <StatusPill status={offer.status || "Pending"} size="sm" />
-                                  </div>
+                                  {showpopup1 === offer._id ?
+                                  
+                                    <select className="text-sm px-3 py-1 border border-slate-200 z-9 focus:ring-2 focus:ring-orange-400 bg-white"
+                                    value={offer.status || ""}
+                                    onChange={(e) => handleOfferStatusChange(offer._id, e.target.value)}
+                                    >
+                                      <option value="">Select Status</option>
+                                      <option value="Approved">Approved</option>
+                                      <option value="Rejected">Rejected</option>
+                                    </select>
+                                    :
+                                   (
+                                    <div className="flex items-center gap-2">
+                                      <StatusPill status={offer.status || "Pending"} size="sm" />
+                                    </div>
+                                  )
+                                }
                                 </div>
                               </div>
                             </div>

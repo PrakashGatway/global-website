@@ -585,7 +585,7 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
                     {recommendedPrograms.length > 0 && (
                       <div className="text-left">
                         <h3 className="text-md font-semibold text-gray-900 mb-3">
-                          Recommended Programs By KC
+                          Recommended Programs By Ooshas
                         </h3>
                         <div className="space-y-4">
                           {recommendedPrograms.map((program, idx) => (
