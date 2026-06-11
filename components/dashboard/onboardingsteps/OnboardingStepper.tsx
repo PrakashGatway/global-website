@@ -60,10 +60,10 @@ export default function OnboardingStepper() {
     }
     setIsSubmitting(true)
     try {
-      const response = await axiosInstance.put('/auth/profile', { preferences: payload , nationality: allValues?.nationality })
+      const response = await axiosInstance.put('/auth/profile', { preferences: payload, nationality: allValues?.nationality })
 
       if (response.data.success) {
-        window.location.href ="/dashboard"
+        window.location.href = "/dashboard"
 
       }
     } catch (error) {

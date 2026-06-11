@@ -300,17 +300,17 @@ export default function CoursesPage() {
     const key = level?.toLowerCase() || 'undergraduate'
     return styles[key as keyof typeof styles] || styles.undergraduate
   }
-     
-  
+
+
 
   return (
-    <main className="flex-1 overflow-y-auto max-w-7xl mx-auto px-4">
-         
-        
+    <main className="flex-1 overflow-y-auto  px-4">
+
+
       <div className="space-y-4">
-        
+
         {/* Hero Section */}
-    <ProgramHeader searchQuery ={searchQuery} setSearchQuery={setSearchQuery} />
+        <ProgramHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
         {/* Search & Filter Bar */}
         {/* <div className="flex flex-col sm:flex-row gap-4">
@@ -353,273 +353,291 @@ export default function CoursesPage() {
           </motion.div>
         )}
 
-         
+
 
         {/* Courses Grid */}
-       <div className="flex flex-col lg:flex-row gap-6 items-start">
-  {/* ================= LEFT SIDEBAR: FILTERS ================= */}
- <ProgramFilters
-  filters={filters}
-  handleFilterChange={handleFilterChange}
-  clearFilters={clearFilters}
-  getActiveFilterCount={getActiveFilterCount}
-  countries={countries}
-  universities={universities}
-  categories={categories}
-  studyModes={studyModes}
-  levels={levels}
-  showFilters={showFilters}
-  setShowFilters={setShowFilters}
-/>
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          {/* ================= LEFT SIDEBAR: FILTERS ================= */}
+          <ProgramFilters
+            filters={filters}
+            handleFilterChange={handleFilterChange}
+            clearFilters={clearFilters}
+            getActiveFilterCount={getActiveFilterCount}
+            countries={countries}
+            universities={universities}
+            categories={categories}
+            studyModes={studyModes}
+            levels={levels}
+            showFilters={showFilters}
+            setShowFilters={setShowFilters}
+          />
 
-  {/* ================= RIGHT CONTENT: COURSE GRID ================= */}
-  <div className="flex-1 w-full">
-    <motion.div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
-      {loading ? (
-        // Enhanced Skeleton Loading
-        Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="bg-card border border-border rounded-2xl overflow-hidden animate-pulse">
-            <div className="h-32 bg-gradient-to-br from-muted to-muted/50"></div>
-            <div className="p-6 space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="w-12 h-12 bg-muted rounded-xl"></div>
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 w-32 bg-muted rounded"></div>
-                  <div className="h-3 w-24 bg-muted rounded"></div>
-                </div>
+          {/* ================= RIGHT CONTENT: COURSE GRID ================= */}
+         <div className="flex-1 w-full">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+    {loading ? (
+      // Compact Skeleton Loading
+      Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="bg-white border border-gray-200 rounded-lg overflow-hidden animate-pulse">
+          <div className="p-4 space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-12 h-12 bg-gray-100 rounded-lg"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-28 bg-gray-100 rounded"></div>
+                <div className="h-3 w-20 bg-gray-100 rounded"></div>
               </div>
-              <div className="space-y-2">
-                <div className="h-3 w-full bg-muted rounded"></div>
-                <div className="h-3 w-3/4 bg-muted rounded"></div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="h-12 bg-muted rounded-lg"></div>
-                <div className="h-12 bg-muted rounded-lg"></div>
-              </div>
-              <div className="h-10 bg-muted rounded-lg"></div>
             </div>
+            <div className="space-y-2">
+              <div className="h-3 w-full bg-gray-100 rounded"></div>
+              <div className="h-3 w-3/4 bg-gray-100 rounded"></div>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="h-16 bg-gray-100 rounded-lg"></div>
+              <div className="h-16 bg-gray-100 rounded-lg"></div>
+              <div className="h-16 bg-gray-100 rounded-lg"></div>
+            </div>
+            <div className="h-9 bg-gray-100 rounded-lg"></div>
           </div>
-        ))
-      ) : courses.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="col-span-full text-center py-16"
+        </div>
+      ))
+    ) : courses.length === 0 ? (
+      <div className="col-span-full text-center py-12">
+        <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+          <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">No programs found</h3>
+        <p className="text-gray-500 text-sm">Try adjusting your search or filters</p>
+        <button
+          onClick={clearFilters}
+          className="mt-5 px-5 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
         >
-          <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
-            <Search className="w-12 h-12 text-gray-800" />
-          </div>
-          <h3 className="text-2xl font-bold mb-2">No programs found</h3>
-          <p className="text-gray-800">Try adjusting your search or filters to find what you're looking for</p>
-          <button
-            onClick={clearFilters}
-            className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all duration-300"
+          Clear all filters
+        </button>
+      </div>
+    ) : (
+      courses.map((course, index) => {
+        const levelStyles = getLevelStyles(course.level);
+        return (
+          <div
+            key={course._id}
+            className="fade-in-up"
+            style={{ animationDelay: `${index * 0.05}s` }}
           >
-            Clear all filters
-          </button>
-        </motion.div>
-      ) : (
-  courses.map((course, index) => {
-    const levelStyles = getLevelStyles(course.level)
-    return (
-      <motion.div
-        key={course._id}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.05 }}
-        whileHover={{ y: -8 }}
-        className="group relative"
-      >
-        {/* Main Card Container - Glass morphism effect */}
-        <div className="relative bg-white/90 backdrop-blur-sm border border-gray-200/80  overflow-hidden hover:shadow-2xl transition-all duration-500 hover:border-primary/30">
-          
-          {/* Premium Gradient Accent Line */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary/70 to-transparent" />
-          
-          {/* Content Wrapper */}
-          <div className="p-6">
-            
-            {/* University & Course Header */}
-            <div className="flex gap-4 mb-5">
-              {/* Logo Container with Glass Effect */}
-              <div className="relative flex-shrink-0">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent rounded-2xl blur-xl" />
-                <div className="relative w-20 h-20 bg-white rounded-2xl shadow-md border border-gray-100 flex items-center justify-center p-2 transition-all duration-300 group-hover:shadow-lg group-hover:border-primary/20">
+            {/* Compact Card */}
+            <div className="bg-white border border-gray-200 rounded-lg p-4 transition-all duration-200 hover:border-primary hover:shadow-md hover:-translate-y-0.5 h-full flex flex-col">
+              
+              {/* Header */}
+              <div className="flex gap-3 mb-3">
+                {/* Logo */}
+                <div className="flex-shrink-0">
                   {course.university?.uni_logo ? (
                     <img
                       src={course.university?.uni_logo}
                       alt={course.university?.name}
-                      className="w-full h-full object-contain"
+                      className="w-14 h-14 object-contain border border-gray-200 rounded-lg p-1.5 bg-gray-50"
                     />
                   ) : (
-                    <Building2 className="w-10 h-10 text-gray-400" />
+                    <div className="w-14 h-14 border border-gray-200 rounded-lg flex items-center justify-center bg-gray-50">
+                      <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
                   )}
+                </div>
+
+                {/* Course Info */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900 line-clamp-2 text-sm leading-tight mb-0.5">
+                    {course.name}
+                  </h3>
+                  <p className="text-xs font-medium text-gray-600 truncate mb-1">
+                    {course.university?.name}
+                  </p>
+                  <div className="flex items-center gap-1">
+                    <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span className="text-xs text-gray-500 truncate">
+                      {course.university?.city}, {course.university?.country}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Course Info */}
-              <div className="flex-1 min-w-0 pt-1">
-                <h3 className="font-bold text-lg line-clamp-2 text-gray-900 group-hover:text-primary transition-colors duration-300 mb-1">
-                  {course.name}
-                </h3>
-                <p className="text-sm font-medium text-gray-700 truncate">
-                  {course.university?.name}
-                </p>
-                <div className="flex items-center gap-1 mt-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-primary/70" />
-                  <p className="text-xs text-gray-600 truncate">
-                    {course.university?.city}, {course.university?.country}
+              {/* Description */}
+              {course.description && (
+                <div className="mb-3">
+                  <div className="w-6 h-0.5 bg-primary rounded-full mb-1.5"></div>
+                  <p className="text-xs text-gray-600 leading-relaxed line-clamp-2" title={course.description}>
+                    {course.description}
+                  </p>
+                </div>
+              )}
+
+              {/* Key Details - Compact Grid */}
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                {/* Tuition Fee */}
+                <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-[11px] font-medium text-gray-500">Tuition</span>
+                  </div>
+                  <p className="font-bold text-gray-900 text-xs">
+                    {formatCurrency(course.tuitionFee || 0, course.currency)}
+                  </p>
+                  <p className="text-[10px] text-gray-400">/year</p>
+                </div>
+
+                {/* Duration */}
+                <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <svg className="w-3 h-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-[11px] font-medium text-gray-500">Duration</span>
+                  </div>
+                  <p className="font-semibold text-gray-800 text-xs">
+                    {course.duration || 'N/A'}
+                  </p>
+                </div>
+
+                {/* Application Fee */}
+                <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
+                  <div className="flex items-center gap-1 mb-0.5">
+                    <svg className="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span className="text-[11px] font-medium text-gray-500">App. Fee</span>
+                  </div>
+                  <p className="font-semibold text-gray-800 text-xs">
+                    {formatCurrency(course.applicationFee || 0, course.currency)}
                   </p>
                 </div>
               </div>
-            </div>
 
-            {/* Description with Enhanced Styling */}
-            {course.description && (
-              <div className="relative mb-5">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary/40 to-primary/10 rounded-full" />
-                <p className="text-gray-600 text-sm leading-relaxed line-clamp-2 pl-3" title={course.description}>
-                  {course.description}
-                </p>
-              </div>
-            )}
-
-            {/* Key Details - Modern Card Grid */}
-            <div className="grid grid-cols-3 gap-3 mb-5">
-              {/* Tuition Fee */}
-              <div className="bg-gradient-to-br from-blue-50/50 to-transparent rounded-xl p-2.5 border border-blue-100/50">
-                <div className="flex items-center gap-1.5 mb-1">
-                  <IndianRupeeIcon className="w-3.5 h-3.5 text-primary" />
-                  <span className="text-xs font-medium text-gray-600">Tuition</span>
-                </div>
-                <p className="font-bold text-primary-dark text-sm">
-                  {formatCurrency(course.tuitionFee || 0, course.currency)}
-                </p>
-                <p className="text-xs text-gray-500">/year</p>
-              </div>
-
-              {/* Duration */}
-              <div className="bg-gradient-to-br from-purple-50/50 to-transparent rounded-xl p-2.5 border border-purple-100/50">
-                <div className="flex items-center gap-1.5 mb-1">
-                  <Clock className="w-3.5 h-3.5 text-purple-600" />
-                  <span className="text-xs font-medium text-gray-600">Duration</span>
-                </div>
-                <p className="font-semibold text-gray-800 text-sm">
-                  {course.duration || 'N/A'}
-                </p>
-              </div>
-
-              {/* Application Fee */}
-              <div className="bg-gradient-to-br from-emerald-50/50 to-transparent rounded-xl p-2.5 border border-emerald-100/50">
-                <div className="flex items-center gap-1.5 mb-1">
-                  <FileText className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="text-xs font-medium text-gray-600">App. Fee</span>
-                </div>
-                <p className="font-semibold text-gray-800 text-sm">
-                  {formatCurrency(course.applicationFee || 0, course.currency)}
-                </p>
-              </div>
-            </div>
-
-            {/* Study Mode & Category Tags */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              {course.studyMode && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-blue-600/5 rounded-xl text-xs font-semibold text-blue-700 border border-blue-200/50">
-                  <Briefcase className="w-3.5 h-3.5" />
-                  {course.studyMode}
-                </span>
-              )}
-
-              {course.category?.name && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl text-xs font-semibold text-primary border border-primary/20">
-                  <BookOpen className="w-3.5 h-3.5" />
-                  {course.category.name}
-                </span>
-              )}
-            </div>
-
-            {/* Tags with Modern Styling */}
-            {course.tags && course.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-5">
-                {course.tags.slice(0, 3).map((tag, i) => (
-                  <span
-                    key={i}
-                    className="px-2.5 py-1 bg-gray-100/80 rounded-lg text-xs text-gray-700 border border-gray-200 font-medium hover:bg-gray-200/80 transition-colors cursor-default"
-                  >
-                    <Tag className="w-3 h-3 inline mr-1 text-gray-500" />
-                    {tag}
+              {/* Study Mode & Category - Compact */}
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {course.studyMode && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-[11px] font-medium border border-blue-200">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    {course.studyMode}
                   </span>
-                ))}
-                {course.tags.length > 3 && (
-                  <span className="px-2.5 py-1 bg-gray-100/80 rounded-lg text-xs text-gray-600 border border-gray-200 font-medium">
-                    +{course.tags.length - 3} more
+                )}
+
+                {course.category?.name && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-md text-[11px] font-medium border border-primary/20">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    {course.category.name}
                   </span>
                 )}
               </div>
-            )}
 
-            {/* Intakes with Premium Design */}
-            {course.university?.intakes && course.university.intakes.length > 0 && (
-              <div className="mb-5 p-3 bg-gradient-to-r from-amber-50/40 to-transparent rounded-xl border border-amber-100/50">
-                <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-amber-600" />
-                  Upcoming Intakes
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {course.university.intakes.slice(0, 3).map((intake, index) => (
+              {/* Tags - Compact */}
+              {course.tags && course.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {course.tags.slice(0, 2).map((tag, i) => (
                     <span
-                      key={index}
-                      className="text-xs px-3 py-1.5 bg-gradient-to-r from-amber-500/10 to-amber-600/5 text-amber-700 rounded-full font-medium border border-amber-200/50"
+                      key={i}
+                      className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-[10px] font-medium border border-gray-200"
                     >
-                      📅 {intake}
+                      <svg className="w-2.5 h-2.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l5 5a2 2 0 01.586 1.414V19a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z" />
+                      </svg>
+                      {tag}
                     </span>
                   ))}
-                  {course.university.intakes.length > 3 && (
-                    <span className="text-xs px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full font-medium border border-gray-200">
-                      +{course.university.intakes.length - 3}
+                  {course.tags.length > 2 && (
+                    <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px] font-medium border border-gray-200">
+                      +{course.tags.length - 2}
                     </span>
                   )}
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Action Buttons - Modern Design */}
-            <div className="flex items-center gap-3 mt-2">
-              <Link
-                href={`/dashboard/programs/${course.slug}`}
-                className="flex-1 relative overflow-hidden group/btn"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 rounded-xl opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300" />
-                <div className="relative px-4 py-2.5 bg-primary rounded-xl text-white font-semibold text-sm text-center transition-all duration-300 group-hover/btn:shadow-lg group-hover/btn:scale-[1.02]">
-                  View Details
+              {/* Intakes - Compact */}
+              {course.university?.intakes && course.university.intakes.length > 0 && (
+                <div className="mb-3 p-2 bg-amber-50 rounded-md border border-amber-200">
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <svg className="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-[11px] font-semibold text-gray-700">Intakes</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {course.university.intakes.slice(0, 2).map((intake, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[11px] px-2 py-1 bg-amber-100 text-amber-700 rounded-full font-medium"
+                      >
+                        {intake}
+                      </span>
+                    ))}
+                    {course.university.intakes.length > 2 && (
+                      <span className="text-[11px] px-2 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">
+                        +{course.university.intakes.length - 2}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </Link>
-              
-              <button
-                onClick={() => {
-                  setSelectedCourse(course)
-                  setIsModalOpen(true)
-                }}
-                className="flex-1 px-4 py-2.5 bg-transparent border-2 border-primary/30 text-primary rounded-xl font-semibold text-sm transition-all duration-300 hover:bg-primary hover:text-white hover:border-primary hover:shadow-lg hover:scale-[1.02]"
-              >
-                Apply Now →
-              </button>
-            </div>
-          </div>
+              )}
 
-          {/* Hover Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/0 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-          
-          {/* Subtle Border Glow on Hover */}
-          <div className="absolute inset-0 rounded-3xl pointer-events-none group-hover:shadow-[0_0_0_2px_rgba(37,99,235,0.2)] transition-shadow duration-300" />
-        </div>
-      </motion.div>
-    )
-  })
-)}
-    </motion.div>
+              {/* Action Buttons - Compact */}
+              <div className="flex items-center gap-2 mt-auto pt-1">
+                <a
+                  href={`/dashboard/programs/${course.slug}`}
+                  className="flex-1 text-center px-3 py-1.5 bg-primary text-white rounded-md text-xs font-medium transition-all duration-200 hover:bg-primary/90"
+                >
+                  View Details
+                </a>
+
+                <button
+                  onClick={() => {
+                    setSelectedCourse(course);
+                    setIsModalOpen(true);
+                  }}
+                  className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-transparent border border-primary/40 text-primary rounded-md text-xs font-medium transition-all duration-200 hover:bg-primary hover:text-white"
+                >
+                  Apply
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <style jsx>{`
+              @keyframes fadeInUp {
+                from {
+                  opacity: 0;
+                  transform: translateY(15px);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
+              }
+              
+              .fade-in-up {
+                opacity: 0;
+                animation: fadeInUp 0.4s ease forwards;
+              }
+            `}</style>
+          </div>
+        );
+      })
+    )}
   </div>
 </div>
+        </div>
 
         {/* Infinite Scroll Loader */}
         <div ref={observerTarget} className="py-8">

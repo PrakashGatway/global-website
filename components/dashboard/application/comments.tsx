@@ -165,7 +165,7 @@ export default function Comments({ application, profile }) {
     <div ref={containerRef} className="p-4">
         {isCompact ? (
             // CARD UI - With scroll
-          <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+          <div className="space-y-4 max-h-[200px] overflow-y-auto pr-2">
   {messageList?.length > 0 ? (
     messageList.map((item, index) => (
       <motion.div

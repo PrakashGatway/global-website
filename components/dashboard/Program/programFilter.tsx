@@ -31,6 +31,7 @@ import CategoryIcon from "@mui/icons-material/Category";
 import WorkIcon from "@mui/icons-material/Work";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import ClearIcon from "@mui/icons-material/Clear";
+import { useGlobal } from "@/src/statecontext";
 
 export default function ProgramFilters({
   filters,
@@ -48,7 +49,8 @@ export default function ProgramFilters({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
-  console.log(countries)
+  const {allProfile} = useGlobal()
+
 
   // Reusable MUI Select Component for Filters
  const FilterSelect = ({ label, icon, options, value, onChange, placeholder }) => {

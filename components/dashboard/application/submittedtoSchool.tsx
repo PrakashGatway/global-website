@@ -13,6 +13,8 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
   const [showActionModal, setShowActionModal] = useState(false);
   const [actionType, setActionType] = useState("");
   const [rejectionReason, setRejectionReason] = useState("");
+  const [hasvisa, sethasvisa] = useState(false)
+  const [visa, setvisa] = useState(false)
 
   const handleDownload = async () => {
     const fileUrl = fileBaseurl(application?.documents?.[0]?.docUrl);
@@ -33,6 +35,14 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
     window.URL.revokeObjectURL(url);
   };
 
+  const [formData, setFormData] = useState({
+    visaType: "",
+    visaNumber: "",
+    passportNumber: "",
+    countryOfIssue: "",
+    visaIssuedOn: "",
+    visaValidUntil: "",
+  });
 
   const submitStatus = async () => {
     try {
@@ -78,7 +88,6 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
       ? JSON.parse(allProfile?.profile?.documents)
       : allProfile?.profile?.documents;
 
-  console.log(Parsedocuments);
 
   const documentList = Object.values(Parsedocuments || {});
 
@@ -112,6 +121,43 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
   const completeDetail = statusDetail.find((item) =>
     item.status === "Completed"
   )
+
+const handleSelectionVisa = async () => {
+  try {
+    if (hasvisa === false) {
+      const res = await axiosInstance.post("/visa", {
+        userId: allProfile?.data?._id,
+        applicationId: application?._id,
+        country: application?.country,
+        course: application?.course?._id,
+      });
+
+      console.log(res.data);
+    } else {
+      const res = await axiosInstance.put(
+        `/applications/${application?._id}`,
+        {
+          isVisa: true,
+          visaDetails: {
+            visaType: formData.visaType,
+            visaNumber: formData.visaNumber,
+            passportNumber: formData.passportNumber,
+            countryOfIssue: formData.countryOfIssue,
+            visaIssuedOn: formData.visaIssuedOn,
+            visaValidUntil: formData.visaValidUntil,
+          },
+        }
+      );
+
+      console.log(res.data);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+
 
 
   const downloadCASLetter = () => {
@@ -883,13 +929,13 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                     </p>
                     <p className="font-semibold">
                       {
-                        activity?.find(
-                          item => item.newValue === "OfferReceived"
-                        )?.createdAt &&
+                        statusDetail?.find(
+                          item => item.status === "OfferReceived"
+                        )?.updatedAt &&
                         new Date(
-                          activity.find(
-                            item => item.newValue === "OfferReceived"
-                          ).createdAt
+                          statusDetail.find(
+                            item => item.status === "OfferReceived"
+                          )?.updatedAt
                         ).toLocaleDateString("en-IN")
                       }
                     </p>
@@ -919,7 +965,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                       Issued By
                     </p>
                     <p className="font-semibold">
-                      Admissions Office
+                      {statusDetail?.find(item => item?.status === "OfferReceived")?.metadata?.offerLetter?.issuedBy}
                     </p>
 
                   </div>
@@ -1218,7 +1264,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
           {showPreview && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-white w-[90%] max-w-5xl h-[90vh] rounded-lg overflow-hidden">
+              <div className="bg-white w-[90%] max-w-5xl h-[90vh] rounded-lg overflow-hidden animate-in fade-in zoom-in duration-300">
 
                 <div className="flex justify-between items-center border-b px-6 py-4">
                   <h3 className="font-semibold text-lg">
@@ -1254,7 +1300,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
           {showActionModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-xl w-full max-w-lg p-6">
+              <div className="bg-white rounded-xl w-full max-w-lg p-6 animate-in fade-in zoom-in duration-300">
                 <h3 className="text-xl font-semibold text-slate-800">
                   Offer Letter Decision
                 </h3>
@@ -1265,7 +1311,11 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                 <div className="flex gap-3 mt-6">
                   <button
-                    onClick={() => setActionType("approve")}
+                    onClick={() => {
+                      setActionType("approve")
+                      setvisa(true)
+                      setShowActionModal(false)
+                    }}
                     className={`flex-1 py-3 border ${actionType === "approve"
                       ? "border-green-500 bg-green-50 text-green-700"
                       : "border-slate-200"
@@ -1322,6 +1372,209 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                       }`}
                   >
                     Submit Decision
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {visa && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-300">
+                <h2 className="text-xl font-bold text-center text-gray-800 mb-2">
+                  Visa Information
+                </h2>
+
+                <p className="text-sm text-gray-500 text-center mb-6">
+                  Do you currently have a valid Visa?
+                </p>
+
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 cursor-pointer border border-gray-200 rounded-xl px-4 py-4 hover:border-green-500 hover:bg-green-50 transition-all">
+                    <input
+                      type="radio"
+                      name="hasVisa"
+                      checked={hasvisa === true}
+                      onChange={() => {
+                        sethasvisa(true)
+                        setvisa(false)
+                      }}
+                      className="w-4 h-4"
+                    />
+                    <span className="font-medium text-gray-700">
+                      Yes, I have a Visa
+                    </span>
+                  </label>
+
+                  <label className="flex items-center gap-3 cursor-pointer border border-gray-200 rounded-xl px-4 py-4 hover:border-red-500 hover:bg-red-50 transition-all">
+                    <input
+                      type="radio"
+                      name="hasVisa"
+                      checked={hasvisa === false}
+                      onChange={() => sethasvisa(false)}
+                      className="w-4 h-4"
+                    />
+                    <span className="font-medium text-gray-700">
+                      No, I don't have a Visa
+                    </span>
+                  </label>
+                </div>
+
+                <div className="flex justify-center mt-6">
+                  <button
+                    onClick={() => {
+                      setvisa(false)
+                      handleSelectionVisa()
+                    }}
+                    className="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {hasvisa && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-300">
+                <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">
+                  Visa Details
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Visa Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Visa Type
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.visaType}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          visaType: e.target.value,
+                        })
+                      }
+                      placeholder="Student Visa"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Visa Number */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Visa Number
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.visaNumber}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          visaNumber: e.target.value,
+                        })
+                      }
+                      placeholder="Enter Visa Number"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Passport Number */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Passport Number
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.passportNumber}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          passportNumber: e.target.value,
+                        })
+                      }
+                      placeholder="Enter Passport Number"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Country of Issue */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Country of Issue
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.countryOfIssue}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          countryOfIssue: e.target.value,
+                        })
+                      }
+                      placeholder="Country"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Visa Issued On */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Visa Issued On
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.visaIssuedOn}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          visaIssuedOn: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                    />
+                  </div>
+
+                  {/* Visa Valid Until */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Visa Valid Until
+                    </label>
+                    <input
+                      type="date"
+                      value={formData.visaValidUntil}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          visaValidUntil: e.target.value,
+                        })
+                      }
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3 mt-6">
+                  <button
+                    onClick={() => {
+                      sethasvisa(false)
+                      setActionType("")
+                    }}
+                    className="px-5 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    className="px-5 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+                    onClick={()=>{
+                      handleSelectionVisa()
+                      sethasvisa(false)
+                    }}
+                  >
+                    Save Details
                   </button>
                 </div>
               </div>
