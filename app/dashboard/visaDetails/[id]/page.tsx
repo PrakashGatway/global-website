@@ -735,7 +735,7 @@ export default function VisaJourneyEditPage() {
             <h2 className="text-lg font-bold text-gray-800 mb-4">Basic Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">User Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">User Name</label>
                 <input
                   type="text"
                   name="userId"
@@ -746,7 +746,7 @@ export default function VisaJourneyEditPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Application ID</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Application ID</label>
                 <input
                   type="text"
                   name="applicationId"
@@ -757,7 +757,7 @@ export default function VisaJourneyEditPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Country</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
                 <input
                   type="text"
                   name="country"
@@ -768,7 +768,7 @@ export default function VisaJourneyEditPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Course</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Course</label>
                 <input
                   type="text"
                   name="course"
@@ -779,7 +779,7 @@ export default function VisaJourneyEditPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Current Step</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Current Step</label>
                 <select
                   name="currentStep"
                   value={formData.currentStep}
@@ -907,15 +907,15 @@ function StepEditor({
           </div>
           <div>
             <h3 className="font-bold text-gray-800">{step.label}</h3>
-            <p className="text-xs text-gray-500">Route: {step.route}</p>
+            <p className="text-sm text-gray-500">Route: {step.route}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className={`text-xs px-2 py-1 rounded ${getStatusColor(step.page?.status)}`}>
+          <span className={`text-sm px-2 py-1 rounded ${getStatusColor(step.page?.status)}`}>
             {step.page?.status || "Pending"}
           </span>
           {step.progress !== undefined && (
-            <span className="text-xs text-gray-500">Progress: {step.progress}%</span>
+            <span className="text-sm text-gray-500">Progress: {step.progress}%</span>
           )}
           {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </div>
@@ -931,7 +931,7 @@ function StepEditor({
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === tab 
                     ? 'bg-[#f56e45] text-white' 
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -949,7 +949,7 @@ function StepEditor({
           {activeTab === 'basic' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Step ID</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Step ID</label>
                 <input
                   type="number"
                   value={step.id}
@@ -958,7 +958,7 @@ function StepEditor({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Route</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Route</label>
                 <input
                   type="text"
                   value={step.route}
@@ -967,7 +967,7 @@ function StepEditor({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Label</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Label</label>
                 <input
                   type="text"
                   value={step.label}
@@ -976,7 +976,7 @@ function StepEditor({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Progress (%)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Progress (%)</label>
                 <input
                   type="number"
                   value={step.progress || 0}
@@ -993,7 +993,7 @@ function StepEditor({
           {activeTab === 'page' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-xs font-medium text-gray-700 mb-1">Page Title</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Page Title</label>
                 <input
                   type="text"
                   value={step.page?.title || ""}
@@ -1002,7 +1002,7 @@ function StepEditor({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Page Status</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Page Status</label>
                 <select
                   value={step.page?.status || "Pending"}
                   onChange={(e) => onPageChange(step.id, "status", e.target.value)}
@@ -1014,7 +1014,7 @@ function StepEditor({
                 </select>
               </div>
               <div className="md:col-span-2">
-                <label className="block text-xs font-medium text-gray-700 mb-1">Subtitle</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
                 <input
                   type="text"
                   value={step.page?.subtitle || ""}
@@ -1030,7 +1030,7 @@ function StepEditor({
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Banner Type</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Banner Type</label>
                   <select
                     value={step.banner?.type || "info"}
                     onChange={(e) => onBannerChange(step.id, "type", e.target.value)}
@@ -1042,7 +1042,7 @@ function StepEditor({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Banner Title</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Banner Title</label>
                   <input
                     type="text"
                     value={step.banner?.title || ""}
@@ -1051,7 +1051,7 @@ function StepEditor({
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Banner Subtitle</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Banner Subtitle</label>
                   <input
                     type="text"
                     value={step.banner?.subtitle || ""}
@@ -1060,7 +1060,7 @@ function StepEditor({
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Banner Action Text</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Banner Action Text</label>
                   <input
                     type="text"
                     value={step.banner?.action || ""}
@@ -1069,7 +1069,7 @@ function StepEditor({
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">File Upload (Optional)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">File Upload (Optional)</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="file"
@@ -1090,7 +1090,7 @@ function StepEditor({
                     )}
                   </div>
                   {step.banner?.fileName && (
-                    <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                    <p className="text-sm text-green-600 mt-1 flex items-center gap-1">
                       <CheckCircle size={12} />
                       Uploaded: {step.banner.fileName}
                     </p>
@@ -1100,7 +1100,7 @@ function StepEditor({
                       href={fileBaseurl(step.banner.fileUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-blue-600 hover:underline flex items-center gap-1 mt-1"
+                      className="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-1"
                     >
                       <LinkIcon size={12} />
                       View Uploaded File
@@ -1121,7 +1121,7 @@ function StepEditor({
                 <button
                   type="button"
                   onClick={() => onAddSectionDetail(step.id, "overview")}
-                  className="text-xs text-[#f56e45] hover:underline flex items-center gap-1"
+                  className="text-sm text-[#f56e45] hover:underline flex items-center gap-1"
                 >
                   <Plus size={12} /> Add Detail
                 </button>
@@ -1135,18 +1135,18 @@ function StepEditor({
                         value={detail.label}
                         onChange={(e) => onSectionDetailChange(step.id, "overview", idx, "label", e.target.value)}
                         placeholder="Label"
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                       />
                       <input
                         type="text"
                         value={detail.value}
                         onChange={(e) => onSectionDetailChange(step.id, "overview", idx, "value", e.target.value)}
                         placeholder="Value"
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                       />
                     </div>
                     <div className="flex items-center gap-2">
-                      <label className="flex items-center gap-1 text-xs whitespace-nowrap">
+                      <label className="flex items-center gap-1 text-sm whitespace-nowrap">
                         <input
                           type="checkbox"
                           checked={detail.highlight || false}
@@ -1178,7 +1178,7 @@ function StepEditor({
                 <button
                   type="button"
                   onClick={() => onAddImportantInfo(step.id)}
-                  className="text-xs text-[#f56e45] hover:underline flex items-center gap-1"
+                  className="text-sm text-[#f56e45] hover:underline flex items-center gap-1"
                 >
                   <Plus size={12} /> Add Info
                 </button>
@@ -1193,19 +1193,19 @@ function StepEditor({
                           value={info.title || ""}
                           onChange={(e) => onImportantInfoChange(step.id, idx, "title", e.target.value)}
                           placeholder="Title"
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs bg-white"
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
                         />
                         <input
                           type="text"
                           value={info.description || ""}
                           onChange={(e) => onImportantInfoChange(step.id, idx, "description", e.target.value)}
                           placeholder="Description"
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs bg-white md:col-span-1"
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white md:col-span-1"
                         />
                         <select
                           value={info.type || "info"}
                           onChange={(e) => onImportantInfoChange(step.id, idx, "type", e.target.value)}
-                          className="px-2 py-1 border border-gray-300 rounded text-xs bg-white"
+                          className="px-2 py-1 border border-gray-300 rounded text-sm bg-white"
                         >
                           {importantInfoTypeOptions.map(opt => (
                             <option key={opt} value={opt}>{opt.toUpperCase()}</option>
@@ -1241,7 +1241,7 @@ function StepEditor({
                 <button
                   type="button"
                   onClick={() => onAddProgressStep(step.id)}
-                  className="text-xs text-[#f56e45] hover:underline flex items-center gap-1"
+                  className="text-sm text-[#f56e45] hover:underline flex items-center gap-1"
                 >
                   <Plus size={12} /> Add Step
                 </button>
@@ -1256,12 +1256,12 @@ function StepEditor({
                           value={progressStep.label || ""}
                           onChange={(e) => onProgressStepChange(step.id, idx, "label", e.target.value)}
                           placeholder="Step Label"
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
                         />
                         <select
                           value={progressStep.status || "pending"}
                           onChange={(e) => onProgressStepChange(step.id, idx, "status", e.target.value)}
-                          className="px-2 py-1 border border-gray-300 rounded text-xs"
+                          className="px-2 py-1 border border-gray-300 rounded text-sm"
                         >
                           <option value="pending">Pending</option>
                           <option value="in-progress">In Progress</option>
@@ -1271,7 +1271,7 @@ function StepEditor({
                           type="date"
                           value={progressStep.date || ""}
                           onChange={(e) => onProgressStepChange(step.id, idx, "date", e.target.value)}
-                          className="px-2 py-1 border border-gray-300 rounded text-xs"
+                          className="px-2 py-1 border border-gray-300 rounded text-sm"
                         />
                       </div>
                       <button
@@ -1284,7 +1284,7 @@ function StepEditor({
                     </div>
                     {progressStep.status && (
                       <div className="mt-2">
-                        <span className={`text-xs px-2 py-0.5 rounded ${getProgressStepStatusClass(progressStep.status)}`}>
+                        <span className={`text-sm px-2 py-0.5 rounded ${getProgressStepStatusClass(progressStep.status)}`}>
                           {progressStep.status.replace('-', ' ').toUpperCase()}
                         </span>
                       </div>
@@ -1310,7 +1310,7 @@ function StepEditor({
                 <button
                   type="button"
                   onClick={() => onAddStatusTimeline(step.id)}
-                  className="text-xs text-[#f56e45] hover:underline flex items-center gap-1"
+                  className="text-sm text-[#f56e45] hover:underline flex items-center gap-1"
                 >
                   <Plus size={12} /> Add Event
                 </button>
@@ -1324,12 +1324,12 @@ function StepEditor({
                           type="date"
                           value={event.date || ""}
                           onChange={(e) => onStatusTimelineChange(step.id, idx, "date", e.target.value)}
-                          className="px-2 py-1 border border-gray-300 rounded text-xs"
+                          className="px-2 py-1 border border-gray-300 rounded text-sm"
                         />
                         <select
                           value={event.status || ""}
                           onChange={(e) => onStatusTimelineChange(step.id, idx, "status", e.target.value)}
-                          className="px-2 py-1 border border-gray-300 rounded text-xs"
+                          className="px-2 py-1 border border-gray-300 rounded text-sm"
                         >
                           <option value="">Select Status</option>
                           {statusOptions.map(opt => (
@@ -1341,7 +1341,7 @@ function StepEditor({
                           value={event.description || ""}
                           onChange={(e) => onStatusTimelineChange(step.id, idx, "description", e.target.value)}
                           placeholder="Description"
-                          className="px-2 py-1 border border-gray-300 rounded text-xs md:col-span-1"
+                          className="px-2 py-1 border border-gray-300 rounded text-sm md:col-span-1"
                         />
                       </div>
                       <button
@@ -1354,7 +1354,7 @@ function StepEditor({
                     </div>
                     {event.status && (
                       <div className="mt-2">
-                        <span className={`text-xs px-2 py-0.5 rounded ${getStatusColor(event.status)}`}>
+                        <span className={`text-sm px-2 py-0.5 rounded ${getStatusColor(event.status)}`}>
                           {event.status}
                         </span>
                       </div>
@@ -1382,13 +1382,13 @@ function StepEditor({
                 </div>
                 <div className="flex-1">
                   <h4 className="font-bold text-sm">{step.banner?.title || "No banner title"}</h4>
-                  <p className="text-xs mt-0.5">{step.banner?.subtitle || "No banner subtitle"}</p>
+                  <p className="text-sm mt-0.5">{step.banner?.subtitle || "No banner subtitle"}</p>
                   {step.banner?.fileUrl && (
                     <a
                       href={fileBaseurl(step.banner.fileUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-blue-600 hover:underline flex items-center gap-1 mt-2"
+                      className="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2"
                     >
                       <Download size={12} />
                       Download Attached File
@@ -1396,19 +1396,19 @@ function StepEditor({
                   )}
                 </div>
                 {step.banner?.action && (
-                  <button className="text-xs font-medium text-[#f56e45] bg-white px-3 py-1 rounded border border-orange-200">
+                  <button className="text-sm font-medium text-[#f56e45] bg-white px-3 py-1 rounded border border-orange-200">
                     {step.banner.action}
                   </button>
                 )}
               </div>
             </div>
             <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-600">
+              <p className="text-sm text-gray-600">
                 <span className="font-medium">Status:</span> {step.page?.status || "Pending"}
               </p>
               {step.progress !== undefined && (
                 <div className="mt-2">
-                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                  <div className="flex justify-between text-sm text-gray-500 mb-1">
                     <span>Progress</span>
                     <span>{step.progress}%</span>
                   </div>
@@ -1419,10 +1419,10 @@ function StepEditor({
               )}
               {step.sections?.overview?.details && step.sections.overview.details.length > 0 && (
                 <div className="mt-3 pt-2 border-t border-gray-200">
-                  <p className="text-xs font-medium text-gray-700 mb-1">Overview Preview:</p>
+                  <p className="text-sm font-medium text-gray-700 mb-1">Overview Preview:</p>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                     {step.sections.overview.details.slice(0, 4).map((detail, idx) => (
-                      <div key={idx} className="flex justify-between text-xs">
+                      <div key={idx} className="flex justify-between text-sm">
                         <span className="text-gray-500">{detail.label}:</span>
                         <span className={detail.highlight ? "text-orange-600 font-medium" : "text-gray-700"}>
                           {detail.value}
@@ -1430,7 +1430,7 @@ function StepEditor({
                       </div>
                     ))}
                     {step.sections.overview.details.length > 4 && (
-                      <p className="text-xs text-gray-400 col-span-2 text-center mt-1">
+                      <p className="text-sm text-gray-400 col-span-2 text-center mt-1">
                         +{step.sections.overview.details.length - 4} more items
                       </p>
                     )}
@@ -1439,15 +1439,15 @@ function StepEditor({
               )}
               {(step.importantInfo && step.importantInfo.length > 0) && (
                 <div className="mt-3 pt-2 border-t border-gray-200">
-                  <p className="text-xs font-medium text-gray-700 mb-1">Important Info Preview:</p>
+                  <p className="text-sm font-medium text-gray-700 mb-1">Important Info Preview:</p>
                   <div className="space-y-1">
                     {step.importantInfo.slice(0, 2).map((info, idx) => (
-                      <div key={idx} className="text-xs">
+                      <div key={idx} className="text-sm">
                         <span className="font-medium">{info.title}:</span> {info.description}
                       </div>
                     ))}
                     {step.importantInfo.length > 2 && (
-                      <p className="text-xs text-gray-400">+{step.importantInfo.length - 2} more items</p>
+                      <p className="text-sm text-gray-400">+{step.importantInfo.length - 2} more items</p>
                     )}
                   </div>
                 </div>

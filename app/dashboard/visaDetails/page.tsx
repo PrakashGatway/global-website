@@ -413,7 +413,7 @@ export default function VisaProcessingListPage() {
                   filteredApplications.map((app) => {
                     const currentStatus = getCurrentStepStatus(app);
                     return (
-                      <tr key={app._id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={app._id} onClick={() => handleEdit(app._id)} className="coursor-pointer hover:bg-gray-50 transition-colors">
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             <FileText size={14} className="text-gray-400" />

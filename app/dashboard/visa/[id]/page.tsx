@@ -733,8 +733,8 @@ const ProgressStep = ({ step, index, total, currentStepId }) => {
         )}
       </div>
       <div className="mt-2 text-center">
-        <div className={`text-xs font-bold ${labelColor}`}>{step.label}</div>
-        <div className={`text-[10px] font-medium mt-1 ${labelColor}`}>
+        <div className={`text-sm font-bold ${labelColor}`}>{step.label}</div>
+        <div className={`text-sm font-medium mt-1 ${labelColor}`}>
           {status === 'completed' ? 'Completed' : isActive ? 'In Progress' : 'Upcoming'}
         </div>
       </div>
@@ -756,7 +756,7 @@ const DetailItem = ({ item }) => {
         <IconComponent size={14} className="text-gray-600" />
       </div>
       <div>
-        <p className="text-[10px] text-gray-500">{item.label}</p>
+        <p className="text-sm text-gray-500">{item.label}</p>
         <p className={`text-sm font-medium ${item.isHighlight ? 'text-green-600' : 'text-gray-800'}`}>
           {item.isFlag ? <span className="flex items-center gap-1"><span>🇩🇪</span> {item.value}</span> : item.value}
         </p>
@@ -769,9 +769,9 @@ const DocumentRow = ({ row, showSize = true }) => (
   <div className="flex flex-col sm:flex-row justify-between items-center py-2 border-b border-gray-50 last:border-0 gap-1">
     <div className="flex items-center gap-2 flex-1">
       <FileText size={12} className="text-gray-500" />
-      <span className="text-xs text-gray-700">{row.name}</span>
+      <span className="text-sm text-gray-700">{row.name}</span>
     </div>
-    <div className="flex items-center gap-3 sm:gap-4 text-[10px]">
+    <div className="flex items-center gap-3 sm:gap-4 text-sm">
       <span className="text-green-600 bg-green-50 px-2 py-0.5 rounded">{row.status}</span>
       <span className="text-gray-400">{row.date}</span>
       {showSize && <span className="text-gray-400">{row.size || '-'}</span>}
@@ -788,7 +788,7 @@ const QuickLinkItem = ({ item }) => {
         <div className="p-1 bg-gray-50 rounded-full">
           <IconComponent size={10} className="text-gray-500" />
         </div>
-        <span className="text-xs text-gray-600">{item.text}</span>
+        <span className="text-sm text-gray-600">{item.text}</span>
       </div>
       <ChevronDown size={10} className="text-gray-400 -rotate-90" />
     </div>
@@ -803,12 +803,12 @@ const Step1APSApplied = ({ data, currentStepId }) => {
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">{stepData.sections.overview.title}</h3>
-          <span className="text-xs text-gray-500">Updated: {stepData.sections.overview.updated}</span>
+          <span className="text-sm text-gray-500">Updated: {stepData.sections.overview.updated}</span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
           {stepData.sections.overview.details.map((detail, idx) => (
             <div key={idx}>
-              <p className="text-[10px] text-gray-500">{detail.label}</p>
+              <p className="text-sm text-gray-500">{detail.label}</p>
               <p className={`text-sm font-medium ${detail.highlight ? 'text-[#f56e45]' : 'text-gray-800'}`}>
                 {detail.value}
               </p>
@@ -819,20 +819,20 @@ const Step1APSApplied = ({ data, currentStepId }) => {
           <div className="bg-[#f56e45] rounded-full p-1">
             <CheckCircle2 size={12} className="text-white" />
           </div>
-          <span className="text-xs text-orange-800">Once your APS is approved, you will be able to start your Visa Application.</span>
+          <span className="text-sm text-orange-800">Once your APS is approved, you will be able to start your Visa Application.</span>
         </div>
       </div>
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <h3 className="font-bold text-gray-800 mb-2">{stepData.sections.whatIsThis.title}</h3>
-        <p className="text-xs text-gray-500 mb-4">{stepData.sections.whatIsThis.description}</p>
+        <p className="text-sm text-gray-500 mb-4">{stepData.sections.whatIsThis.description}</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {stepData.sections.whatIsThis.items.map((item, idx) => {
             const IconComp = iconMap[item.icon] || HelpCircle;
             return (
               <div key={idx} className="flex flex-col items-center text-center p-3 border rounded-lg hover:bg-gray-50 transition-colors">
                 <IconComp className="text-[#f56e45] mb-1" size={20} />
-                <p className="text-[10px] text-gray-600">{item.text}</p>
+                <p className="text-sm text-gray-600">{item.text}</p>
               </div>
             );
           })}
@@ -841,16 +841,16 @@ const Step1APSApplied = ({ data, currentStepId }) => {
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <h3 className="font-bold text-gray-800 mb-1">Prepare for Visa Application</h3>
-        <p className="text-xs text-gray-500 mb-4">Complete these steps while waiting for your APS result.</p>
+        <p className="text-sm text-gray-500 mb-4">Complete these steps while waiting for your APS result.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {stepData.sections.preparationCards.map((card, idx) => {
             const IconComp = iconMap[card.icon] || HelpCircle;
             return (
               <div key={idx} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="mb-3"><IconComp className="text-orange-400" size={28} /></div>
-                <h4 className="font-bold text-xs text-gray-800 mb-1">{card.title}</h4>
-                <p className="text-[10px] text-gray-500 mb-4 leading-relaxed">{card.desc}</p>
-                <button className="text-[#f56e45] text-[10px] font-bold border border-orange-200 bg-orange-50 px-3 py-1 rounded hover:bg-orange-100">{card.btnText}</button>
+                <h4 className="font-bold text-sm text-gray-800 mb-1">{card.title}</h4>
+                <p className="text-sm text-gray-500 mb-4 leading-relaxed">{card.desc}</p>
+                <button className="text-[#f56e45] text-sm font-bold border border-orange-200 bg-orange-50 px-3 py-1 rounded hover:bg-orange-100">{card.btnText}</button>
               </div>
             );
           })}
@@ -860,7 +860,7 @@ const Step1APSApplied = ({ data, currentStepId }) => {
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">{stepData.sections.documents.title}</h3>
-          <button className="text-[#f56e45] text-xs font-bold bg-orange-50 px-3 py-1 rounded">View All Documents →</button>
+          <button className="text-[#f56e45] text-sm font-bold bg-orange-50 px-3 py-1 rounded">View All Documents →</button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
           {stepData.sections.documents.columns.map((column, colIdx) => (
@@ -876,11 +876,11 @@ const Step1APSApplied = ({ data, currentStepId }) => {
                   <div key={idx} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
                     <div className="flex items-center gap-2">
                       <div className={`w-2 h-2 rounded-full ${statusColor}`}></div>
-                      <span className="text-xs font-medium text-gray-700">{doc.label}</span>
+                      <span className="text-sm font-medium text-gray-700">{doc.label}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-gray-500">{doc.status}</span>
-                      <span className="text-[10px] text-[#f56e45] cursor-pointer hover:underline">{doc.action}</span>
+                      <span className="text-sm text-gray-500">{doc.status}</span>
+                      <span className="text-sm text-[#f56e45] cursor-pointer hover:underline">{doc.action}</span>
                     </div>
                   </div>
                 );
@@ -888,7 +888,7 @@ const Step1APSApplied = ({ data, currentStepId }) => {
             </div>
           ))}
         </div>
-        <div className="mt-4 flex gap-4 text-[10px] text-gray-500">
+        <div className="mt-4 flex gap-4 text-sm text-gray-500">
           <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div> Completed</span>
           <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-yellow-500"></div> In Progress</span>
           <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-orange-400"></div> To be uploaded</span>
@@ -916,7 +916,7 @@ const Step2APSApproval = ({ data, currentStepId }) => {
             <div className="flex-1">
               <FileText size={40} className="text-green-600 mb-1" />
               <h5 className="font-bold text-sm text-gray-800">{stepData.sections.approvalDetails.certificate.title}</h5>
-              <p className="text-[10px] text-green-600 font-medium">{stepData.sections.approvalDetails.certificate.status}</p>
+              <p className="text-sm text-green-600 font-medium">{stepData.sections.approvalDetails.certificate.status}</p>
             </div>
             <div className="bg-green-50 p-2 rounded-full">
               <CheckCircle2 size={24} className="text-green-600" />
@@ -927,7 +927,7 @@ const Step2APSApproval = ({ data, currentStepId }) => {
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <h3 className="font-bold text-gray-800 mb-4">{stepData.sections.whatHappensNext.title}</h3>
-        <p className="text-xs text-gray-500 mb-6">{stepData.sections.whatHappensNext.description}</p>
+        <p className="text-sm text-gray-500 mb-6">{stepData.sections.whatHappensNext.description}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {stepData.sections.whatHappensNext.steps.map((step, idx) => {
             const IconComponent = iconMap[step.icon] || FileText;
@@ -936,8 +936,8 @@ const Step2APSApproval = ({ data, currentStepId }) => {
                 <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mb-3">
                   <IconComponent size={18} className="text-green-600" />
                 </div>
-                <h5 className="text-xs font-bold text-gray-800">{step.title}</h5>
-                <p className="text-[10px] text-gray-500 mt-1">{step.description}</p>
+                <h5 className="text-sm font-bold text-gray-800">{step.title}</h5>
+                <p className="text-sm text-gray-500 mt-1">{step.description}</p>
               </div>
             );
           })}
@@ -956,23 +956,23 @@ const Step2APSApproval = ({ data, currentStepId }) => {
             <thead>
               <tr className="border-b border-gray-100">
                 {stepData.sections.documents.columns.map((col, idx) => (
-                  <th key={idx} className="pb-2 text-[10px] font-semibold text-gray-500 text-left">{col}</th>
+                  <th key={idx} className="pb-2 text-sm font-semibold text-gray-500 text-left">{col}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {stepData.sections.documents.rows.map((row, idx) => (
                 <tr key={idx} className="border-b border-gray-50">
-                  <td className="py-2 text-xs text-gray-700">{row.name}</td>
-                  <td className="py-2"><span className="text-[10px] text-green-600 bg-green-50 px-2 py-0.5 rounded">{row.status}</span></td>
-                  <td className="py-2 text-[10px] text-gray-500">{row.remarks}</td>
+                  <td className="py-2 text-sm text-gray-700">{row.name}</td>
+                  <td className="py-2"><span className="text-sm text-green-600 bg-green-50 px-2 py-0.5 rounded">{row.status}</span></td>
+                  <td className="py-2 text-sm text-gray-500">{row.remarks}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
         <div className="mt-4 flex justify-center">
-          <button className="flex items-center gap-2 border border-orange-200 bg-orange-50 text-[#f56e45] text-xs font-medium px-4 py-2 rounded-lg">
+          <button className="flex items-center gap-2 border border-orange-200 bg-orange-50 text-[#f56e45] text-sm font-medium px-4 py-2 rounded-lg">
             <Eye size={14} /> {stepData.sections.documents.buttonText}
           </button>
         </div>
@@ -989,7 +989,7 @@ const Step3VisaApplication = ({ data, currentStepId }) => {
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">{stepData.sections.applicationInfo.title}</h3>
-          <span className="text-xs text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
+          <span className="text-sm text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
             {/* <Edit3 size={12} /> Edit */}
           </span>
         </div>
@@ -1003,14 +1003,14 @@ const Step3VisaApplication = ({ data, currentStepId }) => {
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">{stepData.sections.personalInfo.title}</h3>
-          <span className="text-xs text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
+          <span className="text-sm text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
             {/* <Edit3 size={12} /> Edit */}
           </span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
           {stepData.sections.personalInfo.items.map((item, idx) => (
             <div key={idx}>
-              <p className="text-[10px] text-gray-500">{item.label}</p>
+              <p className="text-sm text-gray-500">{item.label}</p>
               <p className="text-sm font-medium text-gray-800">{item.value}</p>
             </div>
           ))}
@@ -1020,25 +1020,25 @@ const Step3VisaApplication = ({ data, currentStepId }) => {
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">{stepData.sections.familyInfo.title}</h3>
-          <span className="text-xs text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
+          <span className="text-sm text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
             {/* <Edit3 size={12} /> Edit */}
           </span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="border border-gray-100 rounded-lg p-4">
-            <h5 className="text-xs font-bold text-gray-700 mb-3">Father's Details</h5>
+            <h5 className="text-sm font-bold text-gray-700 mb-3">Father's Details</h5>
             <div className="space-y-2">
-              <div><span className="text-[10px] text-gray-500">Name</span><p className="font-medium text-sm">{stepData.sections.familyInfo.father.name}</p></div>
-              <div><span className="text-[10px] text-gray-500">Occupation</span><p className="font-medium text-sm">{stepData.sections.familyInfo.father.occupation}</p></div>
-              <div><span className="text-[10px] text-gray-500">Phone</span><p className="font-medium text-sm">{stepData.sections.familyInfo.father.phone}</p></div>
+              <div><span className="text-sm text-gray-500">Name</span><p className="font-medium text-sm">{stepData.sections.familyInfo.father.name}</p></div>
+              <div><span className="text-sm text-gray-500">Occupation</span><p className="font-medium text-sm">{stepData.sections.familyInfo.father.occupation}</p></div>
+              <div><span className="text-sm text-gray-500">Phone</span><p className="font-medium text-sm">{stepData.sections.familyInfo.father.phone}</p></div>
             </div>
           </div>
           <div className="border border-gray-100 rounded-lg p-4">
-            <h5 className="text-xs font-bold text-gray-700 mb-3">Mother's Details</h5>
+            <h5 className="text-sm font-bold text-gray-700 mb-3">Mother's Details</h5>
             <div className="space-y-2">
-              <div><span className="text-[10px] text-gray-500">Name</span><p className="font-medium text-sm">{stepData.sections.familyInfo.mother.name}</p></div>
-              <div><span className="text-[10px] text-gray-500">Occupation</span><p className="font-medium text-sm">{stepData.sections.familyInfo.mother.occupation}</p></div>
-              <div><span className="text-[10px] text-gray-500">Phone</span><p className="font-medium text-sm text-gray-400">{stepData.sections.familyInfo.mother.phone || "N/A"}</p></div>
+              <div><span className="text-sm text-gray-500">Name</span><p className="font-medium text-sm">{stepData.sections.familyInfo.mother.name}</p></div>
+              <div><span className="text-sm text-gray-500">Occupation</span><p className="font-medium text-sm">{stepData.sections.familyInfo.mother.occupation}</p></div>
+              <div><span className="text-sm text-gray-500">Phone</span><p className="font-medium text-sm text-gray-400">{stepData.sections.familyInfo.mother.phone || "N/A"}</p></div>
             </div>
           </div>
         </div>
@@ -1047,14 +1047,14 @@ const Step3VisaApplication = ({ data, currentStepId }) => {
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">{stepData.sections.travelInfo.title}</h3>
-          <span className="text-xs text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
+          <span className="text-sm text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
             {/* <Edit3 size={12} /> Edit */}
           </span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
           {stepData.sections.travelInfo.items.map((item, idx) => (
             <div key={idx}>
-              <p className="text-[10px] text-gray-500">{item.label}</p>
+              <p className="text-sm text-gray-500">{item.label}</p>
               <p className="text-sm font-medium text-gray-800">{item.value}</p>
             </div>
           ))}
@@ -1064,14 +1064,14 @@ const Step3VisaApplication = ({ data, currentStepId }) => {
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">{stepData.sections.academicInfo.title}</h3>
-          <span className="text-xs text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
+          <span className="text-sm text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
             {/* <Edit3 size={12} /> Edit */}
           </span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
           {stepData.sections.academicInfo.items.map((item, idx) => (
             <div key={idx}>
-              <p className="text-[10px] text-gray-500">{item.label}</p>
+              <p className="text-sm text-gray-500">{item.label}</p>
               <p className="text-sm font-medium text-gray-800">{item.value}</p>
             </div>
           ))}
@@ -1081,14 +1081,14 @@ const Step3VisaApplication = ({ data, currentStepId }) => {
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">{stepData.sections.financialInfo.title}</h3>
-          <span className="text-xs text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
+          <span className="text-sm text-[#f56e45] cursor-pointer hover:underline flex items-center gap-1">
             {/* <Edit3 size={12} /> Edit */}
           </span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
           {stepData.sections.financialInfo.items.map((item, idx) => (
             <div key={idx}>
-              <p className="text-[10px] text-gray-500">{item.label}</p>
+              <p className="text-sm text-gray-500">{item.label}</p>
               <p className="text-sm font-medium text-gray-800">{item.value}</p>
             </div>
           ))}
@@ -1098,17 +1098,17 @@ const Step3VisaApplication = ({ data, currentStepId }) => {
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">{stepData.sections.documents.title}</h3>
-          <span className="text-xs text-[#f56e45] cursor-pointer hover:underline">View All</span>
+          <span className="text-sm text-[#f56e45] cursor-pointer hover:underline">View All</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="pb-2 text-[10px] font-semibold text-gray-500">Document Name</th>
-                <th className="pb-2 text-[10px] font-semibold text-gray-500 text-center">Status</th>
-                <th className="pb-2 text-[10px] font-semibold text-gray-500 text-center">Updated On</th>
-                <th className="pb-2 text-[10px] font-semibold text-gray-500 text-center">File Size</th>
-                <th className="pb-2 text-[10px] font-semibold text-gray-500 text-right">Action</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Document Name</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500 text-center">Status</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500 text-center">Updated On</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500 text-center">File Size</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500 text-right">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -1116,10 +1116,10 @@ const Step3VisaApplication = ({ data, currentStepId }) => {
                 const statusColor = row.status === 'Uploaded' ? 'text-green-600 bg-green-50' : 'text-orange-500 bg-orange-50';
                 return (
                   <tr key={idx} className="border-b border-gray-50">
-                    <td className="py-2"><div className="flex items-center gap-2"><FileText size={12} className="text-gray-500"/><span className="text-xs text-gray-700">{row.name}</span></div></td>
-                    <td className="py-2 text-center"><span className={`text-[10px] ${statusColor} px-2 py-0.5 rounded`}>{row.status}</span></td>
-                    <td className="py-2 text-center text-[10px] text-gray-400">{row.date}</td>
-                    <td className="py-2 text-center text-[10px] text-gray-400">{row.size}</td>
+                    <td className="py-2"><div className="flex items-center gap-2"><FileText size={12} className="text-gray-500"/><span className="text-sm text-gray-700">{row.name}</span></div></td>
+                    <td className="py-2 text-center"><span className={`text-sm ${statusColor} px-2 py-0.5 rounded`}>{row.status}</span></td>
+                    <td className="py-2 text-center text-sm text-gray-400">{row.date}</td>
+                    <td className="py-2 text-center text-sm text-gray-400">{row.size}</td>
                     <td className="py-2 text-right">
                       <div className="flex items-center justify-end gap-2">
                         {row.action === 'view' ? <Eye size={14} className="text-[#f56e45] cursor-pointer" /> : <UploadCloud size={14} className="text-orange-500 cursor-pointer" />}
@@ -1136,7 +1136,7 @@ const Step3VisaApplication = ({ data, currentStepId }) => {
           <div className="flex flex-col items-center gap-2">
             <UploadCloud size={40} className="text-gray-400" />
             <p className="text-sm text-gray-600 font-medium">Drag & drop files here or <span className="text-[#f56e45] cursor-pointer hover:underline">click to upload</span></p>
-            <p className="text-[10px] text-gray-400">Accepted formats: PDF, JPG, PNG (Max size: 10MB each)</p>
+            <p className="text-sm text-gray-400">Accepted formats: PDF, JPG, PNG (Max size: 10MB each)</p>
           </div>
         </div>
       </div>
@@ -1145,17 +1145,17 @@ const Step3VisaApplication = ({ data, currentStepId }) => {
         <h3 className="font-bold text-gray-800 mb-4">{stepData.sections.declarations.title}</h3>
         <div className="flex items-start gap-3 mb-4">
           <input type="checkbox" className="mt-1 w-4 h-4 rounded border-gray-300 text-[#f56e45]" />
-          <p className="text-xs text-gray-600">{stepData.sections.declarations.checkboxText}</p>
+          <p className="text-sm text-gray-600">{stepData.sections.declarations.checkboxText}</p>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center gap-6 text-xs">
-            <div><p className="text-[10px] text-gray-500">Date</p><p className="font-medium">{stepData.sections.declarations.date}</p></div>
-            <div><p className="text-[10px] text-gray-500">Applicant Name</p><p className="font-medium">{stepData.sections.declarations.name}</p></div>
+          <div className="flex items-center gap-6 text-sm">
+            <div><p className="text-sm text-gray-500">Date</p><p className="font-medium">{stepData.sections.declarations.date}</p></div>
+            <div><p className="text-sm text-gray-500">Applicant Name</p><p className="font-medium">{stepData.sections.declarations.name}</p></div>
           </div>
           <div className="flex items-center gap-3">
-            <button className="border border-gray-200 text-gray-600 text-xs font-medium px-4 py-2 rounded hover:bg-gray-50">Save as Draft</button>
-            <button className="bg-white border border-orange-200 text-[#f56e45] text-xs font-medium px-4 py-2 rounded hover:bg-orange-50">Continue Later</button>
-            <button className="bg-[#f56e45] text-white text-xs font-medium px-6 py-2 rounded hover:bg-[#f56e45]">Review Application</button>
+            <button className="border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded hover:bg-gray-50">Save as Draft</button>
+            <button className="bg-white border border-orange-200 text-[#f56e45] text-sm font-medium px-4 py-2 rounded hover:bg-orange-50">Continue Later</button>
+            <button className="bg-[#f56e45] text-white text-sm font-medium px-6 py-2 rounded hover:bg-[#f56e45]">Review Application</button>
           </div>
         </div>
       </div>
@@ -1178,7 +1178,7 @@ const Step4Biometrics = ({ data, currentStepId }) => {
                   {iconMap[item.icon] && React.createElement(iconMap[item.icon], { size: 14, className: "text-orange-600" })}
                 </div>
                 <div>
-                  <p className="text-[10px] text-gray-500">{item.label}</p>
+                  <p className="text-sm text-gray-500">{item.label}</p>
                   <p className="text-sm font-medium text-gray-800">{item.value}</p>
                 </div>
               </div>
@@ -1188,7 +1188,7 @@ const Step4Biometrics = ({ data, currentStepId }) => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {stepData.sections.appointmentDetails.infoCards.map((item, idx) => (
             <div key={idx} className="border border-gray-100 rounded-lg p-3">
-              <p className="text-[10px] text-gray-500">{item.label}</p>
+              <p className="text-sm text-gray-500">{item.label}</p>
               <p className={`text-sm font-medium ${item.isHighlight ? 'text-green-600' : 'text-gray-800'}`}>{item.value}</p>
             </div>
           ))}
@@ -1197,8 +1197,8 @@ const Step4Biometrics = ({ data, currentStepId }) => {
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <h3 className="font-bold text-gray-800 mb-2">{stepData.sections.whatIsBiometrics.title}</h3>
-        <p className="text-xs text-gray-500 mb-3">{stepData.sections.whatIsBiometrics.description}</p>
-        <button className="flex items-center gap-2 text-orange-600 text-xs font-medium hover:underline">
+        <p className="text-sm text-gray-500 mb-3">{stepData.sections.whatIsBiometrics.description}</p>
+        <button className="flex items-center gap-2 text-orange-600 text-sm font-medium hover:underline">
           <PlayCircle size={16} /> {stepData.sections.whatIsBiometrics.watchButton}
         </button>
       </div>
@@ -1212,11 +1212,11 @@ const Step4Biometrics = ({ data, currentStepId }) => {
                 <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                   <Check size={10} className="text-green-600" />
                 </div>
-                <span className="text-xs text-gray-700">{text}</span>
+                <span className="text-sm text-gray-700">{text}</span>
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-gray-400 italic">{stepData.sections.documentsToCarry.note}</p>
+          <p className="text-sm text-gray-400 italic">{stepData.sections.documentsToCarry.note}</p>
         </div>
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
           <h3 className="font-bold text-gray-800 mb-3">{stepData.sections.biometricsProcess.title}</h3>
@@ -1225,13 +1225,13 @@ const Step4Biometrics = ({ data, currentStepId }) => {
               <div key={idx} className="flex items-start gap-3 mb-4 last:mb-0">
                 <div className="flex flex-col items-center">
                   <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                    <span className="text-[10px] font-bold text-orange-600">{idx + 1}</span>
+                    <span className="text-sm font-bold text-orange-600">{idx + 1}</span>
                   </div>
                   {idx < 3 && <div className="w-0.5 h-8 bg-gray-200 mt-1"></div>}
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-800">{step.title}</p>
-                  <p className="text-[10px] text-gray-500">{step.description}</p>
+                  <p className="text-sm font-bold text-gray-800">{step.title}</p>
+                  <p className="text-sm text-gray-500">{step.description}</p>
                 </div>
               </div>
             ))}
@@ -1245,7 +1245,7 @@ const Step4Biometrics = ({ data, currentStepId }) => {
           {stepData.sections.beforeYouGo.items.map((item, idx) => (
             <div key={idx} className="flex items-center gap-2 py-1">
               <div className="p-1 bg-gray-50 rounded-full"><CheckCircle2 size={12} className="text-green-500" /></div>
-              <span className="text-xs text-gray-700">{item.text}</span>
+              <span className="text-sm text-gray-700">{item.text}</span>
             </div>
           ))}
         </div>
@@ -1255,20 +1255,20 @@ const Step4Biometrics = ({ data, currentStepId }) => {
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold text-gray-800">{stepData.sections.feesDetails.title}</h3>
-            <button className="flex items-center gap-1 text-xs text-orange-600"><Download size={12} /> Download Receipt</button>
+            <button className="flex items-center gap-1 text-sm text-orange-600"><Download size={12} /> Download Receipt</button>
           </div>
           <div className="space-y-1">
             {stepData.sections.feesDetails.items.map((item, idx) => (
               <div key={idx} className={`flex justify-between items-center py-2 border-b border-gray-50 last:border-0 ${item.isTotal ? 'font-bold' : ''}`}>
-                <span className="text-xs text-gray-700">{item.description}</span>
+                <span className="text-sm text-gray-700">{item.description}</span>
                 <div className="flex items-center gap-4">
-                  <span className="text-xs font-medium text-gray-800">{item.amount}</span>
-                  <span className="text-[10px] text-green-600 bg-green-50 px-2 py-0.5 rounded">{item.status}</span>
+                  <span className="text-sm font-medium text-gray-800">{item.amount}</span>
+                  <span className="text-sm text-green-600 bg-green-50 px-2 py-0.5 rounded">{item.status}</span>
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-3 text-[10px] text-gray-400 border-t pt-2">
+          <div className="mt-3 text-sm text-gray-400 border-t pt-2">
             <p>Payment Date: {stepData.sections.feesDetails.paymentDate}</p>
             <p>Payment Mode: {stepData.sections.feesDetails.paymentMode}</p>
           </div>
@@ -1282,7 +1282,7 @@ const Step4Biometrics = ({ data, currentStepId }) => {
                   <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   {idx < 3 && <div className="w-0.5 h-4 bg-gray-200"></div>}
                 </div>
-                <div className="flex gap-4 text-xs">
+                <div className="flex gap-4 text-sm">
                   <span className="text-gray-500">{item.date}</span>
                   <span className="text-gray-500">{item.time}</span>
                   <span className="text-gray-700">{item.status}</span>
@@ -1303,7 +1303,7 @@ const Step4Biometrics = ({ data, currentStepId }) => {
                 <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mb-2">
                   <IconComp size={18} className="text-orange-600" />
                 </div>
-                <p className="text-[10px] font-bold text-gray-800">{step.title}</p>
+                <p className="text-sm font-bold text-gray-800">{step.title}</p>
                 <p className="text-[8px] text-gray-500 mt-1">{step.description}</p>
               </div>
             );
@@ -1315,14 +1315,14 @@ const Step4Biometrics = ({ data, currentStepId }) => {
         <h3 className="font-bold text-gray-800 mb-4">{stepData.sections.declaration.title}</h3>
         <div className="flex items-start gap-3 mb-4">
           <input type="checkbox" className="mt-1 w-4 h-4 rounded border-gray-300 text-orange-600" />
-          <p className="text-xs text-gray-600">{stepData.sections.declaration.checkboxText}</p>
+          <p className="text-sm text-gray-600">{stepData.sections.declaration.checkboxText}</p>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center gap-6 text-xs">
-            <div><p className="text-[10px] text-gray-500">Date</p><p className="font-medium">{stepData.sections.declaration.date}</p></div>
-            <div><p className="text-[10px] text-gray-500">Applicant Name</p><p className="font-medium">{stepData.sections.declaration.name}</p></div>
+          <div className="flex items-center gap-6 text-sm">
+            <div><p className="text-sm text-gray-500">Date</p><p className="font-medium">{stepData.sections.declaration.date}</p></div>
+            <div><p className="text-sm text-gray-500">Applicant Name</p><p className="font-medium">{stepData.sections.declaration.name}</p></div>
           </div>
-          <button className="border border-gray-200 text-gray-600 text-xs font-medium px-4 py-2 rounded hover:bg-gray-50">Save & Print</button>
+          <button className="border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded hover:bg-gray-50">Save & Print</button>
         </div>
       </div>
     </>
@@ -1351,12 +1351,12 @@ const Step5VisaDecision = ({ data, currentStepId }) => {
               <Clock size={28} className="text-orange-600" />
             </div>
             <h4 className="font-bold text-sm text-orange-800">{stepData.sections.currentStatus.status}</h4>
-            <p className="text-xs text-gray-600 mt-1">{stepData.sections.currentStatus.description}</p>
+            <p className="text-sm text-gray-600 mt-1">{stepData.sections.currentStatus.description}</p>
           </div>
           <div className="flex-1 space-y-2">
             {stepData.sections.currentStatus.details.map((item, idx) => (
               <div key={idx} className="border-b border-gray-50 pb-2 last:border-0 last:pb-0">
-                <p className="text-[10px] text-gray-500">{item.label}</p>
+                <p className="text-sm text-gray-500">{item.label}</p>
                 <p className="text-sm font-medium text-gray-800">{item.value}</p>
               </div>
             ))}
@@ -1382,10 +1382,10 @@ const Step5VisaDecision = ({ data, currentStepId }) => {
                   </div>
                   <div className="pb-4 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className={`text-xs font-bold ${isActive ? 'text-orange-600' : isCompleted ? 'text-green-600' : 'text-gray-500'}`}>{item.label}</p>
-                      <span className="text-[10px] text-gray-400">{item.date}</span>
+                      <p className={`text-sm font-bold ${isActive ? 'text-orange-600' : isCompleted ? 'text-green-600' : 'text-gray-500'}`}>{item.label}</p>
+                      <span className="text-sm text-gray-400">{item.date}</span>
                     </div>
-                    <p className="text-[10px] text-gray-500">{item.description}</p>
+                    <p className="text-sm text-gray-500">{item.description}</p>
                   </div>
                 </div>
               );
@@ -1399,24 +1399,24 @@ const Step5VisaDecision = ({ data, currentStepId }) => {
               <div key={idx} className="flex items-start gap-3 mb-3 last:mb-0">
                 <div className="flex flex-col items-center">
                   <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                    <span className="text-[10px] font-bold text-orange-600">{idx + 1}</span>
+                    <span className="text-sm font-bold text-orange-600">{idx + 1}</span>
                   </div>
                   {idx < 4 && <div className="w-0.5 h-4 bg-gray-200 mt-1"></div>}
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-800">{step.title}</p>
-                  <p className="text-[10px] text-gray-500">{step.description}</p>
+                  <p className="text-sm font-bold text-gray-800">{step.title}</p>
+                  <p className="text-sm text-gray-500">{step.description}</p>
                 </div>
               </div>
             ))}
           </div>
           <div className="mt-4 p-3 bg-orange-50 border border-orange-100 rounded-lg">
-            <h5 className="text-xs font-bold text-orange-800 flex items-center gap-1">
+            <h5 className="text-sm font-bold text-orange-800 flex items-center gap-1">
               <AlertCircle size={12} /> {stepData.sections.whatHappensNext.importantNote.title}
             </h5>
             <ul className="mt-1 space-y-1">
               {stepData.sections.whatHappensNext.importantNote.items.map((text, idx) => (
-                <li key={idx} className="text-[10px] text-orange-700 flex items-start gap-1">
+                <li key={idx} className="text-sm text-orange-700 flex items-start gap-1">
                   <div className="mt-0.5">•</div>
                   <span>{text}</span>
                 </li>
@@ -1430,16 +1430,16 @@ const Step5VisaDecision = ({ data, currentStepId }) => {
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold text-gray-800">{stepData.sections.submittedDocuments.title}</h3>
-            <span className="text-xs text-orange-600 cursor-pointer hover:underline">View All Documents →</span>
+            <span className="text-sm text-orange-600 cursor-pointer hover:underline">View All Documents →</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               {/* <thead>
                 <tr className="border-b border-gray-100">
-                  <th className="pb-2 text-[10px] font-semibold text-gray-500">Document Name</th>
-                  <th className="pb-2 text-[10px] font-semibold text-gray-500 text-center">Status</th>
-                  <th className="pb-2 text-[10px] font-semibold text-gray-500 text-center">Submitted On</th>
-                  <th className="pb-2 text-[10px] font-semibold text-gray-500 text-right">Remarks</th>
+                  <th className="pb-2 text-sm font-semibold text-gray-500">Document Name</th>
+                  <th className="pb-2 text-sm font-semibold text-gray-500 text-center">Status</th>
+                  <th className="pb-2 text-sm font-semibold text-gray-500 text-center">Submitted On</th>
+                  <th className="pb-2 text-sm font-semibold text-gray-500 text-right">Remarks</th>
                 </tr>
               </thead> */}
               <tbody>
@@ -1453,7 +1453,7 @@ const Step5VisaDecision = ({ data, currentStepId }) => {
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold text-gray-800">{stepData.sections.embassyUpdate.title}</h3>
-            <span className="text-xs text-orange-600 cursor-pointer hover:underline">View All</span>
+            <span className="text-sm text-orange-600 cursor-pointer hover:underline">View All</span>
           </div>
           <div className="space-y-1">
             {stepData.sections.embassyUpdate.items.map((item, idx) => (
@@ -1464,10 +1464,10 @@ const Step5VisaDecision = ({ data, currentStepId }) => {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-gray-400">{item.date}</span>
-                    <span className="text-[10px] text-orange-600 font-medium">{item.status}</span>
+                    <span className="text-sm text-gray-400">{item.date}</span>
+                    <span className="text-sm text-orange-600 font-medium">{item.status}</span>
                   </div>
-                  <p className="text-xs text-gray-600">{item.description}</p>
+                  <p className="text-sm text-gray-600">{item.description}</p>
                 </div>
               </div>
             ))}
@@ -1479,14 +1479,14 @@ const Step5VisaDecision = ({ data, currentStepId }) => {
         <h3 className="font-bold text-gray-800 mb-4">{stepData.sections.declaration.title}</h3>
         <div className="flex items-start gap-3 mb-4">
           <input type="checkbox" className="mt-1 w-4 h-4 rounded border-gray-300 text-orange-600" />
-          <p className="text-xs text-gray-600">{stepData.sections.declaration.checkboxText}</p>
+          <p className="text-sm text-gray-600">{stepData.sections.declaration.checkboxText}</p>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center gap-6 text-xs">
-            <div><p className="text-[10px] text-gray-500">Date</p><p className="font-medium">{stepData.sections.declaration.date}</p></div>
-            <div><p className="text-[10px] text-gray-500">Applicant Name</p><p className="font-medium">{stepData.sections.declaration.name}</p></div>
+          <div className="flex items-center gap-6 text-sm">
+            <div><p className="text-sm text-gray-500">Date</p><p className="font-medium">{stepData.sections.declaration.date}</p></div>
+            <div><p className="text-sm text-gray-500">Applicant Name</p><p className="font-medium">{stepData.sections.declaration.name}</p></div>
           </div>
-          <button className="border border-gray-200 text-gray-600 text-xs font-medium px-4 py-2 rounded hover:bg-gray-50">Save & Print</button>
+          <button className="border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded hover:bg-gray-50">Save & Print</button>
         </div>
       </div>
     </>
@@ -1514,7 +1514,7 @@ const Step6VisaApproved = ({ data, currentStepId }) => {
             <Award size={32} className="text-green-600" />
           </div>
           <h3 className="font-bold text-lg text-gray-800">{stepData.sections.congratulations.title}</h3>
-          <p className="text-xs text-gray-600 mt-2">{stepData.sections.congratulations.message}</p>
+          <p className="text-sm text-gray-600 mt-2">{stepData.sections.congratulations.message}</p>
         </div>
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
           <h3 className="font-bold text-gray-800 mb-4">{stepData.sections.whatHappensNext.title}</h3>
@@ -1526,7 +1526,7 @@ const Step6VisaApproved = ({ data, currentStepId }) => {
                   <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mb-2">
                     <IconComp size={18} className="text-orange-600" />
                   </div>
-                  <p className="text-[10px] font-bold text-gray-700">{step.title}</p>
+                  <p className="text-sm font-bold text-gray-700">{step.title}</p>
                 </div>
               );
             })}
@@ -1539,7 +1539,7 @@ const Step6VisaApproved = ({ data, currentStepId }) => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
           {stepData.sections.visaDetails.items.map((item, idx) => (
             <div key={idx}>
-              <p className="text-[10px] text-gray-500">{item.label}</p>
+              <p className="text-sm text-gray-500">{item.label}</p>
               <p className="text-sm font-medium text-gray-800">{item.value}</p>
             </div>
           ))}
@@ -1551,30 +1551,30 @@ const Step6VisaApproved = ({ data, currentStepId }) => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-4 gap-x-3 mb-3">
           {stepData.sections.passportCollection.items.map((item, idx) => (
             <div key={idx}>
-              <p className="text-[10px] text-gray-500">{item.label}</p>
+              <p className="text-sm text-gray-500">{item.label}</p>
               <p className="text-sm font-medium text-gray-800">{item.value}</p>
             </div>
           ))}
         </div>
         <div className="p-3 bg-orange-50 border border-orange-100 rounded-lg flex items-start gap-2">
           <Info size={14} className="text-orange-600 mt-0.5 flex-shrink-0" />
-          <p className="text-xs text-orange-700">{stepData.sections.passportCollection.note}</p>
+          <p className="text-sm text-orange-700">{stepData.sections.passportCollection.note}</p>
         </div>
       </div>
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">{stepData.sections.documentsSummary.title}</h3>
-          <span className="text-xs text-orange-600 cursor-pointer hover:underline">View All Documents →</span>
+          <span className="text-sm text-orange-600 cursor-pointer hover:underline">View All Documents →</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             {/* <thead>
               <tr className="border-b border-gray-100">
-                <th className="pb-2 text-[10px] font-semibold text-gray-500">Document Name</th>
-                <th className="pb-2 text-[10px] font-semibold text-gray-500 text-center">Status</th>
-                <th className="pb-2 text-[10px] font-semibold text-gray-500 text-center">Submitted On</th>
-                <th className="pb-2 text-[10px] font-semibold text-gray-500 text-right">Remarks</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Document Name</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500 text-center">Status</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500 text-center">Submitted On</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500 text-right">Remarks</th>
               </tr>
             </thead> */}
             <tbody>
@@ -1603,8 +1603,8 @@ const Step6VisaApproved = ({ data, currentStepId }) => {
             <div key={idx} className="flex items-start gap-2 p-2">
               <div className="mt-0.5"><CheckCircle2 size={12} className="text-green-500" /></div>
               <div>
-                <p className="text-xs font-bold text-gray-700">{item.title}</p>
-                <p className="text-[10px] text-gray-500">{item.description}</p>
+                <p className="text-sm font-bold text-gray-700">{item.title}</p>
+                <p className="text-sm text-gray-500">{item.description}</p>
               </div>
             </div>
           ))}
@@ -2341,7 +2341,7 @@ const visaJourneyData = {
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
             {pageData.title}
-            <span className={`text-xs font-normal px-2 py-0.5 rounded ${
+            <span className={`text-sm font-normal px-2 py-0.5 rounded ${
               pageData.status === 'Approved' ? 'bg-green-100 text-green-700' :
               pageData.status === 'Completed' ? 'bg-green-100 text-green-700' :
               pageData.status === 'In Progress' ? 'bg-orange-100 text-[#f56e45]' :
@@ -2379,10 +2379,10 @@ const visaJourneyData = {
             </div>
             <div>
               <h4 className="font-bold text-sm">{bannerData.title}</h4>
-              <p className="text-xs mt-0.5">{bannerData.subtitle}</p>
+              <p className="text-sm mt-0.5">{bannerData.subtitle}</p>
             </div>
           </div>
-          <button className="flex items-center gap-2 bg-white border border-orange-200 text-[#f56e45] text-xs font-bold px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+          <button className="flex items-center gap-2 bg-white border border-orange-200 text-[#f56e45] text-sm font-bold px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
             {bannerData.secondaryAction && bannerData.secondaryAction}
             {bannerData.action && !bannerData.secondaryAction && <Download size={14} />}
             {bannerData.action || (bannerData.secondaryAction && bannerData.action)}
@@ -2401,9 +2401,9 @@ const visaJourneyData = {
             <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-3">
                 <h4 className="text-sm font-bold text-gray-800">{data.sidebar.summary.title}</h4>
-                {/* <span className="text-xs text-[#f56e45] cursor-pointer hover:underline">Edit</span> */}
+                {/* <span className="text-sm text-[#f56e45] cursor-pointer hover:underline">Edit</span> */}
               </div>
-              <div className="space-y-1.5 text-xs">
+              <div className="space-y-1.5 text-sm">
                 {data.sidebar.summary.fields.map((field, idx) => (
                   <div key={idx} className={`flex justify-between ${idx !== data.sidebar.summary.fields.length - 1 ? 'border-b border-gray-50 pb-1.5' : ''}`}>
                     <span className="text-gray-500">{field.label}</span>
@@ -2426,7 +2426,7 @@ const visaJourneyData = {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-2xl font-bold text-gray-700">15%</span>
-                    <span className="text-[10px] text-gray-400">Completed</span>
+                    <span className="text-sm text-gray-400">Completed</span>
                   </div>
                 </div>
                 <div className="w-full space-y-1 mt-1">
@@ -2437,9 +2437,9 @@ const visaJourneyData = {
                           step.id < currentStep ? 'bg-green-500' : 
                           step.id === currentStep ? 'bg-[#f56e45]' : 'bg-gray-300'
                         }`}></div>
-                        <span className="text-xs text-gray-600">{step.label}</span>
+                        <span className="text-sm text-gray-600">{step.label}</span>
                       </div>
-                      <span className="text-[10px] text-gray-500">
+                      <span className="text-sm text-gray-500">
                         {step.id < currentStep ? 'Completed' : step.id === currentStep ? 'In Progress' : 'Pending'}
                       </span>
                     </div>
@@ -2460,8 +2460,8 @@ const visaJourneyData = {
                         <CheckCircle2 size={12} className="text-white" />
                       </div>
                       <div className="ml-1">
-                        <p className="text-xs font-bold text-gray-800">{item.title}</p>
-                        <p className="text-[10px] text-gray-500">{item.date}</p>
+                        <p className="text-sm font-bold text-gray-800">{item.title}</p>
+                        <p className="text-sm text-gray-500">{item.date}</p>
                       </div>
                     </div>
                   ))}
@@ -2483,7 +2483,7 @@ const visaJourneyData = {
                         {item.status === 'Completed' && <Check size={12} className="text-white" />}
                         {item.status === 'In Progress' && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
                       </div>
-                      <span className={`text-xs ${
+                      <span className={`text-sm ${
                         item.status === 'Completed' ? 'text-gray-600' : 
                         item.status === 'In Progress' ? 'text-[#f56e45] font-medium' : 'text-gray-400'
                       }`}>
@@ -2503,7 +2503,7 @@ const visaJourneyData = {
                   {data.steps[3].importantInfo.map((text, idx) => (
                     <div key={idx} className="flex items-start gap-2">
                       <div className="mt-0.5 text-orange-500"><Info size={12} /></div>
-                      <p className="text-xs text-gray-600">{text}</p>
+                      <p className="text-sm text-gray-600">{text}</p>
                     </div>
                   ))}
                 </div>
@@ -2514,23 +2514,23 @@ const visaJourneyData = {
             <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-2">
                 <h4 className="text-sm font-bold text-gray-800">Visa Guide</h4>
-                <span className="text-xs text-[#f56e45] cursor-pointer hover:underline">View All</span>
+                <span className="text-sm text-[#f56e45] cursor-pointer hover:underline">View All</span>
               </div>
               <div className="space-y-0.5">
                 <div className="flex items-center justify-between py-1.5 cursor-pointer hover:bg-gray-50 px-2 rounded">
-                  <div className="flex items-center gap-2"><div className="p-1 bg-gray-50 rounded-full"><HelpCircle size={10} className="text-gray-500" /></div><span className="text-xs text-gray-600">What is APS Certificate?</span></div>
+                  <div className="flex items-center gap-2"><div className="p-1 bg-gray-50 rounded-full"><HelpCircle size={10} className="text-gray-500" /></div><span className="text-sm text-gray-600">What is APS Certificate?</span></div>
                   <ChevronDown size={10} className="text-gray-400 -rotate-90" />
                 </div>
                 <div className="flex items-center justify-between py-1.5 cursor-pointer hover:bg-gray-50 px-2 rounded">
-                  <div className="flex items-center gap-2"><div className="p-1 bg-gray-50 rounded-full"><FileText size={10} className="text-gray-500" /></div><span className="text-xs text-gray-600">Documents Required for Visa</span></div>
+                  <div className="flex items-center gap-2"><div className="p-1 bg-gray-50 rounded-full"><FileText size={10} className="text-gray-500" /></div><span className="text-sm text-gray-600">Documents Required for Visa</span></div>
                   <ChevronDown size={10} className="text-gray-400 -rotate-90" />
                 </div>
                 <div className="flex items-center justify-between py-1.5 cursor-pointer hover:bg-gray-50 px-2 rounded">
-                  <div className="flex items-center gap-2"><div className="p-1 bg-gray-50 rounded-full"><Clock size={10} className="text-gray-500" /></div><span className="text-xs text-gray-600">Visa Processing Time</span></div>
+                  <div className="flex items-center gap-2"><div className="p-1 bg-gray-50 rounded-full"><Clock size={10} className="text-gray-500" /></div><span className="text-sm text-gray-600">Visa Processing Time</span></div>
                   <ChevronDown size={10} className="text-gray-400 -rotate-90" />
                 </div>
                 <div className="flex items-center justify-between py-1.5 cursor-pointer hover:bg-gray-50 px-2 rounded">
-                  <div className="flex items-center gap-2"><div className="p-1 bg-gray-50 rounded-full"><AlertCircle size={10} className="text-gray-500" /></div><span className="text-xs text-gray-600">Common Rejection Reasons</span></div>
+                  <div className="flex items-center gap-2"><div className="p-1 bg-gray-50 rounded-full"><AlertCircle size={10} className="text-gray-500" /></div><span className="text-sm text-gray-600">Common Rejection Reasons</span></div>
                   <ChevronDown size={10} className="text-gray-400 -rotate-90" />
                 </div>
               </div>
@@ -2552,8 +2552,8 @@ const visaJourneyData = {
               <div className="flex items-center gap-3 mb-3">
                 <img src={data.sidebar.counselor.avatar} alt="Counselor" className="w-10 h-10 rounded-full" />
                 <div>
-                  <h5 className="text-xs font-bold text-gray-800">{data.sidebar.counselor.name}</h5>
-                  <p className="text-[10px] text-gray-500">{data.sidebar.counselor.role}</p>
+                  <h5 className="text-sm font-bold text-gray-800">{data.sidebar.counselor.name}</h5>
+                  <p className="text-sm text-gray-500">{data.sidebar.counselor.role}</p>
                   <div className="flex items-center gap-1 mt-0.5">
                     <div className="flex -space-x-1">
                       {[1,2,3].map(i => <div key={i} className="w-2 h-2 rounded-full bg-yellow-400 border border-white"></div>)}
@@ -2567,17 +2567,17 @@ const visaJourneyData = {
                 <button className="flex-1 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 flex justify-center"><Phone size={14} className="text-gray-500" /></button>
                 <button className="flex-1 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 flex justify-center"><Mail size={14} className="text-gray-500" /></button>
               </div>
-              <button className="w-full bg-[#f56e45] hover:bg-[#f56e45] text-white text-xs font-bold py-2 rounded-lg transition-colors">{data.sidebar.counselor.actionButton}</button>
+              <button className="w-full bg-[#f56e45] hover:bg-[#f56e45] text-white text-sm font-bold py-2 rounded-lg transition-colors">{data.sidebar.counselor.actionButton}</button>
             </div>
           </div>
         </div>
 
         {/* Footer */}
         {/* <div className="mt-8 border-t pt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div><p className="text-xs font-bold text-orange-600">{data.footer.processingTime}</p><p className="text-[10px] text-gray-500">APS Processing Time</p></div>
-          <div><p className="text-xs font-bold text-orange-600">{data.footer.visaTime}</p><p className="text-[10px] text-gray-500">Visa Processing Time</p></div>
-          <div><p className="text-xs font-bold text-orange-600">{data.footer.visaFee}</p><p className="text-[10px] text-gray-500">Visa Fee (Approx.)</p></div>
-          <div><p className="text-xs font-bold text-orange-600">{data.footer.applyEarly}</p><p className="text-[10px] text-gray-500">At least 3 months before intake</p></div>
+          <div><p className="text-sm font-bold text-orange-600">{data.footer.processingTime}</p><p className="text-sm text-gray-500">APS Processing Time</p></div>
+          <div><p className="text-sm font-bold text-orange-600">{data.footer.visaTime}</p><p className="text-sm text-gray-500">Visa Processing Time</p></div>
+          <div><p className="text-sm font-bold text-orange-600">{data.footer.visaFee}</p><p className="text-sm text-gray-500">Visa Fee (Approx.)</p></div>
+          <div><p className="text-sm font-bold text-orange-600">{data.footer.applyEarly}</p><p className="text-sm text-gray-500">At least 3 months before intake</p></div>
         </div>
         <div className="mt-2 text-center"><p className="text-[8px] text-gray-400">{data.footer.disclaimer}</p></div> */}
 

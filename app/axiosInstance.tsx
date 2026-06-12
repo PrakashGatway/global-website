@@ -3,7 +3,7 @@ import axios from "axios"
 let mode = "dev"
 
 const BASE_URL =
-  mode === "dev2"
+  mode === "dev"
     ? "http://localhost:5000/api"
     : "https://api.ooshasglobal.com/api"
 

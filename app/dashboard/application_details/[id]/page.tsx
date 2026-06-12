@@ -71,7 +71,7 @@ type ApplicationStatus =
   | "ReviewbyOoshas"
   | "SubmitToSchool"
   | "AwaitingSchoolResponse"
-  | "AdmissionProcessing"
+  // | "AdmissionProcessing"
   | "OfferReceived"
   | "Refused"
   | "PayEnrollenmentDeposit"
@@ -276,7 +276,7 @@ const INTAKE_OPTIONS = [
 
 const STATUS_OPTIONS: ApplicationStatus[] = [
    "Started", "ReviewbyOoshas", "SubmitToSchool", "AwaitingSchoolResponse",
-  "AdmissionProcessing", "OfferReceived", "Refused", "PayEnrollenmentDeposit", "Completed"
+   "OfferReceived", "Refused", "PayEnrollenmentDeposit", "Completed"
 ];
 
 // ── Premium UI Components ────────────────────────────────────────────────────
@@ -1636,6 +1636,7 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
     docUrl: "",
     issuedBy: "",
     endDate: "",
+    startDate : "",
     visaType: "",
     visaNumber: "",
     passportNumber: "",
@@ -1752,6 +1753,7 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
           docUrl: offerLetter.docUrl,
           issuedBy: offerLetter.issuedBy,
           endDate: offerLetter.endDate,
+          startDate: offerLetter.startDate,
           visaType: offerLetter.visaType,
           visaNumber: offerLetter.visaNumber,
           passportNumber: offerLetter.passportNumber,
@@ -1951,35 +1953,70 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
                 <FileText size={16} /> Offer Letter Details
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  value={offerLetter.title}
-                  onChange={(e) => setOfferLetter((p) => ({ ...p, title: e.target.value }))}
-                  placeholder="Offer Letter Title *"
-                  className="px-3 py-2 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                />
-                <select
-                  value={offerLetter.required}
-                  onChange={(e) => setOfferLetter((p) => ({ ...p, required: e.target.value as any }))}
-                  className="px-3 py-2 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                >
-                  <option value="required">Conditional Offer</option>
-                  <option value="optional">Unconditional Offer</option>
-                </select>
-                <input
-                  type="text"
-                  value={offerLetter.issuedBy}
-                  onChange={(e) => setOfferLetter((p) => ({ ...p, issuedBy: e.target.value }))}
-                  placeholder="Issued By (University/Institution)"
-                  className="px-3 py-2 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                />
-                <input
-                  type="date"
-                  value={offerLetter.endDate}
-                  onChange={(e) => setOfferLetter((p) => ({ ...p, endDate: e.target.value }))}
-                  className="px-3 py-2 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                />
-              </div>
+  <div>
+    <label className="block text-sm font-medium mb-1">
+      Offer Letter Title *
+    </label>
+    <input
+      type="text"
+      value={offerLetter.title}
+      onChange={(e) => setOfferLetter((p) => ({ ...p, title: e.target.value }))}
+      placeholder="Offer Letter Title *"
+      className="px-3 py-2 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 w-full"
+    />
+  </div>
+
+  <div>
+    <label className="block text-sm font-medium mb-1">
+      Offer Type
+    </label>
+    <select
+      value={offerLetter.required}
+      onChange={(e) => setOfferLetter((p) => ({ ...p, required: e.target.value as any }))}
+      className="px-3 py-2 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 w-full"
+    >
+      <option value="required">Conditional Offer</option>
+      <option value="optional">Unconditional Offer</option>
+    </select>
+  </div>
+
+  <div>
+    <label className="block text-sm font-medium mb-1">
+      Issued By (University/Institution)
+    </label>
+    <input
+      type="text"
+      value={offerLetter.issuedBy}
+      onChange={(e) => setOfferLetter((p) => ({ ...p, issuedBy: e.target.value }))}
+      placeholder="Issued By (University/Institution)"
+      className="px-3 py-2 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 w-full"
+    />
+  </div>
+
+  <div>
+    <label className="block text-sm font-medium mb-1">
+      End Date
+    </label>
+    <input
+      type="date"
+      value={offerLetter.endDate}
+      onChange={(e) => setOfferLetter((p) => ({ ...p, endDate: e.target.value }))}
+      className="px-3 py-2 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 w-full"
+    />
+  </div>
+
+  <div>
+    <label className="block text-sm font-medium mb-1">
+      Start Date
+    </label>
+    <input
+      type="date"
+      value={offerLetter.startDate}
+      onChange={(e) => setOfferLetter((p) => ({ ...p, startDate: e.target.value }))}
+      className="px-3 py-2 border border-emerald-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 w-full"
+    />
+  </div>
+</div>
               
               <select
                 value={offerLetter.visaType}
@@ -2323,6 +2360,7 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
                   docType: "offer letter",
                   extra : {
                    "endDate" :  offerLetter.endDate,
+                   "startDate" :  offerLetter.startDate,
                    "issuedBy" : offerLetter.issuedBy
                   }
                 });
@@ -2338,6 +2376,7 @@ const StatusDescriptionPopup = ({onAdd, onCancel, status, application, onStatusD
                   docUrl: completedDetails.offerLetterDocUrl,
                   docType: "confirmation letter",
                   extra : {
+                   "startDate" :  completedDetails.documentIssuedOn,
                    "endDate" :  completedDetails.documentValidUntil,
                    "issuedBy" : completedDetails.casNumber
                   }
