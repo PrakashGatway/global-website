@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function ProgramHeader({ searchQuery, setSearchQuery }) {
+export default function ProgramHeader({ searchQuery, setSearchQuery,countries }) {
     const [intake, setIntake] = useState("");
     const [year, setYear] = useState("");
     const [nationality, setNationality] = useState("");
@@ -110,14 +110,13 @@ export default function ProgramHeader({ searchQuery, setSearchQuery }) {
                             value={nationality}
                             onChange={(e) => setNationality(e.target.value)}
                         >
-                            <option value="">All Nationalities</option>
-                            <option value="in">India</option>
-                            <option value="us">United States</option>
-                            <option value="uk">United Kingdom</option>
-                            <option value="ca">Canada</option>
-                            <option value="au">Australia</option>
-                            <option value="de">Germany</option>
-                            <option value="fr">France</option>
+                            {countries?.map((item)=>
+                            <option value={item?.value}>
+                                {item?.label}
+                            </option>
+                            )
+                            }
+                           
                         </select>
                         <svg className="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -125,41 +124,6 @@ export default function ProgramHeader({ searchQuery, setSearchQuery }) {
                     </div>
                 </div>
 
-                {/* State */}
-                <div className="filter-group">
-                    <label className="filter-label">State</label>
-                    <div className="select-wrapper">
-                        <svg className="select-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <select 
-                            className="filter-select"
-                            value={state}
-                            onChange={(e) => setState(e.target.value)}
-                        >
-                            <option value="">All States</option>
-                            <option value="al">Alabama</option>
-                            <option value="ak">Alaska</option>
-                            <option value="az">Arizona</option>
-                            <option value="ar">Arkansas</option>
-                            <option value="ca">California</option>
-                            <option value="co">Colorado</option>
-                            <option value="ct">Connecticut</option>
-                            <option value="de">Delaware</option>
-                            <option value="fl">Florida</option>
-                            <option value="ga">Georgia</option>
-                            <option value="hi">Hawaii</option>
-                            <option value="id">Idaho</option>
-                            <option value="il">Illinois</option>
-                            <option value="in">Indiana</option>
-                            <option value="ia">Iowa</option>
-                        </select>
-                        <svg className="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                </div>
 
                 {/* Search Button */}
                 <div className="button-group">

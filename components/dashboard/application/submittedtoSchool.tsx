@@ -7,7 +7,7 @@ import axiosInstance, { baseUrl, fileBaseurl, imageBaseUrl } from "@/app/axiosIn
 import toast from "react-hot-toast";
 
 
-export default function SubmittedtoSchool({ currentstep, application, profile, allProfile, activity }) {
+export default function SubmittedtoSchool({ currentstep, application, profile, allProfile, activity,fetchApplication }) {
 
   const [showPreview, setShowPreview] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
@@ -117,45 +117,85 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
     },
   ];
 
-  const statusDetail = JSON.parse(application?.statusDetails)
-  const completeDetail = statusDetail.find((item) =>
+ const statusDetail = application?.statusDetails
+  ? JSON.parse(application.statusDetails)
+  : [];
+  const completeDetail = statusDetail?.find((item) =>
     item.status === "Completed"
   )
 
-const handleSelectionVisa = async () => {
-  try {
-    if (hasvisa === false) {
-      const res = await axiosInstance.post("/visa", {
-        userId: allProfile?.data?._id,
-        applicationId: application?._id,
-        country: application?.country,
-        course: application?.course?._id,
-      });
+  const handleSelectionVisa = async () => {
+    try {
+      if (hasvisa === false) {
+        const res = await axiosInstance.post("/visa", {
+          userId: allProfile?.data?._id,
+          applicationId: application?.applicationNumber,
+          country: application?.country,
+          course: application?.course?._id,
+        });
+        await fetchApplication()
+        toast.success("Visa application submitted successfully!");
+        console.log(res.data);
+      } else {
+        const res = await axiosInstance.put(
+          `/applications/${application?._id}`,
+          {
+            isVisa: true,
+            visaDetails: {
+              visaType: formData.visaType,
+              visaNumber: formData.visaNumber,
+              passportNumber: formData.passportNumber,
+              countryOfIssue: formData.countryOfIssue,
+              visaIssuedOn: formData.visaIssuedOn,
+              visaValidUntil: formData.visaValidUntil,
+            },
+          }
+        );
+        await fetchApplication()
 
-      console.log(res.data);
-    } else {
-      const res = await axiosInstance.put(
-        `/applications/${application?._id}`,
-        {
-          isVisa: true,
-          visaDetails: {
-            visaType: formData.visaType,
-            visaNumber: formData.visaNumber,
-            passportNumber: formData.passportNumber,
-            countryOfIssue: formData.countryOfIssue,
-            visaIssuedOn: formData.visaIssuedOn,
-            visaValidUntil: formData.visaValidUntil,
-          },
-        }
+        toast.success("Visa details updated successfully!");
+
+      }
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error?.response?.data?.message ||
+        "Something went wrong. Please try again."
       );
-
-      console.log(res.data);
     }
-  } catch (error) {
-    console.error(error);
+  };
+
+  const offerLetter = application?.documents?.find(
+  item => item?.docType === "offer letter"
+);
+
+const isAlreadyDecided =
+  offerLetter?.status === "Approved" ||
+  offerLetter?.status === "Rejected";
+
+  const handleOpenActionModal = () => {
+  if (isAlreadyDecided) {
+    toast.error(
+      `You have already ${offerLetter.status.toLowerCase()} this offer letter.`
+    );
+    return;
   }
+
+  setShowActionModal(true);
 };
 
+
+  const endDate =
+  application?.documents?.find(
+    item => item?.docType === "offer letter"
+  )?.extra?.endDate;
+
+const daysLeft = endDate
+  ? Math.ceil(
+      (new Date(endDate) - new Date()) / (1000 * 60 * 60 * 24)
+    )
+  : null;
 
 
 
@@ -321,7 +361,7 @@ const handleSelectionVisa = async () => {
                             </p>
 
                             <h4 className="font-semibold text-slate-900">
-                              {new Date(application.createdAt).toLocaleString("en-IN", {
+                              {new Date(application.updatedAt).toLocaleString("en-IN", {
                                 day: "2-digit",
                                 month: "short",
                                 year: "numeric",
@@ -345,7 +385,7 @@ const handleSelectionVisa = async () => {
                             </p>
 
                             <h4 className="font-semibold text-slate-900">
-                              University of Bologna, Italy
+                              {application?.course?.university?.name}
                             </h4>
                           </div>
                         </div>
@@ -404,7 +444,14 @@ const handleSelectionVisa = async () => {
                               </p>
 
                               <h4 className="font-semibold text-slate-900">
-                                22 May 2025, 02:45 PM
+                                   {new Date(application.updatedAt).toLocaleString("en-IN", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: true,
+                              })}
                               </h4>
                             </div>
                           </div>
@@ -421,7 +468,7 @@ const handleSelectionVisa = async () => {
                               </p>
 
                               <h4 className="font-semibold text-slate-900">
-                                University of Bologna, Italy
+                               {application?.course?.university?.name}
                               </h4>
                             </div>
                           </div>
@@ -694,30 +741,31 @@ const handleSelectionVisa = async () => {
                           <>
                             {index === 0 && item.newValue === "SubmitToSchool" && (
                               <>
-                                <div className="relative flex gap-4 pb-8 ">
-                                  <div className="w-5 h-5 border-2 border-slate-300 bg-white" />
-                                  <div className="relative flex gap-4 pb-8">
-                                    <div className="w-5 h-5 border-2 border-slate-300 bg-white" />
+                               <div className="space-y-4 mb-4">
+  <div className="flex gap-4">
+    <div className="w-5 h-5 border-2 border-slate-300 bg-white rounded-sm mt-1" />
+    <div>
+      <h4 className="font-semibold text-sm text-slate-400">
+        Offer Received
+      </h4>
+      <p className="text-xs text-slate-400 mt-1">
+        Pending
+      </p>
+    </div>
+  </div>
 
-                                    <div>
-                                      <h4 className="font-semibold text-sm text-slate-400">
-                                        Offer Received
-                                      </h4>
-                                      <p className="text-xs text-slate-400 mt-1">
-                                        Pending
-                                      </p>
-                                    </div>
-                                  </div>
-
-                                  <div>
-                                    <h4 className="font-semibold text-sm text-slate-400">
-                                      Awaiting School Response
-                                    </h4>
-                                    <p className="text-xs text-slate-400 mt-1">
-                                      Pending
-                                    </p>
-                                  </div>
-                                </div>
+  <div className="flex gap-4">
+    <div className="w-5 h-5 border-2 border-slate-300 bg-white rounded-sm mt-1" />
+    <div>
+      <h4 className="font-semibold text-sm text-slate-400">
+        Awaiting School Response
+      </h4>
+      <p className="text-xs text-slate-400 mt-1">
+        Pending
+      </p>
+    </div>
+  </div>
+</div>
 
 
                               </>
@@ -929,13 +977,13 @@ const handleSelectionVisa = async () => {
                     </p>
                     <p className="font-semibold">
                       {
-                        statusDetail?.find(
-                          item => item.status === "OfferReceived"
-                        )?.updatedAt &&
+                        application?.documents?.find(
+                          item => item.docType === "offer letter"
+                        )?.extra?.startDate &&
                         new Date(
-                          statusDetail.find(
-                            item => item.status === "OfferReceived"
-                          )?.updatedAt
+                          application?.documents.find(
+                            item => item.docType === "offer letter"
+                          )?.extra?.startDate
                         ).toLocaleDateString("en-IN")
                       }
                     </p>
@@ -946,18 +994,41 @@ const handleSelectionVisa = async () => {
                       Offer Status
                     </p>
                     <p className="font-semibold text-red-600">
-                      {application?.documents[0].status}
+                      {application?.documents.find(
+                        item => item.docType === "offer letter"
+                      ).status}
                     </p>
                   </div>
 
-                  <div className="border  p-4">
+                  <div className="border p-4">
                     <p className="text-xs text-slate-500">
                       Respond By
                     </p>
-                    <p className="font-semibold">
-                      18 June 2025 <span className="text-orange-500 text-sm"> (14 Days Left)</span>
-                    </p>
 
+                    <p className="font-semibold">
+                      {endDate
+                        ? new Date(endDate).toLocaleDateString("en-IN")
+                        : "N/A"}
+
+                      {daysLeft !== null && (
+                        <span
+                          className={`text-sm ml-1 ${daysLeft <= 3
+                              ? "text-red-500"
+                              : daysLeft <= 7
+                                ? "text-yellow-500"
+                                : "text-orange-500"
+                            }`}
+                        >
+                          (
+                          {daysLeft > 0
+                            ? `${daysLeft} Days Left`
+                            : daysLeft === 0
+                              ? "Last Day"
+                              : "Expired"}
+                          )
+                        </span>
+                      )}
+                    </p>
                   </div>
 
                   <div className="border p-4">
@@ -965,7 +1036,7 @@ const handleSelectionVisa = async () => {
                       Issued By
                     </p>
                     <p className="font-semibold">
-                      {statusDetail?.find(item => item?.status === "OfferReceived")?.metadata?.offerLetter?.issuedBy}
+                      {application?.documents?.find(item => item?.docType === "offer letter")?.extra?.issuedBy}
                     </p>
 
                   </div>
@@ -981,7 +1052,7 @@ const handleSelectionVisa = async () => {
                   </button>
 
                   <button
-                    onClick={() => setShowActionModal(true)}
+                    onClick={handleOpenActionModal}
                     className="px-5 py-3 text-sm border border-orange-200 text-orange-600 font-medium"
                   >
                     Take Action
@@ -1112,7 +1183,7 @@ const handleSelectionVisa = async () => {
                         </span>
 
                         <span className="font-medium text-right text-xs">
-                          {application?.student?.tuitionfee}
+                          {application?.course?.tuitionFee}
                         </span>
                       </div>
 
@@ -1298,7 +1369,7 @@ const handleSelectionVisa = async () => {
             </div>
           )}
 
-          {showActionModal && (
+          { showActionModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <div className="bg-white rounded-xl w-full max-w-lg p-6 animate-in fade-in zoom-in duration-300">
                 <h3 className="text-xl font-semibold text-slate-800">
@@ -1424,7 +1495,9 @@ const handleSelectionVisa = async () => {
                   <button
                     onClick={() => {
                       setvisa(false)
+                      submitStatus()
                       handleSelectionVisa()
+
                     }}
                     className="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition"
                   >
@@ -1569,7 +1642,7 @@ const handleSelectionVisa = async () => {
 
                   <button
                     className="px-5 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
-                    onClick={()=>{
+                    onClick={() => {
                       handleSelectionVisa()
                       sethasvisa(false)
                     }}

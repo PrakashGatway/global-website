@@ -45,108 +45,119 @@ export default function ProgramFilters({
   levels,
   showFilters,
   setShowFilters,
+  isCleared
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
 
-  const {allProfile} = useGlobal()
+  const { allProfile } = useGlobal()
 
+  console.log("Profile Category:", allProfile?.profile?.preferences?.preferredCourse?.[0]);
+  console.log("Categories:", categories);
+
+  const selectedLevel =
+  isCleared ? "" :
+    filters.level ||
+    levels?.find(
+      item =>
+        item.label?.toLowerCase() ===
+        allProfile?.profile?.preferences?.level?.toLowerCase()
+    )?.value;
 
   // Reusable MUI Select Component for Filters
- const FilterSelect = ({ label, icon, options, value, onChange, placeholder }) => {
-  // Find the selected option object
-  const selectedOption = options?.find(opt => opt.value === value) || null;
-  
-  return (
-    <FormControl fullWidth size="small">
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-        {icon}
-        <Typography variant="caption" fontWeight={500} sx={{ color: "#374151" }}>
-          {label}
-        </Typography>
-      </Box>
-      <Autocomplete
-        size="small"
-        options={options || []}
-        getOptionLabel={(option) => option.label || ""}
-        value={selectedOption}
-        onChange={(event, newValue) => {
-          onChange(newValue ? newValue.value : "");
-        }}
-        isOptionEqualToValue={(option, value) => option.value === value?.value}
-        disableClearable={false}
-        clearOnEscape
-        freeSolo={false}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            placeholder={placeholder}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                backgroundColor: "#F9FAFB",
-                "&:hover": { 
-                  backgroundColor: "#F3F4F6",
+  const FilterSelect = ({ label, icon, options, value, onChange, placeholder }) => {
+    // Find the selected option object
+    const selectedOption = options?.find(opt => opt.value === value) || null;
+
+    return (
+      <FormControl fullWidth size="small">
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+          {icon}
+          <Typography variant="caption" fontWeight={500} sx={{ color: "#374151" }}>
+            {label}
+          </Typography>
+        </Box>
+        <Autocomplete
+          size="small"
+          options={options || []}
+          getOptionLabel={(option) => option.label || ""}
+          value={selectedOption}
+          onChange={(event, newValue) => {
+            onChange(newValue ? newValue.value : "");
+          }}
+          isOptionEqualToValue={(option, value) => option.value === value?.value}
+          disableClearable={false}
+          clearOnEscape
+          freeSolo={false}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              placeholder={placeholder}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: "#F9FAFB",
+                  "&:hover": {
+                    backgroundColor: "#F3F4F6",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#f26d44",
+                    }
+                  },
+                  "&.Mui-focused": {
+                    backgroundColor: "#fff",
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderColor: "#f26d44",
+                      borderWidth: "2px",
+                    },
+                  },
                   "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#f26d44",
-                  }
-                },
-                "&.Mui-focused": {
-                  backgroundColor: "#fff",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#f26d44",
-                    borderWidth: "2px",
+                    borderColor: "#e5e7eb",
                   },
                 },
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#e5e7eb",
+                "& .MuiInputBase-input": {
+                  fontSize: "14px",
+                  padding: "8.5px 14px",
+                },
+              }}
+            />
+          )}
+          renderOption={(props, option) => (
+            <li {...props} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Box sx={{ color: "#f26d44", display: "flex", alignItems: "center" }}>
+                {icon}
+              </Box>
+              <Box>
+                <Typography variant="body2" fontWeight={500}>
+                  {option.label}
+                </Typography>
+              </Box>
+            </li>
+          )}
+          ListboxProps={{
+            sx: {
+              maxHeight: 300,
+              "& .MuiAutocomplete-option": {
+                padding: "8px 12px",
+                "&:hover": {
+                  backgroundColor: "rgba(37, 99, 235, 0.04)",
+                },
+                "&[aria-selected='true']": {
+                  backgroundColor: "rgba(37, 99, 235, 0.1)",
                 },
               },
-              "& .MuiInputBase-input": {
-                fontSize: "14px",
-                padding: "8.5px 14px",
-              },
-            }}
-          />
-        )}
-        renderOption={(props, option) => (
-          <li {...props} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <Box sx={{ color: "#f26d44", display: "flex", alignItems: "center" }}>
-              {icon}
-            </Box>
-            <Box>
-              <Typography variant="body2" fontWeight={500}>
-                {option.label}
-              </Typography>
-            </Box>
-          </li>
-        )}
-        ListboxProps={{
-          sx: {
-            maxHeight: 300,
-            "& .MuiAutocomplete-option": {
-              padding: "8px 12px",
+            },
+          }}
+          sx={{
+            "& .MuiAutocomplete-clearIndicator": {
+              color: "#6b7280",
               "&:hover": {
-                backgroundColor: "rgba(37, 99, 235, 0.04)",
-              },
-              "&[aria-selected='true']": {
-                backgroundColor: "rgba(37, 99, 235, 0.1)",
+                color: "#f26d44",
               },
             },
-          },
-        }}
-        sx={{
-          "& .MuiAutocomplete-clearIndicator": {
-            color: "#6b7280",
-            "&:hover": {
-              color: "#f26d44",
-            },
-          },
-        }}
-      />
-    </FormControl>
-  );
-};
+          }}
+        />
+      </FormControl>
+    );
+  };
   // Filter Content (Reusable for both Desktop & Mobile)
   const FilterContent = () => (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -175,13 +186,21 @@ export default function ProgramFilters({
 
       {/* Filters Body */}
       <Box sx={{ p: 2, flexGrow: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 3 }}>
-        
+
         {/* Country Filter */}
         <FilterSelect
           label="Country"
           icon={<PublicIcon fontSize="small" />}
           options={countries}
-          value={filters.country}
+          value={ isCleared ? "" :
+            filters.country ||
+            countries?.find(
+              item =>
+                item.label?.toLowerCase() ===
+                allProfile?.profile?.preferences?.preferredCountries?.[0]?.toLowerCase()
+            )?.value ||
+            ""
+          }
           onChange={(value) => handleFilterChange("country", value)}
           placeholder="Select country"
         />
@@ -201,7 +220,15 @@ export default function ProgramFilters({
           label="Category"
           icon={<CategoryIcon fontSize="small" />}
           options={categories}
-          value={filters.category}
+          value={isCleared ? "" :
+            filters.category ||
+            categories?.find(
+              item =>
+                item.label?.toLowerCase() ===
+                allProfile?.profile?.preferences?.preferredCourse?.[0]?.toLowerCase()
+            )?.value ||
+            ""
+          }
           onChange={(value) => handleFilterChange("category", value)}
           placeholder="Select category"
         />
@@ -224,7 +251,6 @@ export default function ProgramFilters({
                   textTransform: "none",
                   fontSize: "13px",
                   fontWeight: 500,
-                  borderRadius: "8px",
                   ...(filters.studyMode !== mode.value && {
                     borderColor: "#e5e7eb",
                     color: "#374151",
@@ -252,22 +278,21 @@ export default function ProgramFilters({
                 size="small"
                 onClick={() => handleFilterChange("level", filters.level === level.value ? "" : level.value)}
                 sx={{
-                  borderRadius: "20px",
                   fontSize: "12px",
                   fontWeight: 500,
-                  ...(filters.level === level.value
+                  ...(selectedLevel === level.value
                     ? {
-                        backgroundColor: "rgba(37,99,235,0.1)",
-                        color: "#f26d44",
-                        border: "1px solid #f26d44",
-                        "&:hover": { backgroundColor: "rgba(37,99,235,0.15)" },
-                      }
+                      backgroundColor: "rgba(37,99,235,0.1)",
+                      color: "#f26d44",
+                      border: "1px solid #f26d44",
+                      "&:hover": { backgroundColor: "rgba(37,99,235,0.15)" },
+                    }
                     : {
-                        backgroundColor: "#F9FAFB",
-                        color: "#374151",
-                        border: "1px solid #e5e7eb",
-                        "&:hover": { borderColor: "#f26d44", backgroundColor: "rgba(37,99,235,0.04)" },
-                      }),
+                      backgroundColor: "#F9FAFB",
+                      color: "#374151",
+                      border: "1px solid #e5e7eb",
+                      "&:hover": { borderColor: "#f26d44", backgroundColor: "rgba(37,99,235,0.04)" },
+                    }),
                 }}
               />
             ))}
@@ -288,7 +313,6 @@ export default function ProgramFilters({
                   onDelete={() => handleFilterChange("country", "")}
                   deleteIcon={<CloseIcon fontSize="small" />}
                   sx={{
-                    borderRadius: "20px",
                     backgroundColor: "rgba(37,99,235,0.1)",
                     color: "#f26d44",
                     fontWeight: 500,
@@ -304,7 +328,6 @@ export default function ProgramFilters({
                   onDelete={() => handleFilterChange("studyMode", "")}
                   deleteIcon={<CloseIcon fontSize="small" />}
                   sx={{
-                    borderRadius: "20px",
                     backgroundColor: "rgba(37,99,235,0.1)",
                     color: "#f26d44",
                     fontWeight: 500,
@@ -319,7 +342,6 @@ export default function ProgramFilters({
                   onDelete={() => handleFilterChange("level", "")}
                   deleteIcon={<CloseIcon fontSize="small" />}
                   sx={{
-                    borderRadius: "20px",
                     backgroundColor: "rgba(37,99,235,0.1)",
                     color: "#f26d44",
                     fontWeight: 500,
@@ -361,7 +383,6 @@ export default function ProgramFilters({
             textTransform: "none",
             fontWeight: 600,
             fontSize: "14px",
-            borderRadius: "8px",
             backgroundColor: "#f26d44",
             "&:hover": { backgroundColor: "#f26d44" },
           }}
@@ -387,8 +408,7 @@ export default function ProgramFilters({
       >
         <Box
           sx={{
-            border: "2px solid #f26d44",
-            borderRadius: "16px",
+            border: "1px solid #494938",
             background: "#fff",
             boxShadow: "0 4px 14px rgba(37, 99, 235, 0.08)",
             overflow: "hidden",
@@ -415,7 +435,6 @@ export default function ProgramFilters({
                 sx={{
                   backgroundColor: "#fff",
                   color: "#f26d44",
-                  borderRadius: "50%",
                   width: 20,
                   height: 20,
                   display: "flex",
@@ -432,7 +451,6 @@ export default function ProgramFilters({
           }
           sx={{
             mb: 2,
-            borderRadius: "12px",
             textTransform: "none",
             fontWeight: 600,
             backgroundColor: "#f26d44",

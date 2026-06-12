@@ -1424,7 +1424,7 @@ export default function StudentDetailsPage() {
             ) : currentStep?.step === "AwaitingSchoolResponse" ? (
               <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs} />
             ) : currentStep?.step === "OfferReceived" ? (
-              <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs} />
+              <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs} fetchApplication={fetchApplication} />
             ) : currentStep?.step === "Completed" && currentprimarystep !== "Refused" ? (
               <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} />
             ) : null}

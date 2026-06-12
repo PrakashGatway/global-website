@@ -157,12 +157,12 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
             {activeInnerTab === "tests" && (
               <TestsTab
                 data={{
-                  ielts: JSON.parse(profile?.ielts) || {},
-                  toefl: JSON.parse(profile?.toefl) || {},
-                  gre: JSON.parse(profile?.gre) || {},
-                  sat: JSON.parse(profile?.sat) || {},
-                  gmat: JSON.parse(profile?.gmat) || {},
-                  pte: JSON.parse(profile?.pte) || {},
+                  ielts: JSON?.parse(profile?.ielts) || {},
+                  toefl: JSON?.parse(profile?.toefl) || {},
+                  gre: JSON?.parse(profile?.gre) || {},
+                  sat: JSON?.parse(profile?.sat) || {},
+                  gmat: JSON?.parse(profile?.gmat) || {},
+                  pte: JSON?.parse(profile?.pte) || {},
                 }}
                 onSave={async (val) => {
                   await axiosInstance.put(`/users/${studentId}`, {

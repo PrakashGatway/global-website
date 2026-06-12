@@ -85,6 +85,7 @@ export default function CoursesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedCourse, setSelectedCourse] = useState(null)
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+  const [isCleared, setIsCleared] = useState(false);
 
   // Debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 500)
@@ -256,6 +257,7 @@ export default function CoursesPage() {
     })
     setSearchQuery("")
     setPage(1)
+    setIsCleared(true)
   }
 
   // Format currency
@@ -310,7 +312,8 @@ export default function CoursesPage() {
       <div className="space-y-4">
 
         {/* Hero Section */}
-        <ProgramHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            
+        <ProgramHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} countries={countries} />
 
         {/* Search & Filter Bar */}
         {/* <div className="flex flex-col sm:flex-row gap-4">
@@ -370,6 +373,7 @@ export default function CoursesPage() {
             levels={levels}
             showFilters={showFilters}
             setShowFilters={setShowFilters}
+            isCleared={isCleared}
           />
 
           {/* ================= RIGHT CONTENT: COURSE GRID ================= */}
