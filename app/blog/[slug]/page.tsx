@@ -1,34 +1,31 @@
-import { serverInstance } from "@/app/axiosInstance"
+import { serverInstance } from "@/app/axiosInstance";
 
-import BlogDetailsPage from "@/components/blogDetails"
-import { notFound } from "next/navigation"
-
+import BlogDetailsPage from "@/components/blogDetails";
+import { notFound } from "next/navigation";
 
 // Define types
 interface BlogSEO {
-    metaTitle: string
-    metaDescription: string
-    keywords: string[]
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string[];
 }
 
 interface Blog {
-    _id: string
-    title: string
-    slug: string
-    description: string
-    shortDescription: string
-    coverImage: string
-    seo: BlogSEO
-    tags: string[]
-    status: string
-    isFeatured: boolean
-    views: number
-    createdAt: string
-    updatedAt: string
-    __v: number
+  _id: string;
+  title: string;
+  slug: string;
+  description: string;
+  shortDescription: string;
+  coverImage: string;
+  seo: BlogSEO;
+  tags: string[];
+  status: string;
+  isFeatured: boolean;
+  views: number;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
-
-
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -51,7 +48,7 @@ export async function generateMetadata({ params }) {
       keywords: blog.seo?.keywords || [],
 
       robots: {
-        index: !noIndex,
+        index: true,
         follow: true,
       },
 
@@ -73,46 +70,49 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function Page({ params }) {
+  const { slug } = await params;
+  let blog: Blog;
+  try {
+    const res = await serverInstance.get(`/blogs/${slug}`);
+    blog = res.data.data;
+  } catch (error) {
+    console.error("Error fetching blog:", error);
+    return notFound();
+  }
 
-    const { slug } = await params
-    let blog: Blog
-    try {
-        const res = await serverInstance.get(`/blogs/${slug}`)
-        blog = res.data.data
+  // ===== Latest Blogs =====
+  const latestRes = await serverInstance.get("/blogs?limit=4&sort=-createdAt");
 
-    } catch (error) {
-        console.error("Error fetching blog:", error)
-        return notFound()
-    }
+  const latestBlogs = latestRes.data.data;
 
-    // ===== Latest Blogs =====
-    const latestRes = await serverInstance.get("/blogs?limit=4&sort=-createdAt")
+  const res = await serverInstance.get("/blogs/categories?limit=50");
+  const blogCategory = res.data.data;
 
-    const latestBlogs = latestRes.data.data
+  // get all blogs ordered by date
+  const navRes = await serverInstance.get("/blogs?type=blog");
 
+  const allBlogs = navRes.data.data;
 
-    const res = await serverInstance.get("/blogs/categories?limit=50")
-    const blogCategory = res.data.data
+  const uniblog = await serverInstance.get(
+    `/universities?limit=5&country=${blog?.country?.code}`,
+  );
 
-    // get all blogs ordered by date
-    const navRes = await serverInstance.get(
-        "/blogs?type=blog"
-    );
+  const resvideo = await serverInstance.get("/testimonials?type=video&limit=6");
+  const resimage = await serverInstance.get(
+    "/testimonials?type=image&limit=15",
+  );
 
-    const allBlogs = navRes.data.data;
-
-   const uniblog = await serverInstance.get(`/universities?limit=5&country=${blog?.country?.code}`)
-
-   const resvideo = await serverInstance.get("/testimonials?type=video&limit=6")
-   const resimage = await serverInstance.get("/testimonials?type=image&limit=15")
-
-
-   
- 
-    return (
-        <>
-
-            <BlogDetailsPage latestBlogs={latestBlogs} blog={blog} blogCategory={blogCategory} allBlogs={allBlogs} uniblog={uniblog.data} imageData={resimage.data.data} videoData = {resvideo.data.data} />
-        </>
-    )
+  return (
+    <>
+      <BlogDetailsPage
+        latestBlogs={latestBlogs}
+        blog={blog}
+        blogCategory={blogCategory}
+        allBlogs={allBlogs}
+        uniblog={uniblog.data}
+        imageData={resimage.data.data}
+        videoData={resvideo.data.data}
+      />
+    </>
+  );
 }

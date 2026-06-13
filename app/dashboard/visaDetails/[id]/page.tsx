@@ -660,6 +660,16 @@ export default function VisaJourneyEditPage() {
     return type === 'success' ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200';
   };
 
+  const [currentStep, setCurrentStep] = useState([]);
+  useEffect(() => {
+    setCurrentStep(
+      formData.steps.filter(
+        ele => ele.id == formData.currentStep
+      )
+    );
+  }, [formData.currentStep, formData.steps]);
+
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -786,8 +796,9 @@ export default function VisaJourneyEditPage() {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#f56e45] focus:border-[#f56e45]"
                 >
-                  {[1, 2, 3, 4, 5, 6].map(step => (
-                    <option key={step} value={step}>Step {step}: {formData.steps.find(s => s.id === step)?.label}</option>
+                  {/* {[1, 2, 3, 4, 5, 6].map(step => ( */}
+                  {formData.steps.map(step => (
+                    <option key={step.id} value={step.id}>Step {step.id}: {step.label}</option>
                   ))}
                 </select>
               </div>
@@ -797,10 +808,11 @@ export default function VisaJourneyEditPage() {
           {/* Steps Section */}
           <div className="space-y-6">
             <h2 className="text-lg font-bold text-gray-800">Visa Journey Steps</h2>
-            {formData.steps.map((step) => (
+            {currentStep.map((step) => (
               <StepEditor
                 key={step.id}
                 step={step}
+                currentStep={formData.currentStep}
                 onStepChange={handleStepChange}
                 onPageChange={handleStepPageChange}
                 onBannerChange={handleStepBannerChange}
@@ -836,6 +848,7 @@ export default function VisaJourneyEditPage() {
 // Step Editor Component
 function StepEditor({ 
   step, 
+  currentStep,
   onStepChange, 
   onPageChange, 
   onBannerChange, 
@@ -857,7 +870,7 @@ function StepEditor({
   getStatusColor,
   getBannerTypeColor
 }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [activeTab, setActiveTab] = useState('basic'); // basic, page, banner, sections, importantInfo, progressSteps, statusTimeline
 
   const statusOptions = ["Pending", "In Progress", "Completed", "Approved", "Scheduled", "Under Review by Embassy"];
@@ -1459,3 +1472,19 @@ function StepEditor({
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

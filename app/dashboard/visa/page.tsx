@@ -42,7 +42,33 @@ const ProgressStep = ({ step, index, total, currentStepId, onStepClick }) => {
   let lineBg = 'bg-gray-200';
   let labelColor = 'text-gray-500';
   let status = 'locked';
-
+  const stepIcons = {
+    1: {
+      active: "/icons/approval.png",
+      inactive: "/icons/approva 2.png",
+    },
+    2: {
+      active: "/icons/approval.png",
+      inactive: "/icons/approva 2.png",
+    },
+    3: {
+      active: "/icons/visa.png",
+      inactive: "/icons/visa 2.png",
+    },
+    4: {
+      active: "/icons/biomatric.png",
+      inactive: "/icons/biomatric 2.png",
+    },
+    5: {
+      active: "/icons/descision.png",
+      inactive: "/icons/descision 2.png",
+    },
+    6: {
+      active: "/icons/visa approved.png",
+      inactive: "/icons/visa approved 2.png",
+    },
+  };
+    
   if (step.page?.status === 'Completed' || step.status === 'Completed') {
     status = 'completed';
     circleBg = 'bg-green-500';
@@ -61,19 +87,31 @@ const ProgressStep = ({ step, index, total, currentStepId, onStepClick }) => {
       onClick={() => onStepClick(step.id)}
     >
       {!isLast && (
-        <div className={`absolute top-5 left-[60%] w-full h-1 -z-10 ${lineBg}`}></div>
+        <div className={`absolute top-7 left-[60%] w-full h-[2px] -z-10 ${lineBg}`}></div>
       )}
-      <div className={`w-10 h-10 rounded-full flex items-center justify-center z-10 border-2 ${isActive || status === 'completed' ? 'border-green-500 bg-white' : 'border-gray-300 bg-white'}`}>
-        {status === 'completed' ? (
-          <CheckCircle2 size={20} className="text-green-500" />
+
+      <div className={`w-14 h-14 rounded-full p-3 flex items-center justify-center z-10 border-2 ${isActive || status === 'completed' ? 'border-green-500 bg-white' : 'border-gray-300 bg-white'}`}>
+
+        <img
+          src={
+            status === "completed" || isActive
+              ? stepIcons[step.id]?.active
+              : stepIcons[step.id]?.inactive
+          }
+          alt={step.label}
+          className="w-full h-full object-contain"
+        />
+        {/* {status === 'completed' ? (
+          <CheckCircle2 size={20} className="text-[#f56e45]" />
         ) : isActive ? (
           <div className="w-3 h-3 bg-[#f56e45] rounded-full"></div>
         ) : status === 'locked' ? (
           <Lock size={14} className="text-gray-400" />
         ) : (
           <span className="text-sm font-bold text-gray-500">{step.id}</span>
-        )}
+        )} */}
       </div>
+
       <div className="mt-2 text-center">
         <div className={`text-sm font-bold ${labelColor}`}>{step.label}</div>
         <div className={`text-sm font-medium mt-1 ${labelColor}`}>
@@ -166,10 +204,10 @@ const getStaticFallbackData = () => ({
           ]
         },
         preparationCards: [
-          { icon: "FileText", title: "Blocked Account", desc: "Open a blocked account for your living expenses in Germany.", btnText: "Learn More" },
-          { icon: "Shield", title: "Health Insurance", desc: "Get mandatory health insurance for your student visa.", btnText: "Compare Plans" },
-          { icon: "Building2", title: "Visa Appointment", desc: "Book your visa appointment at the German embassy.", btnText: "Check Slots" },
-          { icon: "Home", title: "Accommodation", desc: "Find student housing in your university city.", btnText: "Search Now" }
+          { icon: "FileText", title: "Blocked Account", desc: "Open a blocked account for your living expenses in Germany.", btnText: "Learn More", bg:"bg-[#f7faff]" },
+          { icon: "Shield", title: "Health Insurance", desc: "Get mandatory health insurance for your student visa.", btnText: "Compare Plans", bg:"bg-[#f5faf9]" },
+          { icon: "Building2", title: "Visa Appointment", desc: "Book your visa appointment at the German embassy.", btnText: "Check Slots", bg:"bg-[#fffcfa]" },
+          { icon: "Home", title: "Accommodation", desc: "Find student housing in your university city.", btnText: "Search Now", bg:"bg-[#faf7fc]" }
         ],
         documents: {
           title: "Required Documents for APS",
@@ -647,37 +685,17 @@ const Step1APSApplied = ({ data, currentStepId, apiData }) => {
   <div className="p-6">
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
       {[
-        {
-          icon: "FileText",
-          title: "Blocked Account",
-          desc: "Open a blocked account for your living expenses in Germany.",
-          btnText: "Learn More",
-        },
-        {
-          icon: "Shield",
-          title: "Health Insurance",
-          desc: "Get mandatory health insurance for your student visa.",
-          btnText: "Compare Plans",
-        },
-        {
-          icon: "Building2",
-          title: "Visa Appointment",
-          desc: "Book your visa appointment at the German embassy.",
-          btnText: "Check Slots",
-        },
-        {
-          icon: "Home",
-          title: "Accommodation",
-          desc: "Find student housing in your university city.",
-          btnText: "Search Now",
-        },
-      ].map((card, idx) => {
+          { icon: "FileText", title: "Blocked Account", desc: "Open a blocked account for your living expenses in Germany.", btnText: "Learn More", bg:"bg-[#f7faff]" },
+          { icon: "Shield", title: "Health Insurance", desc: "Get mandatory health insurance for your student visa.", btnText: "Compare Plans", bg:"bg-[#f5faf9]" },
+          { icon: "Building2", title: "Visa Appointment", desc: "Book your visa appointment at the German embassy.", btnText: "Check Slots", bg:"bg-[#fffcfa]" },
+          { icon: "Home", title: "Accommodation", desc: "Find student housing in your university city.", btnText: "Search Now", bg:"bg-[#faf7fc]" }
+        ].map((card, idx) => {
         const IconComp = iconMap[card.icon] || HelpCircle;
 
         return (
           <div
             key={idx}
-            className="group bg-white border border-gray-200 rounded-xl p-5 hover:border-orange-300 hover:shadow-md transition-all duration-200"
+            className={`group ${card.bg} border border-gray-200 rounded-xl p-5 hover:border-orange-300 hover:shadow-md transition-all duration-200`}
           >
             <div className="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center mb-4">
               <IconComp className="text-orange-500" size={24} />
@@ -1571,7 +1589,12 @@ const Step6VisaApproved = ({ data, currentStepId, apiData }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6  border border-gray-200 shadow-sm flex flex-col items-center justify-center text-center">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-3">
-            <Award size={32} className="text-green-600" />
+            {/* <Award size={32} className="text-green-600" /> */}
+            <img
+          src={'/gif/complete.gif'}
+          alt={"icon"}
+          className="w-full h-full object-contain"
+        />
           </div>
           <h3 className="font-bold text-lg text-gray-800">Congratulations!</h3>
           <p className="text-sm text-gray-600 mt-2">Your German Student Visa has been approved. You can now plan your travel to Germany.</p>
@@ -1971,6 +1994,7 @@ export default function VisaJourneyPage() {
   const pageData = currentStepData?.page || { title: "Visa Journey", status: "In Progress", subtitle: "" };
   const bannerData = currentStepData?.banner || { type: "info", title: "", subtitle: "", action: "" };
 
+  console.log(bannerData, pageData)
   const renderStepContent = () => {
     const stepProps = {
       data: data,
@@ -2055,6 +2079,14 @@ export default function VisaJourneyPage() {
 
   // Get steps for progress bar
   const progressSteps = data.steps || [];
+  const bannerGifMap = {
+  "APS Application": "/gif/registration.gif",
+  "APS Approval": "/gif/Approval.gif",
+  "Visa Application": "/gif/notepad.gif",
+  "Biometrics Appointment": "/gif/Biomatric.gif",
+  "Visa Decision": "/gif/visa descision.gif",
+  "Visa Approved": "/gif/visa approved.gif",
+};
 
   return (
     <div className="min-h-screen">
@@ -2097,37 +2129,87 @@ export default function VisaJourneyPage() {
         )}
 
         {/* Banner - only show if title exists */}
-        {bannerData.title && 
-        <div className={`${getBannerStyles()}  p-4 mb-6 gap-4 border`}>
-          <div className="flex items-start gap-3">
-            <div className={`rounded-full p-1 ${bannerData?.type === 'success' ? 'bg-green-600' : 'bg-orange-600'}`}>
-              <CheckCircle size={14} className="text-white" />
+{bannerData.title && (
+  <div className={`${getBannerStyles()} relative overflow-hidden rounded-xl p-5 mb-6 shadow-sm transition-all duration-300 ${
+    bannerData?.type === 'success' 
+      ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500' 
+      : 'bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500'
+  }`}>
+    <div className="flex items-start gap-4">
+      {/* Icon Container */}
+      <div className="flex-shrink-0">
+        {/* <div className={`rounded-xl p-2.5 shadow-md ${
+          bannerData?.type === 'success' ? 'bg-green-500' : 'bg-orange-500'
+        }`}> */}
+          <img
+            src={bannerGifMap[pageData?.title] || "/gif/notepad.gif"}
+            alt={bannerData?.title}
+            className="w-16 h-16 object-contain"
+          />
+        {/* </div> */}
+      </div>
+
+      {/* Content Area */}
+      <div className="flex-1 min-w-0">
+        <h4 className="font-semibold text-base text-gray-800 leading-tight">
+          {bannerData?.title || "No banner title"}
+        </h4>
+        <p className="text-sm text-gray-600 mt-1 leading-relaxed">
+          {bannerData?.subtitle || "No banner subtitle"}
+        </p>
+        
+        {/* Progress Bar - Optional enhancement */}
+        {bannerData?.progress !== undefined && (
+          <div className="mt-3">
+            <div className="flex justify-between text-xs text-gray-500 mb-1">
+              <span>Progress</span>
+              <span>{bannerData.progress}%</span>
             </div>
-            <div className="flex-1">
-              <h4 className="font-bold text-sm">{bannerData?.title || "No banner title"}</h4>
-              <p className="text-sm mt-0.5">{bannerData?.subtitle || "No banner subtitle"}</p>
+            <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+              <div 
+                className={`h-full rounded-full transition-all duration-500 ${
+                  bannerData?.type === 'success' ? 'bg-green-500' : 'bg-orange-500'
+                }`}
+                style={{ width: `${bannerData.progress}%` }}
+              />
             </div>
-            {bannerData?.action && (
-              <div>
-                <button className="text-sm font-medium text-[#f56e45] bg-white px-3 py-1 rounded border border-orange-200">
-                  {bannerData.action}
-                </button>
-                {bannerData?.fileUrl && (
-                  <a
-                    href={fileBaseurl(bannerData.fileUrl)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2 px-3 py-1"
-                  >
-                    <Download size={12} />
-                    Download File
-                  </a>
-                )}
-              </div>
-            )}
           </div>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      {bannerData?.action && (
+        <div className="flex-shrink-0 flex flex-col items-end gap-2">
+          {/* <button className="text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-4 py-1.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+            {bannerData.action}
+          </button> */}
+          
+          {bannerData?.fileUrl && (
+            <a
+              href={fileBaseurl(bannerData.fileUrl)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-gray-500 hover:text-blue-600 transition-colors duration-200 flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-gray-50"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download File
+            </a>
+          )}
+
         </div>
-        }
+      )}
+    </div>
+    
+    {/* Decorative Element */}
+    <div className="absolute top-0 right-0 opacity-5">
+      <svg className="w-32 h-32" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" />
+      </svg>
+    </div>
+  </div>
+)}
 
         <div className="grid grid-cols-12 gap-6">
           {/* Left Column - Dynamic Content */}
@@ -2169,10 +2251,10 @@ export default function VisaJourneyPage() {
                   <span className="text-gray-500">Course</span>
                   <span className="font-medium text-gray-800">{data.application?.course?.name || data.course?.name || "Computer Science"}</span>
                 </div>
-                {data.applicationId && (
+                {data.applicationNumber && (
                   <div className="flex justify-between border-b border-gray-50 pb-1.5">
                     <span className="text-gray-500">Application ID</span>
-                    <span className="font-medium text-gray-800">{data.applicationId}</span>
+                    <span className="font-medium text-gray-800">{data.applicationNumber}</span>
                   </div>
                 )}
               </div>
