@@ -1,6 +1,6 @@
 import axios from "axios"
 
-let mode = "dev"
+let mode = "devddd"
 
 const BASE_URL =
   mode === "dev"
