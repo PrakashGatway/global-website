@@ -39,15 +39,15 @@ export default function ReviewApplication({ application, allProfile, profile, ac
   };
 
   return (
-    <><div className=" p-4 md:p-2 space-y-5 grid grid-cols-8 gap-2">
+    <><div className=" p-4 md:p-2 space-y-5 grid grid-cols-12 gap-2">
       {/* Top Status Card */}
-      <div className="col-span-6">
-        <div className="bg-orange-50 border border-[#E5E7EB] p-4 md:p-6 mb-2">
+      <div className="col-span-8">
+        <div className="bg-[#fefaf8] border border-orange-400 p-4 md:p-6 mb-2">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
 
             <div className="flex items-start gap-4">
               <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-orange-100 flex items-center justify-center">
-                <img src="https://www.freeiconspng.com/uploads/review-icon-png-9.png" alt="" />
+                <img src="/review-application.gif" alt="" />
               </div>
 
               <div>
@@ -101,11 +101,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
               </div>
             </div>
 
-            <img
-              src="/review-illustration.png"
-              className="w-40 md:w-56"
-              alt=""
-            />
+          
           </div>
         </div>
         {/* Checklist + Counselor */}
@@ -359,8 +355,44 @@ export default function ReviewApplication({ application, allProfile, profile, ac
         </div>
 
       </div>
-      <div className="space-y-4 col-span-2">
+      <div className="space-y-4 col-span-4">
         {/* Application Summary */}
+          <div className="bg-white p-4  border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="text-sm font-bold text-gray-800">Application Summary</h4>
+              </div>
+              <div className="space-y-1.5 text-sm">
+                <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                  <span className="text-gray-500">Student Name</span>
+                  <span className="font-medium text-gray-800">{application?.student?.name || "--"}</span>
+                </div>
+                <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                  <span className="text-gray-500">Student Email</span>
+                  <span className="font-medium text-gray-800">{application?.student?.email || "--"}</span>
+                </div>
+                <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                  <span className="text-gray-500">Student Phone</span>
+                  <span className="font-medium text-gray-800">{application?.student?.phone || "--"}</span>
+                </div>
+                <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                  <span className="text-gray-500">Country</span>
+                  <span className="font-medium text-gray-800 flex items-center gap-1">
+                    {application?.country || "India"}
+                  </span>
+                </div>
+               
+                <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                  <span className="text-gray-500">Course</span>
+                  <span className="font-medium text-gray-800">{application?.course?.name || application?.course?.name || "Computer Science"}</span>
+                </div>
+                {application.applicationId && (
+                  <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                    <span className="text-gray-500">Application ID</span>
+                    <span className="font-medium text-gray-800">{application.applicationId}</span>
+                  </div>
+                )}
+              </div>
+            </div>
 
         <Comments application={application} profile={profile} />
 
@@ -380,7 +412,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
         </div>
 
         {/* Timeline */}
-        <div className="bg-white border border-slate-200 p-5 shadow-sm">
+        <div className="bg-white border border-slate-200 p-5 shadow-sm h-100 overflow-y-auto">
           <div className="flex items-center gap-2 mb-5">
             <Clock3 className="w-5 h-5 text-slate-600" />
             <h3 className="font-semibold text-slate-800">

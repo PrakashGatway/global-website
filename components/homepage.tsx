@@ -45,11 +45,11 @@ export default function Homepage({
   const [playingVideo, setPlayingVideo] = useState(null);
 const [videoLoading, setVideoLoading] = useState(false);
 
-  const getYoutubeId = (url) => {
-  const regExp =
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/;
-  const match = url.match(regExp);
-  return match ? match[1] : "";
+const getDrivePreviewUrl = (url) => {
+  const match = url?.match(/\/d\/([^/]+)/);
+  return match
+    ? `https://drive.google.com/file/d/${match[1]}/preview`
+    : url;
 };
 
   const goToBlog = (slug) => {
@@ -92,7 +92,40 @@ const [videoLoading, setVideoLoading] = useState(false);
     slider.on("updated", nextTimeout);
   }
 
-  console.log(videoRes)
+const visaCards = [
+  {
+    id: 1,
+    name: "Harshit Tak",
+    country: "Canada",
+    visa: "Canada Study Visa",
+    flag: "https://flagcdn.com/w80/ca.png",
+    image: "/visa-1.jpg",
+  },
+  {
+    id: 2,
+    name: "Mohammad Nouman",
+    country: "UK",
+    visa: "Italy Study Visa",
+    flag: "https://flagcdn.com/w80/it.png",
+    image: "/visa-4.jpg",
+  },
+  {
+    id: 3,
+    name: "Krishna Bhatia",
+    country: "Ireland",
+    visa: "Ireland Study Visa",
+    flag: "https://flagcdn.com/w80/ie.png",
+    image: "/visa-3.jpg",
+  },
+  {
+    id: 4,
+    name: "Himani Rawat",
+    country: "Italy",
+    visa: "Italy Study Visa",
+    flag: "https://flagcdn.com/w80/it.png",
+    image: "/visa-2.jpg",
+  },
+];
 
   const [sliderRefblog] = useKeenSlider(
     {
@@ -1178,7 +1211,6 @@ const [videoLoading, setVideoLoading] = useState(false);
 
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
   {videoRes?.map((item) => {
-    const videoId = getYoutubeId(item?.videoUrl);
 
     return (
       <div
@@ -1186,22 +1218,21 @@ const [videoLoading, setVideoLoading] = useState(false);
         className="relative overflow-hidden group h-[400px]"
       >
        {playingVideo === item?._id ? (
-  <div className="relative w-full h-full">
-    {videoLoading && (
-      <div className="absolute inset-0 bg-black flex items-center justify-center z-10">
-        <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
-      </div>
-    )}
+ <div className="relative w-full h-full">
+  {videoLoading && (
+    <div className="absolute inset-0 bg-black flex items-center justify-center z-10">
+      <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+    </div>
+  )}
 
-    <iframe
-      className="w-full h-full"
-      src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
-      title={item?.name}
-      allow="autoplay; encrypted-media"
-      allowFullScreen
-      onLoad={() => setVideoLoading(false)}
-    />
-  </div>
+  <iframe
+    src={item?.videoUrl}
+    className="w-full h-full border-0"
+    allow="autoplay; fullscreen"
+    allowFullScreen
+    onLoad={() => setVideoLoading(false)}
+  />
+</div>
 ) : (
   <>
     <img
@@ -1243,12 +1274,77 @@ const [videoLoading, setVideoLoading] = useState(false);
   </div>
 </section> */}
 
-      <StudentVisaStories
+      {/* <StudentVisaStories
         stories={visacontent}
         title={homePage?.visa?.title}
         subtitle={homePage?.visa?.subtitle}
         tag={homePage?.visa?.tag}
-      />
+      /> */}
+
+      <section className="bg-white py-16">
+  <div className="max-w-7xl mx-auto px-4 md:px-6">
+    
+    {/* Heading */}
+    <div className="text-center mb-14">
+      <h2 className="text-3xl md:text-5xl font-bold text-primary">
+        500+ Dreams{" "}
+        <span className="text-[#F26B3A]">
+          Turned Into Reality
+        </span>
+      </h2>
+
+      <p className="mt-4 text-lg md:text-2xl text-gray-700">
+        Real Students. Real Visas. Real Success Stories.
+      </p>
+    </div>
+    </div>
+
+    {/* Cards */}
+    <div className="bg-[#faf5f2] w-full p-8">
+      <div className="max-w-7xl mx-auto">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 ">
+      {visaCards.map((item) => (
+        <div
+          key={item.id}
+          className="group bg-white shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden "
+        >
+          {/* Image */}
+
+<div className="p-2 bg-gray-100">
+          <div className="overflow-hidden w-full  bg-gray-100 ">
+            <img
+              src={item.image}
+              alt={item.name}
+              className="w-full h-[220px] object-cover group-hover:scale-105 transition duration-500"
+            />
+          </div>
+          </div>
+
+          {/* Content */}
+          <div className="p-5">
+            <div className="flex gap-2">
+              <span className="text-2xl">
+                <img src={item.flag} alt=""  className="w-10 h-6 mt-2"/>
+              </span>
+
+              <div>
+                <h3 className="font-semibold text-xl text-gray-800">
+                  {item.name}
+                </h3>
+
+                <p className="text-[#F26B3A] text-base font-medium">
+                  {item.visa}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+    </div>
+    </div>
+  
+</section>
 
       <FAQSection Faqres={Faqres} />
         {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}

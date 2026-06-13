@@ -404,6 +404,11 @@ export default function StudentDetailsPage() {
   const [showApplicationForm, setshowApplicationForm] = useState(false)
 
   const [stepchange, setstepchange] = useState("Started")
+  const [steptitle, setsteptitle] = useState({
+    title: "Application Started",
+    subTitle: "In Progress",
+    step: "Started",
+  });
   const [CountriesList, setCountriesList] = useState()
   const [user, setUser] = useState()
   const [profile2, setProfile] = useState();
@@ -427,7 +432,7 @@ export default function StudentDetailsPage() {
     },
   ]);
 
-
+  console.log(stepchange)
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -550,6 +555,7 @@ export default function StudentDetailsPage() {
     {
       id: 2,
       title: "Under OOSHAS Review",
+      subTitle: "current",
       step: "ReviewbyOoshas",
       icon: Clock,
     },
@@ -591,23 +597,23 @@ export default function StudentDetailsPage() {
   ];
 
 
-  const timelinesteps =
-    application?.primaryStatus === "Refused"
-      ? [
-        ...steps.filter(
-          (item) =>
-            item.step !== "PayEnrollenmentDeposit" &&
-            item.step !== "Completed"
-        ),
-        {
-          id: 8,
-          title: "Rejection Overview",
-          subTitle: "Rejected",
-          step: "Refused",
-          icon: FileText,
-        },
-      ]
-      : steps;
+  // const timelinesteps =
+  //   application?.primaryStatus === "Refused"
+  //     ? [
+  //       ...steps.filter(
+  //         (item) =>
+  //           item.step !== "PayEnrollenmentDeposit" &&
+  //           item.step !== "Completed"
+  //       ),
+  //       {
+  //         id: 8,
+  //         title: "Rejection Overview",
+  //         subTitle: "Rejected",
+  //         step: "Refused",
+  //         icon: FileText,
+  //       },
+  //     ]
+  //     : steps;
 
 
 
@@ -645,14 +651,13 @@ export default function StudentDetailsPage() {
     }
   };
 
-  const currentprimarystep = application.primaryStatus
+  const currentprimarystep = steps.step
 
-  const currentStep = timelinesteps.find(
-    (item) => item.step === currentprimarystep
+  const currentStep = steps.find(
+    (item) => item.step === stepchange
   );
 
 
-  console.log(currentStep)
 
 
 
@@ -662,51 +667,10 @@ export default function StudentDetailsPage() {
       <div className="bg-white ">
         {/* Course Details */}
         <div className="space-y-3 bg-white">
-          <div className="flex items-start justify-between pb-0">
-            <div className="flex items-top gap-3">
-              {application?.course?.university?.uni_logo ? (
-                <img
-                  src={application.course.university.uni_logo}
-                  alt={application.course.university.name}
-                  className="w-12 h-12 mt-1  object-cover"
-                />
-              ) : (
-                <div className="w-12 h-12  bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
-                  <GraduationCap className="w-6 h-6 text-orange-600" />
-                </div>
-              )}
-              <div>
-                <div className="flex items-center gap-3 flex-wrap">
-                  <Link href={`/dashboard/programs/${application?.course?.slug}`} className="flex  items-center gap-1">
-                    <h1 className="text-2xl font-medium text-gray-800 hover:text-orange-900">{application?.course?.name}</h1>
-                    <span className="inline-flex"><Link href={`/dashboard/programs/${application?.course?.slug}`} className="text-orange-500 underline"><Link2Icon className="w-6 h-6" /></Link></span>
-                  </Link>
-                  <span className="text-xl font-medium text-gray-600"> ({application?.applicationNumber})</span>
-                  {application.course?.applicationFee > 0 && application?.paymentStatus == "Pending" && <span className={`px-3 py-1 text-xs font-medium border flex items-center gap-1.5 ${getPaymentStatusBadge(application?.paymentStatus)}`}>
-                    {application?.paymentStatus === 'Completed' ? <CheckCircle className="w-3.5 h-3.5" /> :
-                      application?.paymentStatus === 'Failed' ? <XCircle className="w-3.5 h-3.5" /> :
-                        <Clock className="w-3.5 h-3.5" />}
-                    Payment: {application?.paymentStatus || 'Pending'}
-                  </span>}
-                </div>
-                <div className="flex items-center gap-2 mt-1">
-                  <Building2 className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-600">{application?.course?.university?.name}  </span>
-                  <span className="inline-flex"><Link href={`/dashboard/universities/${application?.course?.university?.slug}`} className="text-orange-500 underline"><Link2Icon className="w-5 h-5" /></Link></span>
-                  <span className="text-gray-300">•</span>
-                  <Globe2 className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-600">{application?.country}</span>
-                </div>
-                <div className="flex items-center text-gray-700 text-sm gap-2 mt-1 flex-wrap">
-                  <span>Application No: {application?.applicationNumber}</span> |
-                  <span>Selected Intake: {application?.intake}</span>
-                  <button onClick={() => setShowIntakeModal(true)} className="inline-flex hover:text-orange-500 p-1 transition-colors">
-                    <Edit2Icon className="w-4 h-4" />
-                  </button> |
-                  <span>Submission deadline: {application?.deadline || 'N/A'}</span>
-                </div>
-              </div>
-            </div>
+
+          <div className="flex gap-4 items-center mb-10">
+            <h2 className="font-bold text-xl">{steptitle.title}</h2>
+            <span className="bg-orange-100 text-orange-500 p-2 text-xs">{steptitle.subTitle}</span>
           </div>
 
 
@@ -748,12 +712,12 @@ export default function StudentDetailsPage() {
             <div className="relative flex justify-between items-start">
               <div className="absolute top-7 left-14 right-5 h-[1px] bg-gray-300 z-0" />
 
-              {timelinesteps.map((step, index) => {
+              {steps.map((step, index) => {
                 const currentStatus =
-                  application?.primaryStatus
+                  steps?.step
 
-                const currentIndex = timelinesteps.findIndex(
-                  item => item.step === currentStatus
+                const currentIndex = steps.findIndex(
+                  item => item.step === currentStep
                 );
 
 
@@ -789,7 +753,10 @@ export default function StudentDetailsPage() {
 
                         {/* Active Card */}
                         <div
-                          onClick={() => setstepchange(step.step)}
+                          onClick={() => {
+                            setstepchange(step.step)
+                            setsteptitle(step)
+                          }}
                           className="mt-[-6px] w-[170px] h-[115px] bg-orange-50 border border-orange-500 rounded-lg flex flex-col items-center justify-center px-2 cursor-pointer"
                         >
                           <h3 className="text-lg font-semibold text-orange-600 text-center leading-6">
@@ -825,7 +792,11 @@ export default function StudentDetailsPage() {
 
                         {/* Title */}
                         <h4
-                          onClick={() => setstepchange(step.step)}
+                          onClick={() => {
+                            setstepchange(step.step)
+                            setsteptitle(step)
+
+                          }}
                           className="mt-2 text-center font-medium text-sm text-gray-700 max-w-[200px] leading-5 cursor-pointer"
                         >
                           {step.title}
@@ -910,7 +881,7 @@ export default function StudentDetailsPage() {
                           {activeMenu === item && (
                             <motion.div
                               layoutId="activeSidebar"
-                              className="absolute inset-0 bg-green-50 border-l-4 border-green-500"
+                              className="absolute inset-0 bg-orange-50 border-l-4 border-orange-500"
                               transition={{
                                 type: "spring",
                                 stiffness: 350,
@@ -922,14 +893,14 @@ export default function StudentDetailsPage() {
                           <div className="relative z-10 flex items-center gap-3">
                             <FileText
                               className={`w-4 h-4 ${activeMenu === item
-                                ? "text-green-700"
+                                ? "text-orange-500"
                                 : "text-gray-500"
                                 }`}
                             />
 
                             <span
                               className={`text-sm ${activeMenu === item
-                                ? "font-semibold text-green-700"
+                                ? "font-semibold text-orange-500"
                                 : "text-gray-700"
                                 }`}
                             >
@@ -995,7 +966,7 @@ export default function StudentDetailsPage() {
                       {activeMenu === "Overview" && (
                         <>
                           <div className="grid grid-cols-1 gap-4">
-                            <div className="bg-white border p-3 flex justify-between">
+                            <div className="bg-[#fefaf8] border border-orange-400 p-3 flex justify-between">
 
 
                               <div className="w-sm lg:mt-6">
@@ -1032,9 +1003,9 @@ export default function StudentDetailsPage() {
 
                               <div className="shrink-0">
                                 <img
-                                  src="https://png.pngtree.com/png-vector/20260505/ourmid/pngtree-d-purple-clipboard-checklist-icon-with-yellow-pencil-for-task-management-png-image_19233480.webp"
+                                  src="/started-application.gif"
                                   alt=""
-                                  className="w-48 lg:w-60 lg:h-50"
+                                  className="w-48 lg:w-40 lg:h-40 mt-4"
                                 />
                               </div>
 
@@ -1434,7 +1405,7 @@ export default function StudentDetailsPage() {
             )}
 
             {currentStep?.step === "PayEnrollenmentDeposit" && (
-              <EnrollmentDeposit application = {application} allprofile = {allProfile} />
+              <EnrollmentDeposit application={application} allprofile={allProfile} />
             )}
 
             {

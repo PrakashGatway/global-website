@@ -185,7 +185,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
     setShowActionModal(true);
   };
 
-  console.log("heloo",fetchApplication)
+  console.log("heloo", fetchApplication)
 
 
   const endDate =
@@ -220,20 +220,20 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
   return (
     <>
-      <div className="  md:py-6">
+      <div className="  md:py-2">
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-2">
 
           {/* LEFT CONTENT */}
           {currentstep?.step !== "OfferReceived" ? (
-            <div className="xl:col-span-9 space-y-5">
+            <div className="xl:col-span-8 space-y-5">
 
               {/* Top Status Card */}
-              {currentstep.step === "Completed" ? (<div className="w-full bg-white border border-slate-200 rounded-2xl p-4 md:p-2 shadow-sm">
+              {currentstep.step === "Completed" ? (<div className="w-full bg-[#fefaf8] border border-orange-400 p-4 md:p-2 shadow-sm">
                 <div className="flex flex-col lg:flex-row gap-4">
                   {/* Left Illustration */}
                   <div className="flex justify-center lg:justify-start">
-                    <div className="w-40 h-40 md:w-52 md:h-52 bg-orange-50 rounded-2xl flex items-center justify-center">
-                      <FileCheck className="w-20 h-20 md:w-20 md:h-20 text-orange-500" />
+                    <div className="w-20 h-20 md:w-20 md:h-20 bg-orange-100 rounded-2xl flex items-center justify-center rounded-full">
+                      <img src="/confirmmation.gif" alt="" />
                     </div>
                   </div>
 
@@ -324,12 +324,13 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                 </div>
               </div>
               ) : currentstep?.step === "SubmitToSchool" ? (
-                <div className="bg-white border border-slate-200 p-6">
+                <div className="bg-[#fefaf8] border border-orange-400 p-6">
                   <div className="flex flex-col lg:flex-row gap-5">
 
                     <div className="flex justify-center lg:justify-start">
-                      <div className="w-32 h-32 md:w-40 md:h-40  flex items-center justify-center">
-                        <img src="/school-icon.png" alt="" />
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-orange-100 flex items-center justify-center">
+
+                        <img src="/submittedschool.gif" alt="" />
                       </div>
                     </div>
 
@@ -396,13 +397,14 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                     </div>
                   </div>
                 </div>) : currentstep?.step === "AwaitingSchoolResponse" ? (
-                  <div className="w-full bg-white border border-slate-200 rounded-2xl p-4 md:p-6 lg:p-8 shadow-sm">
+                  <div className="w-full bg-[#fefaf8] border border-orange-400 p-4 md:p-6 lg:p-8 shadow-sm">
                     <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
 
                       {/* Left Illustration */}
                       <div className="flex justify-center lg:justify-start">
-                        <div className="w-32 h-32 md:w-40 md:h-40  flex items-center justify-center">
-                          <img src="https://cdn-icons-png.flaticon.com/512/9727/9727531.png" alt="" />
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-orange-100 flex items-center justify-center">
+
+                          <img src="/awaitting-res.gif" alt="" />
                         </div>
                       </div>
 
@@ -930,17 +932,18 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
             </div>
           ) : (
-            <div className="xl:col-span-9 space-y-5">
+            <div className="xl:col-span-8 space-y-5">
               {/* Offer Banner */}
-              <div className="bg-white border border-slate-200  p-6">
+              <div className="bg-[#fefaf8] border border-orange-400  p-6">
 
                 <div className="flex flex-col lg:flex-row gap-6">
 
                   <div className="flex gap-5 flex-1">
 
-                    <div className="w-24 h-24 shrink-0">
+                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-orange-100 flex items-center justify-center">
+
                       <img
-                        src="https://cdn3d.iconscout.com/3d/premium/thumb/receive-mail-3d-icon-png-download-5231900.png"
+                        src="/offer-application.gif"
                         alt=""
                         className="w-full"
                       />
@@ -949,8 +952,8 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                     <div className="flex-1">
 
                       <div className="flex flex-wrap items-center gap-3">
-                        <h2 className="text-2\xl font-bold text-slate-800">
-                          {application?.documents[0].name}
+                        <h2 className="text-2xl font-bold text-slate-800">
+                          {offerLetter?.name || ""}
                         </h2>
 
                         <span className="px-3 py-1  bg-green-100 text-green-700 text-xs font-medium">
@@ -959,7 +962,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                       </div>
 
                       <p className="text-slate-600 mt-2">
-                        {application?.documents[0].description}
+                        {offerLetter?.description || ""}
                       </p>
 
                       <p className="text-slate-600">
@@ -996,9 +999,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                       Offer Status
                     </p>
                     <p className="font-semibold text-red-600">
-                      {application?.documents.find(
-                        item => item.docType === "offer letter"
-                      ).status}
+                      {offerLetter?.status}
                     </p>
                   </div>
 
@@ -1657,8 +1658,44 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
           )}
 
           {/* RIGHT SIDEBAR */}
-          <div className="xl:col-span-3 space-y-5">
+          <div className="xl:col-span-4 space-y-5">
             {/* Summary */}
+            <div className="bg-white p-4  border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="text-sm font-bold text-gray-800">Application Summary</h4>
+              </div>
+              <div className="space-y-1.5 text-sm">
+                <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                  <span className="text-gray-500">Student Name</span>
+                  <span className="font-medium text-gray-800">{application?.student?.name || "--"}</span>
+                </div>
+                <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                  <span className="text-gray-500">Student Email</span>
+                  <span className="font-medium text-gray-800">{application?.student?.email || "--"}</span>
+                </div>
+                <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                  <span className="text-gray-500">Student Phone</span>
+                  <span className="font-medium text-gray-800">{application?.student?.phone || "--"}</span>
+                </div>
+                <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                  <span className="text-gray-500">Country</span>
+                  <span className="font-medium text-gray-800 flex items-center gap-1">
+                    {application?.country || "India"}
+                  </span>
+                </div>
+
+                <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                  <span className="text-gray-500">Course</span>
+                  <span className="font-medium text-gray-800">{application?.course?.name || application?.course?.name || "Computer Science"}</span>
+                </div>
+                {application.applicationId && (
+                  <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                    <span className="text-gray-500">Application ID</span>
+                    <span className="font-medium text-gray-800">{application.applicationId}</span>
+                  </div>
+                )}
+              </div>
+            </div>
             <Comments application={application} profile={profile} />
             {/* Documents */}
             <div className="bg-white border border-slate-200  p-5">
@@ -1725,7 +1762,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
               <div className="flex items-center gap-4">
                 <img
-                  src={allProfile?.data?.assignto?.image || "https://cdn3d.iconscout.com/3d/premium/thumb/profile-avatar-3d-icon-png-download-13206079.png"}
+                  src={"/profile-application.gif"}
                   alt={allProfile?.data?.assignto?.name}
                   className="w-14 h-14  object-cover"
                 />

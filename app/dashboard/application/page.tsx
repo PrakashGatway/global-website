@@ -293,225 +293,305 @@ export default function ApplicationHistoryPage({heading = "Application History",
   }, [loading, pagination.hasMore, loadingMore, pagination.page, fetchApplications])
 
 
-  const ApplicationCard = ({ application }: { application: any }) => {
+const ApplicationCard = ({ application }: { application: any }) => {
     const statusInfo = getStatusInfo(application.primaryStatus)
     const paymentInfo = getPaymentStatusInfo(application.paymentStatus)
     const university = application.course?.university
-    // const documentCount = application.documents.length;
-
 
     return (
-      <motion.div
+      <motion.tr
         onClick={() => router.push(`/dashboard/application/${application.applicationNumber}`)}
-        className="bg-white border-2 rounded-xl p-5 pb-3 transition-all cursor-pointer group"
+        className="hover:bg-gray-50 cursor-pointer group"
+        style={{ borderBottom: '1px solid #e5e7eb' }}
       >
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-start gap-4">
-            <div className="flex items-center justify-center overflow-hidden group-hover:border-[#F26D44] transition-colors">
+        {/* Course & University */}
+        <td className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb' }}>
+          <div className="flex items-center gap-3">
+            <div className="flex-shrink-0">
               {university?.uni_logo ? (
                 <Image
                   src={university.uni_logo}
                   alt={university.name}
-                  width={60}
-                  height={60}
-                  className="object-contain mt-1"
+                  width={40}
+                  height={40}
+                  className="object-contain"
                 />
               ) : (
-                <Building2 className="w-14 h-14 stroke-[1px] text-gray-500" />
+                <Building2 className="w-10 h-10 stroke-[1px] text-gray-400" />
               )}
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-medium text-base text-gray-900">{application.course?.name || 'University'}</h3>
-                <span className="text-base bg-gray-100 font-medium text-gray-800 px-2 py-0.5 rounded-full">
-                  {application.applicationNumber}
-                </span>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium border ${statusInfo.color}`}>
-                  <span className="flex items-center gap-1">
-                    {statusInfo.icon}
-                    {statusInfo.label}
-                  </span>
-                </span>
-              </div>
-              <p className="text-sm text-gray-700 font-medium mb-1">{university.name}</p>
-              <p className="text-sm text-gray-700 font-medium">Academic Intake: {application.intake}</p>
+              <div className="font-medium text-gray-900">{application.course?.name || 'University'}</div>
+              <div className="text-xs text-gray-500">{university?.name}</div>
             </div>
           </div>
+        </td>
 
+        {/* Application Number */}
+        <td className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb' }}>
+          <span className="text-sm font-mono text-gray-600">
+            {application.applicationNumber}
+          </span>
+        </td>
 
-          {/* Status Badges */}
-          <div className="flex flex-col items-start justify-between h-full gap-2">
-            {/* <div className="flex items-center gap-2">
-              <span>
-                Status :
-              </span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium border ${statusInfo.color}`}>
-                <span className="flex items-center gap-1">
-                  {statusInfo.icon}
-                  {statusInfo.label}
-                </span>
-              </span>
-            </div> */}
-            {application.course.applicationFee !== 0 && statusInfo.label == "Pending" && (
-              <span className="text-sm font-medium text-gray-900">
-                Application Fee: {application.course.currency || 'USD'} {application.course.applicationFee.toLocaleString()}
-              </span>
-            )}
-            <div className="flex w-full justify-end gap-1">
-              {(application.course.applicationFee !== 0 && paymentInfo.label == "Pending") && (
-                <button onClick={(e) => {
+        {/* Intake */}
+        <td className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb' }}>
+          <span className="text-sm text-gray-600">{application.intake}</span>
+        </td>
+
+        {/* Level */}
+        <td className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb' }}>
+          <span className="text-sm text-gray-600">{application.course.level || '—'}</span>
+        </td>
+
+        {/* Duration */}
+        <td className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb' }}>
+          <span className="text-sm text-gray-600">{application.course.duration || '—'}</span>
+        </td>
+
+        {/* Country */}
+        <td className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb' }}>
+          <span className="text-sm text-gray-600">{application.country}</span>
+        </td>
+
+        {/* Status */}
+        <td className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb' }}>
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium border ${statusInfo.color}`}>
+            {statusInfo.icon}
+            {statusInfo.label}
+          </span>
+        </td>
+
+        {/* Fee */}
+        <td className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb' }}>
+          {application.course.applicationFee !== 0 && statusInfo.label == "Pending" ? (
+            <span className="font-semibold text-gray-900">
+              {application.course.currency || 'USD'} {application.course.applicationFee.toLocaleString()}
+            </span>
+          ) : (
+            <span className="text-sm text-gray-400">—</span>
+          )}
+        </td>
+
+        {/* Payment Status */}
+        <td className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb' }}>
+          {(application.course.applicationFee !== 0 && paymentInfo.label == "Pending") ? (
+            <span className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium border ${paymentInfo.color}`}>
+              {paymentInfo.icon}
+              {paymentInfo.label == "Pending" ? "Unpaid" : paymentInfo.label}
+            </span>
+          ) : (
+            <span className="text-sm text-gray-400">—</span>
+          )}
+        </td>
+
+        {/* Actions */}
+        <td className="px-4 py-3">
+          <div className="flex gap-2">
+            {(application.course.applicationFee !== 0 && paymentInfo.label == "Pending") && (
+              <button
+                onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
                   router.push(`/dashboard/checkout?application=${application.applicationNumber}`);
-                }} className="text-sm z-50 shadow-md transition-colors hover:shadow-xl font-medium border border-gray-300 px-3 py-2 rounded-lg bg-[#1C3058] hover:bg-[#1C3058]/80 text-gray-100">
-                  Pay Now
+                }}
+                className="px-3 py-1.5 text-xs font-medium text-white bg-[#1C3058] hover:bg-[#1C3058]/80 transition-colors"
+                style={{ border: '1px solid #1C3058' }}
+              >
+                Pay Now
+              </button>
+            )}
+            <button className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors" style={{ border: '1px solid #d1d5db' }}>
+              View
+            </button>
+          </div>
+        </td>
+      </motion.tr>
+    )
+}
+
+// Payment Warning Row Component
+const PaymentWarningRow = ({ application }: { application: any }) => {
+    const paymentInfo = getPaymentStatusInfo(application.paymentStatus)
+    
+    return (
+      <tr style={{ backgroundColor: '#fefce8', borderBottom: '1px solid #e5e7eb' }}>
+        <td colSpan={10} className="px-4 py-2">
+          <div className="flex items-center gap-2 text-xs text-yellow-800">
+            <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            Without payment confirmation, the application process cannot proceed. Please complete the payment to move forward with your application.
+          </div>
+        </td>
+      </tr>
+    )
+}
+
+return (
+  <main className="flex-1 overflow-y-auto">
+    <div className="max-w-full mx-auto p-4">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{heading}</h1>
+            <p className="text-gray-500 text-sm mt-1">
+              {subheading}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="min-h-screen">
+          <div className="max-w-full mx-auto">
+            <div className="animate-pulse">
+              <table className="w-full" style={{ border: '1px solid #e5e7eb' }}>
+                <thead style={{ backgroundColor: '#f9fafb' }}>
+                  <tr>
+                    {[...Array(10)].map((_, i) => (
+                      <th key={i} className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                        <div className="h-4 bg-gray-200 rounded w-20"></div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...Array(5)].map((_, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                      {[...Array(10)].map((_, j) => (
+                        <td key={j} className="px-4 py-3" style={{ borderRight: j < 9 ? '1px solid #e5e7eb' : 'none' }}>
+                          <div className="h-4 bg-gray-200 rounded w-full"></div>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ) : applications.length === 0 ? (
+        <div className="text-center py-12" style={{ border: '1px solid #e5e7eb', backgroundColor: 'white' }}>
+          <div className="w-20 h-20 bg-gray-100 flex items-center justify-center mx-auto mb-4">
+            <GraduationCap className="w-10 h-10 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Applications Found</h3>
+          <p className="text-gray-500 mb-6">
+            {searchQuery || filterStatus.length > 0 || filterCountry
+              ? 'Try adjusting your filters or search query'
+              : 'You haven\'t submitted any applications yet'}
+          </p>
+          <Link
+            href="/dashboard/programs"
+            className="inline-flex items-center gap-2 px-6 py-3 text-white transition-all"
+            style={{ backgroundColor: '#F26D44' }}
+          >
+            <Plus className="w-4 h-4" />
+            Start New Application
+          </Link>
+        </div>
+      ) : (
+        <>
+          <div className="overflow-x-auto">
+            <table className="w-full" style={{ border: '1px solid #e5e7eb', borderCollapse: 'collapse' }}>
+              {/* Table Header */}
+              <thead style={{ backgroundColor: '#f9fafb' }}>
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                    Course
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                    App. No.
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                    Intake
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                    Level
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                    Duration
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                    Country
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                    Status
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                    Fee
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                    Payment
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              
+              <tbody>
+                {applications.map((application, index) => (
+                  <>
+                    <ApplicationCard key={application._id} application={application} />
+                    
+                    {/* Warning row for pending payment applications */}
+                    {(application.course.applicationFee !== 0 && 
+                      getPaymentStatusInfo(application.paymentStatus).label == "Pending") && (
+                      <PaymentWarningRow key={`warning-${application._id}`} application={application} />
+                    )}
+                    
+                    {/* Footer info row for each application */}
+                    <tr key={`footer-${application._id}`} style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                      <td colSpan={10} className="px-4 py-2">
+                        <div className="flex items-center gap-4 text-xs text-gray-500">
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5" />
+                            {formatDistanceToNow(new Date(application.createdAt), { addSuffix: true })}
+                          </span>
+                          {application.backups?.length > 0 && (
+                            <span className="flex items-center gap-1">
+                              <GraduationCap className="w-3.5 h-3.5" />
+                              {application.backups.length} Backup{application.backups.length !== 1 ? 's' : ''}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  </>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {pagination.hasMore && (
+            <div ref={loadMoreRef} className="py-8 flex justify-center">
+              {loadingMore ? (
+                <div className="flex items-center gap-2 text-gray-500">
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                  Loading more...
+                </div>
+              ) : (
+                <button
+                  onClick={() => fetchApplications(pagination.page + 1, true)}
+                  className="px-6 py-2 transition-colors text-gray-600"
+                  style={{ border: '1px solid #e5e7eb', backgroundColor: 'white' }}
+                >
+                  Load More
                 </button>
               )}
-              <button className="text-sm hover:ring-1 shadow-md transition-colors hover:shadow-xl font-medium border border-gray-300 px-3 py-2 rounded-lg text-gray-800">
-                View
-              </button>
             </div>
-
+          )}
+          
+          <div className="text-center text-sm text-gray-500 mt-4">
+            Showing {applications.length} of {pagination.total} applications
           </div>
-        </div>
-        {(application.course.applicationFee !== 0 && paymentInfo.label == "Pending") && errorMessage('Without payment confirmation, the application process cannot proceed. Please complete the payment to move forward with your application.', 'py-2')}
-
-        {/* Footer Info */}
-        <div className="flex items-center justify-between pt-1.5 border-t border-gray-300">
-      
-          <div className="flex items-center gap-4 text-xs text-gray-500">
-            <div className="flex flex-wrap items-center gap-3 !text-xs !text-gray-600">
-              {application.course.level && (
-                <span className="flex items-center gap-1">
-                  <Award className="w-5 h-5 stroke-[1.5px]" />
-                  {application.course.level}
-                </span>
-              )}
-              {application.course.duration && (
-                <span className="flex items-center gap-1">
-                  <Clock className="w-5 h-5 stroke-[1.5px]" />
-                  {application.course.duration}
-                </span>
-              )}
-              <span className="flex items-center gap-1">
-                <MapPin className="w-5 h-5 stroke-[1.5px]" />
-                {application.country}
-              </span>
-
-            </div>
-            {application.backups?.length > 0 && (
-              <span className="flex items-center gap-1 text-xs text-gray-600">
-                <GraduationCap className="w-5 h-5 stroke-[1.5px]" />
-                {application.backups.length} Backup{application.backups.length !== 1 ? 's' : ''}
-              </span>
-            )}
-            <span className="flex items-center gap-1 text-xs text-gray-600">
-              <Clock className="w-5 h-5 stroke-[1.5px] " />
-              {formatDistanceToNow(new Date(application.createdAt), { addSuffix: true })}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {(application.course.applicationFee !== 0 && paymentInfo.label == "Pending") && 
-            (<div className="flex items-center text-xs gap-1">
-              <span>
-                Payment Status :
-              </span>
-              <span className={`px-3 py-1 rounded-full font-medium border ${paymentInfo.color}`}>
-                <span className="flex items-center text-xs gap-1">
-                  {paymentInfo.icon}
-                  {paymentInfo.label == "Pending" ? "Unpaid" : paymentInfo.label}
-                </span>
-              </span>
-            </div>)
-            }
-          </div>
-
-        </div>
-      </motion.div >
-    )
-  }
-
-  return (
-    <main className="flex-1 overflow-y-auto">
-      <div className="max-w-7xl mx-auto p-4">
-        {/* Header */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">{heading}</h1>
-              <p className="text-gray-500 text-sm mt-1">
-                {subheading}
-              </p>
-            </div>
-          </div>
-        </div>
-        {loading ? (
-          <div className="min-h-screen">
-            <div className="max-w-7xl mx-auto">
-              <div className="animate-pulse space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-                  {[...Array(4)].map((_, i) => (
-                    <div key={i} className="bg-white rounded-xl border border-gray-200 p-4">
-                      <div className="h-6 bg-gray-200 rounded w-full mb-3"></div>
-                      <div className="h-5 bg-gray-200 rounded w-[50%] mb-3"></div>
-                      <div className="h-4 bg-gray-200 rounded w-[25%]"></div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : applications.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <GraduationCap className="w-10 h-10 text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Applications Found</h3>
-            <p className="text-gray-500 mb-6">
-              {searchQuery || filterStatus.length > 0 || filterCountry
-                ? 'Try adjusting your filters or search query'
-                : 'You haven\'t submitted any applications yet'}
-            </p>
-            <Link
-              href="/dashboard/programs"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F26D44] to-[#626363] text-white rounded-lg hover:from-[#d55a3a] hover:to-[#4a4a4a] transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              Start New Application
-            </Link>
-          </div>
-        ) : (
-          <>
-            {/* { allProfile?.profileCompletion < 60 && errorMessage('The student\'s profile is incomplete and the system is not able to determine eligibility or calculate correct administration fees due to missing/invalid information related to the student. It is highly advised that you complete the profile before submitting applications.')} */}
-            <div className="space-y-4">
-              {applications.map(application => (
-                <ApplicationCard key={application._id} application={application} />
-              ))}
-            </div>
-            {pagination.hasMore && (
-              <div ref={loadMoreRef} className="py-8 flex justify-center">
-                {loadingMore ? (
-                  <div className="flex items-center gap-2 text-gray-500">
-                    <RefreshCw className="w-5 h-5 animate-spin" />
-                    Loading more...
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => fetchApplications(pagination.page + 1, true)}
-                    className="px-6 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-600"
-                  >
-                    Load More
-                  </button>
-                )}
-              </div>
-            )}
-            <div className="text-center text-sm text-gray-500 mt-4">
-              Showing {applications.length} of {pagination.total} applications
-            </div>
-          </>
-        )}
-      </div>
-    </main>
-  )
+        </>
+      )}
+    </div>
+  </main>
+)
 }
