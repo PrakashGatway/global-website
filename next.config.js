@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  compress: true,
+  
   experimental: {
     optimizePackageImports: [
+      "@mui/material",
+      "@mui/icons-material",
       "lucide-react",
       "react-icons",
       "recharts",

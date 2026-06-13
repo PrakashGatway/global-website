@@ -1,11 +1,16 @@
 import Homepage from "@/components/homepage";
 import { baseUrl, serverInstance } from "./axiosInstance";
 
+export const revalidate = 21600;
+
 const getHomePageData = async () => {
   const res = await fetch(`${baseUrl}/page-information/slug/home`, {
     headers: {
       "Content-Type": "application/json",
-    }
+    },
+    next: {
+      revalidate: 21600,
+    },
   });
 
 
@@ -21,7 +26,7 @@ const getHomePageData = async () => {
 export async function generateMetadata() {
   const { data } = await getHomePageData();
   const seo = data.seoMeta;
-  
+
 
   return {
     title: seo?.metaTitle?.trim() || "Home",
@@ -49,7 +54,6 @@ export default async function Home() {
     serverInstance.get(
       "/page-information/navbar?isFeatured=true&type=destinations&limit=6"
     ),
-
     serverInstance.get("/page-information/navbar?isFeatured=true&type=country&limit=8"),
     serverInstance.get("/testimonials?type=image&limit=15"),
     serverInstance.get("/faqs/public/list?type=General&limit=15"),

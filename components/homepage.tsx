@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
 import { NewTag } from "./tag";
 import Image from "next/image";
 import UniversitySliderClient, { CountryCardGrid } from "@/components/PageComponent/Unversity";
@@ -245,26 +244,6 @@ const [videoLoading, setVideoLoading] = useState(false);
     register("country");
   }, [register]);
 
-  const fetchCountries = useCallback(async () => {
-    try {
-      const response = await axiosInstance.get(
-        "/countries?isFeatured=Yes&limit=300",
-      );
-      const data = response.data.data;
-      let formatData = data.map((country) => ({
-        label: country.name,
-        value: country.code,
-      }));
-      setCountries(formatData);
-    } catch (error) {
-      console.error("Error fetching countries:", error);
-    }
-  });
-
-  useEffect(() => {
-    fetchCountries();
-  }, []);
-
   const { openPopup } = useGlobal();
 
 
@@ -415,16 +394,16 @@ const [videoLoading, setVideoLoading] = useState(false);
       <section className="bg-[#F46C44] overflow-hidden relative">
         <div className="px-4 max-w-[1440px] mx-auto sm:px-8 lg:px-20 flex flex-col lg:flex-row gap-10 lg:gap-2 justify-around items-center">
           {/* LEFT IMAGE (Hidden on Mobile) */}
-          <motion.div className="relative z-10 -bottom-0 lg:-bottom-8 -left-24 hidden lg:block">
+          <div className="relative z-10 -bottom-0 lg:-bottom-8 -left-24 hidden lg:block">
             <img
               src="/images/home-enquiry.png"
               alt={homePage?.formSection?.title || "Enquiry Image"}
               className="w-[320px] lg:w-175"
             />
-          </motion.div>
+          </div>
 
           {/* RIGHT FORM */}
-          <motion.div
+          <div
             initial={{ opacity: 0, x: 60 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
@@ -451,7 +430,7 @@ const [videoLoading, setVideoLoading] = useState(false);
               className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 lg:w-180"
             >
               {/* Full Name */}
-              <motion.div>
+              <div>
                 <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Full Name
                 </label>
@@ -473,10 +452,10 @@ const [videoLoading, setVideoLoading] = useState(false);
                     {errors.fullname.message}
                   </p>
                 )}
-              </motion.div>
+              </div>
 
               {/* Email */}
-              <motion.div>
+              <div>
                 <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Email ID
                 </label>
@@ -500,10 +479,10 @@ const [videoLoading, setVideoLoading] = useState(false);
                     {errors.email.message}
                   </p>
                 )}
-              </motion.div>
+              </div>
 
               {/* Phone */}
-              <motion.div>
+              <div>
                 <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Mobile Number
                 </label>
@@ -530,10 +509,10 @@ const [videoLoading, setVideoLoading] = useState(false);
                     {errors.phone.message}
                   </p>
                 )}
-              </motion.div>
+              </div>
 
               {/* Country */}
-              <motion.div>
+              <div>
                 <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Country to Study
                 </label>
@@ -570,10 +549,10 @@ const [videoLoading, setVideoLoading] = useState(false);
                     </select>
                   )}
                 />
-              </motion.div>
+              </div>
 
               {/* Program */}
-              <motion.div>
+              <div>
                 <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   State
                 </label>
@@ -583,10 +562,10 @@ const [videoLoading, setVideoLoading] = useState(false);
                   type="text"
                   className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-sm lg:text-sm focus:outline-none text-white"
                 />
-              </motion.div>
+              </div>
 
               {/* City */}
-              <motion.div>
+              <div>
                 <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   City
                 </label>
@@ -596,25 +575,25 @@ const [videoLoading, setVideoLoading] = useState(false);
                   type="text"
                   className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-sm lg:text-sm focus:outline-none text-white"
                 />
-              </motion.div>
+              </div>
 
               {/* Submit */}
-              <motion.div className="md:col-span-2 mt-4 flex justify-center">
+              <div className="md:col-span-2 mt-4 flex justify-center">
                 <button
                   type="submit"
                   className="w-full md:w-auto text-sm lg:text-lg bg-secondary hover:bg-primary text-white font-semibold p-2 lg:px-4 lg:py-2.5 rounded-lg"
                 >
                   Submit
                 </button>
-              </motion.div>
+              </div>
             </form>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       <Destinationhome homePage={homePage} />
 
-      {/* <motion.section
+      {/* <section
   initial={{ opacity: 0 }}
   whileInView={{ opacity: 1 }}
   transition={{ duration: 0.6 }}
@@ -622,7 +601,7 @@ const [videoLoading, setVideoLoading] = useState(false);
   className="bg-[#F46C44] py-10 relative overflow-hidden"
 >
   <div className=" px-6">
-    <motion.div
+    <div
       initial={{ y: 40, opacity: 0 }}
       whileInView={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6 }}
@@ -643,7 +622,7 @@ const [videoLoading, setVideoLoading] = useState(false);
       </h3>
 
       <p className=" text-gray-100">{homePage?.whyUs.subTitle}</p>
-    </motion.div>
+    </div>
 
    
 
@@ -653,7 +632,7 @@ const [videoLoading, setVideoLoading] = useState(false);
 
   {[0,1,2,3,4].map((index,i)=>(
     
-    <motion.div
+    <div
       key={index}
       initial={{ y: 50, opacity: 0 }}
       whileInView={{ y: 0, opacity: 1 }}
@@ -681,7 +660,7 @@ const [videoLoading, setVideoLoading] = useState(false);
         </p>
       </div>
 
-    </motion.div>
+    </div>
 
   ))}
 
@@ -692,9 +671,9 @@ const [videoLoading, setVideoLoading] = useState(false);
 
 </div>
   </div>
-</motion.section> */}
+</section> */}
 
-      <motion.section
+      <section
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -706,7 +685,7 @@ const [videoLoading, setVideoLoading] = useState(false);
         <div className="max-w-7xl mx-auto">
           <div className="w-full px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-2 items-center w-full min-h-[500px]">
-              <motion.div
+              <div
                 initial={{ x: -80, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.7 }}
@@ -719,7 +698,7 @@ const [videoLoading, setVideoLoading] = useState(false);
                   className="w-[450px] h-[540px]"
                 />
 
-                <motion.div
+                <div
                   initial={{ scale: 0.7, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
@@ -742,17 +721,17 @@ const [videoLoading, setVideoLoading] = useState(false);
                     <br />
                     Experience
                   </span>
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
 
-              <motion.div
+              <div
                 initial={{ x: 80, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.7 }}
                 viewport={{ once: true }}
                 className="text-left lg:text-left"
               >
-                <motion.span
+                <span
                   initial={{ y: 30, opacity: 0 }}
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.2 }}
@@ -770,9 +749,9 @@ const [videoLoading, setVideoLoading] = useState(false);
                     </span>
                   </NewTag>
 
-                </motion.span>
+                </span>
 
-                <motion.span
+                <span
                   initial={{ y: 30, opacity: 0 }}
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
@@ -783,7 +762,7 @@ const [videoLoading, setVideoLoading] = useState(false);
                   }}
                 />
 
-                <motion.div
+                <div
                   initial={{ y: 30, opacity: 0 }}
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.6 }}
@@ -792,12 +771,12 @@ const [videoLoading, setVideoLoading] = useState(false);
                   <AboutTabsSection
                     tabs={homePage?.trustedPartners?.items || []}
                   />
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       <section className="lg:py-5 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 overflow-hidden ">
@@ -1272,9 +1251,7 @@ const [videoLoading, setVideoLoading] = useState(false);
       />
 
       <FAQSection Faqres={Faqres} />
-      <AnimatePresence>
         {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
-      </AnimatePresence>
     </main>
   );
 }
