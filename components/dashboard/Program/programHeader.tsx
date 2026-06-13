@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function ProgramHeader({ searchQuery, setSearchQuery,countries }) {
+export default function ProgramHeader({ searchQuery, setSearchQuery,countries,course }) {
     const [intake, setIntake] = useState("");
     const [year, setYear] = useState("");
     const [nationality, setNationality] = useState("");
@@ -15,6 +15,14 @@ export default function ProgramHeader({ searchQuery, setSearchQuery,countries })
         setSearchQuery("");
     };
 
+//   const filteredCourses = course?.filter((course) => {
+//   if (!nationality) return true;
+
+//   return (
+//     course?.country?.toLowerCase() ===
+//     nationality?.toLowerCase()
+//   );
+// });
     return (
         <div className="program-header">
             <div className="header-container">
@@ -111,7 +119,7 @@ export default function ProgramHeader({ searchQuery, setSearchQuery,countries })
                             onChange={(e) => setNationality(e.target.value)}
                         >
                             {countries?.map((item)=>
-                            <option value={item?.value}>
+                            <option key={item?.code} value={item?.value}>
                                 {item?.label}
                             </option>
                             )

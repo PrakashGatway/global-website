@@ -25,6 +25,7 @@ import {
   CartesianGrid,
 } from "recharts"
 import axiosInstance from "@/app/axiosInstance" // Adjust path if needed
+import QRCodeGenerator from "../qrCode"
 
 // --- INTERFACES ---
 interface DashboardData {
@@ -184,10 +185,14 @@ export default function DashboardCounsellor() {
           <StatCard title="Unread Messages" value={data.overview.unreadMessages} icon={MessageSquare} color="bg-emerald-600" />
         </div>
 
+
         {/* Row 2: Chart & Students Overview */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
           {/* Applications by Country */}
-          <div className="lg:col-span-2 bg-white border border-slate-200 p-6 border-2">
+          <div className="lg:col-span-2 grid grid-cols-1 gap-4">
+        <QRCodeGenerator/>
+
+          <div className=" bg-white border border-slate-200 p-6 border-2">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-base font-bold text-slate-900">Applications by Country</h3>
@@ -213,6 +218,10 @@ export default function DashboardCounsellor() {
               </BarChart>
             </ResponsiveContainer>
           </div>
+
+          </div>
+
+          
 
           {/* Students Overview */}
           <div className="bg-white border border-slate-200 p-6 border-2">

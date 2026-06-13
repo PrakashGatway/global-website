@@ -275,10 +275,7 @@ const [videoLoading, setVideoLoading] = useState(false);
 
   return (
     <main className="bg-white">
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
+      <section
         className="
           relative overflow-hidden
           bg-white
@@ -292,13 +289,10 @@ const [videoLoading, setVideoLoading] = useState(false);
         <div className="relative z-10 w-7xl max-w-screen mx-auto px-3">
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-2">
 
-            <motion.div
-              initial={{ x: -60, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
+            <div
               className="text-left lg:text-left"
             >
-              <motion.span
+              <span
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
@@ -318,7 +312,7 @@ const [videoLoading, setVideoLoading] = useState(false);
                     </NewTag>
                   </>
                   : null}
-              </motion.span>
+              </span>
 
               <span
                 className="mt-6 text-base font-medium lg:text-lg text-primary mx-auto text-justify lg:mx-0 lg:mb-10"
@@ -328,10 +322,7 @@ const [videoLoading, setVideoLoading] = useState(false);
                 suppressHydrationWarning
               />
 
-              <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
+              <div
                 className="mt-2 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               >
                 <a
@@ -361,14 +352,11 @@ const [videoLoading, setVideoLoading] = useState(false);
                 >
                   {homePage?.hero?.ctaText2 || "Check Your Eligibility"}
                 </a>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
 
 
-            <motion.div
-              initial={{ x: 60, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+            <div
               className="flex justify-center lg:justify-end"
             >
               <div className="relative flex items-center justify-center">
@@ -383,10 +371,7 @@ const [videoLoading, setVideoLoading] = useState(false);
 
 
                 {homePage?.hero?.heroImage && (
-                  <motion.div
-                    initial={{ scale: 0.9 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.6, delay: 0.5 }}
+                  <div
                     className="relative z-1  -bottom-10"
                   >
                     <Image
@@ -396,13 +381,13 @@ const [videoLoading, setVideoLoading] = useState(false);
                       alt="cap"
                       className="lg:w-[420px] w-[200px]"
                     />
-                  </motion.div>
+                  </div>
                 )}
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       <section className="py-6 px-4 bg-white mt-3">
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">

@@ -45,7 +45,8 @@ export default function ProgramFilters({
   levels,
   showFilters,
   setShowFilters,
-  isCleared
+  isCleared,
+  setIsCleared
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
@@ -201,7 +202,9 @@ export default function ProgramFilters({
             )?.value ||
             ""
           }
-          onChange={(value) => handleFilterChange("country", value)}
+          onChange={(value) => {
+            setIsCleared(false);
+            handleFilterChange("country", value)}}
           placeholder="Select country"
         />
 
@@ -229,7 +232,9 @@ export default function ProgramFilters({
             )?.value ||
             ""
           }
-          onChange={(value) => handleFilterChange("category", value)}
+          onChange={(value) => {
+            setIsCleared(false);
+            handleFilterChange("category", value)}}
           placeholder="Select category"
         />
 

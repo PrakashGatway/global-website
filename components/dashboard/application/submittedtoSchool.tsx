@@ -7,7 +7,7 @@ import axiosInstance, { baseUrl, fileBaseurl, imageBaseUrl } from "@/app/axiosIn
 import toast from "react-hot-toast";
 
 
-export default function SubmittedtoSchool({ currentstep, application, profile, allProfile, activity,fetchApplication }) {
+export default function SubmittedtoSchool({ currentstep, application, profile, allProfile, activity, fetchApplication }) {
 
   const [showPreview, setShowPreview] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
@@ -117,9 +117,9 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
     },
   ];
 
- const statusDetail = application?.statusDetails
-  ? JSON.parse(application.statusDetails)
-  : [];
+  const statusDetail = application?.statusDetails
+    ? JSON.parse(application.statusDetails)
+    : [];
   const completeDetail = statusDetail?.find((item) =>
     item.status === "Completed"
   )
@@ -167,35 +167,37 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
   };
 
   const offerLetter = application?.documents?.find(
-  item => item?.docType === "offer letter"
-);
+    item => item?.docType === "offer letter"
+  );
 
-const isAlreadyDecided =
-  offerLetter?.status === "Approved" ||
-  offerLetter?.status === "Rejected";
+  const isAlreadyDecided =
+    offerLetter?.status === "Approved" ||
+    offerLetter?.status === "Rejected";
 
   const handleOpenActionModal = () => {
-  if (isAlreadyDecided) {
-    toast.error(
-      `You have already ${offerLetter.status.toLowerCase()} this offer letter.`
-    );
-    return;
-  }
+    if (isAlreadyDecided) {
+      toast.error(
+        `You have already ${offerLetter.status.toLowerCase()} this offer letter.`
+      );
+      return;
+    }
 
-  setShowActionModal(true);
-};
+    setShowActionModal(true);
+  };
+
+  console.log("heloo",fetchApplication)
 
 
   const endDate =
-  application?.documents?.find(
-    item => item?.docType === "offer letter"
-  )?.extra?.endDate;
+    application?.documents?.find(
+      item => item?.docType === "offer letter"
+    )?.extra?.endDate;
 
-const daysLeft = endDate
-  ? Math.ceil(
+  const daysLeft = endDate
+    ? Math.ceil(
       (new Date(endDate) - new Date()) / (1000 * 60 * 60 * 24)
     )
-  : null;
+    : null;
 
 
 
@@ -444,14 +446,14 @@ const daysLeft = endDate
                               </p>
 
                               <h4 className="font-semibold text-slate-900">
-                                   {new Date(application.updatedAt).toLocaleString("en-IN", {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                hour12: true,
-                              })}
+                                {new Date(application.updatedAt).toLocaleString("en-IN", {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                  hour12: true,
+                                })}
                               </h4>
                             </div>
                           </div>
@@ -468,7 +470,7 @@ const daysLeft = endDate
                               </p>
 
                               <h4 className="font-semibold text-slate-900">
-                               {application?.course?.university?.name}
+                                {application?.course?.university?.name}
                               </h4>
                             </div>
                           </div>
@@ -741,31 +743,31 @@ const daysLeft = endDate
                           <>
                             {index === 0 && item.newValue === "SubmitToSchool" && (
                               <>
-                               <div className="space-y-4 mb-4">
-  <div className="flex gap-4">
-    <div className="w-5 h-5 border-2 border-slate-300 bg-white rounded-sm mt-1" />
-    <div>
-      <h4 className="font-semibold text-sm text-slate-400">
-        Offer Received
-      </h4>
-      <p className="text-xs text-slate-400 mt-1">
-        Pending
-      </p>
-    </div>
-  </div>
+                                <div className="space-y-4 mb-4">
+                                  <div className="flex gap-4">
+                                    <div className="w-5 h-5 border-2 border-slate-300 bg-white rounded-sm mt-1" />
+                                    <div>
+                                      <h4 className="font-semibold text-sm text-slate-400">
+                                        Offer Received
+                                      </h4>
+                                      <p className="text-xs text-slate-400 mt-1">
+                                        Pending
+                                      </p>
+                                    </div>
+                                  </div>
 
-  <div className="flex gap-4">
-    <div className="w-5 h-5 border-2 border-slate-300 bg-white rounded-sm mt-1" />
-    <div>
-      <h4 className="font-semibold text-sm text-slate-400">
-        Awaiting School Response
-      </h4>
-      <p className="text-xs text-slate-400 mt-1">
-        Pending
-      </p>
-    </div>
-  </div>
-</div>
+                                  <div className="flex gap-4">
+                                    <div className="w-5 h-5 border-2 border-slate-300 bg-white rounded-sm mt-1" />
+                                    <div>
+                                      <h4 className="font-semibold text-sm text-slate-400">
+                                        Awaiting School Response
+                                      </h4>
+                                      <p className="text-xs text-slate-400 mt-1">
+                                        Pending
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
 
 
                               </>
@@ -1013,10 +1015,10 @@ const daysLeft = endDate
                       {daysLeft !== null && (
                         <span
                           className={`text-sm ml-1 ${daysLeft <= 3
-                              ? "text-red-500"
-                              : daysLeft <= 7
-                                ? "text-yellow-500"
-                                : "text-orange-500"
+                            ? "text-red-500"
+                            : daysLeft <= 7
+                              ? "text-yellow-500"
+                              : "text-orange-500"
                             }`}
                         >
                           (
@@ -1369,7 +1371,7 @@ const daysLeft = endDate
             </div>
           )}
 
-          { showActionModal && (
+          {showActionModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <div className="bg-white rounded-xl w-full max-w-lg p-6 animate-in fade-in zoom-in duration-300">
                 <h3 className="text-xl font-semibold text-slate-800">

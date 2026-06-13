@@ -172,7 +172,7 @@ export default function Comments({ application, profile }) {
         key={item._id || index}
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-all"
+        className="bg-white  p-2 shadow-sm "
       >
         {/* Header */}
         <div className="flex justify-between items-start mb-3">

@@ -113,7 +113,7 @@ export default function CoursesPage() {
     sort_order: "asc"
   })
 
-  console.log(filters)
+  console.log(universities)
 
   // Fetch filter options
   const fetchFilterOptions = useCallback(async () => {
@@ -313,7 +313,7 @@ export default function CoursesPage() {
 
         {/* Hero Section */}
             
-        <ProgramHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} countries={countries} />
+        <ProgramHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} countries={countries} course={courses}/>
 
         {/* Search & Filter Bar */}
         {/* <div className="flex flex-col sm:flex-row gap-4">
@@ -374,6 +374,7 @@ export default function CoursesPage() {
             showFilters={showFilters}
             setShowFilters={setShowFilters}
             isCleared={isCleared}
+            setIsCleared={setIsCleared}
           />
 
           {/* ================= RIGHT CONTENT: COURSE GRID ================= */}

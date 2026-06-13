@@ -197,13 +197,13 @@ export default function DashboardPage() {
   ]);
 
   const [cards, setCards] = useState([
-      {
+    {
       title: "Documents Uploaded",
       value: "3",
       color: "from-green-500 to-green-600",
       icon: FileText,
       link: "/dashboard/settings#doc",
-      trend : "View all"
+      trend: "View all"
     },
     {
       title: "Universities Applied",
@@ -213,7 +213,7 @@ export default function DashboardPage() {
       link: "/dashboard/universities",
       trend: "View all",
     },
-  
+
     {
       title: "Visa Status",
       value: "Pending",
@@ -249,7 +249,7 @@ export default function DashboardPage() {
     fetchUniversities();
   }, []);
 
-  
+
 
   useEffect(() => {
     if (!allProfile?.profile) return;
@@ -264,7 +264,7 @@ export default function DashboardPage() {
           color: "from-green-500 to-green-600",
           icon: FileText,
           link: "/dashboard/settings#doc",
-          
+
         },
       ];
       const newStepIds = updatedCards.map((s) => s.title);
@@ -300,9 +300,9 @@ export default function DashboardPage() {
           status:
             profileData.otherDetails?.countries_shortlist?.length > 0
               ? "completed"
-            : profileData.otherDetails?.countries_shortlist?.length < 0
-            ? "current"
-            : "upcoming",
+              : profileData.otherDetails?.countries_shortlist?.length < 0
+                ? "current"
+                : "upcoming",
           icon: "globe",
           progress:
             profileData.otherDetails?.countries_shortlist?.length || "0",
@@ -437,384 +437,446 @@ export default function DashboardPage() {
         </div> */}
 
                 {/* Stats Cards */}
-                <div>  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-2">
-                  {cards?.map((card, i) => {
-                    const Icon = card.icon;
-                    return (
-                      <div
-                        key={i}
-                        onClick={() => navigate.push(card?.link)}
-                        className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100 hover:border-transparent"
-                      >
-                       <div className="grid grid-cols-[35%_65%]">
-                         <div className="flex items-start justify-between mb-2">
-                          <div
-                            className={`p-3 rounded-xl bg-gradient-to-br ${card.color} shadow-lg`}
-                          >
-                            <Icon className="w-6 h-6 text-white" />
-                          </div>
-                        </div>
-                       <div>  <h3 className="text-xs font-medium text-gray-500 ">
-                          {card.title}
-                        </h3>
-                        <p className="text-lg font-bold text-gray-900 mb-2 ">
-                          {card.value}
-                        </p>
-                        {card?.trend && (
-                          <p className="text-xs text-orange-500 flex items-center gap-1">
-                            <TrendingUp className="w-3 h-3" />
-                            {card?.trend}
-                          </p>
-                        )}</div>
-                       </div>
-                      
-                      </div>
-                    );
-                  })}
-                </div>
+                <div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-2">
 
-                {/* Step Tracker - Compact Horizontal View */}
-                <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-  {/* Header */}
-  <div className="px-6 pt-6">
-    <div className="flex items-start justify-between">
-      <div>
-        <h2 className="text-[24px] font-bold text-[#111827]">
-          My Study Abroad Journey
-        </h2>
-        <p className="text-sm text-[#6B7280] mt-1">
-          Track your progress from start to finish
-        </p>
+  {/* Documents Uploaded */}
+  <div
+    className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent"
+  >
+    <div className="grid grid-cols-[35%_65%]">
+      <div className="flex items-start justify-between mb-2">
+        <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
+          <FileText className="w-6 h-6 text-white" />
+        </div>
       </div>
 
-      <div className="bg-[#F3F4F6] rounded-xl px-3 py-2 flex items-center gap-3">
-        <span className="text-xs font-semibold text-[#374151]">
-          Overall Progress
-        </span>
-
-        <span className="bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
-          {Math.round(
-            (stepTrackerSteps.filter(
-              (s) => s.status === "completed"
-            ).length /
-              stepTrackerSteps.length) *
-              100
-          )}
-          %
-        </span>
+      <div>
+        <h3 className="text-xs font-medium text-gray-500">
+          Documents Uploaded
+        </h3>
+        <p className="text-lg font-bold text-gray-900 mb-2">
+          3
+        </p>
+     
       </div>
     </div>
   </div>
 
-  <div className="p-4">
-    {/* Desktop */}
-    <div className="hidden lg:block">
-      <div className="relative">
-        {/* Background Line */}
-        <div className="absolute top-6 left-0 right-0 h-[2px] bg-[#DCE3F1]" />
+  {/* Universities Applied */}
+  <div
+    onClick={() => navigate.push("/dashboard/universities")}
+    className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent"
+  >
+    <div className="grid grid-cols-[35%_65%]">
+      <div className="flex items-start justify-between mb-2">
+        <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg">
+          <Building2 className="w-6 h-6 text-white" />
+        </div>
+      </div>
 
-        {/* Active Line */}
-        <div
-          className="absolute top-6 left-0 h-[2px] bg-orange-500"
-          style={{
-            width: `${
-              ((stepTrackerSteps.findIndex(
-                (s) => s.status === "current"
-              ) +
-                1) /
-                stepTrackerSteps.length) *
-              100
-            }%`,
-          }}
-        />
+      <div>
+        <h3 className="text-xs font-medium text-gray-500">
+          Universities Applied
+        </h3>
+        <p className="text-lg font-bold text-gray-900 mb-2">
+          4
+        </p>
+        <p className="text-xs text-orange-500 flex items-center gap-1">
+          <TrendingUp className="w-3 h-3" />
+          View all
+        </p>
+      </div>
+    </div>
+  </div>
 
-        <div className="relative flex justify-between">
-          {stepTrackerSteps.map((step, idx) => {
-            const isCompleted = step.status === "completed";
-            const isCurrent = step.status === "current";
+  {/* Visa Status */}
+  <div
+    onClick={() => navigate.push("/dashboard/visa")}
+    className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent"
+  >
+    <div className="grid grid-cols-[35%_65%]">
+      <div className="flex items-start justify-between mb-2">
+        <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg">
+          <FileLock className="w-6 h-6 text-white" />
+        </div>
+      </div>
 
-            return (
-              <div
-                key={idx}
-                className="flex flex-col items-center text-center max-w-[110px]"
-              >
-                {/* Circle */}
-                <div
-                  className={`
+      <div>
+        <h3 className="text-xs font-medium text-gray-500">
+          Visa Status
+        </h3>
+        <p className="text-lg font-bold text-gray-900 mb-2">
+          Pending
+        </p>
+        <p className="text-xs text-orange-500 flex items-center gap-1">
+          <TrendingUp className="w-3 h-3" />
+          View Details
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {/* Applications */}
+  <div
+    onClick={() => navigate.push("/dashboard/applications")}
+    className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent"
+  >
+    <div className="grid grid-cols-[35%_65%]">
+      <div className="flex items-start justify-between mb-2">
+        <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg">
+          <FileCheck className="w-6 h-6 text-white" />
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-xs font-medium text-gray-500">
+          Applications
+        </h3>
+        <p className="text-lg font-bold text-gray-900 mb-2">
+          4
+        </p>
+        <p className="text-xs text-orange-500 flex items-center gap-1">
+          <TrendingUp className="w-3 h-3" />
+          View all
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+                  {/* Step Tracker - Compact Horizontal View */}
+                  <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                    {/* Header */}
+                    <div className="px-6 pt-6">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h2 className="text-[24px] font-bold text-[#111827]">
+                            My Study Abroad Journey
+                          </h2>
+                          <p className="text-sm text-[#6B7280] mt-1">
+                            Track your progress from start to finish
+                          </p>
+                        </div>
+
+                        <div className="bg-[#F3F4F6] rounded-xl px-3 py-2 flex items-center gap-3">
+                          <span className="text-xs font-semibold text-[#374151]">
+                            Overall Progress
+                          </span>
+
+                          <span className="bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
+                            {Math.round(
+                              (stepTrackerSteps.filter(
+                                (s) => s.status === "completed"
+                              ).length /
+                                stepTrackerSteps.length) *
+                              100
+                            )}
+                            %
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-4">
+                      {/* Desktop */}
+                      <div className="hidden lg:block">
+                        <div className="relative">
+                          {/* Background Line */}
+                          <div className="absolute top-6 left-0 right-0 h-[2px] bg-[#DCE3F1]" />
+
+                          {/* Active Line */}
+                          <div
+                            className="absolute top-6 left-0 h-[2px] bg-orange-500"
+                            style={{
+                              width: `${((stepTrackerSteps.findIndex(
+                                (s) => s.status === "current"
+                              ) +
+                                  1) /
+                                  stepTrackerSteps.length) *
+                                100
+                                }%`,
+                            }}
+                          />
+
+                          <div className="relative flex justify-between">
+                            {stepTrackerSteps.map((step, idx) => {
+                              const isCompleted = step.status === "completed";
+                              const isCurrent = step.status === "current";
+
+                              return (
+                                <div
+                                  key={idx}
+                                  className="flex flex-col items-center text-center max-w-[110px]"
+                                >
+                                  {/* Circle */}
+                                  <div
+                                    className={`
                     relative z-10
                     w-12 h-12 rounded-full bg-white
                     flex items-center justify-center
                     transition-all duration-300
-                    ${
-                      isCompleted
-                        ? "border-2 border-orange-500"
-                        : isCurrent
-                        ? "border-[3px] border-primary shadow-[0_0_0_6px_rgba(37,99,235,0.10)]"
-                        : "border-2 border-[#D1D5DB]"
-                    }
+                    ${isCompleted
+                                        ? "border-2 border-orange-500"
+                                        : isCurrent
+                                          ? "border-[3px] border-primary shadow-[0_0_0_6px_rgba(37,99,235,0.10)]"
+                                          : "border-2 border-[#D1D5DB]"
+                                      }
                   `}
-                >
-                  {isCompleted ? (
-                    <CheckCircle
-                      size={20}
-                      className="text-orange-500"
-                    />
-                  ) : (
-                    <span
-                      className={`font-semibold text-sm ${
-                        isCurrent
-                          ? "text-primary"
-                          : "text-[#9CA3AF]"
-                      }`}
-                    >
-                      {idx + 1}
-                    </span>
-                  )}
-                </div>
+                                  >
+                                    {isCompleted ? (
+                                      <CheckCircle
+                                        size={20}
+                                        className="text-orange-500"
+                                      />
+                                    ) : (
+                                      <span
+                                        className={`font-semibold text-sm ${isCurrent
+                                            ? "text-primary"
+                                            : "text-[#9CA3AF]"
+                                          }`}
+                                      >
+                                        {idx + 1}
+                                      </span>
+                                    )}
+                                  </div>
 
-                {/* Step Name */}
-                <h4
-                  className={`mt-4 text-xs font-semibold leading-tight ${
-                    isCurrent
-                      ? "text-primary"
-                      : isCompleted
-                      ? "text-[#111827]"
-                      : "text-[#6B7280]"
-                  }`}
-                >
-                  {step.name}
-                </h4>
+                                  {/* Step Name */}
+                                  <h4
+                                    className={`mt-4 text-xs font-semibold leading-tight ${isCurrent
+                                        ? "text-primary"
+                                        : isCompleted
+                                          ? "text-[#111827]"
+                                          : "text-[#6B7280]"
+                                      }`}
+                                  >
+                                    {step.name}
+                                  </h4>
 
-                {/* Status */}
-                <p
-                  className={`text-xs mt-1 ${
-                    isCurrent
-                      ? "text-primary font-medium"
-                      : isCompleted
-                      ? "text-[#374151]"
-                      : "text-[#9CA3AF]"
-                  }`}
-                >
-                  {isCompleted
-                    ? "Completed"
-                    : isCurrent
-                    ? "In Progress"
-                    : "Upcoming"}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
+                                  {/* Status */}
+                                  <p
+                                    className={`text-xs mt-1 ${isCurrent
+                                        ? "text-primary font-medium"
+                                        : isCompleted
+                                          ? "text-[#374151]"
+                                          : "text-[#9CA3AF]"
+                                      }`}
+                                  >
+                                    {isCompleted
+                                      ? "Completed"
+                                      : isCurrent
+                                        ? "In Progress"
+                                        : "Upcoming"}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
 
-    {/* Mobile */}
-    <div className="grid grid-cols-2 gap-4 lg:hidden">
-      {stepTrackerSteps.map((step, idx) => {
-        const isCompleted = step.status === "completed";
-        const isCurrent = step.status === "current";
+                      {/* Mobile */}
+                      <div className="grid grid-cols-2 gap-4 lg:hidden">
+                        {stepTrackerSteps.map((step, idx) => {
+                          const isCompleted = step.status === "completed";
+                          const isCurrent = step.status === "current";
 
-        return (
-          <div
-            key={idx}
-            className="flex items-center gap-3 p-4 rounded-xl border border-gray-100"
-          >
-            <div
-              className={`
+                          return (
+                            <div
+                              key={idx}
+                              className="flex items-center gap-3 p-4 rounded-xl border border-gray-100"
+                            >
+                              <div
+                                className={`
                 w-10 h-10 rounded-full flex items-center justify-center
-                ${
-                  isCompleted
-                    ? "bg-green-500 text-white"
-                    : isCurrent
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-gray-500"
-                }
+                ${isCompleted
+                                    ? "bg-green-500 text-white"
+                                    : isCurrent
+                                      ? "bg-blue-500 text-white"
+                                      : "bg-gray-200 text-gray-500"
+                                  }
               `}
-            >
-              {isCompleted ? (
-                <CheckCircle size={16} />
-              ) : (
-                idx + 1
-              )}
-            </div>
+                              >
+                                {isCompleted ? (
+                                  <CheckCircle size={16} />
+                                ) : (
+                                  idx + 1
+                                )}
+                              </div>
 
-            <div>
-              <p className="font-medium text-sm">
-                {step.name}
-              </p>
+                              <div>
+                                <p className="font-medium text-sm">
+                                  {step.name}
+                                </p>
 
-              <p className="text-xs text-gray-500">
-                {isCompleted
-                  ? "Completed"
-                  : isCurrent
-                  ? "In Progress"
-                  : "Upcoming"}
-              </p>
-            </div>
-          </div>
-        );
-      })}
-    </div>
+                                <p className="text-xs text-gray-500">
+                                  {isCompleted
+                                    ? "Completed"
+                                    : isCurrent
+                                      ? "In Progress"
+                                      : "Upcoming"}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
 
-   
-  </div>
 
-   <div className="lg:col-span-3">
-                    {/* Journey Roadmap - Detailed view */}
-                    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-  <div className="px-6 py-4 border-b border-gray-100">
-    <h2 className="text-lg font-bold text-[#1E293B]">
-      Journey Overview
-    </h2>
-  </div>
+                    </div>
 
-  <div className="relative">
-    {/* Vertical Line */}
-    <div className="absolute left-[37px] top-8 bottom-8 w-[2px] bg-gray-200"></div>
+                    <div className="lg:col-span-3">
+                      {/* Journey Roadmap - Detailed view */}
+                      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                        <div className="px-6 py-4 border-b border-gray-100">
+                          <h2 className="text-lg font-bold text-[#1E293B]">
+                            Journey Overview
+                          </h2>
+                        </div>
 
-    {steps.map((item, idx) => {
-      const isCompleted = item.status === "completed";
-      const isCurrent = item.status === "current";
+                        <div className="relative">
+                          {/* Vertical Line */}
+                          <div className="absolute left-[37px] top-8 bottom-8 w-[2px] bg-gray-200"></div>
 
-      const circleColors = [
-        "bg-orange-500",
-        "bg-green-500",
-        "bg-green-500",
-        "bg-blue-600",
-        "bg-violet-500",
-        "bg-red-500",
-        "bg-cyan-500",
-        "bg-pink-500",
-        "bg-purple-500",
-      ];
+                          {steps.map((item, idx) => {
+                            const isCompleted = item.status === "completed";
+                            const isCurrent = item.status === "current";
 
-      return (
-        <div
-          key={idx}
-          className="relative flex items-center px-6 py-5  last:border-b-0"
-        >
-          {/* Step Number */}
-          <div
-  className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-semibold
-  ${
-    item.status === "completed"
-      ? "bg-green-500"
-      : item.status === "current"
-      ? "bg-orange-500"
-      : "bg-red-500"
-  }`}
->
-  {item.step}
-</div>
+                            const circleColors = [
+                              "bg-orange-500",
+                              "bg-green-500",
+                              "bg-green-500",
+                              "bg-blue-600",
+                              "bg-violet-500",
+                              "bg-red-500",
+                              "bg-cyan-500",
+                              "bg-pink-500",
+                              "bg-purple-500",
+                            ];
 
-          {/* Small Status Icon */}
-          <div className="ml-6">
-            <div
-              className={`
+                            return (
+                              <div
+                                key={idx}
+                                className="relative flex items-center px-6 py-5  last:border-b-0"
+                              >
+                                {/* Step Number */}
+                                <div
+                                  className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-semibold
+  ${item.status === "completed"
+                                      ? "bg-green-500"
+                                      : item.status === "current"
+                                        ? "bg-orange-500"
+                                        : "bg-red-500"
+                                    }`}
+                                >
+                                  {item.step}
+                                </div>
+
+                                {/* Small Status Icon */}
+                                <div className="ml-6">
+                                  <div
+                                    className={`
                 w-8 h-8 rounded-lg flex items-center justify-center
-                ${
-                  isCompleted
-                    ? "bg-orange-50"
-                    : isCurrent
-                    ? "bg-blue-50"
-                    : "bg-gray-50"
-                }
+                ${isCompleted
+                                        ? "bg-orange-50"
+                                        : isCurrent
+                                          ? "bg-blue-50"
+                                          : "bg-gray-50"
+                                      }
               `}
-            >
-              {isCompleted ? (
-                <CheckCircle className="w-4 h-4 text-orange-500" />
-              ) : (
-                <span
-                  className={`text-sm font-bold ${
-                    isCurrent
-                      ? "text-blue-600"
-                      : "text-gray-400"
-                  }`}
-                >
-                  {item.step}
-                </span>
-              )}
-            </div>
-          </div>
+                                  >
+                                    {isCompleted ? (
+                                      <CheckCircle className="w-4 h-4 text-orange-500" />
+                                    ) : (
+                                      <span
+                                        className={`text-sm font-bold ${isCurrent
+                                            ? "text-blue-600"
+                                            : "text-gray-400"
+                                          }`}
+                                      >
+                                        {item.step}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
 
-          {/* Content */}
-          <div className="ml-4 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-semibold text-[#1E293B] text-[15px]">
-                {item.title}
-              </h3>
+                                {/* Content */}
+                                <div className="ml-4 flex-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h3 className="font-semibold text-[#1E293B] text-[15px]">
+                                      {item.title}
+                                    </h3>
 
-              <span
-                className={`
+                                    <span
+                                      className={`
                   px-2 py-[2px] rounded text-[10px] font-medium
-                  ${
-                    isCompleted
-                      ? "bg-green-100 text-green-600"
-                      : isCurrent
-                      ? "bg-orange-100 text-orange-600"
-                      : "bg-red-100 text-red-600"
-                  }
+                  ${isCompleted
+                                          ? "bg-green-100 text-green-600"
+                                          : isCurrent
+                                            ? "bg-orange-100 text-orange-600"
+                                            : "bg-red-100 text-red-600"
+                                        }
                 `}
-              >
-                {isCompleted
-                  ? "Completed"
-                  : isCurrent
-                  ? "In Progress"
-                  : "Pending"}
-              </span>
-            </div>
+                                    >
+                                      {isCompleted
+                                        ? "Completed"
+                                        : isCurrent
+                                          ? "In Progress"
+                                          : "Pending"}
+                                    </span>
+                                  </div>
 
-            <p className="text-xs text-gray-500 mt-1">
-              {item.desc}
-            </p>
-          </div>
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    {item.desc}
+                                  </p>
+                                </div>
 
-          {/* Progress */}
-          <div className="w-[140px]">
-            <div
-              className={`font-bold text-[18px]
-              ${
-                item.progress === "Not Booked"
-                  ? "text-red-500"
-                  : "text-[#111827]"
-              }`}
-            >
-              {item.progress}
-            </div>
+                                {/* Progress */}
+                                <div className="w-[140px]">
+                                  <div
+                                    className={`font-bold text-[18px]
+              ${item.progress === "Not Booked"
+                                        ? "text-red-500"
+                                        : "text-[#111827]"
+                                      }`}
+                                  >
+                                    {item.progress}
+                                  </div>
 
-            {item.progressLabel && (
-              <div className="text-xs text-gray-500">
-                {item.progressLabel}
-              </div>
-            )}
-          </div>
+                                  {item.progressLabel && (
+                                    <div className="text-xs text-gray-500">
+                                      {item.progressLabel}
+                                    </div>
+                                  )}
+                                </div>
 
-          {/* Button */}
-          <div className="w-[180px] flex justify-center">
-            <button
-              onClick={() => navigate.push(item.link)}
-              className="px-5 py-2 bg-orange-50 text-orange-500 rounded-md text-xs font-medium hover:bg-indigo-100"
-            >
-              {item.action}
-            </button>
-          </div>
+                                {/* Button */}
+                                <div className="w-[180px] flex justify-center">
+                                  <button
+                                    onClick={() => navigate.push(item.link)}
+                                    className="px-5 py-2 bg-orange-50 text-orange-500 rounded-md text-xs font-medium hover:bg-indigo-100"
+                                  >
+                                    {item.action}
+                                  </button>
+                                </div>
 
-       
-        </div>
-      );
-    })}
-  </div>
-</div>
+
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-</div>
-
-              </div>
-                <div>
-                                      <Rigthsidebar />
 
                 </div>
-               
-              
+                <div>
+                  <Rigthsidebar />
+
+                </div>
+
+
               </div>
               <style jsx>{`
                 .custom-scrollbar::-webkit-scrollbar {
