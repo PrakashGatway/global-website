@@ -36,6 +36,22 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
     }
   };
 
+  const searchParams = useSearchParams()
+
+  const activetab = searchParams.get("tab")
+
+ useEffect(() => {
+  if (activetab === "academic") {
+    setActiveInnerTab("academic");
+  }
+  if(activetab==="work"){
+    setActiveInnerTab("work")
+  }
+  if(activetab==="tests"){
+    setActiveInnerTab("tests")
+  }
+}, [activetab]);
+
   const goToPreviousStep = () => {
     const currentIndex = TAB_ORDER.indexOf(activeInnerTab);
 
@@ -1351,6 +1367,7 @@ import {
   ChevronDown, FileText, Info,
   CheckCircle2, Circle
 } from "lucide-react";
+import { useParams, useSearchParams } from "next/navigation";
 
 const TEST_CONFIGS = [
   {

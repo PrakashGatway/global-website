@@ -146,74 +146,58 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
 
             <div>   {/* Tabs */}
               <div className="flex overflow-x-auto gap-8 border-b mt-6 text-sm">
+                {[
+                  { id: "Paymentdetail", label: "Payment Details" },
+                  { id: "Paymentmethod", label: "Payment Method" },
+                  { id: "Paymentinstruction", label: "Instruction" },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setontab(tab.id)}
+                    className="relative pb-3 font-medium"
+                  >
+                    {ontab === tab.id && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute bottom-0 left-0 right-0 h-[2px] bg-orange-600"
+                        transition={{
+                          type: "spring",
+                          stiffness: 350,
+                          damping: 30,
+                        }}
+                      />
+                    )}
 
-                <button
-                  onClick={() => setontab("Paymentdetail")}
-                  className={`pb-3 font-medium border-b-2 ${ontab === "Paymentdetail"
-                    ? "border-orange-600 text-orange-600"
-                    : "border-transparent text-gray-500 hover:text-orange-600"
-                    }`}
-                >
-                  Payment Details
-                </button>
-                <button
-                  onClick={() => setontab("Paymentmethod")}
-                  className={`pb-3 font-medium border-b-2 ${ontab === "Paymentmethod"
-                    ? "border-orange-600 text-orange-600"
-                    : "border-transparent text-gray-500 hover:text-orange-600"
-                    }`}
-                >
-                  Payment Method
-                </button>
-                <button
-                  onClick={() => {
-                    setontab("Paymentinstruction")
-                  }}
-                  className={`pb-3 font-medium border-b-2 ${ontab === "Paymentinstruction"
-                    ? "border-orange-600 text-orange-600"
-                    : "border-transparent text-gray-500 hover:text-orange-600"
-                    }`}
-                >
-                  Instruction
-                </button>
-
-
+                    <span
+                      className={
+                        ontab === tab.id
+                          ? "text-orange-600"
+                          : "text-gray-500 hover:text-orange-600"
+                      }
+                    >
+                      {tab.label}
+                    </span>
+                  </button>
+                ))}
               </div>
 
               {/* Content */}
               {ontab === "Paymentdetail" && (
                 <div className="grid lg:grid-cols-2 gap-6 mt-6">
-                  {/* Details */}
-                  <div className="space-y-4">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Program</span>
-                      <span>{metadata?.program}</span>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Faculty</span>
-                      <span>{metadata?.faculty}</span>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Start Date</span>
-                      <span>{metadata?.startDate}</span>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Duration</span>
-                      <span>{metadata?.duration}</span>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Tuition Fee</span>
-                      <span>{metadata?.tuitionFee}</span>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Deposit</span>
-                      <span className="font-semibold">{metadata?.amount}</span>
-                    </div>
+                  <div className="space-y-3">
+                    {metadata?.paymentdetails?.map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center border-b pb-2"
+                      >
+                        <span className="text-gray-500 font-medium">
+                          {item.key}
+                        </span>
+                        <span className="text-gray-900">
+                          {item.value}
+                        </span>
+                      </div>
+                    ))}
                   </div>
 
                   {/* Why Card */}
@@ -241,7 +225,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                     ].map((item) => (
                       <motion.div
                         key={item.id}
-                        whileHover={{ y: -2 }}
+
                         whileTap={{ scale: 0.98 }}
                         className="relative "
                       >
@@ -273,176 +257,43 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                       </motion.div>
                     ))}
                   </div>
-                  {paymentMethod === "forex" ? (
-                    <div className="bg-blue-50 border border-blue-100  p-5">
-                      <h3 className="text-lg font-semibold text-slate-800 mb-3">
-                        Forex Payment
-                      </h3>
-
-                      <p className="text-slate-600 mb-4">
-                        Pay your enrollment deposit securely through our authorized forex
-                        payment partners. This option is recommended for international
-                        students as it offers competitive exchange rates and faster
-                        processing.
-                      </p>
-
-                      <ul className="space-y-2 text-sm text-slate-700">
-                        <li>✓ Competitive foreign exchange rates</li>
-                        <li>✓ Secure international transactions</li>
-                        <li>✓ Fast payment confirmation</li>
-                        <li>✓ Support for multiple currencies</li>
-                        <li>✓ Dedicated payment assistance</li>
-                      </ul>
-
-                      <div className="mt-5 p-4 bg-white rounded-lg border">
-                        <p className="font-medium">Required Information</p>
-                        <ul className="mt-2 text-sm text-gray-600 space-y-1">
-                          <li>• Student Application ID</li>
-                          <li>• Student Full Name</li>
-                          <li>• University Name</li>
-                          <li>• Enrollment Deposit Amount</li>
-                        </ul>
-                      </div>
-                    </div>) : paymentMethod === "direct" ? (
-                      <div className="bg-green-50 border border-green-100 rounded-xl p-5">
-                        <h3 className="text-lg font-semibold text-slate-800 mb-3">
-                          Direct Payment
-                        </h3>
-
-                        <p className="text-slate-600 mb-4">
-                          Transfer the enrollment deposit directly to the university's bank
-                          account using the banking details provided below. Ensure that you
-                          include your application reference number in the payment remarks.
-                        </p>
-
-                        <ul className="space-y-2 text-sm text-slate-700">
-                          <li>✓ Direct payment to university account</li>
-                          <li>✓ Accepted worldwide through bank transfer</li>
-                          <li>✓ Transparent payment process</li>
-                          <li>✓ Suitable for self-sponsored students</li>
-                          <li>✓ Official payment confirmation issued</li>
-                        </ul>
-
-                        <div className="mt-5 p-4 bg-white rounded-lg border">
-                          <p className="font-medium mb-2">Important Notes</p>
-                          <ul className="text-sm text-gray-600 space-y-1">
-                            <li>• Include your application ID as reference.</li>
-                            <li>• Upload payment receipt after transfer.</li>
-                            <li>• Processing may take 2–5 business days.</li>
-                            <li>• Ensure the full deposit amount is received.</li>
-                          </ul>
+                  {
+                    paymentMethod === "forex" &&
+                    metadata?.paymentmethod
+                      ?.filter(item => item.method === "Forex Payment")?.map((item, i) => (
+                        <div key={i}>
+                          <div
+                            dangerouslySetInnerHTML={{ __html: item.value }}
+                          />
                         </div>
-                      </div>
-                    ) : null}
+                      ))
+                  }
+
+                  {
+                    paymentMethod === "direct" &&
+                    metadata?.paymentmethod
+                      ?.filter(item => item.method === "Direct Payment")
+                      ?.map((item, i) => (
+                        <div key={i}>
+                          <div
+                            dangerouslySetInnerHTML={{ __html: item.value }}
+                          />
+                        </div>
+                      ))
+                  }
+
                 </>
               )}
 
 
 
               {ontab === "Paymentinstruction" && (
-                <div className="mt-6">
-                  <div className="bg-amber-50 border border-amber-100 rounded-xl p-5">
-                    <h3 className="text-lg font-semibold text-slate-800 mb-3">
-                      Payment Instructions
-                    </h3>
-
-                    <p className="text-slate-600 mb-4">
-                      Please carefully follow the instructions below to ensure your
-                      enrollment deposit is processed successfully and without delay.
-                    </p>
-
-                    <div className="space-y-4">
-                      <div className="flex gap-3">
-                        <div className="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-semibold">
-                          1
-                        </div>
-                        <div>
-                          <p className="font-medium text-slate-800">
-                            Select Your Preferred Payment Method
-                          </p>
-                          <p className="text-sm text-slate-600">
-                            Choose either Forex Payment or Direct Payment based on your
-                            convenience and country of residence.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-3">
-                        <div className="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-semibold">
-                          2
-                        </div>
-                        <div>
-                          <p className="font-medium text-slate-800">
-                            Complete the Payment
-                          </p>
-                          <p className="text-sm text-slate-600">
-                            Transfer the exact enrollment deposit amount and ensure all
-                            transaction charges are covered.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-3">
-                        <div className="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-semibold">
-                          3
-                        </div>
-                        <div>
-                          <p className="font-medium text-slate-800">
-                            Save Payment Receipt
-                          </p>
-                          <p className="text-sm text-slate-600">
-                            Download or take a screenshot of the payment confirmation
-                            receipt for your records.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-3">
-                        <div className="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-semibold">
-                          4
-                        </div>
-                        <div>
-                          <p className="font-medium text-slate-800">
-                            Upload Proof of Payment
-                          </p>
-                          <p className="text-sm text-slate-600">
-                            Upload the payment receipt through the student portal or share
-                            it with your counselor for verification.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-3">
-                        <div className="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-semibold">
-                          5
-                        </div>
-                        <div>
-                          <p className="font-medium text-slate-800">
-                            Await Confirmation
-                          </p>
-                          <p className="text-sm text-slate-600">
-                            The university will verify the payment and update your
-                            application status once the funds are received.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 p-4 bg-white border border-orange-200 rounded-lg">
-                      <h4 className="font-semibold text-orange-600 mb-2">
-                        Important Notes
-                      </h4>
-
-                      <ul className="space-y-2 text-sm text-slate-600">
-                        <li>• Include your Application ID in payment remarks.</li>
-                        <li>• Ensure the payment amount matches the deposit requested.</li>
-                        <li>• Processing may take 2–5 business days.</li>
-                        <li>• Keep a copy of the payment receipt until confirmation.</li>
-                        <li>• Contact your counselor if payment is not reflected after 5 business days.</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+               <div className="text-black mt-2" dangerouslySetInnerHTML={{
+                __html : metadata?.intInstruction
+               }}>
+                
+               </div>
+               
               )}
 
               {/* Important */}
@@ -457,7 +308,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
               </div></div>
 
             {/* Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-6">
+            {/* <div className="flex flex-col sm:flex-row gap-4 mt-6">
               <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 ">
                 Pay Now
               </button>
@@ -465,10 +316,10 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
               <button className="border border-gray-300 px-6 py-3">
                 I'll Pay Later
               </button>
-            </div>
+            </div> */}
 
             {/* Timeline */}
-            <div className="mt-8 border-t pt-6">
+            {/* <div className="mt-8 border-t pt-6">
               <h3 className="font-semibold mb-5">
                 What Happens Next?
               </h3>
@@ -494,7 +345,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                 ))}
 
               </div>
-            </div>
+            </div> */}
 
           </div>
         </div>

@@ -277,117 +277,166 @@ export default function Comments({ application, profile }) {
 </div>
         ) : (
             // TABLE UI - No scroll, auto height
-            <div className="space-y-0 max-h-[350px] overflow-y-auto">
-                {/* Table Header */}
-                <div className="grid grid-cols-12 gap-4 bg-gray-50  py-3 text-xs font-semibold text-gray-600 ">
-                    <div className="col-span-2">Details</div>
-                    <div className="col-span-4">Comment</div>
-                    <div className="col-span-3">Status</div>
-                    <div className="col-span-1 text-center">By</div>
+           <div className="w-full bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div className="overflow-x-auto overflow-y-auto max-h-[500px]">
+        <div className="min-w-[900px]">
+            {/* Table Header with Column Lines */}
+            <div className="grid grid-cols-12 gap-0 bg-gray-100 border-b border-gray-300">
+                <div className="col-span-2 px-4 py-3 border-r border-gray-300">
+                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        Date & Subject
+                    </span>
                 </div>
-
-                {/* Table Messages */}
-                <div className="divide-y ">
-                    {messageList?.length > 0 ? (
-                        messageList.map((item, index) => (
-                            <motion.div
-                                key={item._id || index}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: Math.min(index, 10) * 0.05 }}
-                                className="grid grid-cols-12 gap-4 py-4 hover:bg-gray-50 transition-colors"
-                            >
-                                {/* Details Column */}
-                                <div className="col-span-2">
-                                    <p className="text-sm font-medium text-gray-800">
-                                        {formatDate(item.createdAt)}
-                                    </p>
-                                    <div className="mt-2">
-                                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                                            Subject
-                                        </p>
-                                        <p className="text-sm font-semibold text-gray-900 mt-0.5">
-                                            {item?.extra_content?.subject || "General"}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Comment Column */}
-                                <div className="col-span-4">
-                                    <p className="text-sm text-gray-700 leading-relaxed">
-                                        {item.content}
-                                    </p>
-                                    {item.extra_content?.attachments?.length > 0 && (
-                                        <div className="mt-2 flex flex-wrap gap-2">
-                                            {item.extra_content.attachments.map((att, idx) => (
-                                                <a
-                                                    key={idx}
-                                                    href={`https://api.ooshasglobal.com${att.url}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded-md transition-colors"
-                                                >
-                                                    <Paperclip className="w-3 h-3 flex-shrink-0" />
-                                                    <span className="max-w-[120px] truncate">{att.name}</span>
-                                                </a>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Status Column */}
-                                <div className="col-span-3">
-                                    <div className="space-y-2">
-                                        <div>
-                                            <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">
-                                                Primary
-                                            </p>
-                                            <p className="text-sm text-gray-700 mt-0.5">
-                                                {item.primaryStatus || "Application Processed"}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs font-bold text-gray-600 uppercase tracking-wide">
-                                                Message
-                                            </p>
-                                            <span className={`inline-block mt-0.5 text-xs font-medium px-2 py-0.5 rounded-full ${item?.isRead
-                                                    ? "bg-green-100 text-green-700"
-                                                    : "bg-red-100 text-red-700"
-                                                }`}>
-                                                {item?.isRead ? "Read" : "Unread"}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* User Column */}
-                                <div className="col-span-1 flex flex-col items-center justify-center gap-2">
-                                    <span className="text-xs font-medium text-gray-700 bg-gray-100 px-2 py-1 rounded-md text-center w-full">
-                                        {item.userType === "student" ? "Me" : item.userType?.charAt(0).toUpperCase()}
-                                    </span>
-                                    {item.userType !== "student" && !item?.isRead && (
-                                        <button
-                                            onClick={() => {
-                                                setIsCommentModalOpen(true);
-                                                setMessageSubject(item?.extra_content?.subject);
-                                            }}
-                                            className="bg-orange-500 hover:bg-orange-600 text-white text-[10px] px-1.5 py-1 rounded transition-colors w-full flex items-center justify-center"
-                                        >
-                                            <SendHorizonal className="w-2.5 h-2.5" />
-                                        </button>
-                                    )}
-                                </div>
-                            </motion.div>
-                        ))
-                    ) : (
-                        <div className="flex flex-col items-center justify-center py-12 text-center">
-                            <AlertCircle className="w-12 h-12 text-gray-300 mb-3" />
-                            <p className="text-sm font-medium text-gray-600">No comments yet</p>
-                            <p className="text-xs text-gray-400 mt-1">Be the first to add a comment</p>
-                        </div>
-                    )}
+                <div className="col-span-4 px-4 py-3 border-r border-gray-300">
+                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        Message
+                    </span>
+                </div>
+                <div className="col-span-3 px-4 py-3 border-r border-gray-300">
+                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        Status
+                    </span>
+                </div>
+                <div className="col-span-2 px-4 py-3 border-r border-gray-300">
+                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        From
+                    </span>
+                </div>
+                <div className="col-span-1 px-4 py-3">
+                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        Action
+                    </span>
                 </div>
             </div>
+
+            {/* Messages List with Column Lines */}
+            <div className="divide-y divide-gray-200">
+                {messageList?.length > 0 ? (
+                    messageList.map((item, index) => (
+                        <motion.div
+                            key={item._id || index}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: Math.min(index, 10) * 0.03 }}
+                            className="grid grid-cols-12 gap-0 hover:bg-gray-50 transition-all duration-150"
+                        >
+                            {/* Date & Subject Column */}
+                            <div className="col-span-2 px-4 py-3 border-r border-gray-200">
+                                <div className="flex flex-col">
+                                    <div className="text-sm font-semibold text-gray-900">
+                                        {formatDate(item.createdAt)}
+                                    </div>
+                                    <div className="mt-2">
+                                        <div className="text-[10px] font-semibold text-gray-400 uppercase">
+                                            Subject
+                                        </div>
+                                        <div className="text-xs font-medium text-gray-700 break-words mt-0.5">
+                                            {item?.extra_content?.subject || "—"}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Message Column */}
+                            <div className="col-span-4 px-4 py-3 border-r border-gray-200">
+                                <div className="text-sm text-gray-700 leading-relaxed break-words">
+                                    {item.content || "—"}
+                                </div>
+                                {item.extra_content?.attachments?.length > 0 && (
+                                    <div className="flex flex-wrap gap-1 mt-2">
+                                        {item.extra_content.attachments.map((att, idx) => (
+                                            <a
+                                                key={idx}
+                                                href={`https://api.ooshasglobal.com${att.url}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-1 text-blue-500 text-xs bg-blue-50 px-2 py-0.5 rounded"
+                                            >
+                                                📎 {att.name}
+                                            </a>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Status Column */}
+                            <div className="col-span-3 px-4 py-3 border-r border-gray-200">
+                                <div className="flex flex-col space-y-2">
+                                    <div>
+                                        <div className="text-[10px] font-semibold text-gray-400 uppercase">
+                                            Primary
+                                        </div>
+                                        <div className="text-xs text-gray-600 mt-0.5">
+                                            {item.primaryStatus || "Application Processed"}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="text-[10px] font-semibold text-gray-400 uppercase">
+                                            Message
+                                        </div>
+                                        <span className={`inline-flex items-center gap-1 mt-0.5 text-xs font-medium ${
+                                            item?.isRead ? "text-green-600" : "text-red-600"
+                                        }`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full ${
+                                                item?.isRead ? "bg-green-500" : "bg-red-500"
+                                            }`}></span>
+                                            {item?.isRead ? "Read" : "Unread"}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* From Column */}
+                            <div className="col-span-2 px-4 py-3 border-r border-gray-200">
+                                <div className="flex items-center gap-2">
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                        item.userType === "student" ? "bg-blue-100" : "bg-orange-100"
+                                    }`}>
+                                        <span className={`text-xs font-bold ${
+                                            item.userType === "student" ? "text-blue-600" : "text-orange-600"
+                                        }`}>
+                                            {item.userType === "student" ? "ME" : item.userType?.charAt(0)?.toUpperCase()}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <div className="text-sm font-semibold text-gray-800">
+                                            {item.userType === "student" ? "You" : item.userType || "Counselor"}
+                                        </div>
+                                        <div className="text-xs text-gray-500">
+                                            {item.userType === "student" ? "Student" : "Counselor"}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Action Column */}
+                            <div className="col-span-1 px-4 py-3 flex items-center justify-center">
+                                {item.userType !== "student" && !item?.isRead && (
+                                    <button
+                                        onClick={() => {
+                                            setIsCommentModalOpen(true);
+                                            setMessageSubject(item?.extra_content?.subject);
+                                        }}
+                                        className="px-3 py-1.5 bg-[#F26D44] hover:bg-orange-600 text-white text-xs font-medium rounded-lg transition-colors whitespace-nowrap"
+                                    >
+                                        Reply
+                                    </button>
+                                )}
+                                {item.userType === "student" && (
+                                    <span className="text-xs text-gray-400">—</span>
+                                )}
+                            </div>
+                        </motion.div>
+                    ))
+                ) : (
+                    <div className="flex flex-col items-center justify-center py-16 text-center">
+                        <p className="text-sm text-gray-500">No messages yet</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    </div>
+</div>
         )}
     </div>
 </div>

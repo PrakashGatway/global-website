@@ -5,6 +5,7 @@ import Comments from "./comments";
 import { useState } from "react";
 import axiosInstance, { baseUrl, fileBaseurl, imageBaseUrl } from "@/app/axiosInstance";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 
 export default function SubmittedtoSchool({ currentstep, application, profile, allProfile, activity, fetchApplication }) {
@@ -123,6 +124,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
   const completeDetail = statusDetail?.find((item) =>
     item.status === "Completed"
   )
+ 
 
   const handleSelectionVisa = async () => {
     try {
@@ -185,7 +187,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
     setShowActionModal(true);
   };
 
-  console.log("heloo", fetchApplication)
+  
 
 
   const endDate =
@@ -309,16 +311,13 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                     </div>
 
                     {/* Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-4 mt-8">
+                    <div className="flex flex-col sm:flex-row gap-4 mt-2">
                       <button onClick={downloadCASLetter} className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 text-sm">
                         <Download size={18} />
                         Download CAS Letter
                       </button>
 
-                      <button className="flex items-center justify-center gap-2 border-2 border-orange-500 text-orange-600 hover:bg-orange-50 font-medium px-6 py-3 rounded-xl transition-all duration-300 text-sm">
-                        <Share2 size={18} />
-                        Share with Counselor
-                      </button>
+
                     </div>
                   </div>
                 </div>
@@ -589,7 +588,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   <div className="bg-white border border-slate-200  overflow-hidden">
                     <div className="border-b">
                       <div className="flex">
-                        <button className="px-6 py-4 text-sm font-semibold text-orange-600 border-b-2 border-orange-600">
+                        <button className="px-6 py-4 text-base font-semibold text-orange-600 border-b-2 border-orange-600">
                           Submission Details
                         </button>
                       </div>
@@ -602,7 +601,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                               <Hash className="w-4 h-4 text-slate-500" />
-                              <span className="text-sm text-slate-600">
+                              <span className="text-base text-slate-600">
                                 Application ID
                               </span>
                             </div>
@@ -739,15 +738,15 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                       </div>
                     </div>
 
-                    <div className="p-5 max-h-[300px] overflow-y-auto ">
+                    <div className="p-2 max-h-[300px] overflow-y-auto ">
                       {currentstep.step === "SubmitToSchool" ? (
                         activity?.map((item, index) => (
                           <>
                             {index === 0 && item.newValue === "SubmitToSchool" && (
                               <>
-                                <div className="space-y-4 mb-4">
+                                <div className="space-y-2 mb-2">
                                   <div className="flex gap-4">
-                                    <div className="w-5 h-5 border-2 border-slate-300 bg-white rounded-sm mt-1" />
+                                    <div className="w-5 h-5 border-2 border-slate-300 bg-white rounded-sm " />
                                     <div>
                                       <h4 className="font-semibold text-sm text-slate-400">
                                         Offer Received
@@ -776,7 +775,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                             )}
                             <div
                               key={item._id}
-                              className="relative flex gap-4 pb-8 last:pb-0"
+                              className="relative flex gap-4 pb-3 last:pb-0"
                             >
                               {index !== activity.length - 1 && (
                                 <div className="absolute left-[10px] top-6 w-[2px] h-full bg-slate-200" />
@@ -856,7 +855,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                             )}
                             <div
                               key={item._id}
-                              className="relative flex gap-4 pb-8 last:pb-0"
+                              className="relative flex gap-4 pb-2 last:pb-0"
                             >
                               {index !== activity.length - 1 && (
                                 <div className="absolute left-[10px] top-6 w-[2px] h-full bg-slate-200" />
@@ -922,10 +921,11 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                     </p>
                   </div>
 
-                  <button className="flex items-center justify-center gap-2 px-5 py-3 border border-orange-200 text-orange-600 font-medium hover:bg-orange-50 transition whitespace-nowrap">
-                    <MessageCircle className="w-4 h-4" />
-                    Contact Counselor
-                  </button>
+                  <Link href={"/dashboard/support"}>
+                    <button className="flex items-center justify-center gap-2 px-5 py-3 border border-orange-200 text-orange-600 font-medium hover:bg-orange-50 transition whitespace-nowrap">
+                      <MessageCircle className="w-4 h-4" />
+                      Contact Counselor
+                    </button></Link>
 
                 </div>
               </div>
@@ -1083,7 +1083,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                       What's Next?
                     </h3>
 
-                    <div className="max-h-[380px] overflow-y-auto pr-2 space-y-6">
+                    <div className="max-h-[320px] overflow-y-auto pr-2 space-y-2">
                       {/* Upcoming Steps */}
                       {upcomingSteps.map((step, index) => (
                         <div
@@ -1116,7 +1116,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                               {item.newValue || item.action.replaceAll("_", " ")}
                             </h4>
 
-                            <p className="text-xs text-slate-500 mt-1">
+                            <p className="text-xs text-slate-500">
                               {item.description}
                             </p>
                           </div>
@@ -1140,80 +1140,28 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
 
                     <div className="space-y-4">
-                      <div className="flex justify-between gap-4">
-                        <span className="text-slate-500 text-xs">
-                          Program
+                      {application?.documents?.find((item)=> item.docType === "offer letter")?.extra?.other?.map((item,i)=>
+                      <>
+                       <div className="flex justify-between gap-4">
+                        <span className="text-slate-500 text-sm">
+                          {item?.key}
                         </span>
 
-                        <span className="font-medium text-right text-xs">
-                          {application?.course?.name}
+                        <span className="font-medium text-right text-sm">
+                          {item?.value}
                         </span>
                       </div>
+                      </>
+                      )
+                      }
+                     
 
-                      <div className="flex justify-between gap-4">
-                        <span className="text-slate-500 text-xs">
-                          Faculty/School
-                        </span>
-
-                        <span className="font-medium text-right text-xs">
-                          School of Engineering
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between gap-4">
-                        <span className="text-slate-500 text-xs">
-                          Start Date
-                        </span>
-
-                        <span className="font-medium text-right text-xs">
-                          {new Date(application?.createdAt).toLocaleDateString("en-IN")}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between gap-4">
-                        <span className="text-slate-500 text-xs">
-                          Duration
-                        </span>
-
-                        <span className="font-medium text-right text-xs">
-                          {application?.course?.duration}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between gap-4">
-                        <span className="text-slate-500 text-xs">
-                          Tuition Fee (per year)
-                        </span>
-
-                        <span className="font-medium text-right text-xs">
-                          {application?.course?.tuitionFee}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between gap-4">
-                        <span className="text-slate-500 text-xs">
-                          Offer Type
-                        </span>
-
-                        <span className="font-medium text-right text-xs">
-                          Full Time
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between gap-4">
-                        <span className="text-slate-500 text-xs">
-                          Conditions
-                        </span>
-
-                        <span className="font-medium text-right text-xs">
-                          No conditions
-                        </span>
-                      </div>
+                    
                     </div>
 
 
                     <div className="mt-5 bg-orange-50  p-4">
-                      <p className="text-xs text-orange-700 ">
+                      <p className="text-sm text-orange-700 ">
                         This is an official offer of admission.
                         The full details are available in your offer letter.
                       </p>
@@ -1242,7 +1190,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                           <div>
                             <div className="flex gap-4">
-                              <h4 className="font-medium text-xs">
+                              <h4 className="font-medium text-sm">
                                 Offer Received
                               </h4>
                             </div>
@@ -1258,11 +1206,11 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                           <div>
                             <div className="flex gap-4">
-                              <h4 className="font-medium text-xs">
+                              <h4 className="font-medium text-sm">
                                 Respond By
                               </h4>
 
-                              <p className="text-orange-500 text-sm font-medium">
+                              <p className="text-orange-500 text-xs font-medium">
                                 14 Days Left
                               </p>
                             </div>
@@ -1278,35 +1226,18 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                           <div>
                             <div className="flex gap-4">
-                              <h4 className="font-medium text-xs">
+                              <h4 className="font-medium text-sm">
                                 Enrollment Deposit Deadline
                               </h4>
                             </div>
 
                             <p className="text-xs text-slate-500">
-                              02 July 2025
+                              {statusDetail?.find((item)=> item?.status === "PayEnrollenmentDeposit")?.metadata?.deposit?.paymentDeadline}
                             </p>
                           </div>
                         </div>
 
-                        {/* Program Start Date */}
-                        <div className="flex gap-3">
-                          <div className="mt-1">
-                            <div className="w-5 h-5 border-2 border-slate-300" />
-                          </div>
-
-                          <div>
-                            <div className="flex gap-4">
-                              <h4 className="font-medium text-xs">
-                                Program Start Date
-                              </h4>
-                            </div>
-
-                            <p className="text-xs text-slate-500">
-                              15 September 2026
-                            </p>
-                          </div>
-                        </div>
+                      
 
                       </div>
 
@@ -1318,14 +1249,14 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                         Need Guidance?
                       </h4>
 
-                      <p className="text-xs text-amber-700 mt-2">
+                      <p className="text-sm text-amber-700 mt-2">
                         Talk to your admissions counselor for any help
                         with acceptance, visa or other queries.
                       </p>
-
+<Link href={"/dashboard/support"}>
                       <button className="mt-4 w-full py-3  border border-orange-200 text-orange-600 font-medium text-xs">
                         Contact Counselor
-                      </button>
+                      </button></Link>
 
                     </div>
 

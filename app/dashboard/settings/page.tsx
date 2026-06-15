@@ -36,7 +36,7 @@ export default function ProfilePage() {
   const fetchCountries = useCallback(async () => {
     try {
       const response = await axiosInstance.get('/countries?limit=300')
-      const data = response.data.data
+      const data = response?.data?.data
       setCountries(data)
     } catch (error) {
       console.error('Error fetching countries:', error)

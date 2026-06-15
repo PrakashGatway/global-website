@@ -461,7 +461,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
         </div>
 
         {/* Help Card */}
-        <div className="bg-white border border-slate-200 p-5 shadow-sm">
+        {/* <div className="bg-white border border-slate-200 p-5 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <Info className="w-5 h-5 text-orange-600" />
             <h3 className="font-semibold text-slate-800">
@@ -482,7 +482,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
               Email Support
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
 
     </div>

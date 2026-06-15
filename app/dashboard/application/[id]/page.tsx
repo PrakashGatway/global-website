@@ -58,10 +58,18 @@ import {
   BadgeDollarSign,
   Globe,
   CalendarDays,
-  Hash
+  Hash,
+  ChevronDown,
+  Languages,
+  Monitor,
+  MonitorCheck,
+  MonitorCheckIcon,
+  FileCheck,
+  FileBadge,
+  ChevronRight
 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 import { format } from "date-fns";
 import axiosInstance from "@/app/axiosInstance";
@@ -183,7 +191,116 @@ export default function StudentDetailsPage() {
   const { profile, allProfile, updateProfile } = useGlobal()
   const [activeMenu, setActiveMenu] = useState("Overview");
 
-  console.log(allProfile)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("tab");
+
+    if (tab === "document") {
+      setActiveTab("documents");
+      setActiveMenu("Document")
+
+      setshowApplicationForm(false);
+    } else if (tab) {
+      setshowApplicationForm(true);
+    }
+  }, []);
+
+
+  const sections = [
+    {
+      title: "Personal Information",
+      description: "Name, Date of Birth, Gender, Nationality, Passport details",
+      tab: "personal",
+      icon: User,
+      bg: "bg-blue-50",
+      color: "text-blue-600",
+    },
+    {
+      title: "Contact Information",
+      description: "Email address, Phone number, Current address",
+      tab: "contact",
+      icon: Mail,
+      bg: "bg-green-50",
+      color: "text-green-600",
+    },
+    {
+      title: "Academic Background",
+      description: "School details, Education history, Marks/Grades",
+      tab: "academic",
+      icon: GraduationCap,
+      bg: "bg-purple-50",
+      color: "text-purple-600",
+    },
+    {
+      title: "English Language Proficiency",
+      tab: "tests",
+      description: "IELTS / TOEFL / Other test scores",
+      icon: Languages,
+      bg: "bg-orange-50",
+      color: "text-orange-600",
+    },
+    {
+      title: "Additional Information",
+      tab: "work",
+      description: "Work experience, Motivation letter, Reference letters",
+      icon: Briefcase,
+      bg: "bg-cyan-50",
+      color: "text-cyan-600",
+    },
+    {
+      title: "Document",
+      tab: "document",
+      description: "All Related Documents",
+      icon: Briefcase,
+      bg: "bg-red-50",
+      color: "text-red-600",
+    }
+  ];
+
+
+  const submitNotes = [
+    {
+      icon: AlertCircle,
+      title: "Complete Information",
+      text: "Please ensure all the details are correct and complete.",
+    },
+    {
+      icon: MonitorCheck,
+      title: "Submission Lock",
+      text: "Once submitted, you will not be able to make changes to your application.",
+    },
+    {
+      icon: MonitorCheckIcon,
+      title: "Track Status",
+      text: "You can track your application status from the dashboard.",
+    },
+  ];
+
+
+  const getStatusStyle = (status) => {
+    switch (status?.toLowerCase()) {
+      case "approved":
+        return "bg-green-100 text-green-700 rounded-full";
+
+      case "pending":
+        return "bg-orange-100 text-orange-700 rounded-full";
+
+      case "rejected":
+        return "bg-red-100 text-red-700 rounded-full";
+
+      default:
+        return "bg-gray-100 text-gray-700 rounded-full";
+    }
+  };
+
+  const Parsedocuments =
+    typeof allProfile?.profile?.documents === "string"
+      ? JSON.parse(allProfile.profile.documents)
+      : allProfile?.profile?.documents;
+
+
+
+  const documentList = Object.values(Parsedocuments || {});
 
   useEffect(() => {
     fetchApplication();
@@ -376,6 +493,8 @@ export default function StudentDetailsPage() {
 
 
 
+
+
   const getPaymentStatusBadge = (status: string) => {
     switch (status) {
       case 'Completed':
@@ -389,6 +508,8 @@ export default function StudentDetailsPage() {
   // ==============================
   // STATES
   // ==============================
+
+
 
 
 
@@ -438,11 +559,11 @@ export default function StudentDetailsPage() {
     const fetchStudentData = async () => {
       try {
         setLoading(true);
-        const [countriesRes] = await Promise.all([
-          axiosInstance.get("/countries?limit=250"),
-        ]);
 
-        setCountriesList(countriesRes.data.data || []);
+        const countriesRes = await axiosInstance.get("/countries?limit=250")
+        const data = countriesRes.data.data
+
+        setCountriesList(data)
       } catch (error) {
         console.error("Error fetching student data:", error);
         toast.error("Failed to load student data");
@@ -451,9 +572,9 @@ export default function StudentDetailsPage() {
       }
     };
 
-    if (application?.data?.student?._id) {
-      fetchStudentData();
-    }
+
+    fetchStudentData();
+
   }, [application?.data?.student?._id]);
 
   // Add this effect to check if application is already completed/submitted
@@ -637,13 +758,12 @@ export default function StudentDetailsPage() {
         break;
 
       case "Upload Documents":
-        setActiveMenu("Communication");
+        setActiveMenu("Document");
         setActiveTab("documents");
         break;
 
       case "Review & Submit":
-        setActiveMenu("Communication");
-        setActiveTab("information");
+        setActiveMenu("Review & Submit");
         break;
 
       default:
@@ -669,8 +789,8 @@ export default function StudentDetailsPage() {
         <div className="space-y-3 bg-white">
 
           <div className="flex gap-4 items-center mb-10">
-            <h2 className="font-bold text-xl">{steptitle.title}</h2>
-            <span className="bg-orange-100 text-orange-500 p-2 text-xs">{steptitle.subTitle}</span>
+            <h2 className="font-bold text-lg">{steptitle.title}</h2>
+            <span className="bg-orange-100 text-orange-500 p-2 text-sm">{steptitle.subTitle}</span>
           </div>
 
 
@@ -763,7 +883,7 @@ export default function StudentDetailsPage() {
                             {step.title}
                           </h3>
 
-                          <p className="mt-1 text-xs text-orange-600">
+                          <p className="mt-1 text-sm text-orange-600">
                             {status}
                           </p>
                         </div>
@@ -804,7 +924,7 @@ export default function StudentDetailsPage() {
 
                         {/* Status */}
                         <p
-                          className={`text-xs mt-1 ${status === "completed"
+                          className={`text-sm mt-1 ${status === "completed"
                             ? "text-black"
                             : "text-gray-500"
                             }`}
@@ -839,6 +959,7 @@ export default function StudentDetailsPage() {
                         "Document",
                         "Communication",
                         "Activity Log",
+                        "Review & Submit"
                       ].map((item) => (
                         <motion.div
                           key={item}
@@ -870,6 +991,12 @@ export default function StudentDetailsPage() {
 
                               case "Activity Log":
                                 setActiveMenu("Activity Log")
+                                setshowApplicationForm(false);
+
+                                break;
+
+                              case "Review & Submit":
+                                setActiveMenu("Review & Submit")
 
                               default:
                                 setshowApplicationForm(false);
@@ -919,10 +1046,10 @@ export default function StudentDetailsPage() {
                       <p className="text-sm text-gray-500 mt-2">
                         Contact our support team for assistance.
                       </p>
-
-                      <button className="mt-4 text-orange-600 font-medium">
-                        Contact Support →
-                      </button>
+                      <Link href={"/dashboard/support"}>
+                        <button className="mt-4 text-orange-600 font-medium">
+                          Contact Support →
+                        </button></Link>
                     </div>
                   </div>
                 </div>
@@ -940,16 +1067,11 @@ export default function StudentDetailsPage() {
                       className="col-span-9"
                     >
                       <ProfileTabs
-                        studentId={application?.data?.student?._id}
-                        user={user}
-                        profile={profile2}
-                        countriesList={[]}
-                        onUpdate={() => {
-                          axiosInstance.get(`/users/${application?.data?.student?._id}`).then(res => {
-                            setUser(res.data.data || res.data);
-                            setProfile(res.data.data?.profile || res.data?.profile);
-                          });
-                        }}
+                        studentId={profile?._id}
+                        user={profile}
+                        profile={allProfile?.profile}
+                        countriesList={CountriesList}
+                        onUpdate={updateProfile}
                       />
                     </motion.div>
                   ) : (
@@ -1012,73 +1134,101 @@ export default function StudentDetailsPage() {
                             </div>
                             <div className="bg-white border p-4">
                               {activeTab === 'information' && (
-                                <div className="px-3 py-8">
+                                <div className="space-y-8">
+
+                                  {/* Basic Details */}
                                   <div>
-                                    <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
+                                    <h2 className="text-xl font-semibold mb-4">
                                       Basic Details
                                     </h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                      <DetailItem
-                                        label="Full Name"
-                                        value={application?.student?.name || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Gender"
-                                        value={application?.student?.gender || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Nationality"
-                                        value={application?.student?.nationality || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Date of Birth"
-                                        value={application?.student?.dateOfBirth ? format(new Date(application.student.dateOfBirth), 'yyyy-MM-dd') : "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Application ID"
-                                        value={application?.applicationNumber || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="E-Mail"
-                                        value={application?.student?.email || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Passport No."
-                                        value={application?.student?.passportNumber || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Created At"
-                                        value={application?.createdAt ? format(new Date(application.createdAt), 'dd/MM/yyyy hh:mm a') : "N/A"}
-                                      />
-                                    </div>
+
+                                    <table className="w-full border border-gray-300">
+                                      <tbody>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Full Name</td>
+                                          <td className="border p-3">{application?.student?.name || "N/A"}</td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Gender</td>
+                                          <td className="border p-3">{application?.student?.gender || "N/A"}</td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Nationality</td>
+                                          <td className="border p-3">{application?.student?.nationality || "N/A"}</td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Date of Birth</td>
+                                          <td className="border p-3">
+                                            {application?.student?.dateOfBirth
+                                              ? format(new Date(application.student.dateOfBirth), "yyyy-MM-dd")
+                                              : "N/A"}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Application ID</td>
+                                          <td className="border p-3">{application?.applicationNumber || "N/A"}</td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Email</td>
+                                          <td className="border p-3">{application?.student?.email || "N/A"}</td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Passport No.</td>
+                                          <td className="border p-3">{application?.student?.passportNumber || "N/A"}</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
                                   </div>
 
-                                  {/* Course Details Section */}
-                                  <div className="mt-8 border-t pt-8">
-                                    <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
+                                  {/* Course Details */}
+                                  <div>
+                                    <h2 className="text-xl font-semibold mb-4">
                                       Course Details
                                     </h2>
-                                    {application.course && (
-                                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                        {[
-                                          { label: "Course Name", value: application?.course?.name },
-                                          { label: "University", value: application?.course?.university?.name },
-                                          { label: "Address", value: application?.course?.university?.address },
-                                          { label: "Course Intake", value: application?.intake },
-                                          { label: "Level", value: application?.course?.level },
-                                          { label: "Duration", value: application?.course?.duration },
-                                          { label: "Tuition Fee", value: `${application?.course?.currency || ""} ${application?.course?.tuitionFee || ""}` },
-                                          { label: "QS Ranking", value: application?.course?.university?.uni_rank?.find((item: any) => item.type === "QS World")?.rank || "N/A" },
-                                        ].map((item, index) => (
-                                          <div key={index}>
-                                            <p className="text-sm font-medium text-gray-800 mb-1">{item.label}</p>
-                                            <h3 className="font-medium text-gray-800">{item.value || "N/A"}</h3>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
 
+                                    <table className="w-full border border-gray-300">
+                                      <tbody>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Course Name</td>
+                                          <td className="border p-3">{application?.course?.name || "N/A"}</td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">University</td>
+                                          <td className="border p-3">{application?.course?.university?.name || "N/A"}</td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Address</td>
+                                          <td className="border p-3">{application?.course?.university?.address || "N/A"}</td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Course Intake</td>
+                                          <td className="border p-3">{application?.intake || "N/A"}</td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Level</td>
+                                          <td className="border p-3">{application?.course?.level || "N/A"}</td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Duration</td>
+                                          <td className="border p-3">{application?.course?.duration || "N/A"}</td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">Tuition Fee</td>
+                                          <td className="border p-3">
+                                            {application?.course?.currency} {application?.course?.tuitionFee}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td className="border p-3 font-medium bg-gray-50">QS Ranking</td>
+                                          <td className="border p-3">
+                                            {application?.course?.university?.uni_rank?.find(
+                                              (item) => item.type === "QS World"
+                                            )?.rank || "N/A"}
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
 
                                 </div>
                               )}
@@ -1092,28 +1242,18 @@ export default function StudentDetailsPage() {
                                 </h3>
 
                                 {tasks.map((task, index) => (
+
                                   <div
                                     key={index}
                                     className={`flex items-center justify-between py-4 px-4 border-b last:border-0 transition-all
-      ${task.completed
-                                        ? "bg-green-50"
-                                        : "bg-white"
-                                      }`}
+ transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:bg-orange-50`}
                                   >
-                                    <div className="flex items-start gap-4">
-                                      <input
-                                        type="checkbox"
-                                        checked={task.completed}
-                                        readOnly
-                                        className="w-5 h-5 mt-1 accent-green-500"
-                                      />
+                                    <div className="flex items-start gap-4 ">
+
 
                                       <div>
                                         <h4
-                                          className={`font-semibold ${task.completed
-                                            ? "text-green-700"
-                                            : "text-gray-800"
-                                            }`}
+                                          className={`font-semibold`}
                                         >
                                           {task.title}
                                         </h4>
@@ -1125,23 +1265,13 @@ export default function StudentDetailsPage() {
                                     </div>
 
                                     <div className="flex items-center gap-3">
-                                      {task.completed ? (
-                                        <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
-                                          Completed
-                                        </span>
-                                      ) : (
-                                        <>
-                                          <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-medium">
-                                            Pending
-                                          </span>
-
-                                          <button
-                                            onClick={() => handleContinue(task.title)}
-                                            className="text-orange-600 font-medium hover:text-orange-700"
-                                          >
-                                            Continue →
-                                          </button>
-                                        </>
+                                      {(
+                                        <button
+                                          onClick={() => handleContinue(task.title)}
+                                          className="text-orange-600 font-medium hover:text-orange-700 cursor-pointer"
+                                        >
+                                          Continue →
+                                        </button>
                                       )}
                                     </div>
                                   </div>
@@ -1210,109 +1340,12 @@ export default function StudentDetailsPage() {
                         activeMenu === "Communication" || activeMenu === "Document") && (
                           <>  {/* Tabs */}
                             <div className="bg-white border">
-                              <div className="border-b border-gray-200 overflow-x-auto no-scrollbar px-3">
-                                {/* <div className="flex min-w-max">
-                                  {[
-                                    { id: "information", label: "Information" },
-                                    { id: "documents", label: "Documents" },
-                                    { id: "activity", label: "Comments" }
-                                  ].map((tab) => {
-                                    const isActive = activeTab === tab.id;
 
-                                    return (
-                                      <button
-                                        key={tab.id}
-                                        onClick={() => setActiveTab(tab.id as any)}
-                                        className={`relative px-4 py-3 text-base font-medium whitespace-nowrap transition-all duration-200 ${isActive
-                                          ? "text-orange-600"
-                                          : "text-gray-500 hover:text-gray-800"
-                                          }`}
-                                      >
-                                        {tab.label}
-
-                                        {isActive && (
-                                          <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-orange-500 rounded-full" />
-                                        )}
-                                      </button>
-                                    );
-                                  })}
-                                </div> */}
-                              </div>
 
 
 
                               {/* Information Tab Content */}
-                              {activeTab === 'information' && (
-                                <div className="px-3 py-8">
-                                  <div>
-                                    <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
-                                      Basic Details
-                                    </h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                      <DetailItem
-                                        label="Full Name"
-                                        value={application?.student?.name || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Gender"
-                                        value={application?.student?.gender || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Nationality"
-                                        value={application?.student?.nationality || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Date of Birth"
-                                        value={application?.student?.dateOfBirth ? format(new Date(application.student.dateOfBirth), 'yyyy-MM-dd') : "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Application ID"
-                                        value={application?.applicationNumber || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="E-Mail"
-                                        value={application?.student?.email || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Passport No."
-                                        value={application?.student?.passportNumber || "N/A"}
-                                      />
-                                      <DetailItem
-                                        label="Created At"
-                                        value={application?.createdAt ? format(new Date(application.createdAt), 'dd/MM/yyyy hh:mm a') : "N/A"}
-                                      />
-                                    </div>
-                                  </div>
 
-                                  {/* Course Details Section */}
-                                  <div className="mt-8 border-t pt-8">
-                                    <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
-                                      Course Details
-                                    </h2>
-                                    {application.course && (
-                                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                        {[
-                                          { label: "Course Name", value: application?.course?.name },
-                                          { label: "University", value: application?.course?.university?.name },
-                                          { label: "Address", value: application?.course?.university?.address },
-                                          { label: "Course Intake", value: application?.intake },
-                                          { label: "Level", value: application?.course?.level },
-                                          { label: "Duration", value: application?.course?.duration },
-                                          { label: "Tuition Fee", value: `${application?.course?.currency || ""} ${application?.course?.tuitionFee || ""}` },
-                                          { label: "QS Ranking", value: application?.course?.university?.uni_rank?.find((item: any) => item.type === "QS World")?.rank || "N/A" },
-                                        ].map((item, index) => (
-                                          <div key={index}>
-                                            <p className="text-sm font-medium text-gray-800 mb-1">{item.label}</p>
-                                            <h3 className="font-medium text-gray-800">{item.value || "N/A"}</h3>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-
-
-                                </div>
-                              )}
 
 
                               {/* Documents Tab Content */}
@@ -1372,6 +1405,228 @@ export default function StudentDetailsPage() {
                             className="h-1 bg-orange-500 rounded-full mt-8"
                           />
                         </motion.div>
+                      )}
+
+                      {activeMenu === "Review & Submit" && (
+                        <div className="border border-gray-300 p-2">
+                          <div className="max-w-7xl mx-auto">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                              {/* Left Section */}
+                              <div className="lg:col-span-2 space-y-4">
+
+                                <div>
+                                  <h1 className="text-lg font-bold text-slate-800">
+                                    Review & Submit
+                                  </h1>
+                                  <p className="text-gray-500 text-sm mt-1">
+                                    Please review all the information below before submitting your application.
+                                  </p>
+                                </div>
+
+                                {sections.map((item, index) => (
+                                  <div
+                                    key={index}
+                                    onClick={() => {
+                                      const params = new URLSearchParams(window.location.search);
+
+                                      params.set("tab", item.tab);
+
+                                      window.history.replaceState(
+                                        {},
+                                        "",
+                                        `${window.location.pathname}?${params}`
+                                      );
+
+                                      if (item.tab === "document") {
+                                        setActiveMenu("documents");
+                                        setActiveMenu("Document")
+                                        setshowApplicationForm(false);
+                                      } else {
+                                        setActiveMenu("Application Form");
+                                        setshowApplicationForm(true);
+                                      }
+                                    }}
+                                    className="bg-white border p-4 flex items-center justify-between hover:shadow-sm transition"
+                                  >
+                                    <div className="flex items-center gap-4">
+                                      <div className={`h-12 w-12 flex items-center justify-center ${item.bg}`}>
+                                        <item.icon size={22} className={item.color} />
+                                      </div>
+
+                                      <div>
+                                        <h3 className="font-semibold text-slate-800 text-base">
+                                          {item.title}
+                                        </h3>
+
+                                        <p className="text-sm text-gray-500">
+                                          {item.description}
+                                        </p>
+                                      </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+
+
+                                      <button className="px-4 py-2 border text-orange-600 font-medium hover:bg-orange-50">
+                                        Edit
+                                      </button>
+
+                                      <ChevronRight size={18} className="text-gray-500" />
+                                    </div>
+                                  </div>
+                                ))}
+
+                                {/* Before Submit */}
+                                <div className="bg-white border p-5">
+                                  <h3 className="font-semibold mb-4 text-lg">
+                                    Before you submit
+                                  </h3>
+
+                                  <div className="grid md:grid-cols-3 gap-4">
+                                    {submitNotes.map((note, index) => (
+                                      <div
+                                        key={index}
+                                        className="flex gap-3"
+                                      >
+                                        <div className="h-9 w-9 bg-orange-50 flex items-center justify-center">
+                                          <note.icon
+                                            size={18}
+                                            className="text-orange-600"
+                                          />
+                                        </div>
+
+                                        <p className="text-sm text-gray-600">
+                                          {note.text}
+                                        </p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Right Sidebar */}
+                              <div>
+                                <div className="sticky top-6 space-y-4">
+
+                                  {/* Summary */}
+                                  {/* Application Summary */}
+                                  <div className="bg-white p-4  border border-gray-200 shadow-sm">
+                                    <div className="flex justify-between items-center mb-3">
+                                      <h4 className="text-lg font-bold text-gray-800">Application Summary</h4>
+                                    </div>
+                                    <div className="space-y-1.5 text-sm">
+                                      <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                                        <span className="text-gray-500">Student Name</span>
+                                        <span className="font-medium text-gray-800">{application?.student?.name || "--"}</span>
+                                      </div>
+                                      <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                                        <span className="text-gray-500">Student Email</span>
+                                        <span className="font-medium text-gray-800">{application?.student?.email || "--"}</span>
+                                      </div>
+                                      <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                                        <span className="text-gray-500">Student Phone</span>
+                                        <span className="font-medium text-gray-800">{application?.student?.phone || "--"}</span>
+                                      </div>
+                                      <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                                        <span className="text-gray-500">Country</span>
+                                        <span className="font-medium text-gray-800 flex items-center gap-1">
+                                          {application?.country || "India"}
+                                        </span>
+                                      </div>
+
+                                      <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                                        <span className="text-gray-500">Course</span>
+                                        <span className="font-medium text-gray-800">{application?.course?.name || application?.course?.name || "Computer Science"}</span>
+                                      </div>
+                                      {application?.applicationId && (
+                                        <div className="flex justify-between border-b border-gray-50 pb-1.5">
+                                          <span className="text-gray-500">Application ID</span>
+                                          <span className="font-medium text-gray-800">{application.applicationId}</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Documents */}
+                                  <div className="bg-white border p-5 ">
+                                    <div className="flex justify-between items-center mb-5">
+                                      <div className="flex items-center gap-2">
+
+
+                                        <h3 className="font-bold text-lg text-[#1E293B] text-lg">
+                                          Document Uploaded
+                                        </h3>
+
+                                      </div>
+
+
+                                    </div>
+
+                                    <div className="space-y-4">
+                                      {documentList.map((item) => {
+                                        if (
+                                          item.applicationId &&
+                                          item.applicationId !== application?.applicationNumber
+                                        ) {
+                                          return null;
+                                        }
+                                        return (
+                                          <div
+                                            key={item.docKey}
+                                            className="flex justify-between items-center"
+                                          >
+                                            <div className="flex items-center gap-3">
+                                              {item.status === "approved" ? (
+                                                <CheckCircle size={18} className="text-green-500" />
+                                              ) : item.status === "pending" ? (
+                                                <Clock3 size={18} className="text-orange-500" />
+                                              ) : (
+                                                <AlertCircle size={18} className="text-red-500" />
+                                              )}
+
+                                              <span className="text-sm text-gray-700">
+                                                {item?.docName}
+                                              </span>
+                                            </div>
+
+                                            <span
+                                              className={`px-3 py-1 text-sm font-medium ${getStatusStyle(
+                                                item.status
+                                              )}`}
+                                            >
+                                              {item.status}
+                                            </span>
+                                          </div>
+                                        )
+                                      })}
+                                    </div>
+                                  </div>
+
+                                  {/* Security */}
+                                  <div className="bg-slate-50 border p-5">
+                                    <div className="flex items-center gap-3">
+                                      <ShieldCheck className="text-orange-600" />
+                                      <div>
+                                        <h4 className="font-medium">
+                                          Secure & Confidential
+                                        </h4>
+
+                                        <p className="text-sm text-gray-500">
+                                          Your information is secure and encrypted.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+
+
+
+                                </div>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
                       )}
 
 
@@ -1438,7 +1693,7 @@ export default function StudentDetailsPage() {
                             </div>
 
                             <div className="mt-4 bg-white border border-red-100  p-3">
-                              <p className="text-xs font-semibold uppercase text-red-700">
+                              <p className="text-sm font-semibold uppercase text-red-700">
                                 Rejection Reason
                               </p>
 
@@ -1474,7 +1729,7 @@ export default function StudentDetailsPage() {
                                 </div>
 
                                 <div>
-                                  <p className="text-xs text-slate-500 mb-1">
+                                  <p className="text-sm text-slate-500 mb-1">
                                     {new Date(item.createdAt).toLocaleString("en-IN", {
                                       day: "2-digit",
                                       month: "short",
@@ -1507,76 +1762,137 @@ export default function StudentDetailsPage() {
 
 
                       {/* Application Details */}
-                      <div className="bg-slate-50 border border-slate-200 p-5">
-                        <div className="px-3 py-8">
-                          <div>
-                            <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
+                      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+
+                        {/* Basic Details */}
+                        <div className="border-b">
+                          <div className="bg-slate-50 px-6 py-4 border-b">
+                            <h2 className="text-lg font-semibold text-slate-800">
                               Basic Details
                             </h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                              <DetailItem
-                                label="Full Name"
-                                value={application?.student?.name || "N/A"}
-                              />
-                              <DetailItem
-                                label="Gender"
-                                value={application?.student?.gender || "N/A"}
-                              />
-                              <DetailItem
-                                label="Nationality"
-                                value={application?.student?.nationality || "N/A"}
-                              />
-                              <DetailItem
-                                label="Date of Birth"
-                                value={application?.student?.dateOfBirth ? format(new Date(application.student.dateOfBirth), 'yyyy-MM-dd') : "N/A"}
-                              />
-                              <DetailItem
-                                label="Application ID"
-                                value={application?.applicationNumber || "N/A"}
-                              />
-                              <DetailItem
-                                label="E-Mail"
-                                value={application?.student?.email || "N/A"}
-                              />
-                              <DetailItem
-                                label="Passport No."
-                                value={application?.student?.passportNumber || "N/A"}
-                              />
-                              <DetailItem
-                                label="Created At"
-                                value={application?.createdAt ? format(new Date(application.createdAt), 'dd/MM/yyyy hh:mm a') : "N/A"}
-                              />
-                            </div>
                           </div>
 
-                          {/* Course Details Section */}
-                          <div className="mt-8 border-t pt-8">
-                            <h2 className="text-[20px] font-semibold text-[#2b1640] mb-6">
+                          <div className="overflow-x-auto">
+                            <table className="w-full">
+                              <tbody>
+                                {[
+                                  { label: "Full Name", value: application?.student?.name },
+                                  { label: "Gender", value: application?.student?.gender },
+                                  { label: "Nationality", value: application?.student?.nationality },
+                                  {
+                                    label: "Date of Birth",
+                                    value: application?.student?.dateOfBirth
+                                      ? format(
+                                        new Date(application.student.dateOfBirth),
+                                        "yyyy-MM-dd"
+                                      )
+                                      : "N/A",
+                                  },
+                                  {
+                                    label: "Application ID",
+                                    value: application?.applicationNumber,
+                                  },
+                                  {
+                                    label: "Email",
+                                    value: application?.student?.email,
+                                  },
+                                  {
+                                    label: "Passport No.",
+                                    value: application?.student?.passportNumber,
+                                  },
+                                  {
+                                    label: "Created At",
+                                    value: application?.createdAt
+                                      ? format(
+                                        new Date(application.createdAt),
+                                        "dd/MM/yyyy hh:mm a"
+                                      )
+                                      : "N/A",
+                                  },
+                                ].map((item, index) => (
+                                  <tr
+                                    key={index}
+                                    className="border-b last:border-b-0 hover:bg-slate-50"
+                                  >
+                                    <td className="w-1/3 px-6 py-4 font-medium text-slate-700 bg-slate-50">
+                                      {item.label}
+                                    </td>
+                                    <td className="px-6 py-4 text-slate-900">
+                                      {item.value || "N/A"}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+
+                        {/* Course Details */}
+                        <div>
+                          <div className="bg-slate-50 px-6 py-4 border-b">
+                            <h2 className="text-lg font-semibold text-slate-800">
                               Course Details
                             </h2>
-                            {application.course && (
-                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                {[
-                                  { label: "Course Name", value: application?.course?.name },
-                                  { label: "University", value: application?.course?.university?.name },
-                                  { label: "Address", value: application?.course?.university?.address },
-                                  { label: "Course Intake", value: application?.intake },
-                                  { label: "Level", value: application?.course?.level },
-                                  { label: "Duration", value: application?.course?.duration },
-                                  { label: "Tuition Fee", value: `${application?.course?.currency || ""} ${application?.course?.tuitionFee || ""}` },
-                                  { label: "QS Ranking", value: application?.course?.university?.uni_rank?.find((item: any) => item.type === "QS World")?.rank || "N/A" },
-                                ].map((item, index) => (
-                                  <div key={index}>
-                                    <p className="text-sm font-medium text-gray-800 mb-1">{item.label}</p>
-                                    <h3 className="font-medium text-gray-800">{item.value || "N/A"}</h3>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
                           </div>
 
-
+                          <div className="overflow-x-auto">
+                            <table className="w-full">
+                              <tbody>
+                                {[
+                                  {
+                                    label: "Course Name",
+                                    value: application?.course?.name,
+                                  },
+                                  {
+                                    label: "University",
+                                    value: application?.course?.university?.name,
+                                  },
+                                  {
+                                    label: "Address",
+                                    value: application?.course?.university?.address,
+                                  },
+                                  {
+                                    label: "Course Intake",
+                                    value: application?.intake,
+                                  },
+                                  {
+                                    label: "Level",
+                                    value: application?.course?.level,
+                                  },
+                                  {
+                                    label: "Duration",
+                                    value: application?.course?.duration,
+                                  },
+                                  {
+                                    label: "Tuition Fee",
+                                    value: `${application?.course?.currency || ""} ${application?.course?.tuitionFee || ""
+                                      }`,
+                                  },
+                                  {
+                                    label: "QS Ranking",
+                                    value:
+                                      application?.course?.university?.uni_rank?.find(
+                                        (item) => item.type === "QS World"
+                                      )?.rank || "N/A",
+                                  },
+                                ].map((item, index) => (
+                                  <tr
+                                    key={index}
+                                    className="border-b last:border-b-0 hover:bg-slate-50"
+                                  >
+                                    <td className="w-1/3 px-6 py-4 font-medium text-slate-700 bg-slate-50">
+                                      {item.label}
+                                    </td>
+                                    <td className="px-6 py-4 text-slate-900">
+                                      {item.value || "N/A"}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
+
                       </div>
                     </div>
 
@@ -1630,7 +1946,7 @@ export default function StudentDetailsPage() {
                         </div>
                         <p className="font-medium text-sm">{item}</p>
                       </div>
-                      <p className="text-xs text-gray-500 ml-6">Status: Open</p>
+                      <p className="text-sm text-gray-500 ml-6">Status: Open</p>
                     </div>
                   ))}
                 </div>
@@ -1694,7 +2010,7 @@ export default function StudentDetailsPage() {
                   <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-2 mb-3">
                       <h3 className="font-semibold text-gray-900">{selectedRequirement.name}</h3>
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${selectedRequirement.required === 'required'
+                      <span className={`px-2 py-0.5 rounded-full text-sm font-medium ${selectedRequirement.required === 'required'
                         ? 'bg-red-100 text-red-700'
                         : selectedRequirement.required === 'optional'
                           ? 'bg-gray-100 text-gray-700'
@@ -1742,7 +2058,7 @@ export default function StudentDetailsPage() {
                           />
                           <UploadCloud className="w-10 h-10 text-gray-400 mx-auto mb-3" />
                           <p className="text-sm text-gray-600 font-medium">Click or drag files to upload</p>
-                          <p className="text-xs text-gray-400 mt-1">Supports PDF, DOC, DOCX, JPG, PNG up to 10MB</p>
+                          <p className="text-sm text-gray-400 mt-1">Supports PDF, DOC, DOCX, JPG, PNG up to 10MB</p>
                         </div>
                         {uploadedFiles.length > 0 && (
                           <div className="mt-4 space-y-2">
@@ -1752,7 +2068,7 @@ export default function StudentDetailsPage() {
                                   <File className="w-5 h-5 text-orange-500 flex-shrink-0" />
                                   <div className="min-w-0">
                                     <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-                                    <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                    <p className="text-sm text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                                   </div>
                                 </div>
                                 <button type="button" onClick={() => removeFile(index)} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors">
@@ -1766,8 +2082,8 @@ export default function StudentDetailsPage() {
                         {uploadProgress[selectedRequirement?.id] > 0 && uploadProgress[selectedRequirement?.id] < 100 && (
                           <div className="mt-4">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs text-gray-500">Uploading...</span>
-                              <span className="text-xs text-gray-500 font-medium">{uploadProgress[selectedRequirement.id]}%</span>
+                              <span className="text-sm text-gray-500">Uploading...</span>
+                              <span className="text-sm text-gray-500 font-medium">{uploadProgress[selectedRequirement.id]}%</span>
                             </div>
                             <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                               <motion.div
