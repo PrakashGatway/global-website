@@ -607,12 +607,11 @@ export default function AboutUsPage({ aboutData }) {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
                   >
                     <option value="">Select Destination</option>
-                    <option value="usa">Study in USA</option>
-                    <option value="uk">Study in UK</option>
-                    <option value="canada">Study in France</option>
-                    <option value="australia">Study in Italy</option>
-                    <option value="germany">Study in Germany</option>
-                    <option value="france">Study in Dubai</option>
+                 {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
+                    <option key={c} value={c.toLowerCase()}>
+                      Study In {c}
+                    </option>
+                  ))}
                   </select>
                 </div>
 

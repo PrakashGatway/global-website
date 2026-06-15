@@ -291,9 +291,11 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
                           className={`w-full pl-9 pr-3 py-2.5 text-sm border ${errors.destination ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F46C44] bg-white appearance-none cursor-pointer transition-all`}
                         >
                           <option value="">Select Country</option>
-                          {countries.map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                          ))}
+                         {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
+                    <option key={c} value={c.toLowerCase()}>
+                      Study In {c}
+                    </option>
+                  ))}
                         </select>
                       </div>
                       {errors.destination && (

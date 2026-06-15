@@ -224,7 +224,7 @@ const FormSection = ({ data }) => {
                   className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
                 >
                   <option value="">Country to Study</option>
-                  {["USA", "UK", "France", "Germany", "Italy", "Dubai"].map((c) => (
+                  {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
                     <option key={c} value={c.toLowerCase()}>
                       Study In {c}
                     </option>
@@ -268,11 +268,11 @@ const FormSection = ({ data }) => {
             dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
           />
 
-          <a href={data?.ctaLink1 || "/contact"}>
+          {/* <a href={data?.ctaLink1 || "/contact"}>
             <button className="bg-secondary hover:bg-primary text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold transition text-xs sm:text-base">
               {data?.ctaText1 || "Read More >>"}
             </button>
-          </a>
+          </a> */}
         </div>
 
       </div>

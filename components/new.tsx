@@ -217,11 +217,11 @@ const FormSection = () => {
               className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
             >
               <option value="">Country to Study</option>
-              {["USA", "UK", "France", "Germany", "Italy", "Dubai"].map((c) => (
-                <option key={c} value={c.toLowerCase()}>
-                  Study In {c}
-                </option>
-              ))}
+              {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
+                    <option key={c} value={c.toLowerCase()}>
+                      Study In {c}
+                    </option>
+                  ))}
             </select>
           </div>
         </div>

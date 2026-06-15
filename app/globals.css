@@ -30,6 +30,15 @@
     padding-top: max(1rem, env(safe-area-inset-top));
   }
 }
+.linkedClass * a {
+  color: blue;
+  text-decoration: none;
+}
+
+.linkedClass * button {
+  color: white;
+  text-decoration: none;
+}
 
 /* For mobile web view optimization */
 @media (display-mode: standalone) {

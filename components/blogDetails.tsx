@@ -15,23 +15,23 @@ import { useCallback, useEffect, useState } from "react"
 
 
 
-export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBlogs,uniblog,imageData,videoData }) {
+export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBlogs, uniblog, imageData, videoData }) {
 
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm()
 
-   const [visacontent, setVisaContent] = useState([]);
-  
-    const fetchVisa = useCallback(() => {
-  const filtervisa = imageData.filter(
-    (item) => item.target === "visa"
-  );
-  setVisaContent(filtervisa);
-}, [imageData]);
+  const [visacontent, setVisaContent] = useState([]);
 
-useEffect(() => {
-  fetchVisa();
-}, [fetchVisa]);
+  const fetchVisa = useCallback(() => {
+    const filtervisa = imageData.filter(
+      (item) => item.target === "visa"
+    );
+    setVisaContent(filtervisa);
+  }, [imageData]);
+
+  useEffect(() => {
+    fetchVisa();
+  }, [fetchVisa]);
 
 
   const onSubmit = async (data) => {
@@ -155,27 +155,27 @@ useEffect(() => {
     <section className="bg-white min-h-screen ">
 
       {/* ================= BREADCRUMB NAVIGATION ================= */}
-     <div className="max-w-7xl mx-auto px-4 pt-4 text-sm text-gray-600">
-  <nav className="flex items-center gap-2">
-    <Link href="/" className="hover:text-orange-600">
-      Home
-    </Link>
+      <div className="max-w-7xl mx-auto px-4 pt-4 text-sm text-gray-600">
+        <nav className="flex items-center gap-2">
+          <Link href="/" className="hover:text-orange-600">
+            Home
+          </Link>
 
-    <span>›</span>
+          <span>›</span>
 
-    <Link href="/blog" className="hover:text-orange-600">
-      Blogs
-    </Link>
+          <Link href="/blog" className="hover:text-orange-600">
+            Blogs
+          </Link>
 
-    <span>›</span>
+          <span>›</span>
 
-    <span className="text-orange-600 font-medium">
-      {blog.title}
-    </span>
-  </nav>
-</div>
+          <span className="text-orange-600 font-medium">
+            {blog.title}
+          </span>
+        </nav>
+      </div>
 
-     
+
 
 
       {/* ================= MAIN CONTENT AREA ================= */}
@@ -183,23 +183,23 @@ useEffect(() => {
 
         {/* ================= LEFT CONTENT COLUMN ================= */}
         <div className="space-y-4 max-w-5xl">
-           <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold leading-tight mb-4 text-top">
-                {blog.title}
-              </h1>
-             <div className="relative w-full h-30 lg:h-120 shrink-0">
-              <Image
-                src={
-                  blog?.coverImage && blog.coverImage.trim() !== ""
-                    ? blog.coverImage
-                    : "https://static-cse.canva.com/blob/1134734/Thepowerofheroimagedesignfeaturedimage.jpg"
-                }
-                alt={blog.title}
-                fill
-                className="object-cover "
-                priority
-                sizes="160px"
-              />
-            </div>
+          <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold leading-tight mb-4 text-top">
+            {blog.title}
+          </h1>
+          <div className="relative w-full h-30 lg:h-120 shrink-0">
+            <Image
+              src={
+                blog?.coverImage && blog.coverImage.trim() !== ""
+                  ? blog.coverImage
+                  : "https://static-cse.canva.com/blob/1134734/Thepowerofheroimagedesignfeaturedimage.jpg"
+              }
+              alt={blog.title}
+              fill
+              className="object-cover "
+              priority
+              sizes="160px"
+            />
+          </div>
 
           {/* SHORT DESCRIPTION SECTION */}
           {blog.shortDescription && (
@@ -309,7 +309,7 @@ useEffect(() => {
                 dangerouslySetInnerHTML={{ __html: htmlWithIds }}
               />
 
-              
+
 
               <div
                 className="blog-html pt-10"
@@ -325,7 +325,7 @@ useEffect(() => {
 
               {/* TAGS */}
               <div className="flex flex-wrap gap-2">
-                {blog?.tags&&blog?.tags?.map((tag, index) => (
+                {blog?.tags && blog?.tags?.map((tag, index) => (
                   <span
                     key={index}
                     className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
@@ -336,7 +336,7 @@ useEffect(() => {
               </div>
 
               <div className="flex justify-end">
-             
+
                 {/* PREV / NEXT NAVIGATION */}
                 <div className="flex justify-between gap-4">
 
@@ -477,11 +477,11 @@ useEffect(() => {
                     className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-10 py-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all duration-200 appearance-none cursor-pointer text-gray-700 hover:border-gray-300"
                   >
                     <option value="" disabled className="text-gray-400">Select country</option>
-                    <option>Canada</option>
-                    <option>UK</option>
-                    <option>USA</option>
-                    <option>Australia</option>
-                    <option>Germany</option>
+                   {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
+                    <option key={c} value={c.toLowerCase()}>
+                      Study In {c}
+                    </option>
+                  ))}
                   </select>
                   <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -491,7 +491,7 @@ useEffect(() => {
               </div>
 
               {/* Message */}
-            
+
 
               {/* Checkbox */}
               <div className="flex items-center gap-2.5 pt-1">
@@ -623,70 +623,70 @@ useEffect(() => {
                 </div>
             </div> */}
 
-             <div className="relative max-w-7xl  mx-auto pt-6">
+      <div className="relative max-w-7xl  mx-auto pt-6">
         <h2 className="text-xl   mb-2 ">
           <span className="text-primary lg:text-4xl font-semibold" >
             Top universities for Indian students
           </span>
-       
+
 
 
 
         </h2>
 
       </div>
-            <UniversityCard university= {uniblog.result} perView={3} />
-  
-            {/* <VideoTestimonialsSlider items={videoData}/> */}
-            <div className="py-10">
-            <StudentVisaStories stories={visacontent} isSameLine={"yes"}/>
+      <UniversityCard university={uniblog.result} perView={3} />
 
+      {/* <VideoTestimonialsSlider items={videoData}/> */}
+      <div className="py-10">
+        <StudentVisaStories stories={visacontent} isSameLine={"yes"} />
+
+      </div>
+
+      <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-0">
+
+          {/* Text */}
+          <div className="text-white relative z-10">
+            <span className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight">{blog?.extraMetadata?.ctaTitle}</span>
+
+            <br /> <span
+              className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
+
+            >{blog?.extraMetadata?.ctaDescription}</span>
+            <div className="mt-4">
+              <a href="/contact">
+                <button className="bg-secondary hover:bg-primary px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md hover:scale-105 transition text-xs sm:text-base">
+                  Contact US
+                </button>
+              </a>
             </div>
+          </div>
 
-            <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
-                  <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-0">
-            
-                    {/* Text */}
-                    <div className="text-white relative z-10">
-                      <span className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight">{blog?.extraMetadata?.ctaTitle}</span>
-            
-                     <br /> <span
-                        className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
-                        
-                      >{blog?.extraMetadata?.ctaDescription}</span>
-                      <div className="mt-4">
-                        <a href="/contact">
-                          <button className="bg-secondary hover:bg-primary px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md hover:scale-105 transition text-xs sm:text-base">
-                            Contact US
-                          </button>
-                        </a>
-                      </div>
-                    </div>
-            
-                    {/* Decorative circle — only on lg */}
-                    <div className="hidden lg:flex relative h-[325px] items-center justify-center">
-                      <img
-                        src="/images/circle stand.png"
-                        alt=""
-                        className="absolute z-10 w-[90px] bottom-0"
-                        style={{ right: "calc(50% - 45px)" }}
-                      />
-                      <img
-                        src="/images/circle.png"
-                        alt=""
-                        className="w-80 xl:w-96 animate-spin [animation-duration:60s]"
-                      />
-                    </div>
-                  </div>
-            
-                  <img
-                    src="/images/country-building-img.png"
-                    alt=""
-                    className="absolute bottom-0 right-0 w-2/3 sm:w-1/2 object-contain pointer-events-none"
-                  />
-                  <div className="absolute bottom-0 left-0 w-full sm:w-1/2 h-2 sm:h-3 bg-yellow-400" />
-                </section>
-            
+          {/* Decorative circle — only on lg */}
+          <div className="hidden lg:flex relative h-[325px] items-center justify-center">
+            <img
+              src="/images/circle stand.png"
+              alt=""
+              className="absolute z-10 w-[90px] bottom-0"
+              style={{ right: "calc(50% - 45px)" }}
+            />
+            <img
+              src="/images/circle.png"
+              alt=""
+              className="w-80 xl:w-96 animate-spin [animation-duration:60s]"
+            />
+          </div>
+        </div>
+
+        <img
+          src="/images/country-building-img.png"
+          alt=""
+          className="absolute bottom-0 right-0 w-2/3 sm:w-1/2 object-contain pointer-events-none"
+        />
+        <div className="absolute bottom-0 left-0 w-full sm:w-1/2 h-2 sm:h-3 bg-yellow-400" />
+      </section>
+
       <FAQSection Faqres={blog?.faq || []} />
 
 

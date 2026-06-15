@@ -43,14 +43,14 @@ export default function Homepage({
   const router = useRouter()
 
   const [playingVideo, setPlayingVideo] = useState(null);
-const [videoLoading, setVideoLoading] = useState(false);
+  const [videoLoading, setVideoLoading] = useState(false);
 
-const getDrivePreviewUrl = (url) => {
-  const match = url?.match(/\/d\/([^/]+)/);
-  return match
-    ? `https://drive.google.com/file/d/${match[1]}/preview`
-    : url;
-};
+  const getDrivePreviewUrl = (url) => {
+    const match = url?.match(/\/d\/([^/]+)/);
+    return match
+      ? `https://drive.google.com/file/d/${match[1]}/preview`
+      : url;
+  };
 
   const goToBlog = (slug) => {
     router.push(`/blog/${slug}`);
@@ -92,40 +92,40 @@ const getDrivePreviewUrl = (url) => {
     slider.on("updated", nextTimeout);
   }
 
-const visaCards = [
-  {
-    id: 1,
-    name: "Harshit Tak",
-    country: "Canada",
-    visa: "Canada Study Visa",
-    flag: "https://flagcdn.com/w80/ca.png",
-    image: "/visa-1.jpg",
-  },
-  {
-    id: 2,
-    name: "Mohammad Nouman",
-    country: "UK",
-    visa: "Italy Study Visa",
-    flag: "https://flagcdn.com/w80/it.png",
-    image: "/visa-4.jpg",
-  },
-  {
-    id: 3,
-    name: "Krishna Bhatia",
-    country: "Ireland",
-    visa: "Ireland Study Visa",
-    flag: "https://flagcdn.com/w80/ie.png",
-    image: "/visa-3.jpg",
-  },
-  {
-    id: 4,
-    name: "Himani Rawat",
-    country: "Italy",
-    visa: "Italy Study Visa",
-    flag: "https://flagcdn.com/w80/it.png",
-    image: "/visa-2.jpg",
-  },
-];
+  const visaCards = [
+    {
+      id: 1,
+      name: "Harshit Tak",
+      country: "Canada",
+      visa: "Canada Study Visa",
+      flag: "https://flagcdn.com/w80/ca.png",
+      image: "/visa-1.jpg",
+    },
+    {
+      id: 2,
+      name: "Mohammad Nouman",
+      country: "UK",
+      visa: "Italy Study Visa",
+      flag: "https://flagcdn.com/w80/it.png",
+      image: "/visa-4.jpg",
+    },
+    {
+      id: 3,
+      name: "Krishna Bhatia",
+      country: "Ireland",
+      visa: "Ireland Study Visa",
+      flag: "https://flagcdn.com/w80/ie.png",
+      image: "/visa-3.jpg",
+    },
+    {
+      id: 4,
+      name: "Himani Rawat",
+      country: "Italy",
+      visa: "Italy Study Visa",
+      flag: "https://flagcdn.com/w80/it.png",
+      image: "/visa-2.jpg",
+    },
+  ];
 
   const [sliderRefblog] = useKeenSlider(
     {
@@ -561,24 +561,11 @@ const visaCards = [
                       <option value="" className="text-black">
                         Country to Study
                       </option>
-                      <option value="usa" className="text-black">
-                        Study In USA
-                      </option>
-                      <option value="uk" className="text-black">
-                        Study In UK
-                      </option>
-                      <option value="france" className="text-black">
-                        Study In France
-                      </option>
-                      <option value="germany" className="text-black">
-                        Study In Germany
-                      </option>
-                      <option value="italy" className="text-black">
-                        Study In Italy
-                      </option>
-                      <option value="dubai" className="text-black">
-                        Study In Dubai
-                      </option>
+                      {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
+                        <option className="text-black" key={c} value={c.toLowerCase()}>
+                          Study In {c}
+                        </option>
+                      ))}
                     </select>
                   )}
                 />
@@ -1281,73 +1268,69 @@ const visaCards = [
         tag={homePage?.visa?.tag}
       /> */}
 
-      <section className="bg-white py-16">
-  <div className="max-w-7xl mx-auto px-4 md:px-6">
-    
-    {/* Heading */}
-    <div className="text-center mb-14">
-      <h2 className="text-3xl md:text-5xl font-bold text-primary">
-        500+ Dreams{" "}
-        <span className="text-[#F26B3A]">
-          Turned Into Reality
-        </span>
-      </h2>
+      {/* <section className="bg-white py-16">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
 
-      <p className="mt-4 text-lg md:text-2xl text-gray-700">
-        Real Students. Real Visas. Real Success Stories.
-      </p>
-    </div>
-    </div>
-
-    {/* Cards */}
-    <div className="bg-[#faf5f2] w-full p-8">
-      <div className="max-w-7xl mx-auto">
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 ">
-      {visaCards.map((item) => (
-        <div
-          key={item.id}
-          className="group bg-white shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden "
-        >
-          {/* Image */}
-
-<div className="p-2 bg-gray-100">
-          <div className="overflow-hidden w-full  bg-gray-100 ">
-            <img
-              src={item.image}
-              alt={item.name}
-              className="w-full h-[220px] object-cover group-hover:scale-105 transition duration-500"
-            />
-          </div>
-          </div>
-
-          {/* Content */}
-          <div className="p-5">
-            <div className="flex gap-2">
-              <span className="text-2xl">
-                <img src={item.flag} alt=""  className="w-10 h-6 mt-2"/>
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-5xl font-bold text-primary">
+              500+ Dreams{" "}
+              <span className="text-[#F26B3A]">
+                Turned Into Reality
               </span>
+            </h2>
 
-              <div>
-                <h3 className="font-semibold text-xl text-gray-800">
-                  {item.name}
-                </h3>
+            <p className="mt-4 text-lg md:text-2xl text-gray-700">
+              Real Students. Real Visas. Real Success Stories.
+            </p>
+          </div>
+        </div>
 
-                <p className="text-[#F26B3A] text-base font-medium">
-                  {item.visa}
-                </p>
-              </div>
+        <div className="bg-[#faf5f2] w-full p-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 ">
+              {visaCards.map((item) => (
+                <div
+                  key={item.id}
+                  className="group bg-white shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden "
+                >
+
+                  <div className="p-2 bg-gray-100">
+                    <div className="overflow-hidden w-full  bg-gray-100 ">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-[220px] object-cover group-hover:scale-105 transition duration-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-5">
+                    <div className="flex gap-2">
+                      <span className="text-2xl">
+                        <img src={item.flag} alt="" className="w-10 h-6 mt-2" />
+                      </span>
+
+                      <div>
+                        <h3 className="font-semibold text-xl text-gray-800">
+                          {item.name}
+                        </h3>
+
+                        <p className="text-[#F26B3A] text-base font-medium">
+                          {item.visa}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-      ))}
-    </div>
-    </div>
-    </div>
-  
-</section>
+
+      </section> */}
 
       <FAQSection Faqres={Faqres} />
-        {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
+      {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
     </main>
   );
 }
