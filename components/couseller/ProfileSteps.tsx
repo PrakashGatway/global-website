@@ -36,9 +36,10 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
     }
   };
 
-  const searchParams = useSearchParams()
+  // const searchParams = useSearchParams()
 
-  const activetab = searchParams.get("tab")
+  const activetab = "" 
+  // searchParams.get("tab")
 
  useEffect(() => {
   if (activetab === "academic") {
