@@ -1678,6 +1678,7 @@ const [depositDetails, setDepositDetails] = useState({
   paymentDeadline: "",
   currency: "USD",
   offerDeadline: "",
+  tuitionFee: "",
   paymentdetails: [{ key: "", value: "" }], 
   paymentmethod: [{ method: "Forex Payment", value: "" }, {method: "Direct Payment", value: ""}],  
   intInstruction: "",
@@ -1795,6 +1796,7 @@ const [depositDetails, setDepositDetails] = useState({
           paymentdetails: depositDetails.paymentdetails,  
           paymentmethod: depositDetails.paymentmethod,  
           intInstruction: depositDetails.intInstruction, 
+          tuitionFee: depositDetails.tuitionFee
         };
         break;
       case "Completed":
@@ -2228,6 +2230,13 @@ const [depositDetails, setDepositDetails] = useState({
     <div>
       <h4 className="text-sm font-semibold text-orange-800 mb-3">Deposit & Enrollment Details</h4>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input 
+          type="text" 
+          placeholder="tuitionFee  Amount *" 
+          value={depositDetails.tuitionFee} 
+          onChange={(e) => setDepositDetails((p) => ({ ...p, tuitionFee: e.target.value }))} 
+          className="px-3 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400" 
+        />
         <input 
           type="text" 
           placeholder="Deposit Amount *" 

@@ -17,6 +17,7 @@ import {
   LinkIcon
 } from 'lucide-react';
 import axiosInstance, { fileBaseurl } from '@/app/axiosInstance';
+import { useRouter } from 'next/navigation';
 
 const iconMap = {
   User: User, FileText: FileText, FileCheck: FileCheck, Globe: Globe,
@@ -612,7 +613,7 @@ const getStaticFallbackData = () => ({
 
 const Step1APSApplied = ({ data, currentStepId, apiData }) => {
   const stepData = apiData?.steps?.find(s => s.id === 1) || getStaticFallbackData().steps[0];
-  
+  const router = useRouter();
   return (
     <>
       <div className="bg-white p-6  border border-gray-200 shadow-sm">
@@ -722,7 +723,36 @@ const Step1APSApplied = ({ data, currentStepId, apiData }) => {
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {(stepData?.importantInfo || []).map((item, idx) => (
+        {(stepData?.importantInfo || []).filter(item => item.type !== "requirement").map((item, idx) => (
+          <div
+            key={idx}
+            className="bg-white border border-gray-200 rounded-xl p-4"
+          >
+            <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">
+              {item.title}
+            </p>
+
+            <p className="text-sm font-medium text-gray-800 break-words">
+              {item.description}
+            </p>
+            
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+       
+
+      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-gray-800">Required Documents for APS</h3>
+          <button className="text-[#f56e45] text-sm font-bold bg-orange-50 px-3 py-1 rounded"
+           onClick={() => router.push('/dashboard/settings')}>View All Documents →</button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+            {(stepData?.importantInfo || []).filter(item => item.type === "requirement").map((item, idx) => (
           <div
             key={idx}
             className="bg-white border border-gray-200 rounded-xl p-4"
@@ -757,80 +787,8 @@ const Step1APSApplied = ({ data, currentStepId, apiData }) => {
             
           </div>
         ))}
-      </div>
-    </div>
-  </div>
-</div>
 
-       {/*<div className="bg-white p-6  border border-gray-200 shadow-sm">
-        <h3 className="font-bold text-gray-800 mb-1">Prepare for Visa Application</h3>
-        <p className="text-sm text-gray-500 mb-4">Complete these steps while waiting for your APS result.</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { icon: "FileText", title: "Blocked Account", desc: "Open a blocked account for your living expenses in Germany.", btnText: "Learn More" },
-            { icon: "Shield", title: "Health Insurance", desc: "Get mandatory health insurance for your student visa.", btnText: "Compare Plans" },
-            { icon: "Building2", title: "Visa Appointment", desc: "Book your visa appointment at the German embassy.", btnText: "Check Slots" },
-            { icon: "Home", title: "Accommodation", desc: "Find student housing in your university city.", btnText: "Search Now" }
-          ].map((card, idx) => {
-            const IconComp = iconMap[card.icon] || HelpCircle;
-            return (
-              <div key={idx} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className="mb-3"><IconComp className="text-orange-400" size={28} /></div>
-                <h4 className="font-bold text-sm text-gray-800 mb-1">{card.title}</h4>
-                <p className="text-sm text-gray-500 mb-4 leading-relaxed">{card.desc}</p>
-               </div>
-            );
-          })}
-        </div>
-
-        
-      <div className="bg-white p-6  border border-gray-200 shadow-sm mt-2">
-        <h3 className="font-bold text-gray-800 mb-4">Visa Details</h3>
-        
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
-          {(stepData?.importantInfo || [
-            { label: "Visa Number", value: "GER-VISA-2026-12345" },
-            { label: "Passport Number", value: "P12345678" },
-            { label: "Duration", value: "24 Months" },
-            { label: "Work Permit", value: "120 full days / 240 half days" }
-          ]).map((item, idx) => (
-            <div key={idx} className='space-y-2'>
-              <p className="text-sm text-gray-500">{item.title}</p>
-              <p className="text-sm font-medium text-gray-800">{item.description}</p>
-              
-                {item.type === "requirement" && <div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="file"
-                      // onChange={handleFileSelect}
-                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                      className="hidden"
-                      id={`file-upload-${item.title}`}
-                    />
-                    <label
-                      htmlFor={`file-upload-${item.title}`}
-                      className="flex items-center gap-2 px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm cursor-pointer hover:bg-gray-200"
-                    >
-                      <UploadCloud size={16} />
-                      Choose File
-                    </label>
-                  </div>
-
-                </div>
-                }
-            </div>
-          ))}
-        </div>
-      </div> 
-      </div>*/}
-
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-bold text-gray-800">Required Documents for APS</h3>
-          <button className="text-[#f56e45] text-sm font-bold bg-orange-50 px-3 py-1 rounded">View All Documents →</button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-          {[
+          {/* {[
             [
               { label: "10th Marksheet", status: "Completed", action: "View" },
               { label: "12th Marksheet", status: "Completed", action: "View" },
@@ -864,7 +822,7 @@ const Step1APSApplied = ({ data, currentStepId, apiData }) => {
                 );
               })}
             </div>
-          ))}
+          ))} */}
         </div>
         <div className="mt-4 flex gap-4 text-sm text-gray-500">
           <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div> Completed</span>
@@ -2129,87 +2087,88 @@ export default function VisaJourneyPage() {
         )}
 
         {/* Banner - only show if title exists */}
-{bannerData.title && (
-  <div className={`${getBannerStyles()} relative overflow-hidden rounded-xl p-5 mb-6 shadow-sm transition-all duration-300 ${
-    bannerData?.type === 'success' 
-      ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500' 
-      : 'bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500'
-  }`}>
-    <div className="flex items-start gap-4">
-      {/* Icon Container */}
-      <div className="flex-shrink-0">
-        {/* <div className={`rounded-xl p-2.5 shadow-md ${
-          bannerData?.type === 'success' ? 'bg-green-500' : 'bg-orange-500'
-        }`}> */}
-          <img
-            src={bannerGifMap[pageData?.title] || "/gif/notepad.gif"}
-            alt={bannerData?.title}
-            className="w-16 h-16 object-contain"
-          />
-        {/* </div> */}
-      </div>
 
-      {/* Content Area */}
-      <div className="flex-1 min-w-0">
-        <h4 className="font-semibold text-base text-gray-800 leading-tight">
-          {bannerData?.title || "No banner title"}
-        </h4>
-        <p className="text-sm text-gray-600 mt-1 leading-relaxed">
-          {bannerData?.subtitle || "No banner subtitle"}
-        </p>
-        
-        {/* Progress Bar - Optional enhancement */}
-        {bannerData?.progress !== undefined && (
-          <div className="mt-3">
-            <div className="flex justify-between text-xs text-gray-500 mb-1">
-              <span>Progress</span>
-              <span>{bannerData.progress}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
-              <div 
-                className={`h-full rounded-full transition-all duration-500 ${
+        {bannerData.title && (
+          <div className={`${getBannerStyles()} relative overflow-hidden rounded-xl p-5 mb-6 shadow-sm transition-all duration-300 ${
+            bannerData?.type === 'success' 
+              ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500' 
+              : 'bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500'
+          }`}>
+            <div className="flex items-start gap-4">
+              {/* Icon Container */}
+              <div className="flex-shrink-0">
+                {/* <div className={`rounded-xl p-2.5 shadow-md ${
                   bannerData?.type === 'success' ? 'bg-green-500' : 'bg-orange-500'
-                }`}
-                style={{ width: `${bannerData.progress}%` }}
-              />
+                }`}> */}
+                  <img
+                    src={bannerGifMap[pageData?.title] || "/gif/notepad.gif"}
+                    alt={bannerData?.title}
+                    className="w-16 h-16 object-contain"
+                  />
+                {/* </div> */}
+              </div>
+
+              {/* Content Area */}
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-base text-gray-800 leading-tight">
+                  {bannerData?.title || "No banner title"}
+                </h4>
+                <p className="text-sm text-gray-600 mt-1 leading-relaxed">
+                  {bannerData?.subtitle || "No banner subtitle"}
+                </p>
+                
+                {/* Progress Bar - Optional enhancement */}
+                {bannerData?.progress !== undefined && (
+                  <div className="mt-3">
+                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                      <span>Progress</span>
+                      <span>{bannerData.progress}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          bannerData?.type === 'success' ? 'bg-green-500' : 'bg-orange-500'
+                        }`}
+                        style={{ width: `${bannerData.progress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              {bannerData?.action && (
+                <div className="flex-shrink-0 flex flex-col items-end gap-2">
+                  {/* <button className="text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-4 py-1.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                    {bannerData.action}
+                  </button> */}
+                  
+                  {bannerData?.fileUrl && (
+                    <a
+                      href={fileBaseurl(bannerData.fileUrl)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-gray-500 hover:text-blue-600 transition-colors duration-200 flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-gray-50"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      Download File
+                    </a>
+                  )}
+
+                </div>
+              )}
+            </div>
+            
+            {/* Decorative Element */}
+            <div className="absolute top-0 right-0 opacity-5">
+              <svg className="w-32 h-32" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" />
+              </svg>
             </div>
           </div>
         )}
-      </div>
-
-      {/* Action Buttons */}
-      {bannerData?.action && (
-        <div className="flex-shrink-0 flex flex-col items-end gap-2">
-          {/* <button className="text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-4 py-1.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-            {bannerData.action}
-          </button> */}
-          
-          {bannerData?.fileUrl && (
-            <a
-              href={fileBaseurl(bannerData.fileUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-gray-500 hover:text-blue-600 transition-colors duration-200 flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-gray-50"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-              Download File
-            </a>
-          )}
-
-        </div>
-      )}
-    </div>
-    
-    {/* Decorative Element */}
-    <div className="absolute top-0 right-0 opacity-5">
-      <svg className="w-32 h-32" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" />
-      </svg>
-    </div>
-  </div>
-)}
 
         <div className="grid grid-cols-12 gap-6">
           {/* Left Column - Dynamic Content */}
