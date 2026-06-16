@@ -1261,14 +1261,14 @@ export default function Homepage({
   </div>
 </section> */}
 
-      {/* <StudentVisaStories
+       {/* <StudentVisaStories
         stories={visacontent}
         title={homePage?.visa?.title}
         subtitle={homePage?.visa?.subtitle}
         tag={homePage?.visa?.tag}
-      /> */}
+      />  */}
 
-      {/* <section className="bg-white py-16">
+       <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
 
           <div className="text-center mb-14">
@@ -1327,7 +1327,7 @@ export default function Homepage({
           </div>
         </div>
 
-      </section> */}
+      </section>
 
       <FAQSection Faqres={Faqres} />
       {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
