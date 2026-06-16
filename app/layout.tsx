@@ -18,7 +18,7 @@ import WhatsAppButton from "@/components/whatsappbtn";
 
 const ptSans = Noto_Sans({
   subsets: ["latin"],
-  weight: ["400","500","600","700"], // PT Sans supports mainly 400 & 700
+  weight: ["400", "500", "600", "700"], // PT Sans supports mainly 400 & 700
   display: "swap",
 });
 
@@ -51,8 +51,8 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: any;
 }>) {
-  
-  const [feature, countryres, unicat,footerRes] = await Promise.all([
+
+  const [feature, countryres, unicat, footerRes] = await Promise.all([
     serverInstance.get("/page-information/navbar?isNavbar=true"),
     serverInstance.get("/page-information/navbar?isFeatured=true&type=country"),
     serverInstance.get("/universities/search"),
@@ -112,6 +112,22 @@ export default async function RootLayout({
           `}
         </Script>
 
+        <Script id="gtm-script" strategy="afterInteractive">
+          {`
+      (function(w,d,s,l,i){
+        w[l]=w[l]||[];
+        w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});
+        var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),
+        dl=l!='dataLayer'?'&l='+l:'';
+        j.async=true;
+        j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+        f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-W6KTHRQZ');
+    `}
+        </Script>
+
         {/* <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-RHBS4GW2Z0"
           strategy="afterInteractive"
@@ -133,6 +149,14 @@ export default async function RootLayout({
         className={`${ptSans.className} antialiased`}
         style={{ maxWidth: "1840px", margin: "0 auto" }}
       >
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-W6KTHRQZ"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <GlobalProvider>
           <Navbar
             Featureitem={featureRes || []}
