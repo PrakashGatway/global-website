@@ -476,7 +476,7 @@ const Step2APSApproval = ({ data, currentStepId, apiData }) => {
             {(stepData?.importantInfo || []).map((row, idx) => (
               <tr key={idx} className="border-b border-gray-50">
                 <td className="py-2 text-sm text-gray-700">{row.title}</td>
-                <td className="py-2"><span className="text-sm text-green-600 bg-green-50 px-2 py-0.5 rounded">{row.description}</span></td>
+                <td className="py-2"><span className="text-sm  px-2 py-0.5 rounded">{row.description}</span></td>
               </tr>
             ))}
           </tbody>
@@ -639,17 +639,17 @@ const Step3VisaApplication = ({ data, currentStepId, apiData }) => {
           <div className="border border-gray-100 p-4">
             <h5 className="text-sm font-bold text-gray-700 mb-3">Father's Details</h5>
             <div className="space-y-2">
-              <div><span className="text-sm text-gray-500">Name</span><p className="font-medium text-sm">--</p></div>
-              <div><span className="text-sm text-gray-500">Occupation</span><p className="font-medium text-sm">--</p></div>
-              <div><span className="text-sm text-gray-500">Phone</span><p className="font-medium text-sm">--</p></div>
+              <div><span className="text-sm text-gray-500">Name</span><p className="font-medium text-sm">{apiData?.user?.familyDetails?.fatherName || '--'}</p></div>
+              <div><span className="text-sm text-gray-500">Occupation</span><p className="font-medium text-sm">{apiData?.user?.familyDetails?.fatherOccupation || '--'}</p></div>
+              <div><span className="text-sm text-gray-500">Phone</span><p className="font-medium text-sm">{apiData?.user?.familyDetails?.fatherPhone || '--'}</p></div>
             </div>
           </div>
           <div className="border border-gray-100 p-4">
             <h5 className="text-sm font-bold text-gray-700 mb-3">Mother's Details</h5>
             <div className="space-y-2">
-              <div><span className="text-sm text-gray-500">Name</span><p className="font-medium text-sm">--</p></div>
-              <div><span className="text-sm text-gray-500">Occupation</span><p className="font-medium text-sm">--</p></div>
-              <div><span className="text-sm text-gray-500">Phone</span><p className="font-medium text-sm">--</p></div>
+              <div><span className="text-sm text-gray-500">Name</span><p className="font-medium text-sm">{apiData?.user?.familyDetails?.motherName || '--'}</p></div>
+              <div><span className="text-sm text-gray-500">Occupation</span><p className="font-medium text-sm">{apiData?.user?.familyDetails?.motherOccupation || '--'}</p></div>
+              <div><span className="text-sm text-gray-500">Phone</span><p className="font-medium text-sm">{apiData?.user?.familyDetails?.motherPhone || '--'}</p></div>
             </div>
           </div>
         </div>
@@ -657,7 +657,7 @@ const Step3VisaApplication = ({ data, currentStepId, apiData }) => {
 
       {(stepData?.importantInfo && stepData.importantInfo.length > 0) && (
         <div className="bg-white p-6 border border-gray-200 -sm">
-          <h3 className="font-bold text-gray-800 mb-4">Important Info</h3>
+          <h3 className="font-bold text-gray-800 mb-4">Financial Information</h3>
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100">
@@ -669,7 +669,7 @@ const Step3VisaApplication = ({ data, currentStepId, apiData }) => {
               {stepData.importantInfo.map((row, idx) => (
                 <tr key={idx} className="border-b border-gray-50">
                   <td className="py-2 text-sm text-gray-700">{row.title}</td>
-                  <td className="py-2"><span className="text-sm text-green-600 bg-green-50 px-2 py-0.5 rounded">{row.description}</span></td>
+                  <td className="py-2"><span className="text-sm  px-2 py-0.5 rounded">{row.description}</span></td>
                 </tr>
               ))}
             </tbody>
