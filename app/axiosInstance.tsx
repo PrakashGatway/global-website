@@ -1,11 +1,17 @@
 import axios from "axios"
 
-let mode = "devddd"
+let mode = "dev2"
 
 const BASE_URL =
   mode === "dev"
     ? "http://localhost:5000/api"
     : "https://api.ooshasglobal.com/api"
+
+    
+const BASE_IMF_URL =
+  mode === "dev"
+    ? "http://localhost:5000"
+    : "https://api.ooshasglobal.com"
 
  
 export const serverInstance = axios.create({
@@ -17,7 +23,7 @@ export const serverInstance = axios.create({
 })
 
 export const fileBaseurl =  (data) => {
-  return `${BASE_URL.split('/api')[0]}${data}`
+  return `${BASE_IMF_URL}${data}`
 }
 
 const axiosInstance = axios.create({

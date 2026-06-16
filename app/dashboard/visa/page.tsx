@@ -1,7 +1,7 @@
 // app/visa-journey/page.js
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   BookOpen, Bell, HelpCircle, ChevronDown, CheckCircle2, Download,
   FileText, User, MapPin, Calendar, Building2, ArrowRight, Eye,
@@ -14,7 +14,7 @@ import {
   RefreshCw, EyeOff, ThumbsUp, Search, FileSearch, FileSignature,
   FileDigit, FileBox, Award, Ticket, Bookmark, ShieldIcon, Files,
   FileInput, FileClock, CheckCheckIcon, Sparkles, Star, LayoutDashboard,
-  LinkIcon
+  LinkIcon, Edit, Send
 } from 'lucide-react';
 import axiosInstance, { fileBaseurl } from '@/app/axiosInstance';
 import { useRouter } from 'next/navigation';
@@ -92,7 +92,6 @@ const ProgressStep = ({ step, index, total, currentStepId, onStepClick }) => {
       )}
 
       <div className={`w-14 h-14 rounded-full p-3 flex items-center justify-center z-10 border-2 ${isActive || status === 'completed' ? 'border-green-500 bg-white' : 'border-gray-300 bg-white'}`}>
-
         <img
           src={
             status === "completed" || isActive
@@ -102,15 +101,6 @@ const ProgressStep = ({ step, index, total, currentStepId, onStepClick }) => {
           alt={step.label}
           className="w-full h-full object-contain"
         />
-        {/* {status === 'completed' ? (
-          <CheckCircle2 size={20} className="text-[#f56e45]" />
-        ) : isActive ? (
-          <div className="w-3 h-3 bg-[#f56e45] rounded-full"></div>
-        ) : status === 'locked' ? (
-          <Lock size={14} className="text-gray-400" />
-        ) : (
-          <span className="text-sm font-bold text-gray-500">{step.id}</span>
-        )} */}
       </div>
 
       <div className="mt-2 text-center">
@@ -127,13 +117,13 @@ const DetailItem = ({ item }) => {
   const IconComponent = iconMap[item.icon] || FileText;
   return (
     <div className="flex items-start gap-2">
-      <div className="p-1.5 bg-gray-50 rounded-lg flex-shrink-0">
+      <div className="p-1.5 bg-gray-50 flex-shrink-0">
         <IconComponent size={14} className="text-gray-600" />
       </div>
       <div>
         <p className="text-sm text-gray-500">{item.label}</p>
         <p className={`text-sm font-medium ${item.isHighlight ? 'text-green-600' : 'text-gray-800'}`}>
-          {item.isFlag ? <span className="flex items-center gap-1"><span>🇩🇪</span> {item.value}</span> : item.value}
+          {item.isFlag ? <span className="flex items-center gap-1"><span>🇩🇪</span> {item.value || "--"}</span> : item.value || "--"}
         </p>
       </div>
     </div>
@@ -144,13 +134,21 @@ const DocumentRow = ({ row, showSize = true }) => (
   <div className="flex flex-col sm:flex-row justify-between items-center py-2 border-b border-gray-50 last:border-0 gap-1">
     <div className="flex items-center gap-2 flex-1">
       <FileText size={12} className="text-gray-500" />
-      <span className="text-sm text-gray-700">{row.name}</span>
+      <span className="text-sm text-gray-700">{row.documentType || row.name}</span>
     </div>
     <div className="flex items-center gap-3 sm:gap-4 text-sm">
-      <span className="text-green-600 bg-green-50 px-2 py-0.5 rounded">{row.status}</span>
-      <span className="text-gray-400">{row.date}</span>
+      <span className={`px-2 py-0.5 rounded ${
+        row.status === 'uploaded' || row.status === 'Completed' || row.status === 'Approved' || row.status === 'Verified'
+          ? 'text-green-600 bg-green-50' 
+          : row.status === 'pending' || row.status === 'In Progress'
+          ? 'text-yellow-600 bg-yellow-50'
+          : 'text-orange-500 bg-orange-50'
+      }`}>
+        {row.status}
+      </span>
+      <span className="text-gray-400">{row.uploadedAt || row.date || '--'}</span>
       {showSize && <span className="text-gray-400">{row.size || '-'}</span>}
-      <span className="text-gray-400">{row.remarks || 'Accepted'}</span>
+      <span className="text-gray-400">{row.remarks || '--'}</span>
     </div>
   </div>
 );
@@ -170,453 +168,88 @@ const QuickLinkItem = ({ item }) => {
   );
 };
 
-// Static fallback data structure
-const getStaticFallbackData = () => ({
-  steps: [
-    {
-      id: 1,
-      label: "APS",
-      route: "aps-applied",
-      page: { title: 'APS Application', status: 'In Progress', subtitle: 'Complete your APS process to proceed with visa application.' },
-      banner: { type: 'info', title: 'Your APS application is in progress.', subtitle: 'Complete your APS process to proceed with visa application.', action: 'View APS Application' },
-      progress: 90,
-      sections: {
-        overview: {
-          title: "Application Overview",
-          updated: "Just now",
-          details: [
-            { label: "Application Number", value: "OS1779510584408", highlight: true },
-            { label: "Applied University", value: "Technical University of Munich" },
-            { label: "Course", value: "Bachelor of Computer Science" },
-            { label: "Country", value: "Italy", isFlag: true },
-            { label: "Application Date", value: "02 June 2026" },
-            { label: "Current Status", value: "Under Review", highlight: true },
-            { label: "Expected Result", value: "15 July 2026" }
-          ]
-        },
-        whatIsThis: {
-          title: "What is APS Certificate?",
-          description: "The Academic Evaluation Centre (APS) certificate verifies the authenticity of your academic documents for studying in Germany.",
-          items: [
-            { icon: "FileCheck", text: "Document Verification" },
-            { icon: "Shield", text: "Authenticity Check" },
-            { icon: "Clock", text: "4-6 Weeks Process" },
-            { icon: "GraduationCap", text: "Required for Visa" }
-          ]
-        },
-        preparationCards: [
-          { icon: "FileText", title: "Blocked Account", desc: "Open a blocked account for your living expenses in Germany.", btnText: "Learn More", bg:"bg-[#f7faff]" },
-          { icon: "Shield", title: "Health Insurance", desc: "Get mandatory health insurance for your student visa.", btnText: "Compare Plans", bg:"bg-[#f5faf9]" },
-          { icon: "Building2", title: "Visa Appointment", desc: "Book your visa appointment at the German embassy.", btnText: "Check Slots", bg:"bg-[#fffcfa]" },
-          { icon: "Home", title: "Accommodation", desc: "Find student housing in your university city.", btnText: "Search Now", bg:"bg-[#faf7fc]" }
-        ],
-        documents: {
-          title: "Required Documents for APS",
-          columns: [
-            [{ label: "10th Marksheet", status: "Completed", action: "View" },
-             { label: "12th Marksheet", status: "Completed", action: "View" },
-             { label: "Bachelor's Degree", status: "Completed", action: "View" }],
-            [{ label: "Passport Copy", status: "Completed", action: "View" },
-             { label: "Language Certificate", status: "In Progress", action: "Upload" },
-             { label: "LOR", status: "To be uploaded", action: "Upload" }]
-          ]
-        }
-      }
-    },
-    {
-      id: 2,
-      label: "APS Approval",
-      route: "aps-approval",
-      page: { title: 'APS Approval', status: 'Pending', subtitle: 'Your APS certificate is being processed.' },
-      banner: { type: 'info', title: 'APS Application Under Review', subtitle: 'Your documents are being verified by APS India.', action: 'Track Status' },
-      sections: {
-        approvalDetails: {
-          title: "APS Certificate Details",
-          items: [
-            { icon: "FileText", label: "Certificate Number", value: "APS-2026-123456" },
-            { icon: "Calendar", label: "Issue Date", value: "Pending" },
-            { icon: "Clock", label: "Valid Until", value: "Pending" },
-            { icon: "Shield", label: "Verification Status", value: "In Progress", isHighlight: true }
-          ],
-          certificate: {
-            title: "APS Certificate",
-            status: "Awaiting Approval"
-          }
-        },
-        whatHappensNext: {
-          title: "What happens next?",
-          description: "Once your APS is approved, you can proceed with your visa application.",
-          steps: [
-            { icon: "Mail", title: "Email Notification", description: "You'll receive an email once approved" },
-            { icon: "Download", title: "Download Certificate", description: "Download your APS certificate" },
-            { icon: "FileText", title: "Visa Application", description: "Start your visa application" },
-            { icon: "Calendar", title: "Book Appointment", description: "Schedule your visa interview" }
-          ],
-          actionButton: "Proceed to Visa Application"
-        },
-        documents: {
-          title: "Submitted Documents",
-          columns: ["Document Name", "Status", "Remarks"],
-          rows: [
-            { name: "Academic Documents", status: "Verified", remarks: "Accepted" },
-            { name: "Language Proficiency", status: "Verified", remarks: "Accepted" },
-            { name: "Passport Copy", status: "Verified", remarks: "Accepted" }
-          ],
-          buttonText: "View All Documents"
-        }
-      }
-    },
-    {
-      id: 3,
-      label: "Visa Application",
-      route: "visa-application",
-      page: { title: 'Visa Application', status: 'In Progress', subtitle: 'Complete your visa application form.' },
-      banner: { type: 'info', title: 'Visa Application in Progress', subtitle: 'Please complete all sections and upload required documents.', action: 'Continue Application' },
-      progress: 45,
-      sections: {
-        applicationInfo: {
-          title: "Application Information",
-          items: [
-            { icon: "FileText", label: "Visa Application Number", value: "VIS-2026-789012" },
-            { icon: "Building2", label: "Embassy", value: "German Embassy, New Delhi" },
-            { icon: "Calendar", label: "Applied On", value: "10 June 2026" },
-            { icon: "Clock", label: "Last Updated", value: "12 June 2026" }
-          ]
-        },
-        personalInfo: {
-          title: "Personal Information",
-          items: [
-            { label: "Full Name", value: "John Doe" },
-            { label: "Date of Birth", value: "15 March 1998" },
-            { label: "Passport Number", value: "P12345678" },
-            { label: "Nationality", value: "Indian" }
-          ]
-        },
-        familyInfo: {
-          father: { name: "Robert Doe", occupation: "Engineer", phone: "+91 9876543210" },
-          mother: { name: "Jane Doe", occupation: "Teacher", phone: "+91 9876543211" }
-        },
-        travelInfo: {
-          title: "Travel Information",
-          items: [
-            { label: "Intended Arrival", value: "01 September 2026" },
-            { label: "Duration of Stay", value: "2 Years" },
-            { label: "Port of Entry", value: "Frankfurt Airport" },
-            { label: "Previous Travel", value: "None" }
-          ]
-        },
-        academicInfo: {
-          title: "Academic Information",
-          items: [
-            { label: "University Name", value: "Technical University of Munich" },
-            { label: "Course", value: "Master in Computer Science" },
-            { label: "Start Date", value: "01 October 2026" },
-            { label: "End Date", value: "30 September 2028" }
-          ]
-        },
-        financialInfo: {
-          title: "Financial Information",
-          items: [
-            { label: "Blocked Account", value: "Opened - €11,208" },
-            { label: "Tuition Fee Paid", value: "€3,000" },
-            { label: "Sponsorship", value: "Self/Family" },
-            { label: "Scholarship", value: "None" }
-          ]
-        },
-        documents: {
-          title: "Required Documents",
-          rows: [
-            { name: "Passport", status: "Uploaded", date: "10 Jun 2026", size: "2.3 MB", action: "view" },
-            { name: "Visa Application Form", status: "Uploaded", date: "10 Jun 2026", size: "1.1 MB", action: "view" },
-            { name: "APS Certificate", status: "Pending", date: "-", size: "-", action: "upload" },
-            { name: "Blocked Account Proof", status: "Pending", date: "-", size: "-", action: "upload" }
-          ]
-        },
-        declarations: {
-          title: "Declaration",
-          checkboxText: "I declare that all information provided is true and complete to the best of my knowledge.",
-          date: "12 June 2026",
-          name: "John Doe"
-        }
-      }
-    },
-    {
-      id: 4,
-      label: "Biometrics",
-      route: "biometrics",
-      page: { title: 'Biometrics Appointment', status: 'Scheduled', subtitle: 'Your biometrics appointment has been scheduled.' },
-      banner: { type: 'success', title: 'Biometrics Scheduled', subtitle: 'Please attend your appointment on the scheduled date.', action: 'Download Appointment Letter' },
-      sections: {
-        appointmentDetails: {
-          title: "Appointment Details",
-          items: [
-            { icon: "Calendar", label: "Appointment Date", value: "25 June 2026" },
-            { icon: "Clock", label: "Time", value: "10:30 AM" },
-            { icon: "MapPin", label: "Venue", value: "German Visa Application Centre, New Delhi" },
-            { icon: "Info", label: "Important Instructions", value: "Arrive 15 minutes before scheduled time", fullWidth: true }
-          ],
-          infoCards: [
-            { label: "Visa Application ID", value: "VIS-2026-789012" },
-            { label: "Appointment Status", value: "Confirmed", isHighlight: true },
-            { label: "Documents to Carry", value: "6 Items" },
-            { label: "Fees Paid", value: "€75" }
-          ]
-        },
-        whatIsBiometrics: {
-          title: "What is Biometrics?",
-          description: "Biometrics includes fingerprinting and photograph capture for identity verification.",
-          watchButton: "Watch Video Guide"
-        },
-        documentsToCarry: {
-          title: "Documents to Carry",
-          items: [
-            "Original Passport",
-            "Appointment Letter Copy",
-            "Visa Application Copy",
-            "Recent Photographs (2)",
-            "Visa Fee Receipt"
-          ],
-          note: "Note: Please carry all original documents for verification"
-        },
-        biometricsProcess: {
-          title: "Biometrics Process",
-          steps: [
-            { title: "Document Verification", description: "Your documents will be verified at the counter" },
-            { title: "Photograph Capture", description: "Your photograph will be taken professionally" },
-            { title: "Fingerprint Scanning", description: "All 10 fingers will be scanned" },
-            { title: "Signature Capture", description: "Your digital signature will be captured" }
-          ]
-        },
-        beforeYouGo: {
-          title: "Before You Go",
-          items: [
-            { text: "Reach on time" },
-            { text: "Carry all documents" },
-            { text: "Dress formally" },
-            { text: "No electronic items" },
-            { text: "Follow guidelines" }
-          ]
-        },
-        feesDetails: {
-          title: "Fees Details",
-          items: [
-            { description: "Visa Application Fee", amount: "€75", status: "Paid" },
-            { description: "Biometrics Fee", amount: "Included", status: "Paid" },
-            { description: "Service Charge", amount: "₹1,000", status: "Paid", isTotal: true }
-          ],
-          paymentDate: "12 June 2026",
-          paymentMode: "Online - Credit Card"
-        },
-        appointmentHistory: {
-          title: "Appointment History",
-          items: [
-            { date: "12 Jun 2026", time: "10:30 AM", status: "Scheduled" },
-            { date: "10 Jun 2026", time: "-", status: "Slot Selected" },
-            { date: "08 Jun 2026", time: "-", status: "Application Submitted" }
-          ]
-        },
-        afterBiometrics: {
-          title: "After Biometrics",
-          steps: [
-            { icon: "Clock", title: "Processing", description: "Visa processing begins" },
-            { icon: "FileText", title: "Status Check", description: "Track your application" },
-            { icon: "Mail", title: "Decision", description: "Receive email notification" },
-            { icon: "Ticket", title: "Passport", description: "Collect your passport" }
-          ]
-        },
-        declaration: {
-          title: "Confirmation",
-          checkboxText: "I confirm that I have attended the biometrics appointment and provided my biometrics.",
-          date: "25 June 2026",
-          name: "John Doe"
-        }
-      }
-    },
-    {
-      id: 5,
-      label: "Visa Decision",
-      route: "visa-decision",
-      page: { title: 'Visa Decision', status: 'Under Review by Embassy', subtitle: 'Your application is being processed by the embassy.' },
-      banner: { type: 'info', title: 'Application Under Review', subtitle: 'The embassy is processing your visa application.', action: 'Track Application' },
-      sections: {
-        applicationDetails: {
-          title: "Application Details",
-          items: [
-            { icon: "FileText", label: "Application ID", value: "VIS-2026-789012" },
-            { icon: "Calendar", label: "Submitted On", value: "10 June 2026" },
-            { icon: "Building2", label: "Processing Embassy", value: "German Embassy, New Delhi" },
-            { icon: "Clock", label: "Processing Time", value: "4-6 weeks" }
-          ]
-        },
-        currentStatus: {
-          title: "Current Status",
-          status: "Under Review",
-          description: "Your application is currently under review by the embassy. This may take 4-6 weeks.",
-          details: [
-            { label: "Last Updated", value: "15 June 2026" },
-            { label: "Current Stage", value: "Document Verification" },
-            { label: "Estimated Decision", value: "End of July 2026" }
-          ]
-        },
-        decisionTimeline: {
-          title: "Decision Timeline",
-          items: [
-            { label: "Application Received", date: "10 Jun 2026", status: "completed", description: "Application submitted successfully" },
-            { label: "Document Verification", date: "15 Jun 2026", status: "active", description: "Verification in progress" },
-            { label: "Background Check", date: "Pending", status: "pending", description: "Will start after verification" },
-            { label: "Final Decision", date: "Pending", status: "pending", description: "Approval/Rejection notification" }
-          ]
-        },
-        whatHappensNext: {
-          title: "What happens next?",
-          steps: [
-            { title: "Verification Complete", description: "Your documents will be verified" },
-            { title: "Decision Made", description: "You'll receive email notification" },
-            { title: "Passport Collection", description: "Collect your passport with visa" },
-            { title: "Travel Planning", description: "Plan your travel to Germany" }
-          ],
-          importantNote: {
-            title: "Important Note",
-            items: [
-              "Do not book flights until visa is approved",
-              "Processing times may vary based on individual cases",
-              "You may be called for additional documents if required"
-            ]
-          }
-        },
-        submittedDocuments: {
-          title: "Submitted Documents",
-          rows: [
-            { name: "Passport", status: "Verified", date: "10 Jun 2026" },
-            { name: "APS Certificate", status: "Verified", date: "12 Jun 2026" },
-            { name: "Financial Documents", status: "Under Review", date: "15 Jun 2026" }
-          ]
-        },
-        embassyUpdate: {
-          title: "Embassy Updates",
-          items: [
-            { date: "15 Jun 2026", status: "Update", description: "Document verification in progress" },
-            { date: "12 Jun 2026", status: "Update", description: "Application received by embassy" },
-            { date: "10 Jun 2026", status: "Info", description: "Application forwarded to embassy" }
-          ]
-        },
-        declaration: {
-          title: "Acknowledgment",
-          checkboxText: "I acknowledge that I have read and understood the visa processing timeline and conditions.",
-          date: "15 June 2026",
-          name: "John Doe"
-        }
-      }
-    },
-    {
-      id: 6,
-      label: "Visa Approved",
-      route: "visa-approved",
-      page: { title: 'Visa Approved', status: 'Approved', subtitle: 'Congratulations! Your visa has been approved.' },
-      banner: { type: 'success', title: 'Visa Approved!', subtitle: 'Your visa has been approved. Please collect your passport.', action: 'Download Visa Letter' },
-      sections: {
-        visaApprovalDetails: {
-          title: "Visa Approval Details",
-          items: [
-            { icon: "Award", label: "Visa Type", value: "Student Visa" },
-            { icon: "Calendar", label: "Valid From", value: "01 September 2026" },
-            { icon: "Calendar", label: "Valid Until", value: "30 September 2028" },
-            { icon: "Globe", label: "Entries", value: "Multiple" }
-          ]
-        },
-        congratulations: {
-          title: "Congratulations!",
-          message: "Your German Student Visa has been approved. You can now plan your travel to Germany."
-        },
-        whatHappensNext: {
-          title: "Next Steps",
-          steps: [
-            { icon: "Ticket", title: "Collect Passport" },
-            { icon: "Plane", title: "Book Flights" },
-            { icon: "Home", title: "Find Accommodation" },
-            { icon: "Calendar", title: "Plan Arrival" }
-          ]
-        },
-        visaDetails: {
-          title: "Visa Sticker Details",
-          items: [
-            { label: "Visa Number", value: "GER-VISA-2026-12345" },
-            { label: "Passport Number", value: "P12345678" },
-            { label: "Duration", value: "24 Months" },
-            { label: "Work Permit", value: "120 full days / 240 half days" }
-          ]
-        },
-        passportCollection: {
-          title: "Passport Collection",
-          items: [
-            { label: "Collection Mode", value: "In Person / Courier" },
-            { label: "Collection Date", value: "25 July 2026 onwards" },
-            { label: "Collection Time", value: "9:00 AM - 4:00 PM" },
-            { label: "Documents Required", value: "Original receipt + ID proof" }
-          ],
-          note: "If opting for courier, passport will be delivered within 3-5 business days"
-        },
-        documentsSummary: {
-          title: "Documents Summary",
-          rows: [
-            { name: "Passport with Visa Sticker", status: "Ready", date: "25 Jul 2026" },
-            { name: "Visa Approval Letter", status: "Downloaded", date: "20 Jul 2026" },
-            { name: "Travel Insurance", status: "Purchased", date: "22 Jul 2026" }
-          ]
-        },
-        embassyMessage: {
-          title: "Message from Embassy",
-          message: "Congratulations on your visa approval! Please ensure you carry all necessary documents while traveling. Welcome to Germany!"
-        },
-        importantInfo: {
-          title: "Important Information",
-          items: [
-            { title: "Travel Insurance", description: "Ensure you have valid travel insurance for first 3 months" },
-            { title: "Registration", description: "Register at local citizen's office within 14 days of arrival" },
-            { title: "Blocked Account", description: "Activate your blocked account upon arrival" },
-            { title: "Health Insurance", description: "German health insurance must be active from day 1" }
-          ]
-        }
-      }
-    }
-  ],
-  sidebar: {
-    summary: {
-      title: "Application Summary",
-      fields: [
-        { label: "Student Name", value: "John Doe" },
-        { label: "Country", value: "India", isFlag: true },
-        { label: "University", value: "Technical University of Munich" },
-        { label: "Course", value: "Master in Computer Science" }
-      ]
-    },
-    quickLinks: {
-      title: "Quick Links",
-      items: [
-        { icon: "HelpCircle", text: "Visa FAQ" },
-        { icon: "FileText", text: "Document Checklist" },
-        { icon: "Clock", text: "Processing Times" },
-        { icon: "AlertCircle", text: "Track Application" }
-      ]
-    },
-    counselor: {
-      title: "Your Counselor",
-      avatar: "/avatar-placeholder.png",
-      name: "Sarah Johnson",
-      role: "Senior Visa Counselor",
-      rating: 4.9,
-      students: 128,
-      actionButton: "Message Counselor"
-    }
-  }
-});
-
-const Step1APSApplied = ({ data, currentStepId, apiData }) => {
-  const stepData = apiData?.steps?.find(s => s.id === 1) || getStaticFallbackData().steps[0];
+const Step1APSApplied = ({ data, currentStepId, apiData, visaId }) => {
+  const stepData = apiData?.steps?.find(s => s.id === 1);
   const router = useRouter();
+  const [uploadingDocs, setUploadingDocs] = useState({});
+  const [uploadedDocs, setUploadedDocs] = useState({});
+
+  useEffect(() => {
+    if (visaId) {
+      fetchUploadedDocuments();
+    }
+  }, [visaId]);
+
+  const fetchUploadedDocuments = async () => {
+    try {
+      const response = await axiosInstance.get(`/visa/${visaId}/documents`);
+      const docs = response.data.data.requirements;
+      const docsMap = {};
+      docs.forEach(doc => {
+        docsMap[doc.documentType] = doc;
+      });
+      setUploadedDocs(docsMap);
+    } catch (error) {
+      console.error("Failed to fetch documents:", error);
+    }
+  };
+
+  const handleFileChange = async (e, documentTitle) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    
+    const file = e.target.files[0];
+    
+    if (file.size > 5 * 1024 * 1024) {
+      console.error("File size should be less than 5MB");
+      return;
+    }
+    
+    const allowedTypes = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx'];
+    const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+    if (!allowedTypes.includes(fileExt)) {
+      console.error("Invalid file type. Please upload PDF, JPG, PNG, or DOC files.");
+      return;
+    }
+
+    setUploadingDocs(prev => ({ ...prev, [documentTitle]: true }));
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("documentType", documentTitle);
+      formData.append("visaId", visaId);
+
+      const uploadResponse = await axiosInstance.post("/visa/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+    } catch (error) {
+      console.error(error.message || "Failed to upload file");
+    } finally {
+      setUploadingDocs(prev => ({ ...prev, [documentTitle]: false }));
+    }
+  };
+
+  const handleViewDocument = async (documentTitle) => {
+    const doc = uploadedDocs[documentTitle];
+    if (doc && doc.fileUrl) {
+      window.open(fileBaseurl(doc.fileUrl), '_blank');
+    }
+  };
+
+  const getDocumentStatus = (documentTitle) => {
+    if (uploadedDocs[documentTitle]) {
+      return { status: "Uploaded", color: "bg-green-500", action: "View" };
+    }
+    if (uploadingDocs[documentTitle]) {
+      return { status: "Uploading...", color: "bg-yellow-500", action: "Uploading" };
+    }
+    return { status: "Pending", color: "bg-orange-400", action: "Upload" };
+  };
+
   return (
     <>
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">{stepData?.sections?.overview?.title || "Application Overview"}</h3>
           <span className="text-sm text-gray-500">Updated: {stepData?.sections?.overview?.updated || "Just now"}</span>
@@ -626,7 +259,7 @@ const Step1APSApplied = ({ data, currentStepId, apiData }) => {
             <div key={idx}>
               <p className="text-sm text-gray-500">{detail.label}</p>
               <p className={`text-sm font-medium ${detail.highlight ? 'text-[#f56e45]' : 'text-gray-800'}`}>
-                {detail.value}
+                {detail.value || "--"}
               </p>
             </div>
           ))}
@@ -650,7 +283,7 @@ const Step1APSApplied = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-2">What is APS Certificate?</h3>
         <p className="text-sm text-gray-500 mb-4">The Academic Evaluation Centre (APS) certificate verifies the authenticity of your academic documents for studying in Germany.</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -662,7 +295,7 @@ const Step1APSApplied = ({ data, currentStepId, apiData }) => {
           ].map((item, idx) => {
             const IconComp = iconMap[item.icon] || HelpCircle;
             return (
-              <div key={idx} className="flex flex-col items-center text-center p-3 border rounded-lg hover:bg-gray-50 transition-colors">
+              <div key={idx} className="flex flex-col items-center text-center p-3 border hover:bg-gray-50 transition-colors">
                 <IconComp className="text-[#f56e45] mb-1" size={20} />
                 <p className="text-sm text-gray-600">{item.text}</p>
               </div>
@@ -671,164 +304,99 @@ const Step1APSApplied = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-<div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-  {/* Header */}
-  <div className="bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-5 border-b border-orange-200">
-    <h3 className="text-lg font-bold text-gray-800">
-      Prepare for Visa Application
-    </h3>
-    <p className="text-sm text-gray-600 mt-1">
-      Complete these steps while waiting for your APS result.
-    </p>
-  </div>
-
-  {/* Preparation Cards */}
-  <div className="p-6">
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      {[
-          { icon: "FileText", title: "Blocked Account", desc: "Open a blocked account for your living expenses in Germany.", btnText: "Learn More", bg:"bg-[#f7faff]" },
-          { icon: "Shield", title: "Health Insurance", desc: "Get mandatory health insurance for your student visa.", btnText: "Compare Plans", bg:"bg-[#f5faf9]" },
-          { icon: "Building2", title: "Visa Appointment", desc: "Book your visa appointment at the German embassy.", btnText: "Check Slots", bg:"bg-[#fffcfa]" },
-          { icon: "Home", title: "Accommodation", desc: "Find student housing in your university city.", btnText: "Search Now", bg:"bg-[#faf7fc]" }
-        ].map((card, idx) => {
-        const IconComp = iconMap[card.icon] || HelpCircle;
-
-        return (
-          <div
-            key={idx}
-            className={`group ${card.bg} border border-gray-200 rounded-xl p-5 hover:border-orange-300 hover:shadow-md transition-all duration-200`}
-          >
-            <div className="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center mb-4">
-              <IconComp className="text-orange-500" size={24} />
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden -sm">
+        <div className="bg-gradient-to-r from-orange-50 to-orange-100 px-6 py-5 border-b border-orange-200">
+          <h3 className="text-lg font-bold text-gray-800">Prepare for Visa Application</h3>
+          <p className="text-sm text-gray-600 mt-1">Complete these steps while waiting for your APS result.</p>
+        </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { icon: "FileText", title: "Blocked Account", desc: "Open a blocked account for your living expenses in Germany.", btnText: "Learn More", bg:"bg-[#f7faff]" },
+              { icon: "Shield", title: "Health Insurance", desc: "Get mandatory health insurance for your student visa.", btnText: "Compare Plans", bg:"bg-[#f5faf9]" },
+              { icon: "Building2", title: "Visa Appointment", desc: "Book your visa appointment at the German embassy.", btnText: "Check Slots", bg:"bg-[#fffcfa]" },
+              { icon: "Home", title: "Accommodation", desc: "Find student housing in your university city.", btnText: "Search Now", bg:"bg-[#faf7fc]" }
+            ].map((card, idx) => {
+              const IconComp = iconMap[card.icon] || HelpCircle;
+              return (
+                <div key={idx} className={`group ${card.bg} border border-gray-200 rounded-xl p-5 hover:border-orange-300 hover:-md transition-all duration-200`}>
+                  <div className="w-12 h-12 bg-orange-50 flex items-center justify-center mb-4">
+                    <IconComp className="text-orange-500" size={24} />
+                  </div>
+                  <h4 className="font-semibold text-gray-800 mb-2">{card.title}</h4>
+                  <p className="text-sm text-gray-500 leading-relaxed">{card.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="border-t border-gray-200 bg-gray-50">
+          <div className="px-6 py-5">
+            <h3 className="text-lg font-bold text-gray-800 mb-5">Important Details for Visa Application</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {(stepData?.importantInfo || []).map((item, idx) => (
+                <div key={idx} className="bg-white border border-gray-200 rounded-xl p-4">
+                  <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">{item.title}</p>
+                  <p className="text-sm font-medium text-gray-800 break-words">{item.description}</p>
+                </div>
+              ))}
             </div>
-
-            <h4 className="font-semibold text-gray-800 mb-2">
-              {card.title}
-            </h4>
-
-            <p className="text-sm text-gray-500 leading-relaxed">
-              {card.desc}
-            </p>
           </div>
-        );
-      })}
-    </div>
-  </div>
-
-  {/* Visa Details */}
-  <div className="border-t border-gray-200 bg-gray-50">
-    <div className="px-6 py-5">
-      <h3 className="text-lg font-bold text-gray-800 mb-5">
-        Important Details for Visa Application
-      </h3>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {(stepData?.importantInfo || []).filter(item => item.type !== "requirement").map((item, idx) => (
-          <div
-            key={idx}
-            className="bg-white border border-gray-200 rounded-xl p-4"
-          >
-            <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">
-              {item.title}
-            </p>
-
-            <p className="text-sm font-medium text-gray-800 break-words">
-              {item.description}
-            </p>
-            
-          </div>
-        ))}
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
-       
-
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">Required Documents for APS</h3>
-          <button className="text-[#f56e45] text-sm font-bold bg-orange-50 px-3 py-1 rounded"
-           onClick={() => router.push('/dashboard/settings')}>View All Documents →</button>
+          <button className="text-[#f56e45] text-sm font-bold bg-orange-50 px-3 py-1 rounded" onClick={() => router.push('/dashboard/settings')}>
+            View All Documents →
+          </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
-            {(stepData?.importantInfo || []).filter(item => item.type === "requirement").map((item, idx) => (
-          <div
-            key={idx}
-            className="bg-white border border-gray-200 rounded-xl p-4"
-          >
-            <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">
-              {item.title}
-            </p>
-
-            <p className="text-sm font-medium text-gray-800 break-words">
-              {item.description}
-            </p>
-
-            {item.type === "requirement" && (
-              <div className="mt-4">
-                <input
-                  type="file"
-                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                  className="hidden"
-                  id={`file-upload-${item.title}`}
-                />
-
-                <label
-                  htmlFor={`file-upload-${item.title}`}
-                  className="flex items-center justify-center gap-2 w-full px-3 py-2 border border-dashed border-orange-300
-                   bg-orange-50 rounded-lg text-sm text-orange-600 cursor-pointer hover:bg-orange-100 transition"
-                >
-                  <UploadCloud size={16} />
-                  Upload Document
-                </label>
-              </div>
-            )}
+          {(apiData?.documents || []).map((item, idx) => {
+            const docStatus = getDocumentStatus(item.documentType);
+            const isUploaded = item.status === "uploaded";
+            const isUploading = docStatus.status === "Uploading...";
             
-          </div>
-        ))}
-
-          {/* {[
-            [
-              { label: "10th Marksheet", status: "Completed", action: "View" },
-              { label: "12th Marksheet", status: "Completed", action: "View" },
-              { label: "Bachelor's Degree", status: "Completed", action: "View" }
-            ],
-            [
-              { label: "Passport Copy", status: "Completed", action: "View" },
-              { label: "Language Certificate", status: "In Progress", action: "Upload" },
-              { label: "LOR", status: "To be uploaded", action: "Upload" }
-            ]
-          ].map((column, colIdx) => (
-            <div key={colIdx}>
-              {column.map((doc, idx) => {
-                const statusColor = {
-                  'Completed': 'bg-green-500',
-                  'In Progress': 'bg-yellow-500',
-                  'To be uploaded': 'bg-orange-400',
-                  'Not required': 'bg-gray-300'
-                }[doc.status] || 'bg-gray-300';
-                return (
-                  <div key={idx} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${statusColor}`}></div>
-                      <span className="text-sm font-medium text-gray-700">{doc.label}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-500">{doc.status}</span>
-                      <span className="text-sm text-[#f56e45] cursor-pointer hover:underline">{doc.action}</span>
-                    </div>
+            return (
+              <div key={idx} className="bg-white border border-gray-200 rounded-xl p-4 mb-4">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-gray-400 mb-1">Required Document</p>
+                    <p className="text-sm font-medium text-gray-800 break-words">{item.documentType}</p>
                   </div>
-                );
-              })}
-            </div>
-          ))} */}
-        </div>
-        <div className="mt-4 flex gap-4 text-sm text-gray-500">
-          <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div> Completed</span>
-          <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-yellow-500"></div> In Progress</span>
-          <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-orange-400"></div> To be uploaded</span>
-          <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-gray-300"></div> Not Required</span>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${docStatus.color}`}></div>
+                    <span className="text-xs text-gray-500">{item.status}</span>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500 mb-4">{item.description || "No description"}</p>
+                <div className="mt-4">
+                  {!isUploaded ? (
+                    <>
+                      <input type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" className="hidden" id={`file-upload-${item.documentType}`} onChange={(e) => handleFileChange(e, item.documentType)} disabled={isUploading} />
+                      <label htmlFor={`file-upload-${item.documentType}`} className={`flex items-center justify-center gap-2 w-full px-3 py-2 border border-dashed text-sm cursor-pointer transition ${isUploading ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed' : 'border-orange-300 bg-orange-50 text-orange-600 hover:bg-orange-100'}`}>
+                        <UploadCloud size={16} />
+                        {isUploading ? 'Uploading...' : 'Upload Document'}
+                      </label>
+                    </>
+                  ) : (
+                    <div className="flex gap-2">
+                      <button onClick={() => handleViewDocument(item.documentType)} className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-50 border border-green-300 text-sm text-green-600 hover:bg-green-100 transition">
+                        <FileText size={16} /> View Document
+                      </button>
+                    </div>
+                  )}
+                </div>
+                {isUploaded && uploadedDocs[item.documentType] && (
+                  <div className="mt-3 pt-3 border-t border-gray-100">
+                    <p className="text-xs text-gray-400">Uploaded: {new Date(uploadedDocs[item.documentType].uploadedAt).toLocaleDateString()}</p>
+                    <p className="text-xs text-gray-400">Size: {(uploadedDocs[item.documentType].fileSize / 1024).toFixed(2)} KB</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </>
@@ -836,43 +404,46 @@ const Step1APSApplied = ({ data, currentStepId, apiData }) => {
 };
 
 const Step2APSApproval = ({ data, currentStepId, apiData }) => {
-  const stepData = apiData?.steps?.find(s => s.id === 2) || getStaticFallbackData().steps[1];
+  const stepData = apiData?.steps?.find(s => s.id === 2);
+  const router = useRouter();
   
   return (
     <>
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
-        <h3 className="font-bold text-gray-800 mb-4">APS Certificate Details</h3>
+      <div className="bg-white p-6 border border-gray-200 -sm">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-gray-800">{stepData?.sections?.overview?.title || "APS Certificate Details"}</h3>
+          <span className="text-sm text-gray-500">Updated: {stepData?.sections?.overview?.updated || "Just now"}</span>
+        </div>
         <div className='md:flex items-center justify-center'>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
-          {(stepData?.sections?.overview?.details || [
-            { icon: "FileText", label: "Certificate Number", value: "APS-2026-123456" },
-            { icon: "Calendar", label: "Issue Date", value: "Pending" },
-            { icon: "Clock", label: "Valid Until", value: "Pending" },
-            { icon: "Shield", label: "Verification Status", value: "In Progress", isHighlight: true }
-          ]).map((item, idx) => (
-            <DetailItem key={idx} item={item} />
-          ))}
-        </div>
-        <div className="mt-6 md:mt-1 flex justify-center">
-          <div className="bg-white border border-green-200 rounded-lg p-4 w-full max-w-[280px] flex items-center gap-4 shadow-sm">
-            <div className="flex-1">
-              <FileText size={40} className="text-green-600 mb-1" />
-              <h5 className="font-bold text-sm text-gray-800">APS Certificate</h5>
-              <p className="text-sm text-green-600 font-medium">Awaiting Approval</p>
-            </div>
-            <div className="bg-green-50 p-2 rounded-full">
-              <Clock size={24} className="text-yellow-600" />
+            {(stepData?.sections?.overview?.details || []).map((item, idx) => (
+              <div key={idx}>
+                <p className="text-sm text-gray-500">{item.label}</p>
+                <p className={`text-sm font-medium ${item.highlight ? 'text-[#f56e45]' : 'text-gray-800'}`}>
+                  {item.value || "--"}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 md:mt-1 flex justify-center">
+            <div className="bg-white border border-green-200 p-4 w-full min-w-[180px] flex items-center gap-4 -sm">
+              <div className="flex-1">
+                <img src={'/gif/Approval.gif'} className='w-20 h-20' />
+                <h5 className="font-bold text-sm text-gray-800">APS Certificate</h5>
+                <p className="text-sm text-green-600 font-medium">
+                  {stepData?.page?.status === 'Completed' ? 'Approved & Issued' : 'Awaiting Approval'}
+                </p>
+              </div>
             </div>
           </div>
         </div>
-        </div>
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-4">What happens next?</h3>
         <p className="text-sm text-gray-500 mb-6">Once your APS is approved, you can proceed with your visa application.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          { [
+          {[
             { icon: "Mail", title: "Email Notification", description: "You'll receive an email once approved" },
             { icon: "Download", title: "Download Certificate", description: "Download your APS certificate" },
             { icon: "FileText", title: "Visa Application", description: "Start your visa application" },
@@ -880,7 +451,7 @@ const Step2APSApproval = ({ data, currentStepId, apiData }) => {
           ].map((step, idx) => {
             const IconComponent = iconMap[step.icon] || FileText;
             return (
-              <div key={idx} className="flex flex-col items-center text-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <div key={idx} className="flex flex-col items-center text-center p-4 border border-gray-200 hover:-md transition-">
                 <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mb-3">
                   <IconComponent size={18} className="text-green-600" />
                 </div>
@@ -890,40 +461,93 @@ const Step2APSApproval = ({ data, currentStepId, apiData }) => {
             );
           })}
         </div>
-
-
-        <div className="mt-6 flex justify-center">
-          <button className="flex items-center gap-2 bg-[#f56e45] hover:bg-[#f56e45] text-white text-sm font-medium px-6 py-2.5 rounded-lg transition-colors shadow-sm">
-            Proceed to Visa Application <ArrowRight size={16} />
-          </button>
-        </div>
       </div>
 
-      
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-4">Important Info</h3>
+        <table className="w-full text-left">
+          <thead>
+            <tr className="border-b border-gray-100">
+              <th className="pb-2 text-sm font-semibold text-gray-500">#</th>
+              <th className="pb-2 text-sm font-semibold text-gray-500">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(stepData?.importantInfo || []).map((row, idx) => (
+              <tr key={idx} className="border-b border-gray-50">
+                <td className="py-2 text-sm text-gray-700">{row.title}</td>
+                <td className="py-2"><span className="text-sm text-green-600 bg-green-50 px-2 py-0.5 rounded">{row.description}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-         <table className="w-full text-left">
+      {(stepData?.progressSteps && stepData.progressSteps.length > 0) && (
+        <div className="bg-white p-6 border border-gray-200 -sm">
+          <h3 className="font-bold text-gray-800 mb-4">Progress Steps</h3>
+          <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="pb-2 text-sm font-semibold text-gray-500">#</th>
-                <th className="pb-2 text-sm font-semibold text-gray-500">Details</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Step</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Status</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Date</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Description</th>
               </tr>
             </thead>
             <tbody>
-              {stepData?.importantInfo?.map((row, idx) => (
+              {stepData.progressSteps.map((row, idx) => (
                 <tr key={idx} className="border-b border-gray-50">
-                  <td className="py-2 text-sm text-gray-700">{row.title}</td>
-                  <td className="py-2"><span className="text-sm text-green-600 bg-green-50 px-2 py-0.5 rounded">{row.description}</span></td>
+                  <td className="py-2 text-sm text-gray-700">{row.label}</td>
+                  <td className="py-2">
+                    <span className={`text-sm px-2 py-0.5 rounded ${
+                      row.status === 'completed' ? 'text-green-600 bg-green-50' :
+                      row.status === 'in-progress' ? 'text-yellow-600 bg-yellow-50' :
+                      'text-gray-500 bg-gray-50'
+                    }`}>
+                      {row.status}
+                    </span>
+                  </td>
+                  <td className="py-2 text-sm text-gray-500">{row.date}</td>
+                  <td className="py-2 text-sm text-gray-500">{row.description}</td>
                 </tr>
               ))}
             </tbody>
-           </table>
+          </table>
+        </div>
+      )}
 
-      </div>
+      {(stepData?.statusTimeline && stepData.statusTimeline.length > 0) && (
+        <div className="bg-white p-6 border border-gray-200 -sm">
+          <h3 className="font-bold text-gray-800 mb-4">Status Timeline</h3>
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-gray-100">
+                <th className="pb-2 text-sm font-semibold text-gray-500">Date</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Status</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {stepData.statusTimeline.map((row, idx) => (
+                <tr key={idx} className="border-b border-gray-50">
+                  <td className="py-2 text-sm text-gray-700">{row.date}</td>
+                  <td className="py-2"><span className="text-sm text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{row.status}</span></td>
+                  <td className="py-2 text-sm text-gray-500">{row.description}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
-        <h3 className="font-bold text-gray-800 mb-4">Submitted Documents</h3>
+      <div className="bg-white p-6 border border-gray-200 -sm">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-gray-800">Submitted Documents</h3>
+          <button className="text-[#f56e45] text-sm font-bold bg-orange-50 px-3 py-1 rounded" onClick={() => router.push('/dashboard/settings')}>
+            View All Documents →
+          </button>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
@@ -931,27 +555,20 @@ const Step2APSApproval = ({ data, currentStepId, apiData }) => {
                 <th className="pb-2 text-sm font-semibold text-gray-500">Document Name</th>
                 <th className="pb-2 text-sm font-semibold text-gray-500">Status</th>
                 <th className="pb-2 text-sm font-semibold text-gray-500">Remarks</th>
-               </tr>
+              </tr>
             </thead>
             <tbody>
-              {[
-                { name: "Academic Documents", status: "Verified", remarks: "Accepted" },
-                { name: "Language Proficiency", status: "Verified", remarks: "Accepted" },
-                { name: "Passport Copy", status: "Verified", remarks: "Accepted" }
-              ].map((row, idx) => (
+              {(apiData?.documents || []).map((row, idx) => (
                 <tr key={idx} className="border-b border-gray-50">
-                  <td className="py-2 text-sm text-gray-700">{row.name}</td>
-                  <td className="py-2"><span className="text-sm text-green-600 bg-green-50 px-2 py-0.5 rounded">{row.status}</span></td>
-                  <td className="py-2 text-sm text-gray-500">{row.remarks}</td>
-                 </tr>
+                  <td className="py-2 text-sm text-gray-700">{row.documentType}</td>
+                  <td className="py-2"><span className={`text-sm px-2 py-0.5 rounded ${
+                    row.status === 'uploaded' ? 'text-green-600 bg-green-50' : 'text-orange-500 bg-orange-50'
+                  }`}>{row.status}</span></td>
+                  <td className="py-2 text-sm text-gray-500">{row.description || "--"}</td>
+                </tr>
               ))}
             </tbody>
-           </table>
-        </div>
-        <div className="mt-4 flex justify-center">
-          <button className="flex items-center gap-2 border border-orange-200 bg-orange-50 text-[#f56e45] text-sm font-medium px-4 py-2 rounded-lg">
-            <Eye size={14} /> View All Documents
-          </button>
+          </table>
         </div>
       </div>
     </>
@@ -959,23 +576,24 @@ const Step2APSApproval = ({ data, currentStepId, apiData }) => {
 };
 
 const Step3VisaApplication = ({ data, currentStepId, apiData }) => {
-  const staticData = getStaticFallbackData();
-  const stepData = apiData?.steps?.find(s => s.id === 3) || staticData.steps[2];
+  const stepData = apiData?.steps?.find(s => s.id === 3);
+  const router = useRouter();
   
   return (
     <>
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="font-bold text-gray-800">Application Information</h3>
+          <h3 className="font-bold text-gray-800">{stepData?.sections?.overview?.title || "Application Information"}</h3>
+          <span className="text-sm text-gray-500">Updated: {stepData?.sections?.overview?.updated || "Just now"}</span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
-          {(stepData?.sections?.overview?.details ||[
-            { icon: "FileText", label: "Visa Application Number", value: "VIS-2026-789012" },
-            { icon: "Building2", label: "Embassy", value: "German Embassy, New Delhi" },
-            { icon: "Calendar", label: "Applied On", value: "10 June 2026" },
-            { icon: "Clock", label: "Last Updated", value: "12 June 2026" }
-          ]).map((item, idx) => (
-            <DetailItem key={idx} item={item} />
+          {(stepData?.sections?.overview?.details || []).map((item, idx) => (
+            <div key={idx}>
+              <p className="text-sm text-gray-500">{item.label}</p>
+              <p className={`text-sm font-medium ${item.highlight ? 'text-[#f56e45]' : 'text-gray-800'}`}>
+                {item.value || "--"}
+              </p>
+            </div>
           ))}
         </div>
         {stepData?.progress && (
@@ -991,7 +609,7 @@ const Step3VisaApplication = ({ data, currentStepId, apiData }) => {
         )}
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">Personal Information</h3>
         </div>
@@ -1010,12 +628,15 @@ const Step3VisaApplication = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">Family Information</h3>
+          <button onClick={() => router.push('/dashboard/settings')} className='px-2 bg-orange-200 flex items-center'>
+            <Edit className='h-4'/> Edit
+          </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="border border-gray-100 rounded-lg p-4">
+          <div className="border border-gray-100 p-4">
             <h5 className="text-sm font-bold text-gray-700 mb-3">Father's Details</h5>
             <div className="space-y-2">
               <div><span className="text-sm text-gray-500">Name</span><p className="font-medium text-sm">--</p></div>
@@ -1023,7 +644,7 @@ const Step3VisaApplication = ({ data, currentStepId, apiData }) => {
               <div><span className="text-sm text-gray-500">Phone</span><p className="font-medium text-sm">--</p></div>
             </div>
           </div>
-          <div className="border border-gray-100 rounded-lg p-4">
+          <div className="border border-gray-100 p-4">
             <h5 className="text-sm font-bold text-gray-700 mb-3">Mother's Details</h5>
             <div className="space-y-2">
               <div><span className="text-sm text-gray-500">Name</span><p className="font-medium text-sm">--</p></div>
@@ -1034,56 +655,61 @@ const Step3VisaApplication = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      
-      
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
-        <h3 className="font-bold text-gray-800 mb-4">Important Info</h3>
-
-         <table className="w-full text-left">
+      {(stepData?.importantInfo && stepData.importantInfo.length > 0) && (
+        <div className="bg-white p-6 border border-gray-200 -sm">
+          <h3 className="font-bold text-gray-800 mb-4">Important Info</h3>
+          <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="pb-2 text-sm font-semibold text-gray-500">#</th>
                 <th className="pb-2 text-sm font-semibold text-gray-500">Details</th>
-               </tr>
+              </tr>
             </thead>
             <tbody>
-              {stepData?.importantInfo?.map((row, idx) => (
+              {stepData.importantInfo.map((row, idx) => (
                 <tr key={idx} className="border-b border-gray-50">
                   <td className="py-2 text-sm text-gray-700">{row.title}</td>
                   <td className="py-2"><span className="text-sm text-green-600 bg-green-50 px-2 py-0.5 rounded">{row.description}</span></td>
-                 </tr>
+                </tr>
               ))}
             </tbody>
-           </table>
+          </table>
+        </div>
+      )}
 
-      </div>
-
-      
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
-        <h3 className="font-bold text-gray-800 mb-4">Progress Step</h3>
-
-         <table className="w-full text-left">
+      {(stepData?.progressSteps && stepData.progressSteps.length > 0) && (
+        <div className="bg-white p-6 border border-gray-200 -sm">
+          <h3 className="font-bold text-gray-800 mb-4">Progress Steps</h3>
+          <table className="w-full text-left">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="pb-2 text-sm font-semibold text-gray-500">#</th>
-                <th className="pb-2 text-sm font-semibold text-gray-500">Details</th>
-               </tr>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Step</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Status</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Date</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Description</th>
+              </tr>
             </thead>
             <tbody>
-              {stepData?.progressSteps?.map((row, idx) => (
+              {stepData.progressSteps.map((row, idx) => (
                 <tr key={idx} className="border-b border-gray-50">
-                  <td className="py-2 text-sm text-gray-700">{row.title}</td>
-                  <td className="py-2"><span className="text-sm text-green-600 bg-green-50 px-2 py-0.5 rounded">{row.description}</span></td>
-                 </tr>
+                  <td className="py-2 text-sm text-gray-700">{row.label}</td>
+                  <td className="py-2">
+                    <span className={`text-sm px-2 py-0.5 rounded ${
+                      row.status === 'completed' ? 'text-green-600 bg-green-50' :
+                      row.status === 'in-progress' ? 'text-yellow-600 bg-yellow-50' :
+                      'text-gray-500 bg-gray-50'
+                    }`}>{row.status}</span>
+                  </td>
+                  <td className="py-2 text-sm text-gray-500">{row.date}</td>
+                  <td className="py-2 text-sm text-gray-500">{row.description}</td>
+                </tr>
               ))}
             </tbody>
-           </table>
+          </table>
+        </div>
+      )}
 
-      </div>
-
-      
-
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">Required Documents</h3>
           <span className="text-sm text-[#f56e45] cursor-pointer hover:underline">View All</span>
@@ -1095,62 +721,45 @@ const Step3VisaApplication = ({ data, currentStepId, apiData }) => {
                 <th className="pb-2 text-sm font-semibold text-gray-500">Document Name</th>
                 <th className="pb-2 text-sm font-semibold text-gray-500 text-center">Status</th>
                 <th className="pb-2 text-sm font-semibold text-gray-500 text-center">Updated On</th>
-                <th className="pb-2 text-sm font-semibold text-gray-500 text-center">File Size</th>
                 <th className="pb-2 text-sm font-semibold text-gray-500 text-right">Action</th>
-               </tr>
+              </tr>
             </thead>
             <tbody>
-              {[
-                { name: "Passport", status: "Uploaded", date: "10 Jun 2026", size: "2.3 MB", action: "view" },
-                { name: "Visa Application Form", status: "Uploaded", date: "10 Jun 2026", size: "1.1 MB", action: "view" },
-                { name: "APS Certificate", status: "Pending", date: "-", size: "-", action: "upload" },
-                { name: "Blocked Account Proof", status: "Pending", date: "-", size: "-", action: "upload" }
-              ].map((row, idx) => {
-                const statusColor = row.status === 'Uploaded' ? 'text-green-600 bg-green-50' : 'text-orange-500 bg-orange-50';
+              {(apiData?.documents || []).map((row, idx) => {
+                const statusColor = row.status === 'uploaded' ? 'text-green-600 bg-green-50' : 'text-orange-500 bg-orange-50';
                 return (
                   <tr key={idx} className="border-b border-gray-50">
-                    <td className="py-2"><div className="flex items-center gap-2"><FileText size={12} className="text-gray-500"/><span className="text-sm text-gray-700">{row.name}</span></div></td>
+                    <td className="py-2"><div className="flex items-center gap-2">
+                      <FileText size={12} className="text-gray-500"/><span className="text-sm text-gray-700">{row.documentType}</span></div></td>
                     <td className="py-2 text-center"><span className={`text-sm ${statusColor} px-2 py-0.5 rounded`}>{row.status}</span></td>
-                    <td className="py-2 text-center text-sm text-gray-400">{row.date}</td>
-                    <td className="py-2 text-center text-sm text-gray-400">{row.size}</td>
+                    <td className="py-2 text-center text-sm text-gray-400">{row.uploadedAt ? new Date(row.uploadedAt).toLocaleDateString() : '--'}</td>
                     <td className="py-2 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {row.action === 'view' ? <Eye size={14} className="text-[#f56e45] cursor-pointer" /> 
+                        {row.status === 'uploaded' ? <Eye size={14} className="text-[#f56e45] cursor-pointer" /> 
                         : <UploadCloud size={14} className="text-orange-500 cursor-pointer" />}
                         <Trash2 size={14} className="text-red-400 cursor-pointer" />
                       </div>
                     </td>
-                   </tr>
+                  </tr>
                 );
               })}
             </tbody>
-           </table>
-        </div>
-        <div className="mt-6 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-          <div className="flex flex-col items-center gap-2">
-            <UploadCloud size={40} className="text-gray-400" />
-            <p className="text-sm text-gray-600 font-medium">Drag & drop files here or <span className="text-[#f56e45] cursor-pointer hover:underline">click to upload</span></p>
-            <p className="text-sm text-gray-400">Accepted formats: PDF, JPG, PNG (Max size: 10MB each)</p>
-          </div>
+          </table>
         </div>
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
-        <h3 className="font-bold text-gray-800 mb-4">Declaration</h3>
-        <div className="flex items-start gap-3 mb-4">
-          <input type="checkbox" className=" w-4 h-4 rounded border-gray-300 text-[#f56e45]" />
-          <p className="text-sm text-gray-600">I declare that all information provided is true and complete to the best of my knowledge.</p>
-        </div>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center gap-6 text-sm">
-            <div><p className="text-sm text-gray-500">Date</p><p className="font-medium">{new Date().toISOString().split('T')[0]}</p></div>
-            <div><p className="text-sm text-gray-500">Applicant Name</p><p className="font-medium">{apiData?.user?.name || "John Doe"}</p></div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded hover:bg-gray-50">Save as Draft</button>
-            <button className="bg-white border border-orange-200 text-[#f56e45] text-sm font-medium px-4 py-2 rounded hover:bg-orange-50">Continue Later</button>
-            <button className="bg-[#f56e45] text-white text-sm font-medium px-6 py-2 rounded hover:bg-[#f56e45]">Review Application</button>
-          </div>
+      <div className="bg-white p-6 border border-gray-200 -sm">
+        <h3 className="font-bold text-gray-800 mb-4">Final Document Review</h3>
+        <div className="flex items-start gap-3 bg-orange-50 border border-orange-200 p-4">
+          <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0" />
+          <p className="text-sm text-gray-700 leading-relaxed">
+            Please carefully review all uploaded documents before proceeding with
+            your visa application. Ensure that all information is accurate,
+            complete, and matches your official records. If you notice any
+            missing documents, incorrect details, or have any questions regarding
+            your application, please contact your assigned counsellor for
+            assistance before submitting.
+          </p>
         </div>
       </div>
     </>
@@ -1158,47 +767,44 @@ const Step3VisaApplication = ({ data, currentStepId, apiData }) => {
 };
 
 const Step4Biometrics = ({ data, currentStepId, apiData }) => {
-  const stepData = apiData?.steps?.find(s => s.id === 4) || getStaticFallbackData().steps[3];
+  const stepData = apiData?.steps?.find(s => s.id === 4);
   
+  const bannerData = stepData?.banner || {};
+
   return (
     <>
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
-        <h3 className="font-bold text-gray-800 mb-4">Appointment Details</h3>
+      <div className="bg-white p-6 border border-gray-200 -sm">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-gray-800">{stepData?.sections?.overview?.title || "Appointment Details"}</h3>
+          <span className="text-sm text-gray-500">Updated: {stepData?.sections?.overview?.updated || "Just now"}</span>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {(stepData?.sections?.overview?.details ||[
-            { label: "Visa Application ID", value: "VIS-2026-789012" },
-            { label: "Appointment Status", value: "Confirmed", isHighlight: true },
-            { label: "Documents to Carry", value: "6 Items" },
-            { label: "Fees Paid", value: "€75" }
-          ]).map((item, idx) => (
-            <div key={idx} className="border border-gray-100 rounded-lg p-3">
+          {(stepData?.sections?.overview?.details || []).map((item, idx) => (
+            <div key={idx} className="border border-gray-100 p-3">
               <p className="text-sm text-gray-500">{item.label}</p>
-              <p className={`text-sm font-medium ${item.isHighlight ? 'text-green-600' : 'text-gray-800'}`}>{item.value}</p>
+              <p className={`text-sm font-medium ${item.highlight ? 'text-[#f56e45]' : 'text-gray-800'}`}>
+                {item.value || "--"}
+              </p>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-2">What is Biometrics?</h3>
         <p className="text-sm text-gray-500 mb-3">Biometrics includes fingerprinting and photograph capture for identity verification.</p>
-        <button className="flex items-center gap-2 text-orange-600 text-sm font-medium hover:underline">
+        <button className="flex items-center gap-2 text-[#f56e45] text-sm font-medium hover:underline">
           <PlayCircle size={16} /> Watch Video Guide
         </button>
       </div>
 
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6  border border-gray-200 shadow-sm">
+        <div className="bg-white p-6 border border-gray-200 -sm">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold text-gray-800">Fees Details</h3>
           </div>
           <div className="space-y-1">
-            {(stepData?.importantInfo ||[
-              { title: "Visa Application Fee", description: "€75", status: "Paid" },
-              { title: "Biometrics Fee", description: "Included", status: "Paid" },
-              { title: "Service Charge", description: "₹1,000", status: "Paid" }
-            ]).map((item, idx) => (
+            {(stepData?.importantInfo || []).map((item, idx) => (
               <div key={idx} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
                 <span className="text-sm text-gray-700">{item.title}</span>
                 <div className="flex items-center gap-4">
@@ -1208,14 +814,14 @@ const Step4Biometrics = ({ data, currentStepId, apiData }) => {
             ))}
           </div>
         </div>
-        <div className="bg-white p-6  border border-gray-200 shadow-sm">
+        <div className="bg-white p-6 border border-gray-200 -sm">
           <h3 className="font-bold text-gray-800 mb-4">Appointment History</h3>
           <div className="space-y-1">
-            {stepData?.statusTimeline?.map((item, idx) => (
+            {(stepData?.statusTimeline || []).map((item, idx) => (
               <div key={idx} className="flex items-center gap-3 py-1.5">
                 <div className="flex flex-col items-center">
                   <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                  {idx < 3 && <div className="w-0.5 h-4 bg-gray-200"></div>}
+                  {idx < (stepData?.statusTimeline?.length || 0) - 1 && <div className="w-0.5 h-4 bg-gray-200"></div>}
                 </div>
                 <div className="flex gap-4 text-sm">
                   <span className="text-gray-500">{item.date}</span>
@@ -1228,7 +834,7 @@ const Step4Biometrics = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-3">Before You Go</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
           {[
@@ -1246,9 +852,8 @@ const Step4Biometrics = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6  border border-gray-200 shadow-sm">
+        <div className="bg-white p-6 border border-gray-200 -sm">
           <h3 className="font-bold text-gray-800 mb-3">Documents to Carry</h3>
           <div className="space-y-1 mb-3">
             {[
@@ -1268,7 +873,7 @@ const Step4Biometrics = ({ data, currentStepId, apiData }) => {
           </div>
           <p className="text-sm text-gray-400 italic">Note: Please carry all original documents for verification</p>
         </div>
-        <div className="bg-white p-6  border border-gray-200 shadow-sm">
+        <div className="bg-white p-6 border border-gray-200 -sm">
           <h3 className="font-bold text-gray-800 mb-3">Biometrics Process</h3>
           <div className="space-y-1">
             {[
@@ -1294,9 +899,7 @@ const Step4Biometrics = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-
-
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-4">After Biometrics</h3>
         <div className="flex flex-wrap justify-between gap-2">
           {[
@@ -1312,25 +915,24 @@ const Step4Biometrics = ({ data, currentStepId, apiData }) => {
                   <IconComp size={18} className="text-orange-600" />
                 </div>
                 <p className="text-sm font-bold text-gray-800">{step.title}</p>
-                <p className="text-[8px] text-gray-500 mt-1">{step.description}</p>
+                <p className="text-sm text-gray-500 mt-1">{step.description}</p>
               </div>
             );
           })}
         </div>
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-4">Confirmation</h3>
         <div className="flex items-start gap-3 mb-4">
-          <input type="checkbox" className="mt-1 w-4 h-4 rounded border-gray-300 text-orange-600" />
+          {/* <input type="checkbox" className="mt-1 w-4 h-4 rounded border-gray-300 text-[#f56e45]" /> */}
           <p className="text-sm text-gray-600">I confirm that I have attended the biometrics appointment and provided my biometrics.</p>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="flex items-center gap-6 text-sm">
-            <div><p className="text-sm text-gray-500">Date</p><p className="font-medium">25 June 2026</p></div>
-            <div><p className="text-sm text-gray-500">Applicant Name</p><p className="font-medium">John Doe</p></div>
+            <div><p className="text-sm text-gray-500">Applicant Name</p><p className="font-medium">{data?.user?.name || "--"}</p></div>
           </div>
-          <button className="border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded hover:bg-gray-50">Save & Print</button>
+          <a href={fileBaseurl(bannerData.fileUrl)} target='_blank' className="border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded hover:bg-gray-50" >Save & Print</a>
         </div>
       </div>
     </>
@@ -1338,28 +940,34 @@ const Step4Biometrics = ({ data, currentStepId, apiData }) => {
 };
 
 const Step5VisaDecision = ({ data, currentStepId, apiData }) => {
-  const stepData = apiData?.steps?.find(s => s.id === 5) || getStaticFallbackData().steps[4];
+  const stepData = apiData?.steps?.find(s => s.id === 5);
+  const router = useRouter();
   
+  const bannerData = stepData?.banner || {};
+
   return (
     <>
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
-        <h3 className="font-bold text-gray-800 mb-4">Application Details</h3>
+      <div className="bg-white p-6 border border-gray-200 -sm">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-gray-800">{stepData?.sections?.overview?.title || "Application Details"}</h3>
+          <span className="text-sm text-gray-500">Updated: {stepData?.sections?.overview?.updated || "Just now"}</span>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
-          {(stepData?.sections?.overview?.details || [
-            { icon: "FileText", label: "Application ID", value: "No data" },
-            { icon: "Calendar", label: "Submitted On", value: "No data" },
-            { icon: "Building2", label: "Processing Embassy", value: "--" },
-            { icon: "Clock", label: "Processing Time", value: "--" }
-          ]).map((item, idx) => (
-            <DetailItem key={idx} item={item} />
+          {(stepData?.sections?.overview?.details || []).map((item, idx) => (
+            <div key={idx}>
+              <p className="text-sm text-gray-500">{item.label}</p>
+              <p className={`text-sm font-medium ${item.highlight ? 'text-[#f56e45]' : 'text-gray-800'}`}>
+                {item.value || "--"}
+              </p>
+            </div>
           ))}
         </div>
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-4">Current Status</h3>
         <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex-1 bg-orange-50 p-4 rounded-lg border border-orange-100 flex flex-col items-center justify-center text-center">
+          <div className="flex-1 bg-orange-50 p-4 border border-orange-100 flex flex-col items-center justify-center text-center">
             <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-2">
               <Clock size={28} className="text-orange-600" />
             </div>
@@ -1369,11 +977,7 @@ const Step5VisaDecision = ({ data, currentStepId, apiData }) => {
             <p className="text-sm text-gray-600 mt-1">Your application is currently under review by the embassy. This may take 4-6 weeks.</p>
           </div>
           <div className="flex-1 space-y-2">
-            {(stepData?.sections?.overview?.details?.filter(ele => ele.highlight === true) || [
-              { label: "Last Updated", value: "15 June 2026" },
-              { label: "Current Stage", value: "Document Verification" },
-              { label: "Estimated Decision", value: "End of July 2026" }
-            ]).map((item, idx) => (
+            {(stepData?.sections?.overview?.details?.filter(ele => ele.highlight === true) || []).map((item, idx) => (
               <div key={idx} className="border-b border-gray-50 pb-2 last:border-0 last:pb-0">
                 <p className="text-sm text-gray-500">{item.label}</p>
                 <p className="text-sm font-medium text-gray-800">{item.value}</p>
@@ -1384,30 +988,24 @@ const Step5VisaDecision = ({ data, currentStepId, apiData }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6  border border-gray-200 shadow-sm">
+        <div className="bg-white p-6 border border-gray-200 -sm">
           <h3 className="font-bold text-gray-800 mb-4">Decision Info</h3>
           <div className="space-y-1">
-            {(stepData?.importantInfo || [
-              { label: "Application Received", date: "10 Jun 2026", status: "completed", description: "Application submitted successfully" },
-              { label: "Document Verification", date: "15 Jun 2026", status: "active", description: "Verification in progress" },
-              { label: "Background Check", date: "Pending", status: "pending", description: "Will start after verification" },
-              { label: "Final Decision", date: "Pending", status: "pending", description: "Approval/Rejection notification" }
-            ]).map((item, idx) => {
+            {(stepData?.importantInfo || []).map((item, idx) => {
               const isActive = item.status === 'active';
               const isCompleted = item.status === 'completed';
               return (
                 <div key={idx} className="flex gap-3">
                   <div className="flex flex-col items-center">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${isActive ? 'bg-orange-600' : isCompleted ? 'bg-green-500' : 'bg-gray-200'}`}>
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${isActive ? 'bg-[#f56e45]' : isCompleted ? 'bg-green-500' : 'bg-gray-200'}`}>
                       {isCompleted && <Check size={12} className="text-white" />}
                       {isActive && <div className="w-2 h-2 bg-white rounded-full"></div>}
                     </div>
-                    {idx < 3 && <div className={`w-0.5 h-6 ${isActive ? 'bg-orange-300' : isCompleted ? 'bg-green-300' : 'bg-gray-200'}`}></div>}
+                    {idx < (stepData?.importantInfo?.length || 0) - 1 && <div className={`w-0.5 h-6 ${isActive ? 'bg-[#f56e45]' : isCompleted ? 'bg-green-300' : 'bg-gray-200'}`}></div>}
                   </div>
                   <div className="pb-4 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className={`text-sm font-bold ${isActive ? 'text-orange-600' : isCompleted ? 
-                        'text-green-600' : 'text-gray-500'}`}>{item.label}</p>
+                      <p className={`text-sm font-bold ${isActive ? 'text-[#f56e45]' : isCompleted ? 'text-green-600' : 'text-gray-500'}`}>{item.title}</p>
                     </div>
                     <p className="text-sm text-gray-500">{item.description}</p>
                   </div>
@@ -1416,19 +1014,19 @@ const Step5VisaDecision = ({ data, currentStepId, apiData }) => {
             })}
           </div>
         </div>
-        <div className="bg-white p-6  border border-gray-200 shadow-sm">
+        <div className="bg-white p-6 border border-gray-200 -sm">
           <h3 className="font-bold text-gray-800 mb-4">What happens next?</h3>
           <div className="space-y-1">
             {[
               { title: "Verification Complete", description: "Your documents will be verified" },
               { title: "Decision Made", description: "You'll receive email notification" },
               { title: "Passport Collection", description: "Collect your passport with visa" },
-              { title: "Travel Planning", description: "Plan your travel " }
+              { title: "Travel Planning", description: "Plan your travel" }
             ].map((step, idx) => (
               <div key={idx} className="flex items-start gap-3 mb-3 last:mb-0">
                 <div className="flex flex-col items-center">
                   <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                    <span className="text-sm font-bold text-orange-600">{idx + 1}</span>
+                    <span className="text-sm font-bold text-[#f56e45]">{idx + 1}</span>
                   </div>
                   {idx < 3 && <div className="w-0.5 h-4 bg-gray-200 mt-1"></div>}
                 </div>
@@ -1439,7 +1037,7 @@ const Step5VisaDecision = ({ data, currentStepId, apiData }) => {
               </div>
             ))}
           </div>
-          <div className="mt-4 p-3 bg-orange-50 border border-orange-100 rounded-lg">
+          <div className="mt-4 p-3 bg-orange-50 border border-orange-100">
             <h5 className="text-sm font-bold text-orange-800 flex items-center gap-1">
               <AlertCircle size={12} /> Important Note
             </h5>
@@ -1460,44 +1058,49 @@ const Step5VisaDecision = ({ data, currentStepId, apiData }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6  border border-gray-200 shadow-sm">
+        <div className="bg-white p-6 border border-gray-200 -sm">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold text-gray-800">Submitted Documents</h3>
-            <span className="text-sm text-orange-600 cursor-pointer hover:underline">View All Documents →</span>
+            <button className="text-[#f56e45] text-sm font-bold bg-orange-50 px-3 py-1 rounded" onClick={() => router.push('/dashboard/settings')}>
+              View All Documents →
+            </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-gray-100">
+                  <th className="pb-2 text-sm font-semibold text-gray-500">Document Name</th>
+                  <th className="pb-2 text-sm font-semibold text-gray-500">Status</th>
+                  <th className="pb-2 text-sm font-semibold text-gray-500">Updated On</th>
+                </tr>
+              </thead>
               <tbody>
-                {[
-                  { name: "Passport", status: "Verified", date: "10 Jun 2026" },
-                  { name: "APS Certificate", status: "Verified", date: "12 Jun 2026" },
-                  { name: "Financial Documents", status: "Under Review", date: "15 Jun 2026" }
-                ].map((row, idx) => (
-                  <DocumentRow key={idx} row={row} showSize={false} />
+                {(apiData?.documents || []).map((row, idx) => (
+                  <tr key={idx} className="border-b border-gray-50">
+                    <td className="py-2 text-sm text-gray-700">{row.documentType}</td>
+                    <td className="py-2"><span className={`text-sm ${row.status === 'uploaded' ? 'text-green-600 bg-green-50' : 'text-orange-500 bg-orange-50'} px-2 py-0.5 rounded`}>{row.status}</span></td>
+                    <td className="py-2 text-sm text-gray-400">{row.uploadedAt ? new Date(row.uploadedAt).toLocaleDateString() : '--'}</td>
+                  </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
-        <div className="bg-white p-6  border border-gray-200 shadow-sm">
+        <div className="bg-white p-6 border border-gray-200 -sm">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold text-gray-800">Embassy Updates</h3>
           </div>
           <div className="space-y-1">
-            {(stepData?.statusTimeline || [
-              { date: "15 Jun 2026", status: "Update", description: "Document verification in progress" },
-              { date: "12 Jun 2026", status: "Update", description: "Application received by embassy" },
-              { date: "10 Jun 2026", status: "Info", description: "Application forwarded to embassy" }
-            ]).map((item, idx) => (
+            {(stepData?.statusTimeline || []).map((item, idx) => (
               <div key={idx} className="flex gap-3 py-2 border-b border-gray-50 last:border-0">
                 <div className="flex flex-col items-center">
-                  <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                  <div className="w-2 h-2 rounded-full bg-[#f56e45]"></div>
                   <div className="w-0.5 h-6 bg-gray-200"></div>
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-400">{item.date}</span>
-                    <span className="text-sm text-orange-600 font-medium">{item.status}</span>
+                    <span className="text-sm text-[#f56e45] font-medium">{item.status}</span>
                   </div>
                   <p className="text-sm text-gray-600">{item.description}</p>
                 </div>
@@ -1507,18 +1110,17 @@ const Step5VisaDecision = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-4">Acknowledgment</h3>
         <div className="flex items-start gap-3 mb-4">
-          <input type="checkbox" className=" w-4 h-4 rounded border-gray-300 text-orange-600" />
+          {/* <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-[#f56e45]" /> */}
           <p className="text-sm text-gray-600">I acknowledge that I have read and understood the visa processing timeline and conditions.</p>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="flex items-center gap-6 text-sm">
-            <div><p className="text-sm text-gray-500">Date</p><p className="font-medium">15 June 2026</p></div>
-            <div><p className="text-sm text-gray-500">Applicant Name</p><p className="font-medium">John Doe</p></div>
+            <div><p className="text-sm text-gray-500">Applicant Name</p><p className="font-medium">{data?.user?.name || "--"}</p></div>
           </div>
-          <button className="border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded hover:bg-gray-50">Save & Print</button>
+          <a href={fileBaseurl(bannerData.fileUrl)} target='_blank' className="border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded hover:bg-gray-50" >Save & Print</a>
         </div>
       </div>
     </>
@@ -1526,38 +1128,37 @@ const Step5VisaDecision = ({ data, currentStepId, apiData }) => {
 };
 
 const Step6VisaApproved = ({ data, currentStepId, apiData }) => {
-  const stepData = apiData?.steps?.find(s => s.id === 6) || getStaticFallbackData().steps[5];
+  const stepData = apiData?.steps?.find(s => s.id === 6);
+  const router = useRouter();
   
   return (
     <>
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
-        <h3 className="font-bold text-gray-800 mb-4">Visa Approval Details</h3>
+      <div className="bg-white p-6 border border-gray-200 -sm">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-gray-800">{stepData?.sections?.overview?.title || "Visa Approval Details"}</h3>
+          <span className="text-sm text-gray-500">Updated: {stepData?.sections?.overview?.updated || "Just now"}</span>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
-          {(stepData?.sections?.overview?.details || [
-            { icon: "Award", label: "Visa Type", value: "Student Visa" },
-            { icon: "Calendar", label: "Valid From", value: "01 September 2026" },
-            { icon: "Calendar", label: "Valid Until", value: "30 September 2028" },
-            { icon: "Globe", label: "Entries", value: "Multiple" }
-          ]).map((item, idx) => (
-            <DetailItem key={idx} item={item} />
+          {(stepData?.sections?.overview?.details || []).map((item, idx) => (
+            <div key={idx}>
+              <p className="text-sm text-gray-500">{item.label}</p>
+              <p className={`text-sm font-medium ${item.highlight ? 'text-[#f56e45]' : 'text-gray-800'}`}>
+                {item.value || "--"}
+              </p>
+            </div>
           ))}
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6  border border-gray-200 shadow-sm flex flex-col items-center justify-center text-center">
+        <div className="bg-white p-6 border border-gray-200 -sm flex flex-col items-center justify-center text-center">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-3">
-            {/* <Award size={32} className="text-green-600" /> */}
-            <img
-          src={'/gif/complete.gif'}
-          alt={"icon"}
-          className="w-full h-full object-contain"
-        />
+            <img src={'/gif/complete.gif'} alt={"icon"} className="w-full h-full object-contain" />
           </div>
           <h3 className="font-bold text-lg text-gray-800">Congratulations!</h3>
-          <p className="text-sm text-gray-600 mt-2">Your German Student Visa has been approved. You can now plan your travel to Germany.</p>
+          <p className="text-sm text-gray-600 mt-2">Your Student Visa has been approved. You can now plan your travel.</p>
         </div>
-        <div className="bg-white p-6  border border-gray-200 shadow-sm">
+        <div className="bg-white p-6 border border-gray-200 -sm">
           <h3 className="font-bold text-gray-800 mb-4">Next Steps</h3>
           <div className="flex flex-wrap justify-between gap-2">
             {[
@@ -1570,7 +1171,7 @@ const Step6VisaApproved = ({ data, currentStepId, apiData }) => {
               return (
                 <div key={idx} className="flex flex-col items-center text-center flex-1 min-w-[80px]">
                   <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mb-2">
-                    <IconComp size={18} className="text-orange-600" />
+                    <IconComp size={18} className="text-[#f56e45]" />
                   </div>
                   <p className="text-sm font-bold text-gray-700">{step.title}</p>
                 </div>
@@ -1580,54 +1181,58 @@ const Step6VisaApproved = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-4">Visa Sticker Details</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-4 gap-x-3">
-          {(stepData?.importantInfo || [
-            { label: "Visa Number", value: "GER-VISA-2026-12345" },
-            { label: "Passport Number", value: "P12345678" },
-            { label: "Duration", value: "24 Months" },
-            { label: "Work Permit", value: "120 full days / 240 half days" }
-          ]).map((item, idx) => (
+          {(stepData?.importantInfo || []).map((item, idx) => (
             <div key={idx}>
-              <p className="text-sm text-gray-500">{item.label}</p>
-              <p className="text-sm font-medium text-gray-800">{item.value}</p>
+              <p className="text-sm text-gray-500">{item.title}</p>
+              <p className="text-sm font-medium text-gray-800">{item.description}</p>
             </div>
           ))}
         </div>
       </div>
 
-        <div className="p-3 bg-orange-50 border border-orange-100 rounded-lg flex items-start gap-2">
-          <Info size={14} className="text-orange-600 mt-0.5 flex-shrink-0" />
-          <p className="text-sm text-orange-700">If opting for courier, passport will be delivered within 3-5 business days</p>
-        </div>
+      <div className="p-3 bg-orange-50 border border-orange-100 flex items-start gap-2">
+        <Info size={14} className="text-[#f56e45] mt-0.5 flex-shrink-0" />
+        <p className="text-sm text-orange-700">If opting for courier, passport will be delivered within 3-5 business days</p>
+      </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800">Documents Summary</h3>
-          <span className="text-sm text-orange-600 cursor-pointer hover:underline">View All Documents →</span>
+          <button className="text-[#f56e45] text-sm font-bold bg-orange-50 px-3 py-1 rounded" onClick={() => router.push('/dashboard/settings')}>
+            View All Documents →
+          </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-gray-100">
+                <th className="pb-2 text-sm font-semibold text-gray-500">Document Name</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Status</th>
+                <th className="pb-2 text-sm font-semibold text-gray-500">Updated On</th>
+              </tr>
+            </thead>
             <tbody>
-              {[
-                { name: "Passport with Visa Sticker", status: "Ready", date: "25 Jul 2026" },
-                { name: "Visa Approval Letter", status: "Downloaded", date: "20 Jul 2026" },
-                { name: "Travel Insurance", status: "Purchased", date: "22 Jul 2026" }
-              ].map((row, idx) => (
-                <DocumentRow key={idx} row={row} showSize={false} />
+              {(apiData?.documents || []).map((row, idx) => (
+                <tr key={idx} className="border-b border-gray-50">
+                  <td className="py-2 text-sm text-gray-700">{row.documentType}</td>
+                  <td className="py-2"><span className={`text-sm ${row.status === 'uploaded' ? 'text-green-600 bg-green-50' : 'text-blue-600 bg-blue-50'} px-2 py-0.5 rounded`}>{row.status}</span></td>
+                  <td className="py-2 text-sm text-gray-400">{row.uploadedAt ? new Date(row.uploadedAt).toLocaleDateString() : '--'}</td>
+                </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
 
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <div className="flex items-start gap-3">
-          <div className="text-orange-600"><MessageCircle size={24} /></div>
+          <div className="text-[#f56e45]"><MessageCircle size={24} /></div>
           <div>
             <h3 className="font-bold text-gray-800 mb-1">Message from Embassy</h3>
-            <p className="text-sm text-gray-600">Congratulations on your visa approval! Please ensure you carry all necessary documents while traveling. Welcome to Germany!</p>
+            <p className="text-sm text-gray-600">Congratulations on your visa approval! Please ensure you carry all necessary documents while traveling.</p>
           </div>
         </div>
       </div>
@@ -1635,17 +1240,14 @@ const Step6VisaApproved = ({ data, currentStepId, apiData }) => {
   );
 };
 
-// AddCommentStep Component - For steps with no data or pending status
 const AddCommentStep = ({ data, currentStepId, apiData }) => {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Find the current step data
   const currentStepInfo = apiData?.steps?.find(s => s.id === currentStepId);
   const isStepCompleted = currentStepInfo?.status === 'Completed' || currentStepInfo?.page?.status === 'Completed';
 
-  // Load comments from API data or initialize
   useEffect(() => {
     if (apiData?.comments) {
       setComments(apiData.comments);
@@ -1657,7 +1259,6 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
     
     setIsSubmitting(true);
     try {
-      // API call to submit comment
       const newComment = {
         id: Date.now(),
         text: comment,
@@ -1665,9 +1266,6 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
         date: new Date().toISOString().split('T')[0],
         time: new Date().toLocaleTimeString()
       };
-      
-      // In a real implementation, you would call an API endpoint
-      // await axiosInstance.post('/visa/comment', { comment, stepId: currentStepId });
       
       setComments([newComment, ...comments]);
       setComment('');
@@ -1678,11 +1276,10 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
     }
   };
 
-  // If the step is completed, show a different message
   if (isStepCompleted) {
     return (
       <div className="space-y-6">
-        <div className="bg-green-50  p-6 border border-green-200 text-center">
+        <div className="bg-green-50 p-6 border border-green-200 text-center">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle size={32} className="text-green-600" />
           </div>
@@ -1690,9 +1287,7 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
           <p className="text-sm text-green-700 max-w-md mx-auto">
             This step of your visa journey has been completed. You can now proceed to the next step.
           </p>
-          <button 
-            className="mt-4 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-          >
+          <button className="mt-4 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 transition-colors">
             Go to Next Step
           </button>
         </div>
@@ -1702,8 +1297,7 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
 
   return (
     <div className="space-y-6">
-      {/* Step Not Started / Pending Banner */}
-      <div className="bg-yellow-50  p-6 border border-yellow-200 text-center">
+      <div className="bg-yellow-50 p-6 border border-yellow-200 text-center">
         <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <Clock size={32} className="text-yellow-600" />
         </div>
@@ -1713,22 +1307,16 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
           Please complete the previous steps first or contact your counselor for assistance.
         </p>
         <div className="mt-4 flex justify-center gap-3">
-          <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-          >
+          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium px-4 py-2 transition-colors">
             Go to Previous Step
           </button>
-          <button 
-            className="border border-yellow-300 text-yellow-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-yellow-100 transition-colors"
-          >
+          <button className="border border-yellow-300 text-yellow-700 text-sm font-medium px-4 py-2 hover:bg-yellow-100 transition-colors">
             Contact Counselor
           </button>
         </div>
       </div>
 
-      {/* Step Information - Show what's required */}
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
           <Info size={18} className="text-[#f56e45]" />
           Step Information
@@ -1757,7 +1345,7 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
               </li>
             </ul>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-gray-50 p-4">
             <p className="text-sm font-bold text-gray-700 mb-2">Estimated Processing Time:</p>
             <p className="text-2xl font-bold text-[#f56e45]">2-4 Weeks</p>
             <p className="text-sm text-gray-500 mt-1">Processing times may vary based on individual cases</p>
@@ -1765,8 +1353,7 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      {/* Required Documents for this step */}
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-4">Required Documents</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
@@ -1798,26 +1385,24 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      {/* Comments Section */}
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
           <MessageCircle size={18} className="text-[#f56e45]" />
           Comments & Queries
         </h3>
         
-        {/* Add Comment */}
         <div className="mb-6">
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Ask a question or leave a comment about this step..."
-            className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-[#f56e45] focus:ring-1 focus:ring-[#f56e45] min-h-[100px]"
+            className="w-full border border-gray-200 p-3 text-sm focus:outline-none focus:border-[#f56e45] focus:ring-1 focus:ring-[#f56e45] min-h-[100px]"
           />
           <div className="flex justify-end mt-2">
             <button
               onClick={handleSubmitComment}
               disabled={isSubmitting || !comment.trim()}
-              className="bg-[#f56e45] hover:bg-[#f56e45] text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="bg-[#f56e45] hover:bg-[#f56e45] text-white text-sm font-medium px-4 py-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isSubmitting ? 'Submitting...' : 'Post Comment'}
               <Send size={14} />
@@ -1825,7 +1410,6 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
           </div>
         </div>
 
-        {/* Comments List */}
         <div className="space-y-4">
           <p className="text-sm text-gray-500">Previous Comments</p>
           {comments.length > 0 ? (
@@ -1842,7 +1426,7 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
               </div>
             ))
           ) : (
-            <div className="text-center py-6 bg-gray-50 rounded-lg">
+            <div className="text-center py-6 bg-gray-50">
               <MessageCircle size={24} className="text-gray-300 mx-auto mb-2" />
               <p className="text-sm text-gray-400">No comments yet. Be the first to ask a question!</p>
             </div>
@@ -1850,25 +1434,24 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      {/* Support Contact */}
-      <div className="bg-white p-6  border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 border border-gray-200 -sm">
         <h3 className="font-bold text-gray-800 mb-3">Need Help?</h3>
         <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-3 p-3 bg-gray-50">
             <Phone size={18} className="text-[#f56e45]" />
             <div>
               <p className="text-sm text-gray-500">Call our support team</p>
               <p className="text-sm font-medium text-gray-800">+91-11-1234-5678</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-3 p-3 bg-gray-50">
             <Mail size={18} className="text-[#f56e45]" />
             <div>
               <p className="text-sm text-gray-500">Email us</p>
               <p className="text-sm font-medium text-gray-800">support@visajourney.com</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-3 p-3 bg-gray-50">
             <MessageCircle size={18} className="text-[#f56e45]" />
             <div>
               <p className="text-sm text-gray-500">Live chat</p>
@@ -1883,7 +1466,7 @@ const AddCommentStep = ({ data, currentStepId, apiData }) => {
 
 const NoApplicationView = ({ onStartApplication }) => (
   <div className="space-y-6">
-    <div className="bg-orange-50  p-8 border border-orange-200 text-center">
+    <div className="bg-orange-50 p-8 border border-orange-200 text-center">
       <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <FileText size={40} className="text-orange-600" />
       </div>
@@ -1891,10 +1474,7 @@ const NoApplicationView = ({ onStartApplication }) => (
       <p className="text-gray-600 mb-6 max-w-md mx-auto">
         You haven't started your visa application process yet. Start your journey to study in Germany by creating a new application.
       </p>
-      <button 
-        onClick={onStartApplication}
-        className="bg-[#f56e45] hover:bg-[#f56e45] text-white font-medium px-6 py-3 rounded-lg transition-colors inline-flex items-center gap-2"
-      >
+      <button onClick={onStartApplication} className="bg-[#f56e45] hover:bg-[#f56e45] text-white font-medium px-6 py-3 transition-colors inline-flex items-center gap-2">
         Start New Application <ArrowRight size={18} />
       </button>
     </div>
@@ -1908,19 +1488,14 @@ export default function VisaJourneyPage() {
 
   const visaDetails = async () => {
     try {
-      console.log("api calling...")
       const response = await axiosInstance.get('/visa/my');
-      console.log(response.data);
       if (response.data.success && response.data.data && response.data.data.length > 0) {
-        // API returns data as an array, take the first item
         const applicationData = response.data.data[0];
         setApiData(applicationData);
-        // Set current step from API data
         if (applicationData.currentStep) {
           setCurrentStep(applicationData.currentStep);
         }
       } else {
-        // No application found
         setApiData(null);
       }
     } catch (error) {
@@ -1936,7 +1511,6 @@ export default function VisaJourneyPage() {
   }, []);
 
   const handleStartApplication = () => {
-    // Navigate to start application page or show modal
     console.log("Start new application");
   };
 
@@ -1944,35 +1518,29 @@ export default function VisaJourneyPage() {
     setCurrentStep(stepId);
   };
 
-  // Use API data if available, otherwise use static fallback for demo
-  const data = apiData || getStaticFallbackData();
-
-  // Get current step data
+  const data = apiData;
   const currentStepData = data?.steps?.find(step => step.id === currentStep);
   const pageData = currentStepData?.page || { title: "Visa Journey", status: "In Progress", subtitle: "" };
   const bannerData = currentStepData?.banner || { type: "info", title: "", subtitle: "", action: "" };
 
-  console.log(bannerData, pageData)
   const renderStepContent = () => {
     const stepProps = {
       data: data,
       currentStepId: currentStep,
-      apiData: data
+      apiData: data,
+      visaId: apiData?._id
     };
 
-    // Check if current step data exists and has content
     const hasStepData = currentStepData && (
       currentStepData.sections || 
       currentStepData.page?.status === 'Completed' ||
       currentStepData.progress !== undefined
     );
 
-    // If step data is missing or empty, show AddCommentStep
     if (!hasStepData && currentStep > 0) {
       return <AddCommentStep {...stepProps} />;
     }
 
-    // Map your known static steps
     const stepsMap = {
       1: Step1APSApplied,
       2: Step2APSApproval,
@@ -1982,20 +1550,15 @@ export default function VisaJourneyPage() {
       6: Step6VisaApproved,
     };
 
-    // Determine which component to render
     let StepComponent;
-
     if (!currentStep || currentStep <= 0) {
       StepComponent = stepsMap[1];
-    } 
-    else if (currentStep > 6) {
+    } else if (currentStep > 6) {
       StepComponent = AddCommentStep;
-    }
-    else {
+    } else {
       StepComponent = stepsMap[currentStep] || stepsMap[1];
     }
 
-    // Render the selected component
     return <StepComponent {...stepProps} />;
   };
 
@@ -2006,11 +1569,13 @@ export default function VisaJourneyPage() {
     return 'bg-orange-50 border-orange-100 text-orange-800';
   };
 
-  const getBannerIconStyles = () => {
-    if (bannerData.type === 'success') {
-      return 'bg-green-600';
-    }
-    return 'bg-orange-600';
+  const bannerGifMap = {
+    "APS Application": "/gif/registration.gif",
+    "APS Approval": "/gif/Approval.gif",
+    "Visa Application": "/gif/notepad.gif",
+    "Biometrics Appointment": "/gif/Biomatric.gif",
+    "Visa Decision": "/gif/visa descision.gif",
+    "Visa Approved": "/gif/visa approved.gif",
   };
 
   if (loading) {
@@ -2024,7 +1589,6 @@ export default function VisaJourneyPage() {
     );
   }
 
-  // Show no application view if no API data and no fallback needed
   if (!apiData) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -2035,22 +1599,11 @@ export default function VisaJourneyPage() {
     );
   }
 
-  // Get steps for progress bar
   const progressSteps = data.steps || [];
-  const bannerGifMap = {
-  "APS Application": "/gif/registration.gif",
-  "APS Approval": "/gif/Approval.gif",
-  "Visa Application": "/gif/notepad.gif",
-  "Biometrics Appointment": "/gif/Biomatric.gif",
-  "Visa Decision": "/gif/visa descision.gif",
-  "Visa Approved": "/gif/visa approved.gif",
-};
 
   return (
     <div className="min-h-screen">
       <main className="max-w-[1600px] mx-auto p-4">
-        
-        {/* Page Title */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
             {pageData.title}
@@ -2068,9 +1621,8 @@ export default function VisaJourneyPage() {
           {pageData.subtitle && <p className="text-sm text-gray-500 mt-1">{pageData.subtitle}</p>}
         </div>
 
-        {/* Progress Tracker */}
         {progressSteps.length > 0 && (
-          <div className="bg-white p-6  border border-gray-200 shadow-sm mb-6 overflow-x-auto">
+          <div className="bg-white p-6 border border-gray-200 -sm mb-6 overflow-x-auto">
             <div className="flex justify-between min-w-[600px] relative">
               {progressSteps.map((step, index) => (
                 <ProgressStep 
@@ -2086,29 +1638,21 @@ export default function VisaJourneyPage() {
           </div>
         )}
 
-        {/* Banner - only show if title exists */}
-
         {bannerData.title && (
-          <div className={`${getBannerStyles()} relative overflow-hidden rounded-xl p-5 mb-6 shadow-sm transition-all duration-300 ${
+          <div className={`${getBannerStyles()} relative overflow-hidden rounded-xl p-5 mb-6 -sm transition-all duration-300 ${
             bannerData?.type === 'success' 
               ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500' 
               : 'bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500'
           }`}>
             <div className="flex items-start gap-4">
-              {/* Icon Container */}
               <div className="flex-shrink-0">
-                {/* <div className={`rounded-xl p-2.5 shadow-md ${
-                  bannerData?.type === 'success' ? 'bg-green-500' : 'bg-orange-500'
-                }`}> */}
-                  <img
-                    src={bannerGifMap[pageData?.title] || "/gif/notepad.gif"}
-                    alt={bannerData?.title}
-                    className="w-16 h-16 object-contain"
-                  />
-                {/* </div> */}
+                <img
+                  src={bannerGifMap[pageData?.title] || "/gif/notepad.gif"}
+                  alt={bannerData?.title}
+                  className="w-16 h-16 object-contain"
+                />
               </div>
 
-              {/* Content Area */}
               <div className="flex-1 min-w-0">
                 <h4 className="font-semibold text-base text-gray-800 leading-tight">
                   {bannerData?.title || "No banner title"}
@@ -2117,7 +1661,6 @@ export default function VisaJourneyPage() {
                   {bannerData?.subtitle || "No banner subtitle"}
                 </p>
                 
-                {/* Progress Bar - Optional enhancement */}
                 {bannerData?.progress !== undefined && (
                   <div className="mt-3">
                     <div className="flex justify-between text-xs text-gray-500 mb-1">
@@ -2136,32 +1679,25 @@ export default function VisaJourneyPage() {
                 )}
               </div>
 
-              {/* Action Buttons */}
               {bannerData?.action && (
                 <div className="flex-shrink-0 flex flex-col items-end gap-2">
-                  {/* <button className="text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 px-4 py-1.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                    {bannerData.action}
-                  </button> */}
-                  
+                  {console.log(fileBaseurl(bannerData.fileUrl))}
                   {bannerData?.fileUrl && (
                     <a
                       href={fileBaseurl(bannerData.fileUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-gray-500 hover:text-blue-600 transition-colors duration-200 flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-gray-50"
+                      className="text-xs text-gray-500 z-99 corsor-pointer hover:text-blue-600 transition-colors duration-200 
+                      flex items-center gap-1.5 px-2 py-1 rounded-md bg-gray-50"
                     >
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
+                      <Download className="w-3.5 h-3.5" />
                       Download File
                     </a>
                   )}
-
                 </div>
               )}
             </div>
             
-            {/* Decorative Element */}
             <div className="absolute top-0 right-0 opacity-5">
               <svg className="w-32 h-32" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2Z" />
@@ -2171,15 +1707,12 @@ export default function VisaJourneyPage() {
         )}
 
         <div className="grid grid-cols-12 gap-6">
-          {/* Left Column - Dynamic Content */}
           <div className="col-span-12 lg:col-span-9 space-y-6">
             {renderStepContent()}
           </div>
 
-          {/* Right Column - Sidebar */}
           <div className="col-span-12 lg:col-span-3 space-y-6">
-            {/* Application Summary - with API data if available */}
-            <div className="bg-white p-4  border border-gray-200 shadow-sm">
+            <div className="bg-white p-4 border border-gray-200 -sm">
               <div className="flex justify-between items-center mb-3">
                 <h4 className="text-sm font-bold text-gray-800">Application Summary</h4>
               </div>
@@ -2204,23 +1737,12 @@ export default function VisaJourneyPage() {
                 </div>
                 <div className="flex justify-between border-b border-gray-50 pb-1.5">
                   <span className="text-gray-500">Tracking Id</span>
-                  <span className="font-medium text-gray-800">{apiData._id}</span>
+                  <span className="font-medium text-gray-800 text-xs">{apiData._id?.slice(-8) || "--"}</span>
                 </div>
-                <div className="flex justify-between border-b border-gray-50 pb-1.5">
-                  <span className="text-gray-500">Course</span>
-                  <span className="font-medium text-gray-800">{data.application?.course?.name || data.course?.name || "Computer Science"}</span>
-                </div>
-                {data.applicationNumber && (
-                  <div className="flex justify-between border-b border-gray-50 pb-1.5">
-                    <span className="text-gray-500">Application ID</span>
-                    <span className="font-medium text-gray-800">{data.applicationNumber}</span>
-                  </div>
-                )}
               </div>
             </div>
 
-            {/* Progress Steps Card */}
-            <div className="bg-white p-4  border border-gray-200 shadow-sm">
+            <div className="bg-white p-4 border border-gray-200 -sm">
               <h4 className="text-sm font-bold text-gray-800 mb-2">Application Progress</h4>
               <div className="relative w-28 h-28 mx-auto mb-2">
                 <svg className="w-full h-full" viewBox="0 0 100 100">
@@ -2251,8 +1773,7 @@ export default function VisaJourneyPage() {
               </div>
             </div>
 
-            {/* Quick Links */}
-            <div className="bg-white p-4  border border-gray-200 shadow-sm">
+            <div className="bg-white p-4 border border-gray-200 -sm">
               <h4 className="text-sm font-bold text-gray-800 mb-2">Quick Links</h4>
               <div className="space-y-0.5">
                 <QuickLinkItem item={{ icon: "HelpCircle", text: "Visa FAQ" }} />
@@ -2262,8 +1783,7 @@ export default function VisaJourneyPage() {
               </div>
             </div>
 
-            {/* Counselor */}
-            <div className="bg-white p-4  border border-gray-200 shadow-sm">
+            <div className="bg-white p-4 border border-gray-200 -sm">
               <h4 className="text-sm font-bold text-gray-800 mb-3">Your Counselor</h4>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
@@ -2276,16 +1796,16 @@ export default function VisaJourneyPage() {
                     <div className="flex -space-x-1">
                       {[1,2,3,4,5].map(i => <div key={i} className="w-2 h-2 rounded-full bg-yellow-400 border border-white"></div>)}
                     </div>
-                    <span className="text-[8px] text-gray-400">4.9 (128 students)</span>
+                    <span className="text-sm text-gray-400">4.9 (128 students)</span>
                   </div>
                 </div>
               </div>
               <div className="flex gap-2 mb-3">
-                <button className="flex-1 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 flex justify-center"><MessageCircle size={14} className="text-gray-500" /></button>
-                <button className="flex-1 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 flex justify-center"><Phone size={14} className="text-gray-500" /></button>
-                <button className="flex-1 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 flex justify-center"><Mail size={14} className="text-gray-500" /></button>
+                <button className="flex-1 p-1.5 border border-gray-200 hover:bg-gray-50 flex justify-center"><MessageCircle size={14} className="text-gray-500" /></button>
+                <button className="flex-1 p-1.5 border border-gray-200 hover:bg-gray-50 flex justify-center"><Phone size={14} className="text-gray-500" /></button>
+                <button className="flex-1 p-1.5 border border-gray-200 hover:bg-gray-50 flex justify-center"><Mail size={14} className="text-gray-500" /></button>
               </div>
-              <button className="w-full bg-[#f56e45] hover:bg-[#f56e45] text-white text-sm font-bold py-2 rounded-lg transition-colors">Message Counselor</button>
+              <button className="w-full bg-[#f56e45] hover:bg-[#f56e45] text-white text-sm font-bold py-2 transition-colors">Message Counselor</button>
             </div>
           </div>
         </div>

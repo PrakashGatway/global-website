@@ -9,7 +9,10 @@ import {
   Calendar, Building2, Globe, Briefcase, Clock, CreditCard,
   FileCheck, MapPin, Phone, Mail, MessageCircle, Shield,
   Award, BookOpen, HelpCircle, Download, Eye, UploadCloud,
-  X, Check, AlertTriangle, Fingerprint, Camera, Link as LinkIcon
+  X, Check, AlertTriangle, Fingerprint, Camera, Link as LinkIcon,
+  File,
+  CheckCircle2,
+  XCircle
 } from 'lucide-react';
 import axiosInstance, { fileBaseurl } from '@/app/axiosInstance';
 
@@ -20,59 +23,71 @@ export default function VisaJourneyEditPage() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [uploadingFile, setUploadingFile] = useState({ stepId: null, isUploading: false });
+  const [uploadingDocument, setUploadingDocument] = useState(false);
   const [formData, setFormData] = useState({
+    id: "",
     userId: "",
     applicationId: "",
     country: "",
     course: "",
     currentStep: 1,
-    steps: []
+    steps: [],
+    documents: []
   });
+  
   const search = useParams();
   const dataId = search?.id as string;
 
   // Fetch existing visa data
   useEffect(() => {
-    const fetchVisaData = async (id: any) => {
+    const fetchVisaData = async () => {
       try {
-        const response = await axiosInstance.get(`/visa/${id}`);
+        const response = await axiosInstance.get(`/visa/${dataId}`);
         if (response.data.success && response.data.data) {
           const apiData = response.data.data;
-          console.log(apiData, "data");
           setFormData({
+            id: apiData._id,
             userId: apiData.user?.name || "123",
             applicationId: apiData.applicationId || "",
             country: apiData.country || "IT",
             course: apiData.course?.name || "69871a5060ce62ab201683ad",
             currentStep: apiData.currentStep || 1,
-            steps: apiData.steps || getDefaultSteps()
+            steps: apiData.steps || getDefaultSteps(),
+            documents: apiData.documents || []
           });
         } else {
           setFormData({
+            id: dataId,
             userId: "123",
             applicationId: "OS1779510584408",
             country: "IT",
             course: "69871a5060ce62ab201683ad",
             currentStep: 1,
-            steps: getDefaultSteps()
+            steps: getDefaultSteps(),
+            documents: []
           });
         }
       } catch (error) {
         console.error("Error fetching visa data:", error);
+        setError("Failed to load visa data");
         setFormData({
+          id: dataId,
           userId: "123",
           applicationId: "123",
           country: "IT",
           course: "123",
           currentStep: 1,
-          steps: getDefaultSteps()
+          steps: getDefaultSteps(),
+          documents: []
         });
       } finally {
         setLoading(false);
       }
     };
 
-    fetchVisaData(dataId);
+    if (dataId) {
+      fetchVisaData();
+    }
   }, [dataId]);
 
   const getDefaultSteps = () => [
@@ -303,6 +318,155 @@ export default function VisaJourneyEditPage() {
     }
   ];
 
+  // Document Handlers - Updated based on API routes
+  const fetchDocuments = async () => {
+    try {
+      const response = await axiosInstance.get(`/visa/${dataId}/documents`);
+      if (response.data.success && response.data.data) {
+        setFormData(prev => ({
+          ...prev,
+          documents: response.data.data.requirements || response.data.data.documents || []
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+      // Fallback: try to get documents from the visa data
+      try {
+        const visaResponse = await axiosInstance.get(`/visa/${dataId}`);
+        if (visaResponse.data.success && visaResponse.data.data) {
+          setFormData(prev => ({
+            ...prev,
+            documents: visaResponse.data.data.documents || []
+          }));
+        }
+      } catch (fallbackError) {
+        console.error("Error in fallback fetch:", fallbackError);
+        setError("Failed to fetch documents");
+      }
+    }
+  };
+
+  // Create document requirement without file
+  const handleCreateDocumentRequirement = async (documentType, description, isRequired) => {
+    setUploadingDocument(true);
+    
+    try {
+      const documentData = {
+        visaId: dataId,
+        documentType: documentType,
+        description: description,
+        isRequired: isRequired
+      };
+
+      const response = await axiosInstance.post('/visa/document', documentData);
+      
+      if (response.data.success) {
+        await fetchDocuments();
+        setSuccess(`Document requirement "${documentType}" created successfully`);
+        setTimeout(() => setSuccess(null), 3000);
+        return true;
+      } else {
+        throw new Error(response.data.message || "Failed to create document requirement");
+      }
+    } catch (error) {
+      console.error("Error creating document requirement:", error);
+      setError(error.response?.data?.message || "Error creating document requirement");
+      return false;
+    } finally {
+      setUploadingDocument(false);
+    }
+  };
+
+  // Upload document with file
+  const handleDocumentUpload = async (documentType, file, description, isRequired) => {
+    setUploadingDocument(true);
+    
+    try {
+      if (file) {
+        // Upload file first
+        const formDataFile = new FormData();
+        formDataFile.append('file', file);
+        formDataFile.append('visaId', dataId);
+        formDataFile.append('documentType', documentType);
+        
+        const uploadResponse = await axiosInstance.post('/visa/upload', formDataFile, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        
+        if (uploadResponse.data.success) {
+          await fetchDocuments();
+          setSuccess(`Document "${documentType}" uploaded successfully`);
+          setTimeout(() => setSuccess(null), 3000);
+          return true;
+        } else {
+          throw new Error(uploadResponse.data.message || "File upload failed");
+        }
+      } else {
+        // Create document requirement without file
+        return await handleCreateDocumentRequirement(documentType, description, isRequired);
+      }
+    } catch (error) {
+      console.error("Error uploading document:", error);
+      setError(error.response?.data?.message || "Error uploading document");
+      return false;
+    } finally {
+      setUploadingDocument(false);
+    }
+  };
+
+  // Delete document
+  const handleDocumentDelete = async (documentId, documentType) => {
+    if (!confirm('Are you sure you want to delete this document?')) return;
+    
+    try {
+      const response = await axiosInstance.delete(`/visa/${dataId}/documents/${documentId}`);
+      if (response.data.success) {
+        await fetchDocuments();
+        setSuccess("Document deleted successfully");
+        setTimeout(() => setSuccess(null), 3000);
+      } else {
+        throw new Error(response.data.message || "Failed to delete document");
+      }
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      setError(error.response?.data?.message || "Error deleting document");
+    }
+  };
+
+  // Verify document
+  const handleDocumentVerify = async (documentId, status, rejectionReason = '') => {
+    try {
+      const response = await axiosInstance.patch(`/visa/document/${documentId}`, {
+        status: status,
+        rejectionReason: status === 'rejected' ? rejectionReason : undefined,
+        verifiedAt: status === 'verified' ? new Date().toISOString() : undefined
+      });
+      
+      if (response.data.success) {
+        await fetchDocuments();
+        setSuccess(`Document ${status === 'verified' ? 'verified' : 'rejected'} successfully`);
+        setTimeout(() => setSuccess(null), 3000);
+      } else {
+        throw new Error(response.data.message || `Failed to ${status} document`);
+      }
+    } catch (error) {
+      console.error("Error verifying document:", error);
+      setError(error.response?.data?.message || "Error updating document status");
+    }
+  };
+
+  // Download document
+  const handleDocumentDownload = (fileUrl, fileName) => {
+    if (!fileUrl) return;
+    
+    const link = document.createElement('a');
+    link.href = fileBaseurl(fileUrl);
+    link.download = fileName || 'document';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleFileUpload = async (stepId, file) => {
     if (!file) return;
     
@@ -316,8 +480,8 @@ export default function VisaJourneyEditPage() {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
-      if (response.data.success && response.data.docUrl ) {
-        setFormData((prev): any => ({
+      if (response.data.success && response.data.docUrl) {
+        setFormData((prev) => ({
           ...prev,
           steps: prev.steps.map(step =>
             step.id === stepId
@@ -332,7 +496,7 @@ export default function VisaJourneyEditPage() {
               : step
           )
         }));
-        setSuccess(`File uploaded successfully for ${step.label}`);
+        setSuccess(`File uploaded successfully for step ${stepId}`);
         setTimeout(() => setSuccess(null), 3000);
       } else {
         setError("File upload failed");
@@ -351,7 +515,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleStepChange = (stepId, field, value) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step =>
         step.id === stepId
@@ -362,7 +526,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleStepPageChange = (stepId, pageField, value) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step =>
         step.id === stepId
@@ -373,7 +537,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleStepBannerChange = (stepId, bannerField, value) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step =>
         step.id === stepId
@@ -384,7 +548,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleStepProgressChange = (stepId, value) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step =>
         step.id === stepId
@@ -395,7 +559,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleSectionDetailChange = (stepId, sectionName, detailIndex, field, value) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId && step.sections && step.sections[sectionName]) {
@@ -421,7 +585,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const addSectionDetail = (stepId, sectionName) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId && step.sections && step.sections[sectionName]) {
@@ -445,7 +609,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const removeSectionDetail = (stepId, sectionName, detailIndex) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId && step.sections && step.sections[sectionName]) {
@@ -468,7 +632,7 @@ export default function VisaJourneyEditPage() {
 
   // Important Info Handlers
   const addImportantInfo = (stepId) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step =>
         step.id === stepId
@@ -485,7 +649,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleImportantInfoChange = (stepId, index, field, value) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId) {
@@ -499,7 +663,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const removeImportantInfo = (stepId, index) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId) {
@@ -513,7 +677,7 @@ export default function VisaJourneyEditPage() {
 
   // Progress Steps Handlers
   const addProgressStep = (stepId) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step =>
         step.id === stepId
@@ -530,7 +694,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleProgressStepChange = (stepId, index, field, value) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId) {
@@ -544,7 +708,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const removeProgressStep = (stepId, index) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId) {
@@ -558,7 +722,7 @@ export default function VisaJourneyEditPage() {
 
   // Status Timeline Handlers
   const addStatusTimeline = (stepId) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step =>
         step.id === stepId
@@ -575,7 +739,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const handleStatusTimelineChange = (stepId, index, field, value) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId) {
@@ -589,7 +753,7 @@ export default function VisaJourneyEditPage() {
   };
 
   const removeStatusTimeline = (stepId, index) => {
-    setFormData((prev): any => ({
+    setFormData((prev) => ({
       ...prev,
       steps: prev.steps.map(step => {
         if (step.id === stepId) {
@@ -624,11 +788,11 @@ export default function VisaJourneyEditPage() {
         }))
       };
       
-      console.log(payload, "payload");
       const response = await axiosInstance.put(`/visa/${dataId}`, payload);
       
       if (response.data.success) {
         setSuccess("Visa journey data updated successfully!");
+        setTimeout(() => setSuccess(null), 3000);
       } else {
         setError(response.data.message || "Failed to update visa data");
       }
@@ -669,7 +833,6 @@ export default function VisaJourneyEditPage() {
     );
   }, [formData.currentStep, formData.steps]);
 
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -682,7 +845,7 @@ export default function VisaJourneyEditPage() {
   }
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen">
       <main className="max-w-[1600px] mx-auto p-4">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
@@ -699,12 +862,6 @@ export default function VisaJourneyEditPage() {
             </div>
           </div>
           <div className="flex gap-3">
-            {/* <button
-              onClick={() => router.push('/dashboard/visaDetails')}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button> */}
             <button
               onClick={handleSubmit}
               disabled={saving}
@@ -796,7 +953,6 @@ export default function VisaJourneyEditPage() {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#f56e45] focus:border-[#f56e45]"
                 >
-                  {/* {[1, 2, 3, 4, 5, 6].map(step => ( */}
                   {formData.steps.map(step => (
                     <option key={step.id} value={step.id}>Step {step.id}: {step.label}</option>
                   ))}
@@ -812,7 +968,9 @@ export default function VisaJourneyEditPage() {
               <StepEditor
                 key={step.id}
                 step={step}
+                formData={formData}
                 currentStep={formData.currentStep}
+                visaId={dataId}
                 onStepChange={handleStepChange}
                 onPageChange={handleStepPageChange}
                 onBannerChange={handleStepBannerChange}
@@ -822,18 +980,22 @@ export default function VisaJourneyEditPage() {
                 onRemoveSectionDetail={removeSectionDetail}
                 onFileUpload={handleFileUpload}
                 uploadingFile={uploadingFile}
-                // Important Info handlers
                 onAddImportantInfo={addImportantInfo}
                 onImportantInfoChange={handleImportantInfoChange}
                 onRemoveImportantInfo={removeImportantInfo}
-                // Progress Steps handlers
                 onAddProgressStep={addProgressStep}
                 onProgressStepChange={handleProgressStepChange}
                 onRemoveProgressStep={removeProgressStep}
-                // Status Timeline handlers
                 onAddStatusTimeline={addStatusTimeline}
                 onStatusTimelineChange={handleStatusTimelineChange}
                 onRemoveStatusTimeline={removeStatusTimeline}
+                onCreateDocumentRequirement={handleCreateDocumentRequirement}
+                onDocumentUpload={handleDocumentUpload}
+                onDocumentDelete={handleDocumentDelete}
+                onDocumentVerify={handleDocumentVerify}
+                onDocumentDownload={handleDocumentDownload}
+                fetchDocuments={fetchDocuments}
+                uploadingDocument={uploadingDocument}
                 getStatusColor={getStatusColor}
                 getBannerTypeColor={getBannerTypeColor}
               />
@@ -849,6 +1011,8 @@ export default function VisaJourneyEditPage() {
 function StepEditor({ 
   step, 
   currentStep,
+  formData,
+  visaId,
   onStepChange, 
   onPageChange, 
   onBannerChange, 
@@ -867,20 +1031,94 @@ function StepEditor({
   onAddStatusTimeline,
   onStatusTimelineChange,
   onRemoveStatusTimeline,
+  onCreateDocumentRequirement,
+  onDocumentUpload,
+  onDocumentDelete,
+  onDocumentVerify,
+  onDocumentDownload,
+  fetchDocuments,
+  uploadingDocument,
   getStatusColor,
   getBannerTypeColor
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [activeTab, setActiveTab] = useState('basic'); // basic, page, banner, sections, importantInfo, progressSteps, statusTimeline
+  const [activeTab, setActiveTab] = useState('basic');
+  const [newDocumentType, setNewDocumentType] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
+  const [rejectDocumentData, setRejectDocumentData] = useState({ documentId: null, documentType: null });
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [description, setDescription] = useState('');
+  const [isRequired, setIsRequired] = useState(true);
 
   const statusOptions = ["Pending", "In Progress", "Completed", "Approved", "Scheduled", "Under Review by Embassy"];
   const bannerTypeOptions = ["info", "success"];
   const importantInfoTypeOptions = ["info", "warning", "success", "requirement"];
 
   const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      onFileUpload(step.id, file);
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleDocumentUpload = async () => {
+    if (!newDocumentType) {
+      alert('Please select document type');
+      return;
+    }
+
+    const success = await onDocumentUpload(
+      newDocumentType, 
+      selectedFile, 
+      description, 
+      isRequired
+    );
+    
+    if (success) {
+      resetDocumentForm();
+      fetchDocuments(); // Refresh the documents list
+    }
+  };
+
+  const resetDocumentForm = () => {
+    setNewDocumentType('');
+    setSelectedFile(null);
+    setDescription('');
+    setIsRequired(true);
+    const fileInput = document.getElementById(`doc-upload-${step.id}`);
+    if (fileInput) fileInput.value = '';
+  };
+
+  const handleDeleteDocument = async (documentId, documentType) => {
+    await onDocumentDelete(documentId, documentType);
+  };
+
+  const handleVerifyDocument = async (documentId, documentType, status) => {
+    if (status === 'rejected' && !rejectionReason) {
+      alert('Please provide a rejection reason');
+      return;
+    }
+    await onDocumentVerify(documentId, status, rejectionReason);
+    setRejectModalOpen(false);
+    setRejectionReason('');
+    setRejectDocumentData({ documentId: null, documentType: null });
+  };
+
+  const showRejectModal = (documentId, documentType) => {
+    setRejectDocumentData({ documentId, documentType });
+    setRejectModalOpen(true);
+  };
+
+  const getDocumentStatusBadge = (status) => {
+    switch (status) {
+      case 'verified':
+        return 'bg-green-100 text-green-700';
+      case 'rejected':
+        return 'bg-red-100 text-red-700';
+      case 'uploaded':
+        return 'bg-yellow-100 text-yellow-700';
+      default:
+        return 'bg-gray-100 text-gray-600';
     }
   };
 
@@ -939,7 +1177,7 @@ function StepEditor({
         <div className="p-4 space-y-4">
           {/* Tab Navigation */}
           <div className="flex gap-2 border-b pb-2 flex-wrap">
-            {['basic', 'page', 'banner', 'sections', 'importantInfo', 'progressSteps', 'statusTimeline'].map((tab) => (
+            {['basic', 'page', 'banner', 'sections', 'importantInfo', 'progressSteps', 'statusTimeline', 'documents'].map((tab) => (
               <button
                 key={tab}
                 type="button"
@@ -1086,7 +1324,7 @@ function StepEditor({
                   <div className="flex items-center gap-2">
                     <input
                       type="file"
-                      onChange={handleFileSelect}
+                      onChange={(e) => onFileUpload(step.id, e.target.files[0])}
                       accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                       className="hidden"
                       id={`file-upload-${step.id}`}
@@ -1383,6 +1621,192 @@ function StepEditor({
             </div>
           )}
 
+          {/* Documents Tab - Updated with proper API integration */}
+          {activeTab === 'documents' && (
+            <div>
+              {/* Upload New Document Section */}
+              <div className="mb-6 p-4 bg-orange-50 rounded-lg border border-orange-200">
+                <h5 className="text-sm font-medium text-gray-800 mb-3">Add Document Requirement</h5>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="md:col-span-2">
+                    <input
+                      type="text"
+                      placeholder="Document Type (e.g., Passport, Visa Letter, APS Certificate)"
+                      value={newDocumentType}
+                      onChange={(e) => setNewDocumentType(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <textarea
+                      placeholder="Description (e.g., Scanned copy of the first and last page)"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      rows="2"
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="flex items-center gap-2 text-sm text-gray-700">
+                      <input
+                        type="checkbox"
+                        checked={isRequired}
+                        onChange={(e) => setIsRequired(e.target.checked)}
+                        className="rounded border-gray-300 text-[#f56e45] focus:ring-[#f56e45]"
+                      />
+                      Required Document
+                    </label>
+                  </div>
+                  <div>
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                      onChange={handleFileSelect}
+                      id={`doc-upload-${step.id}`}
+                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm file:mr-2 file:px-3 file:py-1 file:bg-orange-50 file:border file:border-orange-300 file:text-orange-600 file:text-sm file:rounded hover:file:bg-orange-100"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Optional: Upload file if available</p>
+                  </div>
+                </div>
+                <div className="mt-3 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleDocumentUpload}
+                    disabled={!newDocumentType || uploadingDocument}
+                    className="px-4 py-2 bg-[#f56e45] text-white text-sm rounded hover:bg-[#e55a35] transition disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {uploadingDocument ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        {selectedFile ? (
+                          <><UploadCloud size={16} /> Upload Document with File</>
+                        ) : (
+                          <><Plus size={16} /> Create Document Requirement</>
+                        )}
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Uploaded Documents List */}
+              <div className="mb-6">
+                <h5 className="text-sm font-medium text-gray-800 mb-3 flex items-center gap-2">
+                  <FileText size={14} /> Document Requirements & Uploads
+                </h5>
+                <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                  {(formData.documents || []).length === 0 ? (
+                    <div className="text-center text-gray-400 py-6 text-sm bg-gray-50 rounded-lg">
+                      No document requirements added yet
+                    </div>
+                  ) : (
+                    formData.documents.map((doc, idx) => (
+                      <div key={doc._id || idx} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <FileText size={16} className="text-[#f56e45]" />
+                              <h6 className="font-medium text-gray-800">{doc.documentType}</h6>
+                              {doc.isRequired && (
+                                <span className="text-xs px-2 py-0.5 rounded bg-red-100 text-red-700">
+                                  Required
+                                </span>
+                              )}
+                              <span className={`text-xs px-2 py-0.5 rounded ${getDocumentStatusBadge(doc.status)}`}>
+                                {doc.status || (doc.fileUrl ? 'uploaded' : 'pending')}
+                              </span>
+                            </div>
+                            
+                            {doc.description && (
+                              <p className="text-sm text-gray-600 mb-2">{doc.description}</p>
+                            )}
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                              <div>
+                                <p className="text-xs text-gray-500">Document Type</p>
+                                <p className="text-gray-700">{doc.documentType}</p>
+                              </div>
+                              {doc.fileName && (
+                                <div>
+                                  <p className="text-xs text-gray-500">File Name</p>
+                                  <p className="text-gray-700">{doc.fileName}</p>
+                                </div>
+                              )}
+                              <div>
+                                <p className="text-xs text-gray-500">Last Updated</p>
+                                <p className="text-gray-700">
+                                  {doc.updatedAt ? new Date(doc.updatedAt).toLocaleDateString() : 
+                                   doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString() : 'N/A'}
+                                </p>
+                              </div>
+                            </div>
+
+                            {doc.rejectionReason && (
+                              <div className="mt-2 p-2 bg-red-50 rounded border border-red-200">
+                                <p className="text-xs text-red-600 font-medium">Rejection Reason:</p>
+                                <p className="text-sm text-red-700">{doc.rejectionReason}</p>
+                              </div>
+                            )}
+
+                            <div className="mt-3 flex gap-2 flex-wrap">
+                              {doc.fileUrl && (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => onDocumentDownload(doc.fileUrl, doc.fileName)}
+                                    className="px-3 py-1 bg-green-50 text-green-600 text-xs rounded hover:bg-green-100 transition flex items-center gap-1"
+                                  >
+                                    <Download size={12} /> Download
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => window.open(fileBaseurl(doc.fileUrl), '_blank')}
+                                    className="px-3 py-1 bg-blue-50 text-blue-600 text-xs rounded hover:bg-blue-100 transition flex items-center gap-1"
+                                  >
+                                    <Eye size={12} /> View
+                                  </button>
+                                </>
+                              )}
+                              {/* {doc.status !== 'verified' && doc.fileUrl && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleVerifyDocument(doc._id, doc.documentType, 'verified')}
+                                  className="px-3 py-1 bg-green-50 text-green-600 text-xs rounded hover:bg-green-100 transition flex items-center gap-1"
+                                >
+                                  <CheckCircle2 size={12} /> Verify
+                                </button>
+                              )}
+                              {doc.status !== 'rejected' && doc.status !== 'verified' && doc.fileUrl && (
+                                <button
+                                  type="button"
+                                  onClick={() => showRejectModal(doc._id, doc.documentType)}
+                                  className="px-3 py-1 bg-red-50 text-red-600 text-xs rounded hover:bg-red-100 transition flex items-center gap-1"
+                                >
+                                  <XCircle size={12} /> Reject
+                                </button>
+                              )} */}
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteDocument(doc._id, doc.documentType)}
+                                className="px-3 py-1 bg-gray-50 text-gray-600 text-xs rounded hover:bg-gray-100 transition flex items-center gap-1"
+                              >
+                                <Trash2 size={12} /> Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Preview Section */}
           <div className="border-t pt-4">
             <h4 className="font-medium text-gray-800 mb-3 flex items-center gap-2">
@@ -1430,41 +1854,46 @@ function StepEditor({
                   </div>
                 </div>
               )}
-              {step.sections?.overview?.details && step.sections.overview.details.length > 0 && (
-                <div className="mt-3 pt-2 border-t border-gray-200">
-                  <p className="text-sm font-medium text-gray-700 mb-1">Overview Preview:</p>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                    {step.sections.overview.details.slice(0, 4).map((detail, idx) => (
-                      <div key={idx} className="flex justify-between text-sm">
-                        <span className="text-gray-500">{detail.label}:</span>
-                        <span className={detail.highlight ? "text-orange-600 font-medium" : "text-gray-700"}>
-                          {detail.value}
-                        </span>
-                      </div>
-                    ))}
-                    {step.sections.overview.details.length > 4 && (
-                      <p className="text-sm text-gray-400 col-span-2 text-center mt-1">
-                        +{step.sections.overview.details.length - 4} more items
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-              {(step.importantInfo && step.importantInfo.length > 0) && (
-                <div className="mt-3 pt-2 border-t border-gray-200">
-                  <p className="text-sm font-medium text-gray-700 mb-1">Important Info Preview:</p>
-                  <div className="space-y-1">
-                    {step.importantInfo.slice(0, 2).map((info, idx) => (
-                      <div key={idx} className="text-sm">
-                        <span className="font-medium">{info.title}:</span> {info.description}
-                      </div>
-                    ))}
-                    {step.importantInfo.length > 2 && (
-                      <p className="text-sm text-gray-400">+{step.importantInfo.length - 2} more items</p>
-                    )}
-                  </div>
-                </div>
-              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reject Modal */}
+      {rejectModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-bold mb-4">Reject Document</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Please provide a reason for rejecting this document:
+            </p>
+            <textarea
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              rows={4}
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm mb-4"
+              placeholder="Enter rejection reason..."
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setRejectModalOpen(false);
+                  setRejectionReason('');
+                  setRejectDocumentData({ documentId: null, documentType: null });
+                }}
+                className="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleVerifyDocument(rejectDocumentData.documentId, rejectDocumentData.documentType, 'rejected')}
+                disabled={!rejectionReason}
+                className="px-4 py-2 bg-red-500 text-white rounded text-sm hover:bg-red-600 disabled:bg-gray-300"
+              >
+                Confirm Rejection
+              </button>
             </div>
           </div>
         </div>
@@ -1472,14 +1901,6 @@ function StepEditor({
     </div>
   );
 }
-
-
-
-
-
-
-
-
 
 
 

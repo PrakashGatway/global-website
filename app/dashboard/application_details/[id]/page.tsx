@@ -1692,6 +1692,7 @@ const [depositDetails, setDepositDetails] = useState({
     offerLetterDocUrl: "",
     documentIssuedOn: "",
     documentValidUntil: "",
+    other : [{key: "",value:""}]
   });
 
 
@@ -1807,6 +1808,7 @@ const [depositDetails, setDepositDetails] = useState({
           validUntil: completedDetails.documentValidUntil,
           offerLetterTitle: completedDetails.offerLetterTitle,
           offerLetterDocUrl: completedDetails.offerLetterDocUrl,
+          other : completedDetails.other
         };
         break;
     }
@@ -2528,6 +2530,62 @@ const [depositDetails, setDepositDetails] = useState({
             </div>
           </div>
         )}
+
+          <div>
+      <div className="flex justify-between items-center mb-3">
+        <h4 className="text-sm font-semibold text-orange-800">Other Details</h4>
+        <button
+          type="button"
+          onClick={() => setCompletedDetails((p) => ({ 
+            ...p, 
+            other: [...p.other, { key: "", value: "" }] 
+          }))}
+          className="text-xs bg-orange-500 text-white px-3 py-1 rounded-lg hover:bg-orange-600 transition-colors flex items-center gap-1"
+        >
+          <Plus size={12} /> Add 
+        </button>
+      </div>
+      <div className="space-y-2">
+        {completedDetails.other.map((detail, index) => (
+          <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
+            <input 
+              type="text" 
+              placeholder="Key (e.g., Account Name, Bank Name)" 
+              value={detail.key}
+              onChange={(e) => {
+                const updated = [...completedDetails.other];
+                updated[index].key = e.target.value;
+                setCompletedDetails((p) => ({ ...p, other: updated }));
+              }}
+              className="px-3 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm" 
+            />
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="Value" 
+                value={detail.value}
+                onChange={(e) => {
+                  const updated = [...completedDetails.other];
+                  updated[index].value = e.target.value;
+                  setCompletedDetails((p) => ({ ...p, other: updated }));
+                }}
+                className="flex-1 px-3 py-2 border border-orange-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 text-sm" 
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const updated = completedDetails.other.filter((_, i) => i !== index);
+                  setCompletedDetails((p) => ({ ...p, other: updated }));
+                }}
+                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
 
           {/* Description Section (common) */}
           <div className="space-y-2">

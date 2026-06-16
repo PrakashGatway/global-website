@@ -203,7 +203,7 @@ export default function DashboardPage() {
       color: "from-green-500 to-green-600",
       icon: FileText,
       link: "/dashboard/settings#doc",
-      trend: "View all"
+      trend: "View all",
     },
     {
       title: "Universities Applied",
@@ -249,8 +249,6 @@ export default function DashboardPage() {
     fetchUniversities();
   }, []);
 
-
-
   useEffect(() => {
     if (!allProfile?.profile) return;
 
@@ -264,7 +262,6 @@ export default function DashboardPage() {
           color: "from-green-500 to-green-600",
           icon: FileText,
           link: "/dashboard/settings#doc",
-
         },
       ];
       const newStepIds = updatedCards.map((s) => s.title);
@@ -347,7 +344,6 @@ export default function DashboardPage() {
       ];
     });
   }, [allProfile]);
-
 
   const getStatusStyle = (status: string) => {
     switch (status) {
@@ -438,113 +434,108 @@ export default function DashboardPage() {
 
                 {/* Stats Cards */}
                 <div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-2">
+                    {/* Documents Uploaded */}
+                    <div className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent">
+                      <div className="grid grid-cols-[35%_65%]">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
+                            <FileText className="w-6 h-6 text-white" />
+                          </div>
+                        </div>
 
-  {/* Documents Uploaded */}
-  <div
-    className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent"
-  >
-    <div className="grid grid-cols-[35%_65%]">
-      <div className="flex items-start justify-between mb-2">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
-          <FileText className="w-6 h-6 text-white" />
-        </div>
-      </div>
+                        <div>
+                          <h3 className="text-xs font-medium text-gray-500">
+                            Documents Uploaded
+                          </h3>
+                          <p className="text-lg font-bold text-gray-900 mb-2">
+                            3
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-      <div>
-        <h3 className="text-xs font-medium text-gray-500">
-          Documents Uploaded
-        </h3>
-        <p className="text-lg font-bold text-gray-900 mb-2">
-          3
-        </p>
-     
-      </div>
-    </div>
-  </div>
+                    {/* Universities Applied */}
+                    <div
+                      onClick={() => navigate.push("/dashboard/universities")}
+                      className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent"
+                    >
+                      <div className="grid grid-cols-[35%_65%]">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg">
+                            <Building2 className="w-6 h-6 text-white" />
+                          </div>
+                        </div>
 
-  {/* Universities Applied */}
-  <div
-    onClick={() => navigate.push("/dashboard/universities")}
-    className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent"
-  >
-    <div className="grid grid-cols-[35%_65%]">
-      <div className="flex items-start justify-between mb-2">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg">
-          <Building2 className="w-6 h-6 text-white" />
-        </div>
-      </div>
+                        <div>
+                          <h3 className="text-xs font-medium text-gray-500">
+                            Universities Applied
+                          </h3>
+                          <p className="text-lg font-bold text-gray-900 mb-2">
+                            4
+                          </p>
+                          <p className="text-xs text-orange-500 flex items-center gap-1">
+                            <TrendingUp className="w-3 h-3" />
+                            View all
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-      <div>
-        <h3 className="text-xs font-medium text-gray-500">
-          Universities Applied
-        </h3>
-        <p className="text-lg font-bold text-gray-900 mb-2">
-          4
-        </p>
-        <p className="text-xs text-orange-500 flex items-center gap-1">
-          <TrendingUp className="w-3 h-3" />
-          View all
-        </p>
-      </div>
-    </div>
-  </div>
+                    {/* Visa Status */}
+                    <div
+                      onClick={() => navigate.push("/dashboard/visa")}
+                      className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent"
+                    >
+                      <div className="grid grid-cols-[35%_65%]">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg">
+                            <FileLock className="w-6 h-6 text-white" />
+                          </div>
+                        </div>
 
-  {/* Visa Status */}
-  <div
-    onClick={() => navigate.push("/dashboard/visa")}
-    className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent"
-  >
-    <div className="grid grid-cols-[35%_65%]">
-      <div className="flex items-start justify-between mb-2">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg">
-          <FileLock className="w-6 h-6 text-white" />
-        </div>
-      </div>
+                        <div>
+                          <h3 className="text-xs font-medium text-gray-500">
+                            Visa Status
+                          </h3>
+                          <p className="text-lg font-bold text-gray-900 mb-2">
+                            Pending
+                          </p>
+                          <p className="text-xs text-orange-500 flex items-center gap-1">
+                            <TrendingUp className="w-3 h-3" />
+                            View Details
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-      <div>
-        <h3 className="text-xs font-medium text-gray-500">
-          Visa Status
-        </h3>
-        <p className="text-lg font-bold text-gray-900 mb-2">
-          Pending
-        </p>
-        <p className="text-xs text-orange-500 flex items-center gap-1">
-          <TrendingUp className="w-3 h-3" />
-          View Details
-        </p>
-      </div>
-    </div>
-  </div>
+                    {/* Applications */}
+                    <div
+                      onClick={() => navigate.push("/dashboard/applications")}
+                      className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent"
+                    >
+                      <div className="grid grid-cols-[35%_65%]">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg">
+                            <FileCheck className="w-6 h-6 text-white" />
+                          </div>
+                        </div>
 
-  {/* Applications */}
-  <div
-    onClick={() => navigate.push("/dashboard/applications")}
-    className="group bg-white rounded-2xl p-4 border border-gray-200 hover:shadow-xl transition-all duration-300 cursor-pointer hover:border-transparent"
-  >
-    <div className="grid grid-cols-[35%_65%]">
-      <div className="flex items-start justify-between mb-2">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg">
-          <FileCheck className="w-6 h-6 text-white" />
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-xs font-medium text-gray-500">
-          Applications
-        </h3>
-        <p className="text-lg font-bold text-gray-900 mb-2">
-          4
-        </p>
-        <p className="text-xs text-orange-500 flex items-center gap-1">
-          <TrendingUp className="w-3 h-3" />
-          View all
-        </p>
-      </div>
-    </div>
-  </div>
-
-</div>
+                        <div>
+                          <h3 className="text-xs font-medium text-gray-500">
+                            Applications
+                          </h3>
+                          <p className="text-lg font-bold text-gray-900 mb-2">
+                            4
+                          </p>
+                          <p className="text-xs text-orange-500 flex items-center gap-1">
+                            <TrendingUp className="w-3 h-3" />
+                            View all
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* Step Tracker - Compact Horizontal View */}
                   <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
@@ -568,10 +559,10 @@ export default function DashboardPage() {
                           <span className="bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
                             {Math.round(
                               (stepTrackerSteps.filter(
-                                (s) => s.status === "completed"
+                                (s) => s.status === "completed",
                               ).length /
                                 stepTrackerSteps.length) *
-                              100
+                                100,
                             )}
                             %
                           </span>
@@ -590,13 +581,14 @@ export default function DashboardPage() {
                           <div
                             className="absolute top-6 left-0 h-[2px] bg-orange-500"
                             style={{
-                              width: `${((stepTrackerSteps.findIndex(
-                                (s) => s.status === "current"
-                              ) +
+                              width: `${
+                                ((stepTrackerSteps.findIndex(
+                                  (s) => s.status === "current",
+                                ) +
                                   1) /
                                   stepTrackerSteps.length) *
                                 100
-                                }%`,
+                              }%`,
                             }}
                           />
 
@@ -617,12 +609,13 @@ export default function DashboardPage() {
                     w-12 h-12 rounded-full bg-white
                     flex items-center justify-center
                     transition-all duration-300
-                    ${isCompleted
-                                        ? "border-2 border-orange-500"
-                                        : isCurrent
-                                          ? "border-[3px] border-primary shadow-[0_0_0_6px_rgba(37,99,235,0.10)]"
-                                          : "border-2 border-[#D1D5DB]"
-                                      }
+                    ${
+                      isCompleted
+                        ? "border-2 border-orange-500"
+                        : isCurrent
+                          ? "border-[3px] border-primary shadow-[0_0_0_6px_rgba(37,99,235,0.10)]"
+                          : "border-2 border-[#D1D5DB]"
+                    }
                   `}
                                   >
                                     {isCompleted ? (
@@ -632,10 +625,11 @@ export default function DashboardPage() {
                                       />
                                     ) : (
                                       <span
-                                        className={`font-semibold text-sm ${isCurrent
+                                        className={`font-semibold text-sm ${
+                                          isCurrent
                                             ? "text-primary"
                                             : "text-[#9CA3AF]"
-                                          }`}
+                                        }`}
                                       >
                                         {idx + 1}
                                       </span>
@@ -644,24 +638,26 @@ export default function DashboardPage() {
 
                                   {/* Step Name */}
                                   <h4
-                                    className={`mt-4 text-xs font-semibold leading-tight ${isCurrent
+                                    className={`mt-4 text-xs font-semibold leading-tight ${
+                                      isCurrent
                                         ? "text-primary"
                                         : isCompleted
                                           ? "text-[#111827]"
                                           : "text-[#6B7280]"
-                                      }`}
+                                    }`}
                                   >
                                     {step.name}
                                   </h4>
 
                                   {/* Status */}
                                   <p
-                                    className={`text-xs mt-1 ${isCurrent
+                                    className={`text-xs mt-1 ${
+                                      isCurrent
                                         ? "text-primary font-medium"
                                         : isCompleted
                                           ? "text-[#374151]"
                                           : "text-[#9CA3AF]"
-                                      }`}
+                                    }`}
                                   >
                                     {isCompleted
                                       ? "Completed"
@@ -690,12 +686,13 @@ export default function DashboardPage() {
                               <div
                                 className={`
                 w-10 h-10 rounded-full flex items-center justify-center
-                ${isCompleted
-                                    ? "bg-green-500 text-white"
-                                    : isCurrent
-                                      ? "bg-blue-500 text-white"
-                                      : "bg-gray-200 text-gray-500"
-                                  }
+                ${
+                  isCompleted
+                    ? "bg-green-500 text-white"
+                    : isCurrent
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 text-gray-500"
+                }
               `}
                               >
                                 {isCompleted ? (
@@ -722,8 +719,6 @@ export default function DashboardPage() {
                           );
                         })}
                       </div>
-
-
                     </div>
 
                     <div className="lg:col-span-3">
@@ -763,12 +758,13 @@ export default function DashboardPage() {
                                 {/* Step Number */}
                                 <div
                                   className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-semibold
-  ${item.status === "completed"
-                                      ? "bg-green-500"
-                                      : item.status === "current"
-                                        ? "bg-orange-500"
-                                        : "bg-red-500"
-                                    }`}
+  ${
+    item.status === "completed"
+      ? "bg-green-500"
+      : item.status === "current"
+        ? "bg-orange-500"
+        : "bg-red-500"
+  }`}
                                 >
                                   {item.step}
                                 </div>
@@ -778,22 +774,24 @@ export default function DashboardPage() {
                                   <div
                                     className={`
                 w-8 h-8 rounded-lg flex items-center justify-center
-                ${isCompleted
-                                        ? "bg-orange-50"
-                                        : isCurrent
-                                          ? "bg-blue-50"
-                                          : "bg-gray-50"
-                                      }
+                ${
+                  isCompleted
+                    ? "bg-orange-50"
+                    : isCurrent
+                      ? "bg-blue-50"
+                      : "bg-gray-50"
+                }
               `}
                                   >
                                     {isCompleted ? (
                                       <CheckCircle className="w-4 h-4 text-orange-500" />
                                     ) : (
                                       <span
-                                        className={`text-sm font-bold ${isCurrent
+                                        className={`text-sm font-bold ${
+                                          isCurrent
                                             ? "text-blue-600"
                                             : "text-gray-400"
-                                          }`}
+                                        }`}
                                       >
                                         {item.step}
                                       </span>
@@ -811,12 +809,13 @@ export default function DashboardPage() {
                                     <span
                                       className={`
                   px-2 py-[2px] rounded text-[10px] font-medium
-                  ${isCompleted
-                                          ? "bg-green-100 text-green-600"
-                                          : isCurrent
-                                            ? "bg-orange-100 text-orange-600"
-                                            : "bg-red-100 text-red-600"
-                                        }
+                  ${
+                    isCompleted
+                      ? "bg-green-100 text-green-600"
+                      : isCurrent
+                        ? "bg-orange-100 text-orange-600"
+                        : "bg-red-100 text-red-600"
+                  }
                 `}
                                     >
                                       {isCompleted
@@ -836,10 +835,11 @@ export default function DashboardPage() {
                                 <div className="w-[140px]">
                                   <div
                                     className={`font-bold text-[18px]
-              ${item.progress === "Not Booked"
-                                        ? "text-red-500"
-                                        : "text-[#111827]"
-                                      }`}
+              ${
+                item.progress === "Not Booked"
+                  ? "text-red-500"
+                  : "text-[#111827]"
+              }`}
                                   >
                                     {item.progress}
                                   </div>
@@ -860,8 +860,6 @@ export default function DashboardPage() {
                                     {item.action}
                                   </button>
                                 </div>
-
-
                               </div>
                             );
                           })}
@@ -869,14 +867,10 @@ export default function DashboardPage() {
                       </div>
                     </div>
                   </div>
-
                 </div>
                 <div>
                   <Rigthsidebar />
-
                 </div>
-
-
               </div>
               <style jsx>{`
                 .custom-scrollbar::-webkit-scrollbar {
