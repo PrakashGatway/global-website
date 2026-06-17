@@ -240,13 +240,13 @@ export default function UniversitiesPage() {
 
   return (
     <div>
-      {hasChecked && selectedCount < 2 && (
-        <CourseShortlist
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          setSelectedCount={setSelectedCount}
-        />
-      )}
+      {/* {hasChecked && selectedCount < 2 && ( 
+         <CourseShortlist
+           isOpen={isOpen}
+           onClose={() => setIsOpen(false)}
+           setSelectedCount={setSelectedCount}
+         />
+       )}*/}
       
       <Suspense fallback={<div>Loading...</div>}>
         <UniversitiesPageClient />
