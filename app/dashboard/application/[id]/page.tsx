@@ -70,7 +70,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
 import { format } from "date-fns";
 import axiosInstance from "@/app/axiosInstance";
 import DynamicFormFields from "@/components/dashboard/application/dynamicform";
@@ -718,23 +718,23 @@ export default function StudentDetailsPage() {
   ];
 
 
-  // const timelinesteps =
-  //   application?.primaryStatus === "Refused"
-  //     ? [
-  //       ...steps.filter(
-  //         (item) =>
-  //           item.step !== "PayEnrollenmentDeposit" &&
-  //           item.step !== "Completed"
-  //       ),
-  //       {
-  //         id: 8,
-  //         title: "Rejection Overview",
-  //         subTitle: "Rejected",
-  //         step: "Refused",
-  //         icon: FileText,
-  //       },
-  //     ]
-  //     : steps;
+  const timelinesteps =
+    application?.primaryStatus === "Refused"
+      ? [
+        ...steps.filter(
+          (item) =>
+            item.step !== "PayEnrollenmentDeposit" &&
+            item.step !== "Completed"
+        ),
+        {
+          id: 8,
+          title: "Rejection Overview",
+          subTitle: "Rejected",
+          step: "Refused",
+          icon: FileText,
+        },
+      ]
+      : steps;
 
 
 
@@ -771,13 +771,18 @@ export default function StudentDetailsPage() {
     }
   };
 
-  const currentprimarystep = steps.step
+  const currentprimarystep = application?.primaryStatus
 
-  const currentStep = steps.find(
-    (item) => item.step === stepchange
-  );
+  const currentStatus = application?.primaryStatus;
 
+const currentStep =
+  timelinesteps.find(
+    item => item.step === currentStatus
+  ) || timelinesteps[0];
 
+ const currentIndex = timelinesteps.findIndex(
+                  item => item.step === currentStatus
+                );
 
 
 
@@ -789,56 +794,35 @@ export default function StudentDetailsPage() {
         <div className="space-y-3 bg-white">
 
           <div className="flex gap-4 items-center mb-10">
-            <h2 className="font-bold text-lg">{steptitle.title}</h2>
-            <span className="bg-orange-100 text-orange-500 p-2 text-sm">{steptitle.subTitle}</span>
+            <h2 className="font-bold text-lg">{currentStep.title}</h2>
+            <span className="bg-orange-100 text-orange-500 p-2 text-sm">{currentStep.subTitle}</span>
           </div>
 
 
-          {/* Staff Details */}
-          {/* <div className="mt-2 w-full border-t pt-5 px-8 grid grid-cols-3 gap-10 mt-8 pt-8 border-t">
-              <div>
-                <h4 className="font-semibold underline text-gray-700 mb-3">Case Owner:</h4>
-                <div className="space-y-2 text-sm">
-                  <p><span className="font-semibold">Name :</span> {application?.caseOwner?.name || "N/A"}</p>
-                </div>
-              </div>
-              <div>
-                <h4 className="font-semibold underline text-gray-700 mb-3">URM Details:</h4>
-                <div className="space-y-2 text-sm">
-                  <p><span className="font-semibold">Name:</span> {application?.urm?.name || "N/A"}</p>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">Number :</span>
-                    <span>{application?.urm?.phone || "N/A"}</span>
-                    <Phone size={16} className="text-gray-500" />
-                  </div>
-                </div>
-              </div>
-              <div>
-                <h4 className="font-semibold underline text-gray-700 mb-3">SRM Details:</h4>
-                <div className="space-y-2 text-sm">
-                  <p><span className="font-semibold">Name :</span> {application?.srm?.name || "N/A"}</p>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">Mobile No :</span>
-                    <span>{application?.srm?.phone || "N/A"}</span>
-                    <Phone size={16} className="text-gray-500" />
-                  </div>
-                </div>
-              </div>
-            </div> */}
+         
+         
 
           <div className="w-full py-1">
 
 
             <div className="relative flex justify-between items-start">
-              <div className="absolute top-7 left-14 right-5 h-[1px] bg-gray-300 z-0" />
+              {/* Background Line */}
+              <div className="absolute top-7 left-14 right-5 h-[2px] bg-gray-300 z-0" />
+              
 
-              {steps.map((step, index) => {
-                const currentStatus =
-                  steps?.step
+              {/* Progress Line */}
+              <div
+                className="absolute top-7 left-14 h-[2px] bg-orange-500 z-0 transition-all duration-500"
+                style={{
+                  width: `${(currentIndex / (timelinesteps.length - 1)) * 90}%`,
+                  right: "auto",
+                }}
+              />
 
-                const currentIndex = steps.findIndex(
-                  item => item.step === currentStep
-                );
+              {timelinesteps.map((step, index) => {
+               
+
+               
 
 
 
@@ -860,9 +844,9 @@ export default function StudentDetailsPage() {
                       <div className="relative flex flex-col items-center">
                         {/* Active Circle */}
                         <div className="relative z-20">
-                          <div className="absolute inset-0 bg-orange-400/20 scale-125" />
+                          {/* <div className="absolute inset-0 bg-orange-400/20 scale-125" /> */}
 
-                          <div className="w-14 h-14 border border-orange-500 bg-white flex items-center justify-center shadow-sm">
+                          <div className="w-14 h-14 rounded-full border border-orange-500 bg-white flex items-center justify-center shadow-sm">
                             {step.icon ? (
                               <step.icon className="w-6 h-6 text-orange-500" />
                             ) : (
@@ -1066,13 +1050,14 @@ export default function StudentDetailsPage() {
                       transition={{ duration: 0.3 }}
                       className="col-span-9"
                     >
+                      <Suspense fallback={<div>Loading...</div>}>
                       <ProfileTabs
                         studentId={profile?._id}
                         user={profile}
                         profile={allProfile?.profile}
                         countriesList={CountriesList}
                         onUpdate={updateProfile}
-                      />
+                      /></Suspense>
                     </motion.div>
                   ) : (
                     <motion.div
@@ -1097,7 +1082,7 @@ export default function StudentDetailsPage() {
                                     Application Started
                                   </h2>
 
-                                  <span className="px-3 py-1 bg-green-100 text-green-700  text-sm font-medium">
+                                  <span className="px-3 py-1 bg-orange-100 text-orange-700  text-sm font-medium">
                                     {application?.primaryStatus}
                                   </span>
                                 </div>
@@ -1107,7 +1092,7 @@ export default function StudentDetailsPage() {
                                 </p>
 
                                 <div className="flex items-center gap-3 mt-2">
-                                  <Calendar className="w-5 h-5 text-green-600" />
+                                  <Calendar className="w-5 h-5 text-orange-600" />
 
                                   <div>
                                     <p className="text-sm text-gray-500">
@@ -1408,7 +1393,7 @@ export default function StudentDetailsPage() {
                       )}
 
                       {activeMenu === "Review & Submit" && (
-                        <div className="border border-gray-300 p-2">
+                        <div className="border border-gray-300 p-6">
                           <div className="max-w-7xl mx-auto">
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

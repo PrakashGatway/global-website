@@ -56,7 +56,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                     Under OOSHAS Review
                   </h2>
 
-                  <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-700 ">
+                  <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-700 ">
                     In Progress
                   </span>
                 </div>
@@ -68,7 +68,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
 
                 <div className="flex flex-col md:flex-row gap-4 mt-4">
                   <div className="border px-4 py-3">
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-gray-500">
                       Review started
                     </p>
                     <p className="font-semibold">
@@ -90,7 +90,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                   </div>
 
                   <div className="border px-4 py-3">
-                    <p className="text-xs text-gray-500">
+                    <p className="text-sm text-gray-500">
                       Expected completion
                     </p>
                     <p className="font-semibold">
@@ -149,7 +149,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                     </div>
 
                     <span
-                      className={`px-3 py-1 text-xs font-medium ${getStatusStyle(
+                      className={`px-3 py-1 text-sm font-medium ${getStatusStyle(
                         item.status
                       )}`}
                     >
@@ -224,7 +224,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
 
                       <td className="py-3">
                         <span
-                          className={`px-3 py-1 text-xs font-medium ${getStatusStyle(
+                          className={`px-3 py-1 text-sm font-medium ${getStatusStyle(
                             doc.status
                           )}`}
                         >
@@ -248,7 +248,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                           {/* View */}
                           <button
                             onClick={() => setPreviewImage(`${fileBaseurl(doc.url)}`)}
-                            className="flex items-center gap-1 px-3 py-1 text-xs font-medium text-orange-600 bg-orange-50 border border-orange-100 hover:bg-orange-100 transition"
+                            className="flex items-center gap-1 px-3 py-1 text-sm font-medium text-orange-600 bg-orange-50 border border-orange-100 hover:bg-orange-100 transition"
                           >
                             <Eye className="w-3 h-3" />
                             View
@@ -287,7 +287,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                   </h4>
 
                   <span
-                    className={`px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap ${getStatusStyle(
+                    className={`px-2.5 py-1 text-sm font-medium rounded-full whitespace-nowrap ${getStatusStyle(
                       doc.status
                     )}`}
                   >

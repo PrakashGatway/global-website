@@ -36,22 +36,22 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
     }
   };
 
-  // const searchParams = useSearchParams()
+  const searchParams = useSearchParams()
 
-  const activetab = "" 
-  // searchParams.get("tab")
+  const activetab = searchParams.get("tab")
+  
 
- useEffect(() => {
-  if (activetab === "academic") {
-    setActiveInnerTab("academic");
-  }
-  if(activetab==="work"){
-    setActiveInnerTab("work")
-  }
-  if(activetab==="tests"){
-    setActiveInnerTab("tests")
-  }
-}, [activetab]);
+  useEffect(() => {
+    if (activetab === "academic") {
+      setActiveInnerTab("academic");
+    }
+    if (activetab === "work") {
+      setActiveInnerTab("work")
+    }
+    if (activetab === "tests") {
+      setActiveInnerTab("tests")
+    }
+  }, [activetab]);
 
   const goToPreviousStep = () => {
     const currentIndex = TAB_ORDER.indexOf(activeInnerTab);
@@ -74,6 +74,7 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
           maritalStatus: user?.maritalStatus || "",
           firstLanguage: user?.firstLanguage || "",
           nationality: user?.nationality || "",
+          familyDetails: user?.familyDetails
         },
         academic: {
           highestAcademic: profile?.highestAcademic || {},
@@ -116,6 +117,8 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
             exit={{ opacity: 0, x: -10 }}
             transition={{ duration: 0.2 }}
           >
+
+
             {activeInnerTab === "personal" && (
               <PersonalInfoTab
                 user={user}
@@ -137,7 +140,9 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
                       issueDate: data.passportIssueDate || user.passportDetail?.issueDate,
                       expiryDate: data.passportExpiry || user.passportDetail?.expiryDate,
                       issueCountry: data.passportIssueCountry || user.passportDetail?.issueCountry
-                    }
+                    },
+                    // ADD THIS LINE TO SAVE FAMILY DETAILS
+                    familyDetails: data.familyDetails
                   };
                   await axiosInstance.put(`/users/${studentId}`, payload);
                   toast.success("Personal information updated");
@@ -684,7 +689,6 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
 
   console.log("currentAddress", user);
 
-
   useEffect(() => {
     setFormData({
       name: user?.name || "",
@@ -698,11 +702,20 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
       firstLanguage: user?.firstLanguage || "",
       nationality: user?.nationality || "",
       currentAddress: profile?.currentAddress,
-      permanentAddress: profile&&profile?.permanentAddress,
+      permanentAddress: profile && profile?.permanentAddress,
       passportNumber: user?.passportNumber || "",
       passportExpiry: user?.passportDetail?.expiryDate || "",
       passportIssueDate: user?.passportDetail?.issueDate || "",
-      passportIssueCountry: user?.passportDetail?.issueCountry || ""
+      passportIssueCountry: user?.passportDetail?.issueCountry || "",
+      // Initialize Family Details from user or profile object (adjust based on your actual API structure)
+      familyDetails: {
+        motherName: user?.familyDetails?.motherName || profile?.familyDetails?.motherName || "",
+        motherPhone: user?.familyDetails?.motherPhone || profile?.familyDetails?.motherPhone || "",
+        motherOccupation: user?.familyDetails?.motherOccupation || profile?.familyDetails?.motherOccupation || "",
+        fatherName: user?.familyDetails?.fatherName || profile?.familyDetails?.fatherName || "",
+        fatherPhone: user?.familyDetails?.fatherPhone || profile?.familyDetails?.fatherPhone || "",
+        fatherOccupation: user?.familyDetails?.fatherOccupation || profile?.familyDetails?.fatherOccupation || "",
+      }
     });
   }, [user, profile]);
 
@@ -740,6 +753,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
       [section]: { ...prev[section], [field]: value }
     }));
   };
+
   const SectionHeader = ({ title, sectionName }: { title: string; sectionName: string }) => (
     <div className="flex justify-between items-center mb-4">
       <h3 className="text-lg font-medium text-gray-900">{title}</h3>
@@ -771,6 +785,8 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
                 passportIssueDate: formData.passportIssueDate,
                 passportIssueCountry: formData.passportIssueCountry,
               };
+            } else if (sectionName === 'familyDetails') {
+              sectionData = { familyDetails: formData.familyDetails };
             }
             handleSectionSave(sectionName, sectionData);
           } else {
@@ -1122,6 +1138,99 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             type="select"
             options={countriesList.map((c: any) => c.name)}
             onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+        </div>
+      </div>
+
+      {/* Section 5: Family Details (New) */}
+      <div className="p-4 bg-white border border-gray-200">
+        <SectionHeader title="Family Details" sectionName="familyDetails" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+          {/* Mother's Details */}
+          <div className="col-span-full mt-2 mb-2 pb-2 border-b border-gray-100">
+            <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Mother's Information</h4>
+          </div>
+
+          <Field
+            label="Mother's Name"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={formData.familyDetails?.motherName}
+            icon={User}
+            fieldKey="familyDetails.motherName"
+            section="familyDetails"
+            onChange={(k: string, v: any) => updateNested("familyDetails", "motherName", v)}
+          />
+          <Field
+            label="Mother's Phone"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={formData.familyDetails?.motherPhone}
+            icon={Phone}
+            fieldKey="familyDetails.motherPhone"
+            section="familyDetails"
+            type="tel"
+            onChange={(k: string, v: any) => updateNested("familyDetails", "motherPhone", v)}
+          />
+          <Field
+            label="Mother's Occupation"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={formData.familyDetails?.motherOccupation}
+            icon={Briefcase}
+            fieldKey="familyDetails.motherOccupation"
+            section="familyDetails"
+            onChange={(k: string, v: any) => updateNested("familyDetails", "motherOccupation", v)}
+          />
+
+          {/* Father's Details */}
+          <div className="col-span-full mt-4 mb-2 pb-2 border-b border-gray-100">
+            <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Father's Information</h4>
+          </div>
+
+          <Field
+            label="Father's Name"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={formData.familyDetails?.fatherName}
+            icon={User}
+            fieldKey="familyDetails.fatherName"
+            section="familyDetails"
+            onChange={(k: string, v: any) => updateNested("familyDetails", "fatherName", v)}
+          />
+          <Field
+            label="Father's Phone"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={formData.familyDetails?.fatherPhone}
+            icon={Phone}
+            fieldKey="familyDetails.fatherPhone"
+            section="familyDetails"
+            type="tel"
+            onChange={(k: string, v: any) => updateNested("familyDetails", "fatherPhone", v)}
+          />
+          <Field
+            label="Father's Occupation"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={formData.familyDetails?.fatherOccupation}
+            icon={Briefcase}
+            fieldKey="familyDetails.fatherOccupation"
+            section="familyDetails"
+            onChange={(k: string, v: any) => updateNested("familyDetails", "fatherOccupation", v)}
           />
         </div>
       </div>
@@ -1664,8 +1773,8 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                     }
                   }}
                   className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium  transition-all ${isEditing
-                      ? "bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-md"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    ? "bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-md"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
                 >
                   {isEditing ? <><Save size={12} /> Save</> : <><Edit2 size={12} /> Edit</>}

@@ -243,7 +243,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   <div className="flex-1">
                     {/* Heading */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
-                      <h2 className="text-xl md:text-lg font-bold text-slate-900">
+                      <h2 className="text-lg md:text-lg font-bold text-slate-900">
                         Congratulations! Your Confirmation Letter is Ready
                       </h2>
 
@@ -339,7 +339,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           Application Submitted to School
                         </h2>
 
-                        <span className="px-3 py-1  bg-orange-100 text-orange-700 text-xs font-semibold">
+                        <span className="px-3 py-1  bg-orange-100 text-orange-700 text-sm font-semibold">
                           Completed
                         </span>
                       </div>
@@ -411,7 +411,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                       <div className="flex-1">
                         {/* Header */}
                         <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
-                          <h2 className="text-xl md:text-lg font-bold text-slate-900">
+                          <h2 className="text-lg md:text-lg font-bold text-slate-900">
                             Awaiting School Response
                           </h2>
 
@@ -665,7 +665,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                             </div>
 
                             <div className="flex items-center gap-2">
-                              <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                              <span className="px-2 py-1 text-sm font-medium bg-green-100 text-green-700 rounded-full">
                                 Paid
                               </span>
 
@@ -698,7 +698,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                               </div>
 
                               <div>
-                                <p className="text-xs text-slate-500 mb-1">
+                                <p className="text-sm text-slate-500 mb-1">
                                   {new Date(item.createdAt).toLocaleString("en-IN", {
                                     day: "2-digit",
                                     month: "short",
@@ -732,7 +732,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   <div className="bg-white border border-slate-200  overflow-hidden">
                     <div className="border-b">
                       <div className="flex">
-                        <button className="px-6 py-4 text-sm font-semibold text-slate-700">
+                        <button className="px-6 py-4 text-base text-sm font-semibold text-slate-700">
                           What Happens Next?
                         </button>
                       </div>
@@ -751,7 +751,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                       <h4 className="font-semibold text-sm text-slate-400">
                                         Offer Received
                                       </h4>
-                                      <p className="text-xs text-slate-400 mt-1">
+                                      <p className="text-sm text-slate-400 mt-1">
                                         Pending
                                       </p>
                                     </div>
@@ -763,7 +763,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                       <h4 className="font-semibold text-sm text-slate-400">
                                         Awaiting School Response
                                       </h4>
-                                      <p className="text-xs text-slate-400 mt-1">
+                                      <p className="text-sm text-slate-400 mt-1">
                                         Pending
                                       </p>
                                     </div>
@@ -800,7 +800,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                   {item.newValue || item.action.replaceAll("_", " ")}
                                 </h4>
 
-                                <p className="text-xs text-slate-500 mt-1">
+                                <p className="text-sm text-slate-500 mt-1">
                                   {new Date(item.createdAt).toLocaleString("en-IN", {
                                     day: "2-digit",
                                     month: "short",
@@ -811,7 +811,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                   })}
                                 </p>
 
-                                <p className="text-xs text-slate-500 mt-1 max-w-xs">
+                                <p className="text-sm text-slate-500 mt-1 max-w-xs">
                                   {item.description}
                                 </p>
                               </div>
@@ -833,7 +833,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                     <h4 className="font-semibold text-sm text-slate-400">
                                       Pay Enrollenment Deposit
                                     </h4>
-                                    <p className="text-xs text-slate-400 mt-1">
+                                    <p className="text-sm text-slate-400 mt-1">
                                       Pending
                                     </p>
                                   </div>
@@ -846,7 +846,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                     <h4 className="font-semibold text-sm text-slate-400">
                                       Offer Received
                                     </h4>
-                                    <p className="text-xs text-slate-400 mt-1">
+                                    <p className="text-sm text-slate-400 mt-1">
                                       Pending
                                     </p>
                                   </div>
@@ -880,7 +880,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                   {item.newValue || item.action.replaceAll("_", " ")}
                                 </h4>
 
-                                <p className="text-xs text-slate-500 mt-1">
+                                <p className="text-sm text-slate-500 mt-1">
                                   {new Date(item.createdAt).toLocaleString("en-IN", {
                                     day: "2-digit",
                                     month: "short",
@@ -891,7 +891,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                   })}
                                 </p>
 
-                                <p className="text-xs text-slate-500 mt-1 max-w-xs">
+                                <p className="text-sm text-slate-500 mt-1 max-w-xs">
                                   {item.description}
                                 </p>
                               </div>
@@ -952,20 +952,20 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                     <div className="flex-1">
 
                       <div className="flex flex-wrap items-center gap-3">
-                        <h2 className="text-2xl font-bold text-slate-800">
+                        <h2 className="text-lg font-bold text-slate-800">
                           {offerLetter?.name || ""}
                         </h2>
 
-                        <span className="px-3 py-1  bg-green-100 text-green-700 text-xs font-medium">
+                        <span className="px-3 py-1  bg-green-100 text-green-700 text-sm font-medium">
                           Offer Received
                         </span>
                       </div>
 
-                      <p className="text-slate-600 mt-2">
+                      <p className="text-slate-600 mt-2 text-sm">
                         {offerLetter?.description || ""}
                       </p>
 
-                      <p className="text-slate-600">
+                      <p className="text-slate-600 text-sm">
                         Please review your offer letter and the next steps below.
                       </p>
 
@@ -977,7 +977,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
 
                   <div className="border p-4">
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm text-slate-500">
                       Offer Date
                     </p>
                     <p className="font-semibold">
@@ -995,7 +995,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   </div>
 
                   <div className="border  p-4">
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm text-slate-500">
                       Offer Status
                     </p>
                     <p className="font-semibold text-red-600">
@@ -1004,7 +1004,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   </div>
 
                   <div className="border p-4">
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm text-slate-500">
                       Respond By
                     </p>
 
@@ -1035,7 +1035,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   </div>
 
                   <div className="border p-4">
-                    <p className="text-xs text-slate-500">
+                    <p className="text-sm text-slate-500">
                       Issued By
                     </p>
                     <p className="font-semibold">
@@ -1099,7 +1099,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                               {step.title}
                             </h4>
 
-                            <p className="text-xs text-slate-400">
+                            <p className="text-sm text-slate-400">
                               {step.description}
                             </p>
                           </div>
@@ -1116,7 +1116,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                               {item.newValue || item.action.replaceAll("_", " ")}
                             </h4>
 
-                            <p className="text-xs text-slate-500">
+                            <p className="text-sm text-slate-500">
                               {item.description}
                             </p>
                           </div>
@@ -1210,7 +1210,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                 Respond By
                               </h4>
 
-                              <p className="text-orange-500 text-xs font-medium">
+                              <p className="text-orange-500 text-sm font-medium">
                                 14 Days Left
                               </p>
                             </div>
@@ -1231,7 +1231,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                               </h4>
                             </div>
 
-                            <p className="text-xs text-slate-500">
+                            <p className="text-sm text-slate-500">
                               {statusDetail?.find((item)=> item?.status === "PayEnrollenmentDeposit")?.metadata?.deposit?.paymentDeadline}
                             </p>
                           </div>
@@ -1254,7 +1254,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                         with acceptance, visa or other queries.
                       </p>
 <Link href={"/dashboard/support"}>
-                      <button className="mt-4 w-full py-3  border border-orange-200 text-orange-600 font-medium text-xs">
+                      <button className="mt-4 w-full py-3  border border-orange-200 text-orange-600 font-medium text-sm">
                         Contact Counselor
                       </button></Link>
 
@@ -1306,7 +1306,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
           {showActionModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <div className="bg-white rounded-xl w-full max-w-lg p-6 animate-in fade-in zoom-in duration-300">
-                <h3 className="text-xl font-semibold text-slate-800">
+                <h3 className="text-lg font-semibold text-slate-800">
                   Offer Letter Decision
                 </h3>
 
@@ -1386,7 +1386,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
           {visa && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-300">
-                <h2 className="text-xl font-bold text-center text-gray-800 mb-2">
+                <h2 className="text-lg font-bold text-center text-gray-800 mb-2">
                   Visa Information
                 </h2>
 
@@ -1445,7 +1445,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
           {hasvisa && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-300">
-                <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">
+                <h3 className="text-lg font-semibold text-gray-800 mb-6 text-center">
                   Visa Details
                 </h3>
 
@@ -1593,7 +1593,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
             {/* Summary */}
             <div className="bg-white p-4  border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-3">
-                <h4 className="text-sm font-bold text-gray-800">Application Summary</h4>
+                <h4 className="text-base font-bold text-gray-800">Application Summary</h4>
               </div>
               <div className="space-y-1.5 text-sm">
                 <div className="flex justify-between border-b border-gray-50 pb-1.5">
@@ -1631,7 +1631,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
             {/* Documents */}
             <div className="bg-white border border-slate-200  p-5">
               <div className="flex items-center justify-between mb-5">
-                <h3 className="font-semibold text-slate-800 text-sm">
+                <h3 className="font-semibold text-slate-800 text-base">
                   Documents Submitted
                 </h3>
 
@@ -1669,7 +1669,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                         </div>
 
                         <span
-                          className={`text-xs font-medium capitalize ${doc.status === "approved"
+                          className={`text-sm font-medium capitalize ${doc.status === "approved"
                             ? "text-green-600"
                             : doc.status === "pending"
                               ? "text-orange-600"

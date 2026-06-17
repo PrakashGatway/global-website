@@ -154,7 +154,7 @@ export default function Comments({ application, profile }) {
             </div>
             <button
                 onClick={() => setIsCommentModalOpen(true)}
-                className="bg-[#F26D44] hover:bg-orange-600 text-white font-semibold px-3 py-2 rounded-lg transition-colors text-xs whitespace-nowrap flex-shrink-0"
+                className="bg-[#F26D44] hover:bg-orange-600 text-white font-semibold px-3 py-2 rounded-lg transition-colors text-sm whitespace-nowrap flex-shrink-0"
             >
                 Send Message
             </button>
@@ -192,14 +192,14 @@ export default function Comments({ application, profile }) {
                   : item.userType || "Counselor"}
               </h4>
 
-              <p className="text-xs text-gray-500">
+              <p className="text-sm text-gray-500">
                 {formatDate(item.createdAt)}
               </p>
             </div>
           </div>
 
           <span
-            className={`text-xs px-2 py-1 rounded-full font-medium ${
+            className={`text-sm px-2 py-1 rounded-full font-medium ${
               item?.isRead
                 ? "bg-green-50 text-green-700"
                 : "bg-orange-50 text-orange-700"
@@ -230,7 +230,7 @@ export default function Comments({ application, profile }) {
                 href={`https://api.ooshasglobal.com${att.url}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 hover:bg-gray-100"
+                className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-100"
               >
                 <Paperclip className="w-3 h-3" />
                 {att.name}
@@ -241,7 +241,7 @@ export default function Comments({ application, profile }) {
 
         {/* Footer */}
         <div className="flex justify-between items-center  border-t border-gray-100">
-          <span className="text-xs text-gray-500">
+          <span className="text-sm text-gray-500">
             Status:{" "}
             <span className="font-medium text-gray-700">
               {item.primaryStatus || "Processed"}
@@ -254,7 +254,7 @@ export default function Comments({ application, profile }) {
                 setIsCommentModalOpen(true);
                 setMessageSubject(item?.extra_content?.subject);
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-medium rounded-lg transition"
+              className="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition"
             >
               <SendHorizonal className="w-3 h-3" />
               Reply
@@ -269,7 +269,7 @@ export default function Comments({ application, profile }) {
       <h3 className="text-sm font-medium text-gray-700">
         No Messages Yet
       </h3>
-      <p className="text-xs text-gray-500 mt-1">
+      <p className="text-sm text-gray-500 mt-1">
         Messages from counselors will appear here.
       </p>
     </div>
@@ -283,27 +283,27 @@ export default function Comments({ application, profile }) {
             {/* Table Header with Column Lines */}
             <div className="grid grid-cols-12 gap-0 bg-gray-100 border-b border-gray-300">
                 <div className="col-span-2 px-4 py-3 border-r border-gray-300">
-                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <span className="text-sm font-bold text-gray-700 uppercase tracking-wider">
                         Date & Subject
                     </span>
                 </div>
                 <div className="col-span-4 px-4 py-3 border-r border-gray-300">
-                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <span className="text-sm font-bold text-gray-700 uppercase tracking-wider">
                         Message
                     </span>
                 </div>
                 <div className="col-span-3 px-4 py-3 border-r border-gray-300">
-                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <span className="text-sm font-bold text-gray-700 uppercase tracking-wider">
                         Status
                     </span>
                 </div>
                 <div className="col-span-2 px-4 py-3 border-r border-gray-300">
-                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <span className="text-sm font-bold text-gray-700 uppercase tracking-wider">
                         From
                     </span>
                 </div>
                 <div className="col-span-1 px-4 py-3">
-                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <span className="text-sm font-bold text-gray-700 uppercase tracking-wider">
                         Action
                     </span>
                 </div>
@@ -326,14 +326,7 @@ export default function Comments({ application, profile }) {
                                     <div className="text-sm font-semibold text-gray-900">
                                         {formatDate(item.createdAt)}
                                     </div>
-                                    <div className="mt-2">
-                                        <div className="text-[10px] font-semibold text-gray-400 uppercase">
-                                            Subject
-                                        </div>
-                                        <div className="text-xs font-medium text-gray-700 break-words mt-0.5">
-                                            {item?.extra_content?.subject || "—"}
-                                        </div>
-                                    </div>
+                                   
                                 </div>
                             </div>
 
@@ -350,7 +343,7 @@ export default function Comments({ application, profile }) {
                                                 href={`https://api.ooshasglobal.com${att.url}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-1 text-blue-500 text-xs bg-blue-50 px-2 py-0.5 rounded"
+                                                className="inline-flex items-center gap-1 text-blue-500 text-sm bg-blue-50 px-2 py-0.5 rounded"
                                             >
                                                 📎 {att.name}
                                             </a>
@@ -366,23 +359,11 @@ export default function Comments({ application, profile }) {
                                         <div className="text-[10px] font-semibold text-gray-400 uppercase">
                                             Primary
                                         </div>
-                                        <div className="text-xs text-gray-600 mt-0.5">
+                                        <div className="text-sm text-gray-600 mt-0.5">
                                             {item.primaryStatus || "Application Processed"}
                                         </div>
                                     </div>
-                                    <div>
-                                        <div className="text-[10px] font-semibold text-gray-400 uppercase">
-                                            Message
-                                        </div>
-                                        <span className={`inline-flex items-center gap-1 mt-0.5 text-xs font-medium ${
-                                            item?.isRead ? "text-green-600" : "text-red-600"
-                                        }`}>
-                                            <span className={`w-1.5 h-1.5 rounded-full ${
-                                                item?.isRead ? "bg-green-500" : "bg-red-500"
-                                            }`}></span>
-                                            {item?.isRead ? "Read" : "Unread"}
-                                        </span>
-                                    </div>
+                                 
                                 </div>
                             </div>
 
@@ -392,7 +373,7 @@ export default function Comments({ application, profile }) {
                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                                         item.userType === "student" ? "bg-blue-100" : "bg-orange-100"
                                     }`}>
-                                        <span className={`text-xs font-bold ${
+                                        <span className={`text-sm font-bold ${
                                             item.userType === "student" ? "text-blue-600" : "text-orange-600"
                                         }`}>
                                             {item.userType === "student" ? "ME" : item.userType?.charAt(0)?.toUpperCase()}
@@ -402,7 +383,7 @@ export default function Comments({ application, profile }) {
                                         <div className="text-sm font-semibold text-gray-800">
                                             {item.userType === "student" ? "You" : item.userType || "Counselor"}
                                         </div>
-                                        <div className="text-xs text-gray-500">
+                                        <div className="text-sm text-gray-500">
                                             {item.userType === "student" ? "Student" : "Counselor"}
                                         </div>
                                     </div>
@@ -417,13 +398,13 @@ export default function Comments({ application, profile }) {
                                             setIsCommentModalOpen(true);
                                             setMessageSubject(item?.extra_content?.subject);
                                         }}
-                                        className="px-3 py-1.5 bg-[#F26D44] hover:bg-orange-600 text-white text-xs font-medium rounded-lg transition-colors whitespace-nowrap"
+                                        className="px-3 py-1.5 bg-[#F26D44] hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
                                     >
                                         Reply
                                     </button>
                                 )}
                                 {item.userType === "student" && (
-                                    <span className="text-xs text-gray-400">—</span>
+                                    <span className="text-sm text-gray-400">—</span>
                                 )}
                             </div>
                         </motion.div>
@@ -473,7 +454,7 @@ export default function Comments({ application, profile }) {
                                                   New Message
                                                 </h3>
 
-                                                <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
+                                                <div className="flex items-center gap-3 mt-1 text-sm text-slate-400">
                                                   <span>To</span>
                                                   <span className="font-medium text-slate-700">
                                                     Ooshas
@@ -568,7 +549,7 @@ export default function Comments({ application, profile }) {
 
                                                     <div
                                                       key={index}
-                                                      className="flex items-center gap-1.5 bg-slate-100 rounded-full px-3 py-1 text-xs text-slate-600"
+                                                      className="flex items-center gap-1.5 bg-slate-100 rounded-full px-3 py-1 text-sm text-slate-600"
                                                     >
 
                                                       <svg

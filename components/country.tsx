@@ -1,7 +1,7 @@
 "use client"
 
 import UniversityCard from '@/components/UniversityCard'
-import { PhoneIcon } from 'lucide-react'
+import { ArrowRight, PhoneIcon } from 'lucide-react'
 import FAQSection from '@/components/faqPage'
 import { DynamicLucideIcon } from '@/components/DynamicLucideIcon'
 import ImageTestimonial from './ImageTestimonial'
@@ -286,12 +286,11 @@ const WhyChooseUsSection = ({ data }) => {
   return (
     <section className="w-full bg-[#ef6a42] py-10 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
-        <Tag data={data?.tag} css="text-white text-xl sm:text-3xl md:text-4xl mb-2 font-bold relative inline-block" text={data?.title?.split("||")[0]} />
-        <span className="block w-12 sm:w-16 h-1 bg-yellow-400 mt-2 sm:mt-3"></span>
-        <div className="mt-6 sm:mt-8">
-          <ExpandableText lines={5} htmlContent={data?.subtitle} />
+        <Tag data={data?.tag} css="text-white text-xl sm:text-3xl md:text-4xl font-bold relative inline-block" text={data?.title?.split("||")[0]} />
+        <div className="">
+          <ExpandableText lines={4} htmlContent={data?.subtitle} />
         </div>
-        <div className="mt-4 text-center">
+        <div className=" text-center">
           <a href={data?.ctaLink1 || "/contact"}>
             <button className="bg-secondary hover:bg-primary text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-xs sm:text-base font-semibold transition">
               {data?.ctaText1 || "Read More >>"}
@@ -332,15 +331,7 @@ const WhyStudySection = ({ data }) => {
               <div>
                 <span className='text-base sm:text-2xl lg:text-xl text-gray-900 font-semibold' dangerouslySetInnerHTML={{ __html: item?.title }} />
                 <ExpandableText
-                  htmlContent={`
-                    <ul class="list-disc pl-5 space-y-1 text-[#123b73] text-xs sm:text-base">
-                      ${item.description
-                      .split("\n")
-                      .filter((line) => line.trim() !== "")
-                      .map((line) => `<li>${line.replace("•", "").trim()}</li>`)
-                      .join("")}
-                    </ul>
-                  `}
+                  htmlContent={`${item.description}`}
                   lines={4}
                 />
               </div>
@@ -490,7 +481,7 @@ const ChoosingUsSection = ({ data, Universityres }) => {
   if (data?.isHidden === "yes") return null
   return (
     <section className="relative w-full bg-[#ef6a42] py-8 sm:py-10 px-4 sm:px-6">
-      <div className="mb-6 sm:mb-10 max-w-7xl mx-auto text-white">
+      <div className="mb-6 sm:mb-2 max-w-7xl mx-auto text-white">
         <Tagging
           data={data?.tag}
           css="text-lg sm:text-3xl md:text-4xl"
@@ -506,7 +497,14 @@ const ChoosingUsSection = ({ data, Universityres }) => {
           }}>
 
           </span>
+
+
         </Tagging>
+        <span className="mt-4 relative inline-block" dangerouslySetInnerHTML={{
+          __html: data?.subtitle
+        }}>
+
+        </span>
       </div>
       <UniversityCard university={Universityres} />
     </section>
@@ -599,6 +597,12 @@ const ServiceSection = ({ data }) => {
 
 const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any) => {
   if (data?.isHidden === "yes") return null
+  const [openIndex, setOpenIndex] = useState(null);
+
+const toggleAccordion = (index) => {
+  setOpenIndex(openIndex === index ? null : index);
+};
+  console.log(data)
   return (
     <section className="w-full bg-[#ef6a42] py-10 sm:py-14 lg:py-10 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto text-white">
@@ -620,22 +624,59 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 sm:gap-x-16 gap-y-4 sm:gap-y-6 mt-6 sm:mt-10">
-          {data.items?.map((item, i) => {
-            return (
-
-              <div key={i} className="flex items-center gap-3 sm:gap-4">
-                <div className="bg-yellow-400 text-black rounded-full p-1.5 sm:p-2 flex-shrink-0">
-                  <DynamicLucideIcon name={item.icon} size={16} className="sm:w-5 sm:h-5" />
-                </div>
-                <span className="border-b border-white pb-1 hover:opacity-80 cursor-pointer text-xs sm:text-base" dangerouslySetInnerHTML={{
-                  __html: item.title
-                }}>
-
-                </span>
-              </div>
-            )
-          })}
+  {data.items?.map((item, i) => (
+    <div key={i} className="space-y-3">
+      
+      {/* Scholarship Row */}
+      <div className="flex items-center gap-3" onClick={() => toggleAccordion(i)}>
+        <div className="bg-yellow-400 text-black rounded-full p-2 flex-shrink-0">
+          <DynamicLucideIcon
+            name={item.icon}
+            size={18}
+          />
         </div>
+
+        <span
+          className="border-b border-white pb-1 text-sm sm:text-base flex-1 cursor-pointer"
+          dangerouslySetInnerHTML={{
+            __html: item.title,
+          }}
+        />
+
+        <button
+          
+          className="text-white hover:scale-110 transition-all duration-300"
+        >
+          <ArrowRight
+            className={`w-5 h-5 transition-transform duration-300 ${
+              openIndex === i ? "rotate-90" : ""
+            }`}
+          />
+        </button>
+      </div>
+
+      {/* Extra Details */}
+    {item?.extraDetail && (
+  <div
+    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+      openIndex === i
+        ? "max-h-[1000px] opacity-100 mt-3"
+        : "max-h-0 opacity-0"
+    }`}
+  >
+    <div className="ml-12 bg-white/10 border border-white/20 rounded-lg p-2 backdrop-blur-sm">
+      <div
+        className="text-white text-sm leading-7 prose prose-invert max-w-none"
+        dangerouslySetInnerHTML={{
+          __html: item.extraDetail,
+        }}
+      />
+    </div>
+  </div>
+)}
+    </div>
+  ))}
+</div>
 
         <div className="flex justify-center mt-6 sm:mt-8">
           <a href="/contact">

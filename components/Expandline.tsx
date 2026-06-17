@@ -19,11 +19,11 @@ export default function ExpandableText({ htmlContent, lines = 3 }) {
   }, [htmlContent]);
 
   return (
-    <div className="mt-6 sm:mt-8">
+    <div className="mt-6 sm:mt-2">
 
       <div
         ref={contentRef}
-        className={`text-white leading-relaxed transition-all duration-300 ${
+        className={`text-whitw leading-relaxed transition-all duration-300 ${
           expanded ? "" : `line-clamp-${lines}`
         }`}
         dangerouslySetInnerHTML={{ __html: htmlContent || "" }}
@@ -34,7 +34,7 @@ export default function ExpandableText({ htmlContent, lines = 3 }) {
         <button
           type="button"
           onClick={() => setExpanded(!expanded)}
-          className="text-black mt-3 font-semibold cursor-pointer"
+          className="!text-black mt-3 font-semibold cursor-pointer"
         >
           {expanded ? "Read Less" : "Read More"}
         </button>

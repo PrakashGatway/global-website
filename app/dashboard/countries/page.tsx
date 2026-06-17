@@ -523,7 +523,7 @@ export default function CountriesPage() {
 
     return (
         <main className="flex-1 min-h-screen bg-white">
-            <div className="max-w-7xl mx-auto px-4 py-6">
+            <div className=" mx-auto px-4 py-6">
                 {/* Header Section */}
 
 
@@ -610,9 +610,9 @@ export default function CountriesPage() {
                             </span>
                         )}
                         {statusFilter && (
-                            <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                            <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm">
                                 Status: {statusFilter}
-                                <button onClick={() => setStatusFilter("")} className="ml-1 hover:text-blue-900">
+                                <button onClick={() => setStatusFilter("")} className="ml-1 hover:text-orange-900">
                                     <X className="w-3 h-3" />
                                 </button>
                             </span>
@@ -653,8 +653,8 @@ export default function CountriesPage() {
                                 <button
 
                                     className={`px-6 py-2 rounded-lg font-medium ${shortlistedCountries.length > 0
-                                            ? "bg-[#2563EB] text-white"
-                                            : "bg-gray-300 text-gray-500 cursor-pointer"
+                                        ? "bg-[#2563EB] text-white"
+                                        : "bg-gray-300 text-gray-500 cursor-pointer"
                                         }`}
                                 >
                                     Continue
@@ -711,12 +711,10 @@ export default function CountriesPage() {
 
                     {/* Header */}
                     <div className="flex flex-col gap-3 border-b border-[#EEF2F7] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-
                         <div>
                             <h2 className="text-[15px] sm:text-[18px] font-semibold text-[#1F2A5A]">
                                 Shortlist & Compare Countries
                             </h2>
-
                             <p className="mt-1 text-[11px] sm:text-[13px] text-[#7B8199]">
                                 Explore and compare countries based on your preferences and key factors.
                             </p>
@@ -724,245 +722,163 @@ export default function CountriesPage() {
                     </div>
 
                     {/* Desktop Table */}
-
                     <div className="hidden lg:block overflow-x-auto">
-                        <table className="w-full min-w-[1100px]">
-
-                            <thead className="bg-[#F8FAFC] border-b border-[#EEF2F7]">
+                        <table className="w-full min-w-[1100px] border-collapse">
+                            <thead className="bg-[#F8FAFC]">
                                 <tr>
-                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
+                                    <th className="px-6 py-5 text-left text-[11px] font-bold uppercase tracking-wider text-[#475467] border-r border-[#E8ECF4]">
                                         Country
                                     </th>
-
-                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
+                                    <th className="px-6 py-5 text-left text-[11px] font-bold uppercase tracking-wider text-[#475467] border-r border-[#E8ECF4]">
                                         Top Courses
                                     </th>
-
-                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
+                                    <th className="px-6 py-5 text-left text-[11px] font-bold uppercase tracking-wider text-[#475467] border-r border-[#E8ECF4]">
                                         Avg. Tuition Fee
                                     </th>
-
-                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
+                                    <th className="px-6 py-5 text-left text-[11px] font-bold uppercase tracking-wider text-[#475467] border-r border-[#E8ECF4]">
                                         PSW
                                     </th>
-
-                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
+                                    <th className="px-6 py-5 text-left text-[11px] font-bold uppercase tracking-wider text-[#475467] border-r border-[#E8ECF4]">
                                         Key Highlights
                                     </th>
-
-                                    <th className="px-6 py-4 text-left text-[12px] font-bold text-[#344054]">
+                                    <th className="px-6 py-5 text-left text-[11px] font-bold uppercase tracking-wider text-[#475467]">
                                         Action
                                     </th>
                                 </tr>
                             </thead>
-
                             <tbody>
-
                                 {countries?.map((item, index) => {
-
-                                    const extra =
-                                        item?.extra_content;
-
-
+                                    const extra = item?.extra_content;
                                     return (
-
                                         <tr
                                             key={item._id || index}
-                                            className="border-b border-[#F1F5F9] hover:bg-[#FAFBFD] transition cursor-pointer relative z-1"
-                                        // onClick={() => navigation(item.code)}
+                                            className="
+    border-b border-[#E8ECF4]
+    cursor-pointer
+    transition-all duration-300 ease-out
+    hover:-translate-y-1
+    hover:scale-[1.0]
+    hover:shadow-[0_20px_40px_rgba(0,0,0,0.18)]
+    hover:bg-orange-50
+  "
+                                            style={{
+                                                transformStyle: "preserve-3d",
+                                            }}
                                         >
-
                                             {/* Country */}
-                                            <td className="px-6 py-5 align-top">
-
+                                            <td className="px-6 py-5 align-top border-r border-[#E8ECF4]">
                                                 <div className="flex gap-4">
-
                                                     <img
                                                         src={item?.flg}
                                                         alt={item?.name}
-                                                        className="h-12 w-16 rounded-md object-cover border"
+                                                        className="h-14 w-20 rounded-lg object-cover border-2 border-[#EEF2F7] shadow-sm"
                                                     />
-
-                                                    <div>
-
-                                                        <h3 className="text-[14px] text-[#475467]">
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="text-[14px] font-semibold text-[#1F2A5A]">
                                                             {item?.name}
                                                         </h3>
-
                                                         <div className="mt-1 flex items-center gap-1 text-[12px] text-[#6B7280]">
-                                                            ⭐ {extra?.rating || "4.5"}
+                                                            <span className="text-yellow-500">⭐</span>
+                                                            <span className="font-medium">{extra?.rating || "4.5"}</span>
+                                                            <span className="text-[#98A2B3]">•</span>
+                                                            <span className="text-[#98A2B3]">Top rated</span>
                                                         </div>
-
-                                                        <span className="mt-3 inline-flex rounded-md bg-[#DCFCE7] px-2 py-1 text-[11px] font-medium text-[#15803D]">
+                                                        <span className="mt-2 inline-flex rounded-full bg-[#DCFCE7] px-3 py-1 text-[10px] font-semibold text-[#15803D] border border-[#BBF7D0]">
                                                             High Match
                                                         </span>
-
                                                     </div>
-
                                                 </div>
-
                                             </td>
 
                                             {/* Courses */}
-                                            <td className="px-6 py-5 align-top">
-
-                                                <ul className="space-y-2 text-[13px] text-[#475467]">
-
-                                                    {extra?.topcourse
-                                                        ?.slice(0, 3)
-                                                        ?.map((course, idx) => (
-
-                                                            <li key={idx}>
-                                                                • {course}
-                                                            </li>
-
-                                                        ))}
-
+                                            <td className="px-6 py-5 align-top border-r border-[#E8ECF4]">
+                                                <ul className="space-y-1.5 text-[13px] text-[#475467]">
+                                                    {extra?.topcourse?.slice(0, 3)?.map((course, idx) => (
+                                                        <li key={idx} className="flex items-start gap-1.5">
+                                                            <span className="text-[#2563EB] text-[8px] mt-1.5">●</span>
+                                                            <span className="line-clamp-1">{course}</span>
+                                                        </li>
+                                                    ))}
                                                 </ul>
-
                                             </td>
 
                                             {/* Tuition */}
-                                            <td className="px-6 py-5 align-top">
-
-                                                <div className="text-[13px] text-[#475467]">
-                                                    {extra?.tuitionfee || "N/A"}
+                                            <td className="px-6 py-5 align-top border-r border-[#E8ECF4]">
+                                                <div className="flex flex-col">
+                                                    <span className="text-[15px] font-semibold text-[#1F2A5A]">
+                                                        {extra?.tuitionfee || "N/A"}
+                                                    </span>
+                                                    <span className="text-[10px] text-[#98A2B3]">per year</span>
                                                 </div>
-
                                             </td>
 
                                             {/* PSW */}
-                                            <td className="px-6 py-5 align-top">
-
-                                                <div className="text-[13px] text-[#475467]">
-                                                    {extra?.psw || "N/A"}
+                                            <td className="px-6 py-5 align-top border-r border-[#E8ECF4]">
+                                                <div className="flex flex-col">
+                                                    <span className="text-[14px] font-semibold text-[#1F2A5A]">
+                                                        {extra?.psw || "N/A"}
+                                                    </span>
+                                                    <span className="text-[10px] text-[#98A2B3]">post-study work</span>
                                                 </div>
-
                                             </td>
 
                                             {/* Highlights */}
-                                            <td className="px-6 py-5 align-top">
-
-                                                <ul className="space-y-2">
-
-                                                    {extra?.keyHightlights?.map(
-                                                        (highlight, idx) => (
-
-                                                            <li
-                                                                key={idx}
-                                                                className="flex items-center gap-2 text-[13px] text-[#475467]"
-                                                            >
-
-                                                                <span className="h-2 w-2 rounded-full bg-green-500"></span>
-
-                                                                {highlight}
-
-                                                            </li>
-
-                                                        )
-                                                    )}
-
+                                            <td className="px-6 py-5 align-top border-r border-[#E8ECF4]">
+                                                <ul className="space-y-1.5">
+                                                    {extra?.keyHightlights?.map((highlight, idx) => (
+                                                        <li key={idx} className="flex items-center gap-2 text-[12px] text-[#475467]">
+                                                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
+                                                            <span className="line-clamp-1">{highlight}</span>
+                                                        </li>
+                                                    ))}
                                                 </ul>
-
                                             </td>
 
                                             {/* Action */}
-                                            <td className="px-6 py-5 align-top">
-
+                                            <td className="px-3 py-5 align-top">
                                                 <div className="flex flex-col gap-3">
-
                                                     {/* SHORTLIST */}
-
-                                                    <label
-                                                        className="
-            flex items-center gap-2
-            text-[13px] font-medium
-            text-[#2563EB]
-            cursor-pointer
-        "
-                                                    >
-
+                                                    <label className="flex items-center gap-2 text-[12px] font-medium text-[#2563EB] cursor-pointer hover:text-[#1D4ED8] transition-colors">
                                                         <input
                                                             type="checkbox"
                                                             disabled={shortlistedCountries.length === 3 && !shortlistedCountries.includes(item.code)}
-
-                                                            checked={shortlistedCountries.includes(
-                                                                item?.code
-                                                            )}
-
-                                                            onChange={() =>
-                                                                handleShortlist(item)
-                                                            }
-
-                                                            className="
-                h-4 w-4
-                rounded
-                accent-blue-600
-                cursor-pointer
-            "
+                                                            checked={shortlistedCountries.includes(item?.code)}
+                                                            onChange={() => handleShortlist(item)}
+                                                            className="h-4 w-4 rounded border-2 border-[#D1D5DB] text-orange-600 focus:ring-orange-500 focus:ring-offset-2 cursor-pointer transition-all"
                                                         />
-
-                                                        Shortlist
-
+                                                        <span>Shortlist</span>
                                                     </label>
 
                                                     {/* BUTTONS */}
-
                                                     <div className="flex gap-2">
-
-                                                        {/* VIEW BUTTON */}
-
                                                         <button
-                                                            onClick={() => navigation(item?.code)}
-                                                            className="
-                px-4 py-2
-                rounded-lg
-                border border-gray-300
-                text-sm font-medium
-                hover:bg-gray-100
-                transition
-            "
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                navigation(item?.code);
+                                                            }}
+                                                            className="px-4 py-2 rounded-lg border border-[#D1D5DB] text-[12px] font-medium text-[#475467] hover:bg-[#F9FAFB] hover:border-[#9CA3AF] transition-all duration-200"
                                                         >
                                                             View
                                                         </button>
-
-                                                        {/* COMPARE BUTTON */}
-
                                                         <button
-                                                            onClick={() => handleCompare(item)}
-                                                            className="
-                px-4 py-2
-                rounded-lg
-                bg-blue-600
-                hover:bg-blue-700
-                text-white
-                text-sm
-                font-medium
-                shadow-sm
-                transition
-            "
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleCompare(item);
+                                                            }}
+                                                            className="px-4 py-2 rounded-lg bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white text-[12px] font-medium shadow-md hover:shadow-lg transition-all duration-200"
                                                         >
                                                             Compare
                                                         </button>
-
                                                     </div>
-
                                                 </div>
-
                                             </td>
-
                                         </tr>
-
-
                                     );
-
                                 })}
-
                             </tbody>
-
                         </table>
-
                     </div>
+
                     <CompareDrawer
                         open={openDrawer}
                         setOpen={setOpenDrawer}
@@ -970,187 +886,128 @@ export default function CountriesPage() {
                         currentCountry={currentCountry}
                     />
 
-
-
-
                     {/* Mobile Cards */}
                     <div className="flex flex-col gap-4 p-4 lg:hidden">
-
                         {countries?.map((item, index) => {
-
                             const extra = item?.extra_content;
-
                             return (
-
                                 <div
                                     key={item._id || index}
-                                    className="rounded-2xl border border-[#EEF2F7] bg-white p-4 shadow-sm transition hover:shadow-md cursor-pointer"
+                                    className="rounded-2xl border border-[#EEF2F7] bg-white p-5 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:border-[#2563EB]"
                                     onClick={() => navigation(item.code)}
                                 >
-
                                     {/* Top */}
-                                    <div className="flex gap-3">
-
+                                    <div className="flex gap-4">
                                         <img
                                             src={item?.flg}
                                             alt={item?.name}
-                                            className="h-12 w-16 rounded-md border object-cover"
+                                            className="h-14 w-20 rounded-lg object-cover border-2 border-[#EEF2F7] shadow-sm"
                                         />
-
                                         <div className="min-w-0 flex-1">
-
                                             <div className="flex items-start justify-between gap-2">
-
                                                 <div>
-
-                                                    <h3 className="text-[14px] font-semibold text-[#111827]">
+                                                    <h3 className="text-[15px] font-semibold text-[#1F2A5A]">
                                                         {item?.name}
                                                     </h3>
-
-                                                    <p className="mt-1 text-[12px] text-[#6B7280]">
-                                                        ⭐ {extra?.rating || "4.5"}
-                                                    </p>
-
+                                                    <div className="mt-1 flex items-center gap-1 text-[12px] text-[#6B7280]">
+                                                        <span className="text-yellow-500">⭐</span>
+                                                        <span className="font-medium">{extra?.rating || "4.5"}</span>
+                                                    </div>
                                                 </div>
-
-                                                <span className="rounded-md bg-[#DCFCE7] px-2 py-1 text-[10px] font-medium text-[#15803D]">
+                                                <span className="rounded-full bg-[#DCFCE7] px-3 py-1 text-[10px] font-semibold text-[#15803D] border border-[#BBF7D0] whitespace-nowrap">
                                                     High Match
                                                 </span>
-
                                             </div>
-
-                                            {/* Tuition Fee */}
-                                            <div className="mt-3 text-[13px] font-semibold text-[#344054]">
-                                                {extra?.tuitionfee || "N/A"}
+                                            <div className="mt-2">
+                                                <span className="text-[14px] font-semibold text-[#1F2A5A]">
+                                                    {extra?.tuitionfee || "N/A"}
+                                                </span>
+                                                <span className="text-[10px] text-[#98A2B3] ml-1">per year</span>
                                             </div>
-
                                         </div>
-
                                     </div>
 
                                     {/* Courses */}
                                     <div className="mt-4">
-
-                                        <h4 className="text-[12px] font-semibold text-[#667085]">
+                                        <h4 className="text-[11px] font-semibold uppercase tracking-wider text-[#98A2B3]">
                                             Top Courses
                                         </h4>
-
                                         <ul className="mt-2 space-y-1 text-[12px] text-[#475467]">
-
-                                            {extra?.topcourse
-                                                ?.slice(0, 3)
-                                                ?.map((course, idx) => (
-
-                                                    <li key={idx}>
-                                                        • {course}
-                                                    </li>
-
-                                                ))}
-
+                                            {extra?.topcourse?.slice(0, 3)?.map((course, idx) => (
+                                                <li key={idx} className="flex items-start gap-1.5">
+                                                    <span className="text-[#2563EB] text-[8px] mt-1">●</span>
+                                                    <span>{course}</span>
+                                                </li>
+                                            ))}
                                         </ul>
-
                                     </div>
 
                                     {/* Highlights */}
                                     <div className="mt-4">
-
-                                        <h4 className="text-[12px] font-semibold text-[#667085]">
+                                        <h4 className="text-[11px] font-semibold uppercase tracking-wider text-[#98A2B3]">
                                             Key Highlights
                                         </h4>
-
                                         <div className="mt-2 flex flex-wrap gap-2">
-
-                                            {extra?.keyHightlights
-                                                ?.slice(0, 3)
-                                                ?.map((highlight, idx) => (
-
-                                                    <span
-                                                        key={idx}
-                                                        className="rounded-full bg-[#F0FDF4] px-2 py-1 text-[10px] font-medium text-[#15803D]"
-                                                    >
-                                                        {highlight}
-                                                    </span>
-
-                                                ))}
-
+                                            {extra?.keyHightlights?.slice(0, 3)?.map((highlight, idx) => (
+                                                <span key={idx} className="rounded-full bg-[#F0FDF4] px-3 py-1 text-[10px] font-medium text-[#15803D] border border-[#DCFCE7]">
+                                                    {highlight}
+                                                </span>
+                                            ))}
                                         </div>
-
                                     </div>
 
                                     {/* Footer */}
-                                    <div className="mt-5 flex items-center justify-between border-t pt-4">
-
+                                    <div className="mt-5 flex items-center justify-between border-t border-[#F1F5F9] pt-4">
                                         <div>
-
-                                            <p className="text-[11px] text-[#98A2B3]">
+                                            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#98A2B3]">
                                                 PSW
                                             </p>
-
-                                            <p className="text-[13px] font-semibold text-[#344054]">
+                                            <p className="text-[13px] font-semibold text-[#1F2A5A] mt-0.5">
                                                 {extra?.psw || "N/A"}
                                             </p>
-
                                         </div>
-
-                                        <div className="flex items-center gap-4">
-
-                                            <label className="flex items-center gap-2 text-[12px] font-medium text-[#2563EB]">
-
+                                        <div className="flex items-center gap-3">
+                                            <label className="flex items-center gap-1.5 text-[12px] font-medium text-[#2563EB] cursor-pointer">
                                                 <input
                                                     type="checkbox"
-
-                                                    checked={shortlistedCountries.includes(
-                                                        item?.code
-                                                    )}
-
-                                                    onChange={() =>
-                                                        handleShortlist(item)
-                                                    }
-
-                                                    className="h-4 w-4 rounded"
+                                                    checked={shortlistedCountries.includes(item?.code)}
+                                                    onChange={() => handleShortlist(item)}
+                                                    className="h-4 w-4 rounded border-2 border-[#D1D5DB] text-orange-600 focus:ring-orange-500 focus:ring-offset-2 cursor-pointer"
                                                 />
-
-
-                                                Shortlist
-
+                                                <span>Shortlist</span>
                                             </label>
-
-                                            <button className="text-[12px] font-medium text-[#2563EB]">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleCompare(item);
+                                                }}
+                                                className="px-4 py-2 rounded-lg bg-gradient-to-r from-orange-600 to-orange-500 text-white text-[12px] font-medium shadow-md"
+                                            >
                                                 Compare
                                             </button>
-
                                         </div>
-
                                     </div>
-
                                 </div>
-
                             );
-
                         })}
-
                     </div>
-                    <div
-                        ref={observerTarget}
-                        className="h-20 flex justify-center items-center"
-                    >
 
-                        <div
-                            ref={observerTarget}
-                            className="h-20 flex justify-center items-center"
-                        >
-                            {loading && (
-                                <div className="flex flex-col items-center gap-2">
-                                    <div className="h-8 w-8 rounded-full border-b-2 border-[#F26D44] animate-spin" />
-                                    <p className="text-sm text-gray-500">Loading more countries...</p>
+                    {/* Loading & End State */}
+                    <div ref={observerTarget} className="h-20 flex justify-center items-center border-t border-[#E8ECF4]">
+                        {loading && (
+                            <div className="flex flex-col items-center gap-2">
+                                <div className="h-8 w-8 rounded-full border-4 border-[#F26D44] border-t-transparent animate-spin" />
+                                <p className="text-sm text-[#98A2B3]">Loading more countries...</p>
+                            </div>
+                        )}
+                        {!hasMore && countries.length > 0 && (
+                            <div className="flex flex-col items-center gap-1">
+                                <div className="h-8 w-8 rounded-full bg-[#F1F5F9] flex items-center justify-center text-[#98A2B3]">
+                                    ✓
                                 </div>
-                            )}
-
-                            {!hasMore && countries.length > 0 && (
-                                <p className="text-sm text-gray-400">You've seen all {totalCountries} countries</p>
-                            )}
-                        </div>
-
+                                <p className="text-sm text-[#98A2B3]">All {totalCountries} countries loaded</p>
+                            </div>
+                        )}
                     </div>
                 </div>
 

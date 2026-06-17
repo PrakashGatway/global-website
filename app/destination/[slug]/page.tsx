@@ -47,7 +47,7 @@ export default async function Page({ params }: { params: any }) {
   ]);
 
   return (
-    <div className="linkedClass">
+    <div className="linkedClass list-style">
       <CountryDetails Universityres={Universityres?.data?.result} Faqres={Faqres.data.data} pageData={Pageres?.data?.data} imageData={imageRes.data.data} videoRes={videoRes.data} />
     </div>
   )

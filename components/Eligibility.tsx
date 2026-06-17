@@ -61,7 +61,7 @@ export default function EligibilitySection({ pageData,tag = 2 } : any) {
               {open === i && (
                 <div className="px-4 pb-4 lg:px-6  text-xs lg:text-base text-black">
                   <ul className="list-disc pl-5 space-y-1">
-                    {item?.subItems?.split(",").map((sub, idx) => (
+                    {item?.subItems?.split("|").map((sub, idx) => (
                       <li key={idx}>{sub.trim()}</li>
                     ))}
                   </ul>

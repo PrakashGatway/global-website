@@ -65,11 +65,11 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
 
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-xl font-bold text-slate-800">
+                    <h2 className="text-lg font-bold text-slate-800">
                       Pay Enrollment Deposit
                     </h2>
 
-                    <span className="bg-orange-100 text-orange-700 text-xs font-medium px-3 py-1 ">
+                    <span className="bg-orange-100 text-orange-700 text-sm font-medium px-3 py-1 ">
                       In Progress
                     </span>
                   </div>
@@ -82,22 +82,22 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
 
                     <div className="border  p-3">
-                      <p className="text-xs text-gray-500">Deposit Amount</p>
+                      <p className="text-sm text-gray-500">Deposit Amount</p>
                       <h4 className="font-bold mt-1">{metadata?.amount}</h4>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-sm text-gray-400">
                         Non-refundable
                       </p>
                     </div>
 
                     <div className="border p-3 rounded-lg">
-                      <p className="text-xs text-gray-500">Payment Deadline</p>
+                      <p className="text-sm text-gray-500">Payment Deadline</p>
 
                       <h4 className="font-bold mt-1">
                         {metadata?.paymentDeadline}
                       </h4>
 
                       <p
-                        className={`text-xs mt-1 ${daysLeft <= 3
+                        className={`text-sm mt-1 ${daysLeft <= 3
                           ? "text-red-600"
                           : daysLeft <= 7
                             ? "text-orange-600"
@@ -111,10 +111,10 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                     </div>
 
                     <div className="border p-3">
-                      <p className="text-xs text-gray-500">Offer Deadline</p>
+                      <p className="text-sm text-gray-500">Offer Deadline</p>
                       <h4 className="font-bold mt-1">{metadata?.offerDeadline}</h4>
                       <p
-                        className={`text-xs mt-1 ${offerdateleft <= 3
+                        className={`text-sm mt-1 ${offerdateleft <= 3
                           ? "text-red-600"
                           : offerdateleft <= 7
                             ? "text-orange-600"
@@ -128,7 +128,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                     </div>
 
                     <div className="border p-3">
-                      <p className="text-xs text-gray-500">Currency</p>
+                      <p className="text-sm text-gray-500">Currency</p>
                       <h4 className="font-bold mt-1">{metadata?.currency}</h4>
 
                     </div>
@@ -354,7 +354,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
         <div className="xl:col-span-4 space-y-4">
           <div className="bg-white p-4  border border-gray-200 shadow-sm">
             <div className="flex justify-between items-center mb-3">
-              <h4 className="text-sm font-bold text-gray-800">Application Summary</h4>
+              <h4 className="text-lg font-bold text-gray-800">Application Summary</h4>
             </div>
             <div className="space-y-1.5 text-sm">
               <div className="flex justify-between border-b border-gray-50 pb-1.5">
@@ -391,16 +391,16 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
 
           {/* Payment Summary */}
           <div className="bg-white  border p-5">
-            <h3 className="font-semibold mb-4">
+            <h3 className="font-semibold mb-4 text-lg">
               Payment Summary
             </h3>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between text-sm">
               <span>Tuition Fee</span>
               <span>{metadata?.tuitionFee}</span>
             </div>
 
-            <div className="flex justify-between mt-2">
+            <div className="flex justify-between mt-2 text-sm">
               <span>Enrollment Deposit</span>
               <span>{metadata?.amount}</span>
             </div>

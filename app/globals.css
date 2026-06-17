@@ -40,6 +40,16 @@
   text-decoration: none;
 }
 
+.list-style * ul {
+  list-style-type: disc !important;
+  padding-left: 20px;
+}
+
+.list-style * ol {
+  list-style-type: decimal !important;
+  padding-left: 20px;
+}
+
 /* For mobile web view optimization */
 @media (display-mode: standalone) {
   header {
