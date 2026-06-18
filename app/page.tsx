@@ -17,13 +17,9 @@ const generateHomeSchema = (data) => {
       "@id": `${baseUrl}/#organization`,
       name: "Ooshas Global",
       url: baseUrl,
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://ooshasglobal.com/images/newlogo3.png"
-      },
-      "image": "https://ooshasglobal.com/images/newlogo3.png",
+      "logo": "https://ooshasglobal.com/images/newlogo3.png",
       sameAs: [
-        "https://www.facebook.com/share/18vb1scYJk/?mibextid=wwXIfr",
+        "https://www.facebook.com/share/18vb1scYJk",
         "https://www.instagram.com/ooshasglobal"
       ]
     },
@@ -109,10 +105,10 @@ export default async function Home() {
   const faqs = Faqres?.data?.data || [];
 
 
-    const faqSchema =
-      faqs.length > 0
-        ? generateFaqSchema(faqs)
-        : null;
+  const faqSchema =
+    faqs.length > 0
+      ? generateFaqSchema(faqs)
+      : null;
 
 
 
@@ -130,7 +126,7 @@ export default async function Home() {
         />
       ))}
 
-         {/* FAQ Schema */}
+      {/* FAQ Schema */}
       {faqSchema && (
         <script
           type="application/ld+json"
