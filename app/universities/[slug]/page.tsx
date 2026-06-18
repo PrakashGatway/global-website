@@ -1,9 +1,71 @@
 import { serverInstance } from "@/app/axiosInstance";
 import UniDetailsClient from "../../../components/new";
 
+const stripHtml = (text = "") =>
+  String(text)
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const universitySchema = (uni: any) => ({
+  "@context": "https://schema.org",
+  "@type": "CollegeOrUniversity",
+  name: uni.name,
+  url: `https://ooshasglobal.com/universities/${uni.slug}`,
+  description:
+    stripHtml(uni.short_description || "") ||
+    stripHtml(uni.description || ""),
+  logo: uni.uni_logo,
+  image: uni.cover_photo || uni.uni_logo,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: uni.city,
+    addressCountry: uni.country,
+  },
+});
+
+const breadcrumbSchema = (uni: any) => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://ooshasglobal.com",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Universities",
+      item: "https://ooshasglobal.com",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: uni.name,
+      item: `https://ooshasglobal.com/universities/${uni.slug}`,
+    },
+  ],
+});
+
+const faqSchema = (faqs: any[]) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: stripHtml(faq.question),
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: stripHtml(faq.answer),
+    },
+  })),
+});
+
 export async function generateMetadata({
   params
-}:any){
+}: any) {
 
   const { slug } = await params;
   try {
@@ -90,6 +152,17 @@ export default async function UniDetailsPage({
 
   const Faqres = await serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`)
 
+  const faqs = Faqres.data.data || [];
+
+  const uniSchema = universitySchema(universityData);
+
+  const breadSchema = breadcrumbSchema(universityData);
+
+  const faqPageSchema =
+    faqs.length > 0
+      ? faqSchema(faqs)
+      : null;
+
   if (!universityData) {
     return (
       <main className="min-h-[80vh] flex justify-center items-center bg-gradient-to-b from-slate-50 to-white">
@@ -106,6 +179,37 @@ export default async function UniDetailsPage({
     );
   }
 
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(uniSchema),
+        }}
+      />
 
-  return <UniDetailsClient data={universityData} Faqres={Faqres.data.data || []} Universityres={Universityres.data.result || []} />;
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadSchema),
+        }}
+      />
+
+      {faqPageSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqPageSchema),
+          }}
+        />
+      )}
+
+      <UniDetailsClient
+        data={universityData}
+        Faqres={faqs}
+        Universityres={Universityres.data.result || []}
+      />
+    </>
+  );
+
 }

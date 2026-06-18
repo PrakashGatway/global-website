@@ -689,7 +689,6 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
 
       <FAQSection Faqres={blog?.faq || []} />
 
-
     </section>
   )
 }

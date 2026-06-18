@@ -3,6 +3,45 @@ import { baseUrl, serverInstance } from "./axiosInstance";
 
 export const revalidate = 21600;
 
+const generateHomeSchema = (data) => {
+  const seo = data?.seoMeta || {};
+
+  const baseUrl = "https://ooshasglobal.com";
+  const currentUrl = "https://ooshasglobal.com/home";
+
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": `${baseUrl}/#organization`,
+      name: "Ooshas Global",
+      url: baseUrl,
+      logo: `https://ooshasglobal.com/images/newlogo3.png`, // replace with actual logo
+      description: seo?.metaDescription || "",
+      sameAs: [
+        "https://www.facebook.com/share/18vb1scYJk/?mibextid=wwXIfr",
+        "https://www.instagram.com/ooshasglobal"
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": `${baseUrl}/#website`,
+      url: baseUrl,
+      name: seo?.metaTitle || "Ooshas Global",
+      description: seo?.metaDescription || "",
+      publisher: {
+        "@id": `${baseUrl}/#organization`
+      },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${baseUrl}/search?q={search_term_string}`,
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ];
+};
+
 const getHomePageData = async () => {
   const res = await fetch(`${baseUrl}/page-information/slug/home`, {
     headers: {
@@ -27,7 +66,6 @@ export async function generateMetadata() {
   const { data } = await getHomePageData();
   const seo = data.seoMeta;
 
-
   return {
     title: seo?.metaTitle?.trim() || "Home",
     description: seo?.metaDescription,
@@ -38,7 +76,7 @@ export async function generateMetadata() {
     openGraph: {
       title: seo?.metaTitle,
       description: seo?.metaDescription,
-      url: `${seo?.canonicalUrl || "https://ooshasglobal.com/home/"}`,
+      url: `${seo?.canonicalUrl || "https://ooshasglobal.com/home"}`,
       type: "website",
     },
   };
@@ -49,6 +87,8 @@ export async function generateMetadata() {
 export default async function Home() {
   const { data } = await getHomePageData();
   const homePage = data.sections;
+
+  const schemas = generateHomeSchema(data);
 
   const [destinationRes, countryRes, imageRes, Faqres, videoRes, blogres, unires] = await Promise.all([
     serverInstance.get(
@@ -66,15 +106,28 @@ export default async function Home() {
 
 
   return (
-    <Homepage
-      homePage={homePage}
-      destinationData={destinationRes.data.data}
-      countryData={countryRes.data.data}
-      imageData={imageRes.data.data}
-      Faqres={Faqres.data.data}
-      videoRes={videoRes.data.data}
-      blogres={blogres.data.data}
-      unires={unires.data.result}
-    />
+    <>
+      {schemas.map((schema, index) => (
+        <script
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(schema),
+          }}
+        />
+      ))}
+
+      <Homepage
+        homePage={homePage}
+        destinationData={destinationRes.data.data}
+        countryData={countryRes.data.data}
+        imageData={imageRes.data.data}
+        Faqres={Faqres.data.data}
+        videoRes={videoRes.data.data}
+        blogres={blogres.data.data}
+        unires={unires.data.result}
+      />
+    </>
+
   );
 }

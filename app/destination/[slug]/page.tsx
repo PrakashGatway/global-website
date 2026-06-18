@@ -1,13 +1,19 @@
 import { serverInstance } from "@/app/axiosInstance";
 import CountryDetails from "@/components/country";
-
-
-
+import {
+  generateWebPageSchema,
+  generateBreadcrumbSchema,
+  generateFaqSchema,
+} from "@/utils/schema";
 
 /* ---------------- SEO ---------------- */
 export async function generateMetadata({ params }: { params: any }) {
-  const { slug } = await params
-  const res = await serverInstance.get(`/page-information/slug/${slug}`);
+  const { slug } = await params;
+
+  const res = await serverInstance.get(
+    `/page-information/slug/${slug}`
+  );
+
   const seo = res.data.data.seoMeta;
 
   return {
@@ -15,40 +21,131 @@ export async function generateMetadata({ params }: { params: any }) {
     description: seo?.metaDescription,
     keywords: seo?.metaKeywords,
     alternates: {
-      canonical: `${seo?.canonicalUrl}`
+      canonical: seo?.canonicalUrl,
     },
     openGraph: {
       title: seo?.metaTitle,
       description: seo?.metaDescription,
-      url: `/${seo?.canonicalUrl || ""}`,
-      type: "website"
-    }
+      url: seo?.canonicalUrl,
+      type: "website",
+    },
   };
 }
 
+export default async function Page({
+  params,
+}: {
+  params: any;
+}) {
+  const { slug } = await params;
 
-export default async function Page({ params }: { params: any }) {
-  const { slug } = await params
+  const Pageres = await serverInstance.get(
+    `/page-information/slug/${slug}`
+  );
 
-
-  const Pageres = await serverInstance.get(`/page-information/slug/${slug}`);
-
+  const pageData = Pageres?.data?.data;
 
   const [
     Universityres,
     Faqres,
     imageRes,
-    videoRes
+    videoRes,
   ] = await Promise.all([
-    serverInstance.get(`/universities?limit=5&country=${Pageres?.data?.data?.country?.code || ""}`),
-    serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`),
-    serverInstance.get("/testimonials?type=image&limit=15"),
-    serverInstance.get("/testimonials?type=video&limit=6"),
+    serverInstance.get(
+      `/universities?limit=5&country=${
+        pageData?.country?.code || ""
+      }`
+    ),
+    serverInstance.get(
+      `/faqs/public/list?type=${slug}&limit=15`
+    ),
+    serverInstance.get(
+      "/testimonials?type=image&limit=15"
+    ),
+    serverInstance.get(
+      "/testimonials?type=video&limit=6"
+    ),
   ]);
 
+  const faqs = Faqres?.data?.data || [];
+
+  const currentUrl = `https://ooshasglobal.com/${slug}`;
+
+  const webPageSchema = generateWebPageSchema({
+    title:
+      pageData?.h1 ||
+      pageData?.title ||
+      pageData?.name,
+    description:
+      pageData?.seoMeta?.metaDescription || "",
+    url: currentUrl,
+  });
+
+  const breadcrumbSchema =
+    generateBreadcrumbSchema([
+      {
+        name: "Home",
+        url: "https://ooshasglobal.com",
+      },
+      {
+        name: "Study Abroad",
+      },
+      {
+        name:
+          pageData?.h1 ||
+          pageData?.title ||
+          pageData?.name,
+      },
+    ]);
+
+
+  const faqSchema =
+    faqs.length > 0
+      ? generateFaqSchema(faqs)
+      : null;
+
+
   return (
-    <div className="linkedClass list-style">
-      <CountryDetails Universityres={Universityres?.data?.result} Faqres={Faqres.data.data} pageData={Pageres?.data?.data} imageData={imageRes.data.data} videoRes={videoRes.data} />
-    </div>
-  )
+    <>
+      {/* WebPage Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(webPageSchema),
+        }}
+      />
+
+      {/* Breadcrumb Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            breadcrumbSchema
+          ),
+        }}
+      />
+
+      {/* FAQ Schema */}
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqSchema),
+          }}
+        />
+      )}
+
+      <div className="linkedClass list-style">
+        <CountryDetails
+          Universityres={
+            Universityres?.data?.result
+          }
+          Faqres={faqs}
+          pageData={pageData}
+          imageData={imageRes.data.data}
+          videoRes={videoRes.data}
+        />
+      </div>
+    </>
+  );
 }

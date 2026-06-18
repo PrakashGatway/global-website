@@ -27,6 +27,79 @@ interface Blog {
   __v: number;
 }
 
+const stripHtml = (text = "") =>
+  String(text)
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const articleSchema = (blog: any) => ({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: blog.title,
+  description:
+    blog.seo?.metaDescription ||
+    stripHtml(blog.shortDescription || ""),
+  image: [blog.coverImage],
+  datePublished: blog.createdAt,
+  dateModified: blog.updatedAt || blog.createdAt,
+  author: {
+    "@type": "Organization",
+    name: "Ooshas Global",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Ooshas Global",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://ooshasglobal.com/logo.png", // replace with actual logo
+    },
+  },
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": `https://ooshasglobal.com/blog/${blog.slug}`,
+  },
+});
+
+const breadcrumbSchema = (blog: any) => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://ooshasglobal.com",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Blogs",
+      item: "https://ooshasglobal.com/blogs",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: blog.title,
+      item: `https://ooshasglobal.com/blog/${blog.slug}`,
+    },
+  ],
+});
+
+const faqSchema = (faqs: any[]) => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: stripHtml(faq.question),
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: stripHtml(faq.answer),
+    },
+  })),
+});
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
 
@@ -102,8 +175,41 @@ export default async function Page({ params }) {
     "/testimonials?type=image&limit=15",
   );
 
+  const articleJsonLd = articleSchema(blog);
+
+  const breadcrumbJsonLd = breadcrumbSchema(blog);
+
+  const faqJsonLd =
+    blog?.faq.length > 0
+      ? faqSchema(blog?.faq)
+      : null;
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleJsonLd),
+        }}
+      />
+
+      {/* Breadcrumb Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd),
+        }}
+      />
+
+      {/* FAQ Schema */}
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqJsonLd),
+          }}
+        />
+      )}
       <BlogDetailsPage
         latestBlogs={latestBlogs}
         blog={blog}
