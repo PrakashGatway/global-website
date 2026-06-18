@@ -4,42 +4,48 @@ import { generateFaqSchema } from "@/utils/schema";
 
 export const revalidate = 21600;
 
+// 1. Updated Schema Generator to use a unified @graph array
 const generateHomeSchema = (data) => {
   const seo = data?.seoMeta || {};
+  
+  // Use a fallback, but make sure it handles canonical trailing slashes gracefully
+  const primaryUrl = "https://ooshasglobal.com"; 
 
-  const baseUrl = "https://ooshasglobal.com";
-  const currentUrl = "https://ooshasglobal.com/home";
-
-  return [
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "@id": `${baseUrl}/#organization`,
-      name: "Ooshas Global",
-      url: baseUrl,
-      "logo": "https://ooshasglobal.com/images/newlogo3.png",
-      sameAs: [
-        "https://www.facebook.com/share/18vb1scYJk",
-        "https://www.instagram.com/ooshasglobal"
-      ]
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "@id": `${baseUrl}/#website`,
-      url: baseUrl,
-      name: seo?.metaTitle || "Ooshas Global",
-      description: seo?.metaDescription || "",
-      publisher: {
-        "@id": `${baseUrl}/#organization`
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${primaryUrl}/#organization`,
+        "name": "Ooshas Global",
+        "url": primaryUrl,
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://ooshasglobal.com/images/newlogo3.png",
+          "caption": "Ooshas Global Logo"
+        },
+        "sameAs": [
+          "https://www.facebook.com/share/18vb1scYJk",
+          "https://www.instagram.com/ooshasglobal"
+        ]
       },
-      potentialAction: {
-        "@type": "SearchAction",
-        target: `${baseUrl}/search?q={search_term_string}`,
-        "query-input": "required name=search_term_string"
+      {
+        "@type": "WebSite",
+        "@id": `${primaryUrl}/#website`,
+        "url": primaryUrl,
+        "name": seo?.metaTitle || "Ooshas Global",
+        "description": seo?.metaDescription || "",
+        "publisher": {
+          "@id": `${primaryUrl}/#organization`
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": `${primaryUrl}/search?q={search_term_string}`,
+          "query-input": "required name=search_term_string"
+        }
       }
-    }
-  ];
+    ]
+  };
 };
 
 const getHomePageData = async () => {
@@ -52,15 +58,12 @@ const getHomePageData = async () => {
     },
   });
 
-
   if (!res.ok) {
     throw new Error("Failed to fetch homepage data");
   }
 
   return res.json();
 };
-
-
 
 export async function generateMetadata() {
   const { data } = await getHomePageData();
@@ -82,18 +85,14 @@ export async function generateMetadata() {
   };
 }
 
-
-
 export default async function Home() {
   const { data } = await getHomePageData();
   const homePage = data.sections;
 
-  const schemas = generateHomeSchema(data);
+  const mainSchema = generateHomeSchema(data);
 
   const [destinationRes, countryRes, imageRes, Faqres, videoRes, blogres, unires] = await Promise.all([
-    serverInstance.get(
-      "/page-information/navbar?isFeatured=true&type=destinations&limit=6"
-    ),
+    serverInstance.get("/page-information/navbar?isFeatured=true&type=destinations&limit=6"),
     serverInstance.get("/page-information/navbar?isFeatured=true&type=country&limit=8"),
     serverInstance.get("/testimonials?type=image&limit=15"),
     serverInstance.get("/faqs/public/list?type=General&limit=15"),
@@ -103,28 +102,17 @@ export default async function Home() {
   ]);
 
   const faqs = Faqres?.data?.data || [];
-
-
-  const faqSchema =
-    faqs.length > 0
-      ? generateFaqSchema(faqs)
-      : null;
-
-
-
-
+  const faqSchema = faqs.length > 0 ? generateFaqSchema(faqs) : null;
 
   return (
     <>
-      {schemas.map((schema, index) => (
-        <script
-          key={index}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(schema),
-          }}
-        />
-      ))}
+      {/* Main Graph Schema (Organization + Website) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(mainSchema),
+        }}
+      />
 
       {/* FAQ Schema */}
       {faqSchema && (
@@ -147,6 +135,5 @@ export default async function Home() {
         unires={unires.data.result}
       />
     </>
-
   );
 }
