@@ -7,9 +7,7 @@ export const revalidate = 21600;
 // 1. Updated Schema Generator to use a unified @graph array
 const generateHomeSchema = (data) => {
   const seo = data?.seoMeta || {};
-  
-  // Use a fallback, but make sure it handles canonical trailing slashes gracefully
-  const primaryUrl = "https://ooshasglobal.com"; 
+  const primaryUrl = "https://ooshasglobal.com";
 
   return {
     "@context": "https://schema.org",
@@ -42,6 +40,19 @@ const generateHomeSchema = (data) => {
           "@type": "SearchAction",
           "target": `${primaryUrl}/search?q={search_term_string}`,
           "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${primaryUrl}/#webpage`,
+        "url": primaryUrl,
+        "name": seo?.metaTitle || "Ooshas Global",
+        "description": seo?.metaDescription || "",
+        "isPartOf": {
+          "@id": `${primaryUrl}/#website`
+        },
+        "about": {
+          "@id": `${primaryUrl}/#organization`
         }
       }
     ]
