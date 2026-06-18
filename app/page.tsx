@@ -1,5 +1,6 @@
 import Homepage from "@/components/homepage";
 import { baseUrl, serverInstance } from "./axiosInstance";
+import { generateFaqSchema } from "@/utils/schema";
 
 export const revalidate = 21600;
 
@@ -102,6 +103,15 @@ export default async function Home() {
     serverInstance.get("/universities?limit=10")
   ]);
 
+  const faqs = Faqres?.data?.data || [];
+
+
+    const faqSchema =
+      faqs.length > 0
+        ? generateFaqSchema(faqs)
+        : null;
+
+
 
 
 
@@ -116,6 +126,16 @@ export default async function Home() {
           }}
         />
       ))}
+
+         {/* FAQ Schema */}
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(faqSchema),
+          }}
+        />
+      )}
 
       <Homepage
         homePage={homePage}

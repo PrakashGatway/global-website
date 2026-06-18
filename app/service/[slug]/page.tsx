@@ -136,6 +136,7 @@ export default async function Page({ params }) {
       ? generateFaqSchema(faqs)
       : null;
 
+
   return (
     <>
       <script

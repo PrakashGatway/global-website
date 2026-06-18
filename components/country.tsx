@@ -390,11 +390,11 @@ const PopularCoursesSection = ({ data }) => {
                 <div className="px-4 py-4 flex flex-col flex-grow">
                   <div className="text-base lg:text-xl font-bold text-[#F46C44]" dangerouslySetInnerHTML={{ __html: item?.coursesname }} />
                   <div className="text-sm text-gray-800 mt-2 line-clamp-2" dangerouslySetInnerHTML={{ __html: item?.description || "" }} />
-                  <div className="mt-auto pt-3 flex justify-end">
+                  {/* <div className="mt-auto pt-3 flex justify-end">
                     <button className="bg-[#F46C44] text-white text-sm px-4 py-1.5 rounded-full flex items-center gap-2 hover:bg-primary transition">
                       Explore →
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -745,7 +745,7 @@ const CTASection = ({ data }) => {
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export default function CountryDetails({ Universityres, Faqres, pageData, imageData, videoRes }) {
+export default function CountryDetails({ Universityres, Faqres, pageData, imageData, videoRes,countryres }) {
   const router = useRouter()
   const pathname = usePathname()
 
