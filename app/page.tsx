@@ -17,8 +17,11 @@ const generateHomeSchema = (data) => {
       "@id": `${baseUrl}/#organization`,
       name: "Ooshas Global",
       url: baseUrl,
-      logo: `https://ooshasglobal.com/images/newlogo3.png`, // replace with actual logo
-      description: seo?.metaDescription || "",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://ooshasglobal.com/images/newlogo3.png"
+      },
+      "image": "https://ooshasglobal.com/images/newlogo3.png",
       sameAs: [
         "https://www.facebook.com/share/18vb1scYJk/?mibextid=wwXIfr",
         "https://www.instagram.com/ooshasglobal"
@@ -77,7 +80,7 @@ export async function generateMetadata() {
     openGraph: {
       title: seo?.metaTitle,
       description: seo?.metaDescription,
-      url: `${seo?.canonicalUrl || "https://ooshasglobal.com/home"}`,
+      url: `${seo?.canonicalUrl || "https://ooshasglobal.com"}`,
       type: "website",
     },
   };
