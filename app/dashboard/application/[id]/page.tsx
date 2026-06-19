@@ -775,14 +775,14 @@ export default function StudentDetailsPage() {
 
   const currentStatus = application?.primaryStatus;
 
-const currentStep =
-  timelinesteps.find(
-    item => item.step === currentStatus
-  ) || timelinesteps[0];
+  const currentStep =
+    timelinesteps.find(
+      item => item.step === currentStatus
+    ) || timelinesteps[0];
 
- const currentIndex = timelinesteps.findIndex(
-                  item => item.step === currentStatus
-                );
+  const currentIndex = timelinesteps.findIndex(
+    item => item.step === currentStatus
+  );
 
 
 
@@ -795,12 +795,12 @@ const currentStep =
 
           <div className="flex gap-4 items-center mb-10">
             <h2 className="font-bold text-lg">{currentStep.title}</h2>
-            <span className="bg-orange-100 text-orange-500 p-2 text-sm">{currentStep.subTitle}</span>
+            <span className="bg-orange-100 text-orange-500 p-2 text-base">{currentStep.subTitle}</span>
           </div>
 
 
-         
-         
+
+
 
           <div className="w-full py-1">
 
@@ -808,7 +808,7 @@ const currentStep =
             <div className="relative flex justify-between items-start">
               {/* Background Line */}
               <div className="absolute top-7 left-14 right-5 h-[2px] bg-gray-300 z-0" />
-              
+
 
               {/* Progress Line */}
               <div
@@ -820,9 +820,9 @@ const currentStep =
               />
 
               {timelinesteps.map((step, index) => {
-               
 
-               
+
+
 
 
 
@@ -867,7 +867,7 @@ const currentStep =
                             {step.title}
                           </h3>
 
-                          <p className="mt-1 text-sm text-orange-600">
+                          <p className="mt-1 text-base text-orange-600">
                             {status}
                           </p>
                         </div>
@@ -901,14 +901,14 @@ const currentStep =
                             setsteptitle(step)
 
                           }}
-                          className="mt-2 text-center font-medium text-sm text-gray-700 max-w-[200px] leading-5 cursor-pointer"
+                          className="mt-2 text-center font-medium text-base text-gray-700 max-w-[200px] leading-5 cursor-pointer"
                         >
                           {step.title}
                         </h4>
 
                         {/* Status */}
                         <p
-                          className={`text-sm mt-1 ${status === "completed"
+                          className={`text-base mt-1 ${status === "completed"
                             ? "text-black"
                             : "text-gray-500"
                             }`}
@@ -1010,7 +1010,7 @@ const currentStep =
                             />
 
                             <span
-                              className={`text-sm ${activeMenu === item
+                              className={`text-base ${activeMenu === item
                                 ? "font-semibold text-orange-500"
                                 : "text-gray-700"
                                 }`}
@@ -1023,11 +1023,11 @@ const currentStep =
                     </div>
 
                     <div className="border-t p-6">
-                      <h3 className="font-semibold text-sm">
+                      <h3 className="font-semibold text-base">
                         Need Help?
                       </h3>
 
-                      <p className="text-sm text-gray-500 mt-2">
+                      <p className="text-base text-gray-500 mt-2">
                         Contact our support team for assistance.
                       </p>
                       <Link href={"/dashboard/support"}>
@@ -1051,13 +1051,13 @@ const currentStep =
                       className="col-span-9"
                     >
                       <Suspense fallback={<div>Loading...</div>}>
-                      <ProfileTabs
-                        studentId={profile?._id}
-                        user={profile}
-                        profile={allProfile?.profile}
-                        countriesList={CountriesList}
-                        onUpdate={updateProfile}
-                      /></Suspense>
+                        <ProfileTabs
+                          studentId={profile?._id}
+                          user={profile}
+                          profile={allProfile?.profile}
+                          countriesList={CountriesList}
+                          onUpdate={updateProfile}
+                        /></Suspense>
                     </motion.div>
                   ) : (
                     <motion.div
@@ -1082,7 +1082,7 @@ const currentStep =
                                     Application Started
                                   </h2>
 
-                                  <span className="px-3 py-1 bg-orange-100 text-orange-700  text-sm font-medium">
+                                  <span className="px-3 py-1 bg-orange-100 text-orange-700  text-base font-medium">
                                     {application?.primaryStatus}
                                   </span>
                                 </div>
@@ -1095,7 +1095,7 @@ const currentStep =
                                   <Calendar className="w-5 h-5 text-orange-600" />
 
                                   <div>
-                                    <p className="text-sm text-gray-500">
+                                    <p className="text-base text-gray-500">
                                       Started On
                                     </p>
 
@@ -1243,7 +1243,7 @@ const currentStep =
                                           {task.title}
                                         </h4>
 
-                                        <p className="text-gray-500 text-sm">
+                                        <p className="text-gray-500 text-base">
                                           {task.description}
                                         </p>
                                       </div>
@@ -1279,7 +1279,7 @@ const currentStep =
                                           Estimated Time
                                         </h4>
 
-                                        <p className="text-gray-500 text-sm">
+                                        <p className="text-gray-500 text-base">
                                           20–30 minutes to complete
                                         </p>
                                       </div>
@@ -1293,7 +1293,7 @@ const currentStep =
                                           Information Needed
                                         </h4>
 
-                                        <p className="text-gray-500 text-sm">
+                                        <p className="text-gray-500 text-base">
                                           Personal details, academic records,
                                           ID proof, etc.
                                         </p>
@@ -1308,7 +1308,7 @@ const currentStep =
                                           Save Progress
                                         </h4>
 
-                                        <p className="text-gray-500 text-sm">
+                                        <p className="text-gray-500 text-base">
                                           You can save progress and continue later.
                                         </p>
                                       </div>
@@ -1404,7 +1404,7 @@ const currentStep =
                                   <h1 className="text-lg font-bold text-slate-800">
                                     Review & Submit
                                   </h1>
-                                  <p className="text-gray-500 text-sm mt-1">
+                                  <p className="text-gray-500 text-base mt-1">
                                     Please review all the information below before submitting your application.
                                   </p>
                                 </div>
@@ -1444,7 +1444,7 @@ const currentStep =
                                           {item.title}
                                         </h3>
 
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-base text-gray-500">
                                           {item.description}
                                         </p>
                                       </div>
@@ -1481,7 +1481,7 @@ const currentStep =
                                           />
                                         </div>
 
-                                        <p className="text-sm text-gray-600">
+                                        <p className="text-base text-gray-600">
                                           {note.text}
                                         </p>
                                       </div>
@@ -1498,16 +1498,21 @@ const currentStep =
                                   {/* Application Summary */}
                                   <div className="bg-white p-4  border border-gray-200 shadow-sm">
                                     <div className="flex justify-between items-center mb-3">
-                                      <h4 className="text-lg font-bold text-gray-800">Application Summary</h4>
+                                      <h4 className="text-base font-bold text-gray-800">Application Summary</h4>
                                     </div>
-                                    <div className="space-y-1.5 text-sm">
+                                    <div className="space-y-1.5 text-base">
                                       <div className="flex justify-between border-b border-gray-50 pb-1.5">
                                         <span className="text-gray-500">Student Name</span>
                                         <span className="font-medium text-gray-800">{application?.student?.name || "--"}</span>
                                       </div>
-                                      <div className="flex justify-between border-b border-gray-50 pb-1.5">
-                                        <span className="text-gray-500">Student Email</span>
-                                        <span className="font-medium text-gray-800">{application?.student?.email || "--"}</span>
+                                      <div className="flex gap-3 border-b border-gray-100 pb-2">
+                                        <span className="text-gray-500 w-[120px] flex-shrink-0">
+                                          Student Email
+                                        </span>
+
+                                        <span className="font-medium text-gray-800 flex-1 break-all text-right">
+                                          {application?.student?.email || "--"}
+                                        </span>
                                       </div>
                                       <div className="flex justify-between border-b border-gray-50 pb-1.5">
                                         <span className="text-gray-500">Student Phone</span>
@@ -1524,7 +1529,7 @@ const currentStep =
                                         <span className="text-gray-500">Course</span>
                                         <span className="font-medium text-gray-800">{application?.course?.name || application?.course?.name || "Computer Science"}</span>
                                       </div>
-                                      {application?.applicationId && (
+                                      {application.applicationId && (
                                         <div className="flex justify-between border-b border-gray-50 pb-1.5">
                                           <span className="text-gray-500">Application ID</span>
                                           <span className="font-medium text-gray-800">{application.applicationId}</span>
@@ -1559,7 +1564,7 @@ const currentStep =
                                         return (
                                           <div
                                             key={item.docKey}
-                                            className="flex justify-between items-center"
+                                            className="flex justify-between items-center gap-2"
                                           >
                                             <div className="flex items-center gap-3">
                                               {item.status === "approved" ? (
@@ -1570,13 +1575,13 @@ const currentStep =
                                                 <AlertCircle size={18} className="text-red-500" />
                                               )}
 
-                                              <span className="text-sm text-gray-700">
+                                              <span className="text-base text-gray-700">
                                                 {item?.docName}
                                               </span>
                                             </div>
 
                                             <span
-                                              className={`px-3 py-1 text-sm font-medium ${getStatusStyle(
+                                              className={`px-3 py-1 text-base font-medium ${getStatusStyle(
                                                 item.status
                                               )}`}
                                             >
@@ -1597,7 +1602,7 @@ const currentStep =
                                           Secure & Confidential
                                         </h4>
 
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-base text-gray-500">
                                           Your information is secure and encrypted.
                                         </p>
                                       </div>
@@ -1678,11 +1683,11 @@ const currentStep =
                             </div>
 
                             <div className="mt-4 bg-white border border-red-100  p-3">
-                              <p className="text-sm font-semibold uppercase text-red-700">
+                              <p className="text-base font-semibold uppercase text-red-700">
                                 Rejection Reason
                               </p>
 
-                              <p className="text-sm text-slate-600 mt-2">
+                              <p className="text-base text-slate-600 mt-2">
                                 {application?.documents?.[0]?.rejectReason ||
                                   "No rejection reason provided."}
                               </p>
@@ -1714,7 +1719,7 @@ const currentStep =
                                 </div>
 
                                 <div>
-                                  <p className="text-sm text-slate-500 mb-1">
+                                  <p className="text-base text-slate-500 mb-1">
                                     {new Date(item.createdAt).toLocaleString("en-IN", {
                                       day: "2-digit",
                                       month: "short",
@@ -1725,12 +1730,12 @@ const currentStep =
                                     })}
                                   </p>
 
-                                  <h4 className="font-medium text-sm text-slate-800">
+                                  <h4 className="font-medium text-base text-slate-800">
                                     {item.newValue || item.action.replaceAll("_", " ")}
                                   </h4>
 
                                   <p
-                                    className={`text-sm mt-1 ${item.action === "STATUS_CHANGED"
+                                    className={`text-base mt-1 ${item.action === "STATUS_CHANGED"
                                       ? "text-green-600 font-medium"
                                       : "text-slate-400"
                                       }`}
@@ -1887,7 +1892,7 @@ const currentStep =
                         What's Next?
                       </h4>
 
-                      <p className="text-sm text-amber-700 mt-2 leading-6">
+                      <p className="text-base text-amber-700 mt-2 leading-6">
                         Please review the rejection reason carefully. You may contact your
                         education consultant for alternative course options, backup
                         applications, or guidance on reapplying in a future intake.
@@ -1929,16 +1934,16 @@ const currentStep =
                         <div className={`w-4 h-4 rounded-full border-2 ${selectedIntake === item ? "border-orange-500 bg-orange-500" : "border-gray-300"}`}>
                           {selectedIntake === item && <div className="w-2 h-2 rounded-full bg-white m-0.5"></div>}
                         </div>
-                        <p className="font-medium text-sm">{item}</p>
+                        <p className="font-medium text-base">{item}</p>
                       </div>
-                      <p className="text-sm text-gray-500 ml-6">Status: Open</p>
+                      <p className="text-base text-gray-500 ml-6">Status: Open</p>
                     </div>
                   ))}
                 </div>
               </div>
               <div className="flex justify-end gap-2 mt-4">
                 <button onClick={() => setShowIntakeModal(false)}
-                  className="px-3 py-2 text-sm border rounded-md hover:bg-gray-50">Cancel</button>
+                  className="px-3 py-2 text-base border rounded-md hover:bg-gray-50">Cancel</button>
                 <button
                   onClick={async () => {
                     if (selectedIntake) {
@@ -1952,7 +1957,7 @@ const currentStep =
                       }
                     }
                   }}
-                  className="px-4 py-2 text-sm bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
+                  className="px-4 py-2 text-base bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
                 >
                   Submit
                 </button>
@@ -1983,7 +1988,7 @@ const currentStep =
               <div className="sticky shrink-0 top-0 bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between z-10">
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900">Answer Requirement</h2>
-                  <p className="text-sm text-gray-500">Provide the requested information</p>
+                  <p className="text-base text-gray-500">Provide the requested information</p>
                 </div>
                 <button onClick={() => setIsDrawerOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                   <X className="w-5 h-5 text-gray-500" />
@@ -1995,7 +2000,7 @@ const currentStep =
                   <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-2 mb-3">
                       <h3 className="font-semibold text-gray-900">{selectedRequirement.name}</h3>
-                      <span className={`px-2 py-0.5 rounded-full text-sm font-medium ${selectedRequirement.required === 'required'
+                      <span className={`px-2 py-0.5 rounded-full text-base font-medium ${selectedRequirement.required === 'required'
                         ? 'bg-red-100 text-red-700'
                         : selectedRequirement.required === 'optional'
                           ? 'bg-gray-100 text-gray-700'
@@ -2013,7 +2018,7 @@ const currentStep =
                   ) : (
                     <>
                       <div className="mb-3">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-base font-medium text-gray-700 mb-1">
                           Your Notes <span className="text-red-500">*</span>
                         </label>
                         <textarea
@@ -2026,7 +2031,7 @@ const currentStep =
                         />
                       </div>
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-base font-medium text-gray-700 mb-2">
                           Attach Files <span className="text-gray-400 font-normal">(PDF, DOC, JPG, PNG - max 10MB)</span>
                         </label>
                         <div
@@ -2042,8 +2047,8 @@ const currentStep =
                             onChange={handleFileSelect}
                           />
                           <UploadCloud className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-                          <p className="text-sm text-gray-600 font-medium">Click or drag files to upload</p>
-                          <p className="text-sm text-gray-400 mt-1">Supports PDF, DOC, DOCX, JPG, PNG up to 10MB</p>
+                          <p className="text-base text-gray-600 font-medium">Click or drag files to upload</p>
+                          <p className="text-base text-gray-400 mt-1">Supports PDF, DOC, DOCX, JPG, PNG up to 10MB</p>
                         </div>
                         {uploadedFiles.length > 0 && (
                           <div className="mt-4 space-y-2">
@@ -2052,8 +2057,8 @@ const currentStep =
                                 <div className="flex items-center gap-3 min-w-0">
                                   <File className="w-5 h-5 text-orange-500 flex-shrink-0" />
                                   <div className="min-w-0">
-                                    <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-                                    <p className="text-sm text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                    <p className="text-base font-medium text-gray-900 truncate">{file.name}</p>
+                                    <p className="text-base text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                                   </div>
                                 </div>
                                 <button type="button" onClick={() => removeFile(index)} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors">
@@ -2067,8 +2072,8 @@ const currentStep =
                         {uploadProgress[selectedRequirement?.id] > 0 && uploadProgress[selectedRequirement?.id] < 100 && (
                           <div className="mt-4">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-sm text-gray-500">Uploading...</span>
-                              <span className="text-sm text-gray-500 font-medium">{uploadProgress[selectedRequirement.id]}%</span>
+                              <span className="text-base text-gray-500">Uploading...</span>
+                              <span className="text-base text-gray-500 font-medium">{uploadProgress[selectedRequirement.id]}%</span>
                             </div>
                             <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                               <motion.div
@@ -2108,10 +2113,10 @@ type DetailProps = {
 function DetailItem({ label, value }: DetailProps) {
   return (
     <div>
-      <p className="text-sm font-semibold text-gray-800 mb-1">
+      <p className="text-base font-semibold text-gray-800 mb-1">
         {label}
       </p>
-      <p className="text-gray-700 font-medium text-sm">{value}</p>
+      <p className="text-gray-700 font-medium text-base">{value}</p>
     </div>
   );
 }
@@ -2119,11 +2124,11 @@ function DetailItem({ label, value }: DetailProps) {
 function EditableItem({ label, value }: DetailProps) {
   return (
     <div>
-      <p className="text-sm font-semibold text-gray-700 mb-2">
+      <p className="text-base font-semibold text-gray-700 mb-2">
         {label}
       </p>
       <div className="flex items-center gap-2">
-        <p className="text-gray-700 font-medium text-sm">{value}</p>
+        <p className="text-gray-700 font-medium text-base">{value}</p>
         {/* <Pencil size={14} className="text-gray-500 cursor-pointer hover:text-[#ff6a1a]" /> */}
       </div>
     </div>

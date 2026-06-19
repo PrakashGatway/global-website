@@ -50,10 +50,10 @@ export default async function Page({
     Faqres,
     imageRes,
     videoRes,
+    countryres
   ] = await Promise.all([
     serverInstance.get(
-      `/universities?limit=5&country=${
-        pageData?.country?.code || ""
+      `/universities?limit=5&country=${pageData?.country?.code || ""
       }`
     ),
     serverInstance.get(
@@ -65,7 +65,16 @@ export default async function Page({
     serverInstance.get(
       "/testimonials?type=video&limit=6"
     ),
+    serverInstance.get("/page-information/navbar?isFeatured=true&type=country"),
+
   ]);
+
+  const filterCountry = countryres.data.data.filter((item) =>
+    item.slug !== slug
+  )
+
+
+
 
   const faqs = Faqres?.data?.data || [];
 
@@ -135,6 +144,28 @@ export default async function Page({
         />
       )}
 
+      {pageData?.isFeatured === false && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "LocalBusiness",
+              name: "Ooshas Global",
+              url: currentUrl,
+              description:
+                pageData?.seoMeta?.metaDescription || "",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: pageData?.city || "",
+                addressRegion: pageData?.state || "",
+                addressCountry: "IN",
+              },
+            }),
+          }}
+        />
+      )}
+
       <div className="linkedClass list-style">
         <CountryDetails
           Universityres={
@@ -144,6 +175,7 @@ export default async function Page({
           pageData={pageData}
           imageData={imageRes.data.data}
           videoRes={videoRes.data}
+          countryres={filterCountry}
         />
       </div>
     </>

@@ -39,6 +39,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useGlobal } from "@/src/statecontext";
+import Select from "react-select";
 
 interface University {
   _id: string;
@@ -160,7 +161,7 @@ function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl flex flex-col max-h-[85vh]">
+      <div className="relative w-full max-w-lg bg-white  shadow-2xl flex flex-col max-h-[85vh]">
         <div className="bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-5">
           <h2 className="text-xl font-bold text-white">
             Choose Your Field of Study
@@ -183,7 +184,7 @@ function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
               <button
                 key={ele.id}
                 onClick={() => toggleCourse(ele.name)}
-                className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 mb-2
+                className={`w-full flex items-center gap-3 p-3  border-2 mb-2
                 ${ele.selected ? "border-indigo-600 bg-indigo-50" : "border-gray-100 hover:border-indigo-200"}`}
               >
                 <span>{ele.selected ? "✓" : ""}</span>
@@ -201,7 +202,7 @@ function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
               <button
                 key={i}
                 onClick={() => setPage(i + 1)}
-                className={`w-8 h-8 rounded-lg ${page === i + 1 ? "bg-indigo-600 text-white" : "hover:bg-gray-200"}`}
+                className={`w-8 h-8  ${page === i + 1 ? "bg-indigo-600 text-white" : "hover:bg-gray-200"}`}
               >
                 {i + 1}
               </button>
@@ -214,7 +215,7 @@ function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
           <button
             onClick={onClose}
             disabled={selected < 2}
-            className="px-6 py-2 bg-indigo-600 text-white rounded-xl disabled:bg-gray-200"
+            className="px-6 py-2 bg-indigo-600 text-white  disabled:bg-gray-200"
           >
             Continue
           </button>
@@ -247,7 +248,7 @@ export default function UniversitiesPage() {
            setSelectedCount={setSelectedCount}
          />
        )}*/}
-      
+
       <Suspense fallback={<div>Loading...</div>}>
         <UniversitiesPageClient />
       </Suspense>
@@ -256,7 +257,7 @@ export default function UniversitiesPage() {
 }
 
 function UniversitiesPageClient() {
-  const { allProfile,profile } = useGlobal();
+  const { allProfile, profile } = useGlobal();
 
   const [universities, setUniversities] = useState<University[]>([]);
   const [loading, setLoading] = useState(true);
@@ -274,8 +275,9 @@ function UniversitiesPageClient() {
   const [search, setsearch] = useState("");
   // Filters state
   const [filters, setFilters] = useState({
-    country: "",
-  category: "", // add this 
+    country: [],
+    category: "", // add this
+    intake: [],
     city: "",
     uni_type: "",
     has_accommodation: "",
@@ -286,43 +288,43 @@ function UniversitiesPageClient() {
   });
 
 
-//   useEffect(() => {
-//     const country = searchParams.get("country") || "";
-//     if (country) {
-//       setsearch(country);
-//     } else {
-//       setsearch(allProfile?.profile?.otherDetails?.countries_shortlist?.join(",") || "");
-//       console.log(allProfile?.profile?.otherDetails?.categorie_shortlist);
-//     }
-//   }, [searchParams, allProfile]);
+  //   useEffect(() => {
+  //     const country = searchParams.get("country") || "";
+  //     if (country) {
+  //       setsearch(country);
+  //     } else {
+  //       setsearch(allProfile?.profile?.otherDetails?.countries_shortlist?.join(",") || "");
+  //       console.log(allProfile?.profile?.otherDetails?.categorie_shortlist);
+  //     }
+  //   }, [searchParams, allProfile]);
 
 
 
-useEffect(() => {
-  const country = searchParams.get("country") || "";
+  useEffect(() => {
+    const country = searchParams.get("country") || "";
 
-  const shortlistCountries = allProfile?.profile?.otherDetails?.countries_shortlist || [];
+    const shortlistCountries = allProfile?.profile?.otherDetails?.countries_shortlist || [];
 
-  const shortlistCategories = allProfile?.profile?.otherDetails?.categorie_shortlist?.join(",") || [];
+    const shortlistCategories = allProfile?.profile?.otherDetails?.categorie_shortlist?.join(",") || [];
 
-  // country search state
-  const finalCountry = country || shortlistCountries.join(",");
+    // country search state
+    const finalCountry = country || shortlistCountries.join(",");
 
-  setsearch(finalCountry);
+    setsearch(finalCountry);
 
-  // set filters
-  setFilters((prev) => ({
-    ...prev,
-    country: finalCountry,
-    category: shortlistCategories, // set categories
-  }));
+    // set filters
+    setFilters((prev) => ({
+      ...prev,
+      country: finalCountry,
+      category: shortlistCategories, // set categories
+    }));
 
-  console.log(shortlistCategories, "categories");
-}, [searchParams, allProfile, profile]);
+    console.log(shortlistCategories, "categories");
+  }, [searchParams, allProfile, profile]);
 
 
-// console.log(search, "search list")
-//   // Debounced search query
+  // console.log(search, "search list")
+  //   // Debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   // Handle click outside
@@ -400,7 +402,7 @@ useEffect(() => {
         console.log(params, "param", typeof search);
         const response = await axiosInstance.get(`/universities?${params}`);
         const data = response.data.result;
-        
+
 
         if (reset) {
           setUniversities(data || []);
@@ -535,516 +537,523 @@ useEffect(() => {
     return "Selective";
   };
 
+  const intakeOptions = [
+    { value: "January", label: "January" },
+    { value: "February", label: "February" },
+    { value: "March", label: "March" },
+    { value: "September", label: "September" },
+  ];
+
   return (
-    <main className="flex-1 overflow-y-auto max-w-7xl mx-auto px-4">
-      <div className="space-y-4">
-        {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          {/* Breadcrumb */}
-       
-        </motion.div>
+    <main className=" mx-auto px-4">
+      <div className="flex items-center justify-between bg-gradient-to-r from-orange-50 to-white border border-orange-100 p-6 mb-8">
+  <div>
+    <span className="inline-block px-3 py-1 text-sm font-medium bg-orange-100 text-orange-600 rounded-full mb-3">
+      Global University Search
+    </span>
 
-        {/* Search and Filter Bar */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="relative flex-1"
-          >
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 z-1" />
-            <input
-              type="text"
-              placeholder="Search universities by name, country, or city..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-background/50 backdrop-blur-sm"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-muted rounded-full transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </motion.div>
+    <h1 className="text-2xl font-bold text-gray-900 mb-3">
+      Find Universities That Match Your Ambitions
+    </h1>
 
-          <div className="relative" ref={filterButtonRef}>
-            <motion.button
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 p-2 lg:px-5 lg:py-3 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-xl hover:shadow-lg transition-all duration-300 relative"
+    <p className="text-gray-600 text-lg max-w-xl">
+      Browse thousands of universities, filter by country, intake, and study level to find the perfect destination for your future.
+    </p>
+  </div>
+
+  <div className="hidden md:flex items-center justify-center w-28 h-28 rounded-full bg-orange-100">
+    <GraduationCap className="w-14 h-14 text-orange-500" />
+  </div>
+</div>
+      <div className="flex gap-6">
+        {/* Left Side - Permanent Filter Panel */}
+        <aside className="w-80 flex-shrink-0 sticky top-80 ">
+          <div className="sticky top-4 bg-background border border-border  shadow-lg overflow-hidden">
+
+            <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary/5 to-transparent">
+              <h2 className="font-semibold flex items-center gap-2">
+                <Filter className="w-4 h-4 text-primary" />
+                Filters
+              </h2>
+                {/* Results Count */}
+          {!loading && universities.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center justify-between"
             >
-              <Filter className="w-4 h-4" />
-              Filters
-              {activeFilterCount > 0 && (
-                <span className="ml-1 px-2 py-0.5 text-xs bg-white/20 rounded-full animate-pulse">
-                  {activeFilterCount}
-                </span>
-              )}
-              <ChevronDown
-                className={`w-4 h-4 transition-transform duration-200 ${showFilters ? "rotate-180" : ""}`}
-              />
-            </motion.button>
+              <p className="text-sm text-muted-foreground">
+                Found{" "}
+                <span className="font-semibold text-foreground">
+                  {universities.length}
+                </span>{" "}
+                universities
+              </p>
+            </motion.div>
+          )}
+            </div>
 
-            <AnimatePresence>
-              {showFilters && (
-                <>
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onClick={() => setShowFilters(false)}
-                    className="fixed inset-0 z-40 bg-black/10 backdrop-blur-[1px]"
-                  />
-
-                  <motion.div
-                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-80 bg-background border border-border rounded-xl shadow-2xl z-50 overflow-hidden"
+            <div className="p-4 space-y-5 max-h-[calc(100vh-200px)] ">
+              {/* Search Bar */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="relative"
+              >
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 z-1" />
+                <input
+                  type="text"
+                  placeholder="Search universities by name, country, or city..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 border-2 border-border  focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-background/50 backdrop-blur-sm"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-muted  transition-colors"
                   >
-                    <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary/5 to-transparent">
-                      <h2 className="font-semibold flex items-center gap-2">
-                        <Filter className="w-4 h-4 text-primary" />
-                        Filters
-                      </h2>
-                      <button
-                        onClick={() => setShowFilters(false)}
-                        className="p-1 hover:bg-muted rounded-lg transition-colors"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </motion.div>
 
-                    <div className="p-4 space-y-5 max-h-[70vh] overflow-y-auto">
-                      {/* Country Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                          <Globe className="w-4 h-4" />
-                          Country
-                        </label>
-                        <ModernSelect
-                          options={countries}
-                          value={filters.country}
-                          onChange={(value) => {
-                            console.log(value, "value");
-                            handleFilterChange("country", value);
-                          }}
-                          placeholder="Select country"
-                          className="py-0"
-                        />
-                      </div>
+              {/* Country Filter */}
+              {/* <div className="space-y-2">
+            <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+              <Globe className="w-4 h-4" />
+              Country
+            </label>
+            <ModernSelect
+              options={countries}
+              value={filters.country}
+              onChange={(value) => {
+                console.log(value, "value");
+                handleFilterChange("country", value);
+              }}
+              placeholder="Select country"
+              className="py-0"
+            />
+          </div> */}
+              <Select
+                isMulti
+                placeholder="Select Countries"
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    borderColor: state.isFocused ? "#f97316" : "#d1d5db",
+                    boxShadow: state.isFocused
+                      ? "0 0 0 1px #f97316"
+                      : "none",
+                    "&:hover": {
+                      borderColor: "#f97316",
+                    },
+                  }),
 
-                      {/* University Type Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                          <GraduationCap className="w-4 h-4" />
-                          University Type
-                        </label>
-                        <div className="grid grid-cols-2 gap-2">
-                          {[
-                            {
-                              value: "public",
-                              label: "Public",
-                              icon: <Building className="w-4 h-4" />,
-                            },
-                            {
-                              value: "private",
-                              label: "Private",
-                              icon: <Shield className="w-4 h-4" />,
-                            },
-                          ].map((type) => (
-                            <button
-                              key={type.value}
-                              onClick={() =>
-                                handleFilterChange(
-                                  "uni_type",
-                                  filters.uni_type === type.value
-                                    ? ""
-                                    : type.value,
-                                )
-                              }
-                              className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg border transition-all duration-200 ${
-                                filters.uni_type === type.value
-                                  ? "border-primary bg-primary/10 text-primary"
-                                  : "border-border hover:border-primary/50 hover:bg-muted"
-                              }`}
-                            >
-                              {type.icon}
-                              <span className="text-sm">{type.label}</span>
-                            </button>
-                          ))}
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isSelected
+                      ? "#f97316" // selected option
+                      : state.isFocused
+                        ? "#fed7aa" // hover option (orange-200)
+                        : "#fff",
+                    color: state.isSelected ? "#fff" : "#000",
+                    cursor: "pointer",
+                  }),
+                }}
+                options={countries.map((country) => ({
+                  value: country.value,
+                  label: `${country.label} `,
+                }))}
+                value={countries
+                  .filter((c) => filters.country?.includes(c.value))
+                  .map((c) => ({
+                    value: c.value,
+                    label: c.label,
+                  }))}
+                onChange={(selected) =>
+                  setFilters({
+                    ...filters,
+                    country: selected?.map((item) => item.value) || [],
+                  })
+                }
+              />
+
+              <Select
+                isMulti
+                options={intakeOptions}
+                placeholder="Select Intake"
+                value={intakeOptions.filter((item) =>
+                  filters.intake?.includes(item.value)
+                )}
+                onChange={(selected) =>
+                  setFilters({
+                    ...filters,
+                    intake: selected?.map((item) => item.value) || [],
+                  })
+                }
+                styles={{
+                  control: (provided, state) => ({
+                    ...provided,
+                    borderColor: state.isFocused ? "#f97316" : "#d1d5db",
+                    boxShadow: state.isFocused
+                      ? "0 0 0 1px #f97316"
+                      : "none",
+                    "&:hover": {
+                      borderColor: "#f97316",
+                    },
+                  }),
+
+                  option: (provided, state) => ({
+                    ...provided,
+                    backgroundColor: state.isSelected
+                      ? "#f97316"
+                      : state.isFocused
+                        ? "#ffedd5"
+                        : "#fff",
+                    color: state.isSelected ? "#fff" : "#111",
+                  }),
+                }}></Select>
+
+
+
+              {/* University Type Filter */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
+                  <GraduationCap className="w-4 h-4" />
+                  University Type
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    {
+                      value: "public",
+                      label: "Public",
+                      icon: <Building className="w-4 h-4" />,
+                    },
+                    {
+                      value: "private",
+                      label: "Private",
+                      icon: <Shield className="w-4 h-4" />,
+                    },
+                  ].map((type) => (
+                    <button
+                      key={type.value}
+                      onClick={() =>
+                        handleFilterChange(
+                          "uni_type",
+                          filters.uni_type === type.value ? "" : type.value,
+                        )
+                      }
+                      className={`flex items-center justify-center gap-2 px-3 py-2 border transition-all duration-200 ${filters.uni_type === type.value
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/50 hover:bg-muted"
+                        }`}
+                    >
+                      {type.icon}
+                      <span className="text-sm">{type.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Active Filters */}
+              {activeFilterCount > 0 && (
+                <div className="pt-2 border-t border-border">
+                  <p className="text-xs font-medium text-muted-foreground mb-2">
+                    Active Filters
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {filters.country && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary  text-sm">
+                        {filters.country}
+                        <button
+                          onClick={() => handleFilterChange("country", "")}
+                          className="hover:bg-primary/20  p-0.5"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    )}
+                    {filters.uni_type && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary  text-sm">
+                        {filters.uni_type}
+                        <button
+                          onClick={() => handleFilterChange("uni_type", "")}
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between gap-2 p-4 border-t border-border bg-muted/30">
+              <button
+                onClick={clearFilters}
+                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Clear all
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        {/* Right Side - Search and University Cards */}
+        <div className="flex-1 space-y-4">
+
+       
+
+          {/* University Cards Grid */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {loading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-card border border-border  overflow-hidden animate-pulse"
+                >
+                  <div className="h-48 bg-gradient-to-br from-muted to-muted/50"></div>
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-muted "></div>
+                        <div className="space-y-2">
+                          <div className="h-4 w-32 bg-muted "></div>
+                          <div className="h-3 w-24 bg-muted "></div>
                         </div>
                       </div>
+                      <div className="h-8 w-16 bg-muted "></div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-3 w-full bg-muted "></div>
+                      <div className="h-3 w-3/4 bg-muted "></div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="h-12 bg-muted "></div>
+                      <div className="h-12 bg-muted "></div>
+                      <div className="h-12 bg-muted "></div>
+                    </div>
+                    <div className="h-10 bg-muted "></div>
+                  </div>
+                </div>
+              ))
+            ) : universities.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="col-span-full text-center py-16"
+              >
+                <div className="w-24 h-24 mx-auto mb-4  bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+                  <Search className="w-12 h-12 text-muted-foreground" />
+                </div>
+                <h3 className="text-2xl font-bold mb-2">No universities found</h3>
+                <p className="text-muted-foreground">
+                  Try adjusting your search or filters to find what you're looking
+                  for
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground  hover:bg-primary/90 transition-all duration-300"
+                >
+                  Clear all filters
+                </button>
+              </motion.div>
+            ) : (
+              universities.map((uni, index) => (
+                <motion.div
+                  key={index}
+                  className={`relative flex flex-col h-full bg-gradient-to-br ${getCardGradient(uni.uni_type)} border -3xl overflow-hidden`}
+                >
+                  {/* Cover Image */}
+                  <div className="relative h-30 overflow-hidden">
+                    {uni.cover_photo ? (
+                      <img
+                        src={uni.cover_photo}
+                        alt={uni.name}
+                        className="w-full h-full object-cover transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5" />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                  </div>
 
-                      {/* Active Filters */}
-                      {activeFilterCount > 0 && (
-                        <div className="pt-2 border-t border-border">
-                          <div className="flex flex-wrap gap-2">
-                            {filters.country && (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                                {filters.country}
-                                <button
-                                  onClick={() =>
-                                    handleFilterChange("country", "")
-                                  }
-                                  className="hover:bg-primary/20 rounded-full p-0.5"
-                                >
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </span>
+                  <div className="p-3 relative flex flex-col flex-1">
+                    {/* Logo and Header */}
+                    <div className="flex items-start justify-between -mt-12 mb-4 relative">
+                      <div className="flex items-center gap-1">
+                        {uni.uni_logo ? (
+                          <img
+                            src={uni.uni_logo}
+                            alt={uni.name}
+                            className="w-20 h-auto max-h-10 object-fit bg-white shadow-lg border-2"
+                          />
+                        ) : (
+                          <Building className="w-28 h-28 text-muted-foreground" />
+                        )}
+                        <div>
+                          <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary transition-colors">
+                            {uni.name}
+                          </h3>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {uni.city}, {uni.country}
+                            {uni.uni_web && (
+                              <a
+                                href={uni.uni_web}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2.5 border border-border  hover:bg-muted hover:border-primary/50 transition-all duration-300 group-hover:scale-[1.02]"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </a>
                             )}
-                            {filters.uni_type && (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm">
-                                {filters.uni_type}
-                                <button
-                                  onClick={() =>
-                                    handleFilterChange("uni_type", "")
-                                  }
-                                >
-                                  <X className="w-3 h-3" />
-                                </button>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="relative flex flex-col flex-1">
+                      {/* Slogan */}
+                      {uni.slogan && (
+                        <p className="text-xs text-muted-foreground italic mb-3 line-clamp-2">
+                          "{uni.slogan}"
+                        </p>
+                      )}
+
+                      {/* Description */}
+                      <p
+                        className="text-foreground/80 text-[13px] mb-2 line-clamp-3"
+                        title={
+                          uni.short_description || "No description available."
+                        }
+                      >
+                        {uni.short_description || "No description available."}
+                      </p>
+
+                      {/* Intakes */}
+                      {uni.intakes && uni.intakes.length > 0 && (
+                        <div className="mb-3">
+                          <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            Intakes
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {uni.intakes.slice(0, 3).map((intake, index) => (
+                              <span
+                                key={index}
+                                className="text-xs px-2.5 py-1 bg-primary/10 text-primary  font-medium"
+                              >
+                                {intake}
+                              </span>
+                            ))}
+                            {uni.intakes.length > 3 && (
+                              <span className="text-xs px-2.5 py-1 bg-muted text-muted-foreground ">
+                                +{uni.intakes.length - 3}
                               </span>
                             )}
                           </div>
                         </div>
                       )}
-                    </div>
 
-                    <div className="flex items-center justify-between gap-2 p-4 border-t border-border bg-muted/30">
-                      <button
-                        onClick={clearFilters}
-                        className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        Clear all
-                      </button>
-                      <button
-                        onClick={() => setShowFilters(false)}
-                        className="px-6 py-2 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                      >
-                        Apply Filters
-                      </button>
-                    </div>
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
+                      {/* Accommodation */}
+                      {(uni.on_campus_accommodation ||
+                        uni.off_campus_accommodation) && (
+                          <div className="flex items-center gap-3 mb-4">
+                            {uni.on_campus_accommodation && (
+                              <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 ">
+                                <Check className="w-3 h-3" />
+                                On Campus
+                              </span>
+                            )}
+                            {uni.off_campus_accommodation && (
+                              <span className="inline-flex items-center gap-1.5 text-xs text-blue-600 bg-blue-50 px-2 py-1 ">
+                                <Check className="w-3 h-3" />
+                                Off Campus
+                              </span>
+                            )}
+                          </div>
+                        )}
 
-        {/* Results Count */}
-        {!loading && universities.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center justify-between"
-          >
-            <p className="text-sm text-muted-foreground">
-              Found{" "}
-              <span className="font-semibold text-foreground">
-                {universities.length}
-              </span>{" "}
-              universities
-            </p>
-          </motion.div>
-        )}
-
-        {/* University Cards Grid */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {loading ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="bg-card border border-border rounded-2xl overflow-hidden animate-pulse"
-              >
-                <div className="h-48 bg-gradient-to-br from-muted to-muted/50"></div>
-                <div className="p-6 space-y-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-muted rounded-xl"></div>
-                      <div className="space-y-2">
-                        <div className="h-4 w-32 bg-muted rounded"></div>
-                        <div className="h-3 w-24 bg-muted rounded"></div>
-                      </div>
-                    </div>
-                    <div className="h-8 w-16 bg-muted rounded-full"></div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-3 w-full bg-muted rounded"></div>
-                    <div className="h-3 w-3/4 bg-muted rounded"></div>
-                  </div>
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="h-12 bg-muted rounded-lg"></div>
-                    <div className="h-12 bg-muted rounded-lg"></div>
-                    <div className="h-12 bg-muted rounded-lg"></div>
-                  </div>
-                  <div className="h-10 bg-muted rounded-lg"></div>
-                </div>
-              </div>
-            ))
-          ) : universities.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="col-span-full text-center py-16"
-            >
-              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
-                <Search className="w-12 h-12 text-muted-foreground" />
-              </div>
-              <h3 className="text-2xl font-bold mb-2">No universities found</h3>
-              <p className="text-muted-foreground">
-                Try adjusting your search or filters to find what you're looking
-                for
-              </p>
-              <button
-                onClick={clearFilters}
-                className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all duration-300"
-              >
-                Clear all filters
-              </button>
-            </motion.div>
-          ) : (
-            universities.map((uni, index) => (
-              <motion.div
-                key={index}
-                className={`relative flex flex-col h-full bg-gradient-to-br ${getCardGradient(uni.uni_type)} border rounded-3xl overflow-hidden`}
-              >
-                {/* Cover Image */}
-                <div className="relative h-30 overflow-hidden">
-                  {uni.cover_photo ? (
-                    <img
-                      src={uni.cover_photo}
-                      alt={uni.name}
-                      className="w-full h-full object-cover transition-transform duration-700"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
-
-                  {/* Rank Badge */}
-                  {/* <div className="absolute top-3 right-3">
-                    <div className="px-3 py-1.5 bg-black/50 backdrop-blur-md rounded-full text-xs font-semibold text-white border border-white/20">
-                      {formatRank(uni.uni_rank)}
-                    </div>
-                  </div> */}
-                </div>
-
-                <div className="p-3 relative flex flex-col flex-1">
-                  {/* Logo and Header */}
-                  <div className="flex items-start justify-between -mt-12 mb-4 relative">
-                    <div className="flex items-center gap-1">
-                      {/* <div className="w-32 h-10 rounded-xl bg-white shadow-lg border-2 border-background p-2 transform transition-transform duration-300 group-hover:scale-105"> */}
-                      {uni.uni_logo ? (
-                        <img
-                          src={uni.uni_logo}
-                          alt={uni.name}
-                          className="w-20 h-auto max-h-10 object-fit bg-white shadow-lg border-2"
-                        />
-                      ) : (
-                        <Building className="w-28 h-28 text-muted-foreground" />
-                      )}
-                      {/* </div> */}
-                      <div>
-                        <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary transition-colors">
-                          {uni.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
-                          {uni.city}, {uni.country}
-                          {uni.uni_web && (
-                            <a
-                              href={uni.uni_web}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="p-2.5 border border-border rounded-lg hover:bg-muted hover:border-primary/50 transition-all duration-300 group-hover:scale-[1.02]"
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </a>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Type Badge */}
-                  {/* <div className="flex items-center gap-2 mb-3">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${uni.uni_type === 'public' ? 'bg-blue-50 text-blue-600 border-blue-200' :
-                        uni.uni_type === 'private' ? 'bg-purple-50 text-purple-600 border-purple-200' :
-                          'bg-emerald-50 text-emerald-600 border-emerald-200'
-                      }`}>
-                      {getTypeIcon(uni.uni_type)}
-                      {uni.uni_type}
-                    </span>
-                  </div> */}
-                  <div className="relative flex flex-col flex-1">
-                    {/* Slogan */}
-                    {uni.slogan && (
-                      <p className="text-xs text-muted-foreground italic mb-3 line-clamp-2">
-                        "{uni.slogan}"
-                      </p>
-                    )}
-
-                    {/* Description */}
-                    <p
-                      className="text-foreground/80 text-[13px] mb-2 line-clamp-3"
-                      title={
-                        uni.short_description || "No description available."
-                      }
-                    >
-                      {uni.short_description || "No description available."}
-                    </p>
-
-                    {/* Stats Grid */}
-                    {/* <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="bg-muted/30 rounded-lg p-2.5 border border-border/50">
-                      <p className="text-xs text-muted-foreground mb-1">Established</p>
-                      <p className="font-semibold flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {uni.established_year || 'N/A'}
-                      </p>
-                    </div>
-                    <div className="bg-muted/30 rounded-lg p-2.5 border border-border/50">
-                      <p className="text-xs text-muted-foreground mb-1">Acceptance Rate</p>
-                      <div className="flex items-center justify-between">
-                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${getAcceptanceRateColor(uni.acceptanceRate)}`}>
-                          {uni.acceptanceRate || 'N/A'}%
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {getAcceptanceRateLabel(uni.acceptanceRate)}
-                        </span>
-                      </div>
-                    </div>
-                  </div> */}
-
-                    {/* Intakes */}
-                    {uni.intakes && uni.intakes.length > 0 && (
-                      <div className="mb-3">
-                        <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          Intakes
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {uni.intakes.slice(0, 3).map((intake, index) => (
-                            <span
-                              key={index}
-                              className="text-xs px-2.5 py-1 bg-primary/10 text-primary rounded-full font-medium"
-                            >
-                              {intake}
-                            </span>
-                          ))}
-                          {uni.intakes.length > 3 && (
-                            <span className="text-xs px-2.5 py-1 bg-muted text-muted-foreground rounded-full">
-                              +{uni.intakes.length - 3}
-                            </span>
-                          )}
+                      {/* Tags */}
+                      {uni.tags && (
+                        <div className="flex flex-wrap gap-1.5 mb-4">
+                          {uni.tags
+                            .split(",")
+                            .slice(0, 3)
+                            .map((tag, i) => (
+                              <span
+                                key={i}
+                                className="px-2 py-0.5 bg-muted/50  text-xs text-muted-foreground border border-border/50"
+                              >
+                                {tag.trim()}
+                              </span>
+                            ))}
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
 
-                    {/* Accommodation */}
-                    {(uni.on_campus_accommodation ||
-                      uni.off_campus_accommodation) && (
-                      <div className="flex items-center gap-3 mb-4">
-                        {uni.on_campus_accommodation && (
-                          <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                            <Check className="w-3 h-3" />
-                            On Campus
-                          </span>
-                        )}
-                        {uni.off_campus_accommodation && (
-                          <span className="inline-flex items-center gap-1.5 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                            <Check className="w-3 h-3" />
-                            Off Campus
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Tags */}
-                    {uni.tags && (
-                      <div className="flex flex-wrap gap-1.5 mb-4">
-                        {uni.tags
-                          .split(",")
-                          .slice(0, 3)
-                          .map((tag, i) => (
-                            <span
-                              key={i}
-                              className="px-2 py-0.5 bg-muted/50 rounded-full text-xs text-muted-foreground border border-border/50"
-                            >
-                              {tag.trim()}
-                            </span>
-                          ))}
-                      </div>
-                    )}
+                    {/* Footer Actions */}
+                    <div className="flex items-end gap-2 pt-1 mt-auto h-full justify-end">
+                      <Link
+                        href={`/dashboard/universities/${uni?.slug}`}
+                        className="flex-1 p-2 lg:px-4 lg:py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground  hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
+                      >
+                        View Details
+                      </Link>
+                      <Link
+                        href={`/dashboard/programs?university=${uni._id}`}
+                        className="flex-1 p-2 lg:px-4 lg:py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground  hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
+                      >
+                        Apply
+                      </Link>
+                    </div>
                   </div>
 
-                  {/* Footer Actions */}
-                  <div className="flex items-end gap-2 pt-1 mt-auto h-full justify-end">
-                    <Link
-                      href={`/dashboard/universities/${uni?.slug}`}
-                      className="flex-1 p-2 lg:px-4 lg:py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
-                    >
-                      View Details
-                    </Link>
-                    <Link
-                      href={`/dashboard/programs?university=${uni._id}`}
-                      className="flex-1 p-2 lg:px-4 lg:py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
-                    >
-                      Apply
-                    </Link>
-                  </div>
-                </div>
+                  {/* Hover Effect Overlay */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-500 pointer-events-none ${hoveredCard === uni._id ? "opacity-100" : ""}`}
+                  />
+                </motion.div>
+              ))
+            )}
+          </motion.div>
 
-                {/* Hover Effect Overlay */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-500 pointer-events-none ${hoveredCard === uni._id ? "opacity-100" : ""}`}
-                />
+          {/* Infinite Scroll Trigger */}
+          <div ref={observerTarget} className="py-8">
+            {loadingMore && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center"
+              >
+                <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                <p className="mt-3 text-sm text-muted-foreground">
+                  Loading more universities...
+                </p>
               </motion.div>
-            ))
-          )}
-        </motion.div>
-
-        {/* Infinite Scroll Trigger */}
-        <div ref={observerTarget} className="py-8">
-          {loadingMore && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center"
-            >
-              <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-              <p className="mt-3 text-sm text-muted-foreground">
-                Loading more universities...
-              </p>
-            </motion.div>
-          )}
-          {!hasMore && universities.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-8"
-            >
-              <p className="text-muted-foreground">
-                You've explored all universities
-              </p>
-              <p className="text-sm text-muted-foreground/70 mt-1">
-                Showing {universities.length} universities
-              </p>
-            </motion.div>
-          )}
+            )}
+            {!hasMore && universities.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-8"
+              >
+                <p className="text-muted-foreground">
+                  You've explored all universities
+                </p>
+                <p className="text-sm text-muted-foreground/70 mt-1">
+                  Showing {universities.length} universities
+                </p>
+              </motion.div>
+            )}
+          </div>
         </div>
       </div>
     </main>

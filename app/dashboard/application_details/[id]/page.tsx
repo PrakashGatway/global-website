@@ -2528,9 +2528,7 @@ const [depositDetails, setDepositDetails] = useState({
                   </p>
                 )}
             </div>
-          </div>
-        )}
-
+            
           <div>
       <div className="flex justify-between items-center mb-3">
         <h4 className="text-sm font-semibold text-orange-800">Other Details</h4>
@@ -2586,6 +2584,9 @@ const [depositDetails, setDepositDetails] = useState({
         ))}
       </div>
     </div>
+
+          </div>
+        )}
 
           {/* Description Section (common) */}
           <div className="space-y-2">

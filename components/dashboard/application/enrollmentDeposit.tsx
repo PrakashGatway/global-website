@@ -59,7 +59,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
             <div className="border border-orange-400 p-4">
               <div className="flex flex-col lg:flex-row items-start gap-5 ">
 
-                <div className="w-20 h-20 bg-orange-100 flex items-center rounded-full justify-center">
+                <div className="w-40 h-40 bg-orange-100 flex items-center rounded-full justify-center">
                   <img src="/enroll-application.gif" alt="" className="w-full" />
                 </div>
 
@@ -69,12 +69,12 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                       Pay Enrollment Deposit
                     </h2>
 
-                    <span className="bg-orange-100 text-orange-700 text-sm font-medium px-3 py-1 ">
+                    <span className="bg-orange-100 text-orange-700 text-base font-medium px-3 py-1 ">
                       In Progress
                     </span>
                   </div>
 
-                  <p className="text-sm text-gray-600 mt-2">
+                  <p className="text-base text-gray-600 mt-2">
                     To confirm your seat, please pay the enrollment deposit before the deadline.
                   </p>
 
@@ -82,22 +82,22 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
 
                     <div className="border  p-3">
-                      <p className="text-sm text-gray-500">Deposit Amount</p>
+                      <p className="text-base text-gray-500">Deposit Amount</p>
                       <h4 className="font-bold mt-1">{metadata?.amount}</h4>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-base text-gray-400">
                         Non-refundable
                       </p>
                     </div>
 
                     <div className="border p-3 rounded-lg">
-                      <p className="text-sm text-gray-500">Payment Deadline</p>
+                      <p className="text-base text-gray-500">Payment Deadline</p>
 
                       <h4 className="font-bold mt-1">
                         {metadata?.paymentDeadline}
                       </h4>
 
                       <p
-                        className={`text-sm mt-1 ${daysLeft <= 3
+                        className={`text-base mt-1 ${daysLeft <= 3
                           ? "text-red-600"
                           : daysLeft <= 7
                             ? "text-orange-600"
@@ -111,10 +111,10 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                     </div>
 
                     <div className="border p-3">
-                      <p className="text-sm text-gray-500">Offer Deadline</p>
+                      <p className="text-base text-gray-500">Offer Deadline</p>
                       <h4 className="font-bold mt-1">{metadata?.offerDeadline}</h4>
                       <p
-                        className={`text-sm mt-1 ${offerdateleft <= 3
+                        className={`text-base mt-1 ${offerdateleft <= 3
                           ? "text-red-600"
                           : offerdateleft <= 7
                             ? "text-orange-600"
@@ -128,7 +128,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                     </div>
 
                     <div className="border p-3">
-                      <p className="text-sm text-gray-500">Currency</p>
+                      <p className="text-base text-gray-500">Currency</p>
                       <h4 className="font-bold mt-1">{metadata?.currency}</h4>
 
                     </div>
@@ -138,14 +138,14 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
               </div>
 
               {/* Alert */}
-              <div className="mt-5 bg-orange-50 border border-orange-100 p-3 text-sm text-orange-700">
+              <div className="mt-5 bg-orange-50 border border-orange-100 p-3 text-base text-orange-700">
                 Your admission is not confirmed until the enrollment deposit is received by the university.
               </div>
 
             </div>
 
             <div>   {/* Tabs */}
-              <div className="flex overflow-x-auto gap-8 border-b mt-6 text-sm">
+              <div className="flex overflow-x-auto gap-8 border-b mt-6 text-base">
                 {[
                   { id: "Paymentdetail", label: "Payment Details" },
                   { id: "Paymentmethod", label: "Payment Method" },
@@ -206,7 +206,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                       Why Enrollment Deposit?
                     </h3>
 
-                    <ul className="space-y-3 text-sm text-gray-700">
+                    <ul className="space-y-3 text-base text-gray-700">
                       <li>✓ Confirms your seat in the program</li>
                       <li>✓ Required for visa application process</li>
                       <li>✓ Adjusted in tuition fee</li>
@@ -302,7 +302,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                   Important
                 </h4>
 
-                <p className="text-sm text-orange-600 mt-1">
+                <p className="text-base text-orange-600 mt-1">
                   Please pay the enrollment deposit before 18 June 2025 to secure your seat.
                 </p>
               </div></div>
@@ -338,7 +338,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                       ✓
                     </div>
 
-                    <h4 className="text-sm font-semibold mt-3">
+                    <h4 className="text-base font-semibold mt-3">
                       {item}
                     </h4>
                   </div>
@@ -356,7 +356,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
             <div className="flex justify-between items-center mb-3">
               <h4 className="text-lg font-bold text-gray-800">Application Summary</h4>
             </div>
-            <div className="space-y-1.5 text-sm">
+            <div className="space-y-1.5 text-base">
               <div className="flex justify-between border-b border-gray-50 pb-1.5">
                 <span className="text-gray-500">Student Name</span>
                 <span className="font-medium text-gray-800">{application?.student?.name || "--"}</span>
@@ -395,12 +395,12 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
               Payment Summary
             </h3>
 
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-base">
               <span>Tuition Fee</span>
               <span>{metadata?.tuitionFee}</span>
             </div>
 
-            <div className="flex justify-between mt-2 text-sm">
+            <div className="flex justify-between mt-2 text-base">
               <span>Enrollment Deposit</span>
               <span>{metadata?.amount}</span>
             </div>
@@ -427,7 +427,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
                   {allprofile?.data?.assignto?.name}
                 </h4>
 
-                <p className="text-sm text-gray-500">
+                <p className="text-base text-gray-500">
                   {allprofile?.data?.assignto?.role}
                 </p>
               </div>

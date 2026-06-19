@@ -70,6 +70,8 @@ export default function Navbar({
 
   const pathname = usePathname()
 
+  console.log(countryres)
+
   const navbar: NavItem[] = [
     { title: "Home", route: "/", id: 1 },
     { title: "About Us", route: "/about", id: 2 },

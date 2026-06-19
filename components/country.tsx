@@ -16,6 +16,10 @@ import axiosInstance from '@/app/axiosInstance'
 import toast from 'react-hot-toast'
 import { NewTag, Tag, Tagging } from './tag'
 import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { useKeenSlider } from 'keen-slider/react'
+
+
 
 
 // ─── Section Components ────────────────────────────────────────────────────────
@@ -599,9 +603,9 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
   if (data?.isHidden === "yes") return null
   const [openIndex, setOpenIndex] = useState(null);
 
-const toggleAccordion = (index) => {
-  setOpenIndex(openIndex === index ? null : index);
-};
+  const toggleAccordion = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
   console.log(data)
   return (
     <section className="w-full bg-[#ef6a42] py-10 sm:py-14 lg:py-10 px-4 sm:px-6">
@@ -624,59 +628,57 @@ const toggleAccordion = (index) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 sm:gap-x-16 gap-y-4 sm:gap-y-6 mt-6 sm:mt-10">
-  {data.items?.map((item, i) => (
-    <div key={i} className="space-y-3">
-      
-      {/* Scholarship Row */}
-      <div className="flex items-center gap-3" onClick={() => toggleAccordion(i)}>
-        <div className="bg-yellow-400 text-black rounded-full p-2 flex-shrink-0">
-          <DynamicLucideIcon
-            name={item.icon}
-            size={18}
-          />
+          {data.items?.map((item, i) => (
+            <div key={i} className="space-y-3">
+
+              {/* Scholarship Row */}
+              <div className="flex items-center gap-3" onClick={() => toggleAccordion(i)}>
+                <div className="bg-yellow-400 text-black rounded-full p-2 flex-shrink-0">
+                  <DynamicLucideIcon
+                    name={item.icon}
+                    size={18}
+                  />
+                </div>
+
+                <span
+                  className="border-b border-white pb-1 text-sm sm:text-base flex-1 cursor-pointer"
+                  dangerouslySetInnerHTML={{
+                    __html: item.title,
+                  }}
+                />
+
+                <button
+
+                  className="text-white hover:scale-110 transition-all duration-300"
+                >
+                  <ArrowRight
+                    className={`w-5 h-5 transition-transform duration-300 ${openIndex === i ? "rotate-90" : ""
+                      }`}
+                  />
+                </button>
+              </div>
+
+              {/* Extra Details */}
+              {item?.extraDetail && (
+                <div
+                  className={`overflow-hidden transition-all duration-500 ease-in-out ${openIndex === i
+                      ? "max-h-[1000px] opacity-100 mt-3"
+                      : "max-h-0 opacity-0"
+                    }`}
+                >
+                  <div className="ml-12 bg-white/10 border border-white/20 rounded-lg p-2 backdrop-blur-sm">
+                    <div
+                      className="text-white text-sm leading-7 prose prose-invert max-w-none"
+                      dangerouslySetInnerHTML={{
+                        __html: item.extraDetail,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
-
-        <span
-          className="border-b border-white pb-1 text-sm sm:text-base flex-1 cursor-pointer"
-          dangerouslySetInnerHTML={{
-            __html: item.title,
-          }}
-        />
-
-        <button
-          
-          className="text-white hover:scale-110 transition-all duration-300"
-        >
-          <ArrowRight
-            className={`w-5 h-5 transition-transform duration-300 ${
-              openIndex === i ? "rotate-90" : ""
-            }`}
-          />
-        </button>
-      </div>
-
-      {/* Extra Details */}
-    {item?.extraDetail && (
-  <div
-    className={`overflow-hidden transition-all duration-500 ease-in-out ${
-      openIndex === i
-        ? "max-h-[1000px] opacity-100 mt-3"
-        : "max-h-0 opacity-0"
-    }`}
-  >
-    <div className="ml-12 bg-white/10 border border-white/20 rounded-lg p-2 backdrop-blur-sm">
-      <div
-        className="text-white text-sm leading-7 prose prose-invert max-w-none"
-        dangerouslySetInnerHTML={{
-          __html: item.extraDetail,
-        }}
-      />
-    </div>
-  </div>
-)}
-    </div>
-  ))}
-</div>
 
         <div className="flex justify-center mt-6 sm:mt-8">
           <a href="/contact">
@@ -742,12 +744,102 @@ const CTASection = ({ data }) => {
   )
 }
 
+const SimilarDestination = ({ countryres,sliderRef }) => 
+  (
+  
+
+   <section className="py-12 max-w-7xl mx-auto">
+  <div className="flex items-center gap-3 mb-6">
+    <div className="w-1 h-8 bg-orange-500"></div>
+    <h2 className="text-2xl font-bold text-gray-800">
+      Related Destinations
+    </h2>
+  </div>
+
+  <div ref={sliderRef} className="keen-slider">
+    {countryres?.map((item) => (
+      <div
+        key={item._id}
+        className="keen-slider__slide bg-white border border-gray-300"
+      >
+        <Link href={`/destination/${item.slug}`}>
+          <div className="h-42 overflow-hidden border-b border-gray-300">
+            <img
+              src={item.country?.image || item.navbarImage}
+              alt={item.country?.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          <div className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-[1px] bg-orange-500"></div>
+              <span className="text-xs uppercase tracking-widest text-orange-600 font-semibold">
+                Destination
+              </span>
+            </div>
+
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              {item.country?.name}
+            </h3>
+
+            <p className="text-base text-gray-700 line-clamp-2">
+              Explore study opportunities, universities, scholarships,
+              and student life in {item.country?.name}.
+            </p>
+          </div>
+        </Link>
+      </div>
+    ))}
+  </div>
+</section>
+ 
+)
+
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export default function CountryDetails({ Universityres, Faqres, pageData, imageData, videoRes,countryres }) {
+export default function CountryDetails({ Universityres, Faqres, pageData, imageData, videoRes, countryres }) {
   const router = useRouter()
   const pathname = usePathname()
+
+  console.log(pageData)
+  console.log(countryres)
+
+  const animation = { duration: 40000, easing: (t) => t };
+
+const [sliderRef] = useKeenSlider({
+  loop: true,
+  renderMode: "performance",
+  drag: true,
+  slides: {
+    perView: 4,
+    spacing: 20,
+  },
+  breakpoints: {
+    "(max-width: 1024px)": {
+      slides: {
+        perView: 2,
+        spacing: 16,
+      },
+    },
+    "(max-width: 640px)": {
+      slides: {
+        perView: 1,
+        spacing: 12,
+      },
+    },
+  },
+  created(s) {
+    s.moveToIdx(5, true, animation);
+  },
+  updated(s) {
+    s.moveToIdx(s.track.details.abs + 5, true, animation);
+  },
+  animationEnded(s) {
+    s.moveToIdx(s.track.details.abs + 5, true, animation);
+  },
+});
 
   useEffect(() => {
     if (pathname.startsWith("/destination/")) {
@@ -769,6 +861,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
     servicesection: ServiceSection,
     scholarships: ScholarshipsSection,
     cta: CTASection,
+    similardestination: SimilarDestination,
     videoTestimonials: 'VideoTestimonials',
     imageTestimonials: 'ImageTestimonial',
   }
@@ -795,6 +888,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
   }
 
   const sortedSections = getSortedSections()
+
 
   const scholarshipSection = pageData?.sections?.scholarships
   const scholarshipItems = scholarshipSection?.items || []
@@ -879,10 +973,16 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           )
         }
 
+      
+
         return SectionComponent && (
           <SectionComponent key={`${name}-${order}`} data={data} />
         )
       })}
+
+      {countryres?.length > 0 && (
+    <SimilarDestination countryres={countryres} sliderRef={sliderRef} />
+  )}
 
       <FAQSection Faqres={Faqres} />
     </>

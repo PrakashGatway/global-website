@@ -46,7 +46,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
 
             <div className="flex items-start gap-4">
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-orange-100 flex items-center justify-center">
+              <div className="w-16 h-16 md:w-40 md:h-40 rounded-full bg-orange-100 flex items-center justify-center">
                 <img src="/review-application.gif" alt="" />
               </div>
 
@@ -56,19 +56,19 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                     Under OOSHAS Review
                   </h2>
 
-                  <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-700 ">
+                  <span className="px-3 py-1 text-base font-medium bg-green-100 text-green-700 ">
                     In Progress
                   </span>
                 </div>
 
-                <p className="text-gray-500 mt-2 max-w-xl text-sm">
+                <p className="text-gray-500 mt-2 max-w-xl text-base">
                   Our admissions team is reviewing your application and documents.
                   We'll notify you once the review is completed.
                 </p>
 
                 <div className="flex flex-col md:flex-row gap-4 mt-4">
                   <div className="border px-4 py-3">
-                    <p className="text-sm text-gray-500">
+                    <p className="text-base text-gray-500">
                       Review started
                     </p>
                     <p className="font-semibold">
@@ -90,7 +90,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                   </div>
 
                   <div className="border px-4 py-3">
-                    <p className="text-sm text-gray-500">
+                    <p className="text-base text-gray-500">
                       Expected completion
                     </p>
                     <p className="font-semibold">
@@ -143,13 +143,13 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                         <AlertCircle size={18} className="text-red-500" />
                       )}
 
-                      <span className="text-sm text-gray-700">
+                      <span className="text-base text-gray-700">
                         {item?.docName}
                       </span>
                     </div>
 
                     <span
-                      className={`px-3 py-1 text-sm font-medium ${getStatusStyle(
+                      className={`px-3 py-1 text-base font-medium ${getStatusStyle(
                         item.status
                       )}`}
                     >
@@ -175,7 +175,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                   {allProfile?.data?.assignto?.name}
                 </h4>
 
-                <p className="text-sm text-gray-500">
+                <p className="text-base text-gray-500">
                   {allProfile?.data?.assignto?.role}
                 </p>
               </div>
@@ -188,7 +188,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
               </p>
             </div>
 
-            <p className="mt-4 text-sm text-gray-500">
+            <p className="mt-4 text-base text-gray-500">
               Last Updated: 21 May 2025, 04:30 PM
             </p>
           </div>
@@ -219,12 +219,12 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                     return null;
                   }
                   return (
-                    <tr key={doc.docKey} className="border-t text-sm">
+                    <tr key={doc.docKey} className="border-t text-base">
                       <td className="py-3">{doc.docName}</td>
 
                       <td className="py-3">
                         <span
-                          className={`px-3 py-1 text-sm font-medium ${getStatusStyle(
+                          className={`px-3 py-1 text-base font-medium ${getStatusStyle(
                             doc.status
                           )}`}
                         >
@@ -248,7 +248,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                           {/* View */}
                           <button
                             onClick={() => setPreviewImage(`${fileBaseurl(doc.url)}`)}
-                            className="flex items-center gap-1 px-3 py-1 text-sm font-medium text-orange-600 bg-orange-50 border border-orange-100 hover:bg-orange-100 transition"
+                            className="flex items-center gap-1 px-3 py-1 text-base font-medium text-orange-600 bg-orange-50 border border-orange-100 hover:bg-orange-100 transition"
                           >
                             <Eye className="w-3 h-3" />
                             View
@@ -282,12 +282,12 @@ export default function ReviewApplication({ application, allProfile, profile, ac
               >
                 {/* Header */}
                 <div className="flex justify-between items-start gap-3">
-                  <h4 className="font-semibold text-gray-800 text-sm leading-5">
+                  <h4 className="font-semibold text-gray-800 text-base leading-5">
                     {doc.docName}
                   </h4>
 
                   <span
-                    className={`px-2.5 py-1 text-sm font-medium rounded-full whitespace-nowrap ${getStatusStyle(
+                    className={`px-2.5 py-1 text-base font-medium rounded-full whitespace-nowrap ${getStatusStyle(
                       doc.status
                     )}`}
                   >
@@ -297,14 +297,14 @@ export default function ReviewApplication({ application, allProfile, profile, ac
 
                 {/* Details */}
                 <div className="mt-3 space-y-2">
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-base">
                     <span className="text-gray-500">Document Type</span>
                     <span className="text-gray-800 font-medium">
                       {doc.originalName}
                     </span>
                   </div>
 
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-base">
                     <span className="text-gray-500">Updated</span>
                     <span className="text-gray-800">
                       {new Date(
@@ -329,7 +329,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                         `${fileBaseurl(doc.url)}`
                       )
                     }
-                    className="flex-1 flex items-center justify-center gap-2 bg-orange-50 text-orange-600 border border-orange-200 py-2.5 rounded-lg text-sm font-medium"
+                    className="flex-1 flex items-center justify-center gap-2 bg-orange-50 text-orange-600 border border-orange-200 py-2.5 rounded-lg text-base font-medium"
                   >
                     <Eye className="w-4 h-4" />
                     View
@@ -339,7 +339,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                     href={`${fileBaseurl(doc.url)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 bg-gray-50 text-gray-700 border border-gray-200 py-2.5 rounded-lg text-sm font-medium"
+                    className="flex-1 flex items-center justify-center gap-2 bg-gray-50 text-gray-700 border border-gray-200 py-2.5 rounded-lg text-base font-medium"
                   >
                     <Download className="w-4 h-4" />
                     Download
@@ -359,9 +359,9 @@ export default function ReviewApplication({ application, allProfile, profile, ac
         {/* Application Summary */}
           <div className="bg-white p-4  border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-3">
-                <h4 className="text-sm font-bold text-gray-800">Application Summary</h4>
+                <h4 className="text-base font-bold text-gray-800">Application Summary</h4>
               </div>
-              <div className="space-y-1.5 text-sm">
+              <div className="space-y-1.5 text-base">
                 <div className="flex justify-between border-b border-gray-50 pb-1.5">
                   <span className="text-gray-500">Student Name</span>
                   <span className="font-medium text-gray-800">{application?.student?.name || "--"}</span>
@@ -402,7 +402,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
             Overall Review Progress
           </h3>
 
-          <p className="text-green-600 font-semibold text-sm mb-2">
+          <p className="text-green-600 font-semibold text-base mb-2">
             80% Complete
           </p>
 
@@ -431,7 +431,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                   )}
 
                   <div>
-                    <p className="font-medium text-sm">
+                    <p className="font-medium text-base">
                       {new Date(item.createdAt).toLocaleString("en-IN", {
                         day: "2-digit",
                         month: "short",
@@ -441,7 +441,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
                       })}
                     </p>
 
-                    <p className="text-slate-500 text-sm">
+                    <p className="text-slate-500 text-base">
                       {item.description}
                     </p>
                   </div>
@@ -451,7 +451,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
               <div className="flex gap-3">
                 <Circle className="w-5 h-5 text-slate-300 mt-1" />
                 <div>
-                  <p className="font-medium text-sm text-slate-400">
+                  <p className="font-medium text-base text-slate-400">
                     No Activity Found
                   </p>
                 </div>
@@ -469,7 +469,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
             </h3>
           </div>
 
-          <p className="text-sm text-slate-500 mb-4">
+          <p className="text-base text-slate-500 mb-4">
             Contact your advisor or our support team.
           </p>
 

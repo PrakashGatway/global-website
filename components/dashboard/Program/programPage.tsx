@@ -350,7 +350,7 @@ export default function CoursesPage() {
             animate={{ opacity: 1 }}
             className="flex items-center justify-between"
           >
-            <p className="text-sm text-gray-800">
+            <p className="text-base text-gray-800">
               Found <span className="font-semibold text-foreground">{courses.length}</span> programs
             </p>
           </motion.div>
@@ -413,10 +413,10 @@ export default function CoursesPage() {
           </svg>
         </div>
         <h3 className="text-xl font-bold text-gray-900 mb-2">No programs found</h3>
-        <p className="text-gray-500 text-sm">Try adjusting your search or filters</p>
+        <p className="text-gray-500 text-base">Try adjusting your search or filters</p>
         <button
           onClick={clearFilters}
-          className="mt-5 px-5 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors"
+          className="mt-5 px-5 py-2 bg-primary text-white rounded-lg text-base font-medium hover:bg-primary/90 transition-colors"
         >
           Clear all filters
         </button>
@@ -454,10 +454,10 @@ export default function CoursesPage() {
 
                 {/* Course Info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 line-clamp-2 text-sm leading-tight mb-0.5">
+                  <h3 className="font-semibold text-gray-900 line-clamp-2 text-base leading-tight mb-0.5">
                     {course.name}
                   </h3>
-                  <p className="text-xs font-medium text-gray-600 truncate mb-1">
+                  <p className="text-sm font-medium text-gray-600 truncate mb-1">
                     {course.university?.name}
                   </p>
                   <div className="flex items-center gap-1">
@@ -465,7 +465,7 @@ export default function CoursesPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    <span className="text-xs text-gray-500 truncate">
+                    <span className="text-sm text-gray-500 truncate">
                       {course.university?.city}, {course.university?.country}
                     </span>
                   </div>
@@ -476,7 +476,7 @@ export default function CoursesPage() {
               {course.description && (
                 <div className="mb-3">
                   <div className="w-6 h-0.5 bg-primary rounded-full mb-1.5"></div>
-                  <p className="text-xs text-gray-600 leading-relaxed line-clamp-2" title={course.description}>
+                  <p className="text-sm text-gray-600 leading-relaxed line-clamp-2" title={course.description}>
                     {course.description}
                   </p>
                 </div>
@@ -492,7 +492,7 @@ export default function CoursesPage() {
                     </svg>
                     <span className="text-[11px] font-medium text-gray-500">Tuition</span>
                   </div>
-                  <p className="font-bold text-gray-900 text-xs">
+                  <p className="font-bold text-gray-900 text-sm">
                     {formatCurrency(course.tuitionFee || 0, course.currency)}
                   </p>
                   <p className="text-[10px] text-gray-400">/year</p>
@@ -506,7 +506,7 @@ export default function CoursesPage() {
                     </svg>
                     <span className="text-[11px] font-medium text-gray-500">Duration</span>
                   </div>
-                  <p className="font-semibold text-gray-800 text-xs">
+                  <p className="font-semibold text-gray-800 text-sm">
                     {course.duration || 'N/A'}
                   </p>
                 </div>
@@ -519,7 +519,7 @@ export default function CoursesPage() {
                     </svg>
                     <span className="text-[11px] font-medium text-gray-500">App. Fee</span>
                   </div>
-                  <p className="font-semibold text-gray-800 text-xs">
+                  <p className="font-semibold text-gray-800 text-sm">
                     {formatCurrency(course.applicationFee || 0, course.currency)}
                   </p>
                 </div>
@@ -599,7 +599,7 @@ export default function CoursesPage() {
               <div className="flex items-center gap-2 mt-auto pt-1">
                 <a
                   href={`/dashboard/programs/${course.slug}`}
-                  className="flex-1 text-center px-3 py-1.5 bg-primary text-white rounded-md text-xs font-medium transition-all duration-200 hover:bg-primary/90"
+                  className="flex-1 text-center px-3 py-1.5 bg-primary text-white rounded-md text-sm font-medium transition-all duration-200 hover:bg-primary/90"
                 >
                   View Details
                 </a>
@@ -609,7 +609,7 @@ export default function CoursesPage() {
                     setSelectedCourse(course);
                     setIsModalOpen(true);
                   }}
-                  className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-transparent border border-primary/40 text-primary rounded-md text-xs font-medium transition-all duration-200 hover:bg-primary hover:text-white"
+                  className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-transparent border border-primary/40 text-primary rounded-md text-sm font-medium transition-all duration-200 hover:bg-primary hover:text-white"
                 >
                   Apply
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -653,7 +653,7 @@ export default function CoursesPage() {
               className="text-center"
             >
               <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-              <p className="mt-3 text-sm text-gray-800">Loading more programs...</p>
+              <p className="mt-3 text-base text-gray-800">Loading more programs...</p>
             </motion.div>
           )}
           {!hasMore && courses.length > 0 && (
@@ -664,7 +664,7 @@ export default function CoursesPage() {
             >
 
               <p className="text-gray-800">You've explored all programs</p>
-              <p className="text-sm text-gray-800/70 mt-1">
+              <p className="text-base text-gray-800/70 mt-1">
                 Showing {courses.length} programs
               </p>
             </motion.div>

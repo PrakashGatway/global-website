@@ -234,8 +234,8 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                 <div className="flex flex-col lg:flex-row gap-4">
                   {/* Left Illustration */}
                   <div className="flex justify-center lg:justify-start">
-                    <div className="w-20 h-20 md:w-20 md:h-20 bg-orange-100 rounded-2xl flex items-center justify-center rounded-full">
-                      <img src="/confirmmation.gif" alt="" />
+                    <div className="w-20 h-20 md:w-40 md:h-40 bg-orange-100 rounded-2xl flex items-center justify-center rounded-full">
+                      <img src="/confirmmation.png" alt="" />
                     </div>
                   </div>
 
@@ -247,13 +247,13 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                         Congratulations! Your Confirmation Letter is Ready
                       </h2>
 
-                      <span className="inline-flex items-center w-fit px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
+                      <span className="inline-flex items-center w-fit px-3 py-1 rounded-full bg-green-100 text-green-700 text-base font-medium">
                         Received
                       </span>
                     </div>
 
                     {/* Description */}
-                    <div className="space-y-2 text-slate-600 text-sm md:text-sm">
+                    <div className="space-y-2 text-slate-600 text-base md:text-base">
                       <p>
                         Your Confirmation of Acceptance for Studies (CAS) has been
                         issued by the University of Bologna.
@@ -268,42 +268,42 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                     {/* Details Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mt-8">
                       <div className="border border-slate-200 rounded-xl p-4">
-                        <p className="text-sm text-slate-500 mb-2">
+                        <p className="text-base text-slate-500 mb-2">
                           Document Type
                         </p>
 
-                        <h4 className="font-semibold text-slate-800 leading-6 text-sm">
+                        <h4 className="font-semibold text-slate-800 leading-6 text-base">
                           CAS
                         </h4>
                       </div>
 
                       <div className="border border-slate-200 rounded-xl p-4">
-                        <p className="text-sm text-slate-500 mb-2">
+                        <p className="text-base text-slate-500 mb-2">
                           CAS Number
                         </p>
 
-                        <h4 className="font-semibold text-orange-600 break-all text-sm">
+                        <h4 className="font-semibold text-orange-600 break-all text-base">
                           {completeDetail?.metadata?.completed?.casNumber}
                         </h4>
                       </div>
 
                       <div className="border border-slate-200 rounded-xl p-4">
-                        <p className="text-sm text-slate-500 mb-2">
+                        <p className="text-base text-slate-500 mb-2">
                           Issued On
                         </p>
 
-                        <h4 className="font-semibold text-slate-800 text-sm">
+                        <h4 className="font-semibold text-slate-800 text-base">
                           {completeDetail?.metadata?.completed?.issuedOn}
 
                         </h4>
                       </div>
 
                       <div className="border border-slate-200 rounded-xl p-4">
-                        <p className="text-sm text-slate-500 mb-2">
+                        <p className="text-base text-slate-500 mb-2">
                           Valid Until
                         </p>
 
-                        <h4 className="font-semibold text-slate-800 text-sm">
+                        <h4 className="font-semibold text-slate-800 text-base">
                           {completeDetail?.metadata?.completed?.validUntil}
 
                         </h4>
@@ -312,7 +312,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                     {/* Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 mt-2">
-                      <button onClick={downloadCASLetter} className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 text-sm">
+                      <button onClick={downloadCASLetter} className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 text-base">
                         <Download size={18} />
                         Download CAS Letter
                       </button>
@@ -327,7 +327,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   <div className="flex flex-col lg:flex-row gap-5">
 
                     <div className="flex justify-center lg:justify-start">
-                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-orange-100 flex items-center justify-center">
+                      <div className="w-16 h-16 md:w-40 md:h-40 rounded-full bg-orange-100 flex items-center justify-center">
 
                         <img src="/submittedschool.gif" alt="" />
                       </div>
@@ -339,12 +339,12 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           Application Submitted to School
                         </h2>
 
-                        <span className="px-3 py-1  bg-orange-100 text-orange-700 text-sm font-semibold">
+                        <span className="px-3 py-1  bg-orange-100 text-orange-700 text-base font-semibold">
                           Completed
                         </span>
                       </div>
 
-                      <p className="text-slate-500 text-sm">
+                      <p className="text-slate-500 text-base">
                         Your application has been successfully submitted
                         to the University of Bologna.
                       </p>
@@ -358,7 +358,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           </div>
 
                           <div>
-                            <p className="text-sm text-slate-500 mb-1">
+                            <p className="text-base text-slate-500 mb-1">
                               Submitted on
                             </p>
 
@@ -382,7 +382,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           </div>
 
                           <div>
-                            <p className="text-sm text-slate-500 mb-1">
+                            <p className="text-base text-slate-500 mb-1">
                               Submitted to
                             </p>
 
@@ -401,7 +401,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                       {/* Left Illustration */}
                       <div className="flex justify-center lg:justify-start">
-                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-orange-100 flex items-center justify-center">
+                        <div className="w-16 h-16 md:w-40 md:h-40 rounded-full bg-orange-100 flex items-center justify-center">
 
                           <img src="/awaitting-res.gif" alt="" />
                         </div>
@@ -415,13 +415,13 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                             Awaiting School Response
                           </h2>
 
-                          <span className="inline-flex items-center w-fit px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-medium">
+                          <span className="inline-flex items-center w-fit px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-base font-medium">
                             In Progress
                           </span>
                         </div>
 
                         {/* Description */}
-                        <div className="space-y-1 text-slate-600 text-sm">
+                        <div className="space-y-1 text-slate-600 text-base">
                           <p>
                             Your application has been received by the University of Bologna.
                           </p>
@@ -442,7 +442,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                             </div>
 
                             <div>
-                              <p className="text-sm text-slate-500 mb-1">
+                              <p className="text-base text-slate-500 mb-1">
                                 Submitted on
                               </p>
 
@@ -466,7 +466,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                             </div>
 
                             <div>
-                              <p className="text-sm text-slate-500 mb-1">
+                              <p className="text-base text-slate-500 mb-1">
                                 Submitted to
                               </p>
 
@@ -485,7 +485,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
               <div className="bg-orange-50 border border-orange-100  px-4 py-3 flex items-center gap-3">
                 <Info className="w-5 h-5 text-orange-600" />
 
-                <p className="text-sm text-orange-700">
+                <p className="text-base text-orange-700">
                   You will be notified once the university starts
                   reviewing your application.
                 </p>
@@ -497,7 +497,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                     {/* Tabs */}
                     <div className="border-b border-gray-200">
                       <div className="flex overflow-x-auto">
-                        <button className="px-6 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
+                        <button className="px-6 py-4 text-base font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap">
                           CAS Details
                         </button>
 
@@ -511,55 +511,55 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                         <div>
                           <div className="space-y-5">
                             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
-                              <p className="text-sm font-semibold text-gray-800">Student Name</p>
-                              <p className="text-sm text-gray-600">{allProfile?.data?.name}</p>
+                              <p className="text-base font-semibold text-gray-800">Student Name</p>
+                              <p className="text-base text-gray-600">{allProfile?.data?.name}</p>
                             </div>
 
                             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
-                              <p className="text-sm font-semibold text-gray-800">Date of Birth</p>
-                              <p className="text-sm text-gray-600">{allProfile?.data?.dateOfBirth}</p>
+                              <p className="text-base font-semibold text-gray-800">Date of Birth</p>
+                              <p className="text-base text-gray-600">{allProfile?.data?.dateOfBirth}</p>
                             </div>
 
                             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
-                              <p className="text-sm font-semibold text-gray-800">Nationality</p>
-                              <p className="text-sm text-gray-600">{allProfile?.data?.nationality}</p>
+                              <p className="text-base font-semibold text-gray-800">Nationality</p>
+                              <p className="text-base text-gray-600">{allProfile?.data?.nationality}</p>
                             </div>
 
                             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
-                              <p className="text-sm font-semibold text-gray-800">Passport No.</p>
-                              <p className="text-sm text-gray-600">{allProfile?.data?.passportNumber}</p>
+                              <p className="text-base font-semibold text-gray-800">Passport No.</p>
+                              <p className="text-base text-gray-600">{allProfile?.data?.passportNumber}</p>
                             </div>
 
                             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
-                              <p className="text-sm font-semibold text-gray-800">Program</p>
-                              <p className="text-sm text-gray-600">{application?.course?.name}</p>
+                              <p className="text-base font-semibold text-gray-800">Program</p>
+                              <p className="text-base text-gray-600">{application?.course?.name}</p>
                             </div>
 
                             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
-                              <p className="text-sm font-semibold text-gray-800">Start Date</p>
-                              <p className="text-sm text-gray-600">15 September 2026</p>
+                              <p className="text-base font-semibold text-gray-800">Start Date</p>
+                              <p className="text-base text-gray-600">15 September 2026</p>
                             </div>
 
                             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
-                              <p className="text-sm font-semibold text-gray-800">End Date</p>
-                              <p className="text-sm text-gray-600">14 September 2029</p>
+                              <p className="text-base font-semibold text-gray-800">End Date</p>
+                              <p className="text-base text-gray-600">14 September 2029</p>
                             </div>
 
                             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
-                              <p className="text-sm font-semibold text-gray-800">CAS Issue Date</p>
-                              <p className="text-sm text-gray-600">{completeDetail?.metadata?.completed?.issuedOn}</p>
+                              <p className="text-base font-semibold text-gray-800">CAS Issue Date</p>
+                              <p className="text-base text-gray-600">{completeDetail?.metadata?.completed?.issuedOn}</p>
                             </div>
 
                             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
-                              <p className="text-sm font-semibold text-gray-800">CAS Expiry Date</p>
-                              <p className="text-sm text-gray-600">{completeDetail?.metadata?.completed?.validUntil}</p>
+                              <p className="text-base font-semibold text-gray-800">CAS Expiry Date</p>
+                              <p className="text-base text-gray-600">{completeDetail?.metadata?.completed?.validUntil}</p>
                             </div>
 
 
 
                             <div className="grid grid-cols-[140px_1fr] sm:grid-cols-[180px_1fr] gap-4">
-                              <p className="text-sm font-semibold text-gray-800">CAS Number</p>
-                              <p className="text-sm text-gray-600">{completeDetail?.metadata?.completed?.casNumber}</p>
+                              <p className="text-base font-semibold text-gray-800">CAS Number</p>
+                              <p className="text-base text-gray-600">{completeDetail?.metadata?.completed?.casNumber}</p>
                             </div>
 
 
@@ -606,7 +606,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                               </span>
                             </div>
 
-                            <span className="text-sm font-medium text-slate-800">
+                            <span className="text-base font-medium text-slate-800">
                               {application?.applicationNumber}
                             </span>
                           </div>
@@ -615,12 +615,12 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                               <GraduationCap className="w-4 h-4 text-slate-500" />
-                              <span className="text-sm text-slate-600">
+                              <span className="text-base text-slate-600">
                                 Program
                               </span>
                             </div>
 
-                            <span className="text-sm font-medium text-slate-800">
+                            <span className="text-base font-medium text-slate-800">
                               {application?.course?.name}
                             </span>
                           </div>
@@ -629,12 +629,12 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                               <Calendar className="w-4 h-4 text-slate-500" />
-                              <span className="text-sm text-slate-600">
+                              <span className="text-base text-slate-600">
                                 Intake
                               </span>
                             </div>
 
-                            <span className="text-sm font-medium text-slate-800">
+                            <span className="text-base font-medium text-slate-800">
                               {application?.intake}
                             </span>
                           </div>
@@ -643,12 +643,12 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                               <CalendarDays className="w-4 h-4 text-slate-500" />
-                              <span className="text-sm text-slate-600">
+                              <span className="text-base text-slate-600">
                                 Submission Date
                               </span>
                             </div>
 
-                            <span className="text-sm font-medium text-slate-800">
+                            <span className="text-base font-medium text-slate-800">
                               {new Date(application?.createdAt).toLocaleString("en-IN")}
                             </span>
                           </div>
@@ -659,17 +659,17 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                               <BadgeDollarSign className="w-4 h-4 text-slate-500" />
-                              <span className="text-sm text-slate-600">
+                              <span className="text-base text-slate-600">
                                 Application Fee
                               </span>
                             </div>
 
                             <div className="flex items-center gap-2">
-                              <span className="px-2 py-1 text-sm font-medium bg-green-100 text-green-700 rounded-full">
+                              <span className="px-2 py-1 text-base font-medium bg-green-100 text-green-700 rounded-full">
                                 Paid
                               </span>
 
-                              <span className="text-sm font-medium text-slate-800">
+                              <span className="text-base font-medium text-slate-800">
                                 €{application?.course?.applicationFee}
                               </span>
                             </div>
@@ -698,7 +698,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                               </div>
 
                               <div>
-                                <p className="text-sm text-slate-500 mb-1">
+                                <p className="text-base text-slate-500 mb-1">
                                   {new Date(item.createdAt).toLocaleString("en-IN", {
                                     day: "2-digit",
                                     month: "short",
@@ -709,12 +709,12 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                   })}
                                 </p>
 
-                                <h4 className="font-medium text-sm text-slate-800">
+                                <h4 className="font-medium text-base text-slate-800">
                                   {item.newValue || item.action.replaceAll("_", " ")}
                                 </h4>
 
                                 <p
-                                  className={`text-sm mt-1 ${item.action === "STATUS_CHANGED"
+                                  className={`text-base mt-1 ${item.action === "STATUS_CHANGED"
                                     ? "text-green-600 font-medium"
                                     : "text-slate-400"
                                     }`}
@@ -732,7 +732,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   <div className="bg-white border border-slate-200  overflow-hidden">
                     <div className="border-b">
                       <div className="flex">
-                        <button className="px-6 py-4 text-base text-sm font-semibold text-slate-700">
+                        <button className="px-6 py-4 text-base text-base font-semibold text-slate-700">
                           What Happens Next?
                         </button>
                       </div>
@@ -748,10 +748,10 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                   <div className="flex gap-4">
                                     <div className="w-5 h-5 border-2 border-slate-300 bg-white rounded-sm " />
                                     <div>
-                                      <h4 className="font-semibold text-sm text-slate-400">
+                                      <h4 className="font-semibold text-base text-slate-400">
                                         Offer Received
                                       </h4>
-                                      <p className="text-sm text-slate-400 mt-1">
+                                      <p className="text-base text-slate-400 mt-1">
                                         Pending
                                       </p>
                                     </div>
@@ -760,10 +760,10 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                   <div className="flex gap-4">
                                     <div className="w-5 h-5 border-2 border-slate-300 bg-white rounded-sm mt-1" />
                                     <div>
-                                      <h4 className="font-semibold text-sm text-slate-400">
+                                      <h4 className="font-semibold text-base text-slate-400">
                                         Awaiting School Response
                                       </h4>
-                                      <p className="text-sm text-slate-400 mt-1">
+                                      <p className="text-base text-slate-400 mt-1">
                                         Pending
                                       </p>
                                     </div>
@@ -796,11 +796,11 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                               </div>
 
                               <div>
-                                <h4 className="font-semibold text-sm text-slate-800">
+                                <h4 className="font-semibold text-base text-slate-800">
                                   {item.newValue || item.action.replaceAll("_", " ")}
                                 </h4>
 
-                                <p className="text-sm text-slate-500 mt-1">
+                                <p className="text-base text-slate-500 mt-1">
                                   {new Date(item.createdAt).toLocaleString("en-IN", {
                                     day: "2-digit",
                                     month: "short",
@@ -811,7 +811,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                   })}
                                 </p>
 
-                                <p className="text-sm text-slate-500 mt-1 max-w-xs">
+                                <p className="text-base text-slate-500 mt-1 max-w-xs">
                                   {item.description}
                                 </p>
                               </div>
@@ -830,10 +830,10 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                   <div className="w-5 h-5 border-2 border-slate-300 bg-white" />
 
                                   <div>
-                                    <h4 className="font-semibold text-sm text-slate-400">
+                                    <h4 className="font-semibold text-base text-slate-400">
                                       Pay Enrollenment Deposit
                                     </h4>
-                                    <p className="text-sm text-slate-400 mt-1">
+                                    <p className="text-base text-slate-400 mt-1">
                                       Pending
                                     </p>
                                   </div>
@@ -843,10 +843,10 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                   <div className="w-5 h-5 border-2 border-slate-300 bg-white" />
 
                                   <div>
-                                    <h4 className="font-semibold text-sm text-slate-400">
+                                    <h4 className="font-semibold text-base text-slate-400">
                                       Offer Received
                                     </h4>
-                                    <p className="text-sm text-slate-400 mt-1">
+                                    <p className="text-base text-slate-400 mt-1">
                                       Pending
                                     </p>
                                   </div>
@@ -876,11 +876,11 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                               </div>
 
                               <div>
-                                <h4 className="font-semibold text-sm text-slate-800">
+                                <h4 className="font-semibold text-base text-slate-800">
                                   {item.newValue || item.action.replaceAll("_", " ")}
                                 </h4>
 
-                                <p className="text-sm text-slate-500 mt-1">
+                                <p className="text-base text-slate-500 mt-1">
                                   {new Date(item.createdAt).toLocaleString("en-IN", {
                                     day: "2-digit",
                                     month: "short",
@@ -891,7 +891,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                                   })}
                                 </p>
 
-                                <p className="text-sm text-slate-500 mt-1 max-w-xs">
+                                <p className="text-base text-slate-500 mt-1 max-w-xs">
                                   {item.description}
                                 </p>
                               </div>
@@ -915,7 +915,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                       Need to Update Something?
                     </h3>
 
-                    <p className="text-sm text-slate-500 max-w-2xl">
+                    <p className="text-base text-slate-500 max-w-2xl">
                       If you need to update any information or documents,
                       please contact your counselor.
                     </p>
@@ -938,12 +938,12 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                 <div className="flex flex-col lg:flex-row gap-6">
 
-                  <div className="flex gap-5 flex-1">
+                  <div className="flex gap-20 ">
 
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-orange-100 flex items-center justify-center">
+                    <div className="w-16 h-16 md:w-40 md:h-40 rounded-full bg-orange-100 flex items-center justify-center">
 
                       <img
-                        src="/offer-application.gif"
+                        src="/offer-application.png"
                         alt=""
                         className="w-full"
                       />
@@ -956,16 +956,16 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           {offerLetter?.name || ""}
                         </h2>
 
-                        <span className="px-3 py-1  bg-green-100 text-green-700 text-sm font-medium">
+                        <span className="px-3 py-1  bg-green-100 text-green-700 text-base font-medium">
                           Offer Received
                         </span>
                       </div>
 
-                      <p className="text-slate-600 mt-2 text-sm">
+                      <p className="text-slate-600 mt-2 text-base">
                         {offerLetter?.description || ""}
                       </p>
 
-                      <p className="text-slate-600 text-sm">
+                      <p className="text-slate-600 text-base">
                         Please review your offer letter and the next steps below.
                       </p>
 
@@ -977,7 +977,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
 
                   <div className="border p-4">
-                    <p className="text-sm text-slate-500">
+                    <p className="text-base text-slate-500">
                       Offer Date
                     </p>
                     <p className="font-semibold">
@@ -995,7 +995,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   </div>
 
                   <div className="border  p-4">
-                    <p className="text-sm text-slate-500">
+                    <p className="text-base text-slate-500">
                       Offer Status
                     </p>
                     <p className="font-semibold text-red-600">
@@ -1004,7 +1004,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   </div>
 
                   <div className="border p-4">
-                    <p className="text-sm text-slate-500">
+                    <p className="text-base text-slate-500">
                       Respond By
                     </p>
 
@@ -1015,7 +1015,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                       {daysLeft !== null && (
                         <span
-                          className={`text-sm ml-1 ${daysLeft <= 3
+                          className={`text-base ml-1 ${daysLeft <= 3
                             ? "text-red-500"
                             : daysLeft <= 7
                               ? "text-yellow-500"
@@ -1035,7 +1035,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   </div>
 
                   <div className="border p-4">
-                    <p className="text-sm text-slate-500">
+                    <p className="text-base text-slate-500">
                       Issued By
                     </p>
                     <p className="font-semibold">
@@ -1049,14 +1049,14 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                 <div className="flex flex-wrap gap-3 mt-5">
                   <button
                     onClick={() => setShowPreview(true)}
-                    className="px-5 py-3 text-sm bg-orange-600 text-white font-medium"
+                    className="px-5 py-3 text-base bg-orange-600 text-white font-medium"
                   >
                     View Offer Letter
                   </button>
 
                   <button
                     onClick={handleOpenActionModal}
-                    className="px-5 py-3 text-sm border border-orange-200 text-orange-600 font-medium"
+                    className="px-5 py-3 text-base border border-orange-200 text-orange-600 font-medium"
                   >
                     Take Action
                   </button>
@@ -1066,7 +1066,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
               {/* Success Bar */}
               <div className="bg-green-50 border border-green-100  px-4 py-3">
-                <p className="text-green-700 text-sm">
+                <p className="text-green-700 text-base">
                   Please read your offer letter carefully and follow the
                   instructions to accept your offer.
                 </p>
@@ -1095,11 +1095,11 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           </div>
 
                           <div>
-                            <h4 className="font-medium text-sm text-slate-500">
+                            <h4 className="font-medium text-base text-slate-500">
                               {step.title}
                             </h4>
 
-                            <p className="text-sm text-slate-400">
+                            <p className="text-base text-slate-400">
                               {step.description}
                             </p>
                           </div>
@@ -1112,11 +1112,11 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                           </div>
 
                           <div>
-                            <h4 className="font-medium text-sm">
+                            <h4 className="font-medium text-base">
                               {item.newValue || item.action.replaceAll("_", " ")}
                             </h4>
 
-                            <p className="text-sm text-slate-500">
+                            <p className="text-base text-slate-500">
                               {item.description}
                             </p>
                           </div>
@@ -1143,11 +1143,11 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                       {application?.documents?.find((item)=> item.docType === "offer letter")?.extra?.other?.map((item,i)=>
                       <>
                        <div className="flex justify-between gap-4">
-                        <span className="text-slate-500 text-sm">
+                        <span className="text-slate-500 text-base">
                           {item?.key}
                         </span>
 
-                        <span className="font-medium text-right text-sm">
+                        <span className="font-medium text-right text-base">
                           {item?.value}
                         </span>
                       </div>
@@ -1161,7 +1161,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
 
                     <div className="mt-5 bg-orange-50  p-4">
-                      <p className="text-sm text-orange-700 ">
+                      <p className="text-base text-orange-700 ">
                         This is an official offer of admission.
                         The full details are available in your offer letter.
                       </p>
@@ -1190,7 +1190,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                           <div>
                             <div className="flex gap-4">
-                              <h4 className="font-medium text-sm">
+                              <h4 className="font-medium text-base">
                                 Offer Received
                               </h4>
                             </div>
@@ -1206,11 +1206,11 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                           <div>
                             <div className="flex gap-4">
-                              <h4 className="font-medium text-sm">
+                              <h4 className="font-medium text-base">
                                 Respond By
                               </h4>
 
-                              <p className="text-orange-500 text-sm font-medium">
+                              <p className="text-orange-500 text-base font-medium">
                                 14 Days Left
                               </p>
                             </div>
@@ -1226,12 +1226,12 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                           <div>
                             <div className="flex gap-4">
-                              <h4 className="font-medium text-sm">
+                              <h4 className="font-medium text-base">
                                 Enrollment Deposit Deadline
                               </h4>
                             </div>
 
-                            <p className="text-sm text-slate-500">
+                            <p className="text-base text-slate-500">
                               {statusDetail?.find((item)=> item?.status === "PayEnrollenmentDeposit")?.metadata?.deposit?.paymentDeadline}
                             </p>
                           </div>
@@ -1249,12 +1249,12 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                         Need Guidance?
                       </h4>
 
-                      <p className="text-sm text-amber-700 mt-2">
+                      <p className="text-base text-amber-700 mt-2">
                         Talk to your admissions counselor for any help
                         with acceptance, visa or other queries.
                       </p>
 <Link href={"/dashboard/support"}>
-                      <button className="mt-4 w-full py-3  border border-orange-200 text-orange-600 font-medium text-sm">
+                      <button className="mt-4 w-full py-3  border border-orange-200 text-orange-600 font-medium text-base">
                         Contact Counselor
                       </button></Link>
 
@@ -1279,7 +1279,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   <div className="flex items-center gap-3">
                     <button
                       onClick={handleDownload}
-                      className="flex items-center gap-2 px-4 py-2 text-sm bg-orange-600 text-white rounded-md"
+                      className="flex items-center gap-2 px-4 py-2 text-base bg-orange-600 text-white rounded-md"
                     >
                       <Download size={16} />
                       Download
@@ -1310,7 +1310,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   Offer Letter Decision
                 </h3>
 
-                <p className="text-sm text-slate-500 mt-2">
+                <p className="text-base text-slate-500 mt-2">
                   Please review the offer letter carefully before proceeding.
                 </p>
 
@@ -1342,7 +1342,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                 {actionType === "reject" && (
                   <div className="mt-5">
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-base font-medium mb-2">
                       Rejection Reason
                     </label>
 
@@ -1390,7 +1390,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                   Visa Information
                 </h2>
 
-                <p className="text-sm text-gray-500 text-center mb-6">
+                <p className="text-base text-gray-500 text-center mb-6">
                   Do you currently have a valid Visa?
                 </p>
 
@@ -1452,7 +1452,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Visa Type */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-base font-medium text-gray-700 mb-1">
                       Visa Type
                     </label>
                     <input
@@ -1471,7 +1471,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                   {/* Visa Number */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-base font-medium text-gray-700 mb-1">
                       Visa Number
                     </label>
                     <input
@@ -1490,7 +1490,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                   {/* Passport Number */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-base font-medium text-gray-700 mb-1">
                       Passport Number
                     </label>
                     <input
@@ -1509,7 +1509,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                   {/* Country of Issue */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-base font-medium text-gray-700 mb-1">
                       Country of Issue
                     </label>
                     <input
@@ -1528,7 +1528,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                   {/* Visa Issued On */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-base font-medium text-gray-700 mb-1">
                       Visa Issued On
                     </label>
                     <input
@@ -1546,7 +1546,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                   {/* Visa Valid Until */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-base font-medium text-gray-700 mb-1">
                       Visa Valid Until
                     </label>
                     <input
@@ -1595,7 +1595,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
               <div className="flex justify-between items-center mb-3">
                 <h4 className="text-base font-bold text-gray-800">Application Summary</h4>
               </div>
-              <div className="space-y-1.5 text-sm">
+              <div className="space-y-1.5 text-base">
                 <div className="flex justify-between border-b border-gray-50 pb-1.5">
                   <span className="text-gray-500">Student Name</span>
                   <span className="font-medium text-gray-800">{application?.student?.name || "--"}</span>
@@ -1663,13 +1663,13 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                             <FileText className="w-4 h-4 text-gray-400" />
                           )}
 
-                          <span className="text-sm text-slate-700">
+                          <span className="text-base text-slate-700">
                             {doc.docName}
                           </span>
                         </div>
 
                         <span
-                          className={`text-sm font-medium capitalize ${doc.status === "approved"
+                          className={`text-base font-medium capitalize ${doc.status === "approved"
                             ? "text-green-600"
                             : doc.status === "pending"
                               ? "text-orange-600"
@@ -1708,12 +1708,12 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
               </div>
 
               <div className="mt-5 space-y-3">
-                <div className="flex items-center gap-3 text-sm text-slate-600">
+                <div className="flex items-center gap-3 text-base text-slate-600">
                   <Mail className="w-4 h-4 text-slate-400" />
                   {allProfile?.data?.assignto?.email}
                 </div>
 
-                <div className="flex items-center gap-3 text-sm text-slate-600">
+                <div className="flex items-center gap-3 text-base text-slate-600">
                   <Phone className="w-4 h-4 text-slate-400" />
                   {allProfile?.data?.assignto?.phone}
                 </div>
