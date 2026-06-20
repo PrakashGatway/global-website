@@ -779,13 +779,14 @@ const SimilarDestination = ({ countryres,sliderRef }) =>
               </span>
             </div>
 
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              {item.country?.name}
+            <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-1">
+              {item?.title}
             </h3>
 
             <p className="text-base text-gray-700 line-clamp-2">
-              Explore study opportunities, universities, scholarships,
-              and student life in {item.country?.name}.
+              {item?.subTitle || `Explore study opportunities, universities, scholarships,
+              and student life in ${item?.name}.`}
+              
             </p>
           </div>
         </Link>
