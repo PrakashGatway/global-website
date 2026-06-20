@@ -429,7 +429,7 @@ export default function Navbar({
               <Phone size={16} />
               <span className="text-xs font-semibold">9875863347</span>
             </a>
-            <button onClick={() => setIsOpen(true)} className="text-white bg-[#6d1901] p-2 rounded-md">
+            <button  aria-label="Open navigation menu" onClick={() => setIsOpen(true)} className="text-white bg-[#6d1901] p-2 rounded-md">
               <Menu size={22} />
             </button>
           </div>

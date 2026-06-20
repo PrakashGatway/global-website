@@ -19,7 +19,7 @@ export default function WhatsAppButton() {
 
     <button
       onClick={() => window.open(whatsappLink, "_blank")}
-
+      aria-label="WhatsApp navigation menu"
       rel="noopener noreferrer"
       className="
         fixed right-3 bottom-6 z-50

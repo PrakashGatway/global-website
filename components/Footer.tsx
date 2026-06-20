@@ -57,6 +57,7 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
                         href="https://www.instagram.com/ooshasglobal"
                         target="_blank"
                         rel="noopener noreferrer"
+                         aria-label="Visit Ooshas Global Instagram page"
                         className="text-gray-100 hover:text-[#f46c44] transition-all duration-300 hover:translate-y-[-2px]"
                       >
                         <Instagram className="w-6 h-6" />
@@ -65,6 +66,7 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
                         href="https://www.facebook.com/share/18vb1scYJk/?mibextid=wwXIfr"
                         target="_blank"
                         rel="noopener noreferrer"
+                         aria-label="Visit Ooshas Global facebook page"
                         className="text-gray-100 hover:text-[#f46c44] transition-all duration-300 hover:translate-y-[-2px]"
                       >
                         <Facebook className="w-6 h-6" />
@@ -73,6 +75,7 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
                         href="https://www.linkedin.com/"
                         target="_blank"
                         rel="noopener noreferrer"
+                         aria-label="Visit Ooshas Global linkedin page"
                         className="text-gray-100 hover:text-[#f46c44] transition-all duration-300 hover:translate-y-[-2px]"
                       >
                         <Linkedin className="w-6 h-6" />
@@ -80,6 +83,7 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
                       <a
                         href="https://youtube.com/@ooshasglobal"
                         target="_blank"
+                         aria-label="Visit Ooshas Global youtube page"
                         rel="noopener noreferrer"
                         className="text-gray-100 hover:text-[#f46c44] transition-all duration-300 hover:translate-y-[-2px]"
                       >

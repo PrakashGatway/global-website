@@ -191,13 +191,15 @@ export default function YesItalyLanding() {
                                             <div className="grid md:grid-cols-2 gap-4">
 
                                                 <div>
-                                                    <label className="text-sm font-semibold text-[#0b2545] block mb-1">
+                                                    <label htmlFor="fullname" className="text-sm font-semibold text-[#0b2545] block mb-1">
                                                         Full Name *
                                                     </label>
 
                                                     <input
                                                         type="text"
                                                         required
+                                                        id="fullname"
+                                                        name="fullname"
                                                         value={form.fullName}
                                                         onChange={(e) =>
                                                             setForm({
@@ -211,13 +213,15 @@ export default function YesItalyLanding() {
                                                 </div>
 
                                                 <div>
-                                                    <label className="text-sm font-semibold text-[#0b2545] block mb-1">
+                                                    <label htmlFor="phone" className="text-sm font-semibold text-[#0b2545] block mb-1">
                                                         Mobile Number *
                                                     </label>
 
                                                     <input
                                                         type="tel"
                                                         required
+                                                        name="phone"
+                                                        id="phone"
                                                         value={form.phone}
                                                         onChange={(e) =>
                                                             setForm({
@@ -235,13 +239,15 @@ export default function YesItalyLanding() {
                                             <div className="grid md:grid-cols-2 gap-4">
 
                                                 <div>
-                                                    <label className="text-sm font-semibold text-[#0b2545] block mb-1">
+                                                    <label htmlFor="email" className="text-sm font-semibold text-[#0b2545] block mb-1">
                                                         Email Address *
                                                     </label>
 
                                                     <input
                                                         type="email"
                                                         required
+                                                        name="email"
+                                                        id="email"
                                                         value={form.email}
                                                         onChange={(e) =>
                                                             setForm({
@@ -255,12 +261,14 @@ export default function YesItalyLanding() {
                                                 </div>
 
                                                 <div>
-                                                    <label className="text-sm font-semibold text-[#0b2545] block mb-1">
+                                                    <label htmlFor="degree" className="text-sm font-semibold text-[#0b2545] block mb-1">
                                                         Degree *
                                                     </label>
 
                                                     <select
                                                         required
+                                                        name="degree"
+                                                        id="degree"
                                                         value={form.degree}
                                                         onChange={(e) =>
                                                             setForm({
@@ -281,13 +289,15 @@ export default function YesItalyLanding() {
 
                                             {/* State */}
                                             <div>
-                                                <label className="text-sm font-semibold text-[#0b2545] block mb-1">
+                                                <label htmlFor="state" className="text-sm font-semibold text-[#0b2545] block mb-1">
                                                     State *
                                                 </label>
 
                                                 <input
                                                     type="text"
                                                     required
+                                                    name="state"
+                                                    id="state"
                                                     value={form.state}
                                                     onChange={(e) =>
                                                         setForm({
@@ -302,13 +312,15 @@ export default function YesItalyLanding() {
 
                                             {/* Branch */}
                                             <div>
-                                                <label className="text-sm font-semibold text-[#0b2545] block mb-1">
+                                                <label htmlFor="branch" className="text-sm font-semibold text-[#0b2545] block mb-1">
                                                     Nearest Branch *
                                                 </label>
 
                                                 <input
                                                     type="text"
                                                     required
+                                                    name="branch"
+                                                    id="branch"
                                                     value={form.branch}
                                                     onChange={(e) =>
                                                         setForm({
@@ -322,9 +334,12 @@ export default function YesItalyLanding() {
                                             </div>
 
                                             {/* Checkbox */}
-                                            <label className="flex items-start gap-3 text-sm text-[#0b2545] cursor-pointer">
+                                            <label htmlFor="agreeTerms" className="flex items-start gap-3 text-sm text-[#0b2545] cursor-pointer">
                                                 <input
                                                     type="checkbox"
+                                                    name="agreeTerms"
+                                                    id="agreeTerms"
+                                                    
                                                     checked={form.agreeTerms}
                                                     onChange={(e) =>
                                                         setForm({

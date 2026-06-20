@@ -82,25 +82,25 @@ export default function UniversitySliderClient({ universities }) {
 
   return (
     <section className="max-w-[1440px] mx-auto lg:pt-1 overflow-hidden bg-white">
-     {universities?.title && (
-      <div className="relative max-w-7xl px-4 mx-auto">
-        <h2 className="text-xl   mb-2 ">
-          <span className="text-[#F46C44] lg:text-4xl font-light" >
-            {universities?.title?.split('||')[0] || null}
-          </span>{" "} <br />
-          <span className="text-primary font-bold relative lg:text-5xl">
-            {universities?.title?.split('||')[1] || null}
+      {universities?.title && (
+        <div className="relative max-w-7xl px-4 mx-auto">
+          <h2 className="text-xl   mb-2 ">
+            <span className="text-[#F46C44] lg:text-4xl font-light" >
+              {universities?.title?.split('||')[0] || null}
+            </span>{" "} <br />
+            <span className="text-primary font-bold relative lg:text-5xl">
+              {universities?.title?.split('||')[1] || null}
 
 
 
-          </span>
+            </span>
 
 
 
-        </h2>
+          </h2>
 
-      </div>
-     ) } 
+        </div>
+      )}
 
       {/* FULL WIDTH SLIDER */}
       <div ref={sliderRef} className="keen-slider w-full   ">
@@ -139,190 +139,193 @@ import { useState, useMemo } from "react";
 
 // --- Types ---
 interface Country {
-    id: string;
-    name: string;
-    description: string;
-    link: string;
-    badge?: string;
-    badgeColor?: string;
-    bgClass: string;
-    image: string;
+  id: string;
+  name: string;
+  description: string;
+  link: string;
+  badge?: string;
+  badgeColor?: string;
+  bgClass: string;
+  image: string;
 }
 
 
 
 export const CountryCardGrid = ({ countries }: { countries: any[] }) => {
-   const [hoveredId, setHoveredId] = useState<string | null>(null);
-   const [mappedCountries, setMappedCountries] = useState<any[]>([]);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [mappedCountries, setMappedCountries] = useState<any[]>([]);
 
-   useEffect(() => {
-       if (countries && Array.isArray(countries)) {
-           const transformed = countries.map((item: any, index: number) => {
-               // Handle nested country object (like item 0) OR flat structure (items 1-6)
-               const countryData = item && typeof item === 'object' 
-                   ? { ...item.country, ...item } 
-                   : { ...item };
+  useEffect(() => {
+    if (countries && Array.isArray(countries)) {
+      const transformed = countries.map((item: any, index: number) => {
+        // Handle nested country object (like item 0) OR flat structure (items 1-6)
+        const countryData = item && typeof item === 'object'
+          ? { ...item.country, ...item }
+          : { ...item };
 
-               // Normalize all required fields with fallbacks
-               const normalized = {
-                   id: String(countryData._id || countryData.id || index),
-                   name:  countryData.title || 'Country',
-                   image: countryData.image || countryData.navbarImage || countryData.cardImage || '',
-                   link: countryData.slug ? `/${countryData.slug}` : countryData.link || '#',
-                   description: countryData.subTitle || countryData.description || '',
-                  
-                   
-                  
-                   ...item
-               };
+        // Normalize all required fields with fallbacks
+        const normalized = {
+          id: String(countryData._id || countryData.id || index),
+          name: countryData.title || 'Country',
+          image: countryData.image || countryData.navbarImage || countryData.cardImage || '',
+          link: countryData.slug ? `/${countryData.slug}` : countryData.link || '#',
+          description: countryData.subTitle || countryData.description || '',
 
-               return normalized;
-           });
 
-           setMappedCountries(transformed);
-       }
-   }, [countries]);
 
-   console.log(countries);
+          ...item
+        };
 
-   // --- Dynamic Layout Logic --- (UNCHANGED)
-   const firstRow = useMemo(() => mappedCountries.slice(0, 4), [mappedCountries]);
-   const secondRow = useMemo(() => mappedCountries.slice(4), [mappedCountries]);
+        return normalized;
+      });
 
-   const getCardWidth = (id: string, rowType: 'first' | 'second') => {
-       const rowItems = rowType === 'first' ? firstRow : secondRow;
-       const idsInRow = rowItems.map(c => c.id);
-       
-       if (!idsInRow.includes(id)) return "lg:w-[20%]";
+      setMappedCountries(transformed);
+    }
+  }, [countries]);
 
-       const defaultBigId = rowType === 'first' ? idsInRow[0] : idsInRow[idsInRow.length - 1];
 
-       if (!hoveredId) {
-           return id === defaultBigId ? "lg:w-[40%]" : "lg:w-[20%]";
-       }
+  // --- Dynamic Layout Logic --- (UNCHANGED)
+  const firstRow = useMemo(() => mappedCountries.slice(0, 4), [mappedCountries]);
+  const secondRow = useMemo(() => mappedCountries.slice(4), [mappedCountries]);
 
-       if (idsInRow.includes(hoveredId)) {
-           return id === hoveredId ? "lg:w-[40%]" : "lg:w-[20%]";
-       }
+  const getCardWidth = (id: string, rowType: 'first' | 'second') => {
+    const rowItems = rowType === 'first' ? firstRow : secondRow;
+    const idsInRow = rowItems.map(c => c.id);
 
-       return id === defaultBigId ? "lg:w-[40%]" : "lg:w-[20%]";
-   };
+    if (!idsInRow.includes(id)) return "lg:w-[20%]";
 
-   if (!mappedCountries.length) return null;
+    const defaultBigId = rowType === 'first' ? idsInRow[0] : idsInRow[idsInRow.length - 1];
 
-   return (
-       <div className="w-full max-w-7xl mx-auto px-4 py-8">
-           {/* Mobile View */}
-           <div className="lg:hidden">
-               <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                   {mappedCountries.map((country) => (
-                       <MobileCard key={country.id} country={country} />
-                   ))}
-               </div>
-           </div>
+    if (!hoveredId) {
+      return id === defaultBigId ? "lg:w-[40%]" : "lg:w-[20%]";
+    }
 
-           {/* Desktop View - First Row */}
-           {firstRow.length > 0 && (
-               <div className="hidden lg:flex lg:flex-row gap-4 mb-4">
-                   {firstRow.map((country) => (
-                       <DesktopCard 
-                           key={country.id}
-                           country={country}
-                           widthClass={getCardWidth(country.id, 'first')}
-                           hoveredId={hoveredId}
-                           setHoveredId={setHoveredId}
-                       />
-                   ))}
-               </div>
-           )}
+    if (idsInRow.includes(hoveredId)) {
+      return id === hoveredId ? "lg:w-[40%]" : "lg:w-[20%]";
+    }
 
-           {/* Desktop View - Second Row */}
-           {secondRow.length > 0 && (
-               <div className="hidden lg:flex lg:flex-row gap-4">
-                   {secondRow.map((country, index) => (
-                       <DesktopCard 
-                           key={country.id}
-                           country={country}
-                           widthClass={getCardWidth(country.id, 'second')}
-                           hoveredId={hoveredId}
-                           setHoveredId={setHoveredId}
-                           delay={0.2 + index * 0.05}
-                       />
-                   ))}
-               </div>
-           )}
-       </div>
-   );
+    return id === defaultBigId ? "lg:w-[40%]" : "lg:w-[20%]";
+  };
+
+  if (!mappedCountries.length) return null;
+
+  return (
+    <div className="w-full max-w-7xl mx-auto px-4 py-8">
+      {/* Mobile View */}
+      <div className="lg:hidden">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          {mappedCountries.map((country) => (
+            <MobileCard key={country.id} country={country} />
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop View - First Row */}
+      {firstRow.length > 0 && (
+        <div className="hidden lg:flex lg:flex-row gap-4 mb-4">
+          {firstRow.map((country) => (
+            <DesktopCard
+              key={country.id}
+              country={country}
+              widthClass={getCardWidth(country.id, 'first')}
+              hoveredId={hoveredId}
+              setHoveredId={setHoveredId}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Desktop View - Second Row */}
+      {secondRow.length > 0 && (
+        <div className="hidden lg:flex lg:flex-row gap-4">
+          {secondRow.map((country, index) => (
+            <DesktopCard
+              key={country.id}
+              country={country}
+              widthClass={getCardWidth(country.id, 'second')}
+              hoveredId={hoveredId}
+              setHoveredId={setHoveredId}
+              delay={0.2 + index * 0.05}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
 
 // --- Desktop Card Component ---
-function DesktopCard({ 
-    country, 
-    widthClass, 
-    hoveredId, 
-    setHoveredId, 
-    delay = 0.2 
-}: { 
-    country: Country; 
-    widthClass: string; 
-    hoveredId: string | null; 
-    setHoveredId: (id: string | null) => void;
-    delay?: number;
+function DesktopCard({
+  country,
+  widthClass,
+  hoveredId,
+  setHoveredId,
+  delay = 0.2
+}: {
+  country: Country;
+  widthClass: string;
+  hoveredId: string | null;
+  setHoveredId: (id: string | null) => void;
+  delay?: number;
 }) {
- 
-  console.log(country.country)
-    return (
-        <motion.a
-            href={country.link}
-            className={`relative h-64 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ease-in-out ${widthClass} bg-gradient-to-br ${country.bgClass} hover:shadow-2xl group`}
-            onHoverStart={() => setHoveredId(country.id)}
-            onHoverEnd={() => setHoveredId(null)}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay }}
-            layout
-        >
-            <img
-                src={country.image?.startsWith('http') ? country.image : ``}
-                alt={country.name}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent z-10" />
-            
-          {country.country.name && (
-  <span
-    className="
+
+  return (
+    <motion.a
+      href={country.link}
+      className={`relative h-64 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ease-in-out ${widthClass} bg-gradient-to-br ${country.bgClass} hover:shadow-2xl group`}
+      onHoverStart={() => setHoveredId(country.id)}
+      onHoverEnd={() => setHoveredId(null)}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay }}
+      layout
+    >
+      <Image
+        src={country.image?.startsWith('http') ? country.image : ``}
+        alt={country.name}
+        height={100}
+        width={100}
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent z-10" />
+
+      {country.country.name && (
+        <span
+          className="
       absolute top-4 left-4 z-20
       bg-black/50 backdrop-blur-sm
       text-white text-xs font-semibold
       px-3 py-1 rounded-full
       shadow-lg
     "
-  >
-    <span className="flex items-center gap-2">
-      <img
-        className="w-8 h-8 rounded-[8px] object-cover"
-        src={country.navbarImage}
-        alt={country.country.name}
-      />
+        >
+          <span className="flex items-center gap-2">
+            <Image
+              className="w-8 h-8 rounded-[8px] object-cover"
+              src={country.navbarImage}
+              alt={country.country.name}
+              width={32}
+              height={32}
+            />
 
-      <span className="whitespace-nowrap">
-        {country.country.name}
-      </span>
-    </span>
-  </span>
-)}
-            
-            <div className="absolute bottom-0 left-0 right-0 z-20 p-5 text-white transition-all ">
-                <h3 className="text-2xl font-bold leading-tight">{country?.name}</h3>
-                <p className="text-sm text-white/90 mt-1 line-clamp-2">{country?.description}</p>
-                
-                <span className="inline-flex items-center gap-1 hover:text-orange-500 mt-5  text-white text-xs font-bold px-4  ">
-                    Explore {country.name.split(' ')[0]} →
-                </span>
-            </div>
-        </motion.a>
-    );
+            <span className="whitespace-nowrap">
+              {country.country.name}
+            </span>
+          </span>
+        </span>
+      )}
+
+      <div className="absolute bottom-0 left-0 right-0 z-20 p-5 text-white transition-all ">
+        <h3 className="text-2xl font-bold leading-tight">{country?.name}</h3>
+        <p className="text-sm text-white/90 mt-1 line-clamp-2">{country?.description}</p>
+
+        <span className="inline-flex items-center gap-1 hover:text-orange-500 mt-5  text-white text-xs font-bold px-4  ">
+          Explore {country.name.split(' ')[0]} →
+        </span>
+      </div>
+    </motion.a>
+  );
 }
 
 // --- Mobile Card Component ---
@@ -359,10 +362,10 @@ function MobileCard({ country }: { country: Country }) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />
 
       {/* Country Badge */}
-     {country.country?.name && (
-  <div className="absolute top-3 left-3 z-20 max-w-[80%]">
-    <div
-      className="
+      {country.country?.name && (
+        <div className="absolute top-3 left-3 z-20 max-w-[80%]">
+          <div
+            className="
         flex items-center gap-2
         bg-black/45 backdrop-blur-md
         text-white
@@ -370,30 +373,30 @@ function MobileCard({ country }: { country: Country }) {
         rounded-full
         shadow-lg
       "
-    >
-      <img
-        className="
+          >
+            <img
+              className="
           w-5 h-5 min-w-[20px]
           rounded-full
           object-cover
           border border-white/20
         "
-        src={country.navbarImage}
-        alt={country.country.name}
-      />
+              src={country.navbarImage}
+              alt={country.country.name}
+            />
 
-      <span
-        className="
+            <span
+              className="
           text-[11px] sm:text-xs
           font-semibold
           truncate
         "
-      >
-        {country.country.name}
-      </span>
-    </div>
-  </div>
-)}
+            >
+              {country.country.name}
+            </span>
+          </div>
+        </div>
+      )}
       {/* Bottom Content */}
       <div className="absolute bottom-0 left-0 right-0 z-20 p-4 text-white">
         <h3

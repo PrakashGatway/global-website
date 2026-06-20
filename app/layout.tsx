@@ -17,10 +17,7 @@ import Script from "next/script";
 import dynamic from "next/dynamic";
 
 const WhatsAppButton = dynamic(
-  () => import("@/components/whatsappbtn"),
-  {
-    ssr: false,
-  }
+  () => import("@/components/whatsappbtn")
 );
 
 const Navbar = dynamic(() => import("@/components/navbar"));
@@ -47,12 +44,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
-  ],
 };
 
 export default async function RootLayout({
@@ -192,7 +183,3 @@ export default async function RootLayout({
     </html>
   );
 }
-
-
-
-

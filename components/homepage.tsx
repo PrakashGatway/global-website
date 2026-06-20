@@ -463,10 +463,6 @@ export default function Homepage({
 
           {/* RIGHT FORM */}
           <div
-            initial={{ opacity: 0, x: 60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
             className=" p-6 sm:p-8 lg:p- rounded-2xl w-full lg:w-auto "
           >
             <NewTag
@@ -490,7 +486,7 @@ export default function Homepage({
             >
               {/* Full Name */}
               <div>
-                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
+                <label htmlFor="fullname" className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Full Name
                 </label>
 
@@ -502,6 +498,8 @@ export default function Homepage({
                       message: "Name must be at least 3 characters",
                     },
                   })}
+                  id="fullname"
+                  name="fullname"
                   type="text"
                   className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-sm lg:text-sm text-white"
                 />
@@ -515,7 +513,7 @@ export default function Homepage({
 
               {/* Email */}
               <div>
-                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
+                <label htmlFor="email" className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Email ID
                 </label>
 
@@ -529,6 +527,8 @@ export default function Homepage({
                         "Enter a valid email with proper domain (e.g. .com, .in)",
                     },
                   })}
+                  id="email"
+                  name="email"
                   type="email"
                   className="w-full focus:outline-none border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-sm lg:text-sm text-white"
                 />
@@ -542,7 +542,7 @@ export default function Homepage({
 
               {/* Phone */}
               <div>
-                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
+                <label htmlFor="phone" className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Mobile Number
                 </label>
 
@@ -554,6 +554,8 @@ export default function Homepage({
                       message: "Enter valid 10 digit number",
                     },
                   })}
+                  id="phone"
+                  name="phone"
                   type="tel"
                   maxLength={10}
                   inputMode="numeric"
@@ -572,7 +574,7 @@ export default function Homepage({
 
               {/* Country */}
               <div>
-                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
+                <label htmlFor="country" className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   Country to Study
                 </label>
 
@@ -582,6 +584,8 @@ export default function Homepage({
                   render={({ field }) => (
                     <select
                       {...field}
+                      id="country"
+                      name="country"
                       className="w-full border border-white rounded-lg px-3 py-2 text-sm lg:text-sm bg-transparent text-white focus:outline-none"
                     >
                       <option value="" className="text-black">
@@ -599,26 +603,30 @@ export default function Homepage({
 
               {/* Program */}
               <div>
-                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
+                <label htmlFor="state" className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   State
                 </label>
 
                 <input
                   {...register("state")}
                   type="text"
+                  id="state"
+                  name="state"
                   className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-sm lg:text-sm focus:outline-none text-white"
                 />
               </div>
 
               {/* City */}
               <div>
-                <label className="text-sm lg:text-sm font-medium text-white mb-1 block">
+                <label htmlFor="city" className="text-sm lg:text-sm font-medium text-white mb-1 block">
                   City
                 </label>
 
                 <input
                   {...register("city")}
                   type="text"
+                  id="city"
+                  name="city"
                   className="w-full border-2 border-white rounded-lg p-2 lg:px-4 lg:py-2.5 text-sm lg:text-sm focus:outline-none text-white"
                 />
               </div>
@@ -720,10 +728,6 @@ export default function Homepage({
 </section> */}
 
       <section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-        viewport={{ once: true }}
         className="bg-white relative overflow-hidden w-full py-12 sm:py-10 "
       >
         <div className="absolute -right-20 top-[0%] opacity-30 pointer-events-none hidden lg:block"></div>
@@ -732,23 +736,19 @@ export default function Homepage({
           <div className="w-full px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-2 items-center w-full min-h-[500px]">
               <div
-                initial={{ x: -80, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.7 }}
-                viewport={{ once: true }}
+            
                 className="relative w-full h-full min-h-[420px] sm:min-h-[500px] lg:min-h-[550px] flex justify-center lg:justify-start hidden lg:block"
               >
-                <img
+                <Image
                   src="/images/trust-img.png"
                   alt=""
+                  width={450}
+                  height={540}
+                  loading="lazy"
                   className="w-[450px] h-[540px]"
                 />
 
                 <div
-                  initial={{ scale: 0.7, opacity: 0 }}
-                  whileInView={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  viewport={{ once: true }}
                   className="
               absolute -left-8 sm:left-25 bottom-25
               w-24 h-24 sm:w-28 sm:h-28 lg:w-28 lg:h-28
@@ -771,17 +771,9 @@ export default function Homepage({
               </div>
 
               <div
-                initial={{ x: 80, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.7 }}
-                viewport={{ once: true }}
                 className="text-left lg:text-left"
               >
                 <span
-                  initial={{ y: 30, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  viewport={{ once: true }}
                   className="text-lg sm:text-3xl lg:text-4xl font-bold leading-tight mb-3"
                 >
 
@@ -798,10 +790,6 @@ export default function Homepage({
                 </span>
 
                 <span
-                  initial={{ y: 30, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
-                  viewport={{ once: true }}
                   className="text-sm font-medium sm:text-base text-gray-600 mb-6 leading-relaxed mx-auto lg:mx-0"
                   dangerouslySetInnerHTML={{
                     __html: homePage?.trustedPartners?.subtitle
@@ -809,10 +797,6 @@ export default function Homepage({
                 />
 
                 <div
-                  initial={{ y: 30, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                  viewport={{ once: true }}
                 >
                   <AboutTabsSection
                     tabs={homePage?.trustedPartners?.items || []}
@@ -850,11 +834,15 @@ export default function Homepage({
                 <Link href={`/universities/group/${item.slug}`}>
                   <div className="border border-gray-300 bg-white overflow-hidden hover:shadow-lg transition duration-300">
                     {/* Image */}
-                    <img
+                    <Image
                       src={
                         item.cardImage ||
                         "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop"
                       }
+                      alt={item.title}
+                      width={400}
+                      height={300}
+                      loading="lazy"
                       className="w-full h-[160px] sm:h-[180px] md:h-[200px] object-cover"
                     />
 
