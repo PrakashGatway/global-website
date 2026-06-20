@@ -263,6 +263,7 @@ export default function AccommodationPage() {
                                 <Image
                                     src={city.image}
                                     alt={city.name}
+                                    loading="lazy"
                                     fill
                                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                                 />
@@ -346,6 +347,7 @@ export default function AccommodationPage() {
                                     src={item.image}
                                     alt={item.name}
                                     fill
+                                    loading="lazy"
                                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                                     sizes={viewMode === 'list' ? "288px" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"}
                                 />

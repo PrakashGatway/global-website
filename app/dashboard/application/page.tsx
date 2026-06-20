@@ -313,6 +313,7 @@ const ApplicationCard = ({ application }: { application: any }) => {
                   src={university.uni_logo}
                   alt={university.name}
                   width={40}
+                  loading="lazy"
                   height={40}
                   className="object-contain"
                 />

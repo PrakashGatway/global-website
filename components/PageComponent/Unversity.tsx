@@ -117,6 +117,7 @@ export default function UniversitySliderClient({ universities }) {
                   alt={university.alt}
                   width={800}
                   height={450}
+                  loading="lazy"
                   className="object-contain w-[240px] sm:w-[280px] lg:w-[240px]"
                 />
               </div>

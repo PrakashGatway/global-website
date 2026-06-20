@@ -115,6 +115,7 @@ export default function IvyLeagueUniversitySlider() {
               alt={university.alt}
               width={200}
               height={150}
+              loading="lazy"
               className="object-contain max-h-full max-w-full"
               sizes="(max-width: 640px) 120px, (max-width: 768px) 150px, 200px"
               style={{

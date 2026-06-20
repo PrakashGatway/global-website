@@ -302,6 +302,7 @@ const StickyPaymentSection = ({ sections }) => {
                     width={500}
                     height={700}
                     alt="img"
+                    loading="lazy"
                   />
                 </div>
               ))}

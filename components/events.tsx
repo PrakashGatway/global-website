@@ -93,6 +93,7 @@ export default function Events({ data, page, limit, total, type }) {
                                 alt="Decorative Arrow"
                                 width={400}
                                 height={40}
+                                loading="lazy"
                                 className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
                             />
                         </div>
@@ -104,6 +105,7 @@ export default function Events({ data, page, limit, total, type }) {
                             alt="Decorative Arrow"
                             width={400}
                             height={40}
+                            loading="lazy"
                             className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
                             style={{ transform: 'scaleX(-1) rotate(-35deg)' }}
                         />
@@ -133,6 +135,7 @@ export default function Events({ data, page, limit, total, type }) {
                                         alt="GAway Global Education Event"
                                         width={1200}
                                         height={600}
+                                        loading="lazy"
                                         className="w-2xl h-auto object-cover"
                                         priority
                                     />
@@ -167,6 +170,7 @@ export default function Events({ data, page, limit, total, type }) {
                                             alt="UK Universities"
                                             width={400}
                                             height={400}
+                                            loading="lazy"
                                             className="w-full h-full object-contain"
                                         />
                                     </div>
@@ -194,6 +198,7 @@ export default function Events({ data, page, limit, total, type }) {
                                             alt="Education Fair"
                                             width={400}
                                             height={400}
+                                            loading="lazy"
                                             className="w-full h-full object-contain"
                                         />
                                     </div>
@@ -223,6 +228,7 @@ export default function Events({ data, page, limit, total, type }) {
                             alt="Decorative G Logo"
                             width={400}
                             height={80}
+                            loading="lazy"
                             className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
                             style={{ transform: 'scaleX(-1) rotate(-35deg)' }}
                         />
@@ -521,6 +527,7 @@ export default function Events({ data, page, limit, total, type }) {
                                 alt="Decorative Arrow"
                                 width={400}
                                 height={40}
+                                loading="lazy"
                                 className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
                             />
                         </div>

@@ -126,8 +126,8 @@ export default async function EventDetailPage({
                                 }
                                 alt={event.title}
                                 fill
+                                loading="lazy"
                                 className="object-cover"
-                                priority
                                 sizes="100vw"
                             />
             

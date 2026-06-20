@@ -66,7 +66,7 @@ export function TicketList({ tickets, selectedId, onSelectTicket }: TicketListPr
             className="p-6 text-center min-h-[60vh]"
 
           >
-            <Image src="https://assets-v2.lottiefiles.com/a/09c40a94-1179-11ee-a418-7394edff93c8/NEgtRnqrdz.gif" alt="No tickets" width={250} height={250} className="m-auto opacity-50" />
+            <Image loading="lazy" src="https://assets-v2.lottiefiles.com/a/09c40a94-1179-11ee-a418-7394edff93c8/NEgtRnqrdz.gif" alt="No tickets" width={250} height={250} className="m-auto opacity-50" />
           </motion.div>
         ) : (
           <motion.div

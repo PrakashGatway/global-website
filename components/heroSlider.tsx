@@ -124,6 +124,7 @@ useEffect(() => {
               src={currentItem.url}
               alt={`${universityName} - Image ${currentIndex + 1}`}
               fill
+              loading="lazy"
               className="object-cover"
               priority
               sizes="100vw"
@@ -137,6 +138,7 @@ useEffect(() => {
               src={currentItem.thumbnail || ''}
               alt={`${universityName} - Video ${currentIndex + 1}`}
               fill
+              loading="lazy"
               className="object-cover"
               sizes="100vw"
             />
@@ -252,6 +254,7 @@ useEffect(() => {
                       src={item.url}
                       alt={`Thumbnail ${index + 1}`}
                       fill
+                      loading="lazy"
                       className="object-cover"
                       sizes="80px"
                     />
@@ -261,6 +264,7 @@ useEffect(() => {
                         src={item.thumbnail || '/default-thumbnail.jpg'}
                         alt={`Video thumbnail ${index + 1}`}
                         fill
+                        loading="lazy"
                         className="object-cover"
                         sizes="80px"
                       />

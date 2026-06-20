@@ -143,6 +143,7 @@ export default function CareerPage({ careerData }) {
                     src="https://t4.ftcdn.net/jpg/00/35/30/85/360_F_35308534_WGRVXlymcjQqoRXzeWEfVCOfBHBq9YdW.jpg"
                     width={750}
                     height={480}
+                    loading="lazy"
                     className="rounded-tr-[100px] object-cover px-2 hidden lg:block"
                     alt=""
                 />
@@ -176,6 +177,7 @@ export default function CareerPage({ careerData }) {
                     height={380}
                     className="rounded-tl-[100px] object-cover"
                     alt=""
+                    loading="lazy"
                 />
             </section>
 

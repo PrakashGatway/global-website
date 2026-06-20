@@ -3,30 +3,61 @@
 import Link from "next/link";
 import { NewTag } from "./tag";
 import Image from "next/image";
-import UniversitySliderClient, { CountryCardGrid } from "@/components/PageComponent/Unversity";
-import AboutTabsSection from "@/components/PageComponent/TrustTabs";
-import VideoTestimonialsSlider from "@/components/PageComponent/VideoTestimonial";
-import ImageTestimonial from "@/components/ImageTestimonial";
-import VideoInSvgShape from "@/components/PageComponent/VideoShape";
+// import UniversitySliderClient, { CountryCardGrid } from "@/components/PageComponent/Unversity";
+// import AboutTabsSection from "@/components/PageComponent/TrustTabs";
 
 import axiosInstance, { baseUrl, serverInstance } from "@/app/axiosInstance";
-import Blogs from "./blog";
-import BlogGrid from "./blogGrid";
 import { useKeenSlider } from "keen-slider/react";
-import MultiStepForm from "./PopupForm";
+// import MultiStepForm from "./PopupForm";
 import { startTransition, useCallback, useEffect, useState } from "react";
-import FAQSection from "./faqPage";
+// import FAQSection from "./faqPage";
 import { useGlobal } from "@/src/statecontext";
 import { usePathname, useRouter } from "next/navigation";
-import { HowGawayHelps } from "./PageComponent/DistinationSliders";
 import { Destinationhome } from "./dummydestination";
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { DynamicLucideIcon } from "./DynamicLucideIcon";
-import { ModernSelect } from "./ui/select";
-import StudentVisaStories from "./Studentvisa";
-import UniversityCard from "./UniversityCard";
-import StudyDestinations from "./homepageCom/CountryCards";
+// import UniversityCard from "./UniversityCard";
+
+import dynamic from "next/dynamic";
+import { CountryCardGrid } from "@/components/PageComponent/Unversity";
+
+const UniversitySliderClient = dynamic(
+  () => import("@/components/PageComponent/Unversity").then(
+    mod => mod.default
+  ),
+  {
+    loading: () => <p>Loading...</p>,
+  }
+);
+
+const AboutTabsSection = dynamic(
+  () => import("@/components/PageComponent/TrustTabs"),
+  {
+    loading: () => <p>Loading...</p>,
+  }
+);
+
+const FAQSection = dynamic(
+  () => import("./faqPage"),
+  {
+    loading: () => <p>Loading...</p>,
+  }
+);
+
+const MultiStepForm = dynamic(
+  () => import("./PopupForm"),
+  {
+    loading: () => <p>Loading...</p>,
+  }
+);
+
+const UniversityCard = dynamic(
+  () => import("./UniversityCard"),
+  {
+    loading: () => <p>Loading...</p>,
+  }
+);
 
 export default function Homepage({
   homePage,
@@ -39,11 +70,8 @@ export default function Homepage({
   unires,
 }: any) {
   const [openForm, setOpenForm] = useState(false);
-  const [countries, setCountries] = useState([]);
   const router = useRouter()
 
-  const [playingVideo, setPlayingVideo] = useState(null);
-  const [videoLoading, setVideoLoading] = useState(false);
 
   const getDrivePreviewUrl = (url) => {
     const match = url?.match(/\/d\/([^/]+)/);
@@ -305,9 +333,6 @@ export default function Homepage({
               className="text-left lg:text-left"
             >
               <span
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
                 className="text-xl sm:text-4xl lg:text-4xl leading-tight"
               >
 
@@ -335,7 +360,7 @@ export default function Homepage({
               />
 
               <div
-                className="mt-2 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+                className="mt-6 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               >
                 <a
                   onClick={openPopup}
@@ -391,6 +416,7 @@ export default function Homepage({
                       width={450}
                       height={900}
                       alt="cap"
+                      loading="lazy"
                       className="lg:w-[420px] w-[200px]"
                     />
                   </div>
@@ -1261,14 +1287,14 @@ export default function Homepage({
   </div>
 </section> */}
 
-       {/* <StudentVisaStories
+      {/* <StudentVisaStories
         stories={visacontent}
         title={homePage?.visa?.title}
         subtitle={homePage?.visa?.subtitle}
         tag={homePage?.visa?.tag}
       />  */}
 
-       <section className="bg-white py-16">
+      <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
 
           <div className="text-center mb-14">

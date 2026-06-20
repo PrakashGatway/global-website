@@ -98,7 +98,7 @@ export function Sidebar() {
             alt="Logo"
             width={100}
             height={90}
-            priority
+            loading="lazy"
             className="scale-120"
           />
         </AnimatePresence>

@@ -355,6 +355,7 @@ useEffect(() => {
                           height={60}
                           className="object-contain w-full h-full"
                           unoptimized
+                          loading="lazy"
                         />
                       </div>
                       <div className="w-39 ">
@@ -481,7 +482,7 @@ useEffect(() => {
           <p className="text-lg font-semibold text-gray-700">{sections.roadMap?.subtitle}</p>
 
           <div className="max-w-5xl mx-auto flex justify-center">
-            <Image src="/images/00123.png" alt="ivy-admission-process" width={1000} height={800} className="w-full h-full" />
+            <Image loading="lazy" src="/images/00123.png" alt="ivy-admission-process" width={1000} height={800} className="w-full h-full" />
           </div>
         </div>
       </section>

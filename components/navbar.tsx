@@ -241,9 +241,9 @@ export default function Navbar({
                 src="/images/newlogo3.png"
                 alt="Logo"
                 width={800}
+                loading="lazy"
                 height={100}
                 className={`object-contain w-20 m-auto py-2.5 lg:w-28 lg:ml-10 ${isScrolled ? "" : ""}`}
-                priority
               />
             </Link>
           </div>
@@ -333,7 +333,7 @@ export default function Navbar({
                                       <Link key={uni._id} href={`/universities/${uni.slug}`} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100 hover:bg-[var(--primary)] hover:text-white hover:shadow-md transition group/item">
                                         <div className="w-12 h-12 rounded-lg bg-white border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0">
                                           {uni.uni_logo ? (
-                                            <Image src={uni.uni_logo} alt={uni.name} width={48} height={48} className="object-contain w-full h-full p-1" />
+                                            <Image loading="lazy" src={uni.uni_logo} alt={uni.name} width={48} height={48} className="object-contain w-full h-full p-1" />
                                           ) : (
                                             <div className="w-full h-full bg-gray-100 flex items-center justify-center">
                                               <GraduationCap size={20} className="text-gray-400" />
@@ -367,7 +367,7 @@ export default function Navbar({
                               return (
                                 <Link key={items._id || items.code} href={href} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition">
                                   <div className="w-10 h-10 rounded-full bg-white shadow overflow-hidden">
-                                    <Image src={image || "/placeholder.png"} alt={title} width={40} height={40} className="object-cover w-full h-full" />
+                                    <Image loading="lazy" src={image || "/placeholder.png"} alt={title} width={40} height={40} className="object-cover w-full h-full" />
                                   </div>
                                   <div>
                                     <p className="font-semibold text-sm">{title}</p>
@@ -466,7 +466,7 @@ export default function Navbar({
                       <span>Back</span>
                     </button>
                   ) : (
-                    <Image src="/images/newlogo3.png" alt="Logo" width={85} height={20} className="object-contain" />
+                    <Image loading="lazy" src="/images/newlogo3.png" alt="Logo" width={85} height={20} className="object-contain" />
                   )}
                   <button onClick={() => setIsOpen(false)} className="p-2 rounded-full bg-gray-50 hover:bg-gray-300 transition">
                     <X size={22} className="text-gray-600" />
@@ -613,6 +613,7 @@ export default function Navbar({
                                               src={uni.uni_logo}
                                               alt={uni.name}
                                               width={64}
+                                              loading="lazy"
                                               height={64}
                                               className="object-contain p-2"
                                             />
@@ -681,6 +682,7 @@ export default function Navbar({
                                             alt={title}
                                             width={40}
                                             height={40}
+                                            loading="lazy"
                                             className="object-cover w-full object-center h-full"
                                           />
                                         </div>

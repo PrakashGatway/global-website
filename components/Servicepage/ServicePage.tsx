@@ -94,7 +94,7 @@ const HeroSection = ({ data }) => {
         <div className="relative flex justify-center lg:justify-end mt-10 lg:0 lg:-top-20">
           {data.heroImage && (
             <div className="bg-[#f26b3a] hidden lg:block rounded-tr-[90px] overflow-hidden p-6 sm:p-10 lg:p-40 relative w-[450px] max-w-sm sm:max-w-lg lg:h-[430px]">
-              <Image src={data.heroImage} alt="Hero" fill className="object-contain" />
+              <Image loading="lazy" src={data.heroImage} alt="Hero" fill className="object-contain" />
             </div>
           )}
 
@@ -156,11 +156,11 @@ const StepsSection = ({ data }) => {
           {data.bgImage1 && (
             <div className="relative hidden lg:block w-full max-w-[520px] h-[220px] sm:h-[260px] lg:h-[280px] mx-auto lg:mx-0 top-22">
               <div className="relative w-full aspect-[3/2] overflow-hidden rounded-tr-[70px] left-0 lg:-left-60">
-                <Image src={data.bgImage1} alt="step bg 1" fill className="object-cover" />
+                <Image loading="lazy" src={data.bgImage1} alt="step bg 1" fill className="object-cover" />
               </div>
               {data.bgImage2 && (
                 <div className="hidden lg:block relative mt-[-80px] mx-auto w-[260px] h-[180px] sm:w-[300px] sm:h-[210px] lg:w-[300px] lg:h-[250px] lg:-top-50 overflow-hidden rounded-tr-[70px] rounded-bl-[70px] z-10 bg-white">
-                  <Image src={data.bgImage2} alt="step bg 2" fill className="object-cover" />
+                  <Image loading="lazy" src={data.bgImage2} alt="step bg 2" fill className="object-cover" />
                 </div>
               )}
             </div>
@@ -179,7 +179,7 @@ const StepsSection = ({ data }) => {
               </div>
               {item.icon && (
                 <div className="absolute -right-4 sm:-right-6 lg:-right-7 w-[110px] sm:w-[130px] lg:w-[140px] h-[120px] sm:h-[140px] lg:h-[150px]">
-                  <Image src={item.icon} alt={item.title} fill className="object-contain" />
+                  <Image loading="lazy" src={item.icon} alt={item.title} fill className="object-contain" />
                 </div>
               )}
             </div>

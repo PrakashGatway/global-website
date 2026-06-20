@@ -3,18 +3,29 @@ import type { Metadata, Viewport } from "next";
 import {
   Noto_Sans
 } from "next/font/google";
-import Navbar from "@/components/navbar";
 import "./globals.css";
-import "keen-slider/keen-slider.min.css";
-import { Footer } from "@/components/Footer";
+// import { Footer } from "@/components/Footer";
 import { serverInstance } from "./axiosInstance";
 import { GlobalProvider } from "@/src/statecontext";
 import { Toaster } from "react-hot-toast";
 import Script from "next/script";
-import BreadcrumbSchema from "@/components/BreadcrumbSchema";
 
-import WhatsAppButton from "@/components/whatsappbtn";
-// export const dynamic = "force-dynamic";
+// import BreadcrumbSchema from "@/components/BreadcrumbSchema";
+
+// import WhatsAppButton from "@/components/whatsappbtn";
+
+import dynamic from "next/dynamic";
+
+const WhatsAppButton = dynamic(
+  () => import("@/components/whatsappbtn"),
+  {
+    ssr: false,
+  }
+);
+
+const Navbar = dynamic(() => import("@/components/navbar"));
+
+const Footer = dynamic(() => import("@/components/Footer").then(mod => mod.Footer));
 
 const ptSans = Noto_Sans({
   subsets: ["latin"],

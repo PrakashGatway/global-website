@@ -116,6 +116,7 @@ export default function Blogs({ Blogdata,
               <Image
                 src="/images/g logo.png"
                 alt="G Logo"
+                loading="lazy"
                 width={120}
                 height={120}
                 className="w-8 h-8 sm:w-12 sm:h-12 lg:w-35 lg:h-[6.6rem] object-contain"

@@ -89,7 +89,7 @@ export function DashboardHeader({ profile, Logout }) {
               </span>
             )}
             <Image src="https://i.pinimg.com/originals/fb/11/55/fb1155591460c455edf3ced130b127b9.gif"
-              alt="avatar" width={40} height={40} className="w-full rounded-full h-full object-cover" />
+             loading="lazy" alt="avatar" width={40} height={40} className="w-full rounded-full h-full object-cover" />
           </Link>
 
           {/* Profile Dropdown */}
@@ -102,6 +102,7 @@ export function DashboardHeader({ profile, Logout }) {
             >
               <span className="h-10 w-10 border rounded-full p-0 m-0 shadow-lg overflow-hidden">
                 <Image
+                loading="lazy"
                   src={profile && profile.profileImage ? profile.profileImage
                     : `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s`}
                   alt={profile && profile.name || "user"} width={34} height={34} className="ovject-cover" />
@@ -130,7 +131,7 @@ export function DashboardHeader({ profile, Logout }) {
                     <div className="p-4 border-b border-border">
                       <div className="flex items-center gap-3">
                         <span className="h-11 w-11 border rounded-full p-0 m-0  shadow-lg overflow-hidden">
-                          <Image src={profile && profile.profileImage ? profile.profileImage : `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s`} alt={profile && profile.name} width={40} height={40} className="h-full w-full ovject-cover" />
+                          <Image loading="lazy" src={profile && profile.profileImage ? profile.profileImage : `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s`} alt={profile && profile.name} width={40} height={40} className="h-full w-full ovject-cover" />
                         </span>
                         <div>
                           <p className="text-sm font-semibold capitalize">{profile && profile.name}</p>

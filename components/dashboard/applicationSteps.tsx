@@ -373,6 +373,7 @@ function ProgramDetailsModal({ program, isOpen, onClose, onSelect }: ProgramDeta
                         src={program.university.uni_logo}
                         alt={program.university.name}
                         width={80}
+                        loading="lazy"
                         height={80}
                         className="object-contain"
                       />
@@ -675,6 +676,7 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
                             src={backup.university.uni_logo}
                             alt={backup.university.name}
                             width={60}
+                            loading="lazy"
                             height={60}
                             className="object-contain"
                           />
@@ -818,6 +820,7 @@ export function BackupsForm({ program, formData, setFormData }: BackupsFormProps
                                 alt={prog.university.name}
                                 width={60}
                                 height={60}
+                                loading="lazy"
                                 className="object-contain"
                               />
                             ) : (

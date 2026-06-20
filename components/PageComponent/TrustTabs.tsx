@@ -105,7 +105,7 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
                 width={230}
                 height={250}
                 className="object-cover w-full h-full"
-                priority
+                loading="lazy"
               />
             )}
           </div>

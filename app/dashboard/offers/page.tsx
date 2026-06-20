@@ -306,6 +306,7 @@ export default function OffersPage() {
           alt="wallet" 
           width={24} 
           height={24}
+          loading="lazy"
           className="w-5 h-5 sm:w-6 sm:h-6"
         />
       </div>
@@ -459,6 +460,7 @@ export default function OffersPage() {
                         alt="Profile" 
                         width={32} 
                         height={32} 
+                        loading="lazy"
                         className="w-full h-full object-cover rounded-full" 
                       />
                     </div>
@@ -501,6 +503,7 @@ export default function OffersPage() {
                 src="https://assets-v2.lottiefiles.com/a/0953d504-117d-11ee-aa49-1f149204cb5f/9uZcoEJaoF.gif" 
                 alt="No rewards" 
                 width={180} 
+                loading="lazy"
                 height={180} 
                 className="w-44 h-44 sm:w-60 sm:h-60 mx-auto" 
               />
@@ -591,6 +594,7 @@ export default function OffersPage() {
                 alt="No rewards" 
                 width={180} 
                 height={180} 
+                loading="lazy"
                 className="w-44 h-44 sm:w-60 sm:h-60 mx-auto" 
               />
               <p className="font-medium text-sm sm:text-lg mt-3 text-center px-4">No rewards found</p>

@@ -414,6 +414,7 @@ export default function CheckoutPage() {
                           alt={checkoutItem.university.name}
                           width={64}
                           height={64}
+                          loading="lazy"
                           className="h-full w-full object-contain"
                         />
                       </div>

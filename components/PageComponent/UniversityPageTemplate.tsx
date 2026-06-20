@@ -229,7 +229,7 @@ export default function UniversityPageTemplate({ slug, pageData }: UniversityPag
                     width={150}
                     height={80}
                     className="object-contain h-16 w-auto"
-                    unoptimized
+                    loading="lazy"
                   />
                 </div>
               ))}
@@ -340,7 +340,7 @@ export default function UniversityPageTemplate({ slug, pageData }: UniversityPag
                           width={60}
                           height={60}
                           className="object-contain w-full h-full"
-                          unoptimized
+                          loading="lazy"
                         />
                       </div>
 
@@ -407,6 +407,7 @@ export default function UniversityPageTemplate({ slug, pageData }: UniversityPag
                   height={300}
                   className="w-full h-56 object-cover"
                   unoptimized
+                  loading="lazy"
                 />
                 <div className="py-4">
                   <h4 style={{ fontFamily: "'Mileast', 'Playfair Display', 'Cormorant Garamond', Georgia, serif", fontWeight: 500, textAlign: 'center', transform: 'none', transformStyle: 'flat', transformOrigin: 'initial' }} className="text-lg font-bold text-gray-700 mb-2 leading-tight">
@@ -484,6 +485,7 @@ export default function UniversityPageTemplate({ slug, pageData }: UniversityPag
                     alt={ivyLeagueSpecialSection?.title || `${pageName} Special`}
                     width={600}
                     height={600}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -507,6 +509,7 @@ export default function UniversityPageTemplate({ slug, pageData }: UniversityPag
                       width="100%"
                       height="100%"
                       clipPath={`url(#til-${slug})`}
+
                       preserveAspectRatio="xMidYMid slice"
                     />
                     <path
@@ -603,9 +606,10 @@ export default function UniversityPageTemplate({ slug, pageData }: UniversityPag
                 width={1000} 
                 height={800} 
                 className="w-full h-full" 
+                loading="lazy"
               />
             ) : (
-              <Image src="/images/00123.png" alt={`${slug}-admission-process`} width={1000} height={800} className="w-full h-full" />
+              <Image loading="lazy" src="/images/00123.png" alt={`${slug}-admission-process`} width={1000} height={800} className="w-full h-full" />
             )}
           </div>
         </div>

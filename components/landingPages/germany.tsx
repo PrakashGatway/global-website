@@ -486,7 +486,7 @@ export default function GermanyLanding() {
                                 width={900}
                                 height={100}
                                 className={`object-contain w-28 m-auto py-1 lg:w-32 `}
-                                priority
+                                loading="lazy"
                             />
                         </Link>
                     </div>

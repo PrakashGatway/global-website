@@ -195,8 +195,8 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
               }
               alt={blog.title}
               fill
+              loading="lazy"
               className="object-cover "
-              priority
               sizes="160px"
             />
           </div>
@@ -550,6 +550,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
                         item.coverImage ||
                         "https://static-cse.canva.com/blob/1134734/Thepowerofheroimagedesignfeaturedimage.jpg"
                       }
+                      loading="lazy"
                       alt={item.title}
                       fill
                       className="object-cover group-hover:scale-105 transition duration-300"

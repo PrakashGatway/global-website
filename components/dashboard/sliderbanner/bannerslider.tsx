@@ -85,6 +85,7 @@ export default function RewardSlider({ universities }: any) {
                   src={slide?.uni_logo} 
                   alt={slide?.name} 
                   width={80} 
+                  loading="lazy"
                   height={80} 
                   className="rounded-md sm:rounded-xl w-8 h-8 sm:w-10 sm:h-10 object-contain" 
                 />

@@ -102,9 +102,9 @@ export default function YesItalyLanding() {
                                 src="/images/newlogo3.png"
                                 alt="Logo"
                                 width={900}
+                                loading="lazy"
                                 height={100}
                                 className={`object-contain w-28 m-auto py-1 lg:w-32 `}
-                                priority
                             />
                         </Link>
                     </div>

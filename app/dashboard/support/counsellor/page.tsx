@@ -371,6 +371,7 @@ export default function SupportPage() {
                   <Image 
                     src="https://assets-v2.lottiefiles.com/a/09c40a94-1179-11ee-a418-7394edff93c8/NEgtRnqrdz.gif" 
                     alt="No tickets" 
+                    loading="lazy"
                     width={250} 
                     height={250} 
                     className="m-auto opacity-50" 

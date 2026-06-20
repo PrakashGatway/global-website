@@ -724,7 +724,7 @@ export default function OffersPage() {
                     <div className="flex items-center gap-3">
                         <div className="flex font-semibold items-center gap-2 border-2 border-slate-500 rounded-full px-4 py-1 shadow-xl ">
                             <p className="">Wallet: {profile?.wallet}</p>
-                            <Image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd6RT3_38mLmgDzUAuy2ZcS0ERldqSXpTdQw&s" alt="wallet" width={30} height={30} />
+                            <Image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd6RT3_38mLmgDzUAuy2ZcS0ERldqSXpTdQw&s" alt="wallet" width={30} height={30} loading="lazy"/>
                         </div>
                         {/* Create Coupon Button - Admin only? You can add role check */}
                         <button
@@ -833,7 +833,7 @@ export default function OffersPage() {
                                         >
                                             <div className="flex items-center gap-4">
                                                 <div className="w-12 h-12 rounded-full shadow-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
-                                                    <Image src={referral?.profileImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s"} alt="Profile" width={32} height={32} className="w-full h-full object-cover rounded-full" />
+                                                    <Image loading="lazy" src={referral?.profileImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s"} alt="Profile" width={32} height={32} className="w-full h-full object-cover rounded-full" />
                                                 </div>
                                                 <div>
                                                     <h4 className="font-semibold text-slate-900 capitalize">{referral?.name || "Unknown"}</h4>
@@ -868,7 +868,7 @@ export default function OffersPage() {
                             {
                                 coupons?.data?.length === 0 && (
                                     <div className="flex flex-col items-center justify-center h-100 w-full">
-                                        <Image src="https://assets-v2.lottiefiles.com/a/0953d504-117d-11ee-aa49-1f149204cb5f/9uZcoEJaoF.gif" alt="No rewards" width={250} height={250} className="mx-auto max-w-full max-h-full" />
+                                        <Image loading="lazy" src="https://assets-v2.lottiefiles.com/a/0953d504-117d-11ee-aa49-1f149204cb5f/9uZcoEJaoF.gif" alt="No rewards" width={250} height={250} className="mx-auto max-w-full max-h-full" />
                                         <p className="font-medium text-lg">No coupons found</p>
                                     </div>
                                 )

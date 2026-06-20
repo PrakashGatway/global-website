@@ -38,7 +38,7 @@ export default function EventsSlider() {
                                 width={1920}
                                 height={700}
                                 className="w-full h-auto object-contain"
-                                priority={index === 0}
+                                loading="lazy"
                             />
                         </motion.div>
                     ))}

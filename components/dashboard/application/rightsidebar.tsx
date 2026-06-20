@@ -201,6 +201,7 @@ const getActivityIcon = (type) => {
       alt="Counselor"
       width={70}
       height={70}
+      loading="lazy"
       className="rounded-full object-cover border border-gray-200 flex-shrink-0"
     />
   ) : (

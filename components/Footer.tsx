@@ -38,8 +38,9 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
                 <div className="w-full lg:w-60 pr-0 lg:pr-8 mb-10 lg:mb-0 relative flex flex-col h-full">
                   <Image
                     src="/images/footer-logo.png"
-                    alt="GAway Global"
+                    alt="Ooshas Global"
                     width={130}
+                    loading="lazy"
                     height={50}
                     className="mb-4 text-white"
                   />
