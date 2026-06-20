@@ -97,9 +97,6 @@ export default async function Page({
         url: "https://ooshasglobal.com",
       },
       {
-        name: "Study Abroad",
-      },
-      {
         name:
           pageData?.h1 ||
           pageData?.title ||
@@ -113,6 +110,7 @@ export default async function Page({
       ? generateFaqSchema(faqs)
       : null;
 
+  console.log(breadcrumbSchema, "breadcrumbSchema");
 
   return (
     <>
@@ -144,7 +142,7 @@ export default async function Page({
         />
       )}
 
-      {pageData?.isFeatured === false && (
+      {pageData?.isFeatured == false && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

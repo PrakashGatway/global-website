@@ -142,7 +142,7 @@ export default async function RootLayout({
   `}
         </Script> */}
 
-        <BreadcrumbSchema params={params} />
+        {/* <BreadcrumbSchema params={params} /> */}
       </head>
 
       <body

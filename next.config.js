@@ -19,7 +19,7 @@ const nextConfig = {
     },
   },
   compiler: {
-    removeConsole: false,
+    removeConsole: true,
   },
   typescript: {
     ignoreBuildErrors: true,
