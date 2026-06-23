@@ -124,7 +124,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
   const completeDetail = statusDetail?.find((item) =>
     item.status === "Completed"
   )
- 
+
 
   const handleSelectionVisa = async () => {
     try {
@@ -187,7 +187,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
     setShowActionModal(true);
   };
 
-  
+
 
 
   const endDate =
@@ -233,11 +233,41 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
               {currentstep.step === "Completed" ? (<div className="w-full bg-[#fefaf8] border border-orange-400 p-4 md:p-2 shadow-sm">
                 <div className="flex flex-col lg:flex-row gap-4">
                   {/* Left Illustration */}
-                  <div className="flex justify-center lg:justify-start">
-                    <div className="w-20 h-20 md:w-40 md:h-40 bg-orange-100 rounded-2xl flex items-center justify-center rounded-full">
-                      <img src="/confirmmation.png" alt="" />
+                  <div className="relative">
+                    <>
+                      <style jsx>{`
+    @keyframes pendulum {
+      0% {
+        transform: rotate(-6deg);
+      }
+      50% {
+        transform: rotate(10deg);
+      }
+      100% {
+        transform: rotate(-6deg);
+      }
+    }
+
+    .pendulum {
+      animation: pendulum 5.5s ease-in-out infinite;
+      transform-origin: top center;
+    }
+  `}</style>
+
+                      <div className="w-20 h-20 md:w-40 md:h-40 bg-orange-100 rounded-full flex items-center justify-center">
+                        <img
+                          src="/confirmmation.png"
+                          alt=""
+                          className="pendulum w-full h-full object-contain"
+                        />
+                      </div>
+                    </>
+                    <div className="absolute -top-25 lg:block hidden">
+                      <img src="/celebration.gif" alt="" className="w-60 h-60" />
                     </div>
                   </div>
+
+
 
                   {/* Right Content */}
                   <div className="flex-1">
@@ -940,13 +970,20 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
                   <div className="flex gap-20 ">
 
-                    <div className="w-16 h-16 md:w-40 md:h-40 rounded-full bg-orange-100 flex items-center justify-center">
+                    <div className="w-16 h-16 md:w-34 md:h-34 rounded-full bg-orange-100 flex items-center justify-center relative z-1 ml-14">
 
                       <img
                         src="/offer-application.png"
                         alt=""
-                        className="w-full"
+                        className="w-full "
                       />
+
+                      <div className="absolute -right-30 -top-5 -z-10">
+                        <img src="/star.gif" alt="" className="w-40" />
+                      </div>
+                      <div className="absolute -left-30 -top-5 -z-10">
+                        <img src="/star.gif" alt="" className="w-40" />
+                      </div>
                     </div>
 
                     <div className="flex-1">
@@ -1140,23 +1177,23 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
 
 
                     <div className="space-y-4">
-                      {application?.documents?.find((item)=> item.docType === "offer letter")?.extra?.other?.map((item,i)=>
-                      <>
-                       <div className="flex justify-between gap-4">
-                        <span className="text-slate-500 text-base">
-                          {item?.key}
-                        </span>
+                      {application?.documents?.find((item) => item.docType === "offer letter")?.extra?.other?.map((item, i) =>
+                        <>
+                          <div className="flex justify-between gap-4">
+                            <span className="text-slate-500 text-base">
+                              {item?.key}
+                            </span>
 
-                        <span className="font-medium text-right text-base">
-                          {item?.value}
-                        </span>
-                      </div>
-                      </>
+                            <span className="font-medium text-right text-base">
+                              {item?.value}
+                            </span>
+                          </div>
+                        </>
                       )
                       }
-                     
 
-                    
+
+
                     </div>
 
 
@@ -1232,12 +1269,12 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                             </div>
 
                             <p className="text-base text-slate-500">
-                              {statusDetail?.find((item)=> item?.status === "PayEnrollenmentDeposit")?.metadata?.deposit?.paymentDeadline}
+                              {statusDetail?.find((item) => item?.status === "PayEnrollenmentDeposit")?.metadata?.deposit?.paymentDeadline}
                             </p>
                           </div>
                         </div>
 
-                      
+
 
                       </div>
 
@@ -1253,10 +1290,10 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                         Talk to your admissions counselor for any help
                         with acceptance, visa or other queries.
                       </p>
-<Link href={"/dashboard/support"}>
-                      <button className="mt-4 w-full py-3  border border-orange-200 text-orange-600 font-medium text-base">
-                        Contact Counselor
-                      </button></Link>
+                      <Link href={"/dashboard/support"}>
+                        <button className="mt-4 w-full py-3  border border-orange-200 text-orange-600 font-medium text-base">
+                          Contact Counselor
+                        </button></Link>
 
                     </div>
 

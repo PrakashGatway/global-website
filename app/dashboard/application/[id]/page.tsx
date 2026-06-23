@@ -205,6 +205,10 @@ export default function StudentDetailsPage() {
     }
   }, []);
 
+  const [showCelebration, setShowCelebration] = useState(false);
+
+
+
 
   const sections = [
     {
@@ -301,6 +305,105 @@ export default function StudentDetailsPage() {
 
 
   const documentList = Object.values(Parsedocuments || {});
+
+    const steps = [
+    {
+      id: 1,
+      title: "Application Started",
+      subTitle: "In Progress",
+      step: "Started",
+      icon: FileText,
+    },
+    {
+      id: 2,
+      title: "Under OOSHAS Review",
+      subTitle: "current",
+      step: "ReviewbyOoshas",
+      icon: Clock,
+    },
+    {
+      id: 3,
+      title: "Submitted to School",
+      subTitle: "In Progress",
+      step: "SubmitToSchool",
+      icon: Upload,
+    },
+    {
+      id: 4,
+      title: "Awaiting School Response",
+      subTitle: "In Progress",
+      step: "AwaitingSchoolResponse",
+      icon: Hourglass,
+    },
+    {
+      id: 5,
+      title: "Offer Received",
+      subTitle: "In Progress",
+      step: "OfferReceived",
+      icon: Gift,
+    },
+    {
+      id: 6,
+      title: "Pay Enrollenment Deposit",
+      subTitle: "In Progress",
+      step: "PayEnrollenmentDeposit",
+      icon: ClipboardCheck,
+    },
+    {
+      id: 7,
+      title: "Confirmmation Letter",
+      subTitle: "In Progress",
+      step: "Completed",
+      icon: ClipboardCheck,
+    },
+  ];
+
+
+  const timelinesteps =
+    application?.primaryStatus === "Refused"
+      ? [
+        ...steps.filter(
+          (item) =>
+            item.step !== "PayEnrollenmentDeposit" &&
+            item.step !== "Completed"
+        ),
+        {
+          id: 8,
+          title: "Rejection Overview",
+          subTitle: "Rejected",
+          step: "Refused",
+          icon: FileText,
+        },
+      ]
+      : steps;
+
+        const currentprimarystep = application?.primaryStatus
+
+  const currentStatus = application?.primaryStatus;
+
+  const currentStep =
+    timelinesteps.find(
+      item => item.step === currentStatus
+    ) || timelinesteps[0];
+
+  const currentIndex = timelinesteps.findIndex(
+    item => item.step === currentStatus
+  );
+
+
+  useEffect(() => {
+  if (currentStep?.step === "OfferReceived") {
+    setShowCelebration(true);
+
+    const timer = setTimeout(() => {
+      setShowCelebration(false);
+    }, 6000); // hide after 5 seconds
+
+    return () => clearTimeout(timer);
+  }
+}, [currentStep?.step]);
+
+
 
   useEffect(() => {
     fetchApplication();
@@ -665,76 +768,7 @@ export default function StudentDetailsPage() {
   }
 
 
-  const steps = [
-    {
-      id: 1,
-      title: "Application Started",
-      subTitle: "In Progress",
-      step: "Started",
-      icon: FileText,
-    },
-    {
-      id: 2,
-      title: "Under OOSHAS Review",
-      subTitle: "current",
-      step: "ReviewbyOoshas",
-      icon: Clock,
-    },
-    {
-      id: 3,
-      title: "Submitted to School",
-      subTitle: "In Progress",
-      step: "SubmitToSchool",
-      icon: Upload,
-    },
-    {
-      id: 4,
-      title: "Awaiting School Response",
-      subTitle: "In Progress",
-      step: "AwaitingSchoolResponse",
-      icon: Hourglass,
-    },
-    {
-      id: 5,
-      title: "Offer Received",
-      subTitle: "In Progress",
-      step: "OfferReceived",
-      icon: Gift,
-    },
-    {
-      id: 6,
-      title: "Pay Enrollenment Deposit",
-      subTitle: "In Progress",
-      step: "PayEnrollenmentDeposit",
-      icon: ClipboardCheck,
-    },
-    {
-      id: 7,
-      title: "Confirmmation Letter",
-      subTitle: "In Progress",
-      step: "Completed",
-      icon: ClipboardCheck,
-    },
-  ];
 
-
-  const timelinesteps =
-    application?.primaryStatus === "Refused"
-      ? [
-        ...steps.filter(
-          (item) =>
-            item.step !== "PayEnrollenmentDeposit" &&
-            item.step !== "Completed"
-        ),
-        {
-          id: 8,
-          title: "Rejection Overview",
-          subTitle: "Rejected",
-          step: "Refused",
-          icon: FileText,
-        },
-      ]
-      : steps;
 
 
 
@@ -770,19 +804,6 @@ export default function StudentDetailsPage() {
         break;
     }
   };
-
-  const currentprimarystep = application?.primaryStatus
-
-  const currentStatus = application?.primaryStatus;
-
-  const currentStep =
-    timelinesteps.find(
-      item => item.step === currentStatus
-    ) || timelinesteps[0];
-
-  const currentIndex = timelinesteps.findIndex(
-    item => item.step === currentStatus
-  );
 
 
 
@@ -1640,7 +1661,26 @@ export default function StudentDetailsPage() {
             ) : currentStep?.step === "AwaitingSchoolResponse" ? (
               <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs} />
             ) : currentStep?.step === "OfferReceived" ? (
-              <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} activity={activityLogs} fetchApplication={fetchApplication} />
+              <div className="relative">
+                <SubmittedtoSchool
+                  application={application}
+                  allProfile={allProfile}
+                  profile={profile}
+                  currentstep={currentStep}
+                  activity={activityLogs}
+                  fetchApplication={fetchApplication}
+                />
+
+                {showCelebration && (
+                  <div className="absolute -top-76 inset-x-0 flex justify-center pointer-events-none z-10">
+                    <img
+                      src="/celebration.gif"
+                      alt="Celebration"
+                      className="w-full"
+                    />
+                  </div>
+                )}
+              </div>
             ) : currentStep?.step === "Completed" && currentprimarystep !== "Refused" ? (
               <SubmittedtoSchool application={application} allProfile={allProfile} profile={profile} currentstep={currentStep} />
             ) : null}

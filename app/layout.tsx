@@ -77,7 +77,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/images/fevi-icon.png" className="w-20 " />
+        <link rel="icon" href="/images/fevi-icon.png" className="w-40 " />
         <meta
           name="google-site-verification"
           content="VU_q7Dhlnq-bXvbs2_KwmafQK7MCZMSeu_dHgPEiCtE"

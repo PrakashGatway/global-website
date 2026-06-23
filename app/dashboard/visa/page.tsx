@@ -1551,9 +1551,11 @@ const Step5VisaDecision = ({ data, currentStepId, apiData }) => {
 const Step6VisaApproved = ({ data, currentStepId, apiData }) => {
   const stepData = apiData?.steps?.find(s => s.id === 6);
   const router = useRouter();
+   
 
   return (
     <>
+    <div className='relative'>
       <div className="bg-white p-6 border border-gray-400">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold text-gray-800 text-lg">
@@ -1589,12 +1591,12 @@ const Step6VisaApproved = ({ data, currentStepId, apiData }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[300px_680px] gap-6 relative">
-        <div className="bg-orange-50 border border-orange-200 p-4 h-full">
+        <div className="bg-orange-50 border border-orange-200 py-8 h-full">
           <div className="flex flex-col items-center text-center">
 
-            <div className="w-40 h-40 absolute   flex items-center justify-center mb-3">
+            <div className="w-full h-full absolute   flex items-center justify-center ">
               <img
-                src="/gif/complete.gif"
+                src="/celebration.gif"
                 alt="Completed"
                 className="w-100 h-100 object-contain"
               />
@@ -1755,6 +1757,10 @@ const Step6VisaApproved = ({ data, currentStepId, apiData }) => {
             <p className="text-base text-gray-600">Congratulations on your visa approval! Please ensure you carry all necessary documents while traveling.</p>
           </div>
         </div>
+      </div>
+
+       
+
       </div>
     </>
   );
@@ -2032,6 +2038,9 @@ export default function VisaJourneyPage() {
     visaDetails();
   }, []);
 
+   const [showCelebration, setShowCelebration] = useState(false);
+ 
+
   const handleStartApplication = () => {
     console.log("Start new application");
   };
@@ -2072,7 +2081,6 @@ export default function VisaJourneyPage() {
       6: Step6VisaApproved,
     };
 
-    console.log(profile)
     let StepComponent;
     if (!currentStep || currentStep <= 0) {
       StepComponent = stepsMap[1];
@@ -2084,6 +2092,24 @@ export default function VisaJourneyPage() {
 
     return <StepComponent {...stepProps} />;
   };
+
+  console.log(currentStep)
+
+    useEffect(() => {
+      if(currentStep === 6){
+
+ 
+    setShowCelebration(true);
+
+    const timer = setTimeout(() => {
+      setShowCelebration(false);
+    }, 6000); // hide after 5 seconds
+
+    return () => clearTimeout(timer);
+      }
+
+  
+}, [currentStep]);
 
   const getBannerStyles = () => {
     if (bannerData.type === 'success') {
@@ -2336,6 +2362,16 @@ export default function VisaJourneyPage() {
           </div>
         </div>
       </main>
+
+       {showCelebration && (
+                  <div className="absolute -top-6 inset-x-0 flex justify-center pointer-events-none z-10">
+                    <img
+                      src="/celebration.gif"
+                      alt="Celebration"
+                      className="w-full"
+                    />
+                  </div>
+                )}
     </div>
   );
 }

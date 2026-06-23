@@ -1,6 +1,7 @@
 "use client"
 
 import axiosInstance from "@/app/axiosInstance"
+import { Linkedin, Twitter } from "lucide-react"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
@@ -35,23 +36,86 @@ export default function AuthorPage({ author }) {
     return (
         <>
             <div className="min-h-screen  flex items-center justify-center py-10 px-4 max-w-7xl mx-auto grid grid-cols-1">
-                <div className="w-full  bg-[#fffcf7] shadow-[0_12px_28px_rgba(0,0,0,0.08)] border border-[#e8dfd3] rounded-sm py-8 px-6 md:px-10 transition-all">
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-lg">
 
                     {/* header: name + role */}
-                    <div className="flex flex-wrap items-baseline justify-between border-b-2 border-[#d9cdbc] pb-3 mb-5">
-                        <div>
-                            <h1 className="text-3xl md:text-4xl font-semibold text-[#1e3a5f] tracking-wide">
-                                {author.name}
-                            </h1>
-                            <p className="text-sm text-[#5f4e3c] italic mt-0.5">{author.role}</p>
-                        </div>
-                        <span className="text-sm font-medium text-[#ed6c02] bg-[#fef3e8] px-3 py-1 rounded-full border border-[#ed6c02]/20">
-                            {author.specializes}
-                        </span>
-                    </div>
+                   <div
+  className="relative overflow-hidden rounded-t-lg"
+  style={{
+    backgroundColor: "#f46c44",
+    backgroundImage:
+      "url('https://www.transparenttextures.com/patterns/back-pattern.png')",
+  }}
+>
+    
+
+  {/* Main Header */}
+  <div className="relative  px-6 md:px-10 py-8">
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+      
+      {/* Left Section */}
+      <div className="flex items-center gap-5">
+        <img
+          src={author.image || "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=cover"}
+          alt={author.name}
+          className="w-24 h-24 md:w-28 md:h-28 rounded-full border-4 border-white object-cover shadow-lg"
+        />
+
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-bold text-white">
+              {author.name}
+            </h1>
+
+            <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
+              ✓
+            </span>
+          </div>
+
+          <p className="text-white/90 text-lg mt-1">
+            {author.role}
+          </p>
+
+          <div className="flex gap-3 mt-4">
+  <a
+    href={author.linkedin}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="w-9 h-9 rounded bg-white text-[#006d77] flex items-center justify-center hover:scale-110 transition"
+  >
+    <Linkedin size={18} />
+  </a>
+
+  <a
+    href={author.twitter}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="w-9 h-9 rounded bg-white text-[#006d77] flex items-center justify-center hover:scale-110 transition"
+  >
+    <Twitter size={18} />
+  </a>
+</div>
+        </div>
+      </div>
+
+      {/* Right Stats */}
+      <div className="flex gap-10 text-white">
+        <div className="text-center">
+          <h3 className="text-4xl font-bold">592</h3>
+          <p className="text-white/80">Posts</p>
+        </div>
+
+        <div className="text-center">
+          <h3 className="text-4xl font-bold">45.6L</h3>
+          <p className="text-white/80">Reads</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
                     {/* about section */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 p-5">
                         <div className="md:col-span-2 space-y-3">
                             <h2 className="text-xs uppercase tracking-[0.15em] text-[#1e3a5f] font-semibold border-b border-[#ed6c02] inline-block pb-1">
                                 About
