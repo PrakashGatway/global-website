@@ -390,7 +390,8 @@ function UniversitiesPageClient() {
 
         const params = new URLSearchParams({
           page: currentPage.toString(),
-          limit: "8",
+          isWeb: "true",
+          limit: "9",
           ...(debouncedSearchQuery && { name: debouncedSearchQuery }),
           ...(filters.country && { country: filters.country }),
           // ...(filters.category && { category: filters.category }), // add this
@@ -399,7 +400,6 @@ function UniversitiesPageClient() {
           ...(filters.uni_type && { type: filters.uni_type }),
         });
 
-        console.log(params, "param", typeof search);
         const response = await axiosInstance.get(`/universities?${params}`);
         const data = response.data.result;
 
