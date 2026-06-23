@@ -1,5 +1,7 @@
 "use client";
 
+import axiosInstance from "@/app/axiosInstance";
+import { useParams } from "next/navigation";
 import { useState, useEffect, useRef, ReactNode } from "react";
 
 /* ─── Scroll Animation Hook ─── */
@@ -76,44 +78,11 @@ function AnimatedNumber({ value, suffix = "" }: { value: number; suffix?: string
 }
 
 /* ─── Data ─── */
-const keyFacts = [
-  { label: "Degree", value: "MSc Global & Int'l Management" },
-  { label: "Duration", value: "12 months" },
-  { label: "Credits", value: "180 ECTS" },
-  { label: "Language", value: "English" },
-  { label: "Format", value: "On Campus" },
-  { label: "Intake", value: "October 2026" },
-  { label: "Scholarship", value: "₹10,00,000" },
-  { label: "Deadline", value: "30 Sept 2026" },
-];
 
-const keyFactsDetailed = [
-  { l: "Scholarship Name", v: "Global Excellence Scholarship" },
-  { l: "University", v: "University of Oxford" },
-  { l: "Department", v: "Saïd Business School" },
-  { l: "Degree Awarded", v: "MSc in Global & International Management" },
-  { l: "Duration", v: "12 months (full-time)" },
-  { l: "ECTS Credits", v: "180" },
-  { l: "Teaching Language", v: "English" },
-  { l: "Mode of Study", v: "On campus" },
-  { l: "Intake", v: "October 2026" },
-  { l: "Application Deadline", v: "30 September 2026" },
-  { l: "Scholarship Amount", v: "₹10,00,000 (~£75,900)" },
-  { l: "Coverage", v: "Tuition + Living + Travel" },
-  { l: "Eligible Nationalities", v: "All international (non-UK)" },
-  { l: "Number of Awards", v: "Up to 30 per year" },
-  { l: "Renewable", v: "No (one-year programme)" },
-  { l: "Requires Admission Offer", v: "Yes" },
-];
 
-const costs = [
-  { item: "Tuition Fee (International)", amount: "£52,400" },
-  { item: "College Fee", amount: "£3,500" },
-  { item: "Living Costs (est. 12 months)", amount: "£18,000" },
-  { item: "Books & Supplies", amount: "£800" },
-  { item: "Visa & Health Surcharge", amount: "£1,200" },
-  { item: "Total Estimated Cost", amount: "£75,900", highlight: true },
-];
+
+
+
 
 const requirementTabs = [
   {
@@ -142,38 +111,9 @@ const requirementTabs = [
   },
 ];
 
-const documents = [
-  "Scholarship application form",
-  "Personal statement (1,000 words)",
-  "Curriculum Vitae",
-  "Academic transcripts",
-  "Degree certificate",
-  "Two reference letters",
-  "English test results",
-  "GMAT/GRE scores (if available)",
-  "Research proposal (research track)",
-  "Passport copy",
-];
 
-const curriculum = [
-  { term: "Michaelmas Term (Oct–Dec)", courses: ["Global Strategy & Competition", "International Political Economy", "Quantitative Methods for Management", "Leadership & Organisational Behaviour"] },
-  { term: "Hilary Term (Jan–Mar)", courses: ["Cross-Cultural Management", "International Finance & Risk", "Elective I (12 options)", "Elective II (12 options)"] },
-  { term: "Trinity Term (Apr–Jun)", courses: ["Consulting Project (international org)", "Elective III", "Dissertation / Business Plan"] },
-  { term: "Summer (Jul–Sep)", courses: ["Dissertation Submission", "Graduation Ceremony"] },
-];
 
-const careers = [
-  { title: "Management Consultant", companies: "McKinsey, BCG, Bain", salary: "£65,000–£90,000" },
-  { title: "Strategy Analyst", companies: "Google, Amazon, JP Morgan", salary: "£55,000–£75,000" },
-  { title: "Int'l Business Dev", companies: "Unilever, Siemens, HSBC", salary: "£50,000–£70,000" },
-  { title: "Policy Advisor", companies: "World Bank, OECD, UN", salary: "£45,000–£65,000" },
-];
 
-const reviews = [
-  { name: "Priya S.", country: "India", year: "2024", rating: 5, text: "The Global Excellence Scholarship transformed my career trajectory. The mentorship alone was worth more than the financial support. Oxford's network opened doors I never knew existed." },
-  { name: "Ahmed K.", country: "Egypt", year: "2023", rating: 5, text: "The application process was rigorous but fair. The interviewers genuinely wanted to understand my vision. Now I'm working at the World Bank — something I couldn't have imagined before." },
-  { name: "Maria L.", country: "Brazil", year: "2024", rating: 4, text: "Incredible programme with world-class professors. The only downside is the intensity — be prepared for a challenging but rewarding year. The scholarship community is incredibly supportive." },
-];
 
 const similarScholarships = [
   { name: "Clarendon Fund", uni: "University of Oxford", amount: "Full Tuition + Living", tag: "Fully Funded" },
@@ -195,33 +135,43 @@ const contentTabs = [
   { id: "overview", label: "Overview" },
   { id: "costs", label: "Costs & Funding" },
   { id: "requirements", label: "Requirements" },
-  { id: "curriculum", label: "Curriculum" },
-  { id: "careers", label: "Careers" },
-  { id: "faq", label: "FAQ" },
+  { id: "benefits", label: "Benefits" },
+  { id: "howToApply", label: "How To Apply" },
+
 ];
 
 /* ─── Animated Tab Content Wrapper ─── */
-function TabPanel({ active, children }: { active: boolean; children: ReactNode }) {
+function TabPanel({
+  active,
+  children,
+}: {
+  active: boolean;
+  children: ReactNode;
+}) {
   const innerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
 
   useEffect(() => {
-    if (active && innerRef.current) {
-      const h = innerRef.current.scrollHeight;
-      setHeight(h);
-    } else {
-      setHeight(0);
-    }
-  }, [active]);
+    if (!innerRef.current) return;
+
+    const updateHeight = () => {
+      setHeight(innerRef.current?.scrollHeight || 0);
+    };
+
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(innerRef.current);
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div
-      className="overflow-hidden transition-[height] duration-500 ease-[cubic-bezier(.16,1,.3,1)]"
+      className="overflow-hidden transition-all duration-500"
       style={{ height: active ? height : 0 }}
     >
-      <div ref={innerRef} className="pb-2">
-        {children}
-      </div>
+      <div ref={innerRef}>{children}</div>
     </div>
   );
 }
@@ -232,6 +182,55 @@ export default function ScholarshipPage() {
   const [reqTab, setReqTab] = useState(0);
   const [heroScale, setHeroScale] = useState(1.05);
 
+  const [Scholarship, setScholarship] = useState([])
+  const [Loading, setLoading] = useState(false)
+  const [Error, setError] = useState('')
+  const [Simillar,fetchSimilarScholarships] = useState([])
+
+  const params = useParams();
+  const slug = params?.slug as string;
+
+
+  useEffect(() => {
+    const fetchScholarshipDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get(`/scholarships/slug/${slug}`);
+        const data = response.data;
+
+        if (data.success) {
+          setScholarship(data.data);
+          // Fetch similar scholarships
+        } else {
+          setError(data.message);
+        }
+      } catch (err) {
+        setError("Failed to load scholarship details");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchScholarshipDetails()
+  }, [])
+
+ useEffect(() => {
+  const fetchAllScholarship = async () => {
+    try {
+      const res = await axiosInstance.get("/scholarships/public/list");
+
+      fetchSimilarScholarships(res.data?.data || []);
+    
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  fetchAllScholarship();
+}, []);
+
+
   useEffect(() => {
     const onScroll = () => {
       const s = Math.max(1, 1.05 - window.scrollY * 0.0002);
@@ -239,7 +238,10 @@ export default function ScholarshipPage() {
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+
   }, []);
+
+  console.log(Simillar)
 
   return (
     <main className="bg-[#FAFAF9] text-neutral-900 antialiased">
@@ -278,14 +280,14 @@ export default function ScholarshipPage() {
           </Reveal>
 
           <Reveal delay={200}>
-            <h1 className="text-2xl md:text-4xl lg:text-5xl font-medium text-white tracking-tight leading-[1.15] max-w-3xl">
-              Global Excellence Scholarship
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-medium text-white tracking-tight leading-[1.15] max-w-4xl">
+              {Scholarship?.title}
             </h1>
           </Reveal>
 
           <Reveal delay={300}>
-            <p className="text-white/50 text-sm md:text-base mt-2 font-light">
-              University of Oxford · Saïd Business School · MSc Global & International Management
+            <p className="text-white text-sm md:text-base mt-2 font-light line-clamp-2">
+              {Scholarship?.shortDescription}
             </p>
           </Reveal>
         </div>
@@ -294,17 +296,49 @@ export default function ScholarshipPage() {
       {/* ───── KEY FACTS STRIP ───── */}
       <section className="bg-white border-b border-neutral-100">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 divide-x divide-neutral-100">
-            {keyFacts.map((f, i) => (
-              <Reveal key={f.label} delay={i * 50}>
-                <div className="py-4 px-3 text-center group cursor-default">
-                  <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-neutral-400 mb-1 group-hover:text-orange-600 transition-colors duration-300">
-                    {f.label}
-                  </p>
-                  <p className="font-medium text-sm truncate">{f.value}</p>
-                </div>
-              </Reveal>
-            ))}
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 ">
+            <div className="py-4 px-3 text-center border-r">
+              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-neutral-400">
+                Amount
+              </p>
+              <p className="font-medium text-sm">{Scholarship?.amount}</p>
+            </div>
+
+            <div className="py-4 px-3 text-center border-r">
+              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-neutral-400">
+                Delivery Mode
+              </p>
+              <p className="font-medium text-sm">{Scholarship?.deliveryMode}</p>
+            </div>
+
+            <div className="py-4 px-3 text-center border-r">
+              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-neutral-400">
+                Funding Type
+              </p>
+              <p className="font-medium text-sm">{Scholarship?.fundingType}</p>
+            </div>
+
+
+            <div className="py-4 px-3 text-center border-r">
+              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-neutral-400">
+                Intake
+              </p>
+              <p className="font-medium text-sm">{Scholarship?.intake}</p>
+            </div>
+
+            <div className="py-4 px-3 text-center border-r">
+              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-neutral-400">
+                Study Mode
+              </p>
+              <p className="font-medium text-sm">{Scholarship?.studyMode}</p>
+            </div>
+
+            <div className="py-4 px-3 text-center">
+              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-neutral-400">
+                Deadline
+              </p>
+              <p className="font-medium text-sm">{Scholarship?.deadline}</p>
+            </div>
           </div>
         </div>
       </section>
@@ -318,134 +352,139 @@ export default function ScholarshipPage() {
             <div className="flex-1 min-w-0">
 
               {/* ─── TAB NAV ─── */}
-              <Reveal>
-                <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden mb-1">
-                  <div className="flex overflow-x-auto no-scrollbar">
-                    {contentTabs.map((tab) => (
-                      <button
-                        key={tab.id}
-                        onClick={() => { setActiveTab(tab.id); setOpenFaq(null); }}
-                        className={`relative flex-shrink-0 text-sm font-medium px-6 py-4 transition-colors duration-300 whitespace-nowrap ${
-                          activeTab === tab.id ? "text-neutral-900" : "text-neutral-400 hover:text-neutral-600"
+
+              <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm  mb-1">
+                <div className="flex overflow-x-auto no-scrollbar">
+                  {contentTabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => { setActiveTab(tab.id); setOpenFaq(null); }}
+                      className={`relative flex-shrink-0 text-sm font-medium px-6 py-4 transition-colors duration-300 whitespace-nowrap ${activeTab === tab.id ? "text-neutral-900" : "text-neutral-400 hover:text-neutral-600"
                         }`}
-                      >
-                        {tab.label}
-                        <div
-                          className="absolute bottom-0 left-3 right-3 h-[2px] bg-orange-600 rounded-full transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)]"
-                          style={{
-                            transform: activeTab === tab.id ? "scaleX(1)" : "scaleX(0)",
-                          }}
-                        />
-                      </button>
-                    ))}
-                  </div>
+                    >
+                      {tab.label}
+                      <div
+                        className="absolute bottom-0 left-3 right-3 h-[2px] bg-orange-600 rounded-full transition-all duration-500 ease-[cubic-bezier(.16,1,.3,1)]"
+                        style={{
+                          transform: activeTab === tab.id ? "scaleX(1)" : "scaleX(0)",
+                        }}
+                      />
+                    </button>
+                  ))}
                 </div>
-              </Reveal>
+              </div>
+
 
               {/* ─── TAB PANELS ─── */}
-              <div className="bg-white rounded-2xl border border-neutral-200 border-t-0 rounded-t-none shadow-sm">
+              <div className="bg-white rounded-2xl border border-neutral-200 border-t-0 rounded-t-none shadow-sm ">
 
                 {/* Overview */}
                 <TabPanel active={activeTab === "overview"}>
-                  <div className="p-6 md:p-8 space-y-8">
-                    <div>
-                      <h2 className="text-xl font-medium tracking-tight mb-4">About This Scholarship</h2>
-                      <div className="space-y-4 text-[15px] text-neutral-600 leading-relaxed font-light">
-                        <p>
-                          The Global Excellence Scholarship at the University of Oxford's Saïd Business School is a flagship fully-funded programme designed to attract exceptional international students to the MSc in Global and International Management. It recognises outstanding academic achievement, demonstrated leadership, and a strong commitment to driving positive change in the global business landscape.
-                        </p>
-                        <p>
-                          Each year, up to <strong className="font-medium text-neutral-900">30 scholars</strong> are selected from a highly competitive global pool. The scholarship covers full tuition fees (£52,400), a generous living allowance (£18,000/year), one return flight, and a settling-in grant. Beyond financial support, scholars gain access to an exclusive mentorship programme, leadership retreats, and a lifelong network of Oxford alumni spanning 140+ countries.
-                        </p>
-                        <p>
-                          The MSc in Global and International Management is a <strong className="font-medium text-neutral-900">12-month intensive programme</strong> combining rigorous academic training with real-world consulting projects. Students develop expertise in global strategy, cross-cultural management, international finance, and political economy.
-                        </p>
-                      </div>
-                    </div>
+                  <div className="p-6 md:p-8 space-y-8 ">
 
-                    <div>
-                      <h2 className="text-xl font-medium tracking-tight mb-5">Key Facts</h2>
-                      <div className="grid sm:grid-cols-2 gap-x-10">
-                        {keyFactsDetailed.map((item) => (
-                          <div key={item.l} className="flex justify-between py-2.5 border-b border-neutral-50 group">
-                            <span className="text-sm text-neutral-400 group-hover:text-neutral-600 transition-colors">{item.l}</span>
-                            <span className="text-sm font-medium text-right max-w-[60%]">{item.v}</span>
+                    {/* About */}
+                    <section>
+                      <h2 className="text-xl font-semibold mb-4">
+                        About This Scholarship
+                      </h2>
+
+                      <div className="prose prose-sm max-w-none text-neutral-600">
+                        {Scholarship?.description}
+                      </div>
+                    </section>
+
+                    {/* Key Facts */}
+                    <section>
+                      <h2 className="text-xl font-semibold mb-4">
+                        Scholarship Overview
+                      </h2>
+
+                      <div className="grid md:grid-cols-2 gap-x-10 border rounded-lg">
+                        {Object.entries(Scholarship?.valueDetails || {}).map(([key, value]) => (
+                          <div
+                            key={key}
+                            className="flex justify-between p-4 border-b last:border-b-0"
+                          >
+                            <span className="text-neutral-500">{key}</span>
+                            <span className="font-medium">{value}</span>
                           </div>
                         ))}
                       </div>
-                    </div>
+                    </section>
 
-                    {/* Stats Row */}
-                    <div className="grid grid-cols-3 gap-4">
-                      {[
-                        { num: 30, suffix: "+", label: "Scholars per year" },
-                        { num: 140, suffix: "+", label: "Countries represented" },
-                        { num: 95, suffix: "%", label: "Employed in 6 months" },
-                      ].map((s) => (
-                        <div key={s.label} className="bg-neutral-50 rounded-xl p-5 text-center">
-                          <div className="text-2xl md:text-3xl font-medium tracking-tight text-orange-600">
-                            <AnimatedNumber value={s.num} suffix={s.suffix} />
-                          </div>
-                          <p className="text-xs text-neutral-400 mt-1 font-medium">{s.label}</p>
-                        </div>
-                      ))}
-                    </div>
+                    {/* Benefits Snapshot */}
+                    <section>
+                      <h2 className="text-xl font-semibold mb-4">
+                        Benefits at a Glance
+                      </h2>
 
-                    {/* City */}
-                    <div className="rounded-2xl overflow-hidden border border-neutral-100">
-                      <div className="relative h-40">
-                        <img src="https://picsum.photos/seed/oxford-city-spire/1200/400.jpg" alt="Oxford" className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <h3 className="absolute bottom-4 left-5 text-lg font-medium text-white">About Oxford</h3>
-                      </div>
-                      <div className="p-5">
-                        <div className="grid grid-cols-3 gap-4 mb-4">
-                          {[
-                            { l: "Population", v: "154,000" },
-                            { l: "Living Cost", v: "£1,200–1,500/mo" },
-                            { l: "To London", v: "1 hr train" },
-                          ].map((c) => (
-                            <div key={c.l}>
-                              <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-neutral-400">{c.l}</p>
-                              <p className="text-sm font-medium mt-0.5">{c.v}</p>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        {Object.entries(Scholarship?.benefits || {})
+                          .slice(0, 4)
+                          .map(([title, value]) => (
+                            <div
+                              key={title}
+                              className="border rounded-lg p-4 bg-neutral-50"
+                            >
+                              <h4 className="font-medium text-neutral-900 mb-2">
+                                {title}
+                              </h4>
+                              <p className="text-sm text-neutral-600">
+                                {value}
+                              </p>
                             </div>
                           ))}
-                        </div>
-                        <p className="text-sm text-neutral-500 leading-relaxed font-light">
-                          Oxford is a world-renowned university city with a rich history dating back over 800 years. The city offers a unique blend of historic architecture, vibrant cultural life, and a welcoming international community.
-                        </p>
                       </div>
-                    </div>
+                    </section>
 
-                    {/* Reviews */}
-                    <div>
-                      <div className="flex items-center justify-between mb-5">
-                        <h2 className="text-xl font-medium tracking-tight">Student Reviews</h2>
-                        <div className="text-right">
-                          <span className="text-2xl font-medium">4.7</span>
-                          <span className="text-orange-400 text-sm ml-1">★★★★★</span>
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        {reviews.map((r, i) => (
-                          <div key={i} className="border border-neutral-100 rounded-xl p-5 hover:border-neutral-200 transition-colors duration-300">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-sm font-medium">
-                                  {r.name.charAt(0)}
-                                </div>
-                                <div>
-                                  <p className="font-medium text-sm">{r.name}</p>
-                                  <p className="text-xs text-neutral-400">{r.country} · {r.year}</p>
-                                </div>
-                              </div>
-                              <span className="text-orange-400 text-sm">{"★".repeat(r.rating)}{"☆".repeat(5 - r.rating)}</span>
+                    {/* Eligibility */}
+                    <section>
+                      <h2 className="text-xl font-semibold mb-4">
+                        Eligibility Requirements
+                      </h2>
+
+                      <div className="grid md:grid-cols-2 gap-y-3">
+                        {Object.entries(Scholarship?.eligibilityCriteria || {})
+                          .slice(0, 6)
+                          .map(([key, value]) => (
+                            <div key={key} className="flex items-center gap-3">
+                              <div className="w-2 h-2 rounded-full bg-orange-500" />
+                              <span className="font-medium">{key}</span>
+                              <span className="text-neutral-500">({value})</span>
                             </div>
-                            <p className="text-sm text-neutral-500 leading-relaxed font-light italic">&ldquo;{r.text}&rdquo;</p>
-                          </div>
-                        ))}
+                          ))}
                       </div>
-                    </div>
+                    </section>
+
+                    {/* Application Process */}
+                    <section>
+                      <h2 className="text-xl font-semibold mb-4">
+                        Application Process
+                      </h2>
+
+                      <div className="space-y-3">
+                        {Object.entries(Scholarship?.howToApply || {})
+                          .slice(0, 5)
+                          .map(([step, desc], index) => (
+                            <div
+                              key={step}
+                              className="flex gap-4 border-l-2 border-orange-500 pl-4"
+                            >
+                              <div className="font-semibold text-orange-600">
+                                {index + 1}
+                              </div>
+
+                              <div>
+                                <h4 className="font-medium">{step}</h4>
+                                <p className="text-sm text-neutral-600">
+                                  {desc}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </section>
+
                   </div>
                 </TabPanel>
 
@@ -458,17 +497,17 @@ export default function ScholarshipPage() {
                     </div>
 
                     <div className="space-y-0">
-                      {costs.map((c) => (
+                      {Object.entries(Scholarship?.valueDetails || {}).map(([label, value]) => (
                         <div
-                          key={c.item}
-                          className={`flex justify-between items-center py-3.5 border-b ${
-                            c.highlight
-                              ? "border-t-2 border-t-orange-600 border-b-0 bg-orange-50/50 -mx-6 md:-mx-8 px-6 md:px-8 mt-4"
-                              : "border-neutral-50"
-                          }`}
+                          key={label}
+                          className="flex justify-between py-2.5 border-b border-neutral-50 group"
                         >
-                          <span className={`text-sm ${c.highlight ? "font-medium" : "text-neutral-600 font-light"}`}>{c.item}</span>
-                          <span className={`text-sm font-medium ${c.highlight ? "text-orange-600 text-base" : ""}`}>{c.amount}</span>
+                          <span className="text-sm text-neutral-400 group-hover:text-neutral-600 transition-colors">
+                            {label}
+                          </span>
+                          <span className="text-sm font-medium text-right max-w-[60%]">
+                            {value}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -521,9 +560,8 @@ export default function ScholarshipPage() {
                           <button
                             key={r.name}
                             onClick={() => setReqTab(i)}
-                            className={`flex-1 text-xs font-semibold py-2.5 rounded-lg transition-all duration-300 ${
-                              reqTab === i ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-400 hover:text-neutral-600"
-                            }`}
+                            className={`flex-1 text-xs font-semibold py-2.5 rounded-lg transition-all duration-300 ${reqTab === i ? "bg-white text-neutral-900 shadow-sm" : "text-neutral-400 hover:text-neutral-600"
+                              }`}
                           >
                             {r.name}
                           </button>
@@ -545,12 +583,19 @@ export default function ScholarshipPage() {
                     <div className="pt-6 border-t border-neutral-100">
                       <h3 className="font-medium text-base mb-4">Required Documents</h3>
                       <div className="grid sm:grid-cols-2 gap-x-6 gap-y-1">
-                        {documents.map((doc) => (
-                          <div key={doc} className="flex items-center gap-2.5 text-sm text-neutral-600 font-light py-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />
-                            {doc}
-                          </div>
-                        ))}
+                        {Object.entries(Scholarship?.eligibilityCriteria || {}).map(
+                          ([key, value]) => (
+                            <div
+                              key={key}
+                              className="flex items-center gap-2.5 text-sm text-neutral-600 font-light py-2"
+                            >
+                              <div className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />
+
+                              <span className="font-medium">{key}</span>
+                              <span>{`(${value})`}</span>
+                            </div>
+                          )
+                        )}
                       </div>
                     </div>
 
@@ -569,63 +614,80 @@ export default function ScholarshipPage() {
                 </TabPanel>
 
                 {/* Curriculum */}
-                <TabPanel active={activeTab === "curriculum"}>
+                <TabPanel active={activeTab === "benefits"}>
                   <div className="p-6 md:p-8 space-y-6">
                     <div>
-                      <h2 className="text-xl font-medium tracking-tight mb-1">Programme Structure</h2>
+                      <h2 className="text-xl font-medium tracking-tight mb-1">Programme Benefits</h2>
                       <p className="text-sm text-neutral-400 font-light">180 ECTS · 12 months · Three terms + summer dissertation</p>
                     </div>
 
-                    <div className="space-y-4">
-                      {curriculum.map((term, ti) => (
-                        <div key={term.term} className="border border-neutral-100 rounded-xl overflow-hidden hover:border-neutral-200 transition-colors duration-300">
-                          <div className="bg-neutral-50 px-5 py-3 flex items-center gap-3">
-                            <div className="w-6 h-6 rounded-lg bg-orange-100 flex items-center justify-center text-[10px] font-bold text-orange-600">
-                              T{ti + 1}
-                            </div>
-                            <h4 className="font-medium text-sm">{term.term}</h4>
-                          </div>
-                          <div className="px-5 py-3 space-y-2">
-                            {term.courses.map((c) => (
-                              <div key={c} className="flex items-center gap-2.5 text-sm text-neutral-600 font-light py-1">
-                                <div className="w-1 h-1 rounded-full bg-orange-400" />
-                                {c}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {Object.entries(Scholarship?.benefits || {}).map(
+                        ([title, description], index) => (
+                          <div
+                            key={title}
+                            className="flex gap-4 p-4 border border-neutral-200 rounded-lg bg-white hover:bg-neutral-50 transition-colors"
+                          >
+                            <div className="flex-shrink-0">
+                              <div className="w-8 h-8 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-sm font-semibold text-orange-600">
+                                {index + 1}
                               </div>
-                            ))}
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-neutral-900 mb-1">
+                                {title.toUpperCase()}
+                              </h4>
+
+                              <p className="text-sm text-neutral-600">
+                                {description}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        )
+                      )}
                     </div>
                   </div>
                 </TabPanel>
 
                 {/* Careers */}
-                <TabPanel active={activeTab === "careers"}>
+                <TabPanel active={activeTab === "howToApply"}>
                   <div className="p-6 md:p-8 space-y-6">
                     <div>
-                      <h2 className="text-xl font-medium tracking-tight mb-1">Career Prospects</h2>
+                      <h2 className="text-xl font-medium tracking-tight mb-1">How To Apply</h2>
                       <p className="text-sm text-neutral-400 font-light">95% employed within 6 months · Average starting salary: £62,000</p>
                     </div>
 
                     <div className="overflow-x-auto -mx-6 md:-mx-8">
-                      <table className="w-full min-w-[480px]">
+                      <table className="w-full min-w-[600px]">
                         <thead>
                           <tr className="border-b border-neutral-200">
-                            {["Role", "Top Employers", "Salary Range"].map((h) => (
-                              <th key={h} className={`text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400 pb-3 ${h === "Role" ? "text-left px-6 md:px-8" : h === "Salary Range" ? "text-right px-6 md:px-8" : "text-left px-4"}`}>
-                                {h}
-                              </th>
-                            ))}
+                            <th className="text-left px-6 md:px-8 pb-3 text-[13px] font-bold uppercase tracking-[0.15em] text-neutral-400">
+                              Step
+                            </th>
+                            <th className="text-left px-4 pb-3 text-[13px] font-bold uppercase tracking-[0.15em] text-neutral-400">
+                              Description
+                            </th>
                           </tr>
                         </thead>
+
                         <tbody>
-                          {careers.map((c) => (
-                            <tr key={c.title} className="border-b border-neutral-50 hover:bg-neutral-50/50 transition-colors">
-                              <td className="py-3.5 px-6 md:px-8 font-medium text-sm">{c.title}</td>
-                              <td className="py-3.5 px-4 text-sm text-neutral-500 font-light">{c.companies}</td>
-                              <td className="py-3.5 px-6 md:px-8 text-sm font-medium text-right text-orange-600">{c.salary}</td>
-                            </tr>
-                          ))}
+                          {Object.entries(Scholarship?.howToApply || {}).map(
+                            ([step, description]) => (
+                              <tr
+                                key={step}
+                                className="border-b border-neutral-50 hover:bg-neutral-50/50 transition-colors"
+                              >
+                                <td className="py-4 px-6 md:px-8 font-medium text-sm text-neutral-800 w-[220px]">
+                                  {step}
+                                </td>
+
+                                <td className="py-4 px-4 text-sm text-neutral-600 font-light">
+                                  {description}
+                                </td>
+                              </tr>
+                            )
+                          )}
                         </tbody>
                       </table>
                     </div>
@@ -747,7 +809,7 @@ export default function ScholarshipPage() {
                   </div>
                 </Reveal>
 
-              
+
 
                 {/* Similar */}
                 <Reveal delay={500}>
@@ -774,7 +836,7 @@ export default function ScholarshipPage() {
                   </div>
                 </Reveal>
 
-          
+
 
               </div>
             </div>

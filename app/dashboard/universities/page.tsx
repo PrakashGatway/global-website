@@ -872,15 +872,13 @@ function UniversitiesPageClient() {
                 >
                   {/* Cover Image */}
                   <div className="relative h-30 overflow-hidden">
-                    {uni.cover_photo ? (
+                 
                       <img
-                        src={uni.cover_photo}
+                        src={uni?.cover_photo ? uni?.cover_photo : "https://etimg.etb2bimg.com/photo/121373442.cms"}
                         alt={uni.name}
                         className="w-full h-full object-cover transition-transform duration-700"
                       />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5" />
-                    )}
+                
                     <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
                   </div>
 

@@ -115,7 +115,7 @@ interface Course {
 
 // Stats Card Component
 const StatCard = ({ icon: Icon, label, value, trend, small = false }: any) => (
-    <div className="bg-[#f3f4f6] rounded-2xl hover:bg-[#e5e7eb] hover:outline hover:outline-2 hover:outline-[#F26D44] p-4 pl-1">
+    <div className="bg-[#f3f4f6] hover:bg-[#e5e7eb] hover:outline hover:outline-2 hover:outline-[#F26D44] p-4 pl-1">
         <div className="flex items-center gap-1 mb-2">
             <div className="p-2">
                 <Icon className="w-11 h-11 text-black" strokeWidth={1.1} />
@@ -356,29 +356,37 @@ export default function CourseDetailPage() {
 
                 {/* Hero Section - University & Course Header */}
 
-                <div className="relative rounded-3xl overflow-hidden h-[300px] mb-4">
+                <div className="relative overflow-hidden h-[300px] mb-4">
                     {/* Cover Image */}
                     {course?.university ? (
                         <img
                             src={course?.university?.cover_photo || "https://www.ox.ac.uk/sites/files/oxford/styles/ow_large_feature/s3/field/field_image_main/GAF%20Radcliffe%20Square%20Dawn%20-%20Elizabeth%20Nyikos.jpg?itok=U-0F0aPx"}
                             alt={course?.university.name}
-                            className="absolute rounded-3xl inset-0 w-full h-full object-cover"
+                            onError={(e) => {
+                                e.currentTarget.src =
+                                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr31PbmRHkijGWNIrYGMG0jgevvfpZLVVkh1e42JkPVeQppX6XCfiCF_E&s=10";
+                            }}
+                            className="absolute  inset-0 w-full h-full object-cover"
                         />
                     ) : (
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 pattern-grid" />
                     )}
-                    <div className="absolute rounded-3xl inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                    <div className="absolute  inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
 
                     {/* University Info Overlay */}
-                    <div className="absolute rounded-3xl bottom-0 left-0 right-0 p-6">
+                    <div className="absolute  bottom-0 left-0 right-0 p-6">
                         <div className="container mx-auto">
                             <div className="flex items-end gap-6">
                                 {/* Logo */}
-                                <div className="w-32 h-32 rounded-2xl bg-white p-4 shadow-2xl border border-white/50">
+                                <div className="w-32 h-32  bg-white p-4 shadow-2xl border border-white/50">
                                     {course?.university.uni_logo ? (
                                         <img
                                             src={course?.university.uni_logo}
                                             alt={course?.university.name}
+                                            onError={(e) => {
+                                                e.currentTarget.src =
+                                                    "/images/newlogo3.png";
+                                            }}
                                             className="w-full h-full object-contain"
                                         />
                                     ) : (
@@ -388,12 +396,12 @@ export default function CourseDetailPage() {
 
                                 <div className="flex-1">
 
-                                    <h1 className="text-3xl font-bold text-gray-900 py-2">
+                                    <h1 className="text-2xl font-bold text-gray-900 py-2">
                                         {course.name}
                                     </h1>
                                     <div className="flex items-center justify-start gap-2">
                                         <Building2 className="w-5 h-5 text-gray-800 " />
-                                        <h3 className="text-xl font-semibold mb-1">{course?.university.name}</h3>
+                                        <h3 className="text-lg font-semibold mb-1">{course?.university.name}</h3>
 
                                     </div>
 
@@ -419,15 +427,15 @@ export default function CourseDetailPage() {
                                         {/* <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full font-medium border">
                                             Est. {course?.university.established_year}
                                         </span> */}
-                                        <span className={`px-3 py-1.5 rounded-full text-xs font-medium border ${getLevelColor(course.level)}`}>
+                                        <span className={`px-3 py-1.5 text-xs font-medium border ${getLevelColor(course.level)}`}>
                                             {course.level}
                                         </span>
-                                        <span className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-xs font-medium text-gray-700">
+                                        <span className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-xs font-medium text-gray-700">
                                             {getStudyModeIcon(course.studyMode)}
                                             {course.studyMode}
                                         </span>
                                         {course.tags?.includes('popular') && (
-                                            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 rounded-full text-xs font-medium border border-amber-200">
+                                            <span className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-700 text-xs font-medium border border-amber-200">
                                                 <Trophy className="w-3 h-3" />
                                                 Popular
                                             </span>
@@ -439,7 +447,7 @@ export default function CourseDetailPage() {
                                     {/* <button className="p-3 bg-white/90 backdrop-blur-sm rounded-lg border hover:bg-white transition-colors">
                                         <Share2 className="w-5 h-5" />
                                     </button> */}
-                                    <button onClick={() => setIsModalOpen(true)} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
+                                    <button onClick={() => setIsModalOpen(true)} className="px-6 py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium">
                                         Apply Now
                                     </button>
                                 </div>
@@ -479,7 +487,7 @@ export default function CourseDetailPage() {
                     <StatCard
                         icon={Wallet}
                         label="Application Fee"
-                        value={course.applicationFee +course.currency}
+                        value={course.applicationFee + course.currency}
                         subValue="non-refundable"
                         color="amber"
                     />
@@ -594,13 +602,90 @@ export default function CourseDetailPage() {
                                             animate={{ opacity: 1 }}
                                             className="space-y-2"
                                         >
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                {section.heading}
+                                            <h3 className="text-muted-foreground text-gray-800 leading-relaxed">
+                                                {course.description}
                                             </h3>
                                             <div
                                                 className="text-muted-foreground text-gray-800 leading-relaxed"
                                                 dangerouslySetInnerHTML={{ __html: section.content }}
                                             />
+
+                                             <div className="bg-white py-6">
+                                    <div className="flex items-center justify-between mb-5">
+                                        <h3 className="text-xl font-semibold text-neutral-900">
+                                            Required Documents
+                                        </h3>
+
+                                        <span className="text-xs font-medium px-3 py-1 rounded-full bg-orange-50 text-orange-600">
+                                            {course?.docsRequired?.length || 0} Documents
+                                        </span>
+                                    </div>
+
+                                    <div className="grid md:grid-cols-2 gap-3">
+                                        {course?.docsRequired?.map((doc, index) => (
+                                            <div
+                                                key={index}
+                                                className="flex items-start gap-3 p-4 rounded-xl border border-neutral-100 hover:border-orange-200 hover:bg-orange-50/30 transition-all"
+                                            >
+                                                <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0">
+                                                    📄
+                                                </div>
+
+                                                <div>
+                                                    <p className="font-medium text-neutral-800">
+                                                        {doc}
+                                                    </p>
+                                                    <p className="text-xs text-neutral-400 mt-1">
+                                                        Required for application review
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="bg-white py-6">
+                                    <h3 className="text-lg font-semibold mb-5">
+                                        Application Information
+                                    </h3>
+
+                                    <div className="grid md:grid-cols-2 gap-4">
+                                        <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50">
+                                            <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                                💰
+                                            </div>
+
+                                            <div>
+                                                <p className="text-xs uppercase tracking-wide text-neutral-400">
+                                                    Initial Deposit
+                                                </p>
+                                                <p className="font-semibold text-lg text-neutral-900">
+                                                    £{course?.metaInfo?.initialDeposit}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50">
+                                            <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                                📅
+                                            </div>
+
+                                            <div>
+                                                <p className="text-xs uppercase tracking-wide text-neutral-400">
+                                                    Intake Deadline
+                                                </p>
+
+                                                <p className="font-semibold text-lg text-neutral-900">
+                                                    {course?.metaInfo?.intakeDeadline?.split(":")[0]}
+                                                </p>
+
+                                                <p className="text-sm text-neutral-500">
+                                                    {course?.metaInfo?.intakeDeadline?.split(":")[1]}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                         </motion.div>
                                     )
                                 ))}
@@ -612,6 +697,9 @@ export default function CourseDetailPage() {
                                     showFilters={true} // Show/hide filter panel
                                     title="Scholarships for this Course" // Custom title
                                 />
+
+                               
+
                                 <motion.div
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -807,6 +895,8 @@ export default function CourseDetailPage() {
                                 </div>
                             </motion.div>
                         )}
+
+
 
                         {/* Application CTA Card */}
                         <motion.div

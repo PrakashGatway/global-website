@@ -24,68 +24,44 @@ interface Author {
 
 // mock data – 3 static authors
 const authorsData: Record<string, Author> = {
-  'prakash-jangid': {
-  name: 'Prakash Jangid',
-  role: 'Software Developer',
-  title: 'Full Stack Developer',
-  education: 'B.Tech in Mechanical Engineering',
-  expertise: 'Web Development, Frontend Engineering, Full Stack Applications',
+ 'sakshi-t': {
+  name: 'Sakshi T',
+  role: 'Teacher & Study Abroad Expert',
+  title: 'Content Writer & International Education Specialist',
+  education: 'Academic Background in Education & International Studies',
+  expertise:
+    'Study Abroad Guidance, University Admissions, Visa Processes, Test Preparation, Educational Content Writing',
   about:
-    'Prakash Jangid is a Full Stack Developer with 4+ years of experience in building modern web applications using React.js, Next.js, Node.js, Express.js, and MongoDB. He specializes in creating scalable, user-friendly digital solutions and has worked on education, immigration, and business platforms. His expertise includes frontend architecture, API integration, performance optimization, and responsive UI/UX development.',
+    'Sakshi T is a Teacher and expert Content Writer at Gateway Abroad Education, specializing in international education and test preparation. Drawing from her academic background, she demystifies the complex study abroad journey by crafting insightful, actionable guides on global university admissions, visa processes, and effective exam strategies. Her expert, student-first content empowers applicants to confidently clear competitive tests and transition to top overseas institutions. Passionate about education, Sakshi turns overwhelming academic requirements into clear, step-by-step roadmaps. Her high-value articles and resources bridge the gap between global dreams and reality, making her a trusted authority for future international students.',
   exams: [
-    'React.js',
-    'Next.js',
-    'Node.js',
-    'Express.js',
-    'MongoDB',
-    'JavaScript',
-    'TypeScript',
-    'Tailwind CSS',
-    'REST APIs'
+    'Study Abroad Counseling',
+    'University Admissions',
+    'Student Visa Guidance',
+    'IELTS Preparation',
+    'TOEFL Preparation',
+    'PTE Preparation',
+    'Scholarship Guidance',
+    'International Education',
+    'Career Counseling'
   ],
-  email: 'prakash.jangid@example.com',
-  specializes: 'Full Stack Web Development',
+  email: '',
+  specializes: 'Study Abroad Education & Test Preparation',
   articles: [
     {
-      title: 'Building Scalable Applications with Next.js and React',
+      title: 'Complete Guide to Studying Abroad in 2026',
       date: 'Updated Jun 19, 2026',
-      comments: '12 Comments',
-      shares: '18 Shares',
+      comments: '18 Comments',
+      shares: '24 Shares',
     },
     {
-      title: 'Best Practices for API Integration in Modern Web Apps',
+      title: 'How to Choose the Right University for International Studies',
       date: 'Updated Jun 18, 2026',
-      reads: '15.4K Reads',
-      shares: '9 Shares',
+      reads: '18.2K Reads',
+      shares: '14 Shares',
     },
   ],
 },
-  'manish': {
-    name: 'Manish',
-    role: 'Senior Content Lead',
-    title: 'Education Journalist',
-    education: 'Master\'s in English Literature, B.Ed.',
-    expertise: 'Medical & Law Entrance Exams',
-    about:
-      'Manish has over 5 years of experience in educational journalism. She specializes in medical and law entrance exams, providing in-depth analysis and timely updates for aspirants. Her articles help students navigate complex admission processes with confidence.',
-    exams: ['NEET', 'AIIMS', 'CLAT', 'AILET', 'LSAT India', 'MH CET Law', 'AP LAWCET', 'TS LAWCET'],
-    email: 'manish@shiksha.com',
-    specializes: 'Medical & Law',
-    articles: [
-      {
-        title: 'NEET 2026 Counselling Schedule: Everything You Need to Know',
-        date: 'Updated Jun 17, 2026',
-        comments: '12 Comments',
-        shares: '24 Share',
-      },
-      {
-        title: 'CLAT 2027 Exam Date Announced – Check Complete Details',
-        date: 'Updated Jun 15, 2026',
-        reads: '15.4K Reads',
-        shares: '6 Share',
-      },
-    ],
-  },
+
  
 };
 

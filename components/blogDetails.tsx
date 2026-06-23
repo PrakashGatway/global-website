@@ -97,6 +97,9 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
     ]
   }
 
+  console.log(blog?.author)
+  console.log(blog)
+
   const addHeadingIds = (html: string) => {
     let index = 0
 
@@ -307,7 +310,8 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
               <div
                 className="blog-html"
                 dangerouslySetInnerHTML={{ __html: htmlWithIds }}
-              />
+
+              ></div>
 
 
 
@@ -335,7 +339,19 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
                 ))}
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm">
+                    {blog?.author?.charAt(0) || "S"}
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-gray-500">Author</p>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {blog?.author || "Sakshi T."}
+                    </p>
+                  </div>
+                </div>
 
                 {/* PREV / NEXT NAVIGATION */}
                 <div className="flex justify-between gap-4">
@@ -477,11 +493,11 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
                     className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-10 py-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all duration-200 appearance-none cursor-pointer text-gray-700 hover:border-gray-300"
                   >
                     <option value="" disabled className="text-gray-400">Select country</option>
-                   {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
-                    <option key={c} value={c.toLowerCase()}>
-                      Study In {c}
-                    </option>
-                  ))}
+                    {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
+                      <option key={c} value={c.toLowerCase()}>
+                        Study In {c}
+                      </option>
+                    ))}
                   </select>
                   <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

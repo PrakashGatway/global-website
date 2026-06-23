@@ -56,7 +56,7 @@ export default function AuthorPage({ author }) {
       {/* Left Section */}
       <div className="flex items-center gap-5">
         <img
-          src={author.image || "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=cover"}
+          src={author.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcxSIkbDpRi11M201gRDRamK_4nK4D1rGbeGT3LUJM3g&s=10"}
           alt={author.name}
           className="w-24 h-24 md:w-28 md:h-28 rounded-full border-4 border-white object-cover shadow-lg"
         />
