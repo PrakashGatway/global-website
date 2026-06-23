@@ -457,7 +457,7 @@ export default function CourseDetailPage() {
                     <StatCard
                         icon={IndianRupeeIcon}
                         label="Tuition Fee"
-                        value={formatCurrency(course.tuitionFee, course.currency)}
+                        value={course.tuitionFee + course.currency}
                         subValue="per year"
                         color="primary"
                     />
@@ -479,7 +479,7 @@ export default function CourseDetailPage() {
                     <StatCard
                         icon={Wallet}
                         label="Application Fee"
-                        value={formatCurrency(course.applicationFee, course.currency)}
+                        value={course.applicationFee +course.currency}
                         subValue="non-refundable"
                         color="amber"
                     />
@@ -607,7 +607,7 @@ export default function CourseDetailPage() {
                                 <CourseDetailScholarships
                                     countryId={course?.university?.country} // Pass the country ID from your course data
                                     universityId={course.university._id} // Optional: filter by university
-                                    subjectId={course.subject._id} // Optional: filter by subject
+                                    subjectId={null} // Optional: filter by subject
                                     limit={5} // Number of scholarships per page
                                     showFilters={true} // Show/hide filter panel
                                     title="Scholarships for this Course" // Custom title
@@ -640,7 +640,7 @@ export default function CourseDetailPage() {
                                             <p className="text-sm mt-4">
                                                 Application Fee:{" "}
                                                 <span className="font-semibold">
-                                                    {formatCurrency(course.applicationFee, course.currency)}
+                                                    {course.applicationFee + course.currency}
                                                 </span>
                                             </p>
                                         </div>
@@ -829,7 +829,7 @@ export default function CourseDetailPage() {
                                 <ExternalLink className="w-4 h-4" />
                             </button>
                             <p className="text-xs text-blue-200 mt-4 text-center flex items-center justify-center gap-1">
-                                Application fee: {formatCurrency(course.applicationFee, course.currency)}
+                                Application fee: {course.applicationFee + course.currency}
                             </p>
                         </motion.div>
 

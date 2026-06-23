@@ -493,7 +493,7 @@ export default function CoursesPage() {
                     <span className="text-[11px] font-medium text-gray-500">Tuition</span>
                   </div>
                   <p className="font-bold text-gray-900 text-sm">
-                    {formatCurrency(course.tuitionFee || 0, course.currency)}
+                    {course.tuitionFee || 0 + course.currency}
                   </p>
                   <p className="text-[10px] text-gray-400">/year</p>
                 </div>
@@ -520,7 +520,7 @@ export default function CoursesPage() {
                     <span className="text-[11px] font-medium text-gray-500">App. Fee</span>
                   </div>
                   <p className="font-semibold text-gray-800 text-sm">
-                    {formatCurrency(course.applicationFee || 0, course.currency)}
+                    {course.applicationFee || 0 + course.currency}
                   </p>
                 </div>
               </div>
