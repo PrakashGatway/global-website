@@ -20,6 +20,7 @@ import {
 import Link from "next/link"
 import axiosInstance from "@/app/axiosInstance"
 import { ModernSelect } from "@/components/ui/select"
+import Image from "next/image"
 
 
 interface University {
@@ -113,19 +114,13 @@ interface Course {
 }
 
 const StatCard = ({ icon: Icon, label, value, trend }: any) => (
-    <div className="bg-[#f3f4f6] rounded-2xl hover:bg-[#e5e7eb] hover:outline hover:outline-2 hover:outline-[#F26D44] p-4">
+    <div className="bg-[#f3f4f6] hover:bg-[#e5e7eb] hover:outline hover:outline-2 hover:outline-[#F26D44] p-4">
         <div className="flex items-center gap-1 mb-2">
             <div className="p-2">
-                <Icon className="w-12 h-12 text-black" strokeWidth={1.1} />
+                <Icon className="w-10 h-10 text-black" strokeWidth={1.1} />
             </div>
-            <span className="flex flex-col gap-1 text-sm text-gray-800">{label}
-                <span className="text-2xl font-bold">{value}</span>
-                {trend && (
-                    <span className={`text-sm flex items-center gap-1 ${trend > 0 ? 'text-green-600' : trend < 0 ? 'text-red-600' : 'text-yellow-600'}`}>
-                        {trend > 0 ? <TrendingUp className="w-4 h-4" /> : trend < 0 ? <TrendingDown className="w-4 h-4" /> : <MinusCircle className="w-4 h-4" />}
-                        {Math.abs(trend)}%
-                    </span>
-                )}
+            <span className="flex flex-col gap-1 text-sm font-medium text-gray-800">{label}
+                <span className="text-xl font-bold">{value}</span>
             </span>
         </div>
     </div>
@@ -144,7 +139,7 @@ const TabButton = ({ active, onClick, children }: any) => (
         {active && (
             <motion.div
                 layoutId="activeTab"
-                className="absolute bottom-0 left-0 right-0 h-[3px] rounded-xl bg-[#F26D44]"
+                className="absolute bottom-0 left-0 right-0 h-[3px]  bg-[#F26D44]"
                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
             />
         )}
@@ -158,13 +153,13 @@ const CourseCard = ({ course, university }: { course: Course; university: Univer
         <motion.div
             key={course._id}
             whileHover={{ y: -1 }}
-            className="group relative bg-gray-100 border-2 border-[#F26D44] rounded-xl mb-2 overflow-hidden transition-all duration-100 hover:shadow-md"
+            className="group relative bg-gray-100 border-2 border-[#F26D44]  mb-2 overflow-hidden transition-all duration-100 hover:shadow-md"
         >
             <div className="p-4 space-y-3">
 
                 {/* Header */}
                 <div className="flex gap-3">
-                    <div className="w-14 h-14 rounded-lg bg-gray-50 p-2 border flex items-center justify-center">
+                    <div className="w-14 h-14 -lg bg-gray-50 p-2 border flex items-center justify-center">
                         {course.university?.uni_logo ? (
                             <img
                                 src={course.university.uni_logo}
@@ -243,7 +238,7 @@ const CourseCard = ({ course, university }: { course: Course; university: Univer
                         {course.tags.slice(0, 2).map((tag, i) => (
                             <span
                                 key={i}
-                                className="px-2 py-0.5 bg-gray-100 rounded text-[11px] font-medium"
+                                className="px-2 py-0.5 bg-gray-100  text-[11px] font-medium"
                             >
                                 {tag}
                             </span>
@@ -262,7 +257,7 @@ const CourseCard = ({ course, university }: { course: Course; university: Univer
                         {course.university.intakes.map((intake, i) => (
                             <span
                                 key={i}
-                                className="px-2 py-0.5 bg-primary/10 text-primary rounded-full"
+                                className="px-2 py-0.5 bg-primary/10 text-primary -full"
                             >
                                 {intake}
                             </span>
@@ -274,7 +269,7 @@ const CourseCard = ({ course, university }: { course: Course; university: Univer
                 <div className="pt-2">
                     <Link
                         href={`/dashboard/programs/${course.slug}`}
-                        className="block w-full text-center text-xs py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition"
+                        className="block w-full text-center text-xs py-2 bg-primary text-primary-foreground  hover:bg-primary/90 transition"
                     >
                         View Details
                     </Link>
@@ -416,8 +411,8 @@ export default function UniversityDetailPage() {
                     <h2 className="text-2xl font-bold mb-2">University Not Found</h2>
                     <p className="text-muted-foreground mb-6">The university you're looking for doesn't exist or has been removed.</p>
                     <button
-                        onClick={() => router.push('/universities')}
-                        className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                        onClick={() => router.push('/dashboard/universities')}
+                        className="px-6 py-3 bg-primary text-primary-foreground -lg hover:bg-primary/90 transition-colors"
                     >
                         Browse Universities
                     </button>
@@ -441,29 +436,44 @@ export default function UniversityDetailPage() {
                 <span className="text-gray-900 font-medium truncate max-w-[200px]">{university.name}</span>
             </motion.div>
 
-            <div className="relative rounded-3xl overflow-hidden h-[300px]">
+            <div className="relative overflow-hidden h-[260px]">
                 {/* Cover Image */}
                 {university ? (
-                    <img
-                        src={university.cover_photo || "https://www.ox.ac.uk/sites/files/oxford/styles/ow_large_feature/s3/field/field_image_main/GAF%20Radcliffe%20Square%20Dawn%20-%20Elizabeth%20Nyikos.jpg?itok=U-0F0aPx"}
+                    <Image
+                        src={
+                            university.cover_photo ||
+                            "https://images.pexels.com/photos/6058867/pexels-photo-6058867.jpeg"
+                        }
                         alt={university.name}
-                        className="absolute rounded-3xl inset-0 w-full h-full object-cover"
+                        width={100}
+                        height={100}
+                        className="absolute  inset-0 w-full h-full object-cover"
+                        onError={(e) => {
+                            e.currentTarget.src =
+                                "https://images.pexels.com/photos/6058867/pexels-photo-6058867.jpeg";
+                        }}
                     />
                 ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 pattern-grid" />
                 )}
-                <div className="absolute rounded-xl inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-                <div className="absolute rounded-3xl bottom-0 left-0 right-0 p-6">
+                <div className="absolute bottom-0 left-0 right-0 px-6 py-1">
                     <div className="container mx-auto">
                         <div className="flex items-end gap-6">
                             {/* Logo */}
-                            <div className="w-32 h-28 rounded-2xl bg-white p-4 shadow-2xl border border-white/50">
+                            <div className="w-32 h-28 p-1">
                                 {university.uni_logo ? (
-                                    <img
+                                    <Image
                                         src={university.uni_logo}
                                         alt={university.name}
+                                        width={100}
+                                        height={100}
                                         className="w-full h-full object-contain"
+                                        onError={(e) => {
+                                            e.currentTarget.src =
+                                                "https://ooshasglobal.com/images/newlogo3.png";
+                                        }}
                                     />
                                 ) : (
                                     <Building className="w-full h-full text-muted-foreground" />
@@ -471,26 +481,26 @@ export default function UniversityDetailPage() {
                             </div>
 
                             {/* Info */}
-                            <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2 uppercase !text-xs">
-                                    <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full font-medium border">
+                            <div className="flex-1 pb-3">
+                                <div className="flex items-center gap-1 mb-2 uppercase !text-[11px]">
+                                    <span className="px-3 py-0.5 bg-white/90 backdrop-blur-sm -full font-medium border">
                                         {university.uni_type}
                                     </span>
-                                    <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full font-medium border">
+                                    <span className="px-3 py-0.5 bg-white/90 backdrop-blur-sm -full font-medium border">
                                         Est. {university.established_year}
                                     </span>
                                     {university.uni_rank && university.uni_rank.length > 0 && (
-                                        <span className="px-3 py-1 bg-amber-100/90 backdrop-blur-sm text-amber-700 rounded-full font-medium border border-amber-200">
+                                        <span className="px-3 py-0.5 bg-amber-100/90 backdrop-blur-sm text-amber-700 -full font-medium border border-amber-200">
                                             <Award className="w-4 h-4 inline mr-1" />
                                             {university.uni_rank[0].rank} - {university.uni_rank[0].type}
                                         </span>
                                     )}
                                 </div>
-                                <h1 className="text-xl md:text-3xl font-semibold mb-2">{university.name}</h1>
+                                <h1 className="text-xl md:text-2xl text-white font-semibold mb-1">{university.name}</h1>
                                 {university.slogan && (
-                                    <p className="text-lg text-muted-foreground italic">"{university.slogan}"</p>
+                                    <p className="text-sm text-white italic mb-1">"{university.slogan}"</p>
                                 )}
-                                <div className="flex items-center gap-4 mt-4">
+                                <div className="flex text-white items-center gap-4">
                                     <span className="flex items-center gap-2 text-sm">
                                         <MapPin className="w-4 h-4" />
                                         {university.city}, {university.country}
@@ -512,12 +522,12 @@ export default function UniversityDetailPage() {
 
                             {/* Actions */}
                             <div className="flex gap-2">
-                                {/* <button className="p-3 bg-white/90 backdrop-blur-sm rounded-lg border hover:bg-white transition-colors">
+                                {/* <button className="p-3 bg-white/90 backdrop-blur-sm -lg border hover:bg-white transition-colors">
                                     <Share2 className="w-5 h-5" />
                                 </button>
                                 <button
                                     onClick={() => setSaved(!saved)}
-                                    className={`p-3 rounded-lg border backdrop-blur-sm transition-colors ${saved
+                                    className={`p-3 -lg border backdrop-blur-sm transition-colors ${saved
                                         ? 'bg-primary text-primary-foreground border-primary'
                                         : 'bg-white/90 hover:bg-white border'
                                         }`}
@@ -527,7 +537,7 @@ export default function UniversityDetailPage() {
                                 <button onClick={() =>
                                     router.push(`/dashboard/programs?university=${university._id}`)
                                 }
-                                    className="px-4 py-2.5 bg-[#F26D44] hover:bg-[#F26D44]/90 text-white rounded-lg transition-colors font-medium">
+                                    className="px-4 mb-3 py-2.5 bg-[#F26D44] hover:bg-[#F26D44]/90 text-white -lg transition-colors font-medium">
                                     Apply Now
                                 </button>
                             </div>
@@ -539,12 +549,12 @@ export default function UniversityDetailPage() {
             {/* Stats Bar */}
             <div className="">
                 <div className=" mx-auto py-4">
-                    <div className="grid grid-cols-5 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                         <StatCard icon={Users} label="Total Students" value={university.totalStudents?.toLocaleString() || '1000+'} />
                         <StatCard icon={Globe} label="International" value={university.internationalStudents?.toLocaleString() || '1000+'} />
                         <StatCard icon={GraduationCap} label="Acceptance Rate" value={`${university.acceptanceRate || 'N/A'}%`} />
-                        <StatCard icon={School} label="Rank" value={`#${university?.uni_rank?.[0]?.rank || 'N/A'} (${university?.uni_rank?.[0]?.type || 'N/A'})`} />
-                        <StatCard icon={Building} label="Offers" value={university.offers || 'N/A'} />
+                        <StatCard icon={School} label="Rank" value={`#${university?.uni_rank?.[0]?.rank.split('-')[0] || 'N/A'} (${university?.uni_rank?.[0]?.type.split(' ')[0] || 'N/A'})`} />
+                        <StatCard icon={Building} label="Offers" value={!university.offers || university.offers == 0 ? "100 +" : university.offers} />
                     </div>
                 </div>
             </div>
@@ -552,41 +562,47 @@ export default function UniversityDetailPage() {
             <div className=" mx-auto py-1 ">
                 <div className="flex gap-8">
                     <div className="w-[70%] ">
-                        <div className="flex border-b border-border mb-8 overflow-x-auto no-scrollbar scrollbar-hide">
+                        <div className="flex border-b border-border mb-4 overflow-x-auto no-scrollbar scrollbar-hide">
                             {university?.extra_content?.sections.map((section, index) => (
                                 <TabButton key={index} active={activeTab === section.section_key} onClick={() => setActiveTab(section?.section_key)}>
-                                    <div dangerouslySetInnerHTML={{__html:section.heading}}/>
+                                    <div dangerouslySetInnerHTML={{ __html: section.heading }} />
                                 </TabButton>
                             ))}
                             <TabButton active={activeTab === "courses"} onClick={() => setActiveTab("courses")}>
                                 Courses ({courses.length})
                             </TabButton>
-                            <TabButton active={activeTab === "fees"} onClick={() => setActiveTab("fees")}>
+                            {/* <TabButton active={activeTab === "fees"} onClick={() => setActiveTab("fees")}>
                                 Fees & Scholarships
-                            </TabButton>
+                            </TabButton> */}
                         </div>
 
-                        <div className="space-y-8">
+                        <div className="space-y-4">
                             {activeTab && getSectionContent(activeTab) && (
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className="space-y-8"
+                                    className="space-y-4"
                                 >
                                     {/* Description */}
                                     <div className="prose max-w-none">
-                                        <h2 className="text-xl font-bold mb-4 capitalize"> {activeTab}</h2>
+                                        {/* <h2 className="text-xl font-bold mb-4 capitalize"> {activeTab}</h2> */}
                                         <div
-                                            className="text-gray-700 leading-relaxed"
+                                            className="text-gray-800 leading-[1.8] mb-4"
+                                            dangerouslySetInnerHTML={{
+                                                __html: university.short_description
+                                            }}
+                                        />
+                                        <div
+                                            className="text-gray-800 leading-[1.8]"
                                             dangerouslySetInnerHTML={{
                                                 __html: getSectionContent(activeTab)
                                             }}
                                         />
                                     </div>
 
-                                    <div className="bg-card border border-border rounded-2xl p-6">
-                                        <h3 className="text-lg font-bold mb-4">Quick Facts</h3>
-                                        <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+                                    <div className="bg-card border border-border  p-4">
+                                        <h3 className="text-base font-semibold text-gray-800 mb-4">Quick Facts</h3>
+                                        <div className="grid grid-cols-2 text-gray-700 md:grid-cols-3 gap-3">
                                             <div>
                                                 <p className="text-sm text-muted-foreground mb-1">Established</p>
                                                 <p className="font-medium">{university.established_year}</p>
@@ -597,14 +613,10 @@ export default function UniversityDetailPage() {
                                             </div>
 
                                             <div>
-                                                <p className="text-sm text-muted-foreground mb-1">Campus</p>
-                                                <p className="font-medium">{university.address || 'N/A'}</p>
-                                            </div>
-                                            <div>
                                                 <p className="text-sm text-muted-foreground mb-1">Intakes</p>
                                                 <div className="flex flex-wrap gap-1">
                                                     {university.intakes?.map((intake, i) => (
-                                                        <span key={i} className="text-xs bg-muted px-2 py-1 rounded-full">
+                                                        <span key={i} className="text-xs bg-muted px-2 py-1 -full">
                                                             {intake}
                                                         </span>
                                                     ))}
@@ -614,23 +626,28 @@ export default function UniversityDetailPage() {
                                                 <p className="text-sm text-muted-foreground mb-1">Accommodation</p>
                                                 <div className="flex gap-2">
                                                     {university.on_campus_accommodation && (
-                                                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                                                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 -full">
                                                             On Campus
                                                         </span>
                                                     )}
                                                     {university.off_campus_accommodation && (
-                                                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                                                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 -full">
                                                             Off Campus
                                                         </span>
                                                     )}
                                                 </div>
                                             </div>
+
+                                            <div className="col-span-2">
+                                                <p className="text-sm text-muted-foreground mb-1">Campus</p>
+                                                <p className="font-medium">{university.address || 'N/A'}</p>
+                                            </div>
                                         </div>
                                     </div>
 
                                     {university.facilities && university.facilities.length > 0 && (
-                                        <div className="bg-card border border-border rounded-2xl p-6">
-                                            <h3 className="text-lg font-bold mb-4">Campus Facilities</h3>
+                                        <div className="bg-card border border-border p-4">
+                                            <h3 className="text-base font-semibold text-gray-800 mb-4">Campus Facilities</h3>
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                                 {university.facilities.map((facility, index) => (
                                                     <div key={index} className="flex items-center gap-2">
@@ -642,17 +659,43 @@ export default function UniversityDetailPage() {
                                         </div>
                                     )}
 
-                                    {university.uni_rank && university.uni_rank.length > 0 && (
-                                        <div className="bg-card border border-border rounded-2xl p-6">
-                                            <h3 className="text-lg font-bold mb-4">Rankings & Achievements</h3>
-                                            <div className="space-y-3">
-                                                {university.uni_rank.map((rank, index) => (
-                                                    <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                                                        <div>
-                                                            <p className="font-medium">{rank.type}</p>
-                                                            <p className="text-sm text-muted-foreground">Year: {rank.year}</p>
-                                                        </div>
-                                                        <span className="text-xl font-bold text-primary">#{rank.rank}</span>
+
+                                    {university.financials && (
+                                        <div className="bg-card border border-border p-4">
+                                            <h3 className="text-base font-semibold text-gray-800 mb-4">
+                                                Tuition Fees & Living Costs
+                                            </h3>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                {[
+                                                    {
+                                                        title: "Cost of Living",
+                                                        value: university.financials.cost_of_living,
+                                                    },
+                                                    {
+                                                        title: "Undergraduate Tuition Fees",
+                                                        value: university.financials.ug_fees,
+                                                    },
+                                                    {
+                                                        title: "Postgraduate Tuition Fees",
+                                                        value: university.financials.pg_fees,
+                                                    },
+                                                    {
+                                                        title: "Additional & Administrative Fees",
+                                                        value: university.financials.other_fees,
+                                                    },
+                                                ].map((item, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="p-4 bg-muted/30 flex flex-col gap-1"
+                                                    >
+                                                        <p className="font-medium">
+                                                            {item.title}
+                                                        </p>
+
+                                                        <p className="text-sm text-gray-700">
+                                                            {item.value}
+                                                        </p>
                                                     </div>
                                                 ))}
                                             </div>
@@ -661,7 +704,7 @@ export default function UniversityDetailPage() {
                                 </motion.div>
                             )}
 
-                            {activeTab === "fees" && (
+                            {/* {activeTab === "fees" && (
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -672,8 +715,7 @@ export default function UniversityDetailPage() {
                                         dangerouslySetInnerHTML={{ __html: getSectionContent('fees') }}
                                     />
 
-                                    {/* Average Tuition */}
-                                    <div className="bg-card border border-border rounded-2xl p-6">
+                                    <div className="bg-card border border-border  p-6">
                                         <h3 className="text-lg font-bold mb-4">Estimated Tuition Fees</h3>
                                         <div className="grid grid-cols-2 gap-6">
                                             <div>
@@ -688,50 +730,48 @@ export default function UniversityDetailPage() {
                                             </div>
                                         </div>
                                     </div>
-
-                                    {/* Scholarships */}
-                                    <div className="bg-card border border-border rounded-2xl p-6">
+                                    <div className="bg-card border border-border  p-6">
                                         <div className="flex items-center gap-3 mb-6">
-                                            <div className="p-2 bg-amber-100 rounded-lg">
+                                            <div className="p-2 bg-amber-100 -lg">
                                                 <Award className="w-5 h-5 text-amber-600" />
                                             </div>
                                             <h3 className="text-lg font-bold">Scholarships & Financial Aid</h3>
                                         </div>
                                         <div className="space-y-4">
-                                            <div className="p-4 bg-muted/30 rounded-lg">
+                                            <div className="p-4 bg-muted/30 -lg">
                                                 <h4 className="font-semibold mb-2">Merit-based Scholarships</h4>
                                                 <p className="text-sm text-muted-foreground mb-2">
                                                     Awarded to outstanding students based on academic excellence.
                                                 </p>
-                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
+                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 -full">
                                                     Up to 50% tuition fee waiver
                                                 </span>
                                             </div>
-                                            <div className="p-4 bg-muted/30 rounded-lg">
+                                            <div className="p-4 bg-muted/30 -lg">
                                                 <h4 className="font-semibold mb-2">Need-based Financial Aid</h4>
                                                 <p className="text-sm text-muted-foreground mb-2">
                                                     Available for students demonstrating financial need.
                                                 </p>
-                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
+                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 -full">
                                                     Varies based on need
                                                 </span>
                                             </div>
-                                            <div className="p-4 bg-muted/30 rounded-lg">
+                                            <div className="p-4 bg-muted/30 -lg">
                                                 <h4 className="font-semibold mb-2">International Student Scholarships</h4>
                                                 <p className="text-sm text-muted-foreground mb-2">
                                                     Specifically designed for international students.
                                                 </p>
-                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
+                                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 -full">
                                                     Up to 30% tuition fee waiver
                                                 </span>
                                             </div>
                                         </div>
-                                        <button className="mt-6 w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium">
+                                        <button className="mt-6 w-full px-6 py-3 bg-primary text-primary-foreground -lg hover:bg-primary/90 transition-colors font-medium">
                                             Apply for Scholarships
                                         </button>
                                     </div>
                                 </motion.div>
-                            )}
+                            )} */}
 
                             {(activeTab === "courses" || activeTab) && (
                                 <motion.div
@@ -742,7 +782,7 @@ export default function UniversityDetailPage() {
                                     <h2 className="text-xl font-bold text-gray-800 mb-4 capitalize"> Available Courses</h2>
 
                                     {/* Course Filters */}
-                                    {/* <div className="bg-card border border-border rounded-xl p-6">
+                                    {/* <div className="bg-card border border-border  p-6">
                                         <div className="flex items-center justify-between mb-4">
                                             <h3 className="font-semibold">Filter Courses</h3>
                                             {(courseFilters.level || courseFilters.studyMode || courseFilters.intake) && (
@@ -787,7 +827,7 @@ export default function UniversityDetailPage() {
                                                     placeholder="Search courses..."
                                                     value={courseFilters.search}
                                                     onChange={(e) => setCourseFilters(prev => ({ ...prev, search: e.target.value }))}
-                                                    className="w-full pl-9 pr-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                                    className="w-full pl-9 pr-4 py-2 border border-border -lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
                                                 />
                                             </div>
                                         </div>
@@ -795,7 +835,7 @@ export default function UniversityDetailPage() {
 
                                     <div className="space-y-4">
                                         {courses.length === 0 && !loadingCourses ? (
-                                            <div className="text-center py-12 bg-[#F3F4F6] border-2 border-border rounded-xl">
+                                            <div className="text-center py-12 bg-[#F3F4F6] border-2 border-border ">
                                                 <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                                                 <h3 className="text-lg font-bold mb-2">No Courses Found</h3>
                                                 <p className="text-muted-foreground">
@@ -816,7 +856,7 @@ export default function UniversityDetailPage() {
                                                 <button
                                                     onClick={() => setCoursePage(prev => prev + 1)}
                                                     disabled={loadingCourses}
-                                                    className="px-6 py-3 border border-border rounded-lg hover:bg-muted transition-colors disabled:opacity-50"
+                                                    className="px-6 py-3 border border-border -lg hover:bg-muted transition-colors disabled:opacity-50"
                                                 >
                                                     {loadingCourses ? (
                                                         <Loader2 className="w-5 h-5 animate-spin mx-auto" />
@@ -829,18 +869,17 @@ export default function UniversityDetailPage() {
                                     </div>
                                 </motion.div>
                             )}
-                            
+
                         </div>
                     </div>
 
-                    <div className="w-[30%] space-y-6">
+                    <div className="w-[30%] space-y-3">
                         {/* Contact Information */}
-                        <div className="bg-card border border-border rounded-2xl p-6">
-                            <h3 className="font-bold mb-4 flex items-center gap-2">
-                                <Mail className="w-5 h-5" />
+                        <div className="bg-card border border-border  p-4">
+                            <h3 className="text-base font-semibold text-gray-800 mb-4">
                                 Contact Information
                             </h3>
-                            <div className="space-y-4">
+                            <div className="space-y-3">
                                 {university.contactEmail && (
                                     <div className="flex items-start gap-3">
                                         <Mail className="w-4 h-4 text-muted-foreground mt-0.5" />
@@ -852,36 +891,52 @@ export default function UniversityDetailPage() {
                                         </div>
                                     </div>
                                 )}
-                                {university.contactPhone && (
+                                {university.uni_contact && (
                                     <div className="flex items-start gap-3">
                                         <Phone className="w-4 h-4 text-muted-foreground mt-0.5" />
                                         <div>
-                                            <p className="text-xs text-muted-foreground mb-1">Phone</p>
-                                            <p className="text-sm">{university.contactPhone}</p>
+                                            <p className="text-sm text-muted-foreground mb-1">Phone</p>
+                                            <p className="text-sm">{university.uni_contact}</p>
                                         </div>
                                     </div>
                                 )}
                                 <div className="flex items-start gap-3">
                                     <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
                                     <div>
-                                        <p className="text-xs text-muted-foreground mb-1">Address</p>
+                                        <p className="text-sm text-muted-foreground mb-1">Address</p>
                                         <p className="text-sm">{university.address || `${university.city}, ${university.country}`}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        {university.uni_rank && university.uni_rank.length > 0 && (
+                            <div className="bg-card border border-border  p-4">
+                                <h3 className="text-base font-semibold text-gray-800 mb-4">Rankings & Achievements</h3>
+                                <div className="grid grid-cols-1 gap-3">
+                                    {university.uni_rank.map((rank, index) => (
+                                        <div key={index} className="flex items-center justify-between p-3 bg-muted/30 ">
+                                            <div>
+                                                <p className="font-medium">{rank.type}</p>
+                                                <p className="text-sm text-muted-foreground">Year: {rank.year}</p>
+                                            </div>
+                                            <span className="text-xl font-bold text-primary">#{rank.rank}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Important Dates */}
-                        <div className="bg-card border border-border rounded-2xl p-6">
-                            <h3 className="font-bold mb-4 flex items-center gap-2">
-                                <Calendar className="w-5 h-5" />
+                        <div className="bg-card border border-border  p-4">
+                            <h3 className="text-base font-semibold text-gray-800 mb-4">
                                 Important Dates
                             </h3>
                             <div className="space-y-3">
                                 {university.intakes?.map((intake, index) => (
-                                    <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                                    <div key={index} className="flex items-center justify-between p-3 bg-muted/30 -lg">
                                         <span className="text-sm font-medium">{intake} Intake</span>
-                                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                                        <span className="text-xs bg-primary/50 text-white px-2 py-1 -full">
                                             Apply Now
                                         </span>
                                     </div>
@@ -890,12 +945,12 @@ export default function UniversityDetailPage() {
                         </div>
 
                         {/* Download Brochure */}
-                        <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-2xl p-6">
+                        <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20  p-6">
                             <h3 className="font-bold mb-2">University Brochure</h3>
                             <p className="text-sm text-muted-foreground mb-4">
                                 Download detailed information about programs, fees, and campus life.
                             </p>
-                            <button className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                            <button className="w-full px-4 py-2 bg-primary text-primary-foreground -lg hover:bg-primary/90 transition-colors text-sm font-medium flex items-center justify-center gap-2">
                                 <Download className="w-4 h-4" />
                                 Download PDF
                             </button>
@@ -903,7 +958,7 @@ export default function UniversityDetailPage() {
 
                         {/* Social Media */}
                         {university.socialMedia && Object.keys(university.socialMedia).length > 0 && (
-                            <div className="bg-card border border-border rounded-2xl p-6">
+                            <div className="bg-card border border-border  p-6">
                                 <h3 className="font-bold mb-4">Connect With Us</h3>
                                 <div className="flex gap-2">
                                     {Object.entries(university.socialMedia).map(([platform, url]) => (
@@ -912,7 +967,7 @@ export default function UniversityDetailPage() {
                                             href={url}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="flex-1 p-3 border border-border rounded-lg hover:bg-muted transition-colors text-center"
+                                            className="flex-1 p-3 border border-border -lg hover:bg-muted transition-colors text-center"
                                         >
                                             <span className="text-xs capitalize">{platform}</span>
                                         </a>

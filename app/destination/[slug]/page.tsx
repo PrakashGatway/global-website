@@ -101,6 +101,7 @@ export default async function Page({
           pageData?.h1 ||
           pageData?.title ||
           pageData?.name,
+        url: currentUrl,
       },
     ]);
 
