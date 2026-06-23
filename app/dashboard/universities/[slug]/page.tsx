@@ -341,7 +341,7 @@ export default function UniversityDetailPage() {
                 page: currentPage.toString(),
                 isExtra: 'false',
                 limit: '10',
-                universityId: university._id,
+                university: university._id,
                 ...(courseFilters.level && { level: courseFilters.level }),
                 ...(courseFilters.studyMode && { studyMode: courseFilters.studyMode }),
                 ...(courseFilters.intake && { intake: courseFilters.intake }),
