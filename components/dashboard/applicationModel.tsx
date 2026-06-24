@@ -225,7 +225,7 @@ export function CreateApplicationModal({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 top-0 bottom-0 h-screen bg-black/20 backdrop-blur-[1px] z-40"
+            className="fixed inset-0 top-0 bottom-0 h-screen bg-black/20 backdrop-blur-[1px] z-60"
           />
 
           <motion.div
@@ -233,7 +233,7 @@ export function CreateApplicationModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed inset-0 z-40 flex items-center justify-center p-2 overflow-hidden"
+            className="fixed inset-0 z-60 flex items-center justify-center p-2 overflow-hidden"
           >
             <div className="relative rounded-3xl shadow-xl w-full max-w-4xl max-h-[90vh] min-h-[90vh] overflow-hidden flex flex-col bg-white">
               <motion.div

@@ -70,9 +70,8 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
       })
     }
     return [
-      { id: 'fall2024', month: 'Fall', year: '2024', deadline: 'Jul 30, 2024', status: 'available', fullIntake: 'Fall 2024' },
-      { id: 'spring2025', month: 'Spring', year: '2025', deadline: 'Nov 15, 2024', status: 'available', fullIntake: 'Spring 2025' },
-      { id: 'fall2025', month: 'Fall', year: '2025', deadline: 'Jul 30, 2025', status: 'coming-soon', fullIntake: 'Fall 2025' },
+      { id: 'fall', month: 'Fall', status: 'available', fullIntake: 'Fall 2024' },
+      { id: 'spring', month: 'Spring', status: 'available', fullIntake: 'Spring 2025' },
     ]
   }, [availableIntakes])
 
@@ -122,9 +121,9 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
                     <p className="font-medium text-sm text-gray-900">
                       {intake.month} {intake.year}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    {/* <p className="text-xs text-gray-500">
                       Deadline: {intake.deadline}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
                 {intake.status === 'coming-soon' ? (
@@ -170,100 +169,18 @@ interface PrerequisitesFormProps {
 }
 
 export function PrerequisitesForm({ program, formData, setFormData }: PrerequisitesFormProps) {
-  // Generate prerequisites from program data
+
   const prerequisites = React.useMemo(() => {
-    const prereqs = []
-
-    // Add requirements from program.requirements
+    let prereqs = []
+    console.log(program)
     if (program.requirements) {
-      Object.entries(program.requirements).forEach(([key, value]) => {
-        prereqs.push({
-          id: key.toLowerCase().replace(/\s+/g, '-'),
-          name: key,
-          description: `Required: ${value}`,
-          required: true,
-          format: 'Upload proof/documentation',
-          category: 'requirement'
-        })
-      })
+      prereqs = Object.entries(program?.requirements).map(([name, data]) => ({
+        name,
+        value: data.value
+      }));
     }
-
-    // Add documents from program.docsRequired
-    if (program.docsRequired) {
-      program.docsRequired.forEach((doc: any) => {
-        Object.entries(doc).forEach(([key, value]) => {
-          prereqs.push({
-            id: key.toLowerCase().replace(/\s+/g, '-'),
-            name: key,
-            description: value === 'copy' ? 'Copy required' : String(value),
-            required: true,
-            format: 'PDF/Image (max 10MB)',
-            category: 'document'
-          })
-        })
-      })
-    }
-
     return prereqs
   }, [program])
-
-  const handleFileUpload = (prerequisiteId: string, file: File) => {
-    const updatedDocuments = [...(formData.prerequisites.documents || [])]
-    const index = updatedDocuments.findIndex(d => d.id === prerequisiteId)
-
-    if (index >= 0) {
-      updatedDocuments[index] = {
-        id: prerequisiteId,
-        name: file.name,
-        file,
-        uploaded: true,
-        url: URL.createObjectURL(file)
-      }
-    } else {
-      updatedDocuments.push({
-        id: prerequisiteId,
-        name: file.name,
-        file,
-        uploaded: true,
-        url: URL.createObjectURL(file)
-      })
-    }
-
-    setFormData({
-      ...formData,
-      prerequisites: {
-        ...formData.prerequisites,
-        documents: updatedDocuments
-      }
-    })
-  }
-
-  const markRequirementMet = (requirementId: string) => {
-    const updatedReqs = [...(formData.prerequisites.requirements || [])]
-    const index = updatedReqs.findIndex(r => r.id === requirementId)
-
-    if (index >= 0) {
-      updatedReqs[index] = { ...updatedReqs[index], met: true }
-    } else {
-      updatedReqs.push({ id: requirementId, met: true })
-    }
-
-    setFormData({
-      ...formData,
-      prerequisites: {
-        ...formData.prerequisites,
-        requirements: updatedReqs
-      }
-    })
-  }
-
-  const isDocumentUploaded = (id: string) => {
-    return formData.prerequisites.documents?.some((d: any) => d.id === id && d.uploaded)
-  }
-
-  const isRequirementMet = (id: string) => {
-    return formData.prerequisites.requirements?.some((r: any) => r.id === id && r.met)
-  }
 
   return (
     <div className="p-3">
@@ -272,33 +189,37 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">Program Prerequisites</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-1">Program Prerequisites</h3>
         <p className="text-xs text-gray-500">
-          Please complete all requirements and upload the required documents to proceed with your application.
+          Please review all requirements and documents to proceed with your application.
         </p>
       </motion.div>
+
+      {program?.metaInfo?.EntryRequirement && (
+        <div className='mt-3'>
+          <h3 className='text-gray-600 mb-1 font-bold'>
+            Entry Requirements
+          </h3>
+
+          <p className="text-gray-700 font-medium">
+            {program?.metaInfo?.EntryRequirement}
+          </p>
+        </div>
+      )}
 
       {/* Prerequisites List */}
       <div className="space-y-3 grid grid-cols-2 gap-2 mt-4">
         {prerequisites.map((prerequisite, index) => (
           <motion.div
-            key={prerequisite.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            key={index}
             className="p-3 border-2 rounded-lg"
           >
             <div className="flex items-start gap-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-medium text-gray-900">{prerequisite.name}</h4>
-                  {prerequisite.required && (
-                    <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
-                      {prerequisite.category === 'document' ? 'Document' : 'Requirement'}
-                    </span>
-                  )}
+              <div className="">
+                <div className="">
+                  <h4 className="font-medium uppercase text-gray-900">{prerequisite.name}</h4>
                 </div>
-                <p className="text-sm text-gray-500 mt-1">{prerequisite.description}</p>
+                <p className="text-base text-gray-500 mt-1">{prerequisite.value}</p>
               </div>
             </div>
           </motion.div>
