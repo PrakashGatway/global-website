@@ -6,7 +6,7 @@ import Image from "next/image";
 // import UniversitySliderClient, { CountryCardGrid } from "@/components/PageComponent/Unversity";
 // import AboutTabsSection from "@/components/PageComponent/TrustTabs";
 
-import axiosInstance, { baseUrl, serverInstance } from "@/app/axiosInstance";
+import axiosInstance from "@/app/axiosInstance";
 import { useKeenSlider } from "keen-slider/react";
 // import MultiStepForm from "./PopupForm";
 import { startTransition, useCallback, useEffect, useState } from "react";
@@ -127,7 +127,7 @@ export default function Homepage({
       country: "France",
       visa: "France Study Visa",
       flag: "https://flagcdn.com/w80/fr.png",
-      image: "/visa1.jpeg",
+      image: "/visa1.webp",
     },
     {
       id: 2,
@@ -135,7 +135,7 @@ export default function Homepage({
       country: "Germany",
       visa: "Germany Study Visa",
       flag: "https://flagcdn.com/w80/de.png",
-      image: "/visa2.jpeg",
+      image: "/visa2.webp",
     },
     {
       id: 3,
@@ -143,7 +143,7 @@ export default function Homepage({
       country: "Dubai",
       visa: "Dubai Study Visa",
       flag: "https://flagcdn.com/w80/ae.png",
-      image: "/visa3.jpeg",
+      image: "/visa3.webp",
     },
     {
       id: 4,
@@ -151,7 +151,7 @@ export default function Homepage({
       country: "Ireland",
       visa: "Ireland Study Visa",
       flag: "https://flagcdn.com/w80/ie.png",
-      image: "/visa4.jpeg",
+      image: "/visa4.webp",
     },
   ];
 
@@ -316,24 +316,20 @@ export default function Homepage({
   return (
     <main className="bg-white">
       <section
-        className="
-          relative overflow-hidden
-          bg-white
-          bg-no-repeat bg-cover bg-bottom
-          pt-12 lg:pt-20 
-        "
+        className="overflow-hidden
+          pt-12 lg:pt-20"
       >
 
         <div className="absolute inset-0 bg-white/50 md:bg-transparent pointer-events-none" />
 
-        <div className="relative z-10 w-7xl max-w-screen mx-auto px-3">
-          <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-2">
+        <div className="relative z-10 w-7xl max-w-screen mx-auto px-6 sm:px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-7 items-center gap-2">
 
             <div
-              className="text-left lg:text-left"
+              className="flex flex-col gap-1 lg:col-span-4"
             >
               <span
-                className="text-xl sm:text-4xl lg:text-4xl leading-tight"
+                className="text-3xl sm:text-[2.7rem] leading-[1.4]"
               >
 
                 {homePage?.hero?.title ?
@@ -343,7 +339,7 @@ export default function Homepage({
                       css="block text-[#ea6c46]"
                     >
                       {homePage?.hero?.title.split("||")[0]?.trim()}{" "}
-                      <span className="relative inline-block font-bold text-primary">
+                      <span className="relative inline- font-bold text-primary">
                         {homePage?.hero?.title.split("||")[1]?.trim()}
                       </span>
                     </NewTag>
@@ -352,7 +348,7 @@ export default function Homepage({
               </span>
 
               <span
-                className="mt-6 text-base font-medium lg:text-lg text-primary mx-auto text-justify lg:mx-0 lg:mb-10"
+                className="mt-2 text-base font-medium lg:text-lg text-primary mx-auto text-justify"
                 dangerouslySetInnerHTML={{
                   __html: homePage?.hero?.subtitle
                 }}
@@ -360,7 +356,7 @@ export default function Homepage({
               />
 
               <div
-                className="mt-6 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+                className="flex mt-4 flex-col sm:flex-row gap-4"
               >
                 <button
                   onClick={openPopup}
@@ -371,7 +367,7 @@ export default function Homepage({
               flex items-center justify-center gap-2
               transition-all hover:opacity-90 cursor-pointer
             "
-                  // rel="noopener noreferrer"
+                // rel="noopener noreferrer"
                 >
                   {homePage?.hero?.ctaText1 || "Get Free Counselling"}
                 </button>
@@ -385,7 +381,7 @@ export default function Homepage({
               transition-all hover:bg-[#f46c44] hover:border-none hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
               inline-flex items-center justify-center
             "
-                  // rel="noopener noreferrer"
+                // rel="noopener noreferrer"
                 >
                   {homePage?.hero?.ctaText2 || "Check Your Eligibility"}
                 </button>
@@ -394,17 +390,19 @@ export default function Homepage({
 
 
             <div
-              className="flex justify-center lg:justify-end"
+              className="flex justify-center lg:col-span-3 lg:justify-end"
             >
               <div className="relative flex items-center justify-center">
 
                 <div className="absolute -right top-51 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
-                  <img
-                    src="/images/hero-bg-round.png"
+                  <Image
+                    src="/images/hero-bg-round.webp"
                     alt="circle"
-                    className="w-[540px] max-w-none"
-                    width="1000"
-                    height="1000"
+                    width={640}
+                    height={640}
+                    priority
+                    className="scale-120"
+
                   />
                 </div>
 
@@ -419,7 +417,7 @@ export default function Homepage({
                       height={900}
                       alt="cap"
                       loading="lazy"
-                      className="lg:w-[420px] w-[200px]"
+                      className="lg:w-[420px] w-[400px]"
                     />
                   </div>
                 )}
@@ -456,12 +454,12 @@ export default function Homepage({
         <div className="px-4 max-w-[1440px] mx-auto sm:px-8 lg:px-20 flex flex-col lg:flex-row gap-10 lg:gap-2 justify-around items-center">
           {/* LEFT IMAGE (Hidden on Mobile) */}
           <div className="relative z-10 -bottom-0 lg:-bottom-8 -left-24 hidden lg:block">
-            <img
-              src="/images/home-enquiry.png"
-              alt={homePage?.formSection?.title || "Enquiry Image"}
-              className="w-[320px] lg:w-175"
-              width="1000"
-              height="1000"
+            <Image
+              src="/images/home-enquiry.webp"
+              alt="Connect With Our Expert Team"
+              width={383}
+              height={400}
+              sizes="(max-width: 768px) 100vw, 383px"
             />
           </div>
 
@@ -740,12 +738,12 @@ export default function Homepage({
           <div className="w-full px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-2 items-center w-full min-h-[500px]">
               <div
-            
+
                 className="relative w-full h-full min-h-[420px] sm:min-h-[500px] lg:min-h-[550px] flex justify-center lg:justify-start hidden lg:block"
               >
                 <Image
-                  src="/images/trust-img.png"
-                  alt=""
+                  src="/images/trust-img.webp"
+                  alt="trust section image"
                   width={450}
                   height={540}
                   loading="lazy"
@@ -1031,7 +1029,7 @@ export default function Homepage({
               <div
                 className="bg-[#F46C44] overflow-hidden rounded-2xl p-4 md:p-8 flex flex-col justify-center 
         lg:min-w-[280px] lg:max-w-[320px] 
-        h-auto lg:h-[380px] 
+        h-full lg:h-[380px] 
         z-10 lg:mt-24"
               >
                 <h2 className="  text-white text-primary">
@@ -1058,11 +1056,11 @@ export default function Homepage({
                     >
                       {/* Icon */}
                       <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center mb-3 md:mb-4 mx-auto">
-                        <img 
-                        src={service.icon || "https://cdn-icons-png.flaticon.com/512/5474/5474438.png"} 
-                        alt="img" 
-                        width="1000"
-                        height="1000"
+                        <img
+                          src={service.icon || "https://cdn-icons-png.flaticon.com/512/5474/5474438.png"}
+                          alt="img"
+                          width="1000"
+                          height="1000"
                         />
                       </div>
 
@@ -1141,7 +1139,7 @@ export default function Homepage({
                         src={
                           post.coverImage ||
                           "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
-                        }            
+                        }
                         width="1000"
                         height="1000"
                         alt={post.title}
@@ -1318,7 +1316,6 @@ export default function Homepage({
                   key={item.id}
                   className="group bg-white shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden "
                 >
-
                   <div className="p-2 bg-gray-100">
                     <div className="overflow-hidden w-full  bg-gray-100 ">
                       <img

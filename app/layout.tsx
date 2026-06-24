@@ -103,6 +103,7 @@ export default async function RootLayout({
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-70R8MGMXBN"
+          strategy="afterInteractive"
         ></Script>
         <Script>
           {`
