@@ -51,42 +51,7 @@ import axiosInstance from "../axiosInstance";
 import DashboardCounsellor from "@/components/dashboard/counsellerDashboard/dashboard";
 import { Rigthsidebar } from "@/components/dashboard/application/rightsidebar";
 
-// Step configuration with icons
-const stepIcons = {
-  user: User,
-  globe: Globe,
-  book: BookOpen,
-  university: Building2,
-  document: FileText,
-  visa: FileLock,
-  finance: DollarSign,
-  home: Home,
-  plane: Plane,
-};
 
-const statusColors = {
-  completed: {
-    bg: "bg-green-50",
-    text: "text-green-700",
-    border: "border-green-200",
-    icon: "text-green-600",
-    progress: "bg-green-500",
-  },
-  current: {
-    bg: "bg-blue-50",
-    text: "text-blue-700",
-    border: "border-blue-200",
-    icon: "text-blue-600",
-    progress: "bg-blue-500",
-  },
-  upcoming: {
-    bg: "bg-gray-50",
-    text: "text-gray-600",
-    border: "border-gray-200",
-    icon: "text-gray-400",
-    progress: "bg-gray-300",
-  },
-};
 
 export default function DashboardPage() {
   const { profile, allProfile } = useGlobal();
@@ -345,43 +310,7 @@ export default function DashboardPage() {
     });
   }, [allProfile]);
 
-  const getStatusStyle = (status: string) => {
-    switch (status) {
-      case "completed":
-        return {
-          bg: "bg-green-100",
-          text: "text-green-700",
-          border: "border-green-300",
-          icon: CheckCircle,
-        };
-      case "current":
-        return {
-          bg: "bg-blue-100",
-          text: "text-blue-700",
-          border: "border-blue-300",
-          icon: AlertCircle,
-        };
-      default:
-        return {
-          bg: "bg-gray-100",
-          text: "text-gray-500",
-          border: "border-gray-200",
-          icon: Circle,
-        };
-    }
-  };
 
-  const getProgressWidth = (progress: string) => {
-    if (progress && typeof progress.match === "function") {
-      const match = progress.match(/\d+/);
-      if (match) {
-        const num = parseInt(match[0]);
-        if (!isNaN(num) && num <= 100) return num;
-      }
-    }
-
-    return 0;
-  };
 
   // Step tracker data for the compact view
   const stepTrackerSteps = [
@@ -562,7 +491,7 @@ export default function DashboardPage() {
                                 (s) => s.status === "completed",
                               ).length /
                                 stepTrackerSteps.length) *
-                                100,
+                              100,
                             )}
                             %
                           </span>
@@ -581,14 +510,13 @@ export default function DashboardPage() {
                           <div
                             className="absolute top-6 left-0 h-[2px] bg-orange-500"
                             style={{
-                              width: `${
-                                ((stepTrackerSteps.findIndex(
-                                  (s) => s.status === "current",
-                                ) +
+                              width: `${((stepTrackerSteps.findIndex(
+                                (s) => s.status === "current",
+                              ) +
                                   1) /
                                   stepTrackerSteps.length) *
                                 100
-                              }%`,
+                                }%`,
                             }}
                           />
 
@@ -609,13 +537,12 @@ export default function DashboardPage() {
                     w-12 h-12 rounded-full bg-white
                     flex items-center justify-center
                     transition-all duration-300
-                    ${
-                      isCompleted
-                        ? "border-2 border-orange-500"
-                        : isCurrent
-                          ? "border-[3px] border-primary shadow-[0_0_0_6px_rgba(37,99,235,0.10)]"
-                          : "border-2 border-[#D1D5DB]"
-                    }
+                    ${isCompleted
+                                        ? "border-2 border-orange-500"
+                                        : isCurrent
+                                          ? "border-[3px] border-primary shadow-[0_0_0_6px_rgba(37,99,235,0.10)]"
+                                          : "border-2 border-[#D1D5DB]"
+                                      }
                   `}
                                   >
                                     {isCompleted ? (
@@ -625,11 +552,10 @@ export default function DashboardPage() {
                                       />
                                     ) : (
                                       <span
-                                        className={`font-semibold text-sm ${
-                                          isCurrent
+                                        className={`font-semibold text-sm ${isCurrent
                                             ? "text-primary"
                                             : "text-[#9CA3AF]"
-                                        }`}
+                                          }`}
                                       >
                                         {idx + 1}
                                       </span>
@@ -638,26 +564,24 @@ export default function DashboardPage() {
 
                                   {/* Step Name */}
                                   <h4
-                                    className={`mt-4 text-xs font-semibold leading-tight ${
-                                      isCurrent
+                                    className={`mt-4 text-xs font-semibold leading-tight ${isCurrent
                                         ? "text-primary"
                                         : isCompleted
                                           ? "text-[#111827]"
                                           : "text-[#6B7280]"
-                                    }`}
+                                      }`}
                                   >
                                     {step.name}
                                   </h4>
 
                                   {/* Status */}
                                   <p
-                                    className={`text-xs mt-1 ${
-                                      isCurrent
+                                    className={`text-xs mt-1 ${isCurrent
                                         ? "text-primary font-medium"
                                         : isCompleted
                                           ? "text-[#374151]"
                                           : "text-[#9CA3AF]"
-                                    }`}
+                                      }`}
                                   >
                                     {isCompleted
                                       ? "Completed"
@@ -686,13 +610,12 @@ export default function DashboardPage() {
                               <div
                                 className={`
                 w-10 h-10 rounded-full flex items-center justify-center
-                ${
-                  isCompleted
-                    ? "bg-green-500 text-white"
-                    : isCurrent
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-500"
-                }
+                ${isCompleted
+                                    ? "bg-green-500 text-white"
+                                    : isCurrent
+                                      ? "bg-blue-500 text-white"
+                                      : "bg-gray-200 text-gray-500"
+                                  }
               `}
                               >
                                 {isCompleted ? (
@@ -758,13 +681,12 @@ export default function DashboardPage() {
                                 {/* Step Number */}
                                 <div
                                   className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-semibold
-  ${
-    item.status === "completed"
-      ? "bg-green-500"
-      : item.status === "current"
-        ? "bg-orange-500"
-        : "bg-red-500"
-  }`}
+  ${item.status === "completed"
+                                      ? "bg-green-500"
+                                      : item.status === "current"
+                                        ? "bg-orange-500"
+                                        : "bg-red-500"
+                                    }`}
                                 >
                                   {item.step}
                                 </div>
@@ -774,24 +696,22 @@ export default function DashboardPage() {
                                   <div
                                     className={`
                 w-8 h-8 rounded-lg flex items-center justify-center
-                ${
-                  isCompleted
-                    ? "bg-orange-50"
-                    : isCurrent
-                      ? "bg-blue-50"
-                      : "bg-gray-50"
-                }
+                ${isCompleted
+                                        ? "bg-orange-50"
+                                        : isCurrent
+                                          ? "bg-blue-50"
+                                          : "bg-gray-50"
+                                      }
               `}
                                   >
                                     {isCompleted ? (
                                       <CheckCircle className="w-4 h-4 text-orange-500" />
                                     ) : (
                                       <span
-                                        className={`text-sm font-bold ${
-                                          isCurrent
+                                        className={`text-sm font-bold ${isCurrent
                                             ? "text-blue-600"
                                             : "text-gray-400"
-                                        }`}
+                                          }`}
                                       >
                                         {item.step}
                                       </span>
@@ -809,13 +729,12 @@ export default function DashboardPage() {
                                     <span
                                       className={`
                   px-2 py-[2px] rounded text-[10px] font-medium
-                  ${
-                    isCompleted
-                      ? "bg-green-100 text-green-600"
-                      : isCurrent
-                        ? "bg-orange-100 text-orange-600"
-                        : "bg-red-100 text-red-600"
-                  }
+                  ${isCompleted
+                                          ? "bg-green-100 text-green-600"
+                                          : isCurrent
+                                            ? "bg-orange-100 text-orange-600"
+                                            : "bg-red-100 text-red-600"
+                                        }
                 `}
                                     >
                                       {isCompleted
@@ -835,11 +754,10 @@ export default function DashboardPage() {
                                 <div className="w-[140px]">
                                   <div
                                     className={`font-bold text-[18px]
-              ${
-                item.progress === "Not Booked"
-                  ? "text-red-500"
-                  : "text-[#111827]"
-              }`}
+              ${item.progress === "Not Booked"
+                                        ? "text-red-500"
+                                        : "text-[#111827]"
+                                      }`}
                                   >
                                     {item.progress}
                                   </div>

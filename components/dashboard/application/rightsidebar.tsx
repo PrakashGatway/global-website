@@ -177,7 +177,7 @@ const getActivityIcon = (type) => {
   return (
     <div className="space-y-6">
       {/* Counselor Card */}
-     <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm w-full">
+     {profile?.assignto?.name && <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm w-full">
   {/* Header */}
   <div className="flex items-center justify-between mb-5">
     <h3 className="text-lg font-bold text-[#1E293B]">
@@ -247,7 +247,7 @@ const getActivityIcon = (type) => {
   <button className="w-full mt-6 h-11 rounded-lg bg-secondary/80 hover:bg-primary text-white font-medium text-sm transition">
     Chat Now
   </button>
-</div>
+</div>}
 
       {/* Upcoming Deadlines */}
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">

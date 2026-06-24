@@ -441,7 +441,7 @@ export default function CoursesPage() {
                           <div className="flex-shrink-0">
                             {course.university?.uni_logo ? (
                               <img
-                                src={course.university?.uni_logo}
+                                src={course.university?.uni_logo || "/images/newlogo3.png"}
                                 alt={course.university?.name}
                                 onError={(e) => {
                                   e.currentTarget.src =
@@ -576,39 +576,81 @@ export default function CoursesPage() {
 
                         {/* Intakes - Compact */}
 
-                        <div className="mb-3 p-2 bg-amber-50 rounded-md border border-amber-200">
-                          <div className="flex items-center gap-1 mb-1.5">
-                            <svg className="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <span className="text-[11px] font-semibold text-gray-700">Intakes</span>
-                          </div>
-                          <div className="flex items-center gap-1 group relative">
-                            <span className="text-[11px] px-2 py-1 bg-amber-100 text-amber-700 rounded-full font-medium">
-                              {month}
-                            </span>
+                        {deadline ?
+                          (
+                          <div className="mb-3 p-2 bg-amber-50 rounded-md border border-amber-200">
+  <div className="flex items-center gap-1 mb-1.5">
+    <svg
+      className="w-3 h-3 text-amber-600"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+      />
+    </svg>
 
-                            <div className="relative">
-                              <svg
-                                className="w-4 h-4 text-gray-400 cursor-pointer"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
+    <span className="text-[11px] font-semibold text-gray-700">
+      Intakes
+    </span>
+  </div>
 
-                              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded">
-                                Deadline: {deadline}
-                              </div>
+  <div className="flex items-center gap-1 group relative">
+    <span
+      className={`text-[11px] px-2 py-1 rounded-full font-medium ${
+        deadline &&
+        new Date(deadline).setHours(23, 59, 59, 999) < Date.now()
+          ? "bg-gray-100 text-gray-600"
+          : "bg-amber-100 text-amber-700"
+      }`}
+    >
+      {deadline &&
+      new Date(deadline).setHours(23, 59, 59, 999) < Date.now()
+        ? "Likely Coming Soon"
+        : month}
+    </span>
+
+    <div className="relative">
+      <svg
+        className="w-4 h-4 text-gray-400 cursor-pointer"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded z-10">
+        {deadline &&
+        new Date(deadline).setHours(23, 59, 59, 999) < Date.now()
+          ? "Previous intake deadline has passed"
+          : `Deadline: ${deadline}`}
+      </div>
+    </div>
+  </div>
+</div>
+                          ) : (
+                            <div className="flex flex-wrap gap-2">
+                              {course?.university?.intakes?.map((intake, index) => (
+                                <span
+                                  key={index}
+                                  className="px-3 py-1 rounded-full bg-orange-100 text-orange-600 text-sm font-medium"
+                                >
+                                  {intake}
+                                </span>
+                              ))}
                             </div>
-                          </div>
-                        </div>
+                          )
+                        }
 
 
                         {/* Action Buttons - Compact */}

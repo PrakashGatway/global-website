@@ -26,6 +26,9 @@ export function GlobalProvider({ children }) {
 
     const [selectedCountries, setSelectedCountries] = useState([])
 
+    console.log(hasInteracted)
+    console.log(hasSubmittedForm)
+
     const addCountry = (country) => {
 
         const exists = selectedCountries.find(
@@ -83,14 +86,20 @@ export function GlobalProvider({ children }) {
     }
 
     // ✨ MODIFIED: Differentiate between cancel and submit
-    const showPopup = () => {
-        if (!isPopupOpen && !hasSubmittedForm) {
-            console.log('✅ Opening popup')
-            setIsPopupOpen(true)
-            savePopupCount(popupCount + 1)
-        }
-    }
+ const pathname = usePathname();
 
+const showPopup = () => {
+  // Don't show popup on dashboard pages
+  if (pathname.startsWith("/dashboard")) {
+    return;
+  }
+
+  if (!isPopupOpen && !hasSubmittedForm) {
+    console.log("✅ Opening popup");
+    setIsPopupOpen(true);
+    savePopupCount(popupCount + 1);
+  }
+};
     // ✨ NEW: Called when user clicks CANCEL/X button
     const closePopup = (wasSubmitted = false) => {
 
@@ -131,12 +140,12 @@ export function GlobalProvider({ children }) {
         }
 
         // First popup: at 15s, only if count is 0 and no interaction
-        if (popupCount === 0 && !hasInteracted) {
+        if (popupCount == 0) {
 
             showPopup();
             return;
         }
-        if (popupCount === 1) {
+        if (popupCount == 1) {
 
             showPopup();
             return;
@@ -144,23 +153,23 @@ export function GlobalProvider({ children }) {
 
     };
 
-    // useEffect(() => {
-    //     if (hasInitializedTimers.current) return;
-    //     hasInitializedTimers.current = true;
+    useEffect(() => {
+        if (hasInitializedTimers.current) return;
+        hasInitializedTimers.current = true;
 
-    //     timer1Ref.current = setTimeout(() => {
-    //         checkAndShowPopup();
-    //     }, 15000);
+        timer1Ref.current = setTimeout(() => {
+            checkAndShowPopup();
+        }, 15000);
 
-    //     timer2Ref.current = setTimeout(() => {
-    //         checkAndShowPopup();
-    //     }, 60000);
+        timer2Ref.current = setTimeout(() => {
+            checkAndShowPopup();
+        }, 60000);
 
-    //     return () => {
-    //         if (timer1Ref.current) clearTimeout(timer1Ref.current);
-    //         if (timer2Ref.current) clearTimeout(timer2Ref.current);
-    //     };
-    // }, []);
+        return () => {
+            if (timer1Ref.current) clearTimeout(timer1Ref.current);
+            if (timer2Ref.current) clearTimeout(timer2Ref.current);
+        };
+    }, []);
 
     useEffect(() => {
         const submitted = sessionStorage.getItem('formSubmitted') === 'true';
@@ -192,28 +201,37 @@ export function GlobalProvider({ children }) {
     }, [])
 
     // Track user interaction (scroll/click/key) - but don't block if only cancelling popup
-    // useEffect(() => {
-    //     const handleUserInteraction = (e) => {
-    //         // Ignore interactions that are just closing the popup
-    //         if (e.target?.closest('.popup-close-button') || e.target?.closest('.popup-overlay')) {
-    //             return;
-    //         }
-    //         if (!hasInteracted) {
-    //             console.log('👆 User interacted with page content')
-    //             setHasInteracted(true)
-    //         }
-    //     }
+    useEffect(() => {
+  const handleUserInteraction = (e) => {
+    const target = e.target;
 
-    //     window.addEventListener('click', handleUserInteraction)
-    //     window.addEventListener('scroll', handleUserInteraction)
-    //     window.addEventListener('keydown', handleUserInteraction)
+    // Safely check if target is an Element
+    if (
+      target instanceof Element &&
+      (
+        target.closest(".popup-close-button") ||
+        target.closest(".popup-overlay")
+      )
+    ) {
+      return;
+    }
 
-    //     return () => {
-    //         window.removeEventListener('click', handleUserInteraction)
-    //         window.removeEventListener('scroll', handleUserInteraction)
-    //         window.removeEventListener('keydown', handleUserInteraction)
-    //     }
-    // }, [hasInteracted])
+    if (!hasInteracted) {
+      console.log("👆 User interacted with page content");
+      setHasInteracted(true);
+    }
+  };
+
+  window.addEventListener("click", handleUserInteraction);
+  window.addEventListener("scroll", handleUserInteraction);
+  window.addEventListener("keydown", handleUserInteraction);
+
+  return () => {
+    window.removeEventListener("click", handleUserInteraction);
+    window.removeEventListener("scroll", handleUserInteraction);
+    window.removeEventListener("keydown", handleUserInteraction);
+  };
+}, [hasInteracted]);
 
     // Auth check effect
     useEffect(() => {

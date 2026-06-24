@@ -97,8 +97,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
     ]
   }
 
-  console.log(blog?.author)
-  console.log(blog)
+
 
   const addHeadingIds = (html: string) => {
     let index = 0
@@ -340,18 +339,21 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
               </div>
 
               <div className="flex justify-between">
-                <div className="flex items-center gap-2">
+                <Link
+                  href={`/author/${blog?.author?.toLowerCase().replace(/\s+/g, "-")}`}
+                  className="flex items-center gap-2 group"
+                >
                   <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm">
                     {blog?.author?.charAt(0) || "S"}
                   </div>
 
                   <div>
                     <p className="text-xs text-gray-500">Author</p>
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">
                       {blog?.author || "Sakshi T."}
                     </p>
                   </div>
-                </div>
+                </Link>
 
                 {/* PREV / NEXT NAVIGATION */}
                 <div className="flex justify-between gap-4">
@@ -392,7 +394,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
         <aside className="space-y-3 sticky top-24 h-fit">
 
           {/* ================= BLOG ENQUIRY FORM ================= */}
-          <div className="bg-white/95 relative backdrop-blur-sm p-5 rounded-2xl border-2 border-[#F46C44] max-w-full mx-auto">
+         ` <div className="bg-white/95 relative backdrop-blur-sm p-5 rounded-2xl border-2 border-[#F46C44] max-w-full mx-auto">
             <div className="absolute top-4 right-4 z-10">
               <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-orange-200 px-3 py-1.5 rounded-full shadow-sm hover:shadow-md transition-shadow duration-200">
                 {/* Animated Pulse Dot */}
@@ -544,7 +546,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
 
 
             </form>
-          </div>
+          </div>`
 
           {/* ================= LATEST BLOGS ================= */}
           <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">

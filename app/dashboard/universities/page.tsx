@@ -873,10 +873,17 @@ function UniversitiesPageClient() {
                   {/* Cover Image */}
                   <div className="relative h-30 overflow-hidden">
                  
-                      <img
+                      <Image
                         src={uni?.cover_photo ? uni?.cover_photo : "https://etimg.etb2bimg.com/photo/121373442.cms"}
                         alt={uni.name}
                         className="w-full h-full object-cover transition-transform duration-700"
+                          onError={(e) => {
+                                  e.currentTarget.src =
+                                    "https://etimg.etb2bimg.com/photo/121373442.cms";
+                                }}
+                                width={100}
+                                height={100}
+                        
                       />
                 
                     <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
@@ -887,10 +894,16 @@ function UniversitiesPageClient() {
                     <div className="flex items-start justify-between -mt-12 mb-4 relative">
                       <div className="flex items-center gap-1">
                         {uni.uni_logo ? (
-                          <img
-                            src={uni.uni_logo}
+                          <Image
+                            src={uni.uni_logo || "/images/newlogo3.png"}
                             alt={uni.name}
-                            className="w-20 h-auto max-h-10 object-fit bg-white shadow-lg border-2"
+                            className="w-20 h-auto max-h-10 object-cover bg-white shadow-lg border-2"
+                              onError={(e) => {
+                                  e.currentTarget.src =
+                                    "/images/newlogo3.png";
+                                }}
+                                width={100}
+                                height={100}
                           />
                         ) : (
                           <Building className="w-28 h-28 text-muted-foreground" />

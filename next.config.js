@@ -33,7 +33,7 @@ const nextConfig = {
     },
   },
   compiler: {
-    removeConsole: true,
+    removeConsole: false,
   },
   typescript: {
     ignoreBuildErrors: true,

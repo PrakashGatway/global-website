@@ -381,7 +381,7 @@ export default function CourseDetailPage() {
                                 <div className="w-32 h-32  bg-white p-4 shadow-2xl border border-white/50">
                                     {course?.university.uni_logo ? (
                                         <img
-                                            src={course?.university.uni_logo}
+                                            src={course?.university.uni_logo || "/images/newlogo3.png"}
                                             alt={course?.university.name}
                                             onError={(e) => {
                                                 e.currentTarget.src =
@@ -460,7 +460,7 @@ export default function CourseDetailPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="grid grid-cols-2 md:grid-cols-5 max-w-7xl mx-auto gap-4 mb-6 px-4 sm:px-6 lg:px-8"
+                    className="grid grid-cols-2 md:grid-cols-5 max-w-7xl mx-auto gap-4 mb-6"
                 >
                     <StatCard
                         icon={IndianRupeeIcon}
@@ -502,7 +502,7 @@ export default function CourseDetailPage() {
                 </motion.div>
 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 max-w-7xl mx-auto px-6 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 max-w-7xl mx-auto  gap-6">
                     {/* Left Column - Main Content (2/3 width) */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Tabs Navigation */}
@@ -524,20 +524,7 @@ export default function CourseDetailPage() {
                                             {section.heading}
                                         </TabButton>
                                     ))}
-                                    <TabButton
-                                        active={activeTab === "requirements"}
-                                        onClick={() => setActiveTab("requirements")}
-                                        icon={Award}
-                                    >
-                                        Requirements
-                                    </TabButton>
-                                    <TabButton
-                                        active={activeTab === "documents"}
-                                        onClick={() => setActiveTab("documents")}
-                                        icon={FileText}
-                                    >
-                                        Documents
-                                    </TabButton>
+                                 
 
                                 </div>
                             </div>
@@ -545,53 +532,8 @@ export default function CourseDetailPage() {
                             <div className="p-2">
 
 
-                                {/* Requirements Tab */}
-                                {activeTab === "requirements" && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="space-y-2"
-                                    >
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                            Entry Requirements
-                                        </h3>
-                                        {course.requirements && Object.keys(course.requirements).length > 0 ? (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                {Object.entries(course.requirements).map(([key, value], index) => (
-                                                    <RequirementBadge key={index} label={key} value={value} />
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p className="text-gray-600 bg-gray-50 rounded-lg p-5 border border-gray-200">
-                                                No specific requirements listed for this course.
-                                            </p>
-                                        )}
-                                    </motion.div>
-                                )}
 
-                                {/* Documents Tab */}
-                                {activeTab === "documents" && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="space-y-2"
-                                    >
-                                        <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                            Required Documents
-                                        </h3>
-                                        {course.docsRequired && course.docsRequired.length > 0 ? (
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                {course.docsRequired.map((doc, index) => (
-                                                    <DocumentItem key={index} doc={doc} />
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p className="text-gray-600 bg-gray-50 rounded-lg p-5 border border-gray-200">
-                                                No document requirements listed for this course.
-                                            </p>
-                                        )}
-                                    </motion.div>
-                                )}
+
 
                                 {/* Dynamic Extra Content Sections */}
                                 {course.extra_content?.sections?.map((section) => (
@@ -609,83 +551,143 @@ export default function CourseDetailPage() {
                                                 className="text-muted-foreground text-gray-800 leading-relaxed"
                                                 dangerouslySetInnerHTML={{ __html: section.content }}
                                             />
-
-                                             <div className="bg-white py-6">
-                                    <div className="flex items-center justify-between mb-5">
-                                        <h3 className="text-xl font-semibold text-neutral-900">
-                                            Required Documents
-                                        </h3>
-
-                                        <span className="text-xs font-medium px-3 py-1 rounded-full bg-orange-50 text-orange-600">
-                                            {course?.docsRequired?.length || 0} Documents
-                                        </span>
-                                    </div>
-
-                                    <div className="grid md:grid-cols-2 gap-3">
-                                        {course?.docsRequired?.map((doc, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex items-start gap-3 p-4 rounded-xl border border-neutral-100 hover:border-orange-200 hover:bg-orange-50/30 transition-all"
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                className="space-y-2"
                                             >
-                                                <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0">
-                                                    📄
-                                                </div>
+                                                <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                                                    Entry Requirements
+                                                </h3>
 
-                                                <div>
-                                                    <p className="font-medium text-neutral-800">
-                                                        {doc}
+                                                {course?.requirements &&
+                                                    typeof course.requirements === "object" &&
+                                                    !Array.isArray(course.requirements) &&
+                                                    Object.keys(course.requirements).length > 0 ? (
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                        {Object.entries(course?.requirements || {}).map(
+                                                            ([key, requirement], index) => (
+                                                                <RequirementBadge
+                                                                    key={index}
+                                                                    label={key.toUpperCase()}
+                                                                    value={requirement?.value || "N/A"}
+                                                                />
+                                                            )
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-gray-600 bg-gray-50 rounded-lg p-5 border border-gray-200">
+                                                        No specific requirements listed for this course.
                                                     </p>
-                                                    <p className="text-xs text-neutral-400 mt-1">
-                                                        Required for application review
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="bg-white py-6">
-                                    <h3 className="text-lg font-semibold mb-5">
-                                        Application Information
-                                    </h3>
-
-                                    <div className="grid md:grid-cols-2 gap-4">
-                                        <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50">
-                                            <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                                                💰
-                                            </div>
+                                                )}
+                                            </motion.div>
 
                                             <div>
-                                                <p className="text-xs uppercase tracking-wide text-neutral-400">
-                                                    Initial Deposit
-                                                </p>
-                                                <p className="font-semibold text-lg text-neutral-900">
-                                                    £{course?.metaInfo?.initialDeposit}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50">
-                                            <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                                                📅
+                                                <span className=" bg-yellow-50">{course?.metaInfo?.EntryRequirement}</span>
                                             </div>
 
-                                            <div>
-                                                <p className="text-xs uppercase tracking-wide text-neutral-400">
-                                                    Intake Deadline
-                                                </p>
+                                            <div className="bg-white py-6">
+                                                <div className="flex items-center justify-between mb-5">
+                                                    <h3 className="text-lg font-semibold text-neutral-900">
+                                                        Required Documents
+                                                    </h3>
 
-                                                <p className="font-semibold text-lg text-neutral-900">
-                                                    {course?.metaInfo?.intakeDeadline?.split(":")[0]}
-                                                </p>
+                                                    <span className="text-xs font-medium px-3 py-1 rounded-full bg-orange-50 text-orange-600">
+                                                        {course?.docsRequired?.length || 0} Documents
+                                                    </span>
+                                                </div>
 
-                                                <p className="text-sm text-neutral-500">
-                                                    {course?.metaInfo?.intakeDeadline?.split(":")[1]}
-                                                </p>
+                                                <div className="grid md:grid-cols-2 gap-3">
+                                                    {course?.docsRequired?.map((doc, index) => (
+                                                        <div
+                                                            key={index}
+                                                            className="flex items-start gap-3 p-4 rounded-xl border border-neutral-100 hover:border-orange-200 hover:bg-orange-50/30 transition-all"
+                                                        >
+                                                            <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0">
+                                                                📄
+                                                            </div>
+
+                                                            <div>
+                                                                <p className="font-medium text-neutral-800">
+                                                                    {doc}
+                                                                </p>
+                                                                <p className="text-xs text-neutral-400 mt-1">
+                                                                    Required for application review
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
+
+                                            <div className="bg-white py-6">
+                                                <h3 className="text-lg font-semibold mb-5">
+                                                    Application Information
+                                                </h3>
+
+                                                <div className="grid md:grid-cols-2 gap-4">
+                                                    <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50">
+                                                        <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                                            💰
+                                                        </div>
+
+                                                        <div>
+                                                            <p className="text-xs uppercase tracking-wide text-neutral-400">
+                                                                Initial Deposit
+                                                            </p>
+                                                            <p className="font-semibold text-lg text-neutral-900">
+                                                                £{course?.metaInfo?.initialDeposit}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50">
+                                                        <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                                            📅
+                                                        </div>
+
+                                                        <div>
+                                                            <p className="text-xs uppercase tracking-wide text-neutral-400">
+                                                                Intake Deadline
+                                                            </p>
+
+                                                            <p className="font-semibold text-lg text-neutral-900">
+                                                                {course?.metaInfo?.intakeDeadline?.split(":")[0]}
+                                                            </p>
+
+                                                            <p className="text-sm text-neutral-500">
+                                                                {course?.metaInfo?.intakeDeadline?.split(":")[1]}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50">
+                                                        <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                                            💰
+                                                        </div>
+
+                                                        <div>
+                                                            <p className="text-xs uppercase tracking-wide text-neutral-400">
+                                                                Backlog
+                                                            </p>
+                                                            <p className="font-semibold text-lg text-neutral-900">
+                                                                {course?.metaInfo?.backlog}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {course?.metaInfo?.Remarks && (
+                                                <div className="bg-gray-50 border border-gray-200 p-4">
+                                                    <p className="text-lg font-medium text-gray-500 uppercase tracking-wider mb-2">
+                                                        Remark
+                                                    </p>
+                                                    <p className="text-sm text-gray-800 leading-relaxed">
+                                                        {course.metaInfo.Remarks}
+                                                    </p>
+                                                </div>
+                                            )}
                                         </motion.div>
                                     )
                                 ))}
@@ -698,13 +700,13 @@ export default function CourseDetailPage() {
                                     title="Scholarships for this Course" // Custom title
                                 />
 
-                               
+
 
                                 <motion.div
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.35 }}
-                                    className="relative overflow-hidden rounded-2xl mt-12 bg-gradient-to-r from-[#F26D44]/10 via-pink-200 to-indigo-100 text-gray-800"
+                                    className="relative overflow-hidden  mt-12 bg-gradient-to-r from-[#F26D44]/10 via-pink-200 to-indigo-100 text-gray-800"
                                 >
                                     <div className="px-8 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
 
@@ -760,73 +762,161 @@ export default function CourseDetailPage() {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="bg-gray-100 rounded-xl border-2 border-[#F26D44] text-gray-800 p-6 transition-all"
+                            className="bg-white border border-[#F26D44] p-5 shadow-sm"
                         >
-                            <div className="flex items-center gap-3 mb-5">
-                                <h3 className="font-semibold text-gray-900">About the University</h3>
-                            </div>
+                            <h3 className="font-semibold text-base text-gray-900 mb-4">
+                                About the University
+                            </h3>
 
-                            <div className="space-y-4">
+                            <div className="space-y-5">
                                 {course.university?.slogan && (
-                                    <div className="bg-gradient-to-r from-gray-50 to-white p-4 rounded-lg border border-gray-100 italic text-gray-700 text-sm">
+                                    <div className="bg-orange-50 border border-orange-100 rounded-lg p-3 text-sm italic text-gray-700">
                                         "{course.university.slogan}"
                                     </div>
                                 )}
 
-                                <div className="space-y-4">
-                                    <div className="flex items-start gap-2">
-                                        <MapPin className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Location</p>
-
-                                            {course.university?.address && (
-                                                <p className="text-base mt-0.5">{course.university.address}</p>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-start gap-2">
-                                        <Building2Icon className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Established</p>
-                                            <p className=" font-medium text-gray-80 mt-1">{course.university?.established_year || 'N/A'}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-start gap-2">
-                                        <Users className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Acceptance Rate</p>
-                                            <div className="flex items-center gap-2">
-                                                <span className=" font-bold text-gray-900 mt-1">{course.university?.acceptanceRate || 'N/A'}%</span>
-                                                <span className="text-sm px-2 py-0.5 bg-green-100 text-green-700 rounded-full">
-                                                    Competitive
-                                                </span>
+                                {/* University Information */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {course.university?.address && (
+                                        <div className="flex items-start gap-3">
+                                            <MapPin
+                                                className="w-5 h-5 text-[#F26D44] mt-0.5 flex-shrink-0"
+                                                strokeWidth={1.8}
+                                            />
+                                            <div>
+                                                <p className="text-xs uppercase tracking-wider text-gray-500">
+                                                    Location
+                                                </p>
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {course.university.address}
+                                                </p>
                                             </div>
                                         </div>
+                                    )}
+
+                                    <div className="flex items-start gap-3">
+                                        <Building2Icon
+                                            className="w-5 h-5 text-[#F26D44] mt-0.5 flex-shrink-0"
+                                            strokeWidth={1.8}
+                                        />
+                                        <div>
+                                            <p className="text-xs uppercase tracking-wider text-gray-500">
+                                                Established
+                                            </p>
+                                            <p className="text-sm font-medium text-gray-900">
+                                                {course.university?.established_year || "N/A"}
+                                            </p>
+                                        </div>
                                     </div>
 
-                                    {course.university?.intakes && course.university.intakes.length > 0 && (
-                                        <div className="flex items-start gap-2">
-                                            <Calendar className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
+                                    <div className="flex items-start gap-3">
+                                        <Users
+                                            className="w-5 h-5 text-[#F26D44] mt-0.5 flex-shrink-0"
+                                            strokeWidth={1.8}
+                                        />
+                                        <div>
+                                            <p className="text-xs uppercase tracking-wider text-gray-500">
+                                                Acceptance Rate
+                                            </p>
+                                            <p className="text-sm font-medium text-gray-900">
+                                                {course.university?.acceptanceRate
+                                                    ? `${course.university.acceptanceRate}%`
+                                                    : "N/A"}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {course.university?.uni_web && (
+                                        <div className="flex items-start gap-3">
+                                            <Globe
+                                                className="w-5 h-5 text-[#F26D44] mt-0.5 flex-shrink-0"
+                                                strokeWidth={1.8}
+                                            />
                                             <div>
-                                                <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Intakes</p>
-                                                <div className="flex flex-wrap gap-1.5 mt-1">
-                                                    {course.university.intakes.map((intake, i) => (
-                                                        <span key={i} className="text-sm bg-gray-100 px-2.5 py-1 rounded-full border border-gray-200">
-                                                            {intake}
-                                                        </span>
-                                                    ))}
-                                                </div>
+                                                <p className="text-xs uppercase tracking-wider text-gray-500">
+                                                    Website
+                                                </p>
+                                                <a
+                                                    href={course.university.uni_web}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm font-medium text-[#F26D44] hover:underline break-all"
+                                                >
+                                                    Visit Website
+                                                </a>
                                             </div>
                                         </div>
                                     )}
                                 </div>
 
+                                {/* Intakes */}
+                                {course.university?.intakes?.length > 0 && (
+                                    <div>
+                                        <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">
+                                            Available Intakes
+                                        </p>
+                                        <div className="flex flex-wrap gap-2">
+                                            {course.university.intakes.map((intake, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="px-3 py-1 text-xs font-medium bg-gray-100 border border-gray-200 rounded-full"
+                                                >
+                                                    {intake}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Financial Information */}
+                                {course.university?.financials && (
+                                    <div className="border-t border-gray-200 pt-5">
+                                        <h4 className="font-semibold text-gray-900 mb-3">
+                                            Financial Information
+                                        </h4>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-1 gap-3">
+                                            {[
+                                                {
+                                                    label: "UG Tuition Fees",
+                                                    value: course.university.financials.ug_fees,
+                                                },
+                                                {
+                                                    label: "PG Tuition Fees",
+                                                    value: course.university.financials.pg_fees,
+                                                },
+                                                {
+                                                    label: "Cost of Living",
+                                                    value: course.university.financials.cost_of_living,
+                                                },
+                                                {
+                                                    label: "Other Fees",
+                                                    value: course.university.financials.other_fees,
+                                                },
+                                            ]
+                                                .filter((item) => item.value)
+                                                .map((item, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="bg-gray-50 border border-gray-200 rounded-lg p-3"
+                                                    >
+                                                        <p className="text-xs text-gray-500 uppercase tracking-wide">
+                                                            {item.label}
+                                                        </p>
+                                                        <p className="text-sm font-semibold text-gray-900 mt-1">
+                                                            {item.value}
+                                                        </p>
+                                                    </div>
+                                                ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Button */}
                                 <div className="pt-4 border-t border-gray-200">
                                     <Link
                                         href={`/dashboard/universities/${course.university?.slug}`}
-                                        className="w-full px-4 py-2.5 bg-gradient-to-r from-gray-50 to-white text-gray-700 rounded-xl hover:from-gray-100 hover:to-gray-50 transition-all text-sm font-medium flex items-center justify-center gap-2 border border-gray-200"
+                                        className="w-full flex items-center justify-center gap-2 rounded-lg border border-[#F26D44] bg-[#F26D44] px-4 py-3 text-sm font-medium text-white hover:bg-[#e65d34] transition-colors"
                                     >
                                         View University Profile
                                         <ChevronRight className="w-4 h-4" />
@@ -841,7 +931,7 @@ export default function CourseDetailPage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.25 }}
-                                className="bg-orange-100 rounded-xl border border-gray-200 p-6 transition-all"
+                                className="bg-orange-100  border border-gray-200 p-6 transition-all"
                             >
                                 <div className="flex items-center gap-3 mb-4">
 
@@ -870,7 +960,7 @@ export default function CourseDetailPage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.3 }}
-                                className="bg-white rounded-xl border border-gray-200 p-6 transition-all"
+                                className="bg-white border border-gray-200 p-6 transition-all"
                             >
                                 <div className="flex items-center gap-3 mb-4">
                                     <h3 className="font-semibold text-gray-900">Accommodation</h3>
@@ -903,7 +993,7 @@ export default function CourseDetailPage() {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.35 }}
-                            className="bg-gradient-to-br from-[#F26D44] via-pink-600 to-indigo-700 rounded-xl p-6 text-white shadow-lg"
+                            className="bg-gradient-to-br from-[#F26D44] via-pink-600 to-indigo-700 p-6 text-white shadow-lg"
                         >
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="">

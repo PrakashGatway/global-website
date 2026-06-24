@@ -76,7 +76,7 @@ export default function AuthorPage({ author }) {
             {author.role}
           </p>
 
-          <div className="flex gap-3 mt-4">
+          {/* <div className="flex gap-3 mt-4">
   <a
     href={author.linkedin}
     target="_blank"
@@ -94,12 +94,13 @@ export default function AuthorPage({ author }) {
   >
     <Twitter size={18} />
   </a>
-</div>
+</div> */}
+
         </div>
       </div>
 
       {/* Right Stats */}
-      <div className="flex gap-10 text-white">
+      {/* <div className="flex gap-10 text-white">
         <div className="text-center">
           <h3 className="text-4xl font-bold">592</h3>
           <p className="text-white/80">Posts</p>
@@ -109,7 +110,8 @@ export default function AuthorPage({ author }) {
           <h3 className="text-4xl font-bold">45.6L</h3>
           <p className="text-white/80">Reads</p>
         </div>
-      </div>
+      </div> */}
+
     </div>
   </div>
 </div>
@@ -135,12 +137,12 @@ export default function AuthorPage({ author }) {
                                 <span className="text-[#ed6c02] font-medium"> {author.exams.slice(4).join(', ')}</span>
                                 {author.exams.length > 0 && ' and other popular exams.'}
                             </p>
-                            <p className="text-[#2c241a] text-sm pt-1">
+                            {/* <p className="text-[#2c241a] text-sm pt-1">
                                 <span className="font-medium text-[#1e3a5f]">Contact:</span>{' '}
                                 <a href={`mailto:${author.email}`} className="text-[#ed6c02] hover:underline">
                                     {author.email}
                                 </a>
-                            </p>
+                            </p> */}
                         </div>
                         <div className="bg-[#faf7f1] border border-[#e8dfd3] p-4 rounded-sm self-start">
                             <h3 className="text-xs uppercase tracking-[0.1em] text-[#1e3a5f] font-semibold border-b border-[#d9cdbc] pb-1 mb-2">

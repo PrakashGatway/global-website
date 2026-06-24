@@ -312,7 +312,7 @@ const WhyStudySection = ({ data }) => {
   return (
     <section className="w-full py-10 sm:py-14 lg:py-20 px-4 sm:px-6 bg-white">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8 sm:mb-10">
+        <div className="mb-8 sm:mb-0">
           <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
             <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
               {data?.title?.split('||')[0]?.trim() || ""}
@@ -529,7 +529,7 @@ const ContentSection = ({ data }) => {
       <div className="max-w-7xl mx-auto">
         {(data?.items || []).map((item, i) => (
           <div key={i} className="mb-8 lg:mb-10">
-            <div className="mb-5 sm:mb-8">
+            <div className="mb-5 sm:mb-2">
               <h2 className="text-primary text-xl sm:text-3xl md:text-4xl font-bold">
                 <span className="text-[#F46C44] block" dangerouslySetInnerHTML={{
                   __html: item.title?.split("||")[0]
@@ -539,7 +539,7 @@ const ContentSection = ({ data }) => {
                 </div>
               </h2>
             </div>
-            <div className="country-table overflow-x-auto" dangerouslySetInnerHTML={{ __html: item.description }} />
+            <div className="country-table overflow-x-auto mt-4" dangerouslySetInnerHTML={{ __html: item.description }} />
           </div>
         ))}
       </div>

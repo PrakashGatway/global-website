@@ -1,8 +1,11 @@
 "use client";
 
 import axiosInstance from "@/app/axiosInstance";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect, useRef, ReactNode } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 /* ─── Scroll Animation Hook ─── */
 function useScrollReveal() {
@@ -115,12 +118,6 @@ const requirementTabs = [
 
 
 
-const similarScholarships = [
-  { name: "Clarendon Fund", uni: "University of Oxford", amount: "Full Tuition + Living", tag: "Fully Funded" },
-  { name: "Chevening Scholarship", uni: "Various UK Universities", amount: "Full Tuition + Living", tag: "Fully Funded" },
-  { name: "Rhodes Scholarship", uni: "University of Oxford", amount: "Full Tuition + Living", tag: "Fully Funded" },
-  { name: "Gates Cambridge", uni: "University of Cambridge", amount: "Full Tuition + Living", tag: "Fully Funded" },
-];
 
 const faqs = [
   { q: "Who is eligible to apply?", a: "International students from any country who have received an offer to study a full-time Master's programme at Oxford. You must demonstrate exceptional academic achievement, leadership potential, and commitment to community impact." },
@@ -190,6 +187,32 @@ export default function ScholarshipPage() {
   const params = useParams();
   const slug = params?.slug as string;
 
+    const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm()
+  
+
+  const onSubmit = async (data) => {
+    try {
+      const res = await axiosInstance.post("/contactus", {
+        subject: "Contact Form",
+        type: "Website",
+        fullName: `${data.name}`,
+        email: data.email,
+        phone: data.mobile,
+        destination: data.destination,
+        description: "this is form",
+      });
+
+      if (res.status === 200 || res.status === 201) {
+        toast.success("Message sent successfully ✅");
+        reset();
+      } else {
+        toast.error("Failed to send message ❌");
+      }
+    } catch (error) {
+      toast.error("Failed to send message ❌");
+    }
+  };
+
 
   useEffect(() => {
     const fetchScholarshipDetails = async () => {
@@ -243,6 +266,10 @@ export default function ScholarshipPage() {
 
   console.log(Simillar)
 
+ const allSimillar = Simillar.filter(
+  (item) => item.slug !== slug
+).slice(0, 3);
+  console.log(allSimillar)
   return (
     <main className="bg-[#FAFAF9] text-neutral-900 antialiased">
       {/* ───── HERO ───── */}
@@ -752,89 +779,212 @@ export default function ScholarshipPage() {
               <div className="lg:sticky lg:top-5 space-y-4">
 
                 {/* CTA Card */}
-                <Reveal delay={200}>
-                  <div className="bg-white rounded-2xl border border-neutral-200 shadow-lg overflow-hidden">
-                    <div className="relative h-28">
-                      <img src="https://picsum.photos/seed/said-business/640/240.jpg" alt="" className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
-                        <div className="w-10 h-10 rounded-xl bg-white shadow-lg flex items-center justify-center text-lg">🏛️</div>
-                        <div className="text-orange-300 text-xs">★★★★★ <span className="text-white/60 ml-0.5">4.8</span></div>
-                      </div>
-                    </div>
-                    <div className="p-5">
-                      <h3 className="font-medium text-sm">University of Oxford</h3>
-                      <p className="text-xs text-neutral-400 mb-4">Saïd Business School · Oxford, UK</p>
+              <div className="bg-white/95 relative backdrop-blur-sm p-5 rounded-2xl border-2 border-[#F46C44] max-w-full mx-auto">
+            <div className="absolute top-4 right-4 z-10">
+              <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-orange-200 px-3 py-1.5 rounded-full shadow-sm hover:shadow-md transition-shadow duration-200">
+                {/* Animated Pulse Dot */}
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                </span>
+                <span className="text-xs font-bold text-gray-700 whitespace-nowrap">
+                  Book Free Counselling
+                </span>
+              </div>
+            </div>
 
-                      <div className="space-y-2.5 mb-5">
-                        {[
-                          { l: "Amount", v: "₹10,00,000", vc: "text-orange-600" },
-                          { l: "Deadline", v: "30 Sept 2026", vc: "text-red-600" },
-                          { l: "Days Left", v: "487 days", vc: "" },
-                        ].map((item) => (
-                          <div key={item.l} className="flex justify-between text-sm">
-                            <span className="text-neutral-400 font-light">{item.l}</span>
-                            <span className={`font-medium ${item.vc}`}>{item.v}</span>
-                          </div>
-                        ))}
-                      </div>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
-                      <button className="w-full bg-neutral-900 hover:bg-neutral-800 text-white font-medium py-3 rounded-xl transition-all duration-300 text-sm hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0">
-                        Apply Now
-                      </button>
-                      <button className="w-full border border-neutral-200 hover:border-neutral-300 text-neutral-600 font-medium py-3 rounded-xl transition-all duration-300 text-sm mt-2.5 hover:bg-neutral-50">
-                        Check Eligibility
-                      </button>
-                    </div>
+              {/* Name & Mobile Row */}
+              <div className="grid grid-cols-1 sm:grid-cols-1 gap-4 pt-5">
+                {/* Name */}
+                <div className="space-y-1.5">
+                  <label htmlFor="name" className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <input
+                      id="name"
+                      {...register("name", { required: "Name is required" })}
+                      placeholder="Enter your name"
+                      className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all duration-200 placeholder:text-gray-400 hover:border-gray-300"
+                    />
                   </div>
-                </Reveal>
+                  {errors.name && <p className="text-[11px] text-red-500 font-medium">{errors.name.message}</p>}
+                </div>
 
-                {/* Rankings */}
-                <Reveal delay={300}>
-                  <div className="bg-white rounded-2xl border border-neutral-200 p-5">
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400 mb-4">University Rankings</h4>
-                    <div className="space-y-3">
-                      {[
-                        { name: "QS World University", rank: "#1" },
-                        { name: "THE World University", rank: "#1" },
-                        { name: "FT Business School", rank: "#3" },
-                        { name: "Research Quality", rank: "#2" },
-                      ].map((r) => (
-                        <div key={r.name} className="flex justify-between items-center group">
-                          <span className="text-sm text-neutral-500 font-light group-hover:text-neutral-700 transition-colors">{r.name}</span>
-                          <span className="text-sm font-medium text-orange-600">{r.rank}</span>
-                        </div>
-                      ))}
-                    </div>
+                {/* Mobile */}
+                <div className="space-y-1.5">
+                  <label htmlFor="mobile" className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    Mobile Number
+                  </label>
+                  <div className="relative">
+                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    <input
+                      id="mobile"
+                      {...register("mobile", {
+                        required: "Mobile number required",
+                        pattern: { value: /^[0-9]{10}$/, message: "Enter valid 10 digit number" },
+                      })}
+                      placeholder="10-digit mobile"
+                      type="tel"
+                      inputMode="numeric"
+                      className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all duration-200 placeholder:text-gray-400 hover:border-gray-300"
+                    />
                   </div>
-                </Reveal>
+                  {errors.mobile && <p className="text-[11px] text-red-500 font-medium">{errors.mobile.message}</p>}
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="space-y-1.5">
+                <label htmlFor="email" className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <input
+                    id="email"
+                    {...register("email", {
+                      required: "Email required",
+                      pattern: { value: /^\S+@\S+$/i, message: "Invalid email" },
+                    })}
+                    placeholder="your@email.com"
+                    type="email"
+                    className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all duration-200 placeholder:text-gray-400 hover:border-gray-300"
+                  />
+                </div>
+                {errors.email && <p className="text-[11px] text-red-500 font-medium">{errors.email.message}</p>}
+              </div>
+
+              {/* Destination */}
+              <div className="space-y-1.5">
+                <label htmlFor="destination" className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  Preferred Destination
+                </label>
+                <div className="relative">
+                  <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <select
+                    id="destination"
+                    {...register("destination", { required: "Select destination" })}
+                    className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-10 py-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all duration-200 appearance-none cursor-pointer text-gray-700 hover:border-gray-300"
+                  >
+                    <option value="" disabled className="text-gray-400">Select country</option>
+                    {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
+                      <option key={c} value={c.toLowerCase()}>
+                        Study In {c}
+                      </option>
+                    ))}
+                  </select>
+                  <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+                {errors.destination && <p className="text-[11px] text-red-500 font-medium">{errors.destination.message}</p>}
+              </div>
+
+              {/* Message */}
+
+
+              {/* Checkbox */}
+              <div className="flex items-center gap-2.5 pt-1">
+                <input
+                  type="checkbox"
+                  id="agree"
+                  {...register("agree", { required: "You must accept terms" })}
+                  className="mt-1 w-4 h-4 rounded border-gray-300 text-orange-500 focus:ring-orange-400/30 cursor-pointer transition"
+                />
+                <label htmlFor="agree" className="text-[12px] text-gray-600 leading-tight cursor-pointer">
+                  I agree to the <a href="/terms" className="text-orange-600 font-medium hover:underline">terms & privacy policy</a>
+                </label>
+              </div>
+              {errors.agree && <p className="text-[11px] text-red-500 font-medium -mt-2">{errors.agree.message}</p>}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full mt-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white py-2.5 rounded-xl font-semibold text-sm transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none active:scale-[0.98]"
+              >
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  "Book Free Counselling →"
+                )}
+              </button>
+
+
+            </form>
+          </div>
+
+              
 
 
 
                 {/* Similar */}
-                <Reveal delay={500}>
-                  <div className="bg-white rounded-2xl border border-neutral-200 p-5">
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] text-neutral-400 mb-4">Similar Scholarships</h4>
-                    <div className="space-y-3">
-                      {similarScholarships.map((s) => (
-                        <a
-                          key={s.name}
-                          href="#"
-                          className="block group border border-neutral-100 rounded-xl p-3.5 hover:border-orange-200 hover:bg-orange-50/30 transition-all duration-300"
-                        >
-                          <div className="flex items-start justify-between gap-2 mb-1">
-                            <h5 className="font-medium text-sm group-hover:text-orange-600 transition-colors duration-300 leading-tight">{s.name}</h5>
-                            <span className="text-[8px] font-bold uppercase tracking-[0.15em] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full flex-shrink-0">
-                              {s.tag}
-                            </span>
-                          </div>
-                          <p className="text-xs text-neutral-400 font-light">{s.uni}</p>
-                          <p className="text-xs font-medium text-orange-600 mt-1">{s.amount}</p>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                </Reveal>
+            <div className="bg-white rounded-2xl border border-neutral-200 p-5">
+  <div className="flex items-center justify-between mb-4">
+    <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-neutral-500">
+      Similar Scholarships
+    </h4>
+
+    <span className="px-2.5 py-1 rounded-full bg-orange-100 text-orange-600 text-[10px] font-bold uppercase">
+      {allSimillar?.length || 1} Available
+    </span>
+  </div>
+
+  <div className="space-y-4">
+    {allSimillar?.map((item) => (
+     <Link
+  href={`/scholarship/${item.slug}`}
+  className="group flex gap-3 rounded-xl border border-gray-200 bg-white p-3 hover:border-orange-300 hover:shadow-md transition-all"
+>
+  <img
+    src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=300&auto=format&fit=crop&q=80"
+    alt="Scholarship"
+    className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+  />
+
+  <div className="flex-1 ">
+    <span className="inline-block text-[10px] font-semibold text-orange-600 uppercase tracking-wider">
+      Scholarship
+    </span>
+
+    <h5 className="text-sm font-semibold text-gray-900 mt-1 line-clamp-2">
+      {item.title}
+    </h5>
+
+
+    <div className="flex items-center justify-between mt-2 ">
+      <span className="text-xs text-gray-500">
+        {item.fundingType}
+      </span>
+
+      <span className="text-xs  font-medium text-orange-600 group-hover:translate-x-1 transition-transform">
+        View →
+      </span>
+    </div>
+  </div>
+</Link>
+    ))}
+  </div>
+</div>
 
 
 
