@@ -241,7 +241,7 @@ export default function VisaProcessingListPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#f56e45] mx-auto"></div>
+          <div className="animate-spin -full h-12 w-12 border-b-2 border-[#f56e45] mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading visa applications...</p>
         </div>
       </div>
@@ -260,7 +260,7 @@ export default function VisaProcessingListPage() {
             </div>
             <button
               onClick={fetchVisaApplications}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 -lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
               <RefreshCw size={16} />
               Refresh
@@ -270,57 +270,57 @@ export default function VisaProcessingListPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+          <div className="bg-white -xl border border-gray-200 shadow-sm p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-500">Total Applications</p>
                 <p className="text-2xl font-bold text-gray-800">{stats.total}</p>
               </div>
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-blue-100 -full flex items-center justify-center">
                 <FileText size={20} className="text-blue-600" />
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+          <div className="bg-white -xl border border-gray-200 shadow-sm p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-500">In Progress</p>
                 <p className="text-2xl font-bold text-orange-600">{stats.inProgress}</p>
               </div>
-              <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-orange-100 -full flex items-center justify-center">
                 <ClockIcon size={20} className="text-orange-600" />
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+          <div className="bg-white -xl border border-gray-200 shadow-sm p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-500">Completed</p>
                 <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
               </div>
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-green-100 -full flex items-center justify-center">
                 <CheckCircle size={20} className="text-green-600" />
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+          <div className="bg-white -xl border border-gray-200 shadow-sm p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-500">Visa Approved</p>
                 <p className="text-2xl font-bold text-teal-600">{stats.approved}</p>
               </div>
-              <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-teal-100 -full flex items-center justify-center">
                 <Award size={20} className="text-teal-600" />
               </div>
             </div>
           </div>
-          {/* <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+          {/* <div className="bg-white -xl border border-gray-200 shadow-sm p-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-500">Pending APS</p>
                 <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
               </div>
-              <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-yellow-100 -full flex items-center justify-center">
                 <AlertCircle size={20} className="text-yellow-600" />
               </div>
             </div>
@@ -328,7 +328,7 @@ export default function VisaProcessingListPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-6">
+        <div className="bg-white -xl border border-gray-200 shadow-sm p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="relative">
               <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -337,14 +337,14 @@ export default function VisaProcessingListPage() {
                 placeholder="Search by Application ID, Country, Course..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#f56e45] focus:border-[#f56e45]"
+                className="w-full pl-9 pr-3 py-2 border border-gray-300 -lg text-sm focus:ring-[#f56e45] focus:border-[#f56e45]"
               />
             </div>
             <div>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#f56e45] focus:border-[#f56e45]"
+                className="w-full px-3 py-2 border border-gray-300 -lg text-sm focus:ring-[#f56e45] focus:border-[#f56e45]"
               >
                 <option value="all">All Status</option>
                 <option value="in-progress">In Progress</option>
@@ -357,7 +357,7 @@ export default function VisaProcessingListPage() {
               <select
                 value={countryFilter}
                 onChange={(e) => setCountryFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#f56e45] focus:border-[#f56e45]"
+                className="w-full px-3 py-2 border border-gray-300 -lg text-sm focus:ring-[#f56e45] focus:border-[#f56e45]"
               >
                 <option value="all">All Countries</option>
                 {getUniqueCountries().map(country => (
@@ -369,7 +369,7 @@ export default function VisaProcessingListPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#f56e45] focus:border-[#f56e45]"
+                className="flex-1 px-3 py-2 border border-gray-300 -lg text-sm focus:ring-[#f56e45] focus:border-[#f56e45]"
               >
                 <option value="date">Sort by Date</option>
                 <option value="step">Sort by Step</option>
@@ -378,7 +378,7 @@ export default function VisaProcessingListPage() {
               </select>
               {/* <button
                 onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-                className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="px-3 py-2 border border-gray-300 -lg hover:bg-gray-50"
               >
                 {sortOrder === 'asc' ? '↑' : '↓'}
               </button> */}
@@ -387,19 +387,19 @@ export default function VisaProcessingListPage() {
         </div>
 
         {/* Applications Table */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="bg-white -xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-orange-500 text-white border-b border-gray-200">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Application ID</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Country</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Course</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Current Step</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Progress</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Created</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold ">Application ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold ">Country</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold ">Course</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold ">Current Step</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold ">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold ">Progress</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold ">Created</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold ">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -435,21 +435,21 @@ export default function VisaProcessingListPage() {
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`text-xs px-2 py-1 rounded-full ${getStepColor(currentStatus.stepId)}`}>
+                          <span className={`text-xs px-2 py-1 -full ${getStepColor(currentStatus.stepId)}`}>
                             {currentStatus.label}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`text-xs px-2 py-1 rounded-full ${getStatusBadgeColor(currentStatus.status)}`}>
+                          <span className={`text-xs px-2 py-1 -full ${getStatusBadgeColor(currentStatus.status)}`}>
                             {currentStatus.status}
                           </span>
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             <div className="flex-1 max-w-[100px]">
-                              <div className="w-full bg-gray-200 rounded-full h-1.5">
+                              <div className="w-full bg-gray-200 -full h-1.5">
                                 <div 
-                                  className="bg-[#f56e45] h-1.5 rounded-full" 
+                                  className="bg-[#f56e45] h-1.5 -full" 
                                   style={{ width: `${currentStatus.progress}%` }}
                                 ></div>
                               </div>
@@ -467,21 +467,21 @@ export default function VisaProcessingListPage() {
                           <div className="flex items-center justify-end gap-2">
                             {/* <button
                               onClick={() => handleViewDetails(app)}
-                              className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              className="p-1.5 text-blue-600 hover:bg-blue-50 -lg transition-colors"
                               title="View Details"
                             >
                               <Eye size={16} />
                             </button>
                             <button
                               onClick={() => handleViewJourney(app._id)}
-                              className="p-1.5 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                              className="p-1.5 text-green-600 hover:bg-green-50 -lg transition-colors"
                               title="View Journey"
                             >
                               <ExternalLink size={16} />
                             </button> */}
                             <button
                               onClick={() => handleEdit(app._id)}
-                              className="p-1.5 flex gap-1 items-center text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                              className="p-1.5 flex gap-1 items-center text-orange-600 hover:bg-orange-50 -lg transition-colors"
                               title="Edit"
                             >
                               <Edit3 size={16} /> Edit
@@ -530,10 +530,10 @@ function DetailModal({ application, onClose, onEdit, onViewJourney, getStepColor
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white -xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">Application Details</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg">
+          <button onClick={onClose} className="p-1 hover:bg-gray-100 -lg">
             <X size={20} />
           </button>
         </div>
@@ -564,7 +564,7 @@ function DetailModal({ application, onClose, onEdit, onViewJourney, getStepColor
             <div>
               <label className="text-xs text-gray-500">Current Step</label>
               <div className="flex items-center gap-2 mt-1">
-                <span className={`text-xs px-2 py-1 rounded-full ${getStepColor(currentStatus.stepId)}`}>
+                <span className={`text-xs px-2 py-1 -full ${getStepColor(currentStatus.stepId)}`}>
                   {currentStatus.label}
                 </span>
               </div>
@@ -579,7 +579,7 @@ function DetailModal({ application, onClose, onEdit, onViewJourney, getStepColor
                 <div>
                   <label className="text-xs text-gray-500">Primary Status</label>
                   <p className="text-sm font-medium text-gray-800">
-                    <span className={`text-xs px-2 py-1 rounded-full ${getStatusBadgeColor(application.application.primaryStatus)}`}>
+                    <span className={`text-xs px-2 py-1 -full ${getStatusBadgeColor(application.application.primaryStatus)}`}>
                       {application.application.primaryStatus}
                     </span>
                   </p>
@@ -610,7 +610,7 @@ function DetailModal({ application, onClose, onEdit, onViewJourney, getStepColor
                 {application.application.documents.slice(0, 5).map((doc, idx) => (
                   <div key={idx} className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span className="text-sm text-gray-700">{doc.name}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    <span className={`text-xs px-2 py-0.5 -full ${
                       doc.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
                     }`}>
                       {doc.status}
@@ -632,21 +632,21 @@ function DetailModal({ application, onClose, onEdit, onViewJourney, getStepColor
             <div className="space-y-2">
               {application.steps?.map((step) => (
                 <div key={step.id} className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getStepColor(step.id)}`}>
+                  <div className={`w-8 h-8 -full flex items-center justify-center ${getStepColor(step.id)}`}>
                     <span className="text-xs font-bold">{step.id}</span>
                   </div>
                   <div className="flex-1">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium text-gray-800">{step.label}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusBadgeColor(step.page?.status)}`}>
+                      <span className={`text-xs px-2 py-0.5 -full ${getStatusBadgeColor(step.page?.status)}`}>
                         {step.page?.status || 'Pending'}
                       </span>
                     </div>
                     {step.progress > 0 && (
                       <div className="flex items-center gap-2 mt-1">
                         <div className="flex-1 max-w-[200px]">
-                          <div className="w-full bg-gray-200 rounded-full h-1">
-                            <div className="bg-[#f56e45] h-1 rounded-full" style={{ width: `${step.progress}%` }}></div>
+                          <div className="w-full bg-gray-200 -full h-1">
+                            <div className="bg-[#f56e45] h-1 -full" style={{ width: `${step.progress}%` }}></div>
                           </div>
                         </div>
                         <span className="text-xs text-gray-500">{step.progress}%</span>
@@ -662,19 +662,19 @@ function DetailModal({ application, onClose, onEdit, onViewJourney, getStepColor
         <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-4 py-2 border border-gray-300 -lg text-gray-700 hover:bg-gray-50"
           >
             Close
           </button>
           <button
             onClick={onViewJourney}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            className="px-4 py-2 bg-green-600 text-white -lg hover:bg-green-700"
           >
             View Full Journey
           </button>
           <button
             onClick={onEdit}
-            className="px-4 py-2 bg-[#f56e45] text-white rounded-lg hover:bg-[#e55a35]"
+            className="px-4 py-2 bg-[#f56e45] text-white -lg hover:bg-[#e55a35]"
           >
             Edit Application
           </button>

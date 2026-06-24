@@ -21,11 +21,13 @@ import {
   GiftIcon,
   Armchair,
   HandCoins,
-  UsersIcon
+  UsersIcon,
+  Building2Icon
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useGlobal } from "@/src/statecontext";
+import { MdDetails } from "react-icons/md";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -49,7 +51,7 @@ const counsellor = [
   { icon: UsersIcon, label: "Student", href: "/dashboard/user" },
   { icon: FileText, label: "Application", href: "/dashboard/application_details" },
   { icon: FileText, label: "Visa Prosessing", href: "/dashboard/visaDetails" },
-  // { icon: GiftIcon, label: "Offers", href: "/dashboard/offers/counsellor" },
+  { icon: Building2Icon, label: "Accommodation Details", href: "/dashboard/accommodation-create" },
   { icon: Headphones, label: "Support", href: "/dashboard/support/counsellor" },
   { icon: Bell, label: "Notifications", href: "/dashboard/notifications" },
   { icon: Settings, label: "Settings", href: "/dashboard/settings" },

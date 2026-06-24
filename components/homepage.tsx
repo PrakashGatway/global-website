@@ -362,7 +362,7 @@ export default function Homepage({
               <div
                 className="mt-6 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               >
-                <a
+                <button
                   onClick={openPopup}
                   className="
               text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#f46c44] rounded-full shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
@@ -371,12 +371,12 @@ export default function Homepage({
               flex items-center justify-center gap-2
               transition-all hover:opacity-90 cursor-pointer
             "
-                  rel="noopener noreferrer"
+                  // rel="noopener noreferrer"
                 >
                   {homePage?.hero?.ctaText1 || "Get Free Counselling"}
-                </a>
+                </button>
 
-                <a
+                <button
                   onClick={openPopup}
                   // href={homePage?.hero?.ctaLink2}
                   className="
@@ -385,10 +385,10 @@ export default function Homepage({
               transition-all hover:bg-[#f46c44] hover:border-none hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
               inline-flex items-center justify-center
             "
-                  rel="noopener noreferrer"
+                  // rel="noopener noreferrer"
                 >
                   {homePage?.hero?.ctaText2 || "Check Your Eligibility"}
-                </a>
+                </button>
               </div>
             </div>
 
@@ -403,6 +403,8 @@ export default function Homepage({
                     src="/images/hero-bg-round.png"
                     alt="circle"
                     className="w-[540px] max-w-none"
+                    width="1000"
+                    height="1000"
                   />
                 </div>
 
@@ -458,6 +460,8 @@ export default function Homepage({
               src="/images/home-enquiry.png"
               alt={homePage?.formSection?.title || "Enquiry Image"}
               className="w-[320px] lg:w-175"
+              width="1000"
+              height="1000"
             />
           </div>
 
@@ -1054,7 +1058,12 @@ export default function Homepage({
                     >
                       {/* Icon */}
                       <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center mb-3 md:mb-4 mx-auto">
-                        <img src={service.icon || "https://cdn-icons-png.flaticon.com/512/5474/5474438.png"} alt="" />
+                        <img 
+                        src={service.icon || "https://cdn-icons-png.flaticon.com/512/5474/5474438.png"} 
+                        alt="img" 
+                        width="1000"
+                        height="1000"
+                        />
                       </div>
 
                       {/* Title */}
@@ -1132,7 +1141,9 @@ export default function Homepage({
                         src={
                           post.coverImage ||
                           "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
-                        }
+                        }            
+                        width="1000"
+                        height="1000"
                         alt={post.title}
                         className="w-full h-[210px] object-cover"
                         onError={(e) => {
@@ -1314,6 +1325,8 @@ export default function Homepage({
                         src={item.image}
                         alt={item.name}
                         className="w-full h-[220px] object-cover group-hover:scale-105 transition duration-500"
+                        width="1000"
+                        height="1000"
                       />
                     </div>
                   </div>
@@ -1321,7 +1334,7 @@ export default function Homepage({
                   <div className="p-5">
                     <div className="flex gap-2">
                       <span className="text-2xl">
-                        <img src={item.flag} alt="" className="w-10 h-6 mt-2" />
+                        <img src={item.flag} alt={item.country} width="1000" height="1000" className="w-10 h-6 mt-2" />
                       </span>
 
                       <div>

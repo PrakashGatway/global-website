@@ -1,8 +1,10 @@
 // app/accommodation/page.tsx
 "use client";
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Search, MapPin, Grid, List, ChevronRight, Star, Wifi, Droplets, Flame, Shield, Home, GraduationCap } from 'lucide-react';
+import axiosInstance from '@/app/axiosInstance';
+import { useRouter } from 'next/navigation';
 
 // Dummy accommodation data with images
 interface Accommodation {
@@ -191,31 +193,38 @@ const accommodations: Accommodation[] = [
     }
 ];
 
-const countries = [
-    { name: "United Kingdom", flag: "🇬🇧" },
-    { name: "Canada", flag: "🇨🇦" },
-    { name: "Ireland", flag: "🇮🇪" },
-    { name: "United States", flag: "🇺🇸" },
-    { name: "New Zealand", flag: "🇳🇿" },
-    { name: "UAE", flag: "🇦🇪" }
-];
-
-const cities = [
-    { name: "Sheffield", image: "https://images.unsplash.com/photo-1548625149-fc4a29cf7092?w=300&h=200&fit=crop" },
-    { name: "Bradford", image: "https://images.unsplash.com/photo-1572917718849-706086847c7f?w=300&h=200&fit=crop" },
-    { name: "Liverpool", image: "https://images.unsplash.com/photo-1562569633-622303bafef5?w=300&h=200&fit=crop" },
-    { name: "Edinburgh", image: "https://images.unsplash.com/photo-1529335764857-3f121e912e6e?w=300&h=200&fit=crop" },
-    { name: "Bristol", image: "https://images.unsplash.com/photo-1529634597503-139d3726fed5?w=300&h=200&fit=crop" },
-    { name: "Southampton", image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=300&h=200&fit=crop" },
-    { name: "Newcastle", image: "https://images.unsplash.com/photo-1572917718849-706086847c7f?w=300&h=200&fit=crop" },
-    { name: "Coventry", image: "https://images.unsplash.com/photo-1524230375108-923040281b9e?w=300&h=200&fit=crop" }
-];
-
-const cityList = ["All Cities", "Sheffield", "Manchester", "London", "Birmingham", "Liverpool", "Leeds", "Newcastle", "Coventry", "Bradford", "Edinburgh", "Bristol"];
-
 export default function AccommodationPage() {
-    const [selectedCountry, setSelectedCountry] = useState("United Kingdom");
+    const [selectedCountry, setSelectedCountry] = useState("6a3252e7fb3b7a4680bc148d");
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [countries, setcountries] = useState([]);
+    const [cities, setcities] = useState([]);
+    const [hotels, sethotels] = useState([]);
+    const router = useRouter();
+   
+    const country = useCallback(async () => {
+        try {
+            // const res = await axiosInstance.get('/accommodation/countries');
+            const [res,resdata,hotel] = await Promise.all([
+                axiosInstance.get('/accommodation/countries?limit=30'),
+                axiosInstance.get(`/accommodation/cities/country/${selectedCountry}`),
+                axiosInstance.get(`/accommodation/hotels`)
+
+            ])
+            const data = await res.data.data;
+            const data1 = await resdata.data.data;
+            setcountries(data);
+            setcities(data1);
+            sethotels(hotel.data.data)
+            console.log(data,data1);
+        } catch (error) {
+            console.error("server side error : ", error);
+        }
+    }, [selectedCountry]);
+
+    useEffect(() => {
+        country();
+    },[selectedCountry]);
+
 
     return (
         <div className="min-h-screen mx-auto px-2">
@@ -234,11 +243,11 @@ export default function AccommodationPage() {
             <div className="bg-white sticky top-0 z-20">
                 <div className=" mx-auto">
                     <div className="flex gap-3 overflow-x-auto py-2 scrollbar-hide">
-                        {countries.map((country) => (
+                        {countries.map((country:any) => (
                             <button
                                 key={country.name}
-                                onClick={() => setSelectedCountry(country.name)}
-                                className={`flex items-center gap-2 px-3 py-1 rounded-full border-2 whitespace-nowrap transition-all ${selectedCountry === country.name
+                                onClick={() => setSelectedCountry(country._id)}
+                                className={`flex items-center gap-2 px-3 py-1 rounded-full border-2 whitespace-nowrap transition-all ${selectedCountry === country._id
                                     ? 'border-[#ff6b35] bg-orange-50 text-[#ff6b35]'
                                     : 'border-gray-200 hover:border-[#ff6b35] hover:text-[#ff6b35]'
                                     }`}
@@ -255,7 +264,7 @@ export default function AccommodationPage() {
             <div className="bg-white pt-6">
                 <div className="">
                     <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-                        {cities.map((city) => (
+                        {cities.map((city:any) => (
                             <div
                                 key={city.name}
                                 className="relative flex-shrink-0 w-40 h-28 rounded-xl overflow-hidden cursor-pointer group"
@@ -289,9 +298,10 @@ export default function AccommodationPage() {
                                 className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:border-[#ff6b35] focus:ring-2 focus:ring-orange-100"
                             />
                         </div>
-                        <select className="px-4 py-2.5 border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#ff6b35] focus:ring-2 focus:ring-orange-100 min-w-[200px]">
-                            {cityList.map(city => (
-                                <option key={city}>{city}</option>
+                        <select  className="px-4 py-2.5 border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#ff6b35] focus:ring-2 focus:ring-orange-100 min-w-[200px]">
+                            <option value="">Select An Option</option>
+                            {cities.map(city => (
+                                <option key={city._id}>{city.name}</option>
                             ))}
                         </select>
                         <div className="flex gap-2">
@@ -335,16 +345,17 @@ export default function AccommodationPage() {
                     ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
                     : 'grid-cols-1'
                     }`}>
-                    {accommodations.map((item) => (
+                    {hotels.map((item:any) => (
                         <div
                             key={item.id}
                             className={`bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group ${viewMode === 'list' ? 'flex' : ''
                                 }`}
+                            onClick={() => router.push(`/dashboard/accommodation/${item._id}`)}
                         >
                             {/* Image Container */}
                             <div className={`relative bg-gray-200 ${viewMode === 'list' ? 'w-72' : 'h-42'}`}>
                                 <Image
-                                    src={item.image}
+                                    src={item.thumbnail}
                                     alt={item.name}
                                     fill
                                     loading="lazy"
@@ -359,7 +370,7 @@ export default function AccommodationPage() {
                                     <h3 className="font-bold text-gray-900 text-lg mb-1">{item.name}</h3>
                                     <p className="text-sm text-gray-500 mb-3 flex items-center gap-1">
                                         <MapPin className="w-3.5 h-3.5" />
-                                        {item.city}, {item.country}
+                                        {item.cityId.name}, {item.countryId.name}
                                     </p>
 
                                     {viewMode === 'grid' && (
@@ -375,8 +386,8 @@ export default function AccommodationPage() {
 
                                 <div className="flex items-center justify-between mt-4">
                                     <div>
-                                        <span className="text-2xl font-bold text-gray-900">{item.currency}{item.price}</span>
-                                        <span className="text-gray-500 text-sm">/week</span>
+                                        <span className="text-2xl font-bold text-gray-900">{item.currency}{item.pricePerNight}</span>
+                                        <span className="text-gray-500 text-sm">/PerNight</span>
                                     </div>
                                     <button className="bg-[#ff6b35] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-[#e55a2b] transition shadow-sm hover:shadow-md">
                                         Enquire Now

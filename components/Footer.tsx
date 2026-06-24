@@ -28,7 +28,7 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
       {/* Footer */}
       <footer className="bg-secondary pt-3 overflow-visible relative">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 overflow-visible">
-          {/* ================= MAIN FOOTER CARD with Orange Border ================= */}
+          
           <div className="rounded-[50px] px-6 md:px-12 pt-8 pb-12 relative">
             <div className="flex flex-col lg:flex-row">
               {/* CONTENT AREA WITH DIVIDERS */}

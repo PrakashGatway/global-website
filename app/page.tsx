@@ -85,12 +85,12 @@ export async function generateMetadata() {
     description: seo?.metaDescription,
     keywords: seo?.metaKeywords,
     alternates: {
-      canonical: `/${seo?.canonicalUrl || ""}`,
+      canonical: `https://ooshasglobal.com`,
     },
     openGraph: {
       title: seo?.metaTitle,
       description: seo?.metaDescription,
-      url: `${seo?.canonicalUrl || "https://ooshasglobal.com"}`,
+      url: "https://ooshasglobal.com",
       type: "website",
     },
   };
