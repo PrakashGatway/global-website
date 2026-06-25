@@ -314,10 +314,10 @@ export default function DashboardPage() {
 
   // Step tracker data for the compact view
   const stepTrackerSteps = [
-    { name: "Profile Completed", status: "completed" },
-    { name: "Country Shortlisted", status: "completed" },
-    { name: "Course Shortlisted", status: "completed" },
-    { name: "University Applications", status: "current" },
+    { name: "Profile Completed", status: "current" },
+    { name: "Country Shortlisted", status: "upcoming" },
+    { name: "Course Shortlisted", status: "upcoming" },
+    { name: "University Applications", status: "upcoming" },
     { name: "Offer Letter", status: "upcoming" },
     { name: "Visa Process", status: "upcoming" },
     { name: "Forex & Finance", status: "upcoming" },
@@ -378,7 +378,7 @@ export default function DashboardPage() {
                             Documents Uploaded
                           </h3>
                           <p className="text-lg font-bold text-gray-900 mb-2">
-                            3
+                            0
                           </p>
                         </div>
                       </div>
@@ -401,7 +401,7 @@ export default function DashboardPage() {
                             Universities Applied
                           </h3>
                           <p className="text-lg font-bold text-gray-900 mb-2">
-                            4
+                            0
                           </p>
                           <p className="text-xs text-orange-500 flex items-center gap-1">
                             <TrendingUp className="w-3 h-3" />
@@ -455,7 +455,7 @@ export default function DashboardPage() {
                             Applications
                           </h3>
                           <p className="text-lg font-bold text-gray-900 mb-2">
-                            4
+                            0
                           </p>
                           <p className="text-xs text-orange-500 flex items-center gap-1">
                             <TrendingUp className="w-3 h-3" />

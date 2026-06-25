@@ -24,15 +24,15 @@ interface Author {
 
 // mock data – 3 static authors
 const authorsData: Record<string, Author> = {
- 'sakshi-t.': {
-  name: 'Sakshi T.',
+ 'sakshi-taneja': {
+  name: 'Sakshi Taneja',
   role: 'Teacher & Study Abroad Expert',
   title: 'Content Writer & International Education Specialist',
   education: 'Academic Background in Education & International Studies',
   expertise:
     'Study Abroad Guidance, University Admissions, Visa Processes, Test Preparation, Educational Content Writing',
   about:
-    'Sakshi T. is a Teacher and expert Content Writer at Gateway Abroad Education, specializing in international education and test preparation. Drawing from her academic background, she demystifies the complex study abroad journey by crafting insightful, actionable guides on global university admissions, visa processes, and effective exam strategies. Her expert, student-first content empowers applicants to confidently clear competitive tests and transition to top overseas institutions. Passionate about education, Sakshi turns overwhelming academic requirements into clear, step-by-step roadmaps. Her high-value articles and resources bridge the gap between global dreams and reality, making her a trusted authority for future international students.',
+    'Sakshi Taneja is a Teacher and expert Content Writer at Gateway Abroad Education, specializing in international education and test preparation. Drawing from her academic background, she demystifies the complex study abroad journey by crafting insightful, actionable guides on global university admissions, visa processes, and effective exam strategies. Her expert, student-first content empowers applicants to confidently clear competitive tests and transition to top overseas institutions. Passionate about education, Sakshi turns overwhelming academic requirements into clear, step-by-step roadmaps. Her high-value articles and resources bridge the gap between global dreams and reality, making her a trusted authority for future international students.',
   exams: [
     'Study Abroad Counseling',
     'University Admissions',

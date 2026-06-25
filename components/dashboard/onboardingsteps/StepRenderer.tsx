@@ -67,7 +67,7 @@ export default function StepRenderer({ step, categories, countries }) {
               }`}
           >
             <img src={opt.flg} className="w-10 h-10 rounded-sm mb-2 object-cover" alt={opt.label} />
-            <span className="text-sm font-medium text-foreground">{opt.label}</span>
+            <span className="text-sm font-medium text-foreground text-center">{opt.label}</span>
           </motion.div>
         ))}
       </div>
@@ -83,27 +83,38 @@ export default function StepRenderer({ step, categories, countries }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-4 gap-2">
-        {categories?.map((opt, i) => (
-          <motion.div
-            key={opt.value}
-            custom={i}
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => setValue(step.name, opt.value)}
-            className={`flex flex-col items-center justify-center p-2 py-4 rounded-2xl border-2 cursor-pointer transition-shadow ${value === opt.value
-              ? "border-primary bg-primary/5 shadow-lg shadow-primary/20"
-              : "border-border hover:border-primary/40 hover:shadow-md"
-              }`}
-          >
-            <DynamicLucideIcon name={opt.icon} className="w-7 h-7 stroke-[1.7px] text-gray-700 mb-1 object-cover" />
-            <span className="text-sm font-medium text-foreground">{opt.label}</span>
-          </motion.div>
-        ))}
+      <div className="grid grid-cols-3 gap-3">
+  {categories?.map((opt, i) => (
+    <motion.button
+      key={opt.value}
+      type="button"
+      custom={i}
+      variants={cardVariants}
+      initial="hidden"
+      animate="visible"
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.97 }}
+      onClick={() => setValue(step.name, opt.value)}
+      className={`h-36 rounded-2xl border flex flex-col items-center justify-center text-center p-3 transition-all duration-300
+        ${
+          value === opt.value
+            ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
+            : "border-gray-200 hover:border-primary/40 hover:shadow-md"
+        }`}
+    >
+      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+        <DynamicLucideIcon
+          name={opt.icon}
+          className="w-6 h-6 text-gray-700"
+        />
       </div>
+
+      <span className="text-sm font-medium leading-5 text-gray-800 break-words">
+        {opt.label}
+      </span>
+    </motion.button>
+  ))}
+</div>
     </div>
   );
 

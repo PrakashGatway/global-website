@@ -7,7 +7,9 @@ import {
   GraduationCap, ChevronDown, Loader2, X, Check, ExternalLink,
   Award, Clock, Tag, Building2, Briefcase, FileText,
   MapPinCheck, Sparkles, Globe, Shield, TrendingUp,
-  IndianRupeeIcon
+  IndianRupeeIcon,
+  Calendar1,
+  Info
 } from "lucide-react"
 import axiosInstance from "@/app/axiosInstance"
 import { ModernSelect } from "@/components/ui/select"
@@ -17,6 +19,7 @@ import { useSearchParams } from 'next/navigation';
 
 import ProgramHeader from "./programHeader"
 import ProgramFilters from "./programFilter"
+import toast from "react-hot-toast"
 
 // Debounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -96,9 +99,12 @@ export default function CoursesPage() {
   const [levels, setLevels] = useState([])
   const [categories, setCategories] = useState([])
   const [universities, setUniversities] = useState([])
+  const [selectedProgram, setselectedProgram] = useState([])
 
   const searchParams = useSearchParams();
   const university = searchParams.get('university') || ""
+
+
 
   // Filters state
   const [filters, setFilters] = useState({
@@ -276,27 +282,27 @@ export default function CoursesPage() {
       'undergraduate': {
         gradient: 'from-blue-500/50 via-blue-400/5 to-transparent',
         badge: 'bg-blue-50 text-blue-700 border-blue-200',
-        icon: <GraduationCap className="w-3.5 h-3.5" />
+        icon: <GraduationCap className="w-6.5 h-6.5" />
       },
       'postgraduate': {
         gradient: 'from-purple-500/10 via-purple-400/5 to-transparent',
         badge: 'bg-purple-50 text-purple-700 border-purple-200',
-        icon: <Award className="w-3.5 h-3.5" />
+        icon: <Award className="w-6.5 h-6.5" />
       },
       'phd': {
         gradient: 'from-emerald-500/10 via-emerald-400/5 to-transparent',
         badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-        icon: <TrendingUp className="w-3.5 h-3.5" />
+        icon: <TrendingUp className="w-6.5 h-6.5" />
       },
       'diploma': {
         gradient: 'from-orange-500/10 via-orange-400/5 to-transparent',
         badge: 'bg-orange-50 text-orange-700 border-orange-200',
-        icon: <FileText className="w-3.5 h-3.5" />
+        icon: <FileText className="w-6.5 h-6.5" />
       },
       'certificate': {
         gradient: 'from-teal-500/10 via-teal-400/5 to-transparent',
         badge: 'bg-teal-50 text-teal-700 border-teal-200',
-        icon: <Award className="w-3.5 h-3.5" />
+        icon: <Award className="w-6.5 h-6.5" />
       }
     }
     const key = level?.toLowerCase() || 'undergraduate'
@@ -304,9 +310,28 @@ export default function CoursesPage() {
   }
 
 
+  const handleCompareSelect = (course) => {
+    setselectedProgram((prev) => {
+      const exists = prev.some((item) => item._id === course._id);
+
+      if (exists) {
+        return prev.filter((item) => item._id !== course._id);
+      }
+
+      if (prev.length >= 3) {
+        toast.error("You can compare only 3 programs.");
+        return prev;
+      }
+
+      return [...prev, course];
+    });
+  };
+
+
 
   return (
-    <main className="flex-1 overflow-y-auto  px-4">
+    <main className="flex-1 overflow-y-auto  px-4 relative">
+
 
 
       <div className="space-y-4">
@@ -356,6 +381,32 @@ export default function CoursesPage() {
           </motion.div>
         )}
 
+        {selectedProgram.length > 0 && (
+          <div className="fixed bottom-0 right-[10px] z-50 bg-white border w-210 p-4 shadow-lg flex items-center justify-between">
+            <span className="font-medium">
+              {selectedProgram.length} Program(s) Selected
+            </span>
+
+            <div className="flex gap-3">
+              <button className="px-4 py-2 bg-primary text-white rounded">
+                Compare
+              </button>
+
+              <button className="px-4 py-2 border rounded">
+                PDF
+              </button>
+
+              <button className="px-4 py-2 border rounded">
+                Excel
+              </button>
+
+              <button onClick={() => setselectedProgram([])} className="px-4 py-2 border rounded">
+                Clear
+              </button>
+            </div>
+          </div>
+        )}
+
 
 
         {/* Courses Grid */}
@@ -379,7 +430,7 @@ export default function CoursesPage() {
 
           {/* ================= RIGHT CONTENT: COURSE GRID ================= */}
           <div className="flex-1 w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
               {loading ? (
                 // Compact Skeleton Loading
                 Array.from({ length: 6 }).map((_, i) => (
@@ -389,12 +440,12 @@ export default function CoursesPage() {
                         <div className="w-12 h-12 bg-gray-100 rounded-lg"></div>
                         <div className="flex-1 space-y-2">
                           <div className="h-4 w-28 bg-gray-100 rounded"></div>
-                          <div className="h-3 w-20 bg-gray-100 rounded"></div>
+                          <div className="h-6 w-20 bg-gray-100 rounded"></div>
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <div className="h-3 w-full bg-gray-100 rounded"></div>
-                        <div className="h-3 w-3/4 bg-gray-100 rounded"></div>
+                        <div className="h-6 w-full bg-gray-100 rounded"></div>
+                        <div className="h-6 w-6/4 bg-gray-100 rounded"></div>
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         <div className="h-16 bg-gray-100 rounded-lg"></div>
@@ -423,9 +474,92 @@ export default function CoursesPage() {
                 </div>
               ) : (
                 courses.map((course, index) => {
-                  const intakeDeadline = course?.metaInfo?.intakeDeadline || "";
-                  const [month, deadline] = intakeDeadline.split(":");
-                  const levelStyles = getLevelStyles(course.level);
+                
+       const metaInfo = course?.metaInfo || {};
+
+const intakeDeadline = metaInfo?.intakeDeadline || "";
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const intakeData = intakeDeadline
+  ? intakeDeadline.split(",").map((item) => {
+      const [month, date] = item.split(":");
+
+      const [day, monthNo, year] = date.split("-");
+
+      const deadline = new Date(
+        Number(year),
+        Number(monthNo) - 1,
+        Number(day)
+      );
+
+      return {
+        month,
+        deadline,
+        deadlineText: date,
+        isClosed: deadline < today,
+      };
+    })
+  : [];
+
+const openIntakes = intakeData.filter((item) => !item.isClosed);
+const closedIntakes = intakeData.filter((item) => item.isClosed);
+
+const monthOrder = {
+  Jan: 0,
+  Feb: 1,
+  Mar: 2,
+  Apr: 3,
+  May: 4,
+  Jun: 5,
+  Jul: 6,
+  Aug: 7,
+  Sep: 8,
+  Oct: 9,
+  Nov: 10,
+  Dec: 11,
+};
+
+const currentMonth = new Date().getMonth();
+
+const upcomingIntakes =
+  course?.metaInfo?.Intakes?.split(",")
+    .map((item) => item.trim())
+    .filter((month) => monthOrder[month] >= currentMonth) || [];
+
+
+    const fallbackIntakes =
+  metaInfo?.Intakes?.split(",").map((item) => item.trim()) || [];
+
+const fallbackClosed = metaInfo?.IntakesClosed
+  ? metaInfo.IntakesClosed.split(",").map((item) => {
+      const [month, year, open, closed, remark] = item.split(":::");
+      return {
+        month: month.trim(),
+        remark: remark || "Deadline passed.",
+      };
+    })
+  : [];
+
+const fallbackClosedMonths = fallbackClosed.map((item) => item.month);
+
+const fallbackOpenMonths = fallbackIntakes.filter(
+  (month) => !fallbackClosedMonths.includes(month)
+);
+
+const deadlineMap =
+  metaInfo?.deadline && metaInfo.deadline !== "ASAP"
+    ? Object.fromEntries(
+        metaInfo.deadline.split(",").map((item) => {
+          const [month, deadline] = item.split(":");
+          return [month.trim(), deadline.trim()];
+        })
+      )
+    : {};
+
+const isAsap = metaInfo?.deadline;
+
                   return (
                     <div
                       key={course._id}
@@ -433,10 +567,10 @@ export default function CoursesPage() {
                       style={{ animationDelay: `${index * 0.05}s` }}
                     >
                       {/* Compact Card */}
-                      <div className="bg-white border border-gray-200 rounded-lg p-4 transition-all duration-200 hover:border-primary hover:shadow-md hover:-translate-y-0.5 h-full flex flex-col">
+                      <div className={`  rounded-lg p-4 transition-all duration-200  hover:shadow-md hover:-translate-y-0.5 h-full flex flex-col ${selectedProgram.some((item) => item._id === course._id) ? "border border-orange-500 bg-[#fefaf8]" : "border border-gray-200 bg-white"} `}>
 
                         {/* Header */}
-                        <div className="flex gap-3 mb-3">
+                        <div className="flex gap-3 mb-3 relative">
                           {/* Logo */}
                           <div className="flex-shrink-0">
                             {course.university?.uni_logo ? (
@@ -460,21 +594,32 @@ export default function CoursesPage() {
 
                           {/* Course Info */}
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-900 line-clamp-2 text-base leading-tight mb-0.5">
+                            <h3 className="font-semibold text-orange-500 line-clamp-1 text-base leading-tight mb-0.5 w-80">
                               {course.name}
                             </h3>
-                            <p className="text-sm font-medium text-gray-600 truncate mb-1">
+                            <p className="text-base font-medium text-gray-600 truncate mb-1">
                               {course.university?.name}
                             </p>
                             <div className="flex items-center gap-1">
-                              <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                               </svg>
-                              <span className="text-sm text-gray-500 truncate">
+                              <span className="text-base text-gray-500 truncate">
                                 {course.university?.city}, {course.university?.country}
                               </span>
                             </div>
+                          </div>
+
+                          <div className="absolute top-1 -right-1">
+                            <input
+                              type="checkbox"
+                              checked={selectedProgram.some(
+                                (item) => item._id === course._id
+                              )}
+                              onChange={() => handleCompareSelect(course)}
+                              className="w-5 h-5 accent-primary cursor-pointer"
+                            />
                           </div>
                         </div>
 
@@ -482,7 +627,7 @@ export default function CoursesPage() {
                         {/* {course.description && (
                           <div className="mb-3">
                             <div className="w-6 h-0.5 bg-primary rounded-full mb-1.5"></div>
-                            <p className="text-sm text-gray-600 leading-relaxed line-clamp-2" title={course.description}>
+                            <p className="text-base text-gray-600 leading-relaxed line-clamp-2" title={course.description}>
                               {course.description}
                             </p>
                           </div>
@@ -493,26 +638,25 @@ export default function CoursesPage() {
                           {/* Tuition Fee */}
                           <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
                             <div className="flex items-center gap-1 mb-0.5">
-                              <svg className="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
-                              <span className="text-[11px] font-medium text-gray-500">Tuition</span>
+                              <span className="text-[11px] font-medium text-gray-500">Yearly Tuition</span>
                             </div>
-                            <p className="font-bold text-gray-900 text-sm">
+                            <p className="font-bold text-gray-900 text-base">
                               {course.tuitionFee || 0 + course.currency} {course?.currency}
                             </p>
-                            <p className="text-[10px] text-gray-400">/year</p>
                           </div>
 
                           {/* Duration */}
                           <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
                             <div className="flex items-center gap-1 mb-0.5">
-                              <svg className="w-3 h-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                               <span className="text-[11px] font-medium text-gray-500">Duration</span>
                             </div>
-                            <p className="font-semibold text-gray-800 text-sm">
+                            <p className="font-semibold text-gray-800 text-base">
                               {course.duration || 'N/A'}
                             </p>
                           </div>
@@ -520,157 +664,200 @@ export default function CoursesPage() {
                           {/* Application Fee */}
                           <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
                             <div className="flex items-center gap-1 mb-0.5">
-                              <svg className="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
                               <span className="text-[11px] font-medium text-gray-500">App. Fee</span>
                             </div>
-                            <p className="font-semibold text-gray-800 text-sm">
+                            <p className="font-semibold text-gray-800 text-base">
                               {course.applicationFee || 0 + course.currency}
                             </p>
                           </div>
                         </div>
 
-                        {/* Study Mode & Category - Compact */}
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                          {course.studyMode && (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-[11px] font-medium border border-blue-200">
-                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                              </svg>
-                              {course.studyMode}
-                            </span>
-                          )}
+                   {metaInfo?.AverageScholarship&& <div className="flex gap-4 items-center">
+  <div><h4 className="text-sm font-bold text-gray-700 mb-2">
+    Average Scholarship
+  </h4></div>
 
-                          {course.category?.name && (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-md text-[11px] font-medium border border-primary/20">
-                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                              </svg>
-                              {course.category.name}
-                            </span>
-                          )}
-                        </div>
+  <div className="flex items-center gap-2 mb-2">
+    <span className="text-lg font-semibold text-black">
+      {metaInfo?.AverageScholarship || "N/A"} {" "}{course?.currency}
+    </span>
+
+    {metaInfo?.AverageScholarshipRemarks && (
+      <div className="relative group">
+        <Info className="w-4 h-4 text-gray-400 cursor-pointer" />
+
+        <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-md bg-black px-3 py-2 text-sm leading-5 text-white shadow-lg group-hover:block">
+          {metaInfo.AverageScholarshipRemarks}
+        </div>
+      </div>
+    )}
+  </div>
+</div>}
+
+ {metaInfo?.initialDeposit&& <div className="flex gap-4 items-center">
+  <div><h4 className="text-sm font-bold text-gray-700 mb-2">
+    Initial Deposit
+  </h4></div>
+
+  <div className="flex items-center gap-2 mb-2">
+    <span className="text-lg font-semibold text-black">
+      {metaInfo?.initialDeposit || "N/A"} {" "}{course?.currency}
+    </span>
+
+    {metaInfo?.initialDeposit && (
+      <div className="relative group">
+        <Info className="w-4 h-4 text-gray-400 cursor-pointer" />
+
+        <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-md bg-black px-3 py-2 text-sm leading-5 text-white shadow-lg group-hover:block">
+          {metaInfo.initialDeposit}
+        </div>
+      </div>
+    )}
+  </div>
+</div>}
 
                         {/* Tags - Compact */}
-                        {course.tags && course.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mb-3">
-                            {course.tags.slice(0, 2).map((tag, i) => (
-                              <span
-                                key={i}
-                                className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-[10px] font-medium border border-gray-200"
-                              >
-                                <svg className="w-2.5 h-2.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l5 5a2 2 0 01.586 1.414V19a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z" />
-                                </svg>
-                                {tag}
-                              </span>
-                            ))}
-                            {course.tags.length > 2 && (
-                              <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px] font-medium border border-gray-200">
-                                +{course.tags.length - 2}
-                              </span>
-                            )}
-                          </div>
-                        )}
+                    
 
                         {/* Intakes - Compact */}
+<div className="mb-3 space-y-2">
+  {/* Open Intakes */}
+  {openIntakes.length > 0 && (
+    <div className="flex items-start gap-3">
+      <span className="min-w-[60px] rounded-full bg-green-100 px-2 py-1 text-center text-sm font-semibold text-green-700">
+        Open
+      </span>
 
-                        {deadline ?
-                          (
-                          <div className="mb-3 p-2 bg-amber-50 rounded-md border border-amber-200">
-  <div className="flex items-center gap-1 mb-1.5">
-    <svg
-      className="w-3 h-3 text-amber-600"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-      />
-    </svg>
+      <div className="flex flex-wrap gap-2">
+        {openIntakes.map((item) => (
+          <div key={item.month} className="group relative">
+            <span className="flex items-center gap-1 rounded-md bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
+              <Calendar1 className="h-4 w-4" />
+              {item.month}
 
-    <span className="text-[11px] font-semibold text-gray-700">
-      Intakes
-    </span>
-  </div>
+              <Info className="h-3 w-3 text-gray-500" />
+            </span>
 
-  <div className="flex items-center gap-1 group relative">
-    <span
-      className={`text-[11px] px-2 py-1 rounded-full font-medium ${
-        deadline &&
-        new Date(deadline).setHours(23, 59, 59, 999) < Date.now()
-          ? "bg-gray-100 text-gray-600"
-          : "bg-amber-100 text-amber-700"
-      }`}
-    >
-      {deadline &&
-      new Date(deadline).setHours(23, 59, 59, 999) < Date.now()
-        ? "Likely Coming Soon"
-        : month}
-    </span>
-
-    <div className="relative">
-      <svg
-        className="w-4 h-4 text-gray-400 cursor-pointer"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
-
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded z-10">
-        {deadline &&
-        new Date(deadline).setHours(23, 59, 59, 999) < Date.now()
-          ? "Previous intake deadline has passed"
-          : `Deadline: ${deadline}`}
+            <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+              Deadline: {item.deadlineText}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
-  </div>
+  )}
+
+  {/* Closed Intakes */}
+  {closedIntakes.length > 0 && (
+    <div className="flex items-start gap-3">
+      <span className="min-w-[60px] rounded-full bg-red-100 px-2 py-1 text-center text-sm font-semibold text-red-700">
+        Closed
+      </span>
+
+      <div className="flex flex-wrap gap-2">
+        {closedIntakes.map((item) => (
+          <div key={item.month} className="group relative">
+            <span className="flex items-center gap-1 rounded-md bg-red-50 px-3 py-1 text-sm font-medium text-red-600">
+              <Calendar1 className="h-4 w-4" />
+              {item.month}
+
+              <Info className="h-3 w-3 text-gray-500" />
+            </span>
+
+            <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+              Deadline passed. It will come again soon.
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {/* Fallback */}
+ {/* Fallback */}
+{openIntakes.length === 0 &&
+  closedIntakes.length === 0 &&
+  fallbackIntakes.length > 0 && (
+    <div className="space-y-2">
+
+      {/* Open */}
+      {fallbackOpenMonths.length > 0 && (
+        <div className="flex items-start gap-3">
+          <span className="min-w-[60px] rounded-full bg-green-100 px-2 py-1 text-center text-sm font-semibold text-green-700">
+            Open
+          </span>
+
+          <div className="flex flex-wrap gap-2">
+  {fallbackOpenMonths.map((month) => (
+    <div key={month} className="group relative">
+      <span className="flex items-center gap-1 rounded-md bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
+        <Calendar1 className="h-4 w-4" />
+        {month}
+
+        <Info className="h-3 w-3 text-gray-500 cursor-pointer" />
+      </span>
+
+      <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+        {isAsap
+          ? "Deadline: ASAP"
+          : `Deadline: ${deadlineMap[month] || "ASAP"}`}
+      </div>
+    </div>
+  ))}
 </div>
-                          ) : (
-                            <div className="flex flex-wrap gap-2">
-                              {course?.university?.intakes?.map((intake, index) => (
-                                <span
-                                  key={index}
-                                  className="px-3 py-1 rounded-full bg-orange-100 text-orange-600 text-sm font-medium"
-                                >
-                                  {intake}
-                                </span>
-                              ))}
-                            </div>
-                          )
-                        }
+        </div>
+      )}
+
+      {/* Closed */}
+      {fallbackClosed.length > 0 && (
+        <div className="flex items-start gap-3">
+          <span className="min-w-[60px] rounded-full bg-red-100 px-2 py-1 text-center text-sm font-semibold text-red-700">
+            Closed
+          </span>
+
+          <div className="flex flex-wrap gap-2">
+            {fallbackClosed.map((item) => (
+              <div key={item.month} className="group relative">
+                <span className="flex items-center gap-1 rounded-md bg-red-50 px-3 py-1 text-sm font-medium text-red-600">
+                  <Calendar1 className="h-4 w-4" />
+                  {item.month}
+                  <Info className="h-3 w-3 text-gray-500" />
+                </span>
+
+                <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+                  {item.remark}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+)}
+</div>
 
 
                         {/* Action Buttons - Compact */}
-                        <div className="flex items-center gap-2 mt-auto pt-1">
-                          <a
+                        <div className="flex items-center gap-2 mt-auto pt-4">
+                          <Link
                             href={`/dashboard/programs/${course.slug}`}
-                            className="flex-1 text-center px-3 py-1.5 bg-primary text-white rounded-md text-sm font-medium transition-all duration-200 hover:bg-primary/90"
+                            className="flex-1 text-center px-3 py-1.5 bg-white border border-orange-500 text-orange-500 rounded-md text-base font-medium transition-all duration-200 "
                           >
                             View Details
-                          </a>
+                          </Link>
 
                           <button
                             onClick={() => {
                               setSelectedCourse(course);
                               setIsModalOpen(true);
                             }}
-                            className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-transparent border border-primary/40 text-primary rounded-md text-sm font-medium transition-all duration-200 hover:bg-primary hover:text-white"
+                            className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-[#f26d44] border border-primary/40 text-white rounded-md text-base font-medium transition-all duration-200 "
                           >
                             Apply
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
                           </button>
@@ -701,6 +888,7 @@ export default function CoursesPage() {
             </div>
           </div>
         </div>
+
 
         {/* Infinite Scroll Loader */}
         <div ref={observerTarget} className="py-8">

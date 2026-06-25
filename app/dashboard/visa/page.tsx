@@ -1590,15 +1590,22 @@ const Step6VisaApproved = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[300px_680px] gap-6 relative">
+      <div className="grid grid-cols-1 md:grid-cols-[300px_680px] gap-6 relative my-4">
         <div className="bg-orange-50 border border-orange-200 py-8 h-full">
           <div className="flex flex-col items-center text-center">
 
-            <div className="w-full h-full absolute   flex items-center justify-center ">
+            <div className="w-full h-full absolute -top-14 right-118  flex items-center justify-center ">
               <img
-                src="/celebration.gif"
+                src="/star.gif"
                 alt="Completed"
-                className="w-100 h-100 object-contain"
+                className="w-20 h-20 object-cover"
+              />
+            </div>
+            <div className="w-full h-full absolute -top-14 -left-58  flex items-center justify-center ">
+              <img
+                src="/star.gif"
+                alt="Completed"
+                className="w-20 h-20 object-cover"
               />
             </div>
 
@@ -1682,7 +1689,7 @@ const Step6VisaApproved = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      <div className="p-3 bg-orange-50 border border-orange-100 flex items-start gap-2">
+      <div className="p-3 bg-orange-50 border border-orange-100 flex items-start gap-2 my-4">
         <Info size={14} className="text-[#f56e45] mt-0.5 flex-shrink-0" />
         <p className="text-base text-orange-700">If opting for courier, passport will be delivered within 3-5 business days</p>
       </div>
@@ -1749,7 +1756,7 @@ const Step6VisaApproved = ({ data, currentStepId, apiData }) => {
         </div>
       </div>
 
-      <div className="bg-white p-6 border border-gray-400 -sm">
+      <div className="bg-white p-6 border border-gray-400 -sm my-4">
         <div className="flex items-start gap-3">
           <div className="text-[#f56e45]"><MessageCircle size={24} /></div>
           <div>
@@ -2361,10 +2368,9 @@ export default function VisaJourneyPage() {
             </div>
           </div>
         </div>
-      </main>
 
-       {showCelebration && (
-                  <div className="absolute -top-6 inset-x-0 flex justify-center pointer-events-none z-10">
+          {showCelebration && (
+                  <div className="absolute -top-15  z-10 ">
                     <img
                       src="/celebration.gif"
                       alt="Celebration"
@@ -2372,6 +2378,9 @@ export default function VisaJourneyPage() {
                     />
                   </div>
                 )}
+      </main>
+
+     
     </div>
   );
 }

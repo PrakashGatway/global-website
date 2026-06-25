@@ -119,7 +119,9 @@ export async function generateMetadata({ params }) {
       title: blog.seo?.metaTitle || blog.title,
       description: blog.seo?.metaDescription || blog.shortDescription,
       keywords: blog.seo?.keywords || [],
-
+      alternates: {
+        canonical: `https://ooshasglobal.com/blog/${blog.slug}`,
+      },
       robots: {
         index: true,
         follow: true,

@@ -869,7 +869,7 @@ export default function CourseDetailPage() {
                                 )}
 
                                 {/* Financial Information */}
-                                {course.university?.financials && (
+                                {/* {course.university?.financials && (
                                     <div className="border-t border-gray-200 pt-5">
                                         <h4 className="font-semibold text-gray-900 mb-3">
                                             Financial Information
@@ -910,7 +910,7 @@ export default function CourseDetailPage() {
                                                 ))}
                                         </div>
                                     </div>
-                                )}
+                                )} */}
 
                                 {/* Button */}
                                 <div className="pt-4 border-t border-gray-200">

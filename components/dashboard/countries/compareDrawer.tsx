@@ -91,18 +91,19 @@ const CompareDrawer = ({
             )
 
             console.log("Saving to cookies:", uniqueCountries)
+            Cookies.set("test", "hello");
+
+console.log("Test cookie:", Cookies.get("test"));
+
+const cookieData = JSON.stringify(uniqueCountries);
 
             // Set cookie with proper options
-            Cookies.set(
-                "compareCountries",
-                JSON.stringify(uniqueCountries),
-                {
-                    expires: 7, // Cookie expires in 7 days
-                    path: "/", // Available across all paths
-                    sameSite: "Lax", // CSRF protection
-                    secure: process.env.NODE_ENV === "production" // HTTPS only in production
-                }
-            )
+          Cookies.set("compareCountries", cookieData, {
+        expires: 7,
+        path: "/",
+    });
+
+
 
             // Verify cookie was set
             const savedCookie = Cookies.get("compareCountries")

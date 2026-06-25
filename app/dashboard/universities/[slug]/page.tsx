@@ -660,7 +660,7 @@ export default function UniversityDetailPage() {
                                     )}
 
 
-                                    {university.financials && (
+                                    {/* {university.financials && (
                                         <div className="bg-card border border-border p-4">
                                             <h3 className="text-base font-semibold text-gray-800 mb-4">
                                                 Tuition Fees & Living Costs
@@ -700,7 +700,7 @@ export default function UniversityDetailPage() {
                                                 ))}
                                             </div>
                                         </div>
-                                    )}
+                                    )} */}
                                 </motion.div>
                             )}
 

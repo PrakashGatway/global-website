@@ -340,7 +340,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
 
               <div className="flex justify-between">
                 <Link
-                  href={`/author/${blog?.author?.toLowerCase().replace(/\s+/g, "-")}`}
+                  href={`/author/sakshi-taneja`}
                   className="flex items-center gap-2 group"
                 >
                   <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm">
@@ -350,7 +350,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
                   <div>
                     <p className="text-xs text-gray-500">Author</p>
                     <p className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">
-                      {blog?.author || "Sakshi T."}
+                      { "Sakshi Taneja"}
                     </p>
                   </div>
                 </Link>
