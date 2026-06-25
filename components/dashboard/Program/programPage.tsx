@@ -542,18 +542,18 @@ const fallbackClosed = metaInfo?.IntakesClosed
     })
   : [];
 
-const fallbackClosedMonths = fallbackClosed.map((item) => item.month);
+const fallbackClosedMonths = fallbackClosed?.map((item) => item.month);
 
 const fallbackOpenMonths = fallbackIntakes.filter(
-  (month) => !fallbackClosedMonths.includes(month)
+  (month) => !fallbackClosedMonths?.includes(month)
 );
 
 const deadlineMap =
   metaInfo?.deadline && metaInfo.deadline !== "ASAP"
     ? Object.fromEntries(
-        metaInfo.deadline.split(",").map((item) => {
+        metaInfo?.deadline?.split(",")?.map((item) => {
           const [month, deadline] = item.split(":");
-          return [month.trim(), deadline.trim()];
+          return [month?.trim(), deadline?.trim()];
         })
       )
     : {};
@@ -697,7 +697,7 @@ const isAsap = metaInfo?.deadline;
   </div>
 </div>}
 
- {metaInfo?.initialDeposit&& <div className="flex gap-4 items-center">
+ {metaInfo?.initialDeposit && <div className="flex gap-4 items-center">
   <div><h4 className="text-sm font-bold text-gray-700 mb-2">
     Initial Deposit
   </h4></div>
