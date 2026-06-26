@@ -474,91 +474,91 @@ export default function CoursesPage() {
                 </div>
               ) : (
                 courses.map((course, index) => {
-                
-       const metaInfo = course?.metaInfo || {};
 
-const intakeDeadline = metaInfo?.intakeDeadline || "";
+                  const metaInfo = course?.metaInfo || {};
 
-const today = new Date();
-today.setHours(0, 0, 0, 0);
+                  const intakeDeadline = metaInfo?.intakeDeadline || "";
 
-const intakeData = intakeDeadline
-  ? intakeDeadline.split(",").map((item) => {
-      const [month, date] = item.split(":");
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
 
-      const [day, monthNo, year] = date.split("-");
+                  const intakeData = intakeDeadline
+                    ? intakeDeadline.split(",").map((item) => {
+                      const [month, date] = item.split(":");
 
-      const deadline = new Date(
-        Number(year),
-        Number(monthNo) - 1,
-        Number(day)
-      );
+                      const [day, monthNo, year] = date.split("-");
 
-      return {
-        month,
-        deadline,
-        deadlineText: date,
-        isClosed: deadline < today,
-      };
-    })
-  : [];
+                      const deadline = new Date(
+                        Number(year),
+                        Number(monthNo) - 1,
+                        Number(day)
+                      );
 
-const openIntakes = intakeData.filter((item) => !item.isClosed);
-const closedIntakes = intakeData.filter((item) => item.isClosed);
+                      return {
+                        month,
+                        deadline,
+                        deadlineText: date,
+                        isClosed: deadline < today,
+                      };
+                    })
+                    : [];
 
-const monthOrder = {
-  Jan: 0,
-  Feb: 1,
-  Mar: 2,
-  Apr: 3,
-  May: 4,
-  Jun: 5,
-  Jul: 6,
-  Aug: 7,
-  Sep: 8,
-  Oct: 9,
-  Nov: 10,
-  Dec: 11,
-};
+                  const openIntakes = intakeData.filter((item) => !item.isClosed);
+                  const closedIntakes = intakeData.filter((item) => item.isClosed);
 
-const currentMonth = new Date().getMonth();
+                  const monthOrder = {
+                    Jan: 0,
+                    Feb: 1,
+                    Mar: 2,
+                    Apr: 3,
+                    May: 4,
+                    Jun: 5,
+                    Jul: 6,
+                    Aug: 7,
+                    Sep: 8,
+                    Oct: 9,
+                    Nov: 10,
+                    Dec: 11,
+                  };
 
-const upcomingIntakes =
-  course?.metaInfo?.Intakes?.split(",")
-    .map((item) => item.trim())
-    .filter((month) => monthOrder[month] >= currentMonth) || [];
+                  const currentMonth = new Date().getMonth();
+
+                  const upcomingIntakes =
+                    course?.metaInfo?.Intakes?.split(",")
+                      .map((item) => item.trim())
+                      .filter((month) => monthOrder[month] >= currentMonth) || [];
 
 
-    const fallbackIntakes =
-  metaInfo?.Intakes?.split(",").map((item) => item.trim()) || [];
+                  const fallbackIntakes =
+                    metaInfo?.Intakes?.split(",").map((item) => item.trim()) || [];
 
-const fallbackClosed = metaInfo?.IntakesClosed
-  ? metaInfo.IntakesClosed.split(",").map((item) => {
-      const [month, year, open, closed, remark] = item.split(":::");
-      return {
-        month: month.trim(),
-        remark: remark || "Deadline passed.",
-      };
-    })
-  : [];
+                  const fallbackClosed = metaInfo?.IntakesClosed
+                    ? metaInfo.IntakesClosed.split(",").map((item) => {
+                      const [month, year, open, closed, remark] = item.split(":::");
+                      return {
+                        month: month.trim(),
+                        remark: remark || "Deadline passed.",
+                      };
+                    })
+                    : [];
 
-const fallbackClosedMonths = fallbackClosed?.map((item) => item.month);
+                  const fallbackClosedMonths = fallbackClosed?.map((item) => item.month);
 
-const fallbackOpenMonths = fallbackIntakes.filter(
-  (month) => !fallbackClosedMonths?.includes(month)
-);
+                  const fallbackOpenMonths = fallbackIntakes.filter(
+                    (month) => !fallbackClosedMonths?.includes(month)
+                  );
 
-const deadlineMap =
-  metaInfo?.deadline && metaInfo.deadline !== "ASAP"
-    ? Object.fromEntries(
-        metaInfo?.deadline?.split(",")?.map((item) => {
-          const [month, deadline] = item.split(":");
-          return [month?.trim(), deadline?.trim()];
-        })
-      )
-    : {};
+                  const deadlineMap =
+                    metaInfo?.deadline && metaInfo.deadline !== "ASAP"
+                      ? Object.fromEntries(
+                        metaInfo?.deadline?.split(",")?.map((item) => {
+                          const [month, deadline] = item.split(":");
+                          return [month?.trim(), deadline?.trim()];
+                        })
+                      )
+                      : {};
 
-const isAsap = metaInfo?.deadline;
+                  const isAsap = metaInfo?.deadline;
 
                   return (
                     <div
@@ -567,7 +567,7 @@ const isAsap = metaInfo?.deadline;
                       style={{ animationDelay: `${index * 0.05}s` }}
                     >
                       {/* Compact Card */}
-                      <div className={`  rounded-lg p-4 transition-all duration-200  hover:shadow-md hover:-translate-y-0.5 h-full flex flex-col ${selectedProgram.some((item) => item._id === course._id) ? "border border-orange-500 bg-[#fefaf8]" : "border border-gray-200 bg-white"} `}>
+                      <div className={`  rounded-lg p-4 transition-all duration-200  hover:shadow-md hover:scale-105 h-full flex flex-col ${selectedProgram.some((item) => item._id === course._id) ? "border border-orange-500 bg-[#fefaf8]" : "border border-gray-200 bg-white"} `}>
 
                         {/* Header */}
                         <div className="flex gap-3 mb-3 relative">
@@ -675,169 +675,169 @@ const isAsap = metaInfo?.deadline;
                           </div>
                         </div>
 
-                   {metaInfo?.AverageScholarship&& <div className="flex gap-4 items-center">
-  <div><h4 className="text-sm font-bold text-gray-700 mb-2">
-    Average Scholarship
-  </h4></div>
+                        {metaInfo?.AverageScholarship && <div className="flex gap-4 items-center">
+                          <div><h4 className="text-sm font-bold text-gray-700 mb-2">
+                            Average Scholarship
+                          </h4></div>
 
-  <div className="flex items-center gap-2 mb-2">
-    <span className="text-lg font-semibold text-black">
-      {metaInfo?.AverageScholarship || "N/A"} {" "}{course?.currency}
-    </span>
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-sm font-semibold text-black">
+                              {metaInfo?.AverageScholarship || "N/A"} {" "}{course?.currency}
+                            </span>
 
-    {metaInfo?.AverageScholarshipRemarks && (
-      <div className="relative group">
-        <Info className="w-4 h-4 text-gray-400 cursor-pointer" />
+                            {metaInfo?.AverageScholarshipRemarks && (
+                              <div className="relative group">
+                                <Info className="w-4 h-4 text-gray-400 cursor-pointer" />
 
-        <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-md bg-black px-3 py-2 text-sm leading-5 text-white shadow-lg group-hover:block">
-          {metaInfo.AverageScholarshipRemarks}
-        </div>
-      </div>
-    )}
-  </div>
-</div>}
+                                <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-md bg-black px-3 py-2 text-sm leading-5 text-white shadow-lg group-hover:block">
+                                  {metaInfo.AverageScholarshipRemarks}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>}
 
- {metaInfo?.initialDeposit && <div className="flex gap-4 items-center">
-  <div><h4 className="text-sm font-bold text-gray-700 mb-2">
-    Initial Deposit
-  </h4></div>
+                        {metaInfo?.initialDeposit && <div className="flex gap-4 items-center">
+                          <div><h4 className="text-sm font-bold text-gray-700 mb-2">
+                            Initial Deposit
+                          </h4></div>
 
-  <div className="flex items-center gap-2 mb-2">
-    <span className="text-lg font-semibold text-black">
-      {metaInfo?.initialDeposit || "N/A"} {" "}{course?.currency}
-    </span>
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-sm font-semibold text-black">
+                              {metaInfo?.initialDeposit || "N/A"} {" "}{course?.currency}
+                            </span>
 
-    {metaInfo?.initialDeposit && (
-      <div className="relative group">
-        <Info className="w-4 h-4 text-gray-400 cursor-pointer" />
+                            {metaInfo?.initialDeposit && (
+                              <div className="relative group">
+                                <Info className="w-4 h-4 text-gray-400 cursor-pointer" />
 
-        <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-md bg-black px-3 py-2 text-sm leading-5 text-white shadow-lg group-hover:block">
-          {metaInfo.initialDeposit}
-        </div>
-      </div>
-    )}
-  </div>
-</div>}
+                                <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-md bg-black px-3 py-2 text-sm leading-5 text-white shadow-lg group-hover:block">
+                                  {metaInfo.initialDeposit}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>}
 
                         {/* Tags - Compact */}
-                    
+
 
                         {/* Intakes - Compact */}
-<div className="mb-3 space-y-2">
-  {/* Open Intakes */}
-  {openIntakes.length > 0 && (
-    <div className="flex items-start gap-3">
-      <span className="min-w-[60px] rounded-full bg-green-100 px-2 py-1 text-center text-sm font-semibold text-green-700">
-        Open
-      </span>
+                        <div className="mb-3 space-y-2">
+                          {/* Open Intakes */}
+                          {openIntakes.length > 0 && (
+                            <div className="flex items-start gap-3">
+                              <span className="min-w-[60px] rounded-full bg-green-100 px-2 py-1 text-center text-sm font-semibold text-green-700">
+                                Open
+                              </span>
 
-      <div className="flex flex-wrap gap-2">
-        {openIntakes.map((item) => (
-          <div key={item.month} className="group relative">
-            <span className="flex items-center gap-1 rounded-md bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
-              <Calendar1 className="h-4 w-4" />
-              {item.month}
+                              <div className="flex flex-wrap gap-2">
+                                {openIntakes.map((item) => (
+                                  <div key={item.month} className="group relative">
+                                    <span className="flex items-center gap-1 rounded-md bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
+                                      <Calendar1 className="h-4 w-4" />
+                                      {item.month}
 
-              <Info className="h-3 w-3 text-gray-500" />
-            </span>
+                                      <Info className="h-3 w-3 text-gray-500" />
+                                    </span>
 
-            <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-              Deadline: {item.deadlineText}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )}
+                                    <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+                                      Deadline: {item.deadlineText}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
 
-  {/* Closed Intakes */}
-  {closedIntakes.length > 0 && (
-    <div className="flex items-start gap-3">
-      <span className="min-w-[60px] rounded-full bg-red-100 px-2 py-1 text-center text-sm font-semibold text-red-700">
-        Closed
-      </span>
+                          {/* Closed Intakes */}
+                          {closedIntakes.length > 0 && (
+                            <div className="flex items-start gap-3">
+                              <span className="min-w-[60px] rounded-full bg-red-100 px-2 py-1 text-center text-sm font-semibold text-red-700">
+                                Closed
+                              </span>
 
-      <div className="flex flex-wrap gap-2">
-        {closedIntakes.map((item) => (
-          <div key={item.month} className="group relative">
-            <span className="flex items-center gap-1 rounded-md bg-red-50 px-3 py-1 text-sm font-medium text-red-600">
-              <Calendar1 className="h-4 w-4" />
-              {item.month}
+                              <div className="flex flex-wrap gap-2">
+                                {closedIntakes.map((item) => (
+                                  <div key={item.month} className="group relative">
+                                    <span className="flex items-center gap-1 rounded-md bg-red-50 px-3 py-1 text-sm font-medium text-red-600">
+                                      <Calendar1 className="h-4 w-4" />
+                                      {item.month}
 
-              <Info className="h-3 w-3 text-gray-500" />
-            </span>
+                                      <Info className="h-3 w-3 text-gray-500" />
+                                    </span>
 
-            <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-              Deadline passed. It will come again soon.
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )}
+                                    <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+                                      Deadline passed. It will come again soon.
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
 
-  {/* Fallback */}
- {/* Fallback */}
-{openIntakes.length === 0 &&
-  closedIntakes.length === 0 &&
-  fallbackIntakes.length > 0 && (
-    <div className="space-y-2">
+                          {/* Fallback */}
+                          {/* Fallback */}
+                          {openIntakes.length === 0 &&
+                            closedIntakes.length === 0 &&
+                            fallbackIntakes.length > 0 && (
+                              <div className="space-y-2">
 
-      {/* Open */}
-      {fallbackOpenMonths.length > 0 && (
-        <div className="flex items-start gap-3">
-          <span className="min-w-[60px] rounded-full bg-green-100 px-2 py-1 text-center text-sm font-semibold text-green-700">
-            Open
-          </span>
+                                {/* Open */}
+                                {fallbackOpenMonths.length > 0 && (
+                                  <div className="flex items-start gap-3">
+                                    <span className="min-w-[60px] rounded-full bg-green-100 px-2 py-1 text-center text-sm font-semibold text-green-700">
+                                      Open
+                                    </span>
 
-          <div className="flex flex-wrap gap-2">
-  {fallbackOpenMonths.map((month) => (
-    <div key={month} className="group relative">
-      <span className="flex items-center gap-1 rounded-md bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
-        <Calendar1 className="h-4 w-4" />
-        {month}
+                                    <div className="flex flex-wrap gap-2">
+                                      {fallbackOpenMonths.map((month) => (
+                                        <div key={month} className="group relative">
+                                          <span className="flex items-center gap-1 rounded-md bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
+                                            <Calendar1 className="h-4 w-4" />
+                                            {month}
 
-        <Info className="h-3 w-3 text-gray-500 cursor-pointer" />
-      </span>
+                                            <Info className="h-3 w-3 text-gray-500 cursor-pointer" />
+                                          </span>
 
-      <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-        {isAsap
-          ? "Deadline: ASAP"
-          : `Deadline: ${deadlineMap[month] || "ASAP"}`}
-      </div>
-    </div>
-  ))}
-</div>
-        </div>
-      )}
+                                          <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+                                            {isAsap
+                                              ? "Deadline: ASAP"
+                                              : `Deadline: ${deadlineMap[month] || "ASAP"}`}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
 
-      {/* Closed */}
-      {fallbackClosed.length > 0 && (
-        <div className="flex items-start gap-3">
-          <span className="min-w-[60px] rounded-full bg-red-100 px-2 py-1 text-center text-sm font-semibold text-red-700">
-            Closed
-          </span>
+                                {/* Closed */}
+                                {fallbackClosed.length > 0 && (
+                                  <div className="flex items-start gap-3">
+                                    <span className="min-w-[60px] rounded-full bg-red-100 px-2 py-1 text-center text-sm font-semibold text-red-700">
+                                      Closed
+                                    </span>
 
-          <div className="flex flex-wrap gap-2">
-            {fallbackClosed.map((item) => (
-              <div key={item.month} className="group relative">
-                <span className="flex items-center gap-1 rounded-md bg-red-50 px-3 py-1 text-sm font-medium text-red-600">
-                  <Calendar1 className="h-4 w-4" />
-                  {item.month}
-                  <Info className="h-3 w-3 text-gray-500" />
-                </span>
+                                    <div className="flex flex-wrap gap-2">
+                                      {fallbackClosed.map((item) => (
+                                        <div key={item.month} className="group relative">
+                                          <span className="flex items-center gap-1 rounded-md bg-red-50 px-3 py-1 text-sm font-medium text-red-600">
+                                            <Calendar1 className="h-4 w-4" />
+                                            {item.month}
+                                            <Info className="h-3 w-3 text-gray-500" />
+                                          </span>
 
-                <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-                  {item.remark}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-)}
-</div>
+                                          <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+                                            {item.remark}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                        </div>
 
 
                         {/* Action Buttons - Compact */}

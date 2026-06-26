@@ -7,29 +7,33 @@ import toast from "react-hot-toast"
 
 export default function AuthorPage({ author }) {
     const [blogs, setblogs] = useState([])
+    const [totalPages, setTotalPages] = useState(1);
+    const [page, setPage] = useState(1);
+
+
 
 
     useEffect(() => {
-        const fetchblog = async () => {
+        const fetchblog = async (page) => {
             try {
-                const res = await axiosInstance.get("/blogs?limit=50");
+                const res = await axiosInstance.get(`/blogs?page=${page}&limit=10`);
 
-                const filteredBlogs = res.data.data.filter(
-                    (item) =>
-                        item.author?.toLowerCase() === author.name?.toLowerCase()
-                );
 
-                console.log(filteredBlogs);
+                console.log(res.data);
 
-                setblogs(filteredBlogs);
+                setblogs(res.data.data);
+                setTotalPages(res.data.pages)
             } catch (error) {
                 console.error(error);
                 toast.error("Something went wrong...");
             }
         };
 
-        fetchblog();
-    }, [author.name]);
+        fetchblog(page);
+    }, [author.name, page]);
+
+
+
 
 
 
@@ -39,44 +43,44 @@ export default function AuthorPage({ author }) {
                 <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-lg">
 
                     {/* header: name + role */}
-                   <div
-  className="relative overflow-hidden rounded-t-lg"
-  style={{
-    backgroundColor: "#f46c44",
-    backgroundImage:
-      "url('https://www.transparenttextures.com/patterns/back-pattern.png')",
-  }}
->
-    
+                    <div
+                        className="relative overflow-hidden rounded-t-lg"
+                        style={{
+                            backgroundColor: "#f46c44",
+                            backgroundImage:
+                                "url('https://www.transparenttextures.com/patterns/back-pattern.png')",
+                        }}
+                    >
 
-  {/* Main Header */}
-  <div className="relative  px-6 md:px-10 py-8">
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-      
-      {/* Left Section */}
-      <div className="flex items-center gap-5">
-        <img
-          src={author.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcxSIkbDpRi11M201gRDRamK_4nK4D1rGbeGT3LUJM3g&s=10"}
-          alt={author.name}
-          className="w-24 h-24 md:w-28 md:h-28 rounded-full border-4 border-white object-cover shadow-lg"
-        />
 
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-bold text-white">
-              {author.name}
-            </h1>
+                        {/* Main Header */}
+                        <div className="relative  px-6 md:px-10 py-8">
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
 
-            <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-              ✓
-            </span>
-          </div>
+                                {/* Left Section */}
+                                <div className="flex items-center gap-5">
+                                    <img
+                                        src={author.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcxSIkbDpRi11M201gRDRamK_4nK4D1rGbeGT3LUJM3g&s=10"}
+                                        alt={author.name}
+                                        className="w-24 h-24 md:w-28 md:h-28 rounded-full border-4 border-white object-cover shadow-lg"
+                                    />
 
-          <p className="text-white/90 text-lg mt-1">
-            {author.role}
-          </p>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <h1 className="text-3xl font-bold text-white">
+                                                {author.name}
+                                            </h1>
 
-          {/* <div className="flex gap-3 mt-4">
+                                            <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
+                                                ✓
+                                            </span>
+                                        </div>
+
+                                        <p className="text-white/90 text-lg mt-1">
+                                            {author.role}
+                                        </p>
+
+                                        {/* <div className="flex gap-3 mt-4">
   <a
     href={author.linkedin}
     target="_blank"
@@ -96,11 +100,11 @@ export default function AuthorPage({ author }) {
   </a>
 </div> */}
 
-        </div>
-      </div>
+                                    </div>
+                                </div>
 
-      {/* Right Stats */}
-      {/* <div className="flex gap-10 text-white">
+                                {/* Right Stats */}
+                                {/* <div className="flex gap-10 text-white">
         <div className="text-center">
           <h3 className="text-4xl font-bold">592</h3>
           <p className="text-white/80">Posts</p>
@@ -112,9 +116,9 @@ export default function AuthorPage({ author }) {
         </div>
       </div> */}
 
-    </div>
-  </div>
-</div>
+                            </div>
+                        </div>
+                    </div>
 
                     {/* about section */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 p-5">
@@ -221,6 +225,55 @@ export default function AuthorPage({ author }) {
                                     </div>
                                 </div>
                             ))}
+
+                            <div className="flex items-center justify-center mt-8 gap-2">
+                                {/* Previous */}
+                                <button
+                                    onClick={() => setPage(page - 1)}
+                                    disabled={page === 1}
+                                    className={`flex items-center px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-200
+      ${page === 1
+                                            ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
+                                            : "border-gray-300 bg-white text-gray-700 hover:bg-orange-500 hover:text-white hover:border-orange-500 shadow-sm"
+                                        }`}
+                                >
+                                    ← Previous
+                                </button>
+
+                                {/* Page Numbers */}
+                                <div className="flex items-center gap-2">
+                                    {[...Array(totalPages)].map((_, index) => {
+                                        const pageNumber = index + 1;
+
+                                        return (
+                                            <button
+                                                key={pageNumber}
+                                                onClick={() => setPage(pageNumber)}
+                                                className={`w-10 h-10 rounded-lg text-sm font-semibold transition-all duration-200
+            ${page === pageNumber
+                                                        ? "bg-orange-500 text-white shadow-lg scale-105"
+                                                        : "bg-white border border-gray-300 text-gray-700 hover:bg-orange-50 hover:border-orange-500 hover:text-orange-600"
+                                                    }`}
+                                            >
+                                                {pageNumber}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Next */}
+                                <button
+                                    onClick={() => setPage(page + 1)}
+                                    disabled={page === totalPages}
+                                    className={`flex items-center px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-200
+      ${page === totalPages
+                                            ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
+                                            : "border-gray-300 bg-white text-gray-700 hover:bg-orange-500 hover:text-white hover:border-orange-500 shadow-sm"
+                                        }`}
+                                >
+                                    Next →
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

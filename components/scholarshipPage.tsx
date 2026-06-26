@@ -415,8 +415,10 @@ export default function ScholarshipPage() {
                         About This Scholarship
                       </h2>
 
-                      <div className="prose prose-sm max-w-none text-neutral-600">
-                        {Scholarship?.description}
+                      <div className="prose prose-sm max-w-none text-neutral-600" dangerouslySetInnerHTML={{
+                        __html : Scholarship?.description
+                      }}>
+                        
                       </div>
                     </section>
 
