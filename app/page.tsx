@@ -97,12 +97,8 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const { data } = await getHomePageData();
-  const homePage = data.sections;
-
-  const mainSchema = generateHomeSchema(data);
-
-  const [destinationRes, countryRes, imageRes, Faqres, videoRes, blogres, unires] = await Promise.all([
+  const [data, destinationRes, countryRes, imageRes, Faqres, videoRes, blogres, unires] = await Promise.all([
+    getHomePageData(),
     serverInstance.get("/page-information/navbar?isFeatured=true&type=destinations&limit=6"),
     serverInstance.get("/page-information/navbar?isFeatured=true&type=country&limit=8"),
     serverInstance.get("/testimonials?type=image&limit=15"),
@@ -111,6 +107,10 @@ export default async function Home() {
     serverInstance.get("/blogs?type=blog&limit=5"),
     serverInstance.get("/universities?limit=10")
   ]);
+
+  const homePage = data.data.sections;
+
+  const mainSchema = generateHomeSchema(data?.data);
 
   const faqs = Faqres?.data?.data || [];
   const faqSchema = faqs.length > 0 ? generateFaqSchema(faqs) : null;

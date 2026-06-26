@@ -96,6 +96,14 @@ export async function generateMetadata({
           seo.canonical_tag ||
           `https://ooshasglobal.com/universities/${uni.slug}`,
       },
+      authors: [
+        {
+          name: "Sakshi Taneja",
+          url: "https://ooshasglobal.com/author/sakshi-taneja",
+        },
+      ],
+      creator: "Sakshi Taneja",
+      publisher: "Ooshas Global",
       openGraph: {
         title: seo.meta_title || uni.name,
         description:

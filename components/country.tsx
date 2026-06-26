@@ -18,6 +18,7 @@ import { NewTag, Tag, Tagging } from './tag'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useKeenSlider } from 'keen-slider/react'
+import AuthorCard from './author/author'
 
 
 
@@ -575,11 +576,10 @@ const ServiceSection = ({ data }) => {
                 <DynamicLucideIcon name={`${service?.itemicon}`} size={40} className="sm:w-10 sm:h-10" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 leading-snug" dangerouslySetInnerHTML={{
+                <div className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 leading-snug" dangerouslySetInnerHTML={{
                   __html: service?.itemtitle
                 }}>
-
-                </h3>
+                </div>
                 {/* <div className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed" dangerouslySetInnerHTML={{
                   __html: service?.itemsubtitle
                 }} /> */}
@@ -606,7 +606,6 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
   const toggleAccordion = (index) => {
     setOpenIndex(openIndex === index ? null : index);
   };
-  console.log(data)
   return (
     <section className="w-full bg-[#ef6a42] py-10 sm:py-14 lg:py-10 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto text-white">
@@ -662,8 +661,8 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
               {item?.extraDetail && (
                 <div
                   className={`overflow-hidden transition-all duration-500 ease-in-out ${openIndex === i
-                      ? "max-h-[1000px] opacity-100 mt-3"
-                      : "max-h-0 opacity-0"
+                    ? "max-h-[1000px] opacity-100 mt-3"
+                    : "max-h-0 opacity-0"
                     }`}
                 >
                   <div className="ml-12 bg-white/10 border border-white/20 rounded-lg p-2 backdrop-blur-sm">
@@ -744,53 +743,53 @@ const CTASection = ({ data }) => {
   )
 }
 
-const SimilarDestination = ({ countryres,sliderRef }) => 
-  (
-  
+const SimilarDestination = ({ countryres, sliderRef }) =>
+(
 
-   <section className="py-12 max-w-7xl mx-auto">
-  <div className="flex items-center gap-3 mb-6">
-    <div className="w-1 h-8 bg-orange-500"></div>
-    <h2 className="text-2xl font-bold text-gray-800">
-      Related Destinations
-    </h2>
-  </div>
 
-  <div ref={sliderRef} className="keen-slider">
-    {countryres?.map((item) => (
-      <div
-        key={item._id}
-        className="keen-slider__slide bg-white border border-gray-300"
-      >
-        <Link href={`/destination/${item.slug}`}>
-          <div className="h-42 overflow-hidden border-b border-gray-300">
-            <img
-              src={item.country?.image || item.navbarImage}
-              alt={item.country?.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
+  <section className="py-12 max-w-7xl mx-auto">
+    <div className="flex items-center gap-3 mb-6">
+      <div className="w-1 h-8 bg-orange-500"></div>
+      <h2 className="text-2xl font-bold text-gray-800">
+        Related Destinations
+      </h2>
+    </div>
 
-          <div className="p-5">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-[1px] bg-orange-500"></div>
-              <span className="text-xs uppercase tracking-widest text-orange-600 font-semibold">
-                Destination
-              </span>
+    <div ref={sliderRef} className="keen-slider">
+      {countryres?.map((item) => (
+        <div
+          key={item._id}
+          className="keen-slider__slide bg-white border border-gray-300"
+        >
+          <Link href={`/destination/${item.slug}`}>
+            <div className="h-42 overflow-hidden border-b border-gray-300">
+              <img
+                src={item.country?.image || item.navbarImage}
+                alt={item.country?.name}
+                className="w-full h-full object-cover"
+              />
             </div>
 
-            <h3 className="text-xl font-bold text-gray-900 truncate my-4">
-              {item?.title}
-            </h3>
+            <div className="p-5">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-[1px] bg-orange-500"></div>
+                <span className="text-xs uppercase tracking-widest text-orange-600 font-semibold">
+                  Destination
+                </span>
+              </div>
 
-           
-          </div>
-        </Link>
-      </div>
-    ))}
-  </div>
-</section>
- 
+              <h3 className="text-xl font-bold text-gray-900 truncate my-4">
+                {item?.title}
+              </h3>
+
+
+            </div>
+          </Link>
+        </div>
+      ))}
+    </div>
+  </section>
+
 )
 
 
@@ -800,43 +799,40 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
   const router = useRouter()
   const pathname = usePathname()
 
-  console.log(pageData)
-  console.log(countryres)
-
   const animation = { duration: 40000, easing: (t) => t };
 
-const [sliderRef] = useKeenSlider({
-  loop: true,
-  renderMode: "performance",
-  drag: true,
-  slides: {
-    perView: 4,
-    spacing: 20,
-  },
-  breakpoints: {
-    "(max-width: 1024px)": {
-      slides: {
-        perView: 2,
-        spacing: 16,
+  const [sliderRef] = useKeenSlider({
+    loop: true,
+    renderMode: "performance",
+    drag: true,
+    slides: {
+      perView: 4,
+      spacing: 20,
+    },
+    breakpoints: {
+      "(max-width: 1024px)": {
+        slides: {
+          perView: 2,
+          spacing: 16,
+        },
+      },
+      "(max-width: 640px)": {
+        slides: {
+          perView: 1,
+          spacing: 12,
+        },
       },
     },
-    "(max-width: 640px)": {
-      slides: {
-        perView: 1,
-        spacing: 12,
-      },
+    created(s) {
+      s.moveToIdx(5, true, animation);
     },
-  },
-  created(s) {
-    s.moveToIdx(5, true, animation);
-  },
-  updated(s) {
-    s.moveToIdx(s.track.details.abs + 5, true, animation);
-  },
-  animationEnded(s) {
-    s.moveToIdx(s.track.details.abs + 5, true, animation);
-  },
-});
+    updated(s) {
+      s.moveToIdx(s.track.details.abs + 5, true, animation);
+    },
+    animationEnded(s) {
+      s.moveToIdx(s.track.details.abs + 5, true, animation);
+    },
+  });
 
   useEffect(() => {
     if (pathname.startsWith("/destination/")) {
@@ -970,16 +966,26 @@ const [sliderRef] = useKeenSlider({
           )
         }
 
-      
+
 
         return SectionComponent && (
           <SectionComponent key={`${name}-${order}`} data={data} />
         )
       })}
 
+      <div className='max-w-7xl mx-auto pt-6'>
+        <AuthorCard
+          name="Sakshi Taneja"
+          designation="Content Writer & International Education Specialist"
+          image="/authors/sakshi.jpg"
+          bio="Sakshi Taneja has over 7 years of experience helping students secure admissions to leading universities across the UK, Germany, Australia, Italy, Ireland, Canada, and other top study destinations. Her guidance covers university selection, scholarships, visa applications, and career planning."
+        />
+      </div>
+
+
       {countryres?.length > 0 && (
-    <SimilarDestination countryres={countryres} sliderRef={sliderRef} />
-  )}
+        <SimilarDestination countryres={countryres} sliderRef={sliderRef} />
+      )}
 
       <FAQSection Faqres={Faqres} />
     </>

@@ -23,6 +23,14 @@ export async function generateMetadata({ params }: { params: any }) {
     alternates: {
       canonical: seo?.canonicalUrl,
     },
+    authors: [
+      {
+        name: "Sakshi Taneja",
+        url: "https://ooshasglobal.com/author/sakshi-taneja",
+      },
+    ],
+    creator: "Sakshi Taneja",
+    publisher: "Ooshas Global",
     openGraph: {
       title: seo?.metaTitle,
       description: seo?.metaDescription,
@@ -111,7 +119,6 @@ export default async function Page({
       ? generateFaqSchema(faqs)
       : null;
 
-  console.log(breadcrumbSchema, "breadcrumbSchema");
 
   return (
     <>

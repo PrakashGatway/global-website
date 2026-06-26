@@ -126,7 +126,14 @@ export async function generateMetadata({ params }) {
         index: true,
         follow: true,
       },
-
+      authors: [
+        {
+          name: "Sakshi Taneja",
+          url: "https://ooshasglobal.com/author/sakshi-taneja",
+        },
+      ],
+      creator: "Sakshi Taneja",
+      publisher: "Ooshas Global",
       openGraph: {
         title: blog.seo?.metaTitle || blog.title,
         description: blog.seo?.metaDescription || blog.shortDescription,

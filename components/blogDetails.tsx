@@ -11,6 +11,7 @@ import UniversityCard from "./UniversityCard"
 import StudentVisaStories from "./Studentvisa"
 import VideoTestimonialsSlider from "./PageComponent/VideoTestimonial"
 import { useCallback, useEffect, useState } from "react"
+import { useGlobal } from "@/src/statecontext"
 
 
 
@@ -21,6 +22,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm()
 
   const [visacontent, setVisaContent] = useState([]);
+  const { openPopup } = useGlobal();
 
   const fetchVisa = useCallback(() => {
     const filtervisa = imageData.filter(
@@ -144,12 +146,67 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
     return toc
   }
 
+  useEffect(() => {
+    window.openCounsellingPopup = () => {
+      openPopup();
+    };
 
+    return () => {
+      delete window.openCounsellingPopup;
+    };
+  }, []);
+
+  const injectCounsellingButton = (html: string) => {
+    return html.replace(
+      /<div[^>]*id=["']ooshasformshowing["'][^>]*>([\s\S]*?)<\/div>/i,
+      (_, content) => `
+<div class="my-4 overflow-hidden rounded-2xl border border-orange-200 bg-[#F46C44] shadow-xl">
+
+  <div class="relative px-8 py-8 md:py-12">
+
+    <div class="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-white/10"></div>
+    <div class="absolute -bottom-20 right-10 h-40 w-40 rounded-full bg-[#F46C44]/20"></div>
+
+    <div class="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+
+      <div class="max-w-2xl">
+        <h3 style="font-size: 1.8rem;font-weight: 700;" class="!mt-0 text-3xl font-bold text-gray-100">
+          Start Your Study Abroad Journey Today
+        </h3>
+
+        <div class="!mt-1 text-white/90 leading-8 text-[16px]">
+          ${content || "Get free counselling from our expert counsellors"}
+        </div>
+
+      </div>
+
+      <div class="flex shrink-0 flex-col items-center">
+
+        <button
+          onclick="window.openCounsellingPopup()"
+          class="rounded-xl bg-white px-4 py-3 text-sm font-medium !text-gray-800 shadow-lg transition hover:bg-white/80"
+        >
+          Book Free Counselling
+        </button>
+        <p class="mt-2 text-sm text-white/70">
+          ✔ 100% Free Consultation
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+`
+    );
+  };
 
   const toc = extractTOC(blog.description)
 
   const htmlWithIds = addHeadingIds(blog.description)
-  const htmlWithIds2 = addHeadingIds(blog.description2)
+  const finalHtml = injectCounsellingButton(htmlWithIds);
+  // const htmlWithIds2 = addHeadingIds(blog.description2)
 
   const headings = extractHeadings(blog.description)
 
@@ -181,7 +238,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
 
 
       {/* ================= MAIN CONTENT AREA ================= */}
-      <div className="max-w-7xl mx-auto px-1 py-6 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
+      <div className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8">
 
         {/* ================= LEFT CONTENT COLUMN ================= */}
         <div className="space-y-4 max-w-5xl">
@@ -250,8 +307,14 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
       background-color: #f3ebeb;
       
     }
-
     .blog-html h2 {
+      font-size: 26px;
+      margin: 28px 0 12px;
+      font-weight: 700;
+      color: #00306a
+    }
+
+    .blog-html h2 * {
       font-size: 26px;
       margin: 28px 0 12px;
       font-weight: 700;
@@ -308,16 +371,16 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
 
               <div
                 className="blog-html"
-                dangerouslySetInnerHTML={{ __html: htmlWithIds }}
+                dangerouslySetInnerHTML={{ __html: finalHtml }}
 
               ></div>
 
 
 
-              <div
+              {/* <div
                 className="blog-html pt-10"
                 dangerouslySetInnerHTML={{ __html: htmlWithIds2 }}
-              />
+              /> */}
             </div>
 
 
@@ -350,7 +413,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
                   <div>
                     <p className="text-xs text-gray-500">Author</p>
                     <p className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">
-                      { "Sakshi Taneja"}
+                      {"Sakshi Taneja"}
                     </p>
                   </div>
                 </Link>
@@ -394,7 +457,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
         <aside className="space-y-3 sticky top-24 h-fit">
 
           {/* ================= BLOG ENQUIRY FORM ================= */}
-         ` <div className="bg-white/95 relative backdrop-blur-sm p-5 rounded-2xl border-2 border-[#F46C44] max-w-full mx-auto">
+          ` <div className="bg-white/95 relative backdrop-blur-sm p-5 rounded-2xl border-2 border-[#F46C44] max-w-full mx-auto">
             <div className="absolute top-4 right-4 z-10">
               <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-orange-200 px-3 py-1.5 rounded-full shadow-sm hover:shadow-md transition-shadow duration-200">
                 {/* Animated Pulse Dot */}

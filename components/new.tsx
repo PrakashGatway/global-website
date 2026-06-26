@@ -16,6 +16,7 @@ import axiosInstance from "@/app/axiosInstance";
 import toast from "react-hot-toast";
 import UniversityCard from "./UniversityCard";
 import Link from "next/link";
+import AuthorCard from "./author/author";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -218,10 +219,10 @@ const FormSection = () => {
             >
               <option value="">Country to Study</option>
               {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
-                    <option key={c} value={c.toLowerCase()}>
-                      Study In {c}
-                    </option>
-                  ))}
+                <option key={c} value={c.toLowerCase()}>
+                  Study In {c}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -384,23 +385,24 @@ export default function UniDetailsClient({
             <div className="flex gap-4 px-4">
               {activeSections.map((section) => {
                 console.log(section.section_key)
-                 return (
-                <button
-                  key={section._id}
-                  ref={(el) => {
-                    buttonRefs.current[section.section_key] = el;
-                  }} // 👈 ref each button
-                  onClick={() => scrollToSection(section.section_key)}
-                  className={`px-2 py-3 font-semibold text-sm border-0 border-b-2 whitespace-nowrap transition-colors ${activeSection === section.section_key
-                    ? "border-orange-600 text-orange-600"
-                    : "border-transparent text-gray-500 hover:text-black"
-                    }`}
-                >
-                  <span dangerouslySetInnerHTML={{
-                    __html: section.heading
-                  }} />
-                </button>
-              )})}
+                return (
+                  <button
+                    key={section._id}
+                    ref={(el) => {
+                      buttonRefs.current[section.section_key] = el;
+                    }} // 👈 ref each button
+                    onClick={() => scrollToSection(section.section_key)}
+                    className={`px-2 py-3 font-semibold text-sm border-0 border-b-2 whitespace-nowrap transition-colors ${activeSection === section.section_key
+                      ? "border-orange-600 text-orange-600"
+                      : "border-transparent text-gray-500 hover:text-black"
+                      }`}
+                  >
+                    <span dangerouslySetInnerHTML={{
+                      __html: section.heading
+                    }} />
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -731,6 +733,15 @@ export default function UniDetailsClient({
         />
         <div className="absolute bottom-0 left-0 w-full sm:w-1/2 h-2 sm:h-3 bg-yellow-400" />
       </section>
+
+      <div className='max-w-7xl mx-auto pt-6'>
+        <AuthorCard
+          name="Sakshi Taneja"
+          designation="Content Writer & International Education Specialist"
+          image="/authors/sakshi.jpg"
+          bio="Sakshi Taneja has over 7 years of experience helping students secure admissions to leading universities across the UK, Germany, Australia, Italy, Ireland, Canada, and other top study destinations. Her guidance covers university selection, scholarships, visa applications, and career planning."
+        />
+      </div>
 
       <FAQSection Faqres={Faqres} />
     </main>
