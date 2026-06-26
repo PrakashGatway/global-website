@@ -91,6 +91,11 @@ export function GlobalProvider({ children }) {
 const showPopup = () => {
   // Don't show popup on dashboard pages
   if (pathname.startsWith("/dashboard")) {
+    setIsPopupOpen(false);
+    return;
+  }
+  if (pathname.startsWith("/login")) {
+    setIsPopupOpen(false);
     return;
   }
 
