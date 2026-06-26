@@ -145,12 +145,75 @@ export default function CoursesPage() {
         { label: "Hybrid", value: "Hybrid" }
       ])
       setLevels([
-        { label: "Undergraduate", value: "Undergraduate" },
-        { label: "Postgraduate", value: "Postgraduate" },
-        { label: "PhD", value: "PhD" },
-        { label: "Diploma", value: "Diploma" },
-        { label: "Certificate", value: "Certificate" }
-      ])
+        {
+          label: "High School (11th - 12th)",
+          value: "High School (11th - 12th)",
+        },
+        {
+          label: "UG Diploma/ Certificate/ Associate Degree",
+          value: "UG Diploma/ Certificate/ Associate Degree",
+        },
+        {
+          label: "UG",
+          value: "UG",
+        },
+        {
+          label: "PG Diploma/Certificate",
+          value: "PG Diploma/Certificate",
+        },
+        {
+          label: "PG",
+          value: "PG",
+        },
+        {
+          label: "UG+PG (Accelerated) Degree",
+          value: "UG+PG (Accelerated) Degree",
+        },
+        {
+          label: "PhD",
+          value: "PhD",
+        },
+        {
+          label: "Short-term/Summer Programs",
+          value: "Short-term/Summer Programs",
+        },
+        {
+          label: "Pathway Programs (UG)",
+          value: "Pathway Programs (UG)",
+        },
+        {
+          label: "Pathway Programs (PG)",
+          value: "Pathway Programs (PG)",
+        },
+        {
+          label: "Semester Study Abroad",
+          value: "Semester Study Abroad",
+        },
+        {
+          label: "Twinning Programmes (UG)",
+          value: "Twinning Programmes (UG)",
+        },
+        {
+          label: "Twinning Programmes (PG)",
+          value: "Twinning Programmes (PG)",
+        },
+        {
+          label: "English Language Program",
+          value: "English Language Program",
+        },
+        {
+          label: "Online Programmes / Distance Learning",
+          value: "Online Programmes / Distance Learning",
+        },
+        {
+          label: "Hybrid",
+          value: "Hybrid",
+        },
+        {
+          label: "Grades Below 10th",
+          value: "Grades Below 10th",
+        },
+      ]);
     } catch (error) {
       console.error('Error fetching filter options:', error)
     }
@@ -330,7 +393,7 @@ export default function CoursesPage() {
 
 
   return (
-    <main className="flex-1 overflow-y-auto  px-4 relative">
+    <main className="flex-1    relative">
 
 
 
@@ -338,7 +401,7 @@ export default function CoursesPage() {
 
         {/* Hero Section */}
 
-        <ProgramHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} countries={countries} course={courses} />
+        <ProgramHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} countries={countries} course={courses} levels={levels} categories={categories} />
 
         {/* Search & Filter Bar */}
         {/* <div className="flex flex-col sm:flex-row gap-4">
@@ -410,24 +473,25 @@ export default function CoursesPage() {
 
 
         {/* Courses Grid */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
+        <div className="flex flex-col lg:flex-row gap-4 items-start">
           {/* ================= LEFT SIDEBAR: FILTERS ================= */}
-          <ProgramFilters
-            filters={filters}
-            handleFilterChange={handleFilterChange}
-            clearFilters={clearFilters}
-            getActiveFilterCount={getActiveFilterCount}
-            countries={countries}
-            universities={universities}
-            categories={categories}
-            studyModes={studyModes}
-            levels={levels}
-            showFilters={showFilters}
-            setShowFilters={setShowFilters}
-            isCleared={isCleared}
-            setIsCleared={setIsCleared}
-          />
-
+          <div className="sticky -top-260 self-start">
+            <ProgramFilters
+              filters={filters}
+              handleFilterChange={handleFilterChange}
+              clearFilters={clearFilters}
+              getActiveFilterCount={getActiveFilterCount}
+              countries={countries}
+              universities={universities}
+              categories={categories}
+              studyModes={studyModes}
+              levels={levels}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
+              isCleared={isCleared}
+              setIsCleared={setIsCleared}
+            />
+          </div>
           {/* ================= RIGHT CONTENT: COURSE GRID ================= */}
           <div className="flex-1 w-full">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
@@ -567,7 +631,7 @@ export default function CoursesPage() {
                       style={{ animationDelay: `${index * 0.05}s` }}
                     >
                       {/* Compact Card */}
-                      <div className={`  rounded-lg p-4 transition-all duration-200  hover:shadow-md hover:scale-105 h-full flex flex-col ${selectedProgram.some((item) => item._id === course._id) ? "border border-orange-500 bg-[#fefaf8]" : "border border-gray-200 bg-white"} `}>
+                      <div className={`  rounded-lg p-4 transition-all duration-200  hover:shadow-md hover:scale-101 h-full flex flex-col ${selectedProgram.some((item) => item._id === course._id) ? "border border-orange-500 bg-[#fefaf8]" : "border border-gray-200 bg-white"} `}>
 
                         {/* Header */}
                         <div className="flex gap-3 mb-3 relative">
