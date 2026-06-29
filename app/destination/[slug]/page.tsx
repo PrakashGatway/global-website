@@ -6,6 +6,20 @@ import {
   generateFaqSchema,
 } from "@/utils/schema";
 
+
+const authorSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://ooshasglobal.com/author/sakshi-taneja#author",
+  name: "Sakshi Taneja",
+  jobTitle: "Study Abroad Expert",
+  url: "https://ooshasglobal.com/author/sakshi-taneja",
+  worksFor: {
+    "@type": "Organization",
+    name: "Ooshas Global",
+    url: "https://ooshasglobal.com",
+  },
+};
 /* ---------------- SEO ---------------- */
 export async function generateMetadata({ params }: { params: any }) {
   const { slug } = await params;
@@ -25,10 +39,14 @@ export async function generateMetadata({ params }: { params: any }) {
     },
     authors: [
       {
-        name: "Sakshi Taneja",
-        url: "https://ooshasglobal.com/author/sakshi-taneja",
+        name: "Sakshi Taneja"
+        // url: "https://ooshasglobal.com/author/sakshi-taneja",
       },
     ],
+    robots: {
+      index: true,
+      follow: true,
+    },
     creator: "Sakshi Taneja",
     publisher: "Ooshas Global",
     openGraph: {
@@ -122,6 +140,12 @@ export default async function Page({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(authorSchema),
+        }}
+      />
       {/* WebPage Schema */}
       <script
         type="application/ld+json"

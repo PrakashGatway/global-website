@@ -100,20 +100,26 @@ const faqSchema = (faqs: any[]) => ({
   })),
 });
 
+const authorSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://ooshasglobal.com/author/sakshi-taneja#author",
+  name: "Sakshi Taneja",
+  jobTitle: "Study Abroad Expert",
+  url: "https://ooshasglobal.com/author/sakshi-taneja",
+  worksFor: {
+    "@type": "Organization",
+    name: "Ooshas Global",
+    url: "https://ooshasglobal.com",
+  },
+};
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
 
   try {
     const res = await serverInstance.get(`/blogs/${slug}`);
     const blog = res.data.data;
-
-    const createdDate = new Date(blog.createdAt);
-
-    // ✅ Fixed cutoff date (10 Jan 2026)
-    const cutoffDate = new Date("2026-04-10");
-
-    // ❗ condition: blog older than cutoff → noindex
-    const noIndex = createdDate < cutoffDate;
 
     return {
       title: blog.seo?.metaTitle || blog.title,
@@ -129,7 +135,7 @@ export async function generateMetadata({ params }) {
       authors: [
         {
           name: "Sakshi Taneja",
-          url: "https://ooshasglobal.com/author/sakshi-taneja",
+          // url: "https://ooshasglobal.com/author/sakshi-taneja",
         },
       ],
       creator: "Sakshi Taneja",
@@ -195,6 +201,13 @@ export default async function Page({ params }) {
 
   return (
     <>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(authorSchema),
+        }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

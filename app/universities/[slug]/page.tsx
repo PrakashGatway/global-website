@@ -25,6 +25,20 @@ const universitySchema = (uni: any) => ({
   },
 });
 
+const authorSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://ooshasglobal.com/author/sakshi-taneja#author",
+  name: "Sakshi Taneja",
+  jobTitle: "Study Abroad Expert",
+  url: "https://ooshasglobal.com/author/sakshi-taneja",
+  worksFor: {
+    "@type": "Organization",
+    name: "Ooshas Global",
+    url: "https://ooshasglobal.com",
+  },
+};
+
 const breadcrumbSchema = (uni: any) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -96,10 +110,14 @@ export async function generateMetadata({
           seo.canonical_tag ||
           `https://ooshasglobal.com/universities/${uni.slug}`,
       },
+      robots: {
+        index: true,
+        follow: true,
+      },
       authors: [
         {
           name: "Sakshi Taneja",
-          url: "https://ooshasglobal.com/author/sakshi-taneja",
+          // url: "https://ooshasglobal.com/author/sakshi-taneja",
         },
       ],
       creator: "Sakshi Taneja",
@@ -189,6 +207,12 @@ export default async function UniDetailsPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(authorSchema),
+        }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
