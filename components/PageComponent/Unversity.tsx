@@ -103,7 +103,7 @@ export default function UniversitySliderClient({ universities }) {
       )}
 
       {/* FULL WIDTH SLIDER */}
-      <div ref={sliderRef} className="keen-slider w-full   ">
+      <div ref={sliderRef} className="flex keen-slider w-full   ">
         {universitie.map((university) => (
           <div key={university.id} className="keen-slider__slide ">
             <div className=" rounded-xl ">

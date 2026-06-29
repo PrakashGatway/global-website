@@ -409,7 +409,7 @@ export default function UniDetailsClient({
       )}
 
       {/* ── MAIN CONTENT ────────────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 py-10 grid lg:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto px-4 py-10 lg:grid lg:grid-cols-3 gap-8">
         {/* LEFT — sections + map */}
         <div className="lg:col-span-2 space-y-10">
           {activeSections.map((section) => (

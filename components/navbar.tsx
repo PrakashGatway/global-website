@@ -82,6 +82,13 @@ export default function Navbar({
     { title: "Contact Us", route: "/contact", id: 8 },
   ]
 
+  // Create a combined nav items array with Blog and Events & Webinars
+  const allNavItems = [
+    ...navbar,
+    { title: "Blogs", route: "/blog", id: 23, hasDropdown: false },
+    { title: "Events & Webinars", route: "/events", id: 13, hasDropdown: false }
+  ]
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -186,11 +193,13 @@ export default function Navbar({
   };
 
   const handleNavClick = (item: NavItem) => {
+    // For items without dropdown, close the mobile menu and navigate
     if (!item.hasDropdown) {
       setIsOpen(false);
       return;
     }
 
+    // For items with dropdown, handle navigation in mobile
     if (item.type === 'destination') {
       pushNav({ type: 'countries', title: 'Select Country' });
     } else if (item.type === 'service') {
@@ -200,6 +209,25 @@ export default function Navbar({
     }
   };
 
+  // Handle mobile item click - this is the key fix
+  const handleMobileItemClick = (item: NavItem) => {
+    if (item.hasDropdown) {
+      // If it has dropdown, show the dropdown
+      if (item.type === 'destination') {
+        pushNav({ type: 'countries', title: 'Select Country' });
+      } else if (item.type === 'service') {
+        pushNav({ type: 'services', data: Serviceitem, title: 'Our Services' });
+      } else if (item.type === 'country') {
+        pushNav({ type: 'destinations', data: countryres, title: 'Destinations' });
+      }
+    } else {
+      // If no dropdown, navigate and close menu
+      if (item.route) {
+        window.location.href = item.route;
+      }
+      setIsOpen(false);
+    }
+  };
 
   // Animation variants
   const slideVariants = {
@@ -488,10 +516,11 @@ export default function Navbar({
                         >
                           {screen.type === 'main' && (
                             <div className="px-4 py-2 space-y-1">
-                              {[...navbar, { title: "Blogs", route: "/blog", id: 23 }, { title: "Events & Webinars", route: "/events", id: 13 }].map((item) => (
+                              {/* FIXED: Use allNavItems instead of navbar for mobile */}
+                              {allNavItems.map((item) => (
                                 <div key={item.id} className="rounded-xl overflow-hidden">
                                   <button
-                                    onClick={() => item.hasDropdown ? handleNavClick(item) : setIsOpen(false)}
+                                    onClick={() => handleMobileItemClick(item)}
                                     className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-white/60 active:bg-white/80 transition rounded-xl group"
                                   >
                                     <span className="text-base font-medium text-gray-800 group-hover:text-[#f46c44] transition">
