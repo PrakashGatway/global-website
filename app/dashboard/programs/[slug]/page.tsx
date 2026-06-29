@@ -15,13 +15,19 @@ import {
     IndianRupeeIcon,
     TrendingDown,
     MinusCircle,
-    Building2Icon
+    Building2Icon,
+    Clock3,
+    ArrowRight,
+    Info,
+    ClipboardList,
+    CalendarDays
 } from "lucide-react"
 import axiosInstance from "@/app/axiosInstance"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { CreateApplicationModal } from "@/components/dashboard/applicationModel"
 import CourseDetailScholarships from "@/components/dashboard/scholarship"
+import Image from "next/image"
 
 // Types based on your actual payload
 interface Course {
@@ -114,24 +120,68 @@ interface Course {
 }
 
 // Stats Card Component
-const StatCard = ({ icon: Icon, label, value, trend, small = false }: any) => (
-    <div className="bg-[#f3f4f6] hover:bg-[#e5e7eb] hover:outline hover:outline-2 hover:outline-[#F26D44] p-4 pl-1">
-        <div className="flex items-center gap-1 mb-2">
-            <div className="p-2">
-                <Icon className="w-11 h-11 text-black" strokeWidth={1.1} />
-            </div>
-            <span className="flex flex-col gap-1 text-sm text-gray-800">{label}
-                <span className={`font-bold line-wrapping w-full ${small ? 'text-lg' : 'text-xl'}`}>{value}</span>
-                {trend && (
-                    <span className={`text-sm flex items-center gap-1 ${trend > 0 ? 'text-green-600' : trend < 0 ? 'text-red-600' : 'text-yellow-600'}`}>
-                        {trend > 0 ? <TrendingUp className="w-4 h-4" /> : trend < 0 ? <TrendingDown className="w-4 h-4" /> : <MinusCircle className="w-4 h-4" />}
-                        {Math.abs(trend)}%
-                    </span>
-                )}
+const StatCard = ({
+    icon: Icon,
+    label,
+    value,
+    trend,
+    small = false,
+    last = false,
+}: any) => (
+    <div
+        className={`
+      relative flex items-center gap-4
+      bg-white
+      px-6 py-6
+      h-full
+      transition-all duration-300
+      hover:bg-orange-50
+      ${!last ? "lg:border-r border-[#F3E7DF]" : ""}
+    `}
+    >
+        {/* Icon */}
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-orange-50 shadow-sm">
+            <Icon
+                className="w-7 h-7 text-[#F26D44]"
+                strokeWidth={1.8}
+            />
+        </div>
+
+        {/* Content */}
+        <div className="flex flex-col min-w-0">
+            <span className="text-sm text-gray-500 font-medium">
+                {label}
             </span>
+
+            <span
+                className={`font-bold text-[#1F2340] leading-snug ${small ? "text-lg" : "text-2xl"
+                    }`}
+            >
+                {value}
+            </span>
+
+            {trend !== undefined && (
+                <span
+                    className={`mt-1 flex items-center gap-1 text-sm ${trend > 0
+                        ? "text-green-600"
+                        : trend < 0
+                            ? "text-red-600"
+                            : "text-gray-500"
+                        }`}
+                >
+                    {trend > 0 ? (
+                        <TrendingUp className="w-4 h-4" />
+                    ) : trend < 0 ? (
+                        <TrendingDown className="w-4 h-4" />
+                    ) : (
+                        <MinusCircle className="w-4 h-4" />
+                    )}
+                    {Math.abs(trend)}%
+                </span>
+            )}
         </div>
     </div>
-)
+);
 
 // Tab Button Component
 const TabButton = ({ active, onClick, children }: any) => (
@@ -155,12 +205,84 @@ const TabButton = ({ active, onClick, children }: any) => (
 )
 
 // Requirement Badge Component
-const RequirementBadge = ({ label, value }: { label: string; value: string }) => (
-    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100 hover:border-blue-200 hover:bg-blue-50/30 transition-all">
-        <span className="text-sm text-gray-600">{label}:</span>
-        <span className="text-sm font-semibold text-gray-900">{value}</span>
-    </div>
-)
+interface RequirementBadgeProps {
+    exam: string;
+    overall: string | number;
+    band: string | number;
+}
+
+const RequirementBadge = ({
+    exam,
+    overall,
+    band,
+}: RequirementBadgeProps) => {
+    const getExamConfig = (exam: string) => {
+        switch (exam.toLowerCase()) {
+            case "pte academic":
+                return {
+                    icon: "P",
+                    color: "bg-blue-600",
+                };
+            case "toefl ibt":
+                return {
+                    icon: "T",
+                    color: "bg-blue-700",
+                };
+            case "ielts":
+                return {
+                    icon: "I",
+                    color: "bg-red-600",
+                };
+            default:
+                return {
+                    icon: exam.charAt(0),
+                    color: "bg-gray-600",
+                };
+        }
+    };
+
+    const config = getExamConfig(exam);
+
+    return (
+        <div className="grid grid-cols-[240px_1fr_1.2fr_80px] items-center rounded-xl border border-gray-100 bg-[#FBFCFD] px-5 py-5 hover:border-orange-200 transition-all">
+
+            {/* Exam */}
+            <div className="flex items-center gap-3">
+                <div
+                    className={`w-9 h-9 rounded-full ${config.color} flex items-center justify-center text-white text-sm font-semibold`}
+                >
+                    {config.icon}
+                </div>
+
+                <span className="font-semibold text-[#1F2340]">
+                    {exam}
+                </span>
+            </div>
+
+            {/* Overall */}
+            <div className="border-l border-gray-200 pl-6">
+                <p className="text-sm text-gray-500">Overall</p>
+                <p className="font-bold text-[#1F2340] text-lg">
+                    {overall}
+                </p>
+            </div>
+
+            {/* No Band */}
+            <div className="border-l border-gray-200 pl-6">
+                <p className="text-sm text-gray-500">
+                    No Bands Less Than
+                </p>
+            </div>
+
+            {/* Score */}
+            <div className="border-l border-gray-200 pl-6">
+                <p className="font-bold text-[#1F2340] text-lg">
+                    {band}
+                </p>
+            </div>
+        </div>
+    );
+};
 
 // Document Item Component
 const DocumentItem = ({ doc }: { doc: { [key: string]: string } }) => {
@@ -215,6 +337,29 @@ export default function CourseDetailPage() {
     const [isSaved, setIsSaved] = useState(false)
     const [relatedCourses, setRelatedCourses] = useState([])
     const [isModalOpen, setIsModalOpen] = useState(false)
+
+    const programDetails = [
+        { label: "Duration", value: course?.duration },
+        { label: "Campus", value: course?.metaInfo?.campus },
+        { label: "Intakes", value: course?.metaInfo?.Intakes },
+        { label: "Application Deadline", value: course?.metaInfo?.deadline },
+        {
+            label: "Application Fee",
+            value: `${course?.currency} ${course?.applicationFee ?? 0}`,
+        },
+        {
+            label: "Yearly Tuition Fee",
+            value: `${course?.currency} ${course?.tuitionFee?.toLocaleString() ?? 0}`,
+        },
+        {
+            label: "Average Scholarship",
+            value: `${course?.currency} ${course?.metaInfo?.scholarship ?? 0}`,
+        },
+        {
+            label: "Initial Deposit",
+            value: `${course?.currency} ${course?.metaInfo?.initialDeposit ?? 0}`,
+        },
+    ];
 
     useEffect(() => {
         fetchCourseDetails()
@@ -356,8 +501,8 @@ export default function CourseDetailPage() {
 
                 {/* Hero Section - University & Course Header */}
 
-                <div className="relative overflow-hidden h-[300px] mb-4">
-                    {/* Cover Image */}
+                {/* <div className="relative overflow-hidden h-[300px] mb-4">
+                 
                     {course?.university ? (
                         <img
                             src={course?.university?.cover_photo || "https://www.ox.ac.uk/sites/files/oxford/styles/ow_large_feature/s3/field/field_image_main/GAF%20Radcliffe%20Square%20Dawn%20-%20Elizabeth%20Nyikos.jpg?itok=U-0F0aPx"}
@@ -373,11 +518,11 @@ export default function CourseDetailPage() {
                     )}
                     <div className="absolute  inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
 
-                    {/* University Info Overlay */}
+                 
                     <div className="absolute  bottom-0 left-0 right-0 p-6">
                         <div className="container mx-auto">
                             <div className="flex items-end gap-6">
-                                {/* Logo */}
+                           
                                 <div className="w-32 h-32  bg-white p-4 shadow-2xl border border-white/50">
                                     {course?.university.uni_logo ? (
                                         <img
@@ -424,9 +569,7 @@ export default function CourseDetailPage() {
                                         )}
                                     </div>
                                     <div className="flex items-center gap-3 flex-wrap">
-                                        {/* <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full font-medium border">
-                                            Est. {course?.university.established_year}
-                                        </span> */}
+                                     
                                         <span className={`px-3 py-1.5 text-xs font-medium border ${getLevelColor(course.level)}`}>
                                             {course.level}
                                         </span>
@@ -444,9 +587,7 @@ export default function CourseDetailPage() {
                                 </div>
 
                                 <div className="flex gap-2">
-                                    {/* <button className="p-3 bg-white/90 backdrop-blur-sm rounded-lg border hover:bg-white transition-colors">
-                                        <Share2 className="w-5 h-5" />
-                                    </button> */}
+                                   
                                     <button onClick={() => setIsModalOpen(true)} className="px-6 py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-medium">
                                         Apply Now
                                     </button>
@@ -454,55 +595,154 @@ export default function CourseDetailPage() {
                             </div>
                         </div>
                     </div>
+                </div> */}
+
+                <div className="w-full rounded-3xl bg-gradient-to-r from-[#FFF7F3] via-white to-[#FFF7F3] border border-[#F5E6DE] shadow-sm overflow-hidden mb-4">
+                    <div className="grid lg:grid-cols-[100px_1fr_420px] items-center gap-8 p-8">
+
+                        {/* Logo */}
+                        <div className="flex justify-center">
+                            <div className="w-[110px] h-[110px] rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center">
+                                <Image
+                                    src={course?.university.uni_logo || "/images/newlogo3.png"}
+                                    alt={course?.university.name}
+                                    onError={(e) => {
+                                        e.currentTarget.src =
+                                            "/images/newlogo3.png";
+                                    }}
+                                    width={70}
+                                    height={70}
+                                    className="object-contain"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Content */}
+                        <div>
+                            <h2 className="text-2xl font-bold text-[#1B2143] leading-tight">
+
+                                {course.name}
+                            </h2>
+
+                            <div className="mt-4 space-y-3">
+
+                                <div className="flex items-center gap-2 text-gray-700">
+                                    <Building2 size={18} className="text-gray-500" />
+                                    <span className="font-semibold text-lg">
+                                        {course?.university.name}
+                                    </span>
+                                </div>
+
+                                <div className="flex flex-wrap gap-8 text-gray-600">
+
+                                    <div className="flex items-center gap-2">
+                                        <MapPin size={17} />
+                                        {course?.university.city}, {course?.university.country}
+                                    </div>
+
+                                    {course?.university.uni_web && <div className="flex items-center gap-2">
+                                        <Globe size={17} />
+                                        <a
+                                            href={course?.university.uni_web}
+                                            className="hover:text-orange-500 transition"
+                                        >
+                                            Official Website
+                                        </a>
+                                    </div>}
+
+                                </div>
+
+                                <div className="flex flex-wrap gap-3 pt-2">
+
+                                    <span className="px-4 py-2 rounded-full bg-[#FFF2EB] text-[#D96A34] font-medium">
+                                        {course.level}
+                                    </span>
+
+                                    <span className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 flex items-center gap-2 font-medium">
+                                        <Clock3 size={16} />
+                                        {course.studyMode}
+                                    </span>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        {/* Right */}
+                        <div className="relative flex  items-center justify-center">
+
+                            {/* Decorative Circle */}
+                            <div className="absolute "></div>
+
+                            {/* Image */}
+                            <Image
+                                src="/hero-program.png"
+                                alt="Graduation"
+                                width={240}
+                                height={220}
+                                className="relative z-10"
+                            />
+
+                            <button className="mt-35  bg-gradient-to-r from-[#FF6A2B] to-[#FF4F17] text-white rounded-xl px-4 py-2 flex items-center gap-3 font-semibold shadow-lg hover:scale-105 duration-300">
+                                Apply Now
+                                <ArrowRight size={10} />
+                            </button>
+
+                        </div>
+
+                    </div>
                 </div>
                 {/* Quick Stats Grid */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="grid grid-cols-2 md:grid-cols-5 max-w-7xl mx-auto gap-4 mb-6"
+                    className="max-w-7xl mx-auto mb-8"
                 >
-                    <StatCard
-                        icon={IndianRupeeIcon}
-                        label="Tuition Fee"
-                        value={course.tuitionFee + course.currency}
-                        subValue="per year"
-                        color="primary"
-                    />
-                    <StatCard
-                        icon={Clock}
-                        label="Duration"
-                        value={course.duration}
-                        subValue={course.studyMode}
-                        color="green"
-                    />
-                    <StatCard
-                        icon={GraduationCap}
-                        label="Level"
-                        small={true}
-                        value={course.level}
-                        subValue={course.shortName || 'Degree'}
-                        color="purple"
-                    />
-                    <StatCard
-                        icon={Wallet}
-                        label="Application Fee"
-                        value={course.applicationFee + course.currency}
-                        subValue="non-refundable"
-                        color="amber"
-                    />
-                    <StatCard
-                        icon={TrendingUp}
-                        label="Acceptance Rate"
-                        value={course.university?.acceptanceRate + "%" || 'N/A'}
-                        // trend={course.university?.acceptanceRate ? -Math.random() * 10 : undefined} // Random trend for demo
-                        subValue="Percentage"
-                        color="amber"
-                    />
+                    <div className="bg-white rounded-3xl border border-[#F3E7DF] shadow-[0_8px_30px_rgba(242,109,68,0.08)] overflow-hidden">
+                        <div className="grid grid-cols-2 lg:grid-cols-5">
+                            <StatCard
+                                icon={IndianRupeeIcon}
+                                label="Tuition Fee"
+                                value={`${course.tuitionFee} ${course.currency}`}
+                                subValue="Per Year"
+                            />
+
+                            <StatCard
+                                icon={Clock}
+                                label="Duration"
+                                value={course.duration}
+                                subValue={course.studyMode}
+                            />
+
+                            <StatCard
+                                icon={GraduationCap}
+                                label="Level"
+                                value={course.level}
+                                subValue={course.shortName || "Degree"}
+                                small
+                            />
+
+                            <StatCard
+                                icon={Wallet}
+                                label="Application Fee"
+                                value={`${course.applicationFee} ${course.currency}`}
+                                subValue="Non-refundable"
+                            />
+
+                            <StatCard
+                                icon={TrendingUp}
+                                label="Acceptance Rate"
+                                value={`${course.university?.acceptanceRate ?? 0}%`}
+                                subValue="Percentage"
+                                last
+                            />
+                        </div>
+                    </div>
                 </motion.div>
 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 max-w-7xl mx-auto  gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 max-w-7xl mx-auto  gap-6">
                     {/* Left Column - Main Content (2/3 width) */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Tabs Navigation */}
@@ -524,17 +764,12 @@ export default function CourseDetailPage() {
                                             {section.heading}
                                         </TabButton>
                                     ))}
-                                 
+
 
                                 </div>
                             </div>
                             {/* Tab Content */}
                             <div className="p-2">
-
-
-
-
-
                                 {/* Dynamic Extra Content Sections */}
                                 {course.extra_content?.sections?.map((section) => (
                                     activeTab === section.section_key && (
@@ -551,132 +786,564 @@ export default function CourseDetailPage() {
                                                 className="text-muted-foreground text-gray-800 leading-relaxed"
                                                 dangerouslySetInnerHTML={{ __html: section.content }}
                                             />
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                className="space-y-2"
-                                            >
-                                                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                                                    Entry Requirements
-                                                </h3>
 
-                                                {course?.requirements &&
-                                                    typeof course.requirements === "object" &&
-                                                    !Array.isArray(course.requirements) &&
-                                                    Object.keys(course.requirements).length > 0 ? (
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                        {Object.entries(course?.requirements || {}).map(
-                                                            ([key, requirement], index) => (
-                                                                <RequirementBadge
-                                                                    key={index}
-                                                                    label={key.toUpperCase()}
-                                                                    value={requirement?.value || "N/A"}
-                                                                />
-                                                            )
-                                                        )}
+                                            <div className="grid grid-cols-2 gap-4 items-start">
+
+                                                <div className="flex flex-col">
+
+                                                    <div className=" mt-4">
+                                                        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+
+                                                            {/* Header */}
+                                                            <div className="flex items-center gap-3 border-b border-gray-100 px-6 py-4">
+                                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100">
+                                                                    <Info className="h-5 w-5 text-orange-600" />
+                                                                </div>
+
+                                                                <h2 className="text-lg font-semibold text-[#1D2340]">
+                                                                    Program Details
+                                                                </h2>
+                                                            </div>
+
+                                                            {/* Details */}
+                                                            <div className="px-6 py-2">
+                                                                {programDetails.map((item, index) => (
+                                                                    <div
+                                                                        key={index}
+                                                                        className="grid grid-cols-[330px_1fr] items-start py-2"
+                                                                    >
+                                                                        <p className="text-[15px] text-gray-500">
+                                                                            {item.label}
+                                                                        </p>
+
+                                                                        <p className="text-[15px] font-semibold text-[#1D2340] break-words">
+                                                                            {item.value || "N/A"}
+                                                                        </p>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                ) : (
-                                                    <p className="text-gray-600 bg-gray-50 rounded-lg p-5 border border-gray-200">
-                                                        No specific requirements listed for this course.
-                                                    </p>
-                                                )}
-                                            </motion.div>
 
-                                            <div>
-                                                <span className=" bg-yellow-50">{course?.metaInfo?.EntryRequirement}</span>
-                                            </div>
+                                                    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden mt-4">
+                                                        {/* Header */}
+                                                        <div className="flex items-center gap-3 border-b border-gray-100 px-6 py-4">
 
-                                            <div className="bg-white py-6">
-                                                <div className="flex items-center justify-between mb-5">
-                                                    <h3 className="text-lg font-semibold text-neutral-900">
-                                                        Required Documents
-                                                    </h3>
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center py-2">
+                                                                    <GraduationCap className="w-5 h-5 text-orange-600" />
+                                                                </div>
 
-                                                    <span className="text-xs font-medium px-3 py-1 rounded-full bg-orange-50 text-orange-600">
-                                                        {course?.docsRequired?.length || 0} Documents
-                                                    </span>
-                                                </div>
+                                                                <h3 className="text-lg font-semibold text-[#1D2340]">
+                                                                    Entry Requirements
+                                                                </h3>
+                                                            </div>
+                                                        </div>
 
-                                                <div className="grid md:grid-cols-2 gap-3">
-                                                    {course?.docsRequired?.map((doc, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className="flex items-start gap-3 p-4 rounded-xl border border-neutral-100 hover:border-orange-200 hover:bg-orange-50/30 transition-all"
+                                                        <div className="px-6 py-2">
+                                                            <span>{course?.metaInfo?.EntryRequirement}</span>
+                                                        </div>
+
+
+
+                                                    </div>
+
+                                                    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden mt-6">
+                                                        {/* Header */}
+                                                        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                                                                    <ClipboardList className="w-5 h-5 text-orange-600" />
+                                                                </div>
+
+                                                                <h3 className="text-lg font-semibold text-[#1D2340]">
+                                                                    Application Information
+                                                                </h3>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Body */}
+                                                        <div className="divide-y divide-gray-100">
+
+                                                            {/* Initial Deposit */}
+                                                            <div className="flex items-center justify-between px-6 py-5 hover:bg-orange-50 transition-all">
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                                                        <Wallet className="w-5 h-5 text-orange-600" />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <h4 className="font-medium text-[#1D2340]">
+                                                                            Initial Deposit
+                                                                        </h4>
+
+                                                                        <p className="text-sm text-gray-500">
+                                                                            Amount payable before admission
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <span className="font-semibold text-[#1D2340]">
+                                                                    {course?.currency} {course?.metaInfo?.initialDeposit || 0}
+                                                                </span>
+                                                            </div>
+
+                                                            {/* Intake Deadline */}
+                                                            <div className="flex items-center justify-between px-6 py-5 hover:bg-orange-50 transition-all">
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                                                        <CalendarDays className="w-5 h-5 text-orange-600" />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <h4 className="font-medium text-[#1D2340]">
+                                                                            Intake Deadline
+                                                                        </h4>
+
+                                                                        <p className="text-sm text-gray-500">
+                                                                            Last date to apply
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="text-right">
+                                                                    <p className="font-semibold text-[#1D2340]">
+                                                                        {course?.metaInfo?.intakeDeadline?.split(":")[0] || "N/A"}
+                                                                    </p>
+
+                                                                    <p className="text-sm text-gray-500">
+                                                                        {course?.metaInfo?.intakeDeadline?.split(":")[1]}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Backlog */}
+                                                            <div className="flex items-center justify-between px-6 py-5 hover:bg-orange-50 transition-all">
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                                                        <ClipboardList className="w-5 h-5 text-orange-600" />
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <h4 className="font-medium text-[#1D2340]">
+                                                                            Maximum Backlogs
+                                                                        </h4>
+
+                                                                        <p className="text-sm text-gray-500">
+                                                                            Allowed academic backlogs
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <span className="font-semibold text-[#1D2340]">
+                                                                    {course?.metaInfo?.backlog || "N/A"}
+                                                                </span>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    {course.university?.uni_rank?.length > 0 && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, x: 20 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            transition={{ delay: 0.25 }}
+                                                            className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden mt-6"
                                                         >
-                                                            <div className="w-8 h-8 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center flex-shrink-0">
-                                                                📄
+                                                            {/* Header */}
+                                                            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+                                                                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                                                                    <Trophy className="w-5 h-5 text-orange-600" />
+                                                                </div>
+
+                                                                <h3 className="text-lg font-semibold text-[#1D2340]">
+                                                                    University Rankings
+                                                                </h3>
                                                             </div>
 
-                                                            <div>
-                                                                <p className="font-medium text-neutral-800">
-                                                                    {doc}
-                                                                </p>
-                                                                <p className="text-xs text-neutral-400 mt-1">
-                                                                    Required for application review
-                                                                </p>
+                                                            {/* Body */}
+                                                            <div className="divide-y divide-gray-100">
+                                                                {course.university.uni_rank.map((rank, index) => (
+                                                                    <div
+                                                                        key={index}
+                                                                        className="flex items-center justify-between px-6 py-5 hover:bg-orange-50 transition-all duration-200"
+                                                                    >
+                                                                        <div>
+                                                                            <h4 className="font-medium text-[#1D2340]">
+                                                                                {rank.type}
+                                                                            </h4>
+
+                                                                            <p className="text-sm text-gray-500">
+                                                                                University Ranking
+                                                                            </p>
+                                                                        </div>
+
+                                                                        <div className="text-right">
+                                                                            <p className="text-xl font-bold text-[#1D2340]">
+                                                                                #{rank.rank}
+                                                                            </p>
+
+                                                                            <span className="inline-flex mt-1 rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700">
+                                                                                {rank.year}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+
+                                                    {(course.university?.on_campus_accommodation ||
+                                                        course.university?.off_campus_accommodation) && (
+                                                            <motion.div
+                                                                initial={{ opacity: 0, x: 20 }}
+                                                                animate={{ opacity: 1, x: 0 }}
+                                                                transition={{ delay: 0.3 }}
+                                                                className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden mt-6"
+                                                            >
+                                                                {/* Header */}
+                                                                <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+                                                                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                                                                        <Building2 className="w-5 h-5 text-orange-600" />
+                                                                    </div>
+
+                                                                    <h3 className="text-lg font-semibold text-[#1D2340]">
+                                                                        Accommodation
+                                                                    </h3>
+                                                                </div>
+
+                                                                {/* Body */}
+                                                                <div className="divide-y divide-gray-100">
+
+                                                                    {course.university?.on_campus_accommodation && (
+                                                                        <div className="flex items-center justify-between px-6 py-5 bg-green-50 transition-all">
+                                                                            <div className="flex items-center gap-4">
+                                                                                <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                                                                                    <Home className="w-5 h-5 text-green-600" />
+                                                                                </div>
+
+                                                                                <div>
+                                                                                    <h4 className="font-medium text-[#1D2340]">
+                                                                                        On-Campus Accommodation
+                                                                                    </h4>
+
+                                                                                    <p className="text-sm text-gray-500">
+                                                                                        University-managed housing available
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <span className="inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
+                                                                                <Check className="w-4 h-4" />
+                                                                                Available
+                                                                            </span>
+                                                                        </div>
+                                                                    )}
+
+                                                                    {course.university?.off_campus_accommodation && (
+                                                                    <div>
+                                                                         <div className="flex items-center justify-between px-6 py-5 bg-blue-50 transition-all">
+                                                                            <div className="flex items-center gap-4">
+                                                                                <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                                                                                    <Building2 className="w-5 h-5 text-blue-600" />
+                                                                                </div>
+
+                                                                                <div>
+                                                                                    <h4 className="font-medium text-[#1D2340]">
+                                                                                        Off-Campus Accommodation
+                                                                                    </h4>
+
+                                                                                    <p className="text-sm text-gray-500">
+                                                                                        Private accommodation options available
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <span className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+                                                                                <Check className="w-4 h-4" />
+                                                                                Available
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                    )}
+
+                                                                </div>
+                                                            </motion.div>
+                                                        )}
+
+                                                </div>
+
+                                                <div className="flex flex-col gap-4">
+                                                    {course?.requirements ? (
+                                                        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden mt-4">
+                                                            {/* Header */}
+                                                            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                                                                        <GraduationCap className="w-5 h-5 text-orange-600" />
+                                                                    </div>
+
+                                                                    <h3 className="text-lg font-semibold text-[#1D2340]">
+                                                                        English Proficiency Test Requirements
+                                                                    </h3>
+                                                                </div>
+
+                                                                <button className="px-4 py-2 text-sm font-medium border border-[#F26D44] text-[#F26D44] rounded-lg hover:bg-orange-50 transition">
+                                                                    View Details
+                                                                </button>
+                                                            </div>
+
+                                                            {/* Body */}
+                                                            <div className="divide-y divide-gray-100">
+                                                                {[
+                                                                    {
+                                                                        exam: "PTE",
+                                                                        overall: course.requirements.PteScore,
+                                                                        band: course.requirements.PteNoSectionLessThan,
+                                                                    },
+                                                                    {
+                                                                        exam: "TOEFL iBT",
+                                                                        overall: course.requirements.ToeflScore,
+                                                                        band: course.requirements.ToeflNoSectionLessThan,
+                                                                    },
+                                                                    {
+                                                                        exam: "IELTS",
+                                                                        overall: course.requirements.Ielts,
+                                                                        band: course.requirements.IeltsNoSectionLessThan,
+                                                                    },
+                                                                ].map((item, index) => (
+                                                                    <div
+                                                                        key={index}
+                                                                        className="grid grid-cols-2 items-center px-6  py-4 text-sm"
+                                                                    >
+                                                                        <div className="grid grid-cols-2">
+                                                                            {/* Overall */}
+                                                                            <div className="text-gray-600">
+                                                                                {item.exam} Overall
+                                                                            </div>
+
+                                                                            <div className="font-semibold text-[#1D2340]">
+                                                                                {item.overall}
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div className="grid grid-cols-[3fr_1fr]">
+                                                                            {/* Band */}
+                                                                            <div className="text-gray-600">
+                                                                                {item.exam} No Bands Less Than
+                                                                            </div>
+
+                                                                            <div className="font-semibold text-[#1D2340]">
+                                                                                {item.band}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
                                                             </div>
                                                         </div>
-                                                    ))}
+                                                    ) : (
+                                                        <p className="rounded-xl border border-gray-200 bg-gray-50 p-5 text-gray-600">
+                                                            No English proficiency requirements available.
+                                                        </p>
+                                                    )}
+
+
+
+                                                    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+                                                        {/* Header */}
+                                                        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                                                                    <FileText className="w-5 h-5 text-orange-600" />
+                                                                </div>
+
+                                                                <h3 className="text-lg font-semibold text-[#1D2340]">
+                                                                    Required Documents
+                                                                </h3>
+                                                            </div>
+
+                                                            <span className="px-4 py-2 rounded-lg bg-orange-50 text-orange-600 text-sm font-semibold border border-orange-200">
+                                                                {course?.docsRequired?.length || 0} Documents
+                                                            </span>
+                                                        </div>
+
+                                                        {/* Body */}
+                                                        <div className="divide-y divide-gray-100">
+                                                            {course?.docsRequired?.map((doc: string, index: number) => (
+                                                                <div
+                                                                    key={index}
+                                                                    className="flex items-center justify-between px-6 py-4 hover:bg-orange-50 transition-all duration-200"
+                                                                >
+                                                                    <div className="flex items-center gap-4">
+                                                                        <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                                                                            <FileText className="w-5 h-5 text-orange-600" />
+                                                                        </div>
+
+                                                                        <div>
+                                                                            <h4 className="font-medium text-[#1D2340]">
+                                                                                {doc}
+                                                                            </h4>
+
+                                                                            <p className="text-sm text-gray-500 mt-1">
+                                                                                Required for application review
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <span className="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                                                                        Required
+                                                                    </span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+
+
+                                                    <motion.div
+                                                        initial={{ opacity: 0, x: 20 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: 0.2 }}
+                                                        className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden"
+                                                    >
+                                                        {/* Header */}
+                                                        <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+                                                            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                                                                <Building2Icon className="w-5 h-5 text-orange-600" />
+                                                            </div>
+
+                                                            <h3 className="text-lg font-semibold text-[#1D2340]">
+                                                                About the University
+                                                            </h3>
+                                                        </div>
+
+                                                        {/* Body */}
+                                                        <div className="p-6">
+
+                                                            {/* Slogan */}
+                                                            {course.university?.slogan && (
+                                                                <div className="rounded-xl border border-orange-200 bg-orange-50 px-5 py-4 mb-6">
+                                                                    <p className="italic text-gray-700">
+                                                                        "{course.university.slogan}"
+                                                                    </p>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Information */}
+                                                            <div className="divide-y divide-gray-100">
+
+                                                                {course.university?.address && (
+                                                                    <div className="grid grid-cols-[220px_1fr] items-start py-4 border-b border-gray-100">
+
+                                                                        <div className="flex items-center gap-3">
+                                                                            <MapPin className="w-5 h-5 text-orange-600" />
+
+                                                                            <span className="font-medium text-gray-700">
+                                                                                Location
+                                                                            </span>
+                                                                        </div>
+
+                                                                        <p className="font-semibold text-[#1D2340] leading-7">
+                                                                            {course.university?.address}
+                                                                        </p>
+
+                                                                    </div>
+                                                                )}
+
+                                                                <div className="flex items-center justify-between py-4">
+                                                                    <div className="flex items-center gap-3">
+                                                                        <Building2Icon className="w-5 h-5 text-orange-600" />
+                                                                        <span className="font-medium text-gray-700">
+                                                                            Established
+                                                                        </span>
+                                                                    </div>
+
+                                                                    <span className="font-semibold text-[#1D2340]">
+                                                                        {course.university?.established_year || "N/A"}
+                                                                    </span>
+                                                                </div>
+
+                                                                <div className="flex items-center justify-between py-4">
+                                                                    <div className="flex items-center gap-3">
+                                                                        <Users className="w-5 h-5 text-orange-600" />
+                                                                        <span className="font-medium text-gray-700">
+                                                                            Acceptance Rate
+                                                                        </span>
+                                                                    </div>
+
+                                                                    <span className="font-semibold text-[#1D2340]">
+                                                                        {course.university?.acceptanceRate
+                                                                            ? `${course.university.acceptanceRate}%`
+                                                                            : "N/A"}
+                                                                    </span>
+                                                                </div>
+
+                                                                {course.university?.uni_web && (
+                                                                    <div className="flex items-center justify-between py-4">
+                                                                        <div className="flex items-center gap-3">
+                                                                            <Globe className="w-5 h-5 text-orange-600" />
+                                                                            <span className="font-medium text-gray-700">
+                                                                                Website
+                                                                            </span>
+                                                                        </div>
+
+                                                                        <a
+                                                                            href={course.university.uni_web}
+                                                                            target="_blank"
+                                                                            className="font-semibold text-orange-600 hover:underline"
+                                                                        >
+                                                                            Visit Website
+                                                                        </a>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+
+                                                            {/* Intakes */}
+                                                            {course.university?.intakes?.length > 0 && (
+                                                                <div className="mt-6">
+                                                                    <h4 className="font-semibold text-[#1D2340] mb-3">
+                                                                        Available Intakes
+                                                                    </h4>
+
+                                                                    <div className="flex flex-wrap gap-2">
+                                                                        {course.university.intakes.map((intake, index) => (
+                                                                            <span
+                                                                                key={index}
+                                                                                className="rounded-full bg-orange-50 border border-orange-200 px-4 py-2 text-sm font-medium text-orange-700"
+                                                                            >
+                                                                                {intake}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Button */}
+                                                            <Link
+                                                                href={`/dashboard/universities/${course.university?.slug}`}
+                                                                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#F26D44] py-3 font-medium text-white transition hover:bg-[#e45d33]"
+                                                            >
+                                                                View University Profile
+                                                                <ChevronRight className="w-4 h-4" />
+                                                            </Link>
+                                                        </div>
+                                                    </motion.div>
+
+
+
+
                                                 </div>
+
+
+
                                             </div>
 
-                                            <div className="bg-white py-6">
-                                                <h3 className="text-lg font-semibold mb-5">
-                                                    Application Information
-                                                </h3>
 
-                                                <div className="grid md:grid-cols-2 gap-4">
-                                                    <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50">
-                                                        <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                                                            💰
-                                                        </div>
 
-                                                        <div>
-                                                            <p className="text-xs uppercase tracking-wide text-neutral-400">
-                                                                Initial Deposit
-                                                            </p>
-                                                            <p className="font-semibold text-lg text-neutral-900">
-                                                                £{course?.metaInfo?.initialDeposit}
-                                                            </p>
-                                                        </div>
-                                                    </div>
 
-                                                    <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50">
-                                                        <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                                                            📅
-                                                        </div>
 
-                                                        <div>
-                                                            <p className="text-xs uppercase tracking-wide text-neutral-400">
-                                                                Intake Deadline
-                                                            </p>
 
-                                                            <p className="font-semibold text-lg text-neutral-900">
-                                                                {course?.metaInfo?.intakeDeadline?.split(":")[0]}
-                                                            </p>
 
-                                                            <p className="text-sm text-neutral-500">
-                                                                {course?.metaInfo?.intakeDeadline?.split(":")[1]}
-                                                            </p>
-                                                        </div>
-                                                    </div>
 
-                                                    <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50">
-                                                        <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
-                                                            💰
-                                                        </div>
-
-                                                        <div>
-                                                            <p className="text-xs uppercase tracking-wide text-neutral-400">
-                                                                Backlog
-                                                            </p>
-                                                            <p className="font-semibold text-lg text-neutral-900">
-                                                                {course?.metaInfo?.backlog}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
 
                                             {course?.metaInfo?.Remarks && (
                                                 <div className="bg-gray-50 border border-gray-200 p-4">
@@ -706,7 +1373,7 @@ export default function CourseDetailPage() {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.35 }}
-                                    className="relative overflow-hidden  mt-12 bg-gradient-to-r from-[#F26D44]/10 via-pink-200 to-indigo-100 text-gray-800"
+                                    className="relative overflow-hidden  mt-12 bg-gradient-to-r from-[#F26D44]/10 via-pink-200 to-orange-100 text-gray-800"
                                 >
                                     <div className="px-8 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
 
@@ -739,7 +1406,7 @@ export default function CourseDetailPage() {
                                         <div className="relative z-50 w-full md:w-auto">
                                             <button
                                                 onClick={() => { setIsModalOpen(true) }}
-                                                className="w-full md:w-auto px-8 py-2.5 cursor-pointer bg-white text-gray-700 rounded-xl hover:bg-indigo-100 transition-all font-semibold flex items-center justify-center gap-2"
+                                                className="w-full md:w-auto px-8 py-2.5 cursor-pointer bg-white text-gray-700 rounded-xl hover:bg-orange-100 transition-all font-semibold flex items-center justify-center gap-2"
                                             >
                                                 Apply
                                                 <ExternalLink className="w-4 h-4" />
@@ -755,295 +1422,7 @@ export default function CourseDetailPage() {
                         </motion.div>
                     </div>
 
-                    {/* Right Column - Sidebar (1/3 width) */}
-                    <div className="space-y-2 p-2">
-                        {/* University Info Card */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="bg-white border border-[#F26D44] p-5 shadow-sm"
-                        >
-                            <h3 className="font-semibold text-base text-gray-900 mb-4">
-                                About the University
-                            </h3>
 
-                            <div className="space-y-5">
-                                {course.university?.slogan && (
-                                    <div className="bg-orange-50 border border-orange-100 rounded-lg p-3 text-sm italic text-gray-700">
-                                        "{course.university.slogan}"
-                                    </div>
-                                )}
-
-                                {/* University Information */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {course.university?.address && (
-                                        <div className="flex items-start gap-3">
-                                            <MapPin
-                                                className="w-5 h-5 text-[#F26D44] mt-0.5 flex-shrink-0"
-                                                strokeWidth={1.8}
-                                            />
-                                            <div>
-                                                <p className="text-xs uppercase tracking-wider text-gray-500">
-                                                    Location
-                                                </p>
-                                                <p className="text-sm font-medium text-gray-900">
-                                                    {course.university.address}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className="flex items-start gap-3">
-                                        <Building2Icon
-                                            className="w-5 h-5 text-[#F26D44] mt-0.5 flex-shrink-0"
-                                            strokeWidth={1.8}
-                                        />
-                                        <div>
-                                            <p className="text-xs uppercase tracking-wider text-gray-500">
-                                                Established
-                                            </p>
-                                            <p className="text-sm font-medium text-gray-900">
-                                                {course.university?.established_year || "N/A"}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-start gap-3">
-                                        <Users
-                                            className="w-5 h-5 text-[#F26D44] mt-0.5 flex-shrink-0"
-                                            strokeWidth={1.8}
-                                        />
-                                        <div>
-                                            <p className="text-xs uppercase tracking-wider text-gray-500">
-                                                Acceptance Rate
-                                            </p>
-                                            <p className="text-sm font-medium text-gray-900">
-                                                {course.university?.acceptanceRate
-                                                    ? `${course.university.acceptanceRate}%`
-                                                    : "N/A"}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {course.university?.uni_web && (
-                                        <div className="flex items-start gap-3">
-                                            <Globe
-                                                className="w-5 h-5 text-[#F26D44] mt-0.5 flex-shrink-0"
-                                                strokeWidth={1.8}
-                                            />
-                                            <div>
-                                                <p className="text-xs uppercase tracking-wider text-gray-500">
-                                                    Website
-                                                </p>
-                                                <a
-                                                    href={course.university.uni_web}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="text-sm font-medium text-[#F26D44] hover:underline break-all"
-                                                >
-                                                    Visit Website
-                                                </a>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Intakes */}
-                                {course.university?.intakes?.length > 0 && (
-                                    <div>
-                                        <p className="text-xs uppercase tracking-wider text-gray-500 mb-2">
-                                            Available Intakes
-                                        </p>
-                                        <div className="flex flex-wrap gap-2">
-                                            {course.university.intakes.map((intake, index) => (
-                                                <span
-                                                    key={index}
-                                                    className="px-3 py-1 text-xs font-medium bg-gray-100 border border-gray-200 rounded-full"
-                                                >
-                                                    {intake}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Financial Information */}
-                                {/* {course.university?.financials && (
-                                    <div className="border-t border-gray-200 pt-5">
-                                        <h4 className="font-semibold text-gray-900 mb-3">
-                                            Financial Information
-                                        </h4>
-
-                                        <div className="grid grid-cols-1 sm:grid-cols-1 gap-3">
-                                            {[
-                                                {
-                                                    label: "UG Tuition Fees",
-                                                    value: course.university.financials.ug_fees,
-                                                },
-                                                {
-                                                    label: "PG Tuition Fees",
-                                                    value: course.university.financials.pg_fees,
-                                                },
-                                                {
-                                                    label: "Cost of Living",
-                                                    value: course.university.financials.cost_of_living,
-                                                },
-                                                {
-                                                    label: "Other Fees",
-                                                    value: course.university.financials.other_fees,
-                                                },
-                                            ]
-                                                .filter((item) => item.value)
-                                                .map((item, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="bg-gray-50 border border-gray-200 rounded-lg p-3"
-                                                    >
-                                                        <p className="text-xs text-gray-500 uppercase tracking-wide">
-                                                            {item.label}
-                                                        </p>
-                                                        <p className="text-sm font-semibold text-gray-900 mt-1">
-                                                            {item.value}
-                                                        </p>
-                                                    </div>
-                                                ))}
-                                        </div>
-                                    </div>
-                                )} */}
-
-                                {/* Button */}
-                                <div className="pt-4 border-t border-gray-200">
-                                    <Link
-                                        href={`/dashboard/universities/${course.university?.slug}`}
-                                        className="w-full flex items-center justify-center gap-2 rounded-lg border border-[#F26D44] bg-[#F26D44] px-4 py-3 text-sm font-medium text-white hover:bg-[#e65d34] transition-colors"
-                                    >
-                                        View University Profile
-                                        <ChevronRight className="w-4 h-4" />
-                                    </Link>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* University Rankings Card */}
-                        {course.university?.uni_rank && course.university.uni_rank.length > 0 && (
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.25 }}
-                                className="bg-orange-100  border border-gray-200 p-6 transition-all"
-                            >
-                                <div className="flex items-center gap-3 mb-4">
-
-                                    <h3 className="font-semibold text-gray-900">University Rankings</h3>
-                                </div>
-                                <div className="space-y-3">
-                                    {course.university.uni_rank.map((rank, index) => (
-                                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                            <div className="flex items-center gap-2">
-                                                {/* <Star className="w-4 h-4 text-amber-500 fill-amber-500" /> */}
-                                                <span className="text-sm font-medium text-gray-700">{rank.type}</span>
-                                            </div>
-                                            <div className="text-right">
-                                                <span className="text-lg font-bold text-gray-900">#{rank.rank}</span>
-                                                <span className="text-xs text-gray-500 ml-1">{rank.year}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </motion.div>
-                        )}
-
-                        {/* Accommodation Card */}
-                        {(course.university?.on_campus_accommodation || course.university?.off_campus_accommodation) && (
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.3 }}
-                                className="bg-white border border-gray-200 p-6 transition-all"
-                            >
-                                <div className="flex items-center gap-3 mb-4">
-                                    <h3 className="font-semibold text-gray-900">Accommodation</h3>
-                                </div>
-                                <div className="space-y-3">
-                                    {course.university?.on_campus_accommodation && (
-                                        <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-100">
-                                            <div className="p-1 bg-white rounded-full">
-                                                <Check className="w-4 h-4 text-green-600" />
-                                            </div>
-                                            <span className="text-sm font-medium text-gray-700">On-campus accommodation available</span>
-                                        </div>
-                                    )}
-                                    {course.university?.off_campus_accommodation && (
-                                        <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                                            <div className="p-1 bg-white rounded-full">
-                                                <Check className="w-4 h-4 text-blue-600" />
-                                            </div>
-                                            <span className="text-sm font-medium text-gray-700">Off-campus accommodation available</span>
-                                        </div>
-                                    )}
-                                </div>
-                            </motion.div>
-                        )}
-
-
-
-                        {/* Application CTA Card */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.35 }}
-                            className="bg-gradient-to-br from-[#F26D44] via-pink-600 to-indigo-700 p-6 text-white shadow-lg"
-                        >
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="">
-                                    <GraduationCap className="w-8 h-8" strokeWidth={1.2} />
-                                </div>
-                                <h3 className="text-lg font-semibold">Ready to Apply?</h3>
-                            </div>
-                            <p className="text-sm text-blue-100 mb-5 leading-relaxed">
-                                Start your application process today and take the first step towards your future at {course.university?.name}.
-                            </p>
-                            <button onClick={() => setIsModalOpen(true)} className="w-full px-4 py-2.5 bg-white text-blue-700 rounded-xl hover:bg-blue-50 transition-all font-medium flex items-center justify-center gap-2 shadow-lg">
-                                Apply Now
-                                <ExternalLink className="w-4 h-4" />
-                            </button>
-                            <p className="text-xs text-blue-200 mt-4 text-center flex items-center justify-center gap-1">
-                                Application fee: {course.applicationFee + course.currency}
-                            </p>
-                        </motion.div>
-
-                        {/* Social Media Links */}
-                        {/* {course.university?.social_links && Object.values(course.university.social_links).some(Boolean) && (
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.4 }}
-                                className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all"
-                            >
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="p-2 bg-purple-100 rounded-lg">
-                                        <Globe className="w-5 h-5 text-purple-600" />
-                                    </div>
-                                    <h3 className="font-semibold text-gray-900">Connect With Us</h3>
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                    {Object.entries(course.university.social_links).map(([platform, url]) => (
-                                        <SocialIcon key={platform} platform={platform} url={url} />
-                                    ))}
-                                </div>
-                            </motion.div>
-                        )} */}
-
-                        <CreateApplicationModal
-                            isOpen={isModalOpen}
-                            onClose={() => setIsModalOpen(false)}
-                            onApplicationCreated={() => {
-                                // Refresh applications list or show success message
-                            }}
-                            program={course}
-                        />
-                    </div>
                 </div>
             </div>
         </div>

@@ -50,6 +50,7 @@ const counsellor = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: UsersIcon, label: "Student", href: "/dashboard/user" },
   { icon: FileText, label: "Application", href: "/dashboard/application_details" },
+  { icon: BarChart3, label: "Find Programs", href: "/dashboard/programs" },
   { icon: FileText, label: "Visa Prosessing", href: "/dashboard/visaDetails" },
   { icon: Building2Icon, label: "Accommodation Details", href: "/dashboard/accommodation-create" },
   { icon: Headphones, label: "Support", href: "/dashboard/support/counsellor" },

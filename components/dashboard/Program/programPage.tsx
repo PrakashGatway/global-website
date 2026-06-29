@@ -9,7 +9,8 @@ import {
   MapPinCheck, Sparkles, Globe, Shield, TrendingUp,
   IndianRupeeIcon,
   Calendar1,
-  Info
+  Info,
+  Trash2
 } from "lucide-react"
 import axiosInstance from "@/app/axiosInstance"
 import { ModernSelect } from "@/components/ui/select"
@@ -20,6 +21,11 @@ import { useSearchParams } from 'next/navigation';
 import ProgramHeader from "./programHeader"
 import ProgramFilters from "./programFilter"
 import toast from "react-hot-toast"
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { useGlobal } from "@/src/statecontext"
+
 
 // Debounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -100,9 +106,15 @@ export default function CoursesPage() {
   const [categories, setCategories] = useState([])
   const [universities, setUniversities] = useState([])
   const [selectedProgram, setselectedProgram] = useState([])
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [showCompareModal, setShowCompareModal] = useState(false);
+  const [showCompare,setshowCompare] = useState(false)
 
   const searchParams = useSearchParams();
   const university = searchParams.get('university') || ""
+
+  const { profile } = useGlobal()
+
 
 
 
@@ -219,6 +231,586 @@ export default function CoursesPage() {
     }
   }, [])
 
+  console.log(selectedProgram)
+
+  const downloadPDF = () => {
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 15;
+    const contentWidth = pageWidth - (margin * 2);
+
+    // Theme colors
+    const colors = {
+      primary: [51, 51, 51],
+      accent: [242, 109, 68],
+      textDark: [34, 34, 34],
+      textMedium: [100, 100, 100],
+      textLight: [150, 150, 150],
+      bgLight: [245, 245, 245],
+      bgWhite: [255, 255, 255],
+      divider: [230, 230, 230],
+      white: [255, 255, 255],
+    };
+
+    if (!selectedProgram || selectedProgram.length === 0) {
+      alert('No program selected to generate PDF');
+      return;
+    }
+
+    // ===== HELPER FUNCTIONS =====
+
+    const addPageWithHeader = (pageNumber) => {
+      if (pageNumber > 1) {
+        doc.addPage();
+      }
+
+      // Header bar
+      doc.setFillColor(...colors.primary);
+      doc.rect(0, 0, pageWidth, 12, 'F');
+
+      // Accent line
+      doc.setFillColor(...colors.accent);
+      doc.rect(0, 12, pageWidth, 2, 'F');
+
+      // Brand
+      doc.setFontSize(10);
+      doc.setTextColor(...colors.white);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Ooshas Global', margin, 8);
+
+      return 20;
+    };
+
+    const drawSectionTitle = (title, yPos) => {
+      doc.setFontSize(14);
+      doc.setTextColor(...colors.textDark);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title, margin, yPos);
+
+      // Underline
+      doc.setDrawColor(...colors.accent);
+      doc.setLineWidth(0.5);
+      doc.line(margin, yPos + 2, margin + 35, yPos + 2);
+
+      return yPos + 8;
+    };
+
+    const drawDivider = (yPos) => {
+      doc.setDrawColor(...colors.divider);
+      doc.setLineWidth(0.3);
+      doc.line(margin, yPos, pageWidth - margin, yPos);
+      return yPos + 5;
+    };
+
+    const drawKeyValue = (label, value, x, y, labelWidth) => {
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...colors.textMedium);
+      doc.text(String(label), x, y);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...colors.textDark);
+      doc.text(String(value || 'N/A'), x + labelWidth, y);
+    };
+
+    const drawCard = (x, y, width, height, fill = true) => {
+      if (fill) {
+        doc.setFillColor(...colors.bgLight);
+        doc.roundedRect(x, y, width, height, 2, 2, 'F');
+      }
+      doc.setDrawColor(...colors.divider);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(x, y, width, height, 2, 2);
+    };
+
+    // ===== COVER PAGE =====
+    let yPos = addPageWithHeader(1);
+
+    // Title section
+    doc.setFillColor(...colors.bgLight);
+    doc.roundedRect(margin, yPos, contentWidth, 45, 3, 3, 'F');
+
+    doc.setFontSize(24);
+    doc.setTextColor(...colors.textDark);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Your Shortlisted Programs', margin + 10, yPos + 15);
+
+    doc.setFontSize(11);
+    doc.setTextColor(...colors.textMedium);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Total Programs: ${selectedProgram.length}`, margin + 10, yPos + 25);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, margin + 10, yPos + 32);
+
+    yPos += 55;
+
+    // Program list summary
+    doc.setFontSize(13);
+    doc.setTextColor(...colors.textDark);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Programs Overview', margin, yPos);
+    yPos += 8;
+
+    selectedProgram.forEach((prog, idx) => {
+      // Check if we need a new page
+      if (yPos > pageHeight - 30) {
+        yPos = addPageWithHeader(2);
+      }
+
+      // Program card
+      const cardHeight = 22;
+      drawCard(margin, yPos, contentWidth, cardHeight, true);
+
+      // Number badge
+      doc.setFillColor(...colors.accent);
+      doc.circle(margin + 6, yPos + 11, 5, 'F');
+
+      doc.setFontSize(10);
+      doc.setTextColor(...colors.white);
+      doc.setFont('helvetica', 'bold');
+      doc.text(String(idx + 1), margin + 6, yPos + 12, { align: 'center' });
+
+      // Program name
+      doc.setFontSize(11);
+      doc.setTextColor(...colors.textDark);
+      doc.setFont('helvetica', 'bold');
+      const progName = String(prog.name || 'Program');
+      doc.text(progName, margin + 18, yPos + 9);
+
+      // University
+      doc.setFontSize(9);
+      doc.setTextColor(...colors.textMedium);
+      doc.setFont('helvetica', 'normal');
+      const uniName = String(prog.university?.name || 'University');
+      doc.text(uniName, margin + 18, yPos + 15);
+
+      // Location
+      const location = `${String(prog.university?.city || '')}, ${String(prog.university?.country || '')}`;
+      doc.text(location, margin + 18, yPos + 19);
+
+      yPos += cardHeight + 5;
+    });
+
+    yPos += 5;
+
+    // Instruction
+    doc.setFontSize(10);
+    doc.setTextColor(...colors.textMedium);
+    doc.setFont('helvetica', 'italic');
+    doc.text('Detailed information for each program follows on the next pages...', margin, yPos);
+
+    // ===== DETAILED PAGES FOR EACH PROGRAM =====
+    selectedProgram.forEach((program, progIndex) => {
+      yPos = addPageWithHeader(progIndex + 2);
+
+      // Program header card
+      doc.setFillColor(...colors.primary);
+      doc.roundedRect(margin, yPos, contentWidth, 35, 3, 3, 'F');
+
+      doc.setFontSize(18);
+      doc.setTextColor(...colors.white);
+      doc.setFont('helvetica', 'bold');
+      const titleLines = doc.splitTextToSize(String(program.name || 'Program Name'), contentWidth - 10);
+      doc.text(titleLines, margin + 8, yPos + 12);
+
+      const headerBottomY = yPos + 12 + (titleLines.length * 6);
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(220, 220, 220);
+      doc.text(`${String(program.university?.name || 'University')}`, margin + 8, headerBottomY + 5);
+
+      doc.setTextColor(...colors.accent);
+      doc.text(`${String(program.university?.city || '')}, ${String(program.university?.country || '')}`, margin + 8, headerBottomY + 10);
+
+      yPos = headerBottomY + 25; // Increased from 18 to 25 for more spacing
+
+      // Quick Info Grid
+      yPos = drawSectionTitle('Quick Information', yPos);
+
+      const quickInfo = [
+        ['Study Mode', program.studyMode],
+        ['Duration', program.duration],
+        ['Level', program.level],
+        ['Status', program.status],
+        ['Category', program.category?.name],
+        ['Currency', program.currency],
+      ];
+
+      const colWidth = contentWidth / 3;
+      quickInfo.forEach((item, idx) => {
+        if (idx % 3 === 0 && idx > 0) {
+          yPos += 8;
+        }
+        const col = idx % 3;
+        drawKeyValue(
+          item[0] + ':',
+          item[1],
+          margin + (col * colWidth),
+          yPos,
+          25
+        );
+      });
+      yPos += 12;
+
+      // Financial Details
+      yPos = drawDivider(yPos);
+      yPos = drawSectionTitle('Financial Details', yPos);
+
+      const financialInfo = [
+        ['Tuition Fee', `${program.currency} ${program.tuitionFee?.toLocaleString() || 'N/A'}`],
+        ['Application Fee', program.applicationFee ? `${program.currency} ${program.applicationFee}` : 'Waived'],
+        ['Initial Deposit', program.metaInfo?.initialDeposit ? `${program.currency} ${program.metaInfo.initialDeposit}` : 'N/A'],
+        ['Scholarship', program.metaInfo?.ScholarshipAvailable ? 'Available' : 'Not Available'],
+      ];
+
+      financialInfo.forEach((item, idx) => {
+        const rowY = yPos + (idx * 7);
+        if (idx % 2 === 0) {
+          doc.setFillColor(...colors.bgLight);
+          doc.roundedRect(margin, rowY - 4, contentWidth / 2 - 2, 7, 1, 1, 'F');
+        }
+        drawKeyValue(item[0], item[1], margin + 3, rowY, 30);
+      });
+
+      yPos += financialInfo.length * 7 + 5;
+
+      // ===== PROGRAM DETAILS SECTION (Previous section) =====
+      yPos = drawDivider(yPos);
+      yPos = drawSectionTitle('Program Details', yPos);
+      yPos += 5; // Spacing after title
+
+      const details = [
+        ['Campus', program.metaInfo?.campus],
+        ['Open Intakes', program.metaInfo?.Intakes || program.university?.intakes?.join(', ')],
+        ['Deadline', program.metaInfo?.intakeDeadline || program.metaInfo?.deadline || 'ASAP'],
+        ['Backlog Allowed', program.metaInfo?.backlog || '0'],
+        ['STEM Course', program.metaInfo?.IsStemCourse ? 'Yes' : 'No'],
+        ['Internship', program.metaInfo?.InternshipAvailable ? 'Available' : 'Not Available'],
+      ];
+
+      details.forEach((item, idx) => {
+        const rowY = yPos + (idx * 7);
+        if (idx % 2 === 0) {
+          doc.setFillColor(...colors.bgLight);
+          doc.roundedRect(margin, rowY - 4, contentWidth / 2 - 2, 7, 1, 1, 'F');
+        }
+        drawKeyValue(item[0], item[1], margin + 3, rowY, 30);
+
+        // Second column
+        if (idx + 3 < details.length) {
+          const item2 = details[idx + 3];
+          if (idx % 2 === 1) {
+            doc.setFillColor(...colors.bgLight);
+            doc.roundedRect(margin + contentWidth / 2, rowY - 4, contentWidth / 2 - 4, 7, 1, 1, 'F');
+          }
+          drawKeyValue(item2[0], item2[1], margin + contentWidth / 2 + 3, rowY, 30);
+        }
+      });
+
+      yPos += Math.ceil(details.length / 2) * 7 + 15; // Increased from 5 to 15 for proper spacing
+
+      // ===== ENGLISH REQUIREMENTS SECTION =====
+      yPos = drawDivider(yPos);
+      yPos += 5; // Space after divider
+      yPos = drawSectionTitle('English Requirements', yPos);
+      yPos += 8; // Space after title
+
+      const engReqs = [
+        ['IELTS', `${program.requirements?.Ielts || 'N/A'} (No band < ${program.requirements?.IeltsNoBandLessThan || 'N/A'})`],
+        ['PTE', `${program.requirements?.PteScore || 'N/A'} (No section < ${program.requirements?.PteNoSectionLessThan || 'N/A'})`],
+        ['TOEFL', `${program.requirements?.ToeflScore || 'N/A'} (No section < ${program.requirements?.ToeflNoSectionLessThan || 'N/A'})`],
+        ['DET', program.requirements?.DETScore || 'N/A'],
+      ];
+
+      engReqs.forEach((item, idx) => {
+        const rowY = yPos + (idx * 9);
+
+        // Draw card background for alternating rows
+        if (idx % 2 === 0) {
+          doc.setFillColor(...colors.bgLight);
+          doc.roundedRect(margin, rowY - 3, contentWidth, 8, 1.5, 1.5, 'F');
+        }
+
+        // Label
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...colors.textMedium);
+        doc.text(String(item[0]), margin + 5, rowY + 3);
+
+        // Value
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...colors.textDark);
+        doc.text(String(item[1]), margin + 35, rowY + 3);
+      });
+
+      yPos += engReqs.length * 9 + 10; // Space after English Requirements
+
+      // ===== CHECK FOR PAGE BREAK BEFORE ENTRY REQUIREMENTS =====
+      if (yPos > pageHeight - 50) {
+        yPos = addPageWithHeader(progIndex + 2);
+      }
+
+      // ===== ENTRY REQUIREMENTS SECTION =====
+      yPos = drawDivider(yPos);
+      yPos += 5; // Space after divider
+      yPos = drawSectionTitle('Entry Requirements', yPos);
+      yPos += 8; // Space after title
+
+      const entryReqs = [
+        ['12th Grade', `${program.requirements?.EntryRequirementTwelfth || 'N/A'}%`],
+        ['Work Exp', `${program.requirements?.WorkExp || '0'} years`],
+        ['Without Maths', program.metaInfo?.WithoutMaths ? 'Allowed' : 'Required'],
+        ['MOI Waiver', program.metaInfo?.IsMOIWaiver ? 'Available' : 'Not Available'],
+      ];
+
+      entryReqs.forEach((item, idx) => {
+        const rowY = yPos + (idx * 7);
+
+        // Alternate background
+        if (idx % 2 === 0) {
+          doc.setFillColor(...colors.bgLight);
+          doc.roundedRect(margin, rowY - 3, contentWidth / 2 - 2, 7, 1, 1, 'F');
+        }
+
+        drawKeyValue(item[0], item[1], margin + 3, rowY, 25);
+      });
+
+      yPos += entryReqs.length * 7 + 10;
+
+
+
+
+
+      // Documents Required
+      if (program.docsRequired && program.docsRequired.length > 0) {
+        yPos = drawDivider(yPos);
+        yPos = drawSectionTitle('Required Documents', yPos);
+
+        program.docsRequired.forEach((docItem, idx) => {
+          const y = yPos + (idx * 5);
+          doc.setFillColor(...colors.accent);
+          doc.circle(margin + 2, y - 1, 1.5, 'F');
+
+          doc.setFontSize(9);
+          doc.setTextColor(...colors.textDark);
+          doc.setFont('helvetica', 'normal');
+          doc.text(String(docItem), margin + 7, y);
+        });
+      }
+    });
+
+    // ===== FOOTER ON ALL PAGES =====
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+
+      // Footer line
+      doc.setDrawColor(...colors.divider);
+      doc.setLineWidth(0.3);
+      doc.line(margin, pageHeight - 12, pageWidth - margin, pageHeight - 12);
+
+      // Footer text
+      doc.setFontSize(7);
+      doc.setTextColor(...colors.textLight);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Ooshas Global', margin, pageHeight - 7);
+      doc.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 7, { align: 'right' });
+      doc.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth / 2, pageHeight - 7, { align: 'center' });
+    }
+
+    // Save
+    const fileName = selectedProgram.length > 1
+      ? `Shortlisted_Programs_${selectedProgram.length}.pdf`
+      : `${selectedProgram[0].university?.name || 'Program'}-Details.pdf`;
+
+    doc.save(fileName.replace(/[^a-z0-9]/gi, '_'));
+  };
+
+
+  const downloadExcel = () => {
+    if (!selectedProgram || selectedProgram.length === 0) {
+      alert('No program selected to generate Excel');
+      return;
+    }
+
+    const rows = selectedProgram.map((item, index) => ({
+      // ===== BASIC INFO =====
+      'S.No': index + 1,
+      'Program Name': item.name || '',
+      'Short Name': item.shortName || '',
+      'Status': item.status || '',
+      'Study Mode': item.studyMode || '',
+      'Duration': item.duration || '',
+      'Level': item.level || '',
+      'Category': item.category?.name || '',
+
+      // ===== UNIVERSITY INFO =====
+      'University': item.university?.name || '',
+      'City': item.university?.city || '',
+      'Country': item.university?.country || '',
+      'University Type': item.university?.uni_type || '',
+      'Acceptance Rate (%)': item.university?.acceptanceRate || '',
+      'Address': item.university?.address || '',
+
+      // ===== FINANCIAL DETAILS =====
+      'Currency': item.currency || '',
+      'Tuition Fee': item.tuitionFee || '',
+      'Application Fee': item.applicationFee || 0,
+      'Initial Deposit': item.metaInfo?.initialDeposit || '',
+      'Scholarship Available': item.metaInfo?.ScholarshipAvailable ? 'Yes' : 'No',
+      'Avg Scholarship': item.metaInfo?.AverageScholarship || 'N/A',
+      'Application Fee Waiver': item.metaInfo?.applicationFeeWaiver ? 'Yes' : 'No',
+
+      // ===== INTAKE & DEADLINE =====
+      'Open Intakes': item.metaInfo?.Intakes || item.university?.intakes?.join(', ') || '',
+      'Application Deadline': item.metaInfo?.intakeDeadline || item.metaInfo?.deadline || 'ASAP',
+      'Closed Intakes': item.metaInfo?.IntakesClosed || 'None',
+      'Campus': item.metaInfo?.campus || '',
+
+      // ===== ENGLISH REQUIREMENTS =====
+      'IELTS Overall': item.requirements?.Ielts || 'N/A',
+      'IELTS No Band Less Than': item.requirements?.IeltsNoBandLessThan || 'N/A',
+      'PTE Overall': item.requirements?.PteScore || 'N/A',
+      'PTE No Section Less Than': item.requirements?.PteNoSectionLessThan || 'N/A',
+      'TOEFL iBT Overall': item.requirements?.ToeflScore || 'N/A',
+      'TOEFL iBT No Section Less Than': item.requirements?.ToeflNoSectionLessThan || 'N/A',
+      'DET Score': item.requirements?.DETScore || 'N/A',
+      'English Marks (12th)': item.metaInfo?.EnglishMarks12Score || 'N/A',
+      'Without English Proficiency': item.metaInfo?.WithoutEnglishProficiency ? 'Allowed' : 'Not Allowed',
+
+      // ===== ENTRY REQUIREMENTS =====
+      '12th Grade Requirement (%)': item.requirements?.EntryRequirementTwelfth || 'N/A',
+      'Work Experience (Years)': item.requirements?.WorkExp || '0',
+      'Backlog Allowed': item.metaInfo?.backlog || '0',
+      'Without Maths': item.metaInfo?.WithoutMaths ? 'Allowed' : 'Required',
+      'MOI Waiver': item.metaInfo?.IsMOIWaiver ? 'Available' : 'Not Available',
+      'Detailed Entry Requirement': item.metaInfo?.EntryRequirement || '',
+
+      // ===== PROGRAM FEATURES =====
+      'STEM Course': item.metaInfo?.IsStemCourse ? 'Yes' : 'No',
+      'Internship Available': item.metaInfo?.InternshipAvailable ? 'Yes' : 'No',
+      'Documents Required': item.docsRequired?.join(', ') || '',
+
+
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+
+    // ===== COLUMN WIDTHS =====
+    const colWidths = [
+      { wch: 6 },   // S.No
+      { wch: 35 },  // Program Name
+      { wch: 15 },  // Short Name
+      { wch: 10 },  // Status
+      { wch: 12 },  // Study Mode
+      { wch: 12 },  // Duration
+      { wch: 20 },  // Level
+      { wch: 30 },  // Category
+      { wch: 35 },  // University
+      { wch: 15 },  // City
+      { wch: 10 },  // Country
+      { wch: 12 },  // University Type
+      { wch: 12 },  // Acceptance Rate
+      { wch: 40 },  // Address
+      { wch: 10 },  // Currency
+      { wch: 12 },  // Tuition Fee
+      { wch: 12 },  // Application Fee
+      { wch: 12 },  // Initial Deposit
+      { wch: 15 },  // Scholarship
+      { wch: 15 },  // Avg Scholarship
+      { wch: 15 },  // Fee Waiver
+      { wch: 15 },  // Open Intakes
+      { wch: 15 },  // Deadline
+      { wch: 20 },  // Closed Intakes
+      { wch: 15 },  // Campus
+      { wch: 12 },  // IELTS
+      { wch: 15 },  // IELTS Band
+      { wch: 12 },  // PTE
+      { wch: 15 },  // PTE Section
+      { wch: 12 },  // TOEFL
+      { wch: 15 },  // TOEFL Section
+      { wch: 12 },  // DET
+      { wch: 15 },  // English Marks
+      { wch: 18 },  // Without English
+      { wch: 18 },  // 12th Grade
+      { wch: 15 },  // Work Exp
+      { wch: 12 },  // Backlog
+      { wch: 15 },  // Without Maths
+      { wch: 15 },  // MOI Waiver
+      { wch: 50 },  // Detailed Entry Req
+      { wch: 12 },  // STEM
+      { wch: 15 },  // Internship
+      { wch: 40 },  // Documents
+
+    ];
+
+    ws['!cols'] = colWidths;
+
+    // ===== STYLING (Header Row) =====
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    for (let C = range.s.c; C <= range.e.c; C++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+      if (ws[cellAddress]) {
+        ws[cellAddress].s = {
+          font: { bold: true, color: { rgb: 'FFFFFF' } },
+          fill: { fgColor: { rgb: '333333' } },
+          alignment: { horizontal: 'center', vertical: 'center' },
+          border: {
+            top: { style: 'thin', color: { rgb: '000000' } },
+            bottom: { style: 'thin', color: { rgb: '000000' } },
+            left: { style: 'thin', color: { rgb: '000000' } },
+            right: { style: 'thin', color: { rgb: '000000' } },
+          },
+        };
+      }
+    }
+
+    // ===== FREEZE HEADER ROW =====
+    ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Programs');
+
+    // ===== SECOND SHEET: SUMMARY =====
+    const summaryRows = selectedProgram.map((item, index) => ({
+      'S.No': index + 1,
+      'Program': item.name || '',
+      'University': item.university?.name || '',
+      'Location': `${item.university?.city || ''}, ${item.university?.country || ''}`,
+      'Tuition Fee': `${item.currency || ''} ${item.tuitionFee?.toLocaleString() || ''}`,
+      'Duration': item.duration || '',
+      'Intakes': item.metaInfo?.Intakes || '',
+      'Deadline': item.metaInfo?.intakeDeadline || item.metaInfo?.deadline || 'ASAP',
+      'Scholarship': item.metaInfo?.ScholarshipAvailable ? 'Yes' : 'No',
+      'STEM': item.metaInfo?.IsStemCourse ? 'Yes' : 'No',
+    }));
+
+    const wsSummary = XLSX.utils.json_to_sheet(summaryRows);
+    wsSummary['!cols'] = [
+      { wch: 6 }, { wch: 35 }, { wch: 35 }, { wch: 20 },
+      { wch: 18 }, { wch: 12 }, { wch: 15 }, { wch: 15 },
+      { wch: 12 }, { wch: 8 },
+    ];
+
+    // Style summary header
+    const summaryRange = XLSX.utils.decode_range(wsSummary['!ref']);
+    for (let C = summaryRange.s.c; C <= summaryRange.e.c; C++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+      if (wsSummary[cellAddress]) {
+        wsSummary[cellAddress].s = {
+          font: { bold: true, color: { rgb: 'FFFFFF' } },
+          fill: { fgColor: { rgb: 'F26D44' } },
+          alignment: { horizontal: 'center', vertical: 'center' },
+        };
+      }
+    }
+
+    XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
+
+    XLSX.writeFile(wb, 'SelectedPrograms.xlsx');
+  };
+
   // Fetch courses with debounced search
   const fetchCourses = useCallback(async (reset = false) => {
     try {
@@ -329,48 +921,6 @@ export default function CoursesPage() {
     setIsCleared(true)
   }
 
-  // Format currency
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency || 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount)
-  }
-
-  // Get level badge color and gradient
-  const getLevelStyles = (level: string) => {
-    const styles = {
-      'undergraduate': {
-        gradient: 'from-blue-500/50 via-blue-400/5 to-transparent',
-        badge: 'bg-blue-50 text-blue-700 border-blue-200',
-        icon: <GraduationCap className="w-6.5 h-6.5" />
-      },
-      'postgraduate': {
-        gradient: 'from-purple-500/10 via-purple-400/5 to-transparent',
-        badge: 'bg-purple-50 text-purple-700 border-purple-200',
-        icon: <Award className="w-6.5 h-6.5" />
-      },
-      'phd': {
-        gradient: 'from-emerald-500/10 via-emerald-400/5 to-transparent',
-        badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-        icon: <TrendingUp className="w-6.5 h-6.5" />
-      },
-      'diploma': {
-        gradient: 'from-orange-500/10 via-orange-400/5 to-transparent',
-        badge: 'bg-orange-50 text-orange-700 border-orange-200',
-        icon: <FileText className="w-6.5 h-6.5" />
-      },
-      'certificate': {
-        gradient: 'from-teal-500/10 via-teal-400/5 to-transparent',
-        badge: 'bg-teal-50 text-teal-700 border-teal-200',
-        icon: <Award className="w-6.5 h-6.5" />
-      }
-    }
-    const key = level?.toLowerCase() || 'undergraduate'
-    return styles[key as keyof typeof styles] || styles.undergraduate
-  }
 
 
   const handleCompareSelect = (course) => {
@@ -390,6 +940,7 @@ export default function CoursesPage() {
     });
   };
 
+  
 
 
   return (
@@ -445,22 +996,24 @@ export default function CoursesPage() {
         )}
 
         {selectedProgram.length > 0 && (
-          <div className="fixed bottom-0 right-[10px] z-50 bg-white border w-210 p-4 shadow-lg flex items-center justify-between">
-            <span className="font-medium">
+          <div className="fixed bottom-0 left-100 z-50 bg-primary border w-210 p-4 shadow-lg flex items-center justify-between">
+            <span className="font-medium text-white">
               {selectedProgram.length} Program(s) Selected
             </span>
 
-            <div className="flex gap-3">
-              <button className="px-4 py-2 bg-primary text-white rounded">
+            <div className="flex gap-3 text-white">
+              <button
+                onClick={() => setShowCompareModal(true)}
+                className="px-4 py-2 border rounded"
+              >
                 Compare
               </button>
 
-              <button className="px-4 py-2 border rounded">
-                PDF
-              </button>
-
-              <button className="px-4 py-2 border rounded">
-                Excel
+              <button
+                onClick={() => setShowDownloadModal(true)}
+                className="px-4 py-2 border rounded"
+              >
+                Download
               </button>
 
               <button onClick={() => setselectedProgram([])} className="px-4 py-2 border rounded">
@@ -471,6 +1024,561 @@ export default function CoursesPage() {
         )}
 
 
+        {showDownloadModal && (
+          <div className="fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm flex items-center justify-center">
+
+            <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl">
+
+              {/* Header */}
+
+              <div className="flex items-center justify-between border-b px-8 py-6">
+
+                <h2 className="text-xl font-bold">
+                  Download Selected Programs
+                </h2>
+
+                <button
+                  onClick={() => setShowDownloadModal(false)}
+                  className="text-3xl"
+                >
+                  ×
+                </button>
+
+              </div>
+
+              {/* Program List */}
+
+              <div className="max-h-[420px] overflow-y-auto">
+
+                {selectedProgram.map((program, index) => (
+                  <div
+                    key={program._id}
+                    className="flex items-center justify-between px-8 py-6 border-b"
+                  >
+
+                    <div>
+
+                      <h3 className="text-lg font-semibold text-orange-600">
+
+                        {index + 1}. {program.name}
+
+                      </h3>
+
+                      <div className="mt-3 flex gap-8 text-gray-600 text-base">
+
+                        <span>
+
+                          🏫 {program.university.name}
+
+                        </span>
+
+                        <span>
+
+                          📍 {program.university.country}
+
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setselectedProgram(prev => prev.filter(item => item._id !== program._id))
+                      }}
+                      className="text-orange-500 font-medium"
+                    >
+
+                      Remove
+
+                    </button>
+
+                  </div>
+                ))}
+
+              </div>
+
+              {/* Footer */}
+
+              <div className="flex items-center justify-between p-6">
+
+                <button
+                  onClick={() => setselectedProgram([])}
+                  className="border text-base px-6 py-3 rounded-xl"
+                >
+                  Clear All
+                </button>
+
+                <div className="flex gap-4">
+
+                  <button
+                    onClick={downloadPDF}
+                    className="bg-primary text-base px-6 py-3 rounded-xl text-white"
+                  >
+                    Download as PDF
+                  </button>
+
+                  <button
+                    onClick={downloadExcel}
+                    className="bg-primary text-base px-6 py-3 rounded-xl text-white"
+                  >
+                    Download as Excel
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        )}
+
+
+        {showCompareModal && (
+          <div className="fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm flex items-center justify-center">
+
+            <div className="w-full max-w-5xl rounded-2xl bg-white shadow-2xl">
+
+              {/* Header */}
+
+              <div className="flex items-center justify-between border-b px-8 py-6">
+
+                <h2 className="text-3xl font-bold">
+                  Please select up to 5 programs to compare
+                </h2>
+
+                <button
+                  onClick={() => setShowCompareModal(false)}
+                  className="text-3xl"
+                >
+                  ×
+                </button>
+
+              </div>
+
+              {/* Programs */}
+
+              <div className="max-h-[420px] overflow-y-auto">
+
+                {selectedProgram.map((program, index) => (
+
+                  <div
+                    key={program._id}
+                    className="flex items-center justify-between px-8 py-6 border-b"
+                  >
+
+                    <div>
+
+                      <h3 className="text-xl font-semibold text-primary">
+
+                        {index + 1}. {program.name}
+
+                      </h3>
+
+                      <div className="flex gap-8 mt-3 text-gray-600">
+
+                        <span>
+                          🏫 {program.university?.name}
+                        </span>
+
+                        <span>
+                          📍 {program.university?.country}
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                    <button
+                      onClick={() =>
+                        setselectedProgram((prev) =>
+                          prev.filter((x) => x._id !== program._id)
+                        )
+                      }
+                      className="text-red-500 font-medium"
+                    >
+                      Remove
+                    </button>
+
+                  </div>
+
+                ))}
+
+              </div>
+
+              {/* Footer */}
+
+              <div className="p-6">
+
+                <button
+                  onClick={()=>setshowCompare(true)}
+                  className="w-full rounded-xl bg-primary py-4 text-lg font-semibold text-white"
+                >
+                  Compare
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+        )}
+
+
+        {showCompare && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] overflow-hidden">
+      {/* Header */}
+      <div className="flex justify-between items-center p-6 border-b border-gray-200">
+        <h2 className="text-2xl font-bold text-gray-800">Program Comparison</h2>
+        <button
+          onClick={() => setShowCompare(false)}
+          className="text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <X className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Comparison Table */}
+      <div className="overflow-auto max-h-[calc(90vh-80px)]">
+        <table className="w-full">
+          <tbody>
+            {/* Program Name */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700 w-1/4">
+                Program Name:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  <h3 className="text-lg font-semibold text-primary">
+                    {program.name}
+                  </h3>
+                </td>
+              ))}
+            </tr>
+
+            {/* University Details */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                University Details:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.university?.uni_logo ? (
+                    <img
+                      src={program.university.uni_logo}
+                      alt={program.university.name}
+                      className="h-12 mx-auto mb-2 object-contain"
+                    />
+                  ) : (
+                    <div className="h-12 flex items-center justify-center mb-2">
+                      <Building2 className="w-10 h-10 text-gray-300" />
+                    </div>
+                  )}
+                  <p className="font-semibold text-gray-800">{program.university?.name}</p>
+                </td>
+              ))}
+            </tr>
+
+            {/* Website URL */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Website URL:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.slug ? (
+                    <a
+                      href={`https://www.example.com/${program.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline text-sm break-all"
+                    >
+                      View Program Details
+                    </a>
+                  ) : (
+                    <span className="text-gray-400">-</span>
+                  )}
+                </td>
+              ))}
+            </tr>
+
+            {/* Country */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Country:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  <div className="flex items-center justify-center gap-2">
+                    <MapPin className="w-4 h-4 text-primary" />
+                    <span>{program.university?.city}, {program.university?.country}</span>
+                  </div>
+                </td>
+              ))}
+            </tr>
+
+            {/* Program Level */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Program Level:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.level}
+                </td>
+              ))}
+            </tr>
+
+            {/* Duration */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Duration:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.duration}
+                </td>
+              ))}
+            </tr>
+
+            {/* Intakes */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Intakes:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.metaInfo?.Intakes || program.university?.intakes?.join(', ') || 'N/A'}
+                </td>
+              ))}
+            </tr>
+
+            {/* Standardized Requirements */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700 align-top">
+                Standardized Requirements:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 border-l border-gray-200 align-top">
+                  <div className="text-left space-y-3">
+                    {/* IELTS */}
+                    {(program.requirements?.Ielts || program.requirements?.IeltsNoBandLessThan) && (
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">• IELTS</p>
+                        <div className="ml-4 text-sm text-gray-600">
+                          {program.requirements.IeltsNoBandLessThan && (
+                            <p>No band less than {program.requirements.IeltsNoBandLessThan}</p>
+                          )}
+                          {program.requirements.Ielts && (
+                            <p>Overall – {program.requirements.Ielts}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* PTE */}
+                    {(program.requirements?.PteScore || program.requirements?.PteNoSectionLessThan) && (
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">• PTE</p>
+                        <div className="ml-4 text-sm text-gray-600">
+                          {program.requirements.PteNoSectionLessThan && (
+                            <p>No section less than {program.requirements.PteNoSectionLessThan}</p>
+                          )}
+                          {program.requirements.PteScore && (
+                            <p>Overall – {program.requirements.PteScore}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TOEFL */}
+                    {(program.requirements?.ToeflScore || program.requirements?.ToeflNoSectionLessThan) && (
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">• TOEFL iBT</p>
+                        <div className="ml-4 text-sm text-gray-600">
+                          {program.requirements.ToeflNoSectionLessThan && (
+                            <p>No section less than {program.requirements.ToeflNoSectionLessThan}</p>
+                          )}
+                          {program.requirements.ToeflScore && (
+                            <p>Overall – {program.requirements.ToeflScore}</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* DET */}
+                    {program.requirements?.DETScore && (
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">• DET</p>
+                        <div className="ml-4 text-sm text-gray-600">
+                          <p>Overall – {program.requirements.DETScore}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </td>
+              ))}
+            </tr>
+
+            {/* Application Deadline */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Application Deadline:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.metaInfo?.intakeDeadline || program.metaInfo?.deadline || '-'}
+                </td>
+              ))}
+            </tr>
+
+            {/* Application Fee */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Application Fee:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.applicationFee ? (
+                    <span>{program.currency} {program.applicationFee}</span>
+                  ) : (
+                    <span className="text-green-600 font-semibold">No Application Fee</span>
+                  )}
+                </td>
+              ))}
+            </tr>
+
+            {/* Program Tuition Fees */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Program Tuition Fees:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  <span className="font-semibold text-primary">
+                    {program.currency} {program.tuitionFee?.toLocaleString()}
+                  </span>
+                </td>
+              ))}
+            </tr>
+
+            {/* Study Mode */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Study Mode:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.studyMode}
+                </td>
+              ))}
+            </tr>
+
+            {/* Category */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Category:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.category?.name || '-'}
+                </td>
+              ))}
+            </tr>
+
+            {/* Campus */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Campus:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.metaInfo?.campus || '-'}
+                </td>
+              ))}
+            </tr>
+
+            {/* Scholarship */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Scholarship:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.metaInfo?.ScholarshipAvailable ? (
+                    <span className="text-green-600 font-semibold">✓ Available</span>
+                  ) : (
+                    <span className="text-gray-400">Not Available</span>
+                  )}
+                </td>
+              ))}
+            </tr>
+
+            {/* STEM Course */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                STEM Course:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.metaInfo?.IsStemCourse ? (
+                    <span className="text-green-600 font-semibold">✓ Yes</span>
+                  ) : (
+                    <span className="text-gray-400">No</span>
+                  )}
+                </td>
+              ))}
+            </tr>
+
+            {/* Backlog Allowed */}
+            <tr className="border-b border-gray-200">
+              <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                Backlog Allowed:
+              </td>
+              {selectedProgram.map((program, index) => (
+                <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
+                  {program.metaInfo?.backlog || '0'}
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Footer Actions */}
+      <div className="flex justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
+        <button
+          onClick={() => setShowCompare(false)}
+          className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-white transition-colors"
+        >
+          Close
+        </button>
+        <button
+          onClick={() => {
+            downloadPDF();
+            setShowCompare(false);
+          }}
+          className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+        >
+          <FileDown className="w-4 h-4" />
+          Download PDF
+        </button>
+        <button
+          onClick={() => {
+            downloadExcel();
+            setShowCompare(false);
+          }}
+          className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+        >
+          <FileSpreadsheet className="w-4 h-4" />
+          Download Excel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
         {/* Courses Grid */}
         <div className="flex flex-col lg:flex-row gap-4 items-start">
@@ -675,7 +1783,7 @@ export default function CoursesPage() {
                             </div>
                           </div>
 
-                          <div className="absolute top-1 -right-1">
+                          {profile.role === "counsellor" ? (<div className="absolute top-1 -right-1">
                             <input
                               type="checkbox"
                               checked={selectedProgram.some(
@@ -684,7 +1792,7 @@ export default function CoursesPage() {
                               onChange={() => handleCompareSelect(course)}
                               className="w-5 h-5 accent-primary cursor-pointer"
                             />
-                          </div>
+                          </div>) : null}
                         </div>
 
                         {/* Description */}

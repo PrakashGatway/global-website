@@ -325,7 +325,6 @@ export default function DashboardPage() {
     { name: "Pre-Departure", status: "upcoming" },
   ];
 
-  console.log(allProfile);
 
   return (
     <div className="min-h-screen bg-white">
