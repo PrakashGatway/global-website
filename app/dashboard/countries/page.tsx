@@ -297,13 +297,12 @@ export default function CountriesPage() {
     const [shortlistedCountries,
         setShortlistedCountries] =
         useState(
-            allProfile?.profile?.otherDetails?.countries_shortlist || []
+            allProfile?.profile?.preferences?.preferredCountries || []
         );
 
     useEffect(() => {
-        setShortlistedCountries(allProfile?.profile?.otherDetails?.countries_shortlist || [])
+        setShortlistedCountries(allProfile?.profile?.preferences?.preferredCountries || [])
     }, [allProfile])
-
 
 
 
@@ -315,7 +314,7 @@ export default function CountriesPage() {
         // already exists ?
         const alreadySelected =
             shortlistedCountries.includes(
-                country?.code
+                country?.name
             );
 
         let updatedCountries = [];
@@ -326,7 +325,7 @@ export default function CountriesPage() {
             updatedCountries =
                 shortlistedCountries.filter(
                     (item) =>
-                        item !== country?.code
+                        item !== country?.name
                 );
 
         }
@@ -334,7 +333,7 @@ export default function CountriesPage() {
 
             updatedCountries = [
                 ...shortlistedCountries,
-                country?.code,
+                country?.name,
             ];
         }
 
@@ -351,7 +350,7 @@ export default function CountriesPage() {
                 "/auth/edit-doc",
                 {
                     countries_shortlist:
-                        country?.code,
+                        country?.name,
                 }
             );
 
@@ -398,7 +397,6 @@ export default function CountriesPage() {
             const response = await axiosInstance.get(`/countries?${params}&populateExtra=true`)
             const data: CountriesResponse = response.data
 
-            console.log('Page:', page, 'Data length:', data.data.length, 'Total:', data.total, 'Pages:', data.pages)
 
             setCountries((prev) => {
                 if (page === 1) {
@@ -423,7 +421,6 @@ export default function CountriesPage() {
             const morePages = page < data.pages
             setHasMore(morePages)
 
-            console.log('Has more:', morePages, 'Current page:', page, 'Total pages:', data.pages)
 
         } catch (error) {
             console.error('Error fetching countries:', error)
@@ -460,7 +457,6 @@ export default function CountriesPage() {
         const observer = new IntersectionObserver(
             (entries) => {
                 const entry = entries[0]
-                console.log('Observer triggered:', entry.isIntersecting, 'hasMore:', hasMore, 'loading:', loading)
 
                 if (entry.isIntersecting && hasMore && !loading) {
                     console.log('Loading next page...')
@@ -841,8 +837,8 @@ export default function CountriesPage() {
                                                     <label className="flex items-center gap-2 text-[12px] font-medium text-[#2563EB] cursor-pointer hover:text-[#1D4ED8] transition-colors">
                                                         <input
                                                             type="checkbox"
-                                                            disabled={shortlistedCountries.length === 3 && !shortlistedCountries.includes(item.code)}
-                                                            checked={shortlistedCountries.includes(item?.code)}
+                                                            disabled={shortlistedCountries.length === 3 && !shortlistedCountries.includes(item.name)}
+                                                            checked={shortlistedCountries.includes(item?.name)}
                                                             onChange={() => handleShortlist(item)}
                                                             className="h-4 w-4 rounded border-2 border-[#D1D5DB] text-orange-600 focus:ring-orange-500 focus:ring-offset-2 cursor-pointer transition-all"
                                                         />

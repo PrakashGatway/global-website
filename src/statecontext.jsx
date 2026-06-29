@@ -26,8 +26,7 @@ export function GlobalProvider({ children }) {
 
     const [selectedCountries, setSelectedCountries] = useState([])
 
-    console.log(hasInteracted)
-    console.log(hasSubmittedForm)
+    
 
     const addCountry = (country) => {
 

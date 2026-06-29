@@ -300,27 +300,27 @@ function UniversitiesPageClient() {
 
 
 
-  useEffect(() => {
-    const country = searchParams.get("country") || "";
+ useEffect(() => {
+  const queryCountry = searchParams.get("country");
 
-    const shortlistCountries = allProfile?.profile?.otherDetails?.countries_shortlist || [];
+  const preferredCountries =
+    allProfile?.profile?.preferences?.preferredCountries || [];
 
-    const shortlistCategories = allProfile?.profile?.otherDetails?.categorie_shortlist?.join(",") || [];
+    const countryCodes = countries
+    .filter((c) => preferredCountries.includes(c.label))
+    .map((c) => c.value);
 
-    // country search state
-    const finalCountry = country || shortlistCountries.join(",");
+  const shortlistCategories =
+    allProfile?.profile?.otherDetails?.categorie_shortlist?.join(",") || "";
 
-    setsearch(finalCountry);
 
-    // set filters
-    setFilters((prev) => ({
-      ...prev,
-      country: finalCountry,
-      category: shortlistCategories, // set categories
-    }));
+  setFilters((prev) => ({
+    ...prev,
+    country: countryCodes,
+    category: shortlistCategories,
+  }));
+}, [searchParams, allProfile,countries]);
 
-    console.log(shortlistCategories, "categories");
-  }, [searchParams, allProfile, profile]);
 
 
   // console.log(search, "search list")
