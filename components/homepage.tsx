@@ -1296,9 +1296,10 @@ export default function Homepage({
 
           <div className="text-center mb-14">
             <h2 className="text-3xl md:text-5xl font-bold text-primary">
-              500+ Dreams{" "}
+              Our Student
+              {" "}
               <span className="text-[#F26B3A]">
-                Turned Into Reality
+                Visa Approvals
               </span>
             </h2>
 
