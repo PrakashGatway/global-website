@@ -60,9 +60,8 @@ export function CreateApplicationModal({
   const [isLoading, setIsLoading] = React.useState(false)
   const Router = useRouter()
 
-  // Get available intakes from program data
   const availableIntakes = React.useMemo(() => {
-    return program?.university?.intakes || [program?.intake].filter(Boolean) || ['Fall 2024', 'Spring 2025']
+    return program?.metaInfo?.Intakes.split(',').map(intake => intake.trim()) ||  program?.university?.intakes || []
   }, [program])
 
   const [formData, setFormData] = React.useState({
@@ -227,7 +226,6 @@ export function CreateApplicationModal({
             onClick={onClose}
             className="fixed inset-0 top-0 bottom-0 h-screen bg-black/20 backdrop-blur-[1px] z-60"
           />
-
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}

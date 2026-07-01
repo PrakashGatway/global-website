@@ -161,7 +161,7 @@ function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-lg bg-white  shadow-2xl flex flex-col max-h-[85vh]">
+      <div className="relative w-full max-w-lg bg-white shadow-2xl flex flex-col max-h-[85vh]">
         <div className="bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-5">
           <h2 className="text-xl font-bold text-white">
             Choose Your Field of Study
@@ -184,7 +184,7 @@ function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
               <button
                 key={ele.id}
                 onClick={() => toggleCourse(ele.name)}
-                className={`w-full flex items-center gap-3 p-3  border-2 mb-2
+                className={`w-full flex items-center gap-3 p-3 border-2 mb-2
                 ${ele.selected ? "border-indigo-600 bg-indigo-50" : "border-gray-100 hover:border-indigo-200"}`}
               >
                 <span>{ele.selected ? "✓" : ""}</span>
@@ -202,7 +202,8 @@ function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
               <button
                 key={i}
                 onClick={() => setPage(i + 1)}
-                className={`w-8 h-8  ${page === i + 1 ? "bg-indigo-600 text-white" : "hover:bg-gray-200"}`}
+                className={`w-8 h-8 ${page === i + 1 ? "bg-indigo-600 text-white" : "hover:bg-gray-200"
+                  }`}
               >
                 {i + 1}
               </button>
@@ -215,7 +216,7 @@ function CourseShortlist({ isOpen, onClose, setSelectedCount }) {
           <button
             onClick={onClose}
             disabled={selected < 2}
-            className="px-6 py-2 bg-indigo-600 text-white  disabled:bg-gray-200"
+            className="px-6 py-2 bg-indigo-600 text-white disabled:bg-gray-200"
           >
             Continue
           </button>
@@ -271,8 +272,9 @@ function UniversitiesPageClient() {
   const filterButtonRef = useRef(null);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const searchParams = useSearchParams();
-  // const search = searchParams.get("country") || "" //
+  const [total, setTotal] = useState(0);
   const [search, setsearch] = useState("");
+
   // Filters state
   const [filters, setFilters] = useState({
     country: [],
@@ -287,44 +289,27 @@ function UniversitiesPageClient() {
     sort_order: "asc",
   });
 
+  useEffect(() => {
+    const queryCountry = searchParams.get("country");
 
-  //   useEffect(() => {
-  //     const country = searchParams.get("country") || "";
-  //     if (country) {
-  //       setsearch(country);
-  //     } else {
-  //       setsearch(allProfile?.profile?.otherDetails?.countries_shortlist?.join(",") || "");
-  //       console.log(allProfile?.profile?.otherDetails?.categorie_shortlist);
-  //     }
-  //   }, [searchParams, allProfile]);
-
-
-
- useEffect(() => {
-  const queryCountry = searchParams.get("country");
-
-  const preferredCountries =
-    allProfile?.profile?.preferences?.preferredCountries || [];
+    const preferredCountries =
+      allProfile?.profile?.preferences?.preferredCountries || [];
 
     const countryCodes = countries
-    .filter((c) => preferredCountries.includes(c.label))
-    .map((c) => c.value);
+      .filter((c) => preferredCountries.includes(c.label))
+      .map((c) => c.value);
 
-  const shortlistCategories =
-    allProfile?.profile?.otherDetails?.categorie_shortlist?.join(",") || "";
+    const shortlistCategories =
+      allProfile?.profile?.otherDetails?.categorie_shortlist?.join(",") || "";
 
+    setFilters((prev) => ({
+      ...prev,
+      country: countryCodes,
+      category: shortlistCategories,
+    }));
+  }, [searchParams, allProfile, countries]);
 
-  setFilters((prev) => ({
-    ...prev,
-    country: countryCodes,
-    category: shortlistCategories,
-  }));
-}, [searchParams, allProfile,countries]);
-
-
-
-  // console.log(search, "search list")
-  //   // Debounced search query
+  // Debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   // Handle click outside
@@ -352,7 +337,6 @@ function UniversitiesPageClient() {
     };
   }, []);
 
-
   const fetchCountries = useCallback(async () => {
     try {
       const response = await axiosInstance.get("/countries?limit=300");
@@ -376,39 +360,29 @@ function UniversitiesPageClient() {
     async (reset = false) => {
       try {
         const currentPage = reset ? 1 : page;
-        // const params = new URLSearchParams({
-        //   page: currentPage.toString(),
-        //   limit: "8",
-        //   ...(debouncedSearchQuery && { name: debouncedSearchQuery }),
-        //   ...(filters.country && { country: filters.country }),
-        //   ...(filters.sort_by && { sort_by: filters.sort_by }),
-        //   ...(filters.city && { city: filters.city }),
-        //   ...(filters.uni_type && { type: filters.uni_type }),
-        //   ...(filters.country === "" && search && { country: search }),
-        // });
 
-
+        // Build query parameters based on backend controller
         const params = new URLSearchParams({
           page: currentPage.toString(),
           isWeb: "true",
           limit: "9",
           ...(debouncedSearchQuery && { name: debouncedSearchQuery }),
-          ...(filters.country && { country: filters.country }),
-          // ...(filters.category && { category: filters.category }), // add this
-          ...(filters.sort_by && { sort_by: filters.sort_by }),
+          ...(filters.country.length > 0 && { country: filters.country.join(',') }),
           ...(filters.city && { city: filters.city }),
           ...(filters.uni_type && { type: filters.uni_type }),
+          ...(filters.intake.length > 0 && { intake: filters.intake }), // Backend expects 'intake' param to be present for filtering
         });
 
         const response = await axiosInstance.get(`/universities?${params}`);
         const data = response.data.result;
-
 
         if (reset) {
           setUniversities(data || []);
         } else {
           setUniversities((prev) => [...prev, ...(data || [])]);
         }
+
+        setTotal(response.data.total);
 
         setHasMore(response.data.page < response.data.totalPages || false);
       } catch (error) {
@@ -418,7 +392,7 @@ function UniversitiesPageClient() {
         setLoadingMore(false);
       }
     },
-    [page, debouncedSearchQuery, filters, search],
+    [page, debouncedSearchQuery, filters],
   );
 
   // Initial fetch and reset on filter changes
@@ -426,7 +400,7 @@ function UniversitiesPageClient() {
     setLoading(true);
     setPage(1);
     fetchUniversities(true);
-  }, [debouncedSearchQuery, filters, search]);
+  }, [debouncedSearchQuery, filters]);
 
   // Infinite scroll observer
   useEffect(() => {
@@ -459,7 +433,7 @@ function UniversitiesPageClient() {
   }, [page, fetchUniversities]);
 
   // Handle filter changes
-  const handleFilterChange = (key: keyof typeof filters, value: string) => {
+  const handleFilterChange = (key: keyof typeof filters, value: any) => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
@@ -469,12 +443,13 @@ function UniversitiesPageClient() {
 
   const getActiveFilterCount = () => {
     let count = 0;
-    if (filters.country) count++;
+    if (filters.country.length > 0) count++;
     if (filters.city) count++;
     if (filters.uni_type) count++;
     if (filters.has_accommodation) count++;
     if (filters.min_acceptance_rate) count++;
     if (filters.max_acceptance_rate) count++;
+    if (filters.intake.length > 0) count++;
     return count;
   };
 
@@ -482,7 +457,7 @@ function UniversitiesPageClient() {
 
   const clearFilters = () => {
     setFilters({
-      country: "",
+      country: [],
       category: "",
       city: "",
       uni_type: "",
@@ -491,6 +466,7 @@ function UniversitiesPageClient() {
       max_acceptance_rate: "",
       sort_by: "name",
       sort_order: "asc",
+      intake: [],
     });
     setSearchQuery("");
     setPage(1);
@@ -537,190 +513,234 @@ function UniversitiesPageClient() {
     return "Selective";
   };
 
-  const intakeOptions = [
-    { value: "January", label: "January" },
-    { value: "February", label: "February" },
-    { value: "March", label: "March" },
-    { value: "September", label: "September" },
-  ];
+const intakeOptions = [
+  // Monthly Intakes
+  { value: "January", label: "January" },
+  { value: "February", label: "February" },
+  { value: "March", label: "March" },
+  { value: "April", label: "April" },
+  { value: "May", label: "May" },
+  { value: "June", label: "June" },
+  { value: "July", label: "July" },
+  { value: "August", label: "August" },
+  { value: "September", label: "September" },
+  { value: "October", label: "October" },
+  { value: "November", label: "November" },
+  { value: "December", label: "December" },
+  { value: "Spring", label: "Spring" },
+  { value: "Summer", label: "Summer" },
+  { value: "Fall", label: "Fall" },
+  { value: "Autumn", label: "Autumn" },
+  { value: "Winter", label: "Winter" }
+];
+
+  // Mobile filter toggle
+  const toggleMobileFilters = () => {
+    setShowFilters(!showFilters);
+  };
 
   return (
-    <main className=" mx-auto px-4">
-      <div className="flex items-center justify-between bg-gradient-to-r from-orange-50 to-white border border-orange-100 p-6 mb-8">
-  <div>
-    <span className="inline-block px-3 py-1 text-sm font-medium bg-orange-100 text-orange-600 rounded-full mb-3">
-      Global University Search
-    </span>
+    <main className="mx-auto sm:px-4 sm:py-6">
+      {/* Hero Section */}
+      <div className="flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-orange-50 to-white border border-orange-100 p-6 mb-8 rounded-xl">
+        <div className="mb-6 md:mb-0">
+          <span className="inline-block px-3 py-1 text-sm font-medium bg-orange-100 text-orange-600 rounded-full mb-3">
+            Global University Search
+          </span>
 
-    <h1 className="text-2xl font-bold text-gray-900 mb-3">
-      Find Universities That Match Your Ambitions
-    </h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+            Find Universities That Match Your Ambitions
+          </h1>
 
-    <p className="text-gray-600 text-lg max-w-xl">
-      Browse thousands of universities, filter by country, intake, and study level to find the perfect destination for your future.
-    </p>
-  </div>
+          <p className="text-gray-600 text-sm max-w-xl">
+            Browse thousands of universities, filter by country, intake, and study level to find the perfect destination for your future.
+          </p>
+        </div>
 
-  <div className="hidden md:flex items-center justify-center w-28 h-28 rounded-full bg-orange-100">
-    <GraduationCap className="w-14 h-14 text-orange-500" />
-  </div>
-</div>
-      <div className="flex gap-6">
-        {/* Left Side - Permanent Filter Panel */}
-        <aside className="w-80 flex-shrink-0 sticky top-80 ">
-          <div className="sticky top-4 bg-background border border-border  shadow-lg overflow-hidden">
+        <div className="hidden md:flex items-center justify-center sm:px-8">
+          <img src="/shapes/2.webp" alt="uni" className="w-40 scale-160" />
+        </div>
+      </div>
 
-            <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-primary/5 to-transparent">
+      {/* Mobile Filter Button */}
+      <div className="md:hidden mb-6">
+        <button
+          onClick={toggleMobileFilters}
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-primary/10 text-primary rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors"
+        >
+          <Filter className="w-5 h-5" />
+          <span>Filters {activeFilterCount > 0 && `(${activeFilterCount})`}</span>
+        </button>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Left Side - Permanent Filter Panel (Hidden on mobile when not active) */}
+        <aside
+          className={`${showFilters ? 'block' : 'hidden'
+            } md:block w-full md:w-80 flex-shrink-0`}
+        >
+          <div className="sticky top-6 bg-white border border-border overflow-hidden">
+            <div className="flex items-center justify-between p-3 border-b border-border bg-gradient-to-r from-primary/5 to-transparent">
               <h2 className="font-semibold flex items-center gap-2">
                 <Filter className="w-4 h-4 text-primary" />
                 Filters
               </h2>
-                {/* Results Count */}
-          {!loading && universities.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center justify-between"
-            >
-              <p className="text-sm text-muted-foreground">
-                Found{" "}
-                <span className="font-semibold text-foreground">
-                  {universities.length}
-                </span>{" "}
-                universities
-              </p>
-            </motion.div>
-          )}
+
+              {/* Results Count */}
+              {!loading && universities.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex items-center justify-between"
+                >
+                  <p className="text-sm text-muted-foreground">
+                    Found{" "}
+                    <span className="font-semibold text-foreground">
+                      {total}
+                    </span>{" "}
+                    universities
+                  </p>
+                </motion.div>
+              )}
             </div>
 
-            <div className="p-4 space-y-5 max-h-[calc(100vh-200px)] ">
+            <div className="p-3 space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto">
               {/* Search Bar */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="relative"
-              >
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 z-1" />
-                <input
-                  type="text"
-                  placeholder="Search universities by name, country, or city..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-border  focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all bg-background/50 backdrop-blur-sm"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-muted  transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                )}
-              </motion.div>
+              <div className="flex flex-col gap-1">
+                <label className="block text-sm font-medium mb-px" htmlFor="country">Search</label>
 
-              {/* Country Filter */}
-              {/* <div className="space-y-2">
-            <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-              <Globe className="w-4 h-4" />
-              Country
-            </label>
-            <ModernSelect
-              options={countries}
-              value={filters.country}
-              onChange={(value) => {
-                console.log(value, "value");
-                handleFilterChange("country", value);
-              }}
-              placeholder="Select country"
-              className="py-0"
-            />
-          </div> */}
-              <Select
-                isMulti
-                placeholder="Select Countries"
-                styles={{
-                  control: (provided, state) => ({
-                    ...provided,
-                    borderColor: state.isFocused ? "#f97316" : "#d1d5db",
-                    boxShadow: state.isFocused
-                      ? "0 0 0 1px #f97316"
-                      : "none",
-                    "&:hover": {
-                      borderColor: "#f97316",
-                    },
-                  }),
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="relative"
+                >
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 z-1" />
+                  <input
+                    type="text"
+                    placeholder="Search universities..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 border-1 border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all backdrop-blur-sm rounded"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-muted transition-colors rounded-full"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </motion.div>
+              </div>
 
-                  option: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: state.isSelected
-                      ? "#f97316" // selected option
-                      : state.isFocused
-                        ? "#fed7aa" // hover option (orange-200)
-                        : "#fff",
-                    color: state.isSelected ? "#fff" : "#000",
-                    cursor: "pointer",
-                  }),
-                }}
-                options={countries.map((country) => ({
-                  value: country.value,
-                  label: `${country.label} `,
-                }))}
-                value={countries
-                  .filter((c) => filters.country?.includes(c.value))
-                  .map((c) => ({
-                    value: c.value,
-                    label: c.label,
+              <div className="flex flex-col gap-1">
+                <label className="block text-sm font-medium mb-px" htmlFor="country">Country</label>
+                <Select
+                  isMulti
+                  className="relative z-10"
+                  menuPortalTarget={document.body}
+                  menuPosition="fixed"
+                  menuPlacement="auto"
+                  placeholder="Select Countries"
+                  styles={{
+                    menuPortal: (base) => ({
+                      ...base,
+                      zIndex: 9999,
+                    }),
+                    control: (provided, state) => ({
+                      ...provided,
+                      borderColor: state.isFocused ? "#f97316" : "#d1d5db",
+                      boxShadow: state.isFocused ? "0 0 0 1px #f97316" : "none",
+                      "&:hover": {
+                        borderColor: "#f97316",
+                      },
+                      padding: "4px",
+                    }),
+                    option: (provided, state) => ({
+                      ...provided,
+                      backgroundColor: state.isSelected
+                        ? "#f97316"
+                        : state.isFocused
+                          ? "#fed7aa"
+                          : "#fff",
+                      color: state.isSelected ? "#fff" : "#000",
+                      cursor: "pointer",
+                    }),
+                  }}
+                  options={countries.map((country) => ({
+                    value: country.value,
+                    label: country.label,
                   }))}
-                onChange={(selected) =>
-                  setFilters({
-                    ...filters,
-                    country: selected?.map((item) => item.value) || [],
-                  })
-                }
-              />
-
-              <Select
-                isMulti
-                options={intakeOptions}
-                placeholder="Select Intake"
-                value={intakeOptions.filter((item) =>
-                  filters.intake?.includes(item.value)
-                )}
-                onChange={(selected) =>
-                  setFilters({
-                    ...filters,
-                    intake: selected?.map((item) => item.value) || [],
-                  })
-                }
-                styles={{
-                  control: (provided, state) => ({
-                    ...provided,
-                    borderColor: state.isFocused ? "#f97316" : "#d1d5db",
-                    boxShadow: state.isFocused
-                      ? "0 0 0 1px #f97316"
-                      : "none",
-                    "&:hover": {
-                      borderColor: "#f97316",
-                    },
-                  }),
-
-                  option: (provided, state) => ({
-                    ...provided,
-                    backgroundColor: state.isSelected
-                      ? "#f97316"
-                      : state.isFocused
-                        ? "#ffedd5"
-                        : "#fff",
-                    color: state.isSelected ? "#fff" : "#111",
-                  }),
-                }}></Select>
+                  value={countries
+                    .filter((c) => filters.country?.includes(c.value))
+                    .map((c) => ({
+                      value: c.value,
+                      label: c.label,
+                    }))}
+                  onChange={(selected) =>
+                    setFilters({
+                      ...filters,
+                      country: selected?.map((item) => item.value) || [],
+                    })
+                  }
+                />
+              </div>
+              {/* Country Filter */}
 
 
+              {/* Intake Filter */}
+              <div className="flex flex-col gap-1">
+                <label className="block text-sm font-medium mb-px" htmlFor="country">Intake</label>
+
+                <Select
+                  isMulti
+                  options={intakeOptions}
+                  placeholder="Select Intake"
+                  menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+                  menuPosition="fixed"
+                  menuPlacement="auto"
+                  value={intakeOptions.filter((item) =>
+                    filters.intake?.includes(item.value)
+                  )}
+                  onChange={(selected) =>
+                    setFilters({
+                      ...filters,
+                      intake: selected?.map((item) => item.value) || [],
+                    })
+                  }
+                  styles={{
+                    menuPortal: (base) => ({
+                      ...base,
+                      zIndex: 9999,
+                    }),
+
+                    control: (provided, state) => ({
+                      ...provided,
+                      borderColor: state.isFocused ? "#f97316" : "#d1d5db",
+                      boxShadow: state.isFocused ? "0 0 0 1px #f97316" : "none",
+                      "&:hover": {
+                        borderColor: "#f97316",
+                      },
+                      padding: "4px",
+                    }),
+
+                    option: (provided, state) => ({
+                      ...provided,
+                      backgroundColor: state.isSelected
+                        ? "#f97316"
+                        : state.isFocused
+                          ? "#ffedd5"
+                          : "#fff",
+                      color: state.isSelected ? "#fff" : "#111",
+                      cursor: "pointer",
+                    }),
+                  }}
+                />
+              </div>
 
               {/* University Type Filter */}
               <div className="space-y-2">
-                <label className="text-sm font-medium flex items-center gap-2 text-muted-foreground">
-                  <GraduationCap className="w-4 h-4" />
+                <label className="text-sm font-medium flex items-center gap-2">
                   University Type
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -744,7 +764,7 @@ function UniversitiesPageClient() {
                           filters.uni_type === type.value ? "" : type.value,
                         )
                       }
-                      className={`flex items-center justify-center gap-2 px-3 py-2 border transition-all duration-200 ${filters.uni_type === type.value
+                      className={`flex items-center justify-center gap-2 px-3 py-2 border transition-all duration-200 rounded ${filters.uni_type === type.value
                         ? "border-primary bg-primary/10 text-primary"
                         : "border-border hover:border-primary/50 hover:bg-muted"
                         }`}
@@ -758,27 +778,39 @@ function UniversitiesPageClient() {
 
               {/* Active Filters */}
               {activeFilterCount > 0 && (
-                <div className="pt-2 border-t border-border">
-                  <p className="text-xs font-medium text-muted-foreground mb-2">
+                <div className="pt-2">
+                  <p className="text-xs font-medium mb-2">
                     Active Filters
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {filters.country && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary  text-sm">
-                        {filters.country}
+                    {filters.country.length > 0 && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary text-sm rounded-full">
+                        {filters.country.length} countries
                         <button
-                          onClick={() => handleFilterChange("country", "")}
-                          className="hover:bg-primary/20  p-0.5"
+                          onClick={() => handleFilterChange("country", [])}
+                          className="hover:bg-primary/20 p-0.5 rounded-full"
                         >
                           <X className="w-3 h-3" />
                         </button>
                       </span>
                     )}
                     {filters.uni_type && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary  text-sm">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary text-sm rounded-full">
                         {filters.uni_type}
                         <button
                           onClick={() => handleFilterChange("uni_type", "")}
+                          className="hover:bg-primary/20 p-0.5 rounded-full"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    )}
+                    {filters.intake.length > 0 && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary text-sm rounded-full">
+                        {filters.intake.length} intakes
+                        <button
+                          onClick={() => handleFilterChange("intake", [])}
+                          className="hover:bg-primary/20 p-0.5 rounded-full"
                         >
                           <X className="w-3 h-3" />
                         </button>
@@ -789,10 +821,10 @@ function UniversitiesPageClient() {
               )}
             </div>
 
-            <div className="flex items-center justify-between gap-2 p-4 border-t border-border bg-muted/30">
+            <div className="flex items-center justify-between gap-2 p-2 border-t border-border bg-muted/30">
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="px-4 py-2 font-medium text-sm hover:text-foreground transition-colors"
               >
                 Clear all
               </button>
@@ -802,44 +834,51 @@ function UniversitiesPageClient() {
 
         {/* Right Side - Search and University Cards */}
         <div className="flex-1 space-y-4">
-
-       
+          {/* Close mobile filters button */}
+          {showFilters && (
+            <div className="md:hidden mb-4">
+              <button
+                onClick={toggleMobileFilters}
+                className="flex items-center gap-2 text-primary font-medium"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Back to results
+              </button>
+            </div>
+          )}
 
           {/* University Cards Grid */}
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
           >
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="bg-card border border-border  overflow-hidden animate-pulse"
+                  className="bg-card border border-border overflow-hidden animate-pulse"
                 >
-                  <div className="h-48 bg-gradient-to-br from-muted to-muted/50"></div>
-                  <div className="p-6 space-y-4">
+                  <div className="h-40 bg-gradient-to-br from-muted to-muted/50"></div>
+                  <div className="p-4 space-y-4">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-muted "></div>
+                        <div className="w-12 h-12 bg-muted rounded-lg"></div>
                         <div className="space-y-2">
-                          <div className="h-4 w-32 bg-muted "></div>
-                          <div className="h-3 w-24 bg-muted "></div>
+                          <div className="h-4 w-32 bg-muted rounded"></div>
+                          <div className="h-3 w-24 bg-muted rounded"></div>
                         </div>
                       </div>
-                      <div className="h-8 w-16 bg-muted "></div>
+                      <div className="h-8 w-16 bg-muted rounded"></div>
                     </div>
                     <div className="space-y-2">
-                      <div className="h-3 w-full bg-muted "></div>
-                      <div className="h-3 w-3/4 bg-muted "></div>
+                      <div className="h-3 w-full bg-muted rounded"></div>
+                      <div className="h-3 w-3/4 bg-muted rounded"></div>
                     </div>
                     <div className="grid grid-cols-3 gap-3">
-                      <div className="h-12 bg-muted "></div>
-                      <div className="h-12 bg-muted "></div>
-                      <div className="h-12 bg-muted "></div>
+                      <div className="h-12 bg-muted rounded"></div>
+                      <div className="h-12 bg-muted rounded"></div>
+                      <div className="h-12 bg-muted rounded"></div>
                     </div>
-                    <div className="h-10 bg-muted "></div>
+                    <div className="h-10 bg-muted rounded"></div>
                   </div>
                 </div>
               ))
@@ -849,7 +888,7 @@ function UniversitiesPageClient() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="col-span-full text-center py-16"
               >
-                <div className="w-24 h-24 mx-auto mb-4  bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+                <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center rounded-full">
                   <Search className="w-12 h-12 text-muted-foreground" />
                 </div>
                 <h3 className="text-2xl font-bold mb-2">No universities found</h3>
@@ -859,7 +898,7 @@ function UniversitiesPageClient() {
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground  hover:bg-primary/90 transition-all duration-300"
+                  className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 rounded-lg"
                 >
                   Clear all filters
                 </button>
@@ -868,45 +907,46 @@ function UniversitiesPageClient() {
               universities.map((uni, index) => (
                 <motion.div
                   key={index}
-                  className={`relative flex flex-col h-full bg-gradient-to-br ${getCardGradient(uni.uni_type)} border -3xl overflow-hidden`}
+                  className={`relative hover:shadow-xl flex flex-col h-full border overflow-hidden`}
                 >
                   {/* Cover Image */}
-                  <div className="relative h-30 overflow-hidden">
-                 
-                      <Image
-                        src={uni?.cover_photo ? uni?.cover_photo : "https://etimg.etb2bimg.com/photo/121373442.cms"}
-                        alt={uni.name}
-                        className="w-full h-full object-cover transition-transform duration-700"
-                          onError={(e) => {
-                                  e.currentTarget.src =
-                                    "https://etimg.etb2bimg.com/photo/121373442.cms";
-                                }}
-                                width={100}
-                                height={100}
-                        
-                      />
-                
+                  <div className="relative h-40 overflow-hidden">
+                    <Image
+                      src={
+                        uni?.cover_photo
+                          ? uni?.cover_photo
+                          : "https://etimg.etb2bimg.com/photo/121373442.cms"
+                      }
+                      alt={uni.name}
+                      className="w-full h-full object-cover transition-transform duration-700"
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          "https://etimg.etb2bimg.com/photo/121373442.cms";
+                      }}
+                      width={400}
+                      height={160}
+                      priority={index < 3}
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
                   </div>
 
-                  <div className="p-3 relative flex flex-col flex-1">
+                  <div className="p-4 relative flex flex-col flex-1">
                     {/* Logo and Header */}
                     <div className="flex items-start justify-between -mt-12 mb-4 relative">
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-2">
                         {uni.uni_logo ? (
                           <Image
                             src={uni.uni_logo || "/images/newlogo3.png"}
                             alt={uni.name}
-                            className="w-20 h-auto max-h-10 object-cover bg-white shadow-lg border-2"
-                              onError={(e) => {
-                                  e.currentTarget.src =
-                                    "/images/newlogo3.png";
-                                }}
-                                width={100}
-                                height={100}
+                            className="w-16 h-auto max-h-10 object-cover bg-white shadow-lg border-2 rounded-md"
+                            onError={(e) => {
+                              e.currentTarget.src = "/images/newlogo3.png";
+                            }}
+                            width={64}
+                            height={40}
                           />
                         ) : (
-                          <Building className="w-28 h-28 text-muted-foreground" />
+                          <Building className="w-16 h-16 text-muted-foreground" />
                         )}
                         <div>
                           <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary transition-colors">
@@ -920,9 +960,9 @@ function UniversitiesPageClient() {
                                 href={uni.uni_web}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-2.5 border border-border  hover:bg-muted hover:border-primary/50 transition-all duration-300 group-hover:scale-[1.02]"
+                                className="ml-1 p-1.5 border border-border hover:bg-muted hover:border-primary/50 transition-all duration-300 group-hover:scale-[1.02] rounded"
                               >
-                                <ExternalLink className="w-4 h-4" />
+                                <ExternalLink className="w-3 h-3" />
                               </a>
                             )}
                           </p>
@@ -940,7 +980,7 @@ function UniversitiesPageClient() {
 
                       {/* Description */}
                       <p
-                        className="text-foreground/80 text-[13px] mb-2 line-clamp-3"
+                        className="text-foreground/80 text-[13px] mb-2 line-clamp-2"
                         title={
                           uni.short_description || "No description available."
                         }
@@ -955,42 +995,23 @@ function UniversitiesPageClient() {
                             <Calendar className="w-3 h-3" />
                             Intakes
                           </p>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-1">
                             {uni.intakes.slice(0, 3).map((intake, index) => (
                               <span
                                 key={index}
-                                className="text-xs px-2.5 py-1 bg-primary/10 text-primary  font-medium"
+                                className="text-xs px-2 py-1 bg-primary/10 text-primary font-medium rounded"
                               >
                                 {intake}
                               </span>
                             ))}
                             {uni.intakes.length > 3 && (
-                              <span className="text-xs px-2.5 py-1 bg-muted text-muted-foreground ">
+                              <span className="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">
                                 +{uni.intakes.length - 3}
                               </span>
                             )}
                           </div>
                         </div>
                       )}
-
-                      {/* Accommodation */}
-                      {(uni.on_campus_accommodation ||
-                        uni.off_campus_accommodation) && (
-                          <div className="flex items-center gap-3 mb-4">
-                            {uni.on_campus_accommodation && (
-                              <span className="inline-flex items-center gap-1.5 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 ">
-                                <Check className="w-3 h-3" />
-                                On Campus
-                              </span>
-                            )}
-                            {uni.off_campus_accommodation && (
-                              <span className="inline-flex items-center gap-1.5 text-xs text-blue-600 bg-blue-50 px-2 py-1 ">
-                                <Check className="w-3 h-3" />
-                                Off Campus
-                              </span>
-                            )}
-                          </div>
-                        )}
 
                       {/* Tags */}
                       {uni.tags && (
@@ -1001,7 +1022,7 @@ function UniversitiesPageClient() {
                             .map((tag, i) => (
                               <span
                                 key={i}
-                                className="px-2 py-0.5 bg-muted/50  text-xs text-muted-foreground border border-border/50"
+                                className="px-2 capitalize py-0.5 bg-muted/50 text-xs text-muted-foreground border border-border/50 rounded"
                               >
                                 {tag.trim()}
                               </span>
@@ -1011,26 +1032,21 @@ function UniversitiesPageClient() {
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="flex items-end gap-2 pt-1 mt-auto h-full justify-end">
+                    <div className="flex flex-col sm:flex-row gap-2 pt-2 mt-auto">
                       <Link
                         href={`/dashboard/universities/${uni?.slug}`}
-                        className="flex-1 p-2 lg:px-4 lg:py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground  hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
+                        className="flex-1 p-2 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02] rounded-lg"
                       >
                         View Details
                       </Link>
                       <Link
                         href={`/dashboard/programs?university=${uni._id}`}
-                        className="flex-1 p-2 lg:px-4 lg:py-2.5 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground  hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02]"
+                        className="flex-1 p-2 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02] rounded-lg"
                       >
                         Apply
                       </Link>
                     </div>
                   </div>
-
-                  {/* Hover Effect Overlay */}
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-500 pointer-events-none ${hoveredCard === uni._id ? "opacity-100" : ""}`}
-                  />
                 </motion.div>
               ))
             )}

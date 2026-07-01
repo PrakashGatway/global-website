@@ -99,7 +99,6 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
               className={`relative flex items-center p-4 py-2.5 rounded-lg border-2 cursor-pointer transition-all ${formData.selectedIntake === intake.fullIntake
                 ? 'border-[#F26D44] bg-orange-50'
                 : 'border-gray-300 hover:border-gray-300'
-                } ${intake.status === 'coming-soon' ? 'opacity-60 cursor-not-allowed' : ''
                 }`}
             >
               <input
@@ -108,7 +107,6 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
                 value={intake.fullIntake}
                 checked={formData.selectedIntake === intake.fullIntake}
                 onChange={(e) => setFormData({ ...formData, selectedIntake: e.target.value })}
-                disabled={intake.status === 'coming-soon'}
                 className="sr-only"
               />
               <div className="flex-1 flex items-center justify-between">
@@ -119,27 +117,10 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
                   </div>
                   <div>
                     <p className="font-medium text-sm text-gray-900">
-                      {intake.month} {intake.year}
+                      {intake.month}
                     </p>
-                    {/* <p className="text-xs text-gray-500">
-                      Deadline: {intake.deadline}
-                    </p> */}
                   </div>
                 </div>
-                {intake.status === 'coming-soon' ? (
-                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                    Coming Soon
-                  </span>
-                ) : (
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${formData.selectedIntake === intake.fullIntake
-                    ? 'border-[#F26D44] bg-[#F26D44]'
-                    : 'border-gray-300'
-                    }`}>
-                    {formData.selectedIntake === intake.fullIntake && (
-                      <div className="w-2 h-2 bg-white rounded-full" />
-                    )}
-                  </div>
-                )}
               </div>
             </motion.label>
           ))}
@@ -153,7 +134,7 @@ export function ApplicationForm({ program, formData, setFormData, availableIntak
           className="mt-4 flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-200"
         >
           <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
-          <p className="text-xs text-amber-700">
+          <p className="text-xs text-red-700 font-medium">
             Please ensure you select the correct intake. Changes to intake after submission may require approval.
           </p>
         </motion.div>
@@ -170,13 +151,20 @@ interface PrerequisitesFormProps {
 
 export function PrerequisitesForm({ program, formData, setFormData }: PrerequisitesFormProps) {
 
+  function toNormalCase(str) {
+    return str
+      .replace(/([A-Z])/g, " $1") // Add space before capital letters
+      .trim()
+      .replace(/^./, (char) => char.toUpperCase()); // Capitalize first letter
+  }
+
   const prerequisites = React.useMemo(() => {
     let prereqs = []
-    console.log(program)
+    console.log(program.requirements)
     if (program.requirements) {
       prereqs = Object.entries(program?.requirements).map(([name, data]) => ({
         name,
-        value: data.value
+        value: data
       }));
     }
     return prereqs
@@ -217,7 +205,7 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
             <div className="flex items-start gap-3">
               <div className="">
                 <div className="">
-                  <h4 className="font-medium uppercase text-gray-900">{prerequisite.name}</h4>
+                  <h4 className="font-medium uppercase text-gray-900">{toNormalCase(prerequisite.name)}</h4>
                 </div>
                 <p className="text-base text-gray-500 mt-1">{prerequisite.value}</p>
               </div>
