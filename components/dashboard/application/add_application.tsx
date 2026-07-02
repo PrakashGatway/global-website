@@ -41,15 +41,15 @@ const APP_STEPS = [
         ]
     }
 ];
-
 // --- Sub-Components ---
 
 // Generic Field Renderer matching the RegisterStudentModal styling
-const ModalFieldRenderer = ({ field, value, onChange, options = [] }) => {
+const ModalFieldRenderer = ({ field, value, onChange, options = [], selectedCourse }) => {
     const baseClass = "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] transition-all text-sm";
 
     if (field.type === 'select') {
         const selectOptions = options.length > 0 ? options : (field.options || []).map(o => typeof o === 'string' ? { label: o, value: o } : o);
+        console.log(options)
         return (
             <select value={value || ""} onChange={(e) => onChange(e.target.value)} className={baseClass}>
                 <option value="">Select {field.label}</option>
@@ -164,7 +164,7 @@ const SearchView = ({ searchTerm, setSearchTerm, results, isSearching, onSelect,
 
 // --- Main Component ---
 
-const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClose, onSuccess }) => {
+const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClose, onSuccess, selectedCourse }) => {
     const [flowStep, setFlowStep] = useState<FlowStep>('selection');
     const [selectedStudent, setSelectedStudent] = useState<any>(null);
     const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -186,7 +186,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
     const [intakes, setIntakes] = useState([]);
 
 
-    console.log(intakes)
+    console.log(selectedCourse)
 
 
     // Debounced search effect
@@ -228,32 +228,58 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
 
     // Fetch universities when destination country changes
     useEffect(() => {
-        if (formData.destinationCountry) {
-            axiosInstance.get(`/universities?country=${formData.destinationCountry}`)
+        if (selectedCourse) {
+            setFormData((p) => ({ ...p, destinationCountry: selectedCourse?.country }))
+        }
+        if (formData.destinationCountry || selectedCourse) {
+            axiosInstance.get(`/universities`, {
+                params: {
+                    country: formData.destinationCountry || selectedCourse?.country,
+                    isWeb: true,
+                    limit: 300,
+
+                },
+            })
                 .then(res => {
                     const data = res.data.result || res.data || [];
                     setUniversities(data.map((u: any) => ({ label: u.name, value: u._id })));
+                    selectedCourse &&
+                        setTimeout(() => {
+                            setFormData((prev) => ({
+                                ...prev,
+                                university: selectedCourse?.university?._id,
+                            }));
+                        }, 100);
                 })
                 .catch(err => setUniversities([]));
         } else {
             setUniversities([]);
             setCourses([]);
         }
-    }, [formData.destinationCountry]);
+    }, [formData.destinationCountry, selectedCourse?.country]);
 
     // Fetch courses when university changes
     useEffect(() => {
         if (formData.university) {
-            axiosInstance.get(`/courses?university=${formData.university}`)
+            axiosInstance.get(`/courses?university=${formData.university}& isExtra= false`)
                 .then(res => {
                     const data = res.data.data || res.data || [];
+                    console.log(data)
                     setCourses(
                         data.map((c) => ({
                             label: c.name,
                             value: c._id,
                             university: c.university,
+                            metaInfo: c.metaInfo
                         }))
                     );
+                    selectedCourse &&
+                        setTimeout(() => {
+                            setFormData((prev) => ({
+                                ...prev,
+                                course: selectedCourse?._id,
+                            }));
+                        }, 100);
                 })
                 .catch(err => setCourses([]));
         } else {
@@ -272,6 +298,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
             dateOfBirth: student.dateOfBirth || "",
             nationality: student.nationality || "",
             gender: student.gender || "",
+
         }));
 
         setFlowStep("application_form");
@@ -284,21 +311,29 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
         }
 
         const selectedCourse = courses.find(
+
             (course) => course.value === formData.course
         );
 
         if (selectedCourse) {
-            console.log(selectedCourse)
-            const intakeOptions = (selectedCourse?.university?.intakes || []).map(
-                (intake) => ({
+            const intakeOptions = selectedCourse?.metaInfo?.Intakes
+                ? selectedCourse.metaInfo.Intakes
+                    .split(",")
+                    .map((intake: string) => ({
+                        label: intake.trim(),
+                        value: intake.trim(),
+                    }))
+                    .filter((item) => item.value)
+                : (selectedCourse?.university?.intakes || []).map((intake: string) => ({
                     label: intake,
                     value: intake,
-                })
-            );
+                }));
 
             setIntakes(intakeOptions);
         }
     }, [formData.course, courses]);
+
+
 
     const handleNewUserSuccess = (newStudent: any) => {
         if (newStudent) {
@@ -477,19 +512,24 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
                                         <div className="flex-1 overflow-y-auto px-6 py-6">
                                             <h3 className="text-lg font-semibold text-gray-800 mb-4">{currentStepData.name}</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                {currentStepData.fields.map(field => (
-                                                    <div key={field.name} className="space-y-2">
-                                                        <label className="text-sm font-medium text-gray-700">
-                                                            {field.label} {field.required && <span className="text-red-500">*</span>}
-                                                        </label>
-                                                        <ModalFieldRenderer
-                                                            field={field}
-                                                            value={formData[field.name]}
-                                                            onChange={(val) => setFormData(prev => ({ ...prev, [field.name]: val }))}
-                                                            options={getOptionsForField(field.name)}
-                                                        />
-                                                    </div>
-                                                ))}
+                                                {currentStepData.fields.map(field => {
+                                                    console.log(field)
+                                                    return (
+
+                                                        <div key={field.name} className="space-y-2">
+                                                            <label className="text-sm font-medium text-gray-700">
+                                                                {field.label} {field.required && <span className="text-red-500">*</span>}
+                                                            </label>
+                                                            <ModalFieldRenderer
+                                                                field={field}
+                                                                value={formData[field.name] }
+                                                                onChange={(val) => setFormData(prev => ({ ...prev, [field.name]: val }))}
+                                                                options={getOptionsForField(field.name)}
+                                                                selectedCourse={selectedCourse}
+                                                            />
+                                                        </div>
+                                                    )
+                                                })}
                                             </div>
                                         </div>
 

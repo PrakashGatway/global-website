@@ -318,22 +318,22 @@ const RequestCallbackSection = ({ data }) => {
   const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}` : "";
 
   return (
-    <section className=" bg-white lg:py-16 overflow-hidden">
-      <div className="relative mx-auto min-h-[320px] sm:min-h-[420px] lg:min-h-[560px] bg-[url('https://media.istockphoto.com/id/1094302626/photo/hand-raised-for-vote-and-asking-at-conference-seminar-meeting-room.jpg?s=612x612&w=0&k=20&c=r60nXw6xfHRoNPrTiyImBGsXNS5XjtoOQfKYPrIdKe8=')] bg-cover bg-right bg-no-repeat flex items-center px-4 sm:px-6">
+    <section className=" bg-white lg:py-10 overflow-hidden">
+      <div className="relative mx-auto min-h-[320px] sm:min-h-[420px] lg:min-h-[440px] bg-[url('https://media.istockphoto.com/id/1094302626/photo/hand-raised-for-vote-and-asking-at-conference-seminar-meeting-room.jpg?s=612x612&w=0&k=20&c=r60nXw6xfHRoNPrTiyImBGsXNS5XjtoOQfKYPrIdKe8=')] bg-cover bg-right bg-no-repeat flex items-center px-4 sm:px-6">
         <div className="absolute inset-0 bg-black/60 z-0" />
         <div className="relative z-10 w-full flex justify-center lg:justify-center">
-          <div className="p-[2px] w-full max-w-full sm:max-w-[600px] lg:max-w-[840px] -z-10 ">
+          <div className="p-[2px] w-full max-w-full sm:max-w-[600px] lg:max-w-[780px] -z-10 ">
             <div className="backdrop-blur-xl bg-white/30  rounded-3xl p-8">
               <div className="bg-white p-4 sm:p-6 md:p-6 text-white rounded-3xl">
                 <AnimatePresence mode="wait" custom={direction}>
                   <motion.div key={step} custom={direction} variants={variants} initial="initial" animate="animate" exit="exit">
                     {step === 1 && (
                       <>
-                        <h2 className="text-lg sm:text-xl md:text-3xl font-semibold mb-4 sm:mb-6 text-black">What Is Your Desired Academic Course?</h2>
+                        <h2 className="text-lg sm:text-xl md:text-3xl font-semibold mb-4 sm:mb-6 text-black text-center">What Is Your Desired Academic Course?</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
                           {["UG", "PG", "PHD", "MBBS"].map((item) => (
                             <button key={item} type="button" onClick={() => setValue("course", item, { shouldValidate: true })}
-                              className={`w-full border border-white rounded-3xl py-2 sm:py-4 text-sm sm:text-lg transition ${course === item ? "bg-primary text-white" : "bg-[#f26b3a] hover:bg-primary hover:text-white"}`}>
+                              className={` border border-white rounded-full py-2 sm:p-5 text-sm sm:text-lg transition ${course === item ? "bg-primary text-white" : "bg-[#f26b3a] hover:bg-primary hover:text-white"}`}>
                               {item}
                             </button>
                           ))}
@@ -343,11 +343,11 @@ const RequestCallbackSection = ({ data }) => {
                     )}
                     {step === 2 && (
                       <>
-                        <h2 className="text-lg sm:text-xl md:text-3xl font-semibold mb-4 sm:mb-6 text-black">Which country do you want to go to?</h2>
+                        <h2 className="text-lg sm:text-xl md:text-3xl font-semibold mb-4 sm:mb-6 text-black text-center">Which country do you want to go to?</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                           {["UK", "USA", "Canada", "Australia"].map((item) => (
                             <button key={item} type="button" onClick={() => setValue("country", item, { shouldValidate: true })}
-                              className={`w-full border border-white rounded-3xl py-2 sm:py-4 text-sm sm:text-base transition ${country === item ? "bg-secondary text-white" : "bg-[#f26b3a] hover:bg-secondary hover:text-white"}`}>
+                              className={`w-full border border-white rounded-3xl py-2 sm:py-4 text-sm sm:text-base transition ${country === item ? "bg-primary text-white" : "bg-[#f26b3a] hover:bg-primary hover:text-white"}`}>
                               {item}
                             </button>
                           ))}
@@ -357,7 +357,7 @@ const RequestCallbackSection = ({ data }) => {
                     )}
                     {step === 3 && (
                       <>
-                        <h2 className="text-lg sm:text-xl md:text-3xl font-semibold mb-4 sm:mb-6 text-black">Basic Details</h2>
+                        <h2 className="text-lg sm:text-xl md:text-3xl font-semibold mb-4 sm:mb-6 text-black text-center">Basic Details</h2>
                         <div className="grid grid-cols-1 gap-3 sm:gap-4">
                           <input placeholder="Full Name" {...register("fullName", { required: "Name is required" })} className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base bg-[#f26b3a] rounded-3xl border border-white" />
                           {errors.fullName && <p className="text-red-300 text-sm">{errors.fullName.message}</p>}

@@ -24,6 +24,7 @@ import ProgramFilters from "./programFilter"
 import toast from "react-hot-toast"
 import { useGlobal } from "@/src/statecontext"
 import { downloadExcel, downloadPDF } from "./CourseCard"
+import NewApplicationModal from "../application/add_application"
 
 
 // Debounce hook
@@ -79,6 +80,32 @@ interface Course {
   createdAt: string
 }
 
+interface Application {
+  _id: string;
+  applicationNumber: string;
+  student: Student;
+  country?: string;
+  course?: Course;
+  intake?: string;
+  paymentStatus: PaymentStatus;
+  primaryStatus: ApplicationStatus;
+  isWithdrawn: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+
+interface ApiResponse {
+  success: boolean;
+  data: Application[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+  results: number;
+}
+
+
 export default function CoursesPage() {
   // State management
   const [courses, setCourses] = useState<Course[]>([])
@@ -107,6 +134,23 @@ export default function CoursesPage() {
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [showCompare, setshowCompare] = useState(false)
+  const [showApplicationDetail,setshowApplicationDetail] = useState(false)
+    const [applications, setApplications] = useState<Application[]>([]);
+
+     const [primaryStatus, setPrimaryStatus] = useState("");
+      const [paymentStatus, setPaymentStatus] = useState("");
+      const [intake, setIntake] = useState("");
+      const [country, setCountry] = useState("");
+      const [course, setCourse] = useState("");
+      const [studentFilter, setStudentFilter] = useState("");
+      const [dateFrom, setDateFrom] = useState<Date | null>(null);
+      const [dateTo, setDateTo] = useState<Date | null>(new Date());
+        const [limit, setLimit] = useState(25);
+          const [view, setView] = useState<"list" | "add">("list");
+        
+      
+    
+  
 
   const searchParams = useSearchParams();
   const university = searchParams.get('university') || ""
@@ -132,6 +176,68 @@ export default function CoursesPage() {
     sort_by: "name",
     sort_order: "asc"
   }) as any
+
+
+
+   const fetchApplications = useCallback(async () => {
+      setLoading(true);
+      try {
+        const params: Record<string, string> = {
+          page: page.toString(),
+          limit: limit.toString(),
+        };
+  
+        if (debouncedSearchQuery && debouncedSearchQuery.length >= 3) {
+          params.search = debouncedSearchQuery;
+        }
+        if (primaryStatus) params.primaryStatus = primaryStatus;
+        if (paymentStatus) params.paymentStatus = paymentStatus;
+        if (intake) params.intake = intake;
+        if (country) params.country = country;
+        if (course) params.course = course;
+        if (studentFilter) params.student = studentFilter;
+  
+        if (dateFrom) {
+          params.startDate = dateFrom.toISOString().split("T")[0];
+        }
+        if (dateTo) {
+          params.endDate = dateTo.toISOString().split("T")[0];
+        }
+  
+        console.log("Fetching applications with params:", params);
+  
+        const response = await axiosInstance.get<ApiResponse>(
+          "/applications/getApplicationsByCounsellor",
+          { params }
+        );
+  
+        setApplications(response.data.data || []);
+        setTotal(response.data.total || 0);
+      } catch (err) {
+        console.error("Error fetching applications:", err);
+        toast.error("Failed to fetch applications");
+        setApplications([]);
+        setTotal(0);
+      } finally {
+        setLoading(false);
+      }
+    }, [
+      page,
+      limit,
+      debouncedSearchQuery,
+      primaryStatus,
+      paymentStatus,
+      intake,
+      country,
+      course,
+      studentFilter,
+      dateFrom,
+      dateTo,
+    ]);
+
+      useEffect(() => {
+        fetchApplications();
+      }, [fetchApplications]);
 
   // Fetch filter options
   const fetchFilterOptions = useCallback(async () => {
@@ -1107,7 +1213,8 @@ export default function CoursesPage() {
                           <button
                             onClick={() => {
                               setSelectedCourse(course);
-                              setIsModalOpen(true);
+                              // setIsModalOpen(true);
+                              setshowApplicationDetail(true)
                             }}
                             className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-[#f26d44] border border-primary/40 text-white rounded-md text-base font-medium transition-all duration-200"
                           >
@@ -1168,6 +1275,14 @@ export default function CoursesPage() {
         </div>
 
         {/* Infinite Scroll Loader */}
+
+       {console.log("showApplicationDetail:", showApplicationDetail)}
+{console.log("view:", view)}
+
+        {showApplicationDetail && (
+                    <NewApplicationModal isOpen={showApplicationDetail} onClose={() => setshowApplicationDetail(false)} onSuccess={fetchApplications} selectedCourse= {selectedCourse} />
+
+        )}
 
         <CreateApplicationModal
           isOpen={isModalOpen}
