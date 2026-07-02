@@ -721,7 +721,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
 
       {/* <VideoTestimonialsSlider items={videoData}/> */}
       <div className="py-10">
-        <StudentVisaStories stories={visacontent} isSameLine={"yes"} />
+        <StudentVisaStories stories={visacontent} isSameLine={"no"} />
 
       </div>
 
