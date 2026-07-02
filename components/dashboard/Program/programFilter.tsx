@@ -284,8 +284,6 @@ export default function ProgramFilters({
     }
   };
 
-  console.log(workExperience, "workExperience");
-
   // Handle Clear All
   const handleClearAll = () => {
     clearFilters();

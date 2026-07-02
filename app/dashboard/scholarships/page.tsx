@@ -131,7 +131,7 @@ export default function ScholarshipPage() {
         search: ''
     });
 
-    const fetchScholarships = useCallback(async (page: number = 1) => {
+    const fetchScholarships = async (page: number = 1) => {
         try {
             setLoading(true);
             setError(null);
@@ -145,10 +145,8 @@ export default function ScholarshipPage() {
                 deliveryMode: filters.deliveryMode || "",
                 search: filters.search || ""
             };
-            console.log(params)
 
             const response = await axiosInstance.get(`/scholarships/public/list?${new URLSearchParams(params)}`);
-            console.log(response)
             setScholarships(response.data.data);
             if (response.data.pagination) setPagination(response.data.pagination);
 
@@ -157,11 +155,11 @@ export default function ScholarshipPage() {
         } finally {
             setLoading(false);
         }
-    }, [filters]);
+    };
 
     const fetchCounries = async () => {
         try {
-            const response = await axiosInstance.get(`/countries?limit=50&populateExtra=true`)
+            const response = await axiosInstance.get(`/countries?limit=100`)
             setallCountries(response?.data?.data)
 
         }
@@ -170,23 +168,11 @@ export default function ScholarshipPage() {
             alert("Error...");
         }
     }
-    console.log(scholarships)
-
-
-
     // Initial fetch and filter change
     useEffect(() => {
         fetchScholarships(1);
         fetchCounries()
-
-    }, [fetchScholarships]);
-
-
-
-  
-
-
-
+    }, []);
 
     // Handle filter change
     const handleFilterChange = (key: string, value: string) => {
@@ -204,33 +190,15 @@ export default function ScholarshipPage() {
     // Clear all filters
     const clearFilters = () => {
         setFilters({ country: '', level: '', fundingType: '', deliveryMode: '', search: '' });
-    };
-
-    // Format deadline date
-    const formatDeadline = (deadline: string) => {
-        if (!deadline) return 'No deadline';
-        try {
-            return new Date(deadline).toLocaleDateString('en-GB', {
-                day: 'numeric', month: 'short', year: 'numeric'
-            });
-        } catch {
-            return deadline;
-        }
-    };
-
-    // Get funding badge color
-    const getFundingBadgeColor = (fundingType: string) => {
-        const lower = fundingType?.toLowerCase() || '';
-        if (lower.includes('full')) return 'bg-green-100 text-green-800';
-        if (lower.includes('partial') || lower.includes('waiver')) return 'bg-blue-100 text-blue-800';
-        if (lower.includes('stipend')) return 'bg-purple-100 text-purple-800';
-        return 'bg-gray-100 text-gray-800';
+        setTimeout(() => {
+            fetchScholarships(1);
+        }, 200);
     };
 
     const router = useRouter()
 
     return (
-        <div className="min-h-screen mx-auto px-2 py-2">
+        <div className="min-h-screen mx-auto sm:px-2 py-2">
 
             <div className="">
                 <h1 className="text-2xl font-bold mb-1">
@@ -251,24 +219,24 @@ export default function ScholarshipPage() {
                             }`}
                     >
                         <Globe className="w-4 h-4" />
-                        <span className="text-sm font-medium">All Countries</span>
+                        <span className="text-sm font-medium">All</span>
                     </button>
                     {allCountries.map((country, i) => (
                         <button
                             key={country._id}
                             onClick={() => handleFilterChange('country', country._id)}
-                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 whitespace-nowrap transition-all ${filters.country === country?._id
-                                    ? "border-[#ff6b35] bg-orange-50 text-[#ff6b35]"
-                                    : "border-gray-200 hover:border-[#ff6b35] hover:text-[#ff6b35]"
+                            className={`inline-flex items-center gap-2 px-2.5 py-1.5 rounded-full border-2 whitespace-nowrap transition-all ${filters.country === country?._id
+                                ? "border-[#ff6b35] bg-orange-50 text-[#ff6b35]"
+                                : "border-gray-200 hover:border-[#ff6b35] hover:text-[#ff6b35]"
                                 }`}
                         >
                             <img
                                 src={country?.flg}
                                 alt={country?.name}
-                                className="w-6 h-6 rounded-full object-cover flex-shrink-0"
+                                className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover flex-shrink-0"
                             />
 
-                            <span className="text-sm font-medium leading-none">
+                            <span className="text-xs sm:text-sm font-medium leading-none">
                                 {country?.name}
                             </span>
                         </button>
@@ -392,7 +360,7 @@ export default function ScholarshipPage() {
             </div>
 
             {/* Results Count */}
-            <div className="container mx-auto px-4 py-6">
+            <div className="container mx-auto py-3">
                 <div className="flex justify-between items-center">
                     <p className="text-gray-600">
                         Showing <span className="font-semibold">{scholarships.length}</span> of{' '}
@@ -416,7 +384,7 @@ export default function ScholarshipPage() {
 
             {/* Error State */}
             {error && !loading && (
-                <div className="container mx-auto px-4 py-12">
+                <div className="container mx-auto py-12">
                     <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex items-start gap-3">
                         <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                         <div>
@@ -435,43 +403,38 @@ export default function ScholarshipPage() {
 
             {/* Scholarship Grid/List */}
             {!loading && !error && scholarships.length > 0 && (
-                <div className="container mx-auto px-4 py-6 pb-12">
+                <div className="container mx-auto py-2 pb-12">
                     <div className={`grid gap-6 ${viewMode === 'grid'
-                        ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+                        ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-4'
                         : 'grid-cols-1'
                         }`}>
                         {scholarships.map((scholarship) => (
-                            <div className="duration-300 hover:scale-105 transition-all hover:-translate-y-1 cursor-pointer" key={scholarship?._id}>
-                                <div className="bg-[#efefef] p-2 max-w-[450px] mx-auto">
+                            <div className="duration-300 hover:scale-102 transition-all hover:-translate-y-1 cursor-pointer" key={scholarship?._id}>
+                                <div className="bg-[#efefef] p-1 max-w-[450px] mx-auto">
                                     <div className="overflow-hidden">
                                         <img
                                             src="https://www.mili.edu.af/blogs/elements/post_image/2024-12-23-18-16-4822.jpg"
                                             alt={scholarship.title}
-                                            className="w-full h-[220px] object-cover"
+                                            className="w-full h-[170px] object-cover"
                                         />
-                                   
                                     </div>
 
                                     <div className="pt-4 px-2">
                                         <div className="relative group w-fit">
-                                            <h3 className="text-xl line-clamp-2 font-medium text-black cursor-pointer">
+                                            <h3 className="text-base line-clamp-2 font-medium text-black cursor-pointer">
                                                 {scholarship.title}
                                             </h3>
-
-                                           
                                         </div>
 
-                                        <p className="text-[#444] mt-2 text-sm line-clamp-2 leading-relaxed">
-                                            {scholarship.description}
-                                        </p>
-
+                                        <span dangerouslySetInnerHTML={{ __html: scholarship.description }} className="text-[#444] mt-1 text-sm line-clamp-2 leading-relaxed"/>
+                                           
                                         {/* Bottom CTA */}
-                                        <div onClick={() => router.push(`/dashboard/scholarships/${scholarship.slug}`)} className="flex pb-2 items-center justify-between mt-3 group cursor-pointer">
-                                            <span className="text-[#F46C44] text-lg font-semibold tracking-wide">
+                                        <div onClick={() => router.push(`/dashboard/scholarships/${scholarship.slug}`)} className="flex pb-2 items-center justify-between mt-1 group cursor-pointer">
+                                            <span className="text-[#F46C44] text-base font-semibold tracking-wide">
                                                 Details
                                             </span>
 
-                                            <span className=" right-0 text-[#F46C44] text-4xl group-hover:translate-x-2 transition-all duration-300">
+                                            <span className=" right-0 text-[#F46C44] text-3xl group-hover:translate-x-2 transition-all duration-300">
                                                 →
                                             </span>
                                         </div>

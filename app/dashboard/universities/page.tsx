@@ -37,7 +37,7 @@ import axiosInstance from "@/app/axiosInstance";
 import AmazingSelect, { ModernSelect } from "@/components/ui/select";
 import Link from "next/link";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useGlobal } from "@/src/statecontext";
 import Select from "react-select";
 
@@ -270,11 +270,11 @@ function UniversitiesPageClient() {
   const observerTarget = useRef<HTMLDivElement>(null);
   const [countries, setCountries] = useState([]);
   const filterButtonRef = useRef(null);
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const [total, setTotal] = useState(0);
-  const [search, setsearch] = useState("");
-
+  const pathname = usePathname();
+  const queryCountry = searchParams.get("country");
+  const router = useRouter();
   // Filters state
   const [filters, setFilters] = useState({
     country: [],
@@ -287,27 +287,27 @@ function UniversitiesPageClient() {
     max_acceptance_rate: "",
     sort_by: "name",
     sort_order: "asc",
-  });
+  }) as any;
 
-  useEffect(() => {
-    const queryCountry = searchParams.get("country");
+  // useEffect(() => {
+  //   
 
-    const preferredCountries =
-      allProfile?.profile?.preferences?.preferredCountries || [];
+  //   const preferredCountries =
+  //     allProfile?.profile?.preferences?.preferredCountries || [];
 
-    const countryCodes = countries
-      .filter((c) => preferredCountries.includes(c.label))
-      .map((c) => c.value);
+  //   const countryCodes = countries
+  //     .filter((c) => preferredCountries.includes(c.label))
+  //     .map((c) => c.value);
 
-    const shortlistCategories =
-      allProfile?.profile?.otherDetails?.categorie_shortlist?.join(",") || "";
+  //   const shortlistCategories =
+  //     allProfile?.profile?.otherDetails?.categorie_shortlist?.join(",") || "";
 
-    setFilters((prev) => ({
-      ...prev,
-      country: countryCodes,
-      category: shortlistCategories,
-    }));
-  }, [searchParams, allProfile, countries]);
+  //   setFilters((prev) => ({
+  //     ...prev,
+  //     country: countryCodes,
+  //     category: shortlistCategories,
+  //   }));
+  // }, [searchParams, allProfile, countries]);
 
   // Debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -361,13 +361,22 @@ function UniversitiesPageClient() {
       try {
         const currentPage = reset ? 1 : page;
 
+        const selectedCountries =
+          filters.country.length > 0
+            ? filters.country
+            : queryCountry
+              ? [queryCountry]
+              : [];
+
         // Build query parameters based on backend controller
         const params = new URLSearchParams({
           page: currentPage.toString(),
           isWeb: "true",
           limit: "9",
           ...(debouncedSearchQuery && { name: debouncedSearchQuery }),
-          ...(filters.country.length > 0 && { country: filters.country.join(',') }),
+          ...(selectedCountries.length > 0 && {
+            country: selectedCountries.join(","),
+          }),
           ...(filters.city && { city: filters.city }),
           ...(filters.uni_type && { type: filters.uni_type }),
           ...(filters.intake.length > 0 && { intake: filters.intake }), // Backend expects 'intake' param to be present for filtering
@@ -395,7 +404,29 @@ function UniversitiesPageClient() {
     [page, debouncedSearchQuery, filters],
   );
 
-  // Initial fetch and reset on filter changes
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (initialized.current) return;
+
+    initialized.current = true;
+
+    if (queryCountry) {
+      setFilters((prev) => ({
+        ...prev,
+        country: [queryCountry],
+      }));
+
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("country");
+
+      router.replace(
+        params.toString() ? `${pathname}?${params}` : pathname,
+        { scroll: false }
+      );
+    }
+  }, [queryCountry]);
+
   useEffect(() => {
     setLoading(true);
     setPage(1);
@@ -513,26 +544,26 @@ function UniversitiesPageClient() {
     return "Selective";
   };
 
-const intakeOptions = [
-  // Monthly Intakes
-  { value: "January", label: "January" },
-  { value: "February", label: "February" },
-  { value: "March", label: "March" },
-  { value: "April", label: "April" },
-  { value: "May", label: "May" },
-  { value: "June", label: "June" },
-  { value: "July", label: "July" },
-  { value: "August", label: "August" },
-  { value: "September", label: "September" },
-  { value: "October", label: "October" },
-  { value: "November", label: "November" },
-  { value: "December", label: "December" },
-  { value: "Spring", label: "Spring" },
-  { value: "Summer", label: "Summer" },
-  { value: "Fall", label: "Fall" },
-  { value: "Autumn", label: "Autumn" },
-  { value: "Winter", label: "Winter" }
-];
+  const intakeOptions = [
+    // Monthly Intakes
+    { value: "January", label: "January" },
+    { value: "February", label: "February" },
+    { value: "March", label: "March" },
+    { value: "April", label: "April" },
+    { value: "May", label: "May" },
+    { value: "June", label: "June" },
+    { value: "July", label: "July" },
+    { value: "August", label: "August" },
+    { value: "September", label: "September" },
+    { value: "October", label: "October" },
+    { value: "November", label: "November" },
+    { value: "December", label: "December" },
+    { value: "Spring", label: "Spring" },
+    { value: "Summer", label: "Summer" },
+    { value: "Fall", label: "Fall" },
+    { value: "Autumn", label: "Autumn" },
+    { value: "Winter", label: "Winter" }
+  ];
 
   // Mobile filter toggle
   const toggleMobileFilters = () => {

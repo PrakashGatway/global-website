@@ -374,16 +374,9 @@ export default function PaymentHistoryPage() {
   }
 
   return (
-    <main className="flex-1 overflow-y-auto max-w-7xl mx-auto px-4">
+    <main className="flex-1 overflow-y-auto container mx-auto sm:px-4 py-4">
       <div className="space-y-4">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-2xl bg-gradient-to-br from-primary/5 via-primary/10 to-transparent p-6 overflow-hidden"
-        >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 rounded-full blur-2xl" />
+        <motion.div>
           <div className="relative z-10">
             <h1 className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               Payment History

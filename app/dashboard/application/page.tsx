@@ -200,14 +200,13 @@ const getPaymentStatusInfo = (status: string) => {
   return statusMap[status] || statusMap['Pending']
 }
 
-export default function ApplicationHistoryPage({heading = "Application History", subheading = "Track your study abroad applications and manage required documents", limit = 10, viewAll = false}) {
+export default function ApplicationHistoryPage({ heading = "Application History", subheading = "Track your study abroad applications and manage required documents", limit = 10, viewAll = false }) {
   const [applications, setApplications] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<string[]>([])
   const [filterCountry, setFilterCountry] = useState<string>('')
-  const {allProfile} = useGlobal()
 
 
   const router = useRouter()
@@ -293,7 +292,7 @@ export default function ApplicationHistoryPage({heading = "Application History",
   }, [loading, pagination.hasMore, loadingMore, pagination.page, fetchApplications])
 
 
-const ApplicationCard = ({ application }: { application: any }) => {
+  const ApplicationCard = ({ application }: { application: any }) => {
     const statusInfo = getStatusInfo(application.primaryStatus)
     const paymentInfo = getPaymentStatusInfo(application.paymentStatus)
     const university = application.course?.university
@@ -315,6 +314,9 @@ const ApplicationCard = ({ application }: { application: any }) => {
                   width={40}
                   loading="lazy"
                   height={40}
+                  onError={(e) => {
+                    e.currentTarget.src = "/images/newlogo3.png";
+                  }}
                   className="object-contain"
                 />
               ) : (
@@ -389,7 +391,7 @@ const ApplicationCard = ({ application }: { application: any }) => {
         {/* Actions */}
         <td className="px-4 py-3">
           <div className="flex gap-2">
-            {(application.course.applicationFee !== 0 && paymentInfo.label == "Pending") && (
+            {/* {(application.course.applicationFee !== 0 && paymentInfo.label == "Pending") && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -401,7 +403,7 @@ const ApplicationCard = ({ application }: { application: any }) => {
               >
                 Pay Now
               </button>
-            )}
+            )} */}
             <button className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors" style={{ border: '1px solid #d1d5db' }}>
               View
             </button>
@@ -409,12 +411,12 @@ const ApplicationCard = ({ application }: { application: any }) => {
         </td>
       </motion.tr>
     )
-}
+  }
 
-// Payment Warning Row Component
-const PaymentWarningRow = ({ application }: { application: any }) => {
+  // Payment Warning Row Component
+  const PaymentWarningRow = ({ application }: { application: any }) => {
     const paymentInfo = getPaymentStatusInfo(application.paymentStatus)
-    
+
     return (
       <tr style={{ backgroundColor: '#fefce8', borderBottom: '1px solid #e5e7eb' }}>
         <td colSpan={10} className="px-4 py-2">
@@ -427,172 +429,172 @@ const PaymentWarningRow = ({ application }: { application: any }) => {
         </td>
       </tr>
     )
-}
+  }
 
-return (
-  <main className="flex-1 overflow-y-auto">
-    <div className="max-w-full mx-auto p-4">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">{heading}</h1>
-            <p className="text-gray-500 text-sm mt-1">
-              {subheading}
-            </p>
+  return (
+    <main className="flex-1 overflow-y-auto">
+      <div className="max-w-full mx-auto p-4">
+        {/* Header */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">{heading}</h1>
+              <p className="text-gray-500 text-sm mt-1">
+                {subheading}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {loading ? (
-        <div className="min-h-screen">
-          <div className="max-w-full mx-auto">
-            <div className="animate-pulse">
-              <table className="w-full" style={{ border: '1px solid #e5e7eb' }}>
-                <thead style={{ backgroundColor: '#f9fafb' }}>
-                  <tr>
-                    {[...Array(10)].map((_, i) => (
-                      <th key={i} className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
-                        <div className="h-4 bg-gray-200 rounded w-20"></div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...Array(5)].map((_, i) => (
-                    <tr key={i} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                      {[...Array(10)].map((_, j) => (
-                        <td key={j} className="px-4 py-3" style={{ borderRight: j < 9 ? '1px solid #e5e7eb' : 'none' }}>
-                          <div className="h-4 bg-gray-200 rounded w-full"></div>
-                        </td>
+        {loading ? (
+          <div className="min-h-screen">
+            <div className="max-w-full mx-auto">
+              <div className="animate-pulse">
+                <table className="w-full" style={{ border: '1px solid #e5e7eb' }}>
+                  <thead style={{ backgroundColor: '#f9fafb' }}>
+                    <tr>
+                      {[...Array(10)].map((_, i) => (
+                        <th key={i} className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                          <div className="h-4 bg-gray-200 rounded w-20"></div>
+                        </th>
                       ))}
                     </tr>
+                  </thead>
+                  <tbody>
+                    {[...Array(5)].map((_, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                        {[...Array(10)].map((_, j) => (
+                          <td key={j} className="px-4 py-3" style={{ borderRight: j < 9 ? '1px solid #e5e7eb' : 'none' }}>
+                            <div className="h-4 bg-gray-200 rounded w-full"></div>
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        ) : applications.length === 0 ? (
+          <div className="text-center py-12" style={{ border: '1px solid #e5e7eb', backgroundColor: 'white' }}>
+            <div className="w-20 h-20 bg-gray-100 flex items-center justify-center mx-auto mb-4">
+              <GraduationCap className="w-10 h-10 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Applications Found</h3>
+            <p className="text-gray-500 mb-6">
+              {searchQuery || filterStatus.length > 0 || filterCountry
+                ? 'Try adjusting your filters or search query'
+                : 'You haven\'t submitted any applications yet'}
+            </p>
+            <Link
+              href="/dashboard/programs"
+              className="inline-flex items-center gap-2 px-6 py-3 text-white transition-all"
+              style={{ backgroundColor: '#F26D44' }}
+            >
+              <Plus className="w-4 h-4" />
+              Start New Application
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full" style={{ border: '1px solid #e5e7eb', borderCollapse: 'collapse' }}>
+                {/* Table Header */}
+                <thead style={{ backgroundColor: '#f9fafb' }}>
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                      Course
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                      App. No.
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                      Intake
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                      Level
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                      Duration
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                      Country
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                      Fee
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                      Payment
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderBottom: '1px solid #e5e7eb' }}>
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {applications.map((application, index) => (
+                    <>
+                      <ApplicationCard key={application._id} application={application} />
+
+                      {/* Warning row for pending payment applications */}
+                      {/* {(application.course.applicationFee !== 0 &&
+                        getPaymentStatusInfo(application.paymentStatus).label == "Pending") && (
+                          <PaymentWarningRow key={`warning-${application._id}`} application={application} />
+                        )} */}
+
+                      {/* Footer info row for each application */}
+                      <tr key={`footer-${application._id}`} style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                        <td colSpan={10} className="px-4 py-2">
+                          <div className="flex items-center gap-4 text-xs text-gray-500">
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3.5 h-3.5" />
+                              {formatDistanceToNow(new Date(application.createdAt), { addSuffix: true })}
+                            </span>
+                            {application.backups?.length > 0 && (
+                              <span className="flex items-center gap-1">
+                                <GraduationCap className="w-3.5 h-3.5" />
+                                {application.backups.length} Backup{application.backups.length !== 1 ? 's' : ''}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    </>
                   ))}
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-      ) : applications.length === 0 ? (
-        <div className="text-center py-12" style={{ border: '1px solid #e5e7eb', backgroundColor: 'white' }}>
-          <div className="w-20 h-20 bg-gray-100 flex items-center justify-center mx-auto mb-4">
-            <GraduationCap className="w-10 h-10 text-gray-400" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Applications Found</h3>
-          <p className="text-gray-500 mb-6">
-            {searchQuery || filterStatus.length > 0 || filterCountry
-              ? 'Try adjusting your filters or search query'
-              : 'You haven\'t submitted any applications yet'}
-          </p>
-          <Link
-            href="/dashboard/programs"
-            className="inline-flex items-center gap-2 px-6 py-3 text-white transition-all"
-            style={{ backgroundColor: '#F26D44' }}
-          >
-            <Plus className="w-4 h-4" />
-            Start New Application
-          </Link>
-        </div>
-      ) : (
-        <>
-          <div className="overflow-x-auto">
-            <table className="w-full" style={{ border: '1px solid #e5e7eb', borderCollapse: 'collapse' }}>
-              {/* Table Header */}
-              <thead style={{ backgroundColor: '#f9fafb' }}>
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
-                    Course
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
-                    App. No.
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
-                    Intake
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
-                    Level
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
-                    Duration
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
-                    Country
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
-                    Status
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
-                    Fee
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
-                    Payment
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider" style={{ borderBottom: '1px solid #e5e7eb' }}>
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              
-              <tbody>
-                {applications.map((application, index) => (
-                  <>
-                    <ApplicationCard key={application._id} application={application} />
-                    
-                    {/* Warning row for pending payment applications */}
-                    {(application.course.applicationFee !== 0 && 
-                      getPaymentStatusInfo(application.paymentStatus).label == "Pending") && (
-                      <PaymentWarningRow key={`warning-${application._id}`} application={application} />
-                    )}
-                    
-                    {/* Footer info row for each application */}
-                    <tr key={`footer-${application._id}`} style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                      <td colSpan={10} className="px-4 py-2">
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5" />
-                            {formatDistanceToNow(new Date(application.createdAt), { addSuffix: true })}
-                          </span>
-                          {application.backups?.length > 0 && (
-                            <span className="flex items-center gap-1">
-                              <GraduationCap className="w-3.5 h-3.5" />
-                              {application.backups.length} Backup{application.backups.length !== 1 ? 's' : ''}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  </>
-                ))}
-              </tbody>
-            </table>
-          </div>
 
-          {/* Pagination */}
-          {pagination.hasMore && (
-            <div ref={loadMoreRef} className="py-8 flex justify-center">
-              {loadingMore ? (
-                <div className="flex items-center gap-2 text-gray-500">
-                  <RefreshCw className="w-5 h-5 animate-spin" />
-                  Loading more...
-                </div>
-              ) : (
-                <button
-                  onClick={() => fetchApplications(pagination.page + 1, true)}
-                  className="px-6 py-2 transition-colors text-gray-600"
-                  style={{ border: '1px solid #e5e7eb', backgroundColor: 'white' }}
-                >
-                  Load More
-                </button>
-              )}
+            {/* Pagination */}
+            {pagination.hasMore && (
+              <div ref={loadMoreRef} className="py-8 flex justify-center">
+                {loadingMore ? (
+                  <div className="flex items-center gap-2 text-gray-500">
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                    Loading more...
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => fetchApplications(pagination.page + 1, true)}
+                    className="px-6 py-2 transition-colors text-gray-600"
+                    style={{ border: '1px solid #e5e7eb', backgroundColor: 'white' }}
+                  >
+                    Load More
+                  </button>
+                )}
+              </div>
+            )}
+
+            <div className="text-center text-sm text-gray-500 mt-4">
+              Showing {applications.length} of {pagination.total} applications
             </div>
-          )}
-          
-          <div className="text-center text-sm text-gray-500 mt-4">
-            Showing {applications.length} of {pagination.total} applications
-          </div>
-        </>
-      )}
-    </div>
-  </main>
-)
+          </>
+        )}
+      </div>
+    </main>
+  )
 }

@@ -134,28 +134,13 @@ export default function CoursesPage() {
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [showCompare, setshowCompare] = useState(false)
-  const [showApplicationDetail,setshowApplicationDetail] = useState(false)
-    const [applications, setApplications] = useState<Application[]>([]);
-
-     const [primaryStatus, setPrimaryStatus] = useState("");
-      const [paymentStatus, setPaymentStatus] = useState("");
-      const [intake, setIntake] = useState("");
-      const [country, setCountry] = useState("");
-      const [course, setCourse] = useState("");
-      const [studentFilter, setStudentFilter] = useState("");
-      const [dateFrom, setDateFrom] = useState<Date | null>(null);
-      const [dateTo, setDateTo] = useState<Date | null>(new Date());
-        const [limit, setLimit] = useState(25);
-          const [view, setView] = useState<"list" | "add">("list");
-        
-      
-    
-  
+  const [showApplicationDetail,setshowApplicationDetail] = useState(false)  
 
   const searchParams = useSearchParams();
   const university = searchParams.get('university') || ""
 
-  const { profile, allProfile, refreshProfile } = useGlobal()
+  const { profile, allProfile } = useGlobal()
+  const [preferenceApplied, setPreferenceApplied] = useState(false);
   
   // Filters state
   const [filters, setFilters] = useState({
@@ -177,69 +162,41 @@ export default function CoursesPage() {
     sort_order: "asc"
   }) as any
 
+  const applyPreference = () => {
+  const preferredCountries =
+    allProfile?.profile?.preferences?.preferredCountries || [];
 
+  const countryCodes = countries
+    .filter((c) => preferredCountries.includes(c.label))
+    .map((c) => c.value);
 
-   const fetchApplications = useCallback(async () => {
-      setLoading(true);
-      try {
-        const params: Record<string, string> = {
-          page: page.toString(),
-          limit: limit.toString(),
-        };
-  
-        if (debouncedSearchQuery && debouncedSearchQuery.length >= 3) {
-          params.search = debouncedSearchQuery;
-        }
-        if (primaryStatus) params.primaryStatus = primaryStatus;
-        if (paymentStatus) params.paymentStatus = paymentStatus;
-        if (intake) params.intake = intake;
-        if (country) params.country = country;
-        if (course) params.course = course;
-        if (studentFilter) params.student = studentFilter;
-  
-        if (dateFrom) {
-          params.startDate = dateFrom.toISOString().split("T")[0];
-        }
-        if (dateTo) {
-          params.endDate = dateTo.toISOString().split("T")[0];
-        }
-  
-        console.log("Fetching applications with params:", params);
-  
-        const response = await axiosInstance.get<ApiResponse>(
-          "/applications/getApplicationsByCounsellor",
-          { params }
-        );
-  
-        setApplications(response.data.data || []);
-        setTotal(response.data.total || 0);
-      } catch (err) {
-        console.error("Error fetching applications:", err);
-        toast.error("Failed to fetch applications");
-        setApplications([]);
-        setTotal(0);
-      } finally {
-        setLoading(false);
-      }
-    }, [
-      page,
-      limit,
-      debouncedSearchQuery,
-      primaryStatus,
-      paymentStatus,
-      intake,
-      country,
-      course,
-      studentFilter,
-      dateFrom,
-      dateTo,
-    ]);
+  const preferredCategory = allProfile?.profile?.preferences?.preferredCourse || [];
 
-      useEffect(() => {
-        fetchApplications();
-      }, [fetchApplications]);
+  const preferCatCodes = categories
+    .filter((c) => preferredCategory.includes(c.label))
+    .map((c) => c.value);
 
-  // Fetch filter options
+  setFilters((prev) => ({
+    ...prev,
+    country: countryCodes[0],
+   level: allProfile?.profile?.preferences?.level
+  ? [allProfile.profile.preferences.level]
+  : [],
+    category: preferCatCodes[0]
+  }));
+  setPreferenceApplied(true);
+};
+
+const removePreference = () => {
+  setFilters((prev) => ({
+    ...prev,
+    country: [],
+    level: [],
+    category: [],
+  }));
+  setPreferenceApplied(false);
+};
+
   const fetchFilterOptions = useCallback(async () => {
     try {
       const [countriesRes, uniRes, catRes] = await Promise.all([
@@ -404,7 +361,6 @@ export default function CoursesPage() {
       } else {
         setCourses(prev => [...prev, ...data])
       }
-
       setHasMore(data.length === 12)
     } catch (error) {
       console.error('Error fetching courses:', error)
@@ -419,11 +375,19 @@ export default function CoursesPage() {
     fetchFilterOptions()
   }, [fetchFilterOptions])
 
+
+  const initialLoaded = useRef(false);
+
+useEffect(() => {
+    if (!loading && courses.length > 0) {
+        initialLoaded.current = true;
+    }
+}, [loading, courses]);
+
   // Fetch on search/filter changes
   useEffect(() => {
     setLoading(true)
     setPage(1)
-    console.log("Filters changed, fetching courses with filters:", filters)
     fetchCourses(true)
   }, [filters])
 
@@ -431,12 +395,12 @@ export default function CoursesPage() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => {
-        if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
+        if (initialLoaded.current && entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
           setPage(prev => prev + 1)
           setLoadingMore(true)
         }
       },
-      { threshold: 1.0 }
+      { threshold: 1 }
     )
 
     if (observerTarget.current) {
@@ -533,7 +497,25 @@ export default function CoursesPage() {
             <p className="text-base text-gray-800">
               Found <span className="font-semibold text-foreground">{total && total} + </span> programs
             </p>
+            <div className="flex gap-2">
+  {!preferenceApplied ? (
+    <button
+      onClick={applyPreference}
+      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white"
+    >
+      Apply Preference
+    </button>
+  ) : (
+    <button
+      onClick={removePreference}
+      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-300 text-red-600"
+    >
+      Remove Preference
+    </button>
+  )}
+</div>
           </motion.div>
+
         )}
 
         {selectedProgram.length > 0 && (
@@ -836,8 +818,6 @@ export default function CoursesPage() {
             </div>
           </div>
         )}
-
-        {/* Courses Grid */}
         <div className="flex flex-col lg:flex-row gap-4 items-start">
           {/* LEFT SIDEBAR: FILTERS */}
           <div className="sticky top-4 self-start">
@@ -1213,8 +1193,7 @@ export default function CoursesPage() {
                           <button
                             onClick={() => {
                               setSelectedCourse(course);
-                              // setIsModalOpen(true);
-                              setshowApplicationDetail(true)
+                              profile.role === "user" ? setIsModalOpen(true) :setshowApplicationDetail(true)
                             }}
                             className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-[#f26d44] border border-primary/40 text-white rounded-md text-base font-medium transition-all duration-200"
                           >
@@ -1274,14 +1253,8 @@ export default function CoursesPage() {
           </div>
         </div>
 
-        {/* Infinite Scroll Loader */}
-
-       {console.log("showApplicationDetail:", showApplicationDetail)}
-{console.log("view:", view)}
-
         {showApplicationDetail && (
-                    <NewApplicationModal isOpen={showApplicationDetail} onClose={() => setshowApplicationDetail(false)} onSuccess={fetchApplications} selectedCourse= {selectedCourse} />
-
+          <NewApplicationModal isOpen={showApplicationDetail} onClose={() => setshowApplicationDetail(false)} onSuccess={() => null} selectedCourse= {selectedCourse} />
         )}
 
         <CreateApplicationModal
