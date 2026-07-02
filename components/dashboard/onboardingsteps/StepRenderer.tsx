@@ -4,6 +4,8 @@ import { Check, Search, MapPin, ChevronDown } from "lucide-react";
 import { useState, useMemo } from "react";
 import { ModernSelect } from "@/components/ui/select";
 import { DynamicLucideIcon } from "@/components/DynamicLucideIcon";
+import { STUDY_LEVELS } from "@/utils/schema";
+import Loading from "@/app/dashboard/notifications/loading";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20, scale: 0.95 },
@@ -25,12 +27,10 @@ export default function StepRenderer({ step, categories, countries }) {
   const { watch, setValue, register } = useFormContext();
   const value = watch(step.name);
 
-  const options = [
-    { label: "Undergraduate", value: "undergraduate" },
-    { label: "Postgraduate", value: "postgraduate" },
-    { label: "Diploma", value: "diploma" },
-    { label: "Certificate", value: "certificate" },
-  ]
+  const options = STUDY_LEVELS.map((level) => (
+    { label: level.label, value: level.value }
+  ));
+
 
   const getStudyLevelStyle = (level: string) => {
     switch (level?.toLowerCase()) {
@@ -50,8 +50,13 @@ export default function StepRenderer({ step, categories, countries }) {
   // — Country —
   const renderCountry = () => (
     <div className="max-h-[60vh] p-1 overflow-y-auto">
+    
       <div className="grid grid-cols-3 gap-3">
-        {countries?.map((opt, i) => (
+        {countries.length == 0 ? <>
+        <div className="col-span-3 flex items-center justify-center h-full">
+         <img className="h-30 w-30" src="https://cdn-icons-gif.flaticon.com/10282/10282564.gif" alt=""/>
+        </div>
+        </> : countries?.map((opt, i) => (
           <motion.div
             key={opt.value}
             custom={i}
@@ -84,49 +89,48 @@ export default function StepRenderer({ step, categories, countries }) {
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-  {categories?.map((opt, i) => (
-    <motion.button
-      key={opt.value}
-      type="button"
-      custom={i}
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      onClick={() => setValue(step.name, opt.value)}
-      className={`h-36 rounded-2xl border flex flex-col items-center justify-center text-center p-3 transition-all duration-300
-        ${
-          value === opt.value
-            ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
-            : "border-gray-200 hover:border-primary/40 hover:shadow-md"
-        }`}
-    >
-      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-        <DynamicLucideIcon
-          name={opt.icon}
-          className="w-6 h-6 text-gray-700"
-        />
-      </div>
+        {categories?.map((opt, i) => (
+          <motion.button
+            key={opt.value}
+            type="button"
+            custom={i}
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setValue(step.name, opt.value)}
+            className={`h-36 rounded-2xl border flex flex-col items-center justify-center text-center p-3 transition-all duration-300
+        ${value === opt.value
+                ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
+                : "border-gray-200 hover:border-primary/40 hover:shadow-md"
+              }`}
+          >
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+              <DynamicLucideIcon
+                name={opt.icon}
+                className="w-6 h-6 text-gray-700"
+              />
+            </div>
 
-      <span className="text-sm font-medium leading-5 text-gray-800 break-words">
-        {opt.label}
-      </span>
-    </motion.button>
-  ))}
-</div>
+            <span className="text-sm font-medium leading-5 text-gray-800 break-words">
+              {opt.label}
+            </span>
+          </motion.button>
+        ))}
+      </div>
     </div>
   );
 
   // — Study Level —
   const renderStudyLevel = () => (
-    <div>
+    <div className="max-h-[60vh] p-1 overflow-y-auto">
       <div className="flex items-start gap-3 mb-4">
         <p className="bg-muted px-4 py-3 rounded-2xl rounded-tl-sm text-sm font-medium text-foreground">
           {step.label}
         </p>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-1">
         {options?.map((opt, i) => {
           const isSelected = value === opt.value;
 
@@ -140,7 +144,7 @@ export default function StepRenderer({ step, categories, countries }) {
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setValue(step.name, opt.value)}
-              className={`flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${isSelected
+              className={`flex items-center gap-4 p-4 py-2.5 rounded-xl border-2 cursor-pointer transition-all ${isSelected
                 ? getStudyLevelStyle(opt.value)
                 : "border-border hover:border-primary/30"
                 }`}
@@ -195,41 +199,41 @@ export default function StepRenderer({ step, categories, countries }) {
         </div>
         <div className="flex justify-center">
           <motion.div
-            className="w-36 h-36 rounded-3xl border-2 border-primary/20 flex flex-col items-center justify-center bg-primary/5"
+            className="p-4 rounded-3xl border-2 border-primary/20 flex flex-col items-center justify-center bg-primary/5"
             key={amount}
             initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
           >
-            <span className="text-primary text-lg font-bold">₹</span>
+            <span className="text-primary text-2xl font-medium">₹</span>
             <motion.span
               className="text-3xl font-bold text-foreground"
               key={amount}
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.1 }}
             >
               {Number(amount).toLocaleString()}
             </motion.span>
-            <span className="text-xs text-muted-foreground mt-1">per year</span>
+            {/* <span className="text-xs text-muted-foreground mt-1">per year</span> */}
           </motion.div>
         </div>
         <div className="px-2">
           <input
             type="range"
             min={step.min}
-            max={500000}
+            max={10000000}
             step={step.step}
             value={amount}
             onChange={(e) => setValue(step.name, Number(e.target.value))}
-            className="w-full h-2 rounded-full appearance-none cursor-pointer bg-muted accent-primary
+            className="w-full h-1 rounded-full appearance-none cursor-pointer bg-muted accent-primary
               [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:rounded-full
               [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:shadow-lg
               [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-background"
           />
           <div className="flex font-medium justify-between text-sm text-muted-foreground mt-2">
             <span>₹{step.min?.toLocaleString()}</span>
-            <span>₹{500000}</span>
+            <span>₹{10000000?.toLocaleString()}</span>
           </div>
         </div>
       </div>

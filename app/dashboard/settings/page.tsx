@@ -14,13 +14,14 @@ import { useForm, FormProvider } from "react-hook-form"
 import toast from "react-hot-toast"
 import Documents from "@/components/couseller/Documents"
 import ProfileTabs from "@/components/couseller/ProfileSteps"
+import { STUDY_LEVELS } from "@/utils/schema"
 
 export default function ProfilePage() {
   const router = useRouter();
 
   const { profile, allProfile, updateProfile } = useGlobal();
   const [activeTab, setActiveTab] = useState("overview");
-  const [categories,setCategories] = useState([])
+  const [categories, setCategories] = useState([])
   const menuItems = [
     { key: "overview", label: "Overview" },
     { key: "documents", label: "Documents" },
@@ -349,9 +350,9 @@ export default function ProfilePage() {
                           className="w-full h-12 px-4 border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
                         >
                           <option value="">Select Course</option>
-                          {categories?.map((item)=>
-                          <option key={item?.value} value={item.value}>
-                            {item.label}</option>
+                          {categories?.map((item) =>
+                            <option key={item?.value} value={item.value}>
+                              {item.label}</option>
                           )}
                         </select>
                       </div>
@@ -367,10 +368,11 @@ export default function ProfilePage() {
                           className="w-full h-12 px-4 border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
                         >
                           <option value="">Select Level</option>
-                          <option value="undergraduate">Undergraduate</option>
-                          <option value="postgraduate">Postgraduate</option>
-                          <option value="diploma">Diploma</option>
-                          <option value="certificate">Certificate</option>
+                          {STUDY_LEVELS.map((level) => (
+                            <option key={level.value} value={level.value}>
+                              {level.label}
+                            </option>
+                          ))}
                         </select>
                       </div>
 

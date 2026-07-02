@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Search, MapPin, Grid, List, ChevronRight, Star, GraduationCap, Globe, Calendar, DollarSign, Filter, Loader2, AlertCircle } from 'lucide-react';
 import axiosInstance from '@/app/axiosInstance';
 import { useRouter } from 'next/navigation';
+import { STUDY_LEVELS } from '@/utils/schema';
 
 
 // TypeScript Interfaces matching your schema
@@ -84,15 +85,6 @@ const FUNDING_TYPES = [
     { value: 'Stipend', label: 'Stipend' },
     { value: 'Loan', label: 'Loan' },
     { value: 'Research Grant', label: 'Research Grant' }
-];
-
-const STUDY_LEVELS = [
-    { value: '', label: 'All Levels' },
-    { value: 'Undergraduate', label: 'Undergraduate' },
-    { value: 'Postgraduate', label: 'Postgraduate' },
-    { value: 'PhD', label: 'PhD' },
-    { value: 'Diploma', label: 'Diploma' },
-    { value: 'Certificate', label: 'Certificate' }
 ];
 
 const DELIVERY_MODES = [
@@ -263,6 +255,7 @@ export default function ScholarshipPage() {
                             onChange={(e) => handleFilterChange('level', e.target.value)}
                             className="px-4 py-2.5 border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-[#ff6b35] focus:ring-2 focus:ring-orange-100 min-w-[180px]"
                         >
+                            <option value="">All Levels</option>
                             {STUDY_LEVELS.map(level => (
                                 <option key={level.value} value={level.value}>{level.label}</option>
                             ))}

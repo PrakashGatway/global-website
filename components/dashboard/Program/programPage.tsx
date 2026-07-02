@@ -17,7 +17,7 @@ import axiosInstance from "@/app/axiosInstance"
 import { ModernSelect } from "@/components/ui/select"
 import Link from "next/link"
 import { CreateApplicationModal } from "@/components/dashboard/applicationModel"
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import ProgramHeader from "./programHeader"
 import ProgramFilters from "./programFilter"
@@ -161,6 +161,31 @@ export default function CoursesPage() {
     sort_by: "name",
     sort_order: "asc"
   }) as any
+
+  const initialized = useRef(false);
+  const pathname = usePathname();
+    const router = useRouter();
+
+    useEffect(() => {
+      if (initialized.current) return;
+  
+      initialized.current = true;
+  
+      if (university) {
+        setFilters((prev) => ({
+          ...prev,
+          university: university
+        }));
+  
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("university");
+  
+        router.replace(
+          params.toString() ? `${pathname}?${params}` : pathname,
+          { scroll: false }
+        );
+      }
+    }, [university]);
 
   const applyPreference = () => {
   const preferredCountries =

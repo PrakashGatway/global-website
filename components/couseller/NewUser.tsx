@@ -26,6 +26,7 @@ import {
 import axiosInstance from "@/app/axiosInstance";
 import { toast } from "react-hot-toast";
 import { Autocomplete, InputAdornment, TextField } from "@mui/material";
+import { STUDY_LEVELS } from "@/utils/schema";
 
 interface RegisterStudentModalProps {
     isOpen: boolean;
@@ -806,10 +807,11 @@ const RegisterStudentModal: React.FC<RegisterStudentModalProps> = ({
                                                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded"
                                                 >
                                                     <option value="">Select Level</option>
-                                                    <option value="undergraduate">Undergraduate</option>
-                                                    <option value="postgraduate">Postgraduate</option>
-                                                    <option value="diploma">Diploma</option>
-                                                    <option value="certificate">Certificate</option>
+                                                    {STUDY_LEVELS.map((level) => (
+                                                        <option key={level.value} value={level.value}>
+                                                            {level.label}
+                                                        </option>
+                                                    ))}
                                                 </select>
                                             </div>
 

@@ -45,3 +45,75 @@ export const generateFaqSchema = (faqs: any[]) => ({
     },
   })),
 });
+
+
+export const STUDY_LEVELS = [
+  {
+    label: "High School (11th-12th)",
+    value: "High School (11th-12th)",
+  },
+  {
+    label: "UG Diploma/ Certificate/ Associate Degree",
+    value: "UG Diploma/ Certificate/ Associate Degree",
+  },
+  {
+    label: "Undergraduate",
+    value: "Undergraduate",
+  },
+  {
+    label: "PG Diploma /Certificate",
+    value: "PG Diploma /Certificate",
+  },
+  {
+    label: "Postgraduate",
+    value: "Postgraduate",
+  },
+  {
+    label: "UG+PG (Accelerated) Degree",
+    value: "UG+PG (Accelerated) Degree",
+  },
+  {
+    label: "PhD",
+    value: "PhD",
+  },
+  {
+    label: "Short-term/Summer Programs",
+    value: "Short-term/Summer Programs",
+  },
+  {
+    label: "Pathway Programs (UG)",
+    value: "Pathway Programs (UG)",
+  },
+  {
+    label: "Pathway Programs (PG)",
+    value: "Pathway Programs (PG)",
+  },
+  {
+    label: "Semester Study Abroad",
+    value: "Semester Study Abroad",
+  },
+  {
+    label: "Twinning Programmes (UG)",
+    value: "Twinning Programmes (UG)",
+  },
+  {
+    label: "Twinning Programmes (PG)",
+    value: "Twinning Programmes (PG)",
+  },
+  {
+    label: "English Language Program",
+    value: "English Language program (ESL,IEP,ELP)",
+  },
+  {
+    label: "Online Programmes / Distance Learning",
+    value: "Online Programmes / Distance Learning",
+  },
+  {
+    label: "Hybrid",
+    value: "Hybrid",
+  },
+  {
+    label: "Grades Below 10th",
+    value: "Grades Below 10th",
+  },
+];
