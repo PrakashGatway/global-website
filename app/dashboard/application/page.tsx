@@ -306,7 +306,7 @@ const ApplicationCard = ({ application }: { application: any }) => {
       >
         {/* Course & University */}
         <td className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb' }}>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col lg:flex-row items-center gap-2">
             <div className="flex-shrink-0">
               {university?.uni_logo ? (
                 <Image

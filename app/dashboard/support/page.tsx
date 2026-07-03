@@ -83,7 +83,7 @@ export default function SupportPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen sm:p-4">
+    <div className="flex flex-col h-screen p-2 sm:p-4">
       <EnhancedHeader
         filter={filter}
         onFilterChange={setFilter}

@@ -674,7 +674,7 @@ const Field = ({ label, editingSections, formatDate, displayValue, formData, val
             />
           )
         ) : (
-          <div className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-gray-50/50 border border-gray-200/60 text-sm text-gray-800 capitalize  min-h-[42px] flex items-center`}>
+          <div className={`w-full overflow-hidden ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-gray-50/50 border border-gray-200/60 text-sm text-gray-800 capitalize  min-h-[42px] flex items-center`}>
             {type === "date" ? formatDate(value) : displayValue(value)}
           </div>
         )}

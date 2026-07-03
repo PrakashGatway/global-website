@@ -84,7 +84,7 @@ export function TicketForm({ onSubmit, onClose, isLoading }: TicketFormProps) {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex justify-center mb-8 gap-8"
+        className="flex justify-center mb-8 gap-2 md:gap-8"
       >
         {steps.map((s, index) => (
           <motion.div

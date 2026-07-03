@@ -20,11 +20,20 @@ export default function ProfilePage() {
 
   const { profile, allProfile, updateProfile } = useGlobal();
   const [activeTab, setActiveTab] = useState("overview");
-  const [categories,setCategories] = useState([])
+  const [categories,setCategories] = useState([]);
   const menuItems = [
     { key: "overview", label: "Overview" },
     { key: "documents", label: "Documents" },
     { key: "preference", label: "Preferences" }
+  ];
+  
+  const menuItems1 = [
+    { key: "/dashboard/support", label: "Support" },
+    { key: "/dashboard/notifications", label: "Notificaions" },
+    { key: "/dashboard/payment", label: "Payments" },
+    { key: "/dashboard/application", label: "Application" },
+    { key: "/dashboard/accommodation", label:"Accommodation"},
+    { key: "/dashboard/visa", label:"Visa"}
   ];
 
   const [loading, setLoading] = useState(false);
@@ -48,11 +57,7 @@ export default function ProfilePage() {
   }, [fetchCountries])
 
   // Initialize React Hook Form with validation
-  const { handleSubmit, register, getValues, setValue, reset } = useForm()
-
-
-
-
+  const { handleSubmit, register, getValues, setValue, reset } = useForm();
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -164,7 +169,7 @@ export default function ProfilePage() {
       {/* Main Content */}
       <div className="mx-auto mt-3">
         <div className="flex flex-col lg:flex-row gap-3">
-          <div className="lg:w-80 sticky top-6 self-start">
+          <div className="lg:w-80 md:sticky top-6 self-start">
             <div className="mb-3 ">
               <div className="bg-card border border-border p-3">
                 <div className="flex flex-col md:flex-row w-full items-center gap-3">
@@ -251,6 +256,34 @@ export default function ProfilePage() {
                     />
                   )}
 
+                  <div className="relative z-10 flex items-center gap-3">
+                    <FileText
+                      className={`w-4 h-4 ${activeTab === item.key
+                        ? "text-green-700"
+                        : "text-gray-500"
+                        }`}
+                    />
+
+                    <span
+                      className={`text-sm ${activeTab === item.key
+                        ? "font-semibold text-green-700"
+                        : "text-gray-700"
+                        }`}
+                    >
+                      {item.label}
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+               {menuItems1.map((item) => (
+                <motion.div
+                  key={item.key}
+                  whileHover={{ x: 4 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => router.push(item.key)}
+                  className="relative cursor-pointer px-5 py-4"
+                >
+                 
                   <div className="relative z-10 flex items-center gap-3">
                     <FileText
                       className={`w-4 h-4 ${activeTab === item.key
