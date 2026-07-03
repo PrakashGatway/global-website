@@ -109,22 +109,6 @@ export default function DashboardLayout({
     return null
   }
 
-<<<<<<< HEAD
-
-  const pathname = usePathname(); 
-  
-  if (pathname && pathname.includes("/checkout")) {
-    return (
-      <div className="min-h-screen bg-white">
-        <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
-          <div className="mx-auto">
-            {children}
-          </div>
-        </main>
-      </div>
-    );
-  }
-=======
   // if (usePathname()?.includes("/checkout")) {
   //   return (
   //     <div className="min-h-screen bg-white">
@@ -138,7 +122,6 @@ export default function DashboardLayout({
   //     </div>
   //   )
   // }
->>>>>>> 3826b45914bc5bd732952f0b8b46d530b62f2de0
 
   // if (usePathname().includes("/checkout")) {
   //   return (
