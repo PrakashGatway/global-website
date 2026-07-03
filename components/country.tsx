@@ -565,8 +565,10 @@ const ServiceSection = ({ data }) => {
               __html: data?.servicetitle?.split('||')[1]?.trim() || ""
             }} />
 
-            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
+            <span className="absolute right-0 -bottom-3 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
           </Tagging>
+            <div className="country-table overflow-x-auto mt-1" dangerouslySetInnerHTML={{ __html: data.servicesubtitle }} />
+
 
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
