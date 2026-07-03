@@ -420,8 +420,8 @@ const LifeInSection = ({ data }) => {
 
         {/* Heading */}
         <div className="mb-8 md:mb-12">
-          <span className="text-lg sm:text-4xl md:text-3xl lg:text-4xl font-bold text-primary mb-4 relative">
-            <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
+          <span className="text-lg sm:text-4xl md:text-3xl lg:text-4xl font-bold text-primary mb-1 relative">
+            <Tagging data={data?.tag} css="relative inline-block mb-3 block">
               <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
                 {data?.title?.split('||')[0]?.trim() || ""}
               </span>
@@ -429,9 +429,10 @@ const LifeInSection = ({ data }) => {
                 {data?.title?.split('||')[1]?.trim() || ""}
               </span>
             </Tagging>
-
-            {/* <span className="w-20 sm:w-25 h-1.5 absolute right-1/4 sm:left-0 -bottom-2 sm:-bottom-4 bg-[#F46C44] rounded-full"></span> */}
           </span>
+          <div className="country-table text-[#707888] overflow-x-auto mt-1" dangerouslySetInnerHTML={{ __html: data.subTitle }} />
+          {/* <div className="country-table overflow-x-auto mt-1" dangerouslySetInnerHTML={{ __html: data.servicesubtitle }} /> */}
+
         </div>
 
         {/* Content Grid */}
@@ -567,7 +568,7 @@ const ServiceSection = ({ data }) => {
 
             <span className="absolute right-0 -bottom-3 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
           </Tagging>
-            <div className="country-table overflow-x-auto mt-1" dangerouslySetInnerHTML={{ __html: data.servicesubtitle }} />
+          <div className="country-table overflow-x-auto mt-1" dangerouslySetInnerHTML={{ __html: data.servicesubtitle }} />
 
 
         </div>
