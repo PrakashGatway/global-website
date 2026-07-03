@@ -133,7 +133,7 @@ export default function DashboardLayout({
             ref={containerRef}
             className="flex-1 overflow-y-auto pb-20 lg:pb-0"
           >
-            <div className="mx-auto md:p-4">
+            <div className="mx-auto p-2 md:p-4">
               <NotificationProvider>
                 {children}
               </NotificationProvider>

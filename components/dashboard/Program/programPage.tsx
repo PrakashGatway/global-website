@@ -319,29 +319,6 @@ const removePreference = () => {
     }
   }, [])
 
-  // Load user preferences on mount
-  // useEffect(() => {
-  //   const loadPreferences = () => {
-  //     const preferences = allProfile?.profile?.preferences;
-  //     if (preferences && Object.keys(preferences).length > 0) {
-  //       setFilters(prev => ({
-  //         ...prev,
-  //         country: preferences.country || "",
-  //         category: preferences.category || "",
-  //         studyMode: preferences.studyMode || "",
-  //         level: preferences.level || "",
-  //         minFee: preferences.minFee || "",
-  //         maxFee: preferences.maxFee || "",
-  //       }));
-  //       setHasPreferences(true);
-  //     }
-  //   };
-
-  //   if (allProfile?.profile) {
-  //     loadPreferences();
-  //   }
-  // }, [allProfile]);
-
   const fetchCourses = useCallback(async (reset = false) => {
     try {
       const currentPage = reset ? 1 : page
@@ -845,7 +822,7 @@ useEffect(() => {
         )}
         <div className="flex flex-col lg:flex-row gap-4 items-start">
           {/* LEFT SIDEBAR: FILTERS */}
-          <div className="sticky top-4 self-start">
+          <div className="relative z-99 sticky top-4 self-start">
             <ProgramFilters
             total={total}
               filters={filters}
@@ -982,8 +959,6 @@ useEffect(() => {
                   return (
                     <div
                       key={course._id}
-                      className="fade-in-up"
-                      style={{ animationDelay: `${index * 0.05}s` }}
                     >
                       <div className={`p-4 transition-all duration-200 hover:shadow-md hover:scale-101 h-full flex flex-col ${selectedProgram.some((item) => item._id === course._id) ? "border border-orange-500 bg-[#fefaf8]" : "border border-gray-200 bg-white"}`}>
                         <div className="flex gap-3 mb-3 relative">

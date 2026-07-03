@@ -302,7 +302,7 @@ export default function ProgramFilters({
   // 2. CHANGED FilterContent to a regular function that returns JSX
   // We call it as {renderFilterContent()} instead of <FilterContent />
   const renderFilterContent = () => (
-    <div className="flex flex-col max-h-[85vh]">
+    <div className="flex flex-col max-h-[99vh] lg:max-h-[85vh]">
       {/* Header */}
       <div className="p-3 md:p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50/50 to-transparent flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -793,7 +793,7 @@ export default function ProgramFilters({
       <div className="lg:hidden w-full">
         <button
           onClick={() => setMobileDrawerOpen(true)}
-          className="w-full flex items-center justify-between px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-colors duration-200"
+          className="w-full flex items-center gap-1 justify-between px-4 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold text-sm transition-colors duration-200"
         >
           <div className="flex items-center gap-2">
             <FilterListIcon className="w-4 h-4" />
@@ -808,15 +808,15 @@ export default function ProgramFilters({
 
         {/* Mobile Drawer - Overlay */}
         {mobileDrawerOpen && (
-          <div className="fixed inset-0 z-50 flex justify-end">
+          <div className="fixed inset-0 z-60 flex justify-end">
             {/* Backdrop */}
             <div
-              className="absolute inset-0 bg-black/50"
+              className="absolute inset-0 z-60 bg-black/50"
               onClick={() => setMobileDrawerOpen(false)}
             />
 
             {/* Drawer - Full width on small mobile, 320px on larger */}
-            <div className="relative w-full sm:w-[320px] h-full bg-white shadow-2xl border-l border-gray-200 animate-slideInRight">
+            <div className="relative z-[70] w-full sm:w-[360px] h-full bg-white shadow-2xl border-l border-gray-200 animate-slideInRight">
               {/* Call the function here too */}
               {renderFilterContent()}
             </div>

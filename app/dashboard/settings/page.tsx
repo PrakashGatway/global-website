@@ -73,7 +73,7 @@ export default function ProfilePage() {
       const response = await axiosInstance.put('/upload/profile', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      profile({ ...profile, profileImage: response.data.url });
+      updateProfile();
       toast.success("Profile picture updated!");
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -171,7 +171,7 @@ export default function ProfilePage() {
       {/* Main Content */}
       <div className="mx-auto mt-3">
         <div className="flex flex-col lg:flex-row gap-3">
-          <div className="lg:w-80 md:sticky top-6 self-start">
+          <div className="lg:w-80 w-full md:sticky top-6 self-start">
             <div className="mb-3 ">
               <div className="bg-card border border-border p-3">
                 <div className="flex flex-col md:flex-row w-full items-center gap-3">
