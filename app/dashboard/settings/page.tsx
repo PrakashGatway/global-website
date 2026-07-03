@@ -278,7 +278,6 @@ export default function ProfilePage() {
                 </motion.div>
               ))}
               <div className="block md:hidden">
-                
                {menuItems1.map((item) => (
                 <motion.div
                   key={item.key}
@@ -311,7 +310,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Main Form Area */}
+
           <div className="flex-1">
             <div className="flex-1">
               {activeTab === "overview" && (
