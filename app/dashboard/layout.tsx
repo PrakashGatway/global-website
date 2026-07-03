@@ -109,19 +109,34 @@ export default function DashboardLayout({
     return null
   }
 
-  if (usePathname().includes("/checkout")) {
+
+  const pathname = usePathname(); 
+  
+  if (pathname && pathname.includes("/checkout")) {
     return (
       <div className="min-h-screen bg-white">
-        <main
-          className="flex-1 overflow-y-auto pb-20 lg:pb-0"
-        >
+        <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
           <div className="mx-auto">
             {children}
           </div>
         </main>
       </div>
-    )
+    );
   }
+
+  // if (usePathname().includes("/checkout")) {
+  //   return (
+  //     <div className="min-h-screen bg-white">
+  //       <main
+  //         className="flex-1 overflow-y-auto pb-20 lg:pb-0"
+  //       >
+  //         <div className="mx-auto">
+  //           {children}
+  //         </div>
+  //       </main>
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="min-h-screen bg-white">
