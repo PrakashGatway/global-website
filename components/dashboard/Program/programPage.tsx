@@ -474,6 +474,31 @@ useEffect(() => {
     });
   };
 
+
+ const highlights = [
+  { id: 1, label: "Faster Offer TAT" },
+  { id: 2, label: "Scholarship Available" },
+  { id: 3, label: "High Offer Acceptance Rate" },
+  { id: 4, label: "English Proficiency Exam Waiver" },
+  { id: 5, label: "Affordable University" },
+  { id: 6, label: "Co-op & Built-in Internships" },
+  { id: 7, label: "High Job Demand" },
+  { id: 8, label: "No Tuition Deposit (US)" },
+  { id: 9, label: "Major City" },
+  { id: 10, label: "Eligible Non Collateral Loan" },
+  { id: 11, label: "GS approval with KC (Aus)" },
+  { id: 12, label: "Regional University (Aus)" },
+  { id: 13, label: "Higher Backlog Acceptance" },
+  { id: 14, label: "Low Tuition Deposit" },
+  { id: 15, label: "No Interview Required" },
+  { id: 16, label: "MBA Programs" },
+  { id: 17, label: "Russel Group Universities (UK)" },
+  { id: 18, label: "MOI Acceptable" },
+  { id: 19, label: "Uni has own English Test" },
+];
+
+
+
   return (
     <main className="flex-1 relative">
       <div className="space-y-4">
@@ -892,6 +917,15 @@ useEffect(() => {
                   const today = new Date();
                   today.setHours(0, 0, 0, 0);
 
+                  const ids =
+  course?.metaInfo?.highlight
+    ?.split(",")
+    .map((id) => Number(id.trim())) || [];
+
+const selectedHighlights = highlights.filter((item) =>
+  ids.includes(item.id)
+);
+
                   const intakeData = intakeDeadline
                     ? intakeDeadline.split(",").map((item) => {
                       const [month, date] = item.split(":");
@@ -999,6 +1033,8 @@ useEffect(() => {
                             </div>
                           </div>
 
+                          
+
                           {profile.role === "counsellor" ? (
                             <div className="absolute top-1 -right-1">
                               <input
@@ -1010,6 +1046,19 @@ useEffect(() => {
                             </div>
                           ) : null}
                         </div>
+
+                        <div className="flex flex-wrap gap-2">
+  {selectedHighlights.map((item) => {
+    console.log(item,"kk")
+    return(
+    <div
+      key={item.id}
+      className="px-3 py-1.5 border border-orange-500 bg-orange-100/20 rounded-full  text-black text-xs font-medium"
+    >
+      {item.label}
+    </div>
+  )})}
+</div>
 
                         <div className="grid grid-cols-3 gap-2 mb-3">
                           <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
