@@ -379,43 +379,6 @@ export default function CourseDetailPage() {
         }
     }
 
-    const formatCurrency = (amount: number, currency: string = 'USD') => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: currency,
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(amount)
-    }
-
-    const getLevelColor = (level: string) => {
-        switch (level?.toLowerCase()) {
-            case 'undergraduate':
-                return 'bg-blue-100 text-blue-700 border-blue-200'
-            case 'postgraduate':
-                return 'bg-purple-100 text-purple-700 border-purple-200'
-            case 'diploma':
-                return 'bg-green-100 text-green-700 border-green-200'
-            case 'certificate':
-                return 'bg-amber-100 text-amber-700 border-amber-200'
-            default:
-                return 'bg-gray-100 text-gray-700 border-gray-200'
-        }
-    }
-
-    const getStudyModeIcon = (mode: string) => {
-        switch (mode?.toLowerCase()) {
-            case 'full-time':
-                return <Clock className="w-4 h-4" />
-            case 'part-time':
-                return <Briefcase className="w-4 h-4" />
-            case 'online':
-                return <Globe className="w-4 h-4" />
-            default:
-                return <BookOpen className="w-4 h-4" />
-        }
-    }
-
     // Get extra content section
     const getSectionContent = (key: string) => {
         return course?.extra_content?.sections?.find(section => section.section_key === key)?.content || ''

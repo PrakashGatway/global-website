@@ -1,41 +1,51 @@
 import React, { useState, useRef, useEffect } from "react";
 import Select from "react-select";
 
-export default function ProgramHeader({ searchQuery, setSearchQuery, countries, course, levels, categories }) {
-    const [intake, setIntake] = useState("");
-    const [year, setYear] = useState("");
-    const [nationality, setNationality] = useState("");
-    const [state, setState] = useState("");
+export default function ProgramHeader({ 
+    searchQuery, 
+    setSearchQuery, 
+    countries, 
+    course, 
+    levels, 
+    categories, 
+    filters, 
+    setFilters 
+}: any) {
+    // Local state for form inputs
+    const [localIntakes, setLocalIntakes] = useState<string[]>(filters.intake || []);
+    const [year, setYear] = useState(filters.year || "");
+    const [nationality, setNationality] = useState(filters.nationality || "");
+    const [provinceState, setProvinceState] = useState(filters.state || "");
     const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
     const [programLevelSearch, setProgramLevelSearch] = useState("");
     const [isProgramLevelOpen, setIsProgramLevelOpen] = useState(false);
     const programLevelRef = useRef(null);
 
     // Advanced filter states
-    const [selectedProgramLevels, setSelectedProgramLevels] = useState([]);
-    const [country, setCountry] = useState("United States of America");
-    const [provinceState, setProvinceState] = useState("");
-    const [studyArea, setStudyArea] = useState("");
-    const [disciplineArea, setDisciplineArea] = useState("");
-    const [duration, setDuration] = useState("");
-    const [eslAvailable, setEslAvailable] = useState(false);
+    const [selectedProgramLevels, setSelectedProgramLevels] = useState<string[]>(filters.level || []);
+    const [country, setCountry] = useState(filters.country || "");
+    const [studyArea, setStudyArea] = useState(filters.category || "");
+    const [duration, setDuration] = useState(filters.duration || "");
 
     // Requirements states
-    const [pte, setPte] = useState(false);
-    const [toefl, setToefl] = useState(false);
-    const [ielts, setIelts] = useState(false);
-    const [det, setDet] = useState(false);
-    const [sat, setSat] = useState(false);
-    const [act, setAct] = useState(false);
-    const [gre, setGre] = useState(false);
-    const [gmat, setGmat] = useState(false);
-    const [withoutEnglish, setWithoutEnglish] = useState(false);
-    const [withoutGRE, setWithoutGRE] = useState(false);
-    const [withoutGMAT, setWithoutGMAT] = useState(false);
-    const [withoutMaths, setWithoutMaths] = useState(false);
-    const [stemPrograms, setStemPrograms] = useState(false);
+    const [requirements, setRequirements] = useState<string[]>(filters.requirement || []);
 
-    console.log(duration)
+    // Intake options
+    const intakeOptions = [
+        { value: "January", label: "January" },
+        { value: "February", label: "February" },
+        { value: "March", label: "March" },
+        { value: "April", label: "April" },
+        { value: "May", label: "May" },
+        { value: "June", label: "June" },
+        { value: "July", label: "July" },
+        { value: "August", label: "August" },
+        { value: "September", label: "September" },
+        { value: "October", label: "October" },
+        { value: "November", label: "November" },
+        { value: "December", label: "December" },
+    ];
+
     // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -47,23 +57,48 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        setLocalIntakes(filters.intake || []);
+        setYear(filters.year || "");
+        setNationality(filters.nationality || "");
+        setProvinceState(filters.state || "");
+        setSelectedProgramLevels(filters.level || []);
+        setCountry(filters.country || "");
+        setStudyArea(filters.category || "");
+        setDuration(filters.duration || "");
+        setRequirements(filters.requirement || []);
+    }, [filters]);
+
     const handleSearch = () => {
-        console.log({
-            searchQuery, intake, year, nationality, state,
-            selectedProgramLevels, country, provinceState, studyArea,
-            disciplineArea, duration, eslAvailable
-        });
+        // Update parent filters state - this will trigger the API call
+        setFilters((prev: any) => ({
+            ...prev,
+            intake: localIntakes,
+            year: year,
+            nationality: nationality,
+            state: provinceState,
+            country: country,
+            category: studyArea,
+            duration: duration,
+            level: selectedProgramLevels,
+            requirement: requirements,
+        }));
     };
 
     const handleClearSearch = () => {
         setSearchQuery("");
+        // Also update filters.search
+        setFilters((prev: any) => ({
+            ...prev,
+            search: "",
+        }));
     };
 
     const toggleAdvancedFilters = () => {
         setShowAdvancedFilters(!showAdvancedFilters);
     };
 
-    const toggleProgramLevel = (value) => {
+    const toggleProgramLevel = (value: string) => {
         setSelectedProgramLevels(prev => {
             if (prev.includes(value)) {
                 return prev.filter(item => item !== value);
@@ -73,8 +108,24 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
         });
     };
 
-    const removeProgramLevel = (value) => {
-        setSelectedProgramLevels(prev => prev.filter(item => item !== value));
+    const toggleIntake = (value: string) => {
+        setLocalIntakes(prev => {
+            if (prev.includes(value)) {
+                return prev.filter(item => item !== value);
+            } else {
+                return [...prev, value];
+            }
+        });
+    };
+
+    const toggleRequirement = (value: string) => {
+        setRequirements(prev => {
+            if (prev.includes(value)) {
+                return prev.filter(item => item !== value);
+            } else {
+                return [...prev, value];
+            }
+        });
     };
 
     const clearAllProgramLevels = () => {
@@ -82,29 +133,37 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
         setProgramLevelSearch("");
     };
 
-    const filteredProgramLevels = levels.filter(option =>
+    const filteredProgramLevels = levels.filter((option: any) =>
         option.label.toLowerCase().includes(programLevelSearch.toLowerCase())
     );
 
-    {/* Study Area */ }
-    const options = categories?.map((item) => ({
-        value: item.label,
-        label: item.label,
-    }));
-
-    const programLevelOptions = levels.map((item) => ({
+    // Study Area options
+    const options = categories?.map((item: any) => ({
         value: item.value,
         label: item.label,
     }));
 
-    const DurationOption = [{ value: "0-1 Years" }, { value: "1-2 Years" }, { value: "2-3 Years" }, { value: "3-4 Years" }, { value: "4 or Above Years" }].map((item) => ({
+    console.log("Program Levels:", categories);
+
+    const programLevelOptions = levels.map((item: any) => ({
         value: item.value,
-        label: item.value
-    }))
+        label: item.label,
+    }));
+
+    const DurationOption = [
+        { value: "0-1 Years" },
+        { value: "1-2 Years" },
+        { value: "2-3 Years" },
+        { value: "3-4 Years" },
+        { value: "4-5 Years" },
+    ].map((item) => ({
+        value: item.value,
+        label: item.value =="4-5 Years" ? "4 and above Years" : item.value,
+    }));
 
     // Custom Select Styles
     const customSelectStyles = {
-        control: (provided, state) => ({
+        control: (provided: any, state: any) => ({
             ...provided,
             backgroundColor: "#f9fafb",
             borderColor: state.isFocused ? "#f97316" : "#e5e7eb",
@@ -115,7 +174,7 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
             borderRadius: 0,
             minHeight: "40px",
         }),
-        option: (provided, state) => ({
+        option: (provided: any, state: any) => ({
             ...provided,
             backgroundColor: state.isSelected
                 ? "#ff8243"
@@ -125,13 +184,36 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
             color: state.isSelected ? "#fff" : "#111827",
             cursor: "pointer",
         }),
-        menu: (provided) => ({
+        menu: (provided: any) => ({
             ...provided,
             zIndex: 9999,
         }),
-        menuPortal: (provided) => ({
+        menuPortal: (provided: any) => ({
             ...provided,
             zIndex: 9999,
+        }),
+    };
+
+    // Multi-select styles for intakes
+    const multiSelectStyles = {
+        ...customSelectStyles,
+        multiValue: (provided: any) => ({
+            ...provided,
+            backgroundColor: "#ff8243",
+            borderRadius: "4px",
+        }),
+        multiValueLabel: (provided: any) => ({
+            ...provided,
+            color: "#fff",
+            fontSize: "12px",
+        }),
+        multiValueRemove: (provided: any) => ({
+            ...provided,
+            color: "#fff",
+            ":hover": {
+                backgroundColor: "#f97316",
+                color: "#fff",
+            },
         }),
     };
 
@@ -139,7 +221,7 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
         <div className="bg-white shadow-sm max-w-[1400px] mx-auto overflow-hidden">
             <div className="p-5">
                 {/* Main Filter Bar */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_0.8fr_1.2fr_1.2fr_auto] gap-4 items-end">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[3.5fr_1fr_1fr_1.5fr_1fr_auto] gap-4 items-end">
                     {/* Search Programs */}
                     <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
@@ -158,7 +240,13 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
                                 type="text"
                                 className="w-full py-2.5 px-3 pl-10 pr-9 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-none hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 focus:bg-white outline-none transition-all duration-200"
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    // setFilters((prev: any) => ({
+                                    //     ...prev,
+                                    //     search: e.target.value,
+                                    // }));
+                                }}
                                 placeholder="Search by program name, university..."
                             />
                             {searchQuery && (
@@ -174,38 +262,24 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
                         </div>
                     </div>
 
-                    {/* Intake */}
+                    {/* Intake - Multi Select */}
                     <div className="flex flex-col gap-2">
                         <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                             Intake
                         </label>
-                        <div className="relative w-full">
-                            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-orange-500 pointer-events-none z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            <select
-                                className="w-full py-2.5 px-3 pl-10 pr-9 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-none appearance-none cursor-pointer hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 focus:bg-white outline-none transition-all duration-200"
-                                value={intake}
-                                onChange={(e) => setIntake(e.target.value)}
-                            >
-                                <option value="">All Intakes</option>
-                                <option value="jan">January</option>
-                                <option value="feb">February</option>
-                                <option value="mar">March</option>
-                                <option value="apr">April</option>
-                                <option value="may">May</option>
-                                <option value="jun">June</option>
-                                <option value="jul">July</option>
-                                <option value="aug">August</option>
-                                <option value="sep">September</option>
-                                <option value="oct">October</option>
-                                <option value="nov">November</option>
-                                <option value="dec">December</option>
-                            </select>
-                            <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
+                        <Select
+                            isMulti
+                            options={intakeOptions}
+                            value={intakeOptions.filter(opt => localIntakes.includes(opt.value))}
+                            onChange={(selected) => {
+                                setLocalIntakes(selected ? selected.map((s: any) => s.value) : []);
+                            }}
+                            placeholder="All Intakes"
+                            isSearchable
+                            isClearable
+                            styles={multiSelectStyles}
+                            menuPortalTarget={document.body}
+                        />
                     </div>
 
                     {/* Year */}
@@ -248,7 +322,8 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
                                 value={nationality}
                                 onChange={(e) => setNationality(e.target.value)}
                             >
-                                {countries?.map((item) => (
+                                <option value="">All Nationalities</option>
+                                {countries?.map((item: any) => (
                                     <option key={item?.code} value={item?.value}>
                                         {item?.label}
                                     </option>
@@ -260,30 +335,8 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
                         </div>
                     </div>
 
-                    {/* State */}
-                    <div className="flex flex-col gap-2">
-                        <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                            State
-                        </label>
-                        <div className="relative w-full">
-                            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-orange-500 pointer-events-none z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <select
-                                className="w-full py-2.5 px-3 pl-10 pr-9 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-none appearance-none cursor-pointer hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 focus:bg-white outline-none transition-all duration-200"
-                                value={state}
-                                onChange={(e) => setState(e.target.value)}
-                            >
-                                <option value="">Student's State</option>
-                            </select>
-                            <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-                    </div>
-
                     {/* Buttons */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mb-px">
                         <button
                             className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-orange-500 border-none cursor-pointer whitespace-nowrap shadow-sm hover:bg-orange-600 hover:-translate-y-0.5 hover:shadow-orange-500/20 active:translate-y-0 transition-all duration-200"
                             onClick={handleSearch}
@@ -325,9 +378,29 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             {/* Column 1: Program Level */}
                             <div className="flex flex-col gap-2">
-                                <h3 className="text-sm font-semibold text-gray-900 mb-2">Program Level</h3>
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="text-sm font-semibold text-gray-900">Program Level</h3>
+                                    {selectedProgramLevels.length > 0 && (
+                                        <button
+                                            onClick={clearAllProgramLevels}
+                                            className="text-xs text-orange-500 hover:text-orange-600"
+                                        >
+                                            Clear
+                                        </button>
+                                    )}
+                                </div>
+                                
+                                {/* Search within program levels */}
+                                <input
+                                    type="text"
+                                    value={programLevelSearch}
+                                    onChange={(e) => setProgramLevelSearch(e.target.value)}
+                                    placeholder="Search levels..."
+                                    className="w-full py-2 px-3 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-none placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 focus:bg-white mb-2"
+                                />
+                                
                                 <div className="flex flex-col gap-1.5 max-h-[400px] overflow-y-auto pr-2">
-                                    {programLevelOptions.map((option) => (
+                                    {filteredProgramLevels.map((option: any) => (
                                         <label key={option.value} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
                                             <input
                                                 type="checkbox"
@@ -351,16 +424,16 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
                                         Country
                                     </label>
                                     <Select
-                                        options={countries?.map((item) => ({
-                                            value: item.label,
+                                        options={countries?.map((item: any) => ({
+                                            value: item.value,
                                             label: item.label,
                                         }))}
                                         value={countries
-                                            ?.map((item) => ({
-                                                value: item.label,
+                                            ?.map((item: any) => ({
+                                                value: item.value,
                                                 label: item.label,
                                             }))
-                                            .find((option) => option.value === country)}
+                                            .find((option: any) => option.value === country)}
                                         onChange={(selected) => setCountry(selected?.value || "")}
                                         placeholder="Select Country"
                                         isSearchable
@@ -375,7 +448,6 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
                                     <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                                         Province | State
                                     </label>
-
                                     <input
                                         type="text"
                                         value={provinceState}
@@ -385,14 +457,14 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
                                     />
                                 </div>
 
-                                {/* Study Area */}
+                                {/* Study Area / Category */}
                                 <div className="flex flex-col gap-1.5">
                                     <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                                         Category
                                     </label>
                                     <Select
                                         options={options}
-                                        value={options?.find((option) => option.value === studyArea)}
+                                        value={options?.find((option: any) => option.value === studyArea)}
                                         onChange={(selected) => setStudyArea(selected?.value || "")}
                                         placeholder="Select Category"
                                         isSearchable
@@ -401,8 +473,6 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
                                         menuPortalTarget={document.body}
                                     />
                                 </div>
-
-                             
 
                                 {/* Duration */}
                                 <div className="flex flex-col gap-1.5">
@@ -420,34 +490,42 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
                                         menuPortalTarget={document.body}
                                     />
                                 </div>
-
-
                             </div>
 
                             {/* Column 3: Requirements */}
                             <div className="flex flex-col gap-2">
-                                <h3 className="text-sm font-semibold text-gray-900 mb-2">Requirements</h3>
+                                <div className="flex items-center justify-between mb-2">
+                                    <h3 className="text-sm font-semibold text-gray-900">Requirements</h3>
+                                    {requirements.length > 0 && (
+                                        <button
+                                            onClick={() => setRequirements([])}
+                                            className="text-xs text-orange-500 hover:text-orange-600"
+                                        >
+                                            Clear
+                                        </button>
+                                    )}
+                                </div>
                                 <div className="flex flex-col gap-1.5">
                                     {[
-                                        { id: 'pte', label: 'PTE', state: pte, setState: setPte },
-                                        { id: 'toefl', label: 'TOEFL iBT', state: toefl, setState: setToefl },
-                                        { id: 'ielts', label: 'IELTS', state: ielts, setState: setIelts },
-                                        { id: 'det', label: 'DET', state: det, setState: setDet },
-                                        { id: 'sat', label: 'SAT', state: sat, setState: setSat },
-                                        { id: 'act', label: 'ACT', state: act, setState: setAct },
-                                        { id: 'gre', label: 'GRE', state: gre, setState: setGre },
-                                        { id: 'gmat', label: 'GMAT', state: gmat, setState: setGmat },
-                                        { id: 'without-english', label: 'Without English Proficiency', state: withoutEnglish, setState: setWithoutEnglish },
-                                        { id: 'without-gre', label: 'Without GRE', state: withoutGRE, setState: setWithoutGRE },
-                                        { id: 'without-gmat', label: 'Without GMAT', state: withoutGMAT, setState: setWithoutGMAT },
-                                        { id: 'without-maths', label: 'Without Maths', state: withoutMaths, setState: setWithoutMaths },
-                                        { id: 'stem-programs', label: 'STEM Programs', state: stemPrograms, setState: setStemPrograms },
-                                    ].map(({ id, label, state, setState }) => (
+                                        { id: 'pte', label: 'PTE' },
+                                        { id: 'toefl', label: 'TOEFL iBT' },
+                                        { id: 'ielts', label: 'IELTS' },
+                                        { id: 'det', label: 'DET' },
+                                        { id: 'sat', label: 'SAT' },
+                                        { id: 'act', label: 'ACT' },
+                                        { id: 'gre', label: 'GRE' },
+                                        { id: 'gmat', label: 'GMAT' },
+                                        { id: 'without-english', label: 'Without English Proficiency' },
+                                        { id: 'without-gre', label: 'Without GRE' },
+                                        { id: 'without-gmat', label: 'Without GMAT' },
+                                        { id: 'without-maths', label: 'Without Maths' },
+                                        { id: 'stem-programs', label: 'STEM Programs' },
+                                    ].map(({ id, label }) => (
                                         <label key={id} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors">
                                             <input
                                                 type="checkbox"
-                                                checked={state}
-                                                onChange={(e) => setState(e.target.checked)}
+                                                checked={requirements.includes(id)}
+                                                onChange={() => toggleRequirement(id)}
                                                 className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
                                             />
                                             <span className="text-sm text-gray-700">{label}</span>
@@ -463,31 +541,21 @@ export default function ProgramHeader({ searchQuery, setSearchQuery, countries, 
                                 className="px-6 py-2 text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200"
                                 onClick={handleSearch}
                             >
-                                Search
+                                Apply Filters
                             </button>
                             <button
                                 className="px-6 py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
                                 onClick={() => {
                                     setSelectedProgramLevels([]);
                                     setProgramLevelSearch("");
-                                    setCountry("United States of America");
+                                    setCountry("");
                                     setProvinceState("");
                                     setStudyArea("");
-                                    setDisciplineArea("");
                                     setDuration("");
-                                    setPte(false);
-                                    setToefl(false);
-                                    setIelts(false);
-                                    setDet(false);
-                                    setSat(false);
-                                    setAct(false);
-                                    setGre(false);
-                                    setGmat(false);
-                                    setWithoutEnglish(false);
-                                    setWithoutGRE(false);
-                                    setWithoutGMAT(false);
-                                    setWithoutMaths(false);
-                                    setStemPrograms(false);
+                                    setRequirements([]);
+                                    setLocalIntakes([]);
+                                    setYear("");
+                                    setNationality("");
                                 }}
                             >
                                 Clear All

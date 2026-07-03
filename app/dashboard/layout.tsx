@@ -105,6 +105,10 @@ export default function DashboardLayout({
     return null
   }
 
+  if (loading) {
+    return null
+  }
+
   if (usePathname().includes("/checkout")) {
     return (
       <div className="min-h-screen bg-white">

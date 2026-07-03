@@ -377,14 +377,13 @@ export default function UniDetailsClient({
       )} */}
 
       {activeSections.length > 0 && (
-        <div className="bg-white border-b sticky top-[4.8rem] z-30">
+        <div className="bg-white border-b sticky top-[4.8rem] z-30 lg:block hidden">
           <div
             ref={navRef} // 👈 ref on the scrollable container
             className="overflow-x-auto scrollbar-hide"
           >
             <div className="flex gap-4 px-4">
               {activeSections.map((section) => {
-                console.log(section.section_key)
                 return (
                   <button
                     key={section._id}

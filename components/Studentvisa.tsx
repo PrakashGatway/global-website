@@ -81,7 +81,7 @@ const StudentVisaStories = ({
          
         {/* Header */}
         <div className="text-left my-4">
-           {isSameLine === "no" ? (
+           {true ? (
              <h2>
             <span className="text-[#F46C44] text-2xl sm:text-4xl block font-light mr-2">
               {title?.split("||")[0]}

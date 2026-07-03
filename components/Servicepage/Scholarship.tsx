@@ -42,7 +42,7 @@ const ScholarshipCardItem = ({ scholarship }) => {
 
   return (
     // Added 'h-full' to ensure uniform height in slider
-    <div className="group flex flex-col h-full bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+    <div className="group flex flex-col h-full bg-white rounded-xl border border-gray-200 shadow-sm transition-all duration-300 overflow-hidden">
       
       {/* Badges */}
       <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 items-end">
@@ -192,7 +192,7 @@ const ScholarshipList = ({ scholarships = [], title = '', subtitle = '' }) => {
 
   if (!scholarships || scholarships.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
+      <div className="flex flex-col items-center justify-center py-0 text-center">
         <div className="bg-gray-100 p-4 rounded-full mb-4">
           <Award size={32} className="text-gray-400" />
         </div>
@@ -204,7 +204,7 @@ const ScholarshipList = ({ scholarships = [], title = '', subtitle = '' }) => {
 
   return (
     <div className="w-full px-5 lg:px-0">
-      <div className='mb-10'>
+      <div className='mb-1'>
         {/* Note: Ensure title/subtitle are strings if not using dangerouslySetInnerHTML for simple text */}
         <span className="text-2xl font-bold text-gray-900" dangerouslySetInnerHTML={{ __html: title }} />
         <p className="text-gray-600 mt-4" dangerouslySetInnerHTML={{ __html: subtitle }} />

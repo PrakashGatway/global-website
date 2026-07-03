@@ -51,6 +51,7 @@ import {
 
 import axiosInstance from "@/app/axiosInstance";
 import { CreateApplicationModal } from "@/components/dashboard/applicationModel";
+import Loading from "../../notifications/loading";
 
 interface Scholarship {
     _id: string;
@@ -297,6 +298,10 @@ export default function ScholarshipDetailPage() {
         return new Date(scholarship.deadline) < new Date();
     };
 
+    if(loading) {
+        return <Loading />;
+    }
+
   
 
     if (error || !scholarship) {
@@ -332,7 +337,7 @@ export default function ScholarshipDetailPage() {
 
     return (
         <div className="min-h-screen">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="container mx-auto sm:px-4 py-4">
                 {/* Breadcrumb Navigation */}
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
@@ -347,21 +352,21 @@ export default function ScholarshipDetailPage() {
                 </motion.div>
 
                 {/* Hero Section - University & Scholarship Header */}
-                <div className="relative rounded-3xl overflow-hidden h-[300px] mb-4">
+                <div className="relative overflow-hidden h-[300px] mb-4">
                     {/* Cover Image */}
                     <img
                         src={scholarship.university?.cover_photo || "https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1786&q=80"}
                         alt={scholarship.university?.name || "University"}
-                        className="absolute rounded-3xl inset-0 w-full h-full object-cover"
+                        className="absolute inset-0 w-full h-full object-cover"
                     />
-                    <div className="absolute rounded-3xl inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
 
                     {/* University & Scholarship Info Overlay */}
-                    <div className="absolute rounded-3xl bottom-0 left-0 right-0 p-8">
+                    <div className="absolute bottom-0 left-0 right-0 p-8">
                         <div className="container mx-auto">
                             <div className="flex items-end gap-6">
                                 {/* Logo */}
-                                <div className="w-32 h-32 rounded-2xl bg-white p-4 shadow-2xl border border-white/50">
+                                <div className="w-24 h-24 rounded-3xl bg-white p-2 shadow-2xl border border-white/50">
                                     {scholarship.university?.uni_logo ? (
                                         <img
                                             src={scholarship.university.uni_logo}
@@ -374,12 +379,12 @@ export default function ScholarshipDetailPage() {
                                 </div>
 
                                 <div className="flex-1">
-                                    <h1 className="text-xl font-bold text-gray-900 py-2">
+                                    <h1 className="text-xl font-bold text-gray-100 py-2">
                                         {scholarship.title}
                                     </h1>
                                     <div className="flex items-center justify-start gap-2">
-                                        <Building2 className="w-5 h-5 text-gray-800" />
-                                        <h3 className="text-base font-semibold mb-1">{scholarship.university?.name}</h3>
+                                        <Building2 className="w-5 h-5 text-gray-100" />
+                                        <h3 className="text-base text-gray-100 font-semibold mb-1">{scholarship.university?.name}</h3>
                                     </div>
 
                                     {/* <div className="flex items-center gap-4 my-2 flex-wrap">
@@ -440,7 +445,7 @@ export default function ScholarshipDetailPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex gap-2">
+                                {/* <div className="flex gap-2">
                                     <button
                                         onClick={() => setIsBookmarked(!isBookmarked)}
                                         className="p-3 bg-white/90 backdrop-blur-sm rounded-lg border hover:bg-white transition-colors"
@@ -454,7 +459,7 @@ export default function ScholarshipDetailPage() {
                                     >
                                         {isDeadlinePassed() ? 'Applications Closed' : 'Apply Now'}
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
@@ -509,7 +514,7 @@ export default function ScholarshipDetailPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
                         >
-                            <div className="flex border-b border-border mb-8 overflow-x-auto no-scrollbar scrollbar-hide">
+                            <div className="flex border-b border-border mb-4 overflow-x-auto no-scrollbar scrollbar-hide">
                                 {tabs.map((tab) => (
                                     <TabButton
                                         key={tab.id}
@@ -521,9 +526,7 @@ export default function ScholarshipDetailPage() {
                                 ))}
                             </div>
 
-                            {/* Tab Content */}
                             <div className="p-2">
-                                {/* Overview Tab */}
                                 {activeTab === "overview" && (
                                     <motion.div
                                         initial={{ opacity: 0 }}
@@ -531,13 +534,7 @@ export default function ScholarshipDetailPage() {
                                         className="space-y-6"
                                     >
                                         <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                <BookOpen className="w-5 h-5 text-[#F26D44]" />
-                                                Description
-                                            </h3>
-                                            <p className="text-gray-700 leading-relaxed bg-gray-50 rounded-lg p-5 border border-gray-200">
-                                                {scholarship.description}
-                                            </p>
+                                            <span dangerouslySetInnerHTML={{__html :scholarship.description}} className="text-gray-700"/>
                                         </div>
 
                                         {scholarship.valueDetails && Object.keys(scholarship.valueDetails).length > 0 && (
@@ -867,7 +864,7 @@ export default function ScholarshipDetailPage() {
                                 </div>
 
                                 {/* Right Action */}
-                                <div className="relative z-50 w-full md:w-auto">
+                                {/* <div className="relative z-50 w-full md:w-auto">
                                     <button
                                         onClick={() => setIsModalOpen(true)}
                                         className="w-full md:w-auto px-8 py-2.5 cursor-pointer bg-white text-gray-700 rounded-xl hover:bg-indigo-100 transition-all font-semibold flex items-center justify-center gap-2"
@@ -876,7 +873,7 @@ export default function ScholarshipDetailPage() {
                                         Apply Now
                                         <ExternalLink className="w-4 h-4" />
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
 
                             {/* Decorative Blur Circle */}
@@ -891,15 +888,15 @@ export default function ScholarshipDetailPage() {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="bg-gray-100 rounded-xl border-2 border-[#F26D44] text-gray-800 p-6 transition-all"
+                            className=" border-1 bg-white text-gray-800 p-6 transition-all"
                         >
                             <div className="flex items-center gap-3 mb-5">
                                 <h3 className="font-semibold text-gray-900">Key Information</h3>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-4 grid grid-cols-2 text-sm">
                                 <div className="flex items-start gap-2">
-                                    <DollarSign className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
+                                    <DollarSign className="w-4 h-4 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                                     <div>
                                         <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Award Amount</p>
                                         <p className="text-xl font-bold text-[#F26D44] mt-1">{formatCurrency(scholarship.amount)}</p>
@@ -907,7 +904,7 @@ export default function ScholarshipDetailPage() {
                                 </div>
 
                                 <div className="flex items-start gap-2">
-                                    <Award className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
+                                    <Award className="w-4 h-4 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                                     <div>
                                         <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Selection Basis</p>
                                         <p className="font-medium text-gray-900 mt-1">{scholarship.selectionBasis || "Merit-based"}</p>
@@ -915,7 +912,7 @@ export default function ScholarshipDetailPage() {
                                 </div>
 
                                 <div className="flex items-start gap-2">
-                                    <Calendar className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
+                                    <Calendar className="w-4 h-4 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                                     <div>
                                         <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Deadline</p>
                                         <p className={`font-medium mt-1 ${isDeadlinePassed() ? 'text-red-600' : isDeadlineApproaching() ? 'text-amber-600' : 'text-green-600'}`}>
@@ -938,7 +935,7 @@ export default function ScholarshipDetailPage() {
                                 </div>
 
                                 <div className="flex items-start gap-2">
-                                    <Clock className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
+                                    <Clock className="w-4 h-4 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                                     <div>
                                         <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Study Mode</p>
                                         <p className="font-medium text-gray-900 mt-1">{scholarship.studyMode || "Full-time"}</p>
@@ -946,7 +943,7 @@ export default function ScholarshipDetailPage() {
                                 </div>
 
                                 <div className="flex items-start gap-2">
-                                    <BookOpen className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
+                                    <BookOpen className="w-4 h-4 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                                     <div>
                                         <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Delivery Mode</p>
                                         <p className="font-medium text-gray-900 mt-1">{scholarship.deliveryMode || "On-campus"}</p>
@@ -954,7 +951,7 @@ export default function ScholarshipDetailPage() {
                                 </div>
 
                                 <div className="flex items-start gap-2">
-                                    <Users className="w-6 h-6 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
+                                    <Users className="w-4 h-4 text-gray-800 mt-0.5 flex-shrink-0" strokeWidth={1.5} />
                                     <div>
                                         <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Intake</p>
                                         <p className="font-medium text-gray-900 mt-1">{scholarship.intake || "Multiple"}</p>
@@ -968,10 +965,9 @@ export default function ScholarshipDetailPage() {
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.25 }}
-                            className="bg-white rounded-xl border border-gray-200 p-6 transition-all"
+                            className="bg-white border-1 p-6 transition-all"
                         >
                             <div className="flex items-center gap-3 mb-4">
-                                <Building2Icon className="w-5 h-5 text-[#F26D44]" />
                                 <h3 className="font-semibold text-gray-900">About the University</h3>
                             </div>
 
@@ -1036,10 +1032,9 @@ export default function ScholarshipDetailPage() {
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.3 }}
-                                className="bg-white rounded-xl border border-gray-200 p-6 transition-all"
+                                className="bg-white border border-gray-200 p-6 transition-all"
                             >
                                 <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                    <Sparkles className="w-5 h-5 text-[#F26D44]" />
                                     Similar Scholarships
                                 </h3>
                                 <div className="space-y-3">
@@ -1047,46 +1042,13 @@ export default function ScholarshipDetailPage() {
                                         <Link
                                             key={scholar._id}
                                             href={`/scholarships/${scholar.slug}`}
-                                            className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-100"
+                                            className="block p-3 bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-100"
                                         >
                                             <h4 className="font-medium text-gray-900 mb-1 line-clamp-1">{scholar.title}</h4>
                                             <p className="text-xs text-gray-600 mb-1">{scholar.university?.name}</p>
                                             <p className="text-xs font-semibold text-[#F26D44]">{formatCurrency(scholar.amount)}</p>
                                         </Link>
                                     ))}
-                                </div>
-                            </motion.div>
-                        )}
-
-                        {/* Accommodation Info */}
-                        {(scholarship.university?.on_campus_accommodation || scholarship.university?.off_campus_accommodation) && (
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.35 }}
-                                className="bg-white rounded-xl border border-gray-200 p-6 transition-all"
-                            >
-                                <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                    <Home className="w-5 h-5 text-[#F26D44]" />
-                                    Accommodation
-                                </h3>
-                                <div className="space-y-3">
-                                    {scholarship.university?.on_campus_accommodation && (
-                                        <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-100">
-                                            <div className="p-1 bg-white rounded-full">
-                                                <Check className="w-4 h-4 text-green-600" />
-                                            </div>
-                                            <span className="text-sm font-medium text-gray-700">On-campus accommodation available</span>
-                                        </div>
-                                    )}
-                                    {scholarship.university?.off_campus_accommodation && (
-                                        <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                                            <div className="p-1 bg-white rounded-full">
-                                                <Check className="w-4 h-4 text-blue-600" />
-                                            </div>
-                                            <span className="text-sm font-medium text-gray-700">Off-campus accommodation available</span>
-                                        </div>
-                                    )}
                                 </div>
                             </motion.div>
                         )}

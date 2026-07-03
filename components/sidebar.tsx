@@ -108,7 +108,7 @@ export function Sidebar() {
       </div>
 
       {/* Menu Items */}
-      <nav className={`flex-1 ${show ? "px-2 py-0 space-y-[1.5px]" : "px-3 py-2 space-y-[2px]"}  overflow-y-auto mt-4 no-scrollbar scrollbar-hide scollbar-none`}>
+      <nav className={`flex-1 ${show ? "px-2 py-4 pb-12 space-y-[1.5px]" : "px-3 py-4 space-y-[2px]"}  overflow-y-auto mt-1 no-scrollbar scrollbar-hide scollbar-none`}>
 
         {(profile.role == "counsellor" ? counsellor : menuItems).map((item) => {
           const isActive =
