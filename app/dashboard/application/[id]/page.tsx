@@ -301,8 +301,8 @@ export default function StudentDetailsPage() {
   };
 
   const Parsedocuments =
-    typeof allProfile?.profile?.documents === "string"
-      ? JSON.parse(allProfile.profile.documents)
+   allProfile?.profile?.documents && typeof allProfile?.profile?.documents === "string"
+      ? JSON.parse(allProfile?.profile?.documents)
       : allProfile?.profile?.documents;
 
   const documentList = Object.values(Parsedocuments || {});
