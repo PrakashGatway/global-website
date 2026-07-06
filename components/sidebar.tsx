@@ -30,32 +30,32 @@ import { useGlobal } from "@/src/statecontext";
 import { MdDetails } from "react-icons/md";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: School, label: "Universities", href: "/dashboard/universities" },
-  { icon: ReceiptText, label: "Countries", href: "/dashboard/countries" },
-  { icon: BarChart3, label: "Find Programs", href: "/dashboard/programs" },
-  { icon: FileText, label: "Application", href: "/dashboard/application" },
-  { icon: Tickets, label: "Visa Process", href: "/dashboard/visa" },
-  { icon: HandCoins, label: "Scholarship", href: "/dashboard/scholarships" },
-  { icon: Armchair, label: "Accommodation", href: "/dashboard/accommodation" },
+  { icon: LayoutDashboard, id: "dashboard", label: "Dashboard", href: "/dashboard" },
+  { icon: School, id: "universities", label: "Universities", href: "/dashboard/universities" },
+  { icon: ReceiptText, id: "countries", label: "Countries", href: "/dashboard/countries" },
+  { icon: BarChart3, id: "find-programs", label: "Find Programs", href: "/dashboard/programs" },
+  { icon: FileText, id: "application", label: "Application", href: "/dashboard/application" },
+  { icon: Tickets, id: "visa-process", label: "Visa Process", href: "/dashboard/visa" },
+  { icon: HandCoins, id: "scholarship", label: "Scholarship", href: "/dashboard/scholarships" },
+  { icon: Armchair, id: "accommodation", label: "Accommodation", href: "/dashboard/accommodation" },
   // { icon: Wallet, label: "Ooshas Solution", href: "/dashboard/solution" },
-  { icon: Wallet, label: "Payments", href: "/dashboard/payment" },
-  { icon: GiftIcon, label: "Offers", href: "/dashboard/offers" },
-  { icon: Headphones, label: "Support", href: "/dashboard/support" },
-  { icon: Bell, label: "Notifications", href: "/dashboard/notifications" },
-  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+  { icon: Wallet, id: "payments", label: "Payments", href: "/dashboard/payment" },
+  { icon: GiftIcon, id: "offers", label: "Offers", href: "/dashboard/offers" },
+  { icon: Headphones, id: "support", label: "Support", href: "/dashboard/support" },
+  { icon: Bell, id: "notifications", label: "Notifications", href: "/dashboard/notifications" },
+  { icon: Settings, id: "settings", label: "Settings", href: "/dashboard/settings" },
 ];
 
 const counsellor = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: UsersIcon, label: "Student", href: "/dashboard/user" },
-  { icon: FileText, label: "Application", href: "/dashboard/application_details" },
-  { icon: BarChart3, label: "Find Programs", href: "/dashboard/programs" },
-  { icon: FileText, label: "Visa Prosessing", href: "/dashboard/visaDetails" },
-  { icon: Building2Icon, label: "Accommodation Details", href: "/dashboard/accommodation-create" },
-  { icon: Headphones, label: "Support", href: "/dashboard/support/counsellor" },
-  { icon: Bell, label: "Notifications", href: "/dashboard/notifications" },
-  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+  { icon: LayoutDashboard, id: "dashboard", label: "Dashboard", href: "/dashboard" },
+  { icon: UsersIcon, id: "student", label: "Student", href: "/dashboard/user" },
+  { icon: FileText, id: "application", label: "Application", href: "/dashboard/application_details" },
+  { icon: BarChart3, id: "find-programs", label: "Find Programs", href: "/dashboard/programs" },
+  { icon: FileText, id: "visa-process", label: "Visa Prosessing", href: "/dashboard/visaDetails" },
+  { icon: Building2Icon, id: "accommodation", label: "Accommodation Details", href: "/dashboard/accommodation-create" },
+  { icon: Headphones, id: "support", label: "Support", href: "/dashboard/support/counsellor" },
+  { icon: Bell, id: "notifications", label: "Notifications", href: "/dashboard/notifications" },
+  { icon: Settings, id: "settings", label: "Settings", href: "/dashboard/settings" },
 
 ]
 
@@ -114,15 +114,17 @@ export function Sidebar() {
           const isActive =
             location === item.href ||
             (item.href !== "/dashboard" && location.startsWith(item.href));
-          return (
+          return ( 
             <Link
               key={item.href}
               href={item.href}
               className="block"
+             
             >
               <motion.div
                 whileTap={{ scale: 0.97 }}
                 whileHover={{ scale: 1.04 }}
+                 id={item.id}
                 className={`flex items-center rounded-lg transition-colors relative ${isActive
                   ? "bg-[#6d1901]/70 font-semibold shadow"
                   : "hover:bg-[#6d1901]/30"

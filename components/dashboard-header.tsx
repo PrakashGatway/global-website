@@ -79,7 +79,7 @@ export function DashboardHeader({ profile, Logout }) {
 
         {/* Right Icons */}
         <div className="flex items-center gap-2">
-          <Link
+          <Link id="notification"
             href="/dashboard/notifications"
             className="h-11 w-11 flex items-center justify-center p-0 m-0  relative "
           >
@@ -93,7 +93,7 @@ export function DashboardHeader({ profile, Logout }) {
           </Link>
 
           {/* Profile Dropdown */}
-          <div className="relative">
+          <div id="profile" className="relative ">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -105,7 +105,7 @@ export function DashboardHeader({ profile, Logout }) {
                 loading="lazy"
                   src={profile && profile.profileImage ? profile.profileImage
                     : `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s`}
-                  alt={profile && profile.name || "user"} width={34} height={34} className="ovject-cover" />
+                  alt={profile && profile.name || "user"} width={34} height={34} className="h-full w-full object-cover" />
               </span>
               <div className="hidden md:block text-left ">
                 <p className="text-sm font-semibold capitalize leading-none">{profile && profile.name}</p>
@@ -130,11 +130,11 @@ export function DashboardHeader({ profile, Logout }) {
                   >
                     <div className="p-4 border-b border-border">
                       <div className="flex items-center gap-3">
-                        <span className="h-11 w-11 border rounded-full p-0 m-0  shadow-lg overflow-hidden">
+                        {/* <span className="h-11 w-11 border rounded-full p-0 m-0  shadow-lg overflow-hidden">
                           <Image loading="lazy" src={profile && profile.profileImage ? profile.profileImage : `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s`} alt={profile && profile.name} width={40} height={40} className="h-full w-full ovject-cover" />
-                        </span>
+                        </span> */}
                         <div>
-                          <p className="text-sm font-semibold capitalize">{profile && profile.name}</p>
+                          <p className="text-base font-semibold capitalize">{profile && profile.name}</p>
                           <p className="text-xs text-muted-foreground">{profile && profile.email}</p>
                         </div>
                       </div>

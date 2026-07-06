@@ -4,6 +4,7 @@ import {
   Noto_Sans
 } from "next/font/google";
 import "./globals.css";
+import "driver.js/dist/driver.css";
 // import { Footer } from "@/components/Footer";
 import { serverInstance } from "./axiosInstance";
 import { GlobalProvider } from "@/src/statecontext";
