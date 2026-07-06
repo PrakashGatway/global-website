@@ -27,6 +27,7 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
   const [isPending, startTransition] = useTransition();
 
   const totalPages = Math.ceil(total / limit);
+  
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -86,7 +87,7 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
 
   return (
     <>
-      <section className="relative py-8 sm:py-12 lg:py-20 bg-[#fffaf7] overflow-hidden">
+      <section className="relative py-8 sm:py-12 lg:py-4 bg-[#fffaf7] overflow-hidden">
         <div className="max-w-7xl mx-auto px-3 sm:px-6">
           <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
             {/* Heading */}
@@ -148,7 +149,7 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
         </div>
       </section>
 
-      <section className="py-10">
+      <section className="py-0">
         <div className="mx-auto px-0">
           <div
             className="
@@ -233,7 +234,7 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
       <BlogGrid filteredBlogs={filteredBlogs} />
 
       {/* Pagination */}
-      <section className="py-12 bg-white">
+      <section className="py-4 bg-white">
         <div className="container mx-auto px-6">
           <div className="flex justify-center items-center gap-2 flex-wrap">
             {page > 1 ? (
@@ -289,7 +290,7 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
       </section>
 
       {/* Join Our Exclusive Study Abroad Network */}
-      <section className="py-6 sm:py-8 lg:py-10 bg-[#FF6B35] relative overflow-visible">
+      <section className="py-6 sm:py-8 lg:py-4 bg-[#FF6B35] relative overflow-visible">
         <div className="container mx-auto px-3 sm:px-6">
           <div className="max-w-4xl mx-auto text-left lg:text-center">
             {/* Heading */}
@@ -353,12 +354,12 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
           </div>
         </div>
       </section>
-      <section className="py-12 bg-white">
+      <section className="py-2 bg-white">
         <UniversitySliderClient />
       </section>
 
       {/* Book Your Online Counselling Session */}
-      <section id="contact-form" className="py-20 bg-white">
+      <section id="contact-form" className="py-2 bg-white">
         <div className="max-w-7xl mx-auto px-2">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>

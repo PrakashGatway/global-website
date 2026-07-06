@@ -394,7 +394,7 @@ export default function Navbar({
                               const image = items.navbarImage || items.flag;
                               return (
                                 <Link key={items._id || items.code} href={href} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition">
-                                  <div className="w-10 h-10 rounded-full bg-white shadow overflow-hidden">
+                                  <div className="w-10 h-10   overflow-hidden">
                                     <Image loading="lazy" src={image || "/placeholder.png"} alt={title} width={40} height={40} className="object-cover w-full h-full" />
                                   </div>
                                   <div>

@@ -208,13 +208,16 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
   const finalHtml = injectCounsellingButton(htmlWithIds);
   // const htmlWithIds2 = addHeadingIds(blog.description2)
 
+  const cleanedHtml = finalHtml
+    .replace(/table-layout:\s*fixed;?/gi, "table-layout:auto;")
+    .replace(/width:\s*[\d.]+pt;?/gi, "width:100%;");
   const headings = extractHeadings(blog.description)
 
   return (
     <section className="bg-white min-h-screen ">
 
       {/* ================= BREADCRUMB NAVIGATION ================= */}
-      <div className="max-w-7xl mx-auto px-4 pt-4 text-sm text-gray-600">
+      <div className="lg:block hidden max-w-7xl mx-auto px-4 pt-4 text-sm text-gray-600">
         <nav className="flex items-center gap-2">
           <Link href="/" className="hover:text-orange-600">
             Home
@@ -245,18 +248,20 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
           <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold leading-tight mb-4 text-top">
             {blog.title}
           </h1>
-          <div className="relative w-full h-30 lg:h-120 shrink-0">
+          <div className="relative w-full h-[220px] sm:h-[300px] md:h-[400px] lg:h-[500px] xl:h-[600px]">
             <Image
               src={
-                blog?.coverImage && blog.coverImage.trim() !== ""
+                blog?.coverImage?.trim()
                   ? blog.coverImage
                   : "https://static-cse.canva.com/blob/1134734/Thepowerofheroimagedesignfeaturedimage.jpg"
               }
               alt={blog.title}
               fill
-              loading="lazy"
-              className="object-cover "
-              sizes="160px"
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw,
+           (max-width: 1024px) 100vw,
+           1200px"
+              priority
             />
           </div>
 
@@ -282,6 +287,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
       border-collapse: collapse;
       margin: 20px 0;
       font-size: 15px;
+      overflow-x: auto !important;
     }
 
     .blog-html th,
@@ -369,11 +375,13 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
     }
   `}</style>
 
-              <div
-                className="blog-html"
-                dangerouslySetInnerHTML={{ __html: finalHtml }}
+              <div className="">
+                <div
+                  className="blog-html overflow-x-auto"
+                  dangerouslySetInnerHTML={{ __html: cleanedHtml }}
 
-              ></div>
+                ></div>
+              </div>
 
 
 
@@ -705,7 +713,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
                 </div>
             </div> */}
 
-      <div className="relative max-w-7xl  mx-auto pt-6">
+      <div className="relative max-w-7xl  mx-auto pt-6 pl-4 lg:pl-0">
         <h2 className="text-xl   mb-2 ">
           <span className="text-primary lg:text-4xl font-semibold" >
             Top universities for Indian students

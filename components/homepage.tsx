@@ -430,7 +430,7 @@ export default function Homepage({
       <section className="py-6 px-4 bg-white mt-3">
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {/* Card */}
-          {homePage?.stats?.item?.map((stat, index) => (
+          {homePage?.stats?.items?.map((stat, index) => (
             <div key={index} className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] 
             transition duration-300">
               <DynamicLucideIcon
@@ -1034,11 +1034,11 @@ export default function Homepage({
               >
                 <h2 className="  text-white text-primary">
                   <span className=" font-light block text-xl lg:text-4xl">
-                    {homePage?.servicesection?.title.split("||")[0]}
+                    {homePage?.serviceSection?.title.split("||")[0]}
                   </span>
                   <span className="font-bold text-xl lg:text-2xl relative">
                     {" "}
-                    {homePage?.servicesection?.title.split("||")[1]}
+                    {homePage?.serviceSection?.title.split("||")[1]}
                   </span>
                 </h2>
               </div>
@@ -1049,7 +1049,7 @@ export default function Homepage({
               {/* Services Grid */}
               <div className="flex-1 lg:pl-6 bg-white relative z-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 bg-white">
-                  {homePage?.servicesection?.services?.map((service) => (
+                  {homePage?.serviceSection?.services?.map((service) => (
                     <div
                       key={service.title}
                       className="group rounded-2xl bg-gray-100 p-4 md:p-6 hover:shadow-lg transition-all duration-300 text-center"

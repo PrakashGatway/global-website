@@ -466,7 +466,7 @@ useEffect(() => {
       }
 
       if (prev.length >= 3) {
-        toast.error("You can compare only 3 programs.");
+        toast.error("You can only select 3 programs");
         return prev;
       }
 
@@ -546,7 +546,7 @@ useEffect(() => {
         )}
 
         {selectedProgram.length > 0 && (
-          <div className="fixed bottom-0 left-100 z-50 bg-primary border w-210 p-4 shadow-lg flex items-center justify-between">
+          <div className="fixed bottom-0 left-100 z-100 bg-primary border w-210 p-4 shadow-lg flex items-center justify-between">
             <span className="font-medium text-white">
               {selectedProgram.length} Program(s) Selected
             </span>
@@ -573,278 +573,387 @@ useEffect(() => {
           </div>
         )}
 
-        {showDownloadModal && (
-          <div className="fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm flex items-center justify-center">
-            <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl">
-              <div className="flex items-center justify-between border-b px-8 py-6">
-                <h2 className="text-xl font-bold">
-                  Download Selected Programs
-                </h2>
-                <button
-                  onClick={() => setShowDownloadModal(false)}
-                  className="text-3xl"
-                >
-                  ×
-                </button>
-              </div>
+       <AnimatePresence>
+  {showDownloadModal && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 min-h-screen"
+      onClick={() => setShowDownloadModal(false)}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 30 }}
+        transition={{
+          type: "spring",
+          stiffness: 280,
+          damping: 22,
+        }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl overflow-hidden"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between border-b px-8 py-6">
+          <h2 className="text-xl font-bold">
+            Download Selected Programs
+          </h2>
 
-              <div className="max-h-[420px] overflow-y-auto">
-                {selectedProgram.map((program, index) => (
-                  <div
-                    key={program._id}
-                    className="flex items-center justify-between px-8 py-6 border-b"
-                  >
-                    <div>
-                      <h3 className="text-lg font-semibold text-orange-600">
-                        {index + 1}. {program.name}
-                      </h3>
-                      <div className="mt-3 flex gap-8 text-gray-600 text-base">
-                        <span>
-                          🏫 {program.university.name}
-                        </span>
-                        <span>
-                          📍 {program.university.country}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setselectedProgram(prev => prev.filter(item => item._id !== program._id))
-                      }}
-                      className="text-orange-500 font-medium"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
+          <button
+            onClick={() => setShowDownloadModal(false)}
+            className="text-3xl hover:text-orange-500 transition"
+          >
+            ×
+          </button>
+        </div>
 
-              <div className="flex items-center justify-between p-6">
-                <button
-                  onClick={() => setselectedProgram([])}
-                  className="border text-base px-6 py-3 rounded-xl"
-                >
-                  Clear All
-                </button>
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => downloadPDF(selectedProgram)}
-                    className="bg-primary text-base px-6 py-3 rounded-xl text-white"
-                  >
-                    Download as PDF
-                  </button>
-                  <button
-                    onClick={() => downloadExcel(selectedProgram)}
-                    className="bg-primary text-base px-6 py-3 rounded-xl text-white"
-                  >
-                    Download as Excel
-                  </button>
+        {/* Body */}
+        <div className="max-h-[420px] overflow-y-auto">
+          {selectedProgram.map((program, index) => (
+            <div
+              key={program._id}
+              className="flex items-center justify-between px-8 py-6 border-b"
+            >
+              <div>
+                <h3 className="text-lg font-semibold text-orange-600">
+                  {index + 1}. {program.name}
+                </h3>
+
+                <div className="mt-3 flex gap-8 text-gray-600 text-base">
+                  <span>🏫 {program.university.name}</span>
+                  <span>📍 {program.university.country}</span>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
 
-        {showCompareModal && (
-          <div className="fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm flex items-center justify-center">
-            <div className="w-full max-w-5xl rounded-2xl bg-white shadow-2xl">
-              <div className="flex items-center justify-between border-b px-8 py-6">
-                <h2 className="text-3xl font-bold">
-                  Please select up to 5 programs to compare
-                </h2>
-                <button
-                  onClick={() => setShowCompareModal(false)}
-                  className="text-3xl"
-                >
-                  ×
-                </button>
+              <button
+                onClick={() =>
+                  setselectedProgram((prev) =>
+                    prev.filter((item) => item._id !== program._id)
+                  )
+                }
+                className="text-orange-500 font-medium hover:text-orange-700 transition"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between p-6">
+          <button
+            onClick={() => setselectedProgram([])}
+            className="border px-6 py-3 rounded-xl hover:bg-gray-100 transition"
+          >
+            Clear All
+          </button>
+
+          <div className="flex gap-4">
+            <button
+              onClick={() => downloadPDF(selectedProgram)}
+              className="bg-orange-500 px-6 py-3 rounded-xl text-white hover:scale-105 transition"
+            >
+              Download as PDF
+            </button>
+
+            <button
+              onClick={() => downloadExcel(selectedProgram)}
+              className="bg-orange-500 px-6 py-3 rounded-xl text-white hover:scale-105 transition"
+            >
+              Download as Excel
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+       <AnimatePresence>
+  {showCompareModal && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 min-h-screen"
+      onClick={() => setShowCompareModal(false)}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 30 }}
+        transition={{
+          type: "spring",
+          stiffness: 280,
+          damping: 22,
+        }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-5xl rounded-2xl bg-white shadow-2xl overflow-hidden"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between border-b px-8 py-6">
+          <h2 className="text-3xl font-bold">
+            Please select up to 5 programs to compare
+          </h2>
+
+          <button
+            onClick={() => setShowCompareModal(false)}
+            className="text-3xl hover:text-orange-500 transition"
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Program List */}
+        <div className="max-h-[420px] overflow-y-auto rounded-xl border border-orange-100 bg-white">
+          {selectedProgram.map((program, index) => (
+            <div
+              key={program._id}
+              className="flex items-center justify-between px-4 py-3 border-b border-orange-100 last:border-b-0 hover:bg-orange-50 transition"
+            >
+              <div className="flex-1">
+                <h3 className="text-base font-semibold text-orange-600">
+                  {index + 1}. {program.name}
+                </h3>
+
+                <div className="mt-1 flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                  <span className="flex items-center gap-1">
+                    🏫 {program.university?.name}
+                  </span>
+
+                  <span className="flex items-center gap-1">
+                    📍 {program.university?.country}
+                  </span>
+                </div>
               </div>
 
-              <div className="max-h-[420px] overflow-y-auto">
+              <button
+                onClick={() =>
+                  setselectedProgram((prev) =>
+                    prev.filter((x) => x._id !== program._id)
+                  )
+                }
+                className="ml-4 rounded-md border border-orange-300 px-3 py-1 text-sm font-medium text-orange-600 transition hover:bg-orange-500 hover:text-white"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="p-6">
+          <button
+            onClick={() => {
+              setshowCompare(true);
+              setShowCompareModal(false);
+            }}
+            className="w-full rounded-xl bg-orange-500 py-4 text-lg font-semibold text-white transition hover:bg-orange-600 hover:scale-[1.02] active:scale-95"
+          >
+            Compare
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+      <AnimatePresence>
+  {showCompare && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 min-h-screen"
+      onClick={() => setshowCompare(false)}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 30 }}
+        transition={{
+          type: "spring",
+          stiffness: 280,
+          damping: 22,
+        }}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] overflow-hidden"
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center px-6 py-5 border-b border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-800">
+            Program Comparison
+          </h2>
+
+          <button
+            onClick={() => setshowCompare(false)}
+            className="p-2 rounded-full hover:bg-orange-100 hover:text-orange-500 transition"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Table */}
+        <div className="overflow-auto max-h-[calc(90vh-90px)]">
+          <table className="w-full">
+            <tbody>
+              <tr className="border-b border-gray-200">
+                <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700 w-1/4">
+                  Program Name:
+                </td>
                 {selectedProgram.map((program, index) => (
-                  <div
-                    key={program._id}
-                    className="flex items-center justify-between px-8 py-6 border-b"
+                  <td
+                    key={index}
+                    className="px-6 py-4 text-center border-l border-gray-200"
                   >
-                    <div>
-                      <h3 className="text-xl font-semibold text-primary">
-                        {index + 1}. {program.name}
-                      </h3>
-                      <div className="flex gap-8 mt-3 text-gray-600">
-                        <span>
-                          🏫 {program.university?.name}
-                        </span>
-                        <span>
-                          📍 {program.university?.country}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() =>
-                        setselectedProgram((prev) =>
-                          prev.filter((x) => x._id !== program._id)
-                        )
-                      }
-                      className="text-red-500 font-medium"
-                    >
-                      Remove
-                    </button>
-                  </div>
+                    <h3 className="text-lg font-semibold text-orange-500">
+                      {program.name}
+                    </h3>
+                  </td>
                 ))}
-              </div>
+              </tr>
 
-              <div className="p-6">
-                <button
-                  onClick={() => setshowCompare(true)}
-                  className="w-full rounded-xl bg-primary py-4 text-lg font-semibold text-white"
-                >
-                  Compare
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+              <tr className="border-b border-gray-200">
+                <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                  University Details:
+                </td>
+                {selectedProgram.map((program, index) => (
+                  <td
+                    key={index}
+                    className="px-6 py-4 text-center border-l border-gray-200"
+                  >
+                    {program.university?.uni_logo ? (
+                      <img
+                        src={program.university.uni_logo}
+                        alt={program.university.name}
+                        className="h-12 mx-auto mb-2 object-contain"
+                      />
+                    ) : (
+                      <div className="h-12 flex items-center justify-center mb-2">
+                        <Building2 className="w-10 h-10 text-gray-300" />
+                      </div>
+                    )}
 
-        {showCompare && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] overflow-hidden">
-              <div className="flex justify-between items-center p-6 border-b border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-800">Program Comparison</h2>
-                <button
-                  onClick={() => setShowCompare(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
+                    <p className="font-semibold text-gray-800">
+                      {program.university?.name}
+                    </p>
+                  </td>
+                ))}
+              </tr>
 
-              <div className="overflow-auto max-h-[calc(90vh-80px)]">
-                <table className="w-full">
-                  <tbody>
-                    <tr className="border-b border-gray-200">
-                      <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700 w-1/4">
-                        Program Name:
-                      </td>
-                      {selectedProgram.map((program, index) => (
-                        <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
-                          <h3 className="text-lg font-semibold text-primary">
-                            {program.name}
-                          </h3>
-                        </td>
-                      ))}
-                    </tr>
+              <tr className="border-b border-gray-200">
+                <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                  Country:
+                </td>
+                {selectedProgram.map((program, index) => (
+                  <td
+                    key={index}
+                    className="px-6 py-4 text-center border-l border-gray-200"
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <MapPin className="w-4 h-4 text-orange-500" />
+                      <span>
+                        {program.university?.city},{" "}
+                        {program.university?.country}
+                      </span>
+                    </div>
+                  </td>
+                ))}
+              </tr>
 
-                    <tr className="border-b border-gray-200">
-                      <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
-                        University Details:
-                      </td>
-                      {selectedProgram.map((program, index) => (
-                        <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
-                          {program.university?.uni_logo ? (
-                            <img
-                              src={program.university.uni_logo}
-                              alt={program.university.name}
-                              className="h-12 mx-auto mb-2 object-contain"
-                            />
-                          ) : (
-                            <div className="h-12 flex items-center justify-center mb-2">
-                              <Building2 className="w-10 h-10 text-gray-300" />
-                            </div>
-                          )}
-                          <p className="font-semibold text-gray-800">{program.university?.name}</p>
-                        </td>
-                      ))}
-                    </tr>
+              <tr className="border-b border-gray-200">
+                <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                  Program Level:
+                </td>
+                {selectedProgram.map((program, index) => (
+                  <td
+                    key={index}
+                    className="px-6 py-4 text-center border-l border-gray-200"
+                  >
+                    {program.level}
+                  </td>
+                ))}
+              </tr>
 
-                    <tr className="border-b border-gray-200">
-                      <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
-                        Country:
-                      </td>
-                      {selectedProgram.map((program, index) => (
-                        <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
-                          <div className="flex items-center justify-center gap-2">
-                            <MapPin className="w-4 h-4 text-primary" />
-                            <span>{program.university?.city}, {program.university?.country}</span>
-                          </div>
-                        </td>
-                      ))}
-                    </tr>
+              <tr className="border-b border-gray-200">
+                <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                  Duration:
+                </td>
+                {selectedProgram.map((program, index) => (
+                  <td
+                    key={index}
+                    className="px-6 py-4 text-center border-l border-gray-200"
+                  >
+                    {program.duration}
+                  </td>
+                ))}
+              </tr>
 
-                    <tr className="border-b border-gray-200">
-                      <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
-                        Program Level:
-                      </td>
-                      {selectedProgram.map((program, index) => (
-                        <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
-                          {program.level}
-                        </td>
-                      ))}
-                    </tr>
+              <tr className="border-b border-gray-200">
+                <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                  Application Fee:
+                </td>
+                {selectedProgram.map((program, index) => (
+                  <td
+                    key={index}
+                    className="px-6 py-4 text-center border-l border-gray-200"
+                  >
+                    {program.applicationFee ? (
+                      <span>
+                        {program.currency} {program.applicationFee}
+                      </span>
+                    ) : (
+                      <span className="font-semibold text-green-600">
+                        No Application Fee
+                      </span>
+                    )}
+                  </td>
+                ))}
+              </tr>
 
-                    <tr className="border-b border-gray-200">
-                      <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
-                        Duration:
-                      </td>
-                      {selectedProgram.map((program, index) => (
-                        <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
-                          {program.duration}
-                        </td>
-                      ))}
-                    </tr>
+              <tr className="border-b border-gray-200">
+                <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                  Program Tuition Fees:
+                </td>
+                {selectedProgram.map((program, index) => (
+                  <td
+                    key={index}
+                    className="px-6 py-4 text-center border-l border-gray-200"
+                  >
+                    <span className="font-semibold text-orange-500">
+                      {program.currency}{" "}
+                      {program.tuitionFee?.toLocaleString()}
+                    </span>
+                  </td>
+                ))}
+              </tr>
 
-                    <tr className="border-b border-gray-200">
-                      <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
-                        Application Fee:
-                      </td>
-                      {selectedProgram.map((program, index) => (
-                        <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
-                          {program.applicationFee ? (
-                            <span>{program.currency} {program.applicationFee}</span>
-                          ) : (
-                            <span className="text-green-600 font-semibold">No Application Fee</span>
-                          )}
-                        </td>
-                      ))}
-                    </tr>
+              <tr className="border-b border-gray-200">
+                <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
+                  Study Mode:
+                </td>
+                {selectedProgram.map((program, index) => (
+                  <td
+                    key={index}
+                    className="px-6 py-4 text-center border-l border-gray-200"
+                  >
+                    {program.studyMode}
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
 
-                    <tr className="border-b border-gray-200">
-                      <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
-                        Program Tuition Fees:
-                      </td>
-                      {selectedProgram.map((program, index) => (
-                        <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
-                          <span className="font-semibold text-primary">
-                            {program.currency} {program.tuitionFee?.toLocaleString()}
-                          </span>
-                        </td>
-                      ))}
-                    </tr>
 
-                    <tr className="border-b border-gray-200">
-                      <td className="px-6 py-4 bg-gray-50 font-semibold text-gray-700">
-                        Study Mode:
-                      </td>
-                      {selectedProgram.map((program, index) => (
-                        <td key={index} className="px-6 py-4 text-center border-l border-gray-200">
-                          {program.studyMode}
-                        </td>
-                      ))}
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="flex justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
-                <button
-                  onClick={() => setShowCompare(false)}
-                  className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-white transition-colors"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
         <div className="flex flex-col lg:flex-row gap-4 items-start">
           {/* LEFT SIDEBAR: FILTERS */}
           <div className="relative z-99 sticky top-4 self-start">

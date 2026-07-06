@@ -181,6 +181,14 @@ export default async function RootLayout({
             footerData={footerData}
           />
         </GlobalProvider>
+
+          <Script id="disable-right-click" strategy="afterInteractive">
+          {`
+            document.addEventListener("contextmenu", function(e) {
+              e.preventDefault();
+            });
+          `}
+        </Script>
       </body>
     </html>
   );
