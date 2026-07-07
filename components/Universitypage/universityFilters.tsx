@@ -1,61 +1,55 @@
-// app/universities/components/UniversityFilters.tsx
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { RefreshCcw } from 'lucide-react';
 
 interface UniversityFiltersProps {
-  searchParams: {
-    keyword?: string;
-    country?: string;
-    city?: string;
-    type?: string;
-    intake?: string;
-    tuitionFee?: string;
-    language?: string;
-  };
+  searchParams: Record<string, string | undefined>;
 }
 
 export default function UniversityFilters({ searchParams }: UniversityFiltersProps) {
   const router = useRouter();
-  const currentParams = useSearchParams();
+
+  // Helper to build the new URL based on current props instead of useSearchParams
+  const buildNewUrl = (keyToUpdate: string, value: string | null, isMultiSelect = false) => {
+    const params = new URLSearchParams();
+    
+    Object.entries(searchParams).forEach(([k, v]) => {
+      if (v && k !== keyToUpdate && k !== 'page') {
+        params.set(k, v);
+      }
+    });
+
+    if (isMultiSelect && value) {
+      const currentValues = searchParams[keyToUpdate]?.split(',').filter(Boolean) || [];
+      let newValues: string[];
+      
+      if (currentValues.includes(value)) {
+        newValues = currentValues.filter(v => v != value);
+      } else {
+        newValues = [...currentValues, value];
+      }
+      if (newValues.length > 0) {
+        params.set(keyToUpdate, newValues.join(','));
+      }
+    } else if (value) {
+      params.set(keyToUpdate, value);
+    }
+    params.set('page', '1');
+    
+    return `/find-universities?${params.toString()}`;
+  };
 
   const handleFilterChange = (key: string, value: string) => {
-    const params = new URLSearchParams(currentParams.toString());
-    
-    if (value) {
-      params.set(key, value);
-      params.set('page', '1'); // Reset to page 1 on filter change
-    } else {
-      params.delete(key);
-    }
-    
-    router.push(`/universities?${params.toString()}`, { scroll: false });
+    router.push(buildNewUrl(key, value || null), { scroll: false });
   };
 
   const handleReset = () => {
-    router.push('/universities', { scroll: false });
+    router.push('/find-universities', { scroll: false });
   };
 
   const handleMultiSelect = (key: string, value: string) => {
-    const params = new URLSearchParams(currentParams.toString());
-    const currentValues = params.get(key)?.split(',') || [];
-    
-    let newValues: string[];
-    if (currentValues.includes(value)) {
-      newValues = currentValues.filter(v => v !== value);
-    } else {
-      newValues = [...currentValues, value];
-    }
-    
-    if (newValues.length > 0) {
-      params.set(key, newValues.join(','));
-      params.set('page', '1');
-    } else {
-      params.delete(key);
-    }
-    
-    router.push(`/universities?${params.toString()}`, { scroll: false });
+    router.push(buildNewUrl(key, value, true), { scroll: false });
   };
 
   return (
@@ -112,26 +106,19 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">University Type</label>
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input 
-                type="checkbox" 
-                value="Public" 
-                checked={searchParams.type?.includes('Public') || false}
-                onChange={() => handleMultiSelect('type', 'Public')}
-                className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
-              />
-              Public
-            </label>
-            <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input 
-                type="checkbox" 
-                value="Private" 
-                checked={searchParams.type?.includes('Private') || false}
-                onChange={() => handleMultiSelect('type', 'Private')}
-                className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
-              />
-              Private
-            </label>
+            {['Public', 'Private'].map((val) => (
+              <label key={val} className="flex items-center gap-2 text-sm text-gray-600">
+                <input 
+                  type="checkbox" 
+                  value={val} 
+                  // FIX: Use split(',') to prevent "Public" matching "PublicUniversity"
+                  checked={(searchParams.type?.split(',').filter(Boolean) || []).includes(val)}
+                  onChange={() => handleMultiSelect('type', val)}
+                  className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
+                />
+                {val}
+              </label>
+            ))}
           </div>
         </div>
 
@@ -140,34 +127,25 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
           <label className="block text-sm font-medium text-gray-700 mb-1.5">Tuition Fees</label>
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input 
-                type="checkbox" 
-                value="Low" 
-                checked={searchParams.tuitionFee?.includes('Low') || false}
+              <input type="checkbox" value="Low" 
+                checked={(searchParams.tuitionFee?.split(',').filter(Boolean) || []).includes('Low')}
                 onChange={() => handleMultiSelect('tuitionFee', 'Low')}
                 className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
-              />
-              Low (&lt; €5,000)
+              /> Low (&lt; €5,000)
             </label>
             <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input 
-                type="checkbox" 
-                value="Medium" 
-                checked={searchParams.tuitionFee?.includes('Medium') || false}
+              <input type="checkbox" value="Medium" 
+                checked={(searchParams.tuitionFee?.split(',').filter(Boolean) || []).includes('Medium')}
                 onChange={() => handleMultiSelect('tuitionFee', 'Medium')}
                 className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
-              />
-              Medium (€5,000 - €15,000)
+              /> Medium (€5,000 - €15,000)
             </label>
             <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input 
-                type="checkbox" 
-                value="High" 
-                checked={searchParams.tuitionFee?.includes('High') || false}
+              <input type="checkbox" value="High" 
+                checked={(searchParams.tuitionFee?.split(',').filter(Boolean) || []).includes('High')}
                 onChange={() => handleMultiSelect('tuitionFee', 'High')}
                 className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
-              />
-              High (Above €15,000)
+              /> High (Above €15,000)
             </label>
           </div>
         </div>
@@ -177,24 +155,18 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
           <label className="block text-sm font-medium text-gray-700 mb-1.5">Intake</label>
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input 
-                type="checkbox" 
-                value="Winter" 
-                checked={searchParams.intake?.includes('Winter') || false}
+              <input type="checkbox" value="Winter" 
+                checked={(searchParams.intake?.split(',').filter(Boolean) || []).includes('Winter')}
                 onChange={() => handleMultiSelect('intake', 'Winter')}
                 className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
-              />
-              Winter (Oct)
+              /> Winter (Oct)
             </label>
             <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input 
-                type="checkbox" 
-                value="Summer" 
-                checked={searchParams.intake?.includes('Summer') || false}
+              <input type="checkbox" value="Summer" 
+                checked={(searchParams.intake?.split(',').filter(Boolean) || []).includes('Summer')}
                 onChange={() => handleMultiSelect('intake', 'Summer')}
                 className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
-              />
-              Summer (Apr)
+              /> Summer (Apr)
             </label>
           </div>
         </div>
@@ -204,34 +176,25 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
           <label className="block text-sm font-medium text-gray-700 mb-1.5">Language of Instruction</label>
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input 
-                type="checkbox" 
-                value="English" 
-                checked={searchParams.language?.includes('English') || false}
+              <input type="checkbox" value="English" 
+                checked={(searchParams.language?.split(',').filter(Boolean) || []).includes('English')}
                 onChange={() => handleMultiSelect('language', 'English')}
                 className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
-              />
-              English
+              /> English
             </label>
             <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input 
-                type="checkbox" 
-                value="German" 
-                checked={searchParams.language?.includes('German') || false}
+              <input type="checkbox" value="German" 
+                checked={(searchParams.language?.split(',').filter(Boolean) || []).includes('German')}
                 onChange={() => handleMultiSelect('language', 'German')}
                 className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
-              />
-              German
+              /> German
             </label>
             <label className="flex items-center gap-2 text-sm text-gray-600">
-              <input 
-                type="checkbox" 
-                value="Both" 
-                checked={searchParams.language?.includes('Both') || false}
+              <input type="checkbox" value="Both" 
+                checked={(searchParams.language?.split(',').filter(Boolean) || []).includes('Both')}
                 onChange={() => handleMultiSelect('language', 'Both')}
                 className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
-              />
-              Both
+              /> Both
             </label>
           </div>
         </div>

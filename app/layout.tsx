@@ -157,7 +157,7 @@ export default async function RootLayout({
       </head>
 
       <body
-        className={`${montserrat.className} antialiased`}
+        className={`${montserrat.className} antialiased font-medium`}
         style={{ maxWidth: "1840px", margin: "0 auto" }}
       >
         <noscript>
