@@ -182,9 +182,9 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
       setSelectedProgramsList([...selectedProgramsList, newProgram]);
       //console.log("Recommended Program Added:", newProgram);
       //console.log("All Selected Programs:", [
-        ...selectedProgramsList,
-        newProgram,
-      ]);
+      //   ...selectedProgramsList,
+      //   newProgram,
+      // ]);
     } else {
       //console.log("Maximum 10 programs can be selected");
     }
@@ -197,9 +197,9 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
     //console.log("Selected Intake:", selectedIntake);
     //console.log("Total Programs Selected:", selectedProgramsList.length);
     //console.log(
-      "Selected Programs Details:",
-      JSON.stringify(selectedProgramsList, null, 2),
-    );
+    //   "Selected Programs Details:",
+    //   JSON.stringify(selectedProgramsList, null, 2),
+    // );
     //console.log("=== End of Submission ===");
 
     if (selectedProgramsList.length === 0) {
