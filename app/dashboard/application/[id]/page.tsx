@@ -423,7 +423,6 @@ export default function StudentDetailsPage() {
       }
     } catch (error) {
       console.error("Error fetching application details:", error);
-      console.log(error?.response?.data);
       toast.error("Failed to load application details");
     } finally {
       setLoading(false);
@@ -493,7 +492,6 @@ export default function StudentDetailsPage() {
     formData.append('file', file);
     if (answer) formData.append('answer', answer);
     formData.append('docType', selectedRequirement?.docType);
-    console.log(formData)
 
     const response = await axiosInstance.put(
       `/auth/updateDocuments/${applicationId}/doc?type=application`,
@@ -623,8 +621,6 @@ export default function StudentDetailsPage() {
       completed: false,
     },
   ]);
-
-  console.log(stepchange)
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -2407,7 +2403,7 @@ function EditableItem({ label, value }: DetailProps) {
 //       }
 //     } catch (error) {
 //       console.error("Error fetching application details:", error);
-//       console.log(error?.response?.data);
+//       //console.log(error?.response?.data);
 //       toast.error("Failed to load application details");
 //     } finally {
 //       setLoading(false);
@@ -2477,7 +2473,7 @@ function EditableItem({ label, value }: DetailProps) {
 //     formData.append('file', file);
 //     if (answer) formData.append('answer', answer);
 //     formData.append('docType', selectedRequirement?.docType);
-//     console.log(formData)
+//     //console.log(formData)
 
 //     const response = await axiosInstance.put(
 //       `/auth/updateDocuments/${applicationId}/doc?type=application`,
@@ -2630,7 +2626,7 @@ function EditableItem({ label, value }: DetailProps) {
 //     },
 //   ]);
 
-//   console.log(stepchange)
+//   //console.log(stepchange)
 
 //   useEffect(() => {
 //     const fetchStudentData = async () => {

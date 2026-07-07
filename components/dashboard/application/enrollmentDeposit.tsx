@@ -19,7 +19,7 @@ const EnrollmentDeposit = ({ application, allprofile }) => {
     (item) => item.status === "PayEnrollenmentDeposit"
   );
 
-  console.log(depositData)
+  //console.log(depositData)
 
   const metadata = depositData?.metadata?.deposit
 

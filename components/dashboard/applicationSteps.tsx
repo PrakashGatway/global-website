@@ -160,7 +160,7 @@ export function PrerequisitesForm({ program, formData, setFormData }: Prerequisi
 
   const prerequisites = React.useMemo(() => {
     let prereqs = []
-    console.log(program.requirements)
+    //console.log(program.requirements)
     if (program.requirements) {
       prereqs = Object.entries(program?.requirements).map(([name, data]) => ({
         name,

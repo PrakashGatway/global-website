@@ -308,7 +308,7 @@ export default function Homepage({
   const { openPopup } = useGlobal();
 
 
-  // console.log("home page",homePage)
+  // //console.log("home page",homePage)
 
   // const Tag = `h${homePage?.hero?.tag || 1}`; // fallback to h1 if undefined
 

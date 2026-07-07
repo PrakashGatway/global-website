@@ -52,7 +52,7 @@ export default function DashboardLayout({
     try {
       // Check if Notification API is available
       if (typeof Notification === 'undefined') {
-        console.log('Notification API not supported');
+        //console.log('Notification API not supported');
         return;
       }
 
@@ -75,7 +75,7 @@ export default function DashboardLayout({
         }
       }
     } catch (error) {
-      console.log('Error requesting notification permission:', error);
+      //console.log('Error requesting notification permission:', error);
       tokenRequestedRef.current = false;
     }
   };

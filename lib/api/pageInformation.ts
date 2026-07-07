@@ -95,7 +95,7 @@ export async function getImageBySlug(
     if (!response.ok) {
       // If image not found, return null (fallback to default)
       if (response.status === 404) {
-        console.log(`Image not found: ${slug}/${imageType} - Using fallback`)
+        //console.log(`Image not found: ${slug}/${imageType} - Using fallback`)
         return null
       }
       throw new Error(`Failed to fetch image: ${response.statusText} (${response.status})`)
@@ -188,7 +188,7 @@ export async function getPageInformationBySlug(
     
     // Debug logging
     if (process.env.NODE_ENV === 'development') {
-      console.log(`✅ API Response for ${slug}:`, {
+      //console.log(`✅ API Response for ${slug}:`, {
         success: jsonData.success,
         hasData: !!jsonData.data,
         status: jsonData.data?.status,

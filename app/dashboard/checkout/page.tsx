@@ -217,7 +217,7 @@ export default function CheckoutPage() {
         setTotal(data.checkoutItem.amount)
 
       } catch (error: any) {
-        console.log(error)
+        //console.log(error)
         toast.error(error.response?.data?.message || 'Failed to load checkout details')
         router.push('/dashboard/application')
       } finally {

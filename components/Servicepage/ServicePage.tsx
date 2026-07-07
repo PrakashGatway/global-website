@@ -887,7 +887,7 @@ const VideoTestimonialsWrapper = ({ data, videoRes }) => {
 const VisaStoriesWrapper = ({ data, testimonialimg }) => {
   if (!data) return null;
   const filtervisa = testimonialimg?.filter((item) => item.target === "visa") || [];
-  console.log(data.title)
+  //console.log(data.title)
   return (
     <StudentVisaStories
       stories={filtervisa}
@@ -934,7 +934,7 @@ export default function ServicePage({ serviceData, testimonialimg, galleryData, 
   const [galleryType, setgalleryType] = useState(galleryData);
   const [loading, setLoading] = useState(false);
 
-  console.log(serviceData, "ServiceData")
+  //console.log(serviceData, "ServiceData")
 
   const getGallery = async (type) => {
     try {

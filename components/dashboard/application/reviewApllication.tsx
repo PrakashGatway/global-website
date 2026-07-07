@@ -18,7 +18,7 @@ export default function ReviewApplication({ application, allProfile, profile, ac
       ? JSON.parse(allProfile.profile.documents)
       : allProfile?.profile?.documents;
 
-  console.log(activity);
+  //console.log(activity);
 
   const documentList = Object.values(Parsedocuments || {});
 

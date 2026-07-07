@@ -18,9 +18,6 @@ export default function AuthorPage({ author }) {
             try {
                 const res = await axiosInstance.get(`/blogs?page=${page}&limit=10`);
 
-
-                console.log(res.data);
-
                 setblogs(res.data.data);
                 setTotalPages(res.data.pages)
             } catch (error) {

@@ -21,7 +21,7 @@ export default function ContactUsPage({ contactData, Faqres }) {
   const sendMessageTitle = contactData?.sections?.sendMessage?.title
   const sendMessageSubtitle = contactData?.sections?.sendMessage?.subtitle
   const sendMessagePoints = contactData?.sections?.sendMessage?.points || [];
-  // console.log(getInTouchpoint)
+  // //console.log(getInTouchpoint)
   // Icon mapping for sendMessage points
   const pointIcons = {
     message: <MessageSquare className="h-6 w-6" style={{ color: '#FF6B35' }} />

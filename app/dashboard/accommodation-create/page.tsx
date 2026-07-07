@@ -638,7 +638,6 @@ function HotelList({ hotels, countries, cities, onEdit, onDelete, renderStars, g
                 {hotel.currency}{hotel.pricePerNight}
               </span>
             </div>
-              {console.log(hotel,"hotel")}
             <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
               <MapPin size={14} className="text-orange-500" />
               <span>{hotel.cityId.name}</span>

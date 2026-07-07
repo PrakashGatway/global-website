@@ -315,8 +315,6 @@ const CreateCouponModal: React.FC<CreateCouponModalProps> = ({ isOpen, onClose, 
                 }
             }
 
-            console.log(payload)
-
             const response = await axiosInstance.post('/coupons', payload)
             if (response.data?.success) {
                 toast.success('Coupon created successfully!')
@@ -682,7 +680,6 @@ export default function OffersPage() {
         }
         window.open(shareUrl, '_blank')
     }
-    console.log(profile)
 
     const myReferrals = async () => {
         try {

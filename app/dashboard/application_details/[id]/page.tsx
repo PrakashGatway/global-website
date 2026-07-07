@@ -600,7 +600,6 @@ export default function ApplicationDetailPage() {
       const res = await axiosInstance.get(`/users/${studentId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      console.log(res.data , "res.data", studentId);
       setStudentData(res.data || res.data);
     } catch (err) {
       console.error("Failed to fetch student data:", err);
@@ -710,7 +709,6 @@ export default function ApplicationDetailPage() {
           "course": application?.course?._id || "",
           "extra": statusMetadata  || {}
         })
-        console.log(response.data, "response ")
       }
       
       const res = await axiosInstance.put(`/applications/${id}`, {
@@ -3310,7 +3308,7 @@ function DocumentUploadModal({ visible, onClose, onUpload, onUpdateDocument, upl
 //       const res = await axiosInstance.get(`/users/${studentId}`, {
 //         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
 //       });
-//       console.log(res.data , "res.data", studentId);
+//       //console.log(res.data , "res.data", studentId);
 //       setStudentData(res.data || res.data);
 //     } catch (err) {
 //       console.error("Failed to fetch student data:", err);
@@ -3420,7 +3418,7 @@ function DocumentUploadModal({ visible, onClose, onUpload, onUpdateDocument, upl
 //           "course": application?.course?._id || "",
 //           "extra": statusMetadata  || {}
 //         })
-//         console.log(response.data, "response ")
+//         //console.log(response.data, "response ")
 //       }
       
 //       const res = await axiosInstance.put(`/applications/${id}`, {
@@ -5856,7 +5854,7 @@ function DocumentUploadModal({ visible, onClose, onUpload, onUpdateDocument, upl
 //       const res = await axiosInstance.get(`/users/${studentId}`, {
 //         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
 //       });
-//       console.log(res.data , "res.data", studentId);
+//       //console.log(res.data , "res.data", studentId);
 //       setStudentData(res.data || res.data);
 //     } catch (err) {
 //       console.error("Failed to fetch student data:", err);
@@ -5903,7 +5901,7 @@ function DocumentUploadModal({ visible, onClose, onUpload, onUpdateDocument, upl
 //   }, [application?.course?.university?.code]);
 
 //   // useEffect(() => {
-//   //    console.log(formData.primaryStatus,"lwjeflkadjoij");
+//   //    //console.log(formData.primaryStatus,"lwjeflkadjoij");
 //   //   if(formData.primaryStatus === application?.paymentStatus){
 //   //     setShowpopup(true);
 //   //   }

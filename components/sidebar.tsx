@@ -64,7 +64,7 @@ export function Sidebar() {
   const location = usePathname();
   const { profile, show } = useGlobal();
 
-  // console.log()
+  // //console.log()
   // if(location){
   //   location.startsWith("/dashboard/loan")
   //   return null

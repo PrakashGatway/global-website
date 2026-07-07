@@ -27,7 +27,7 @@ import AuthorCard from './author/author'
 
 const HeroSection = ({ data, alldata }) => {
   if (data?.isHidden === "yes") return null
-  // console.log('hero d',data)
+  // //console.log('hero d',data)
   return (
     <section className="block overflow-hidden">
       <div
@@ -897,7 +897,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
   const shouldRenderSection = (name, data) => {
     if (!data) return false
-    // if (name === 'visaStories') console.log("Visa Stories Count:", visaStories.length)
+    // if (name === 'visaStories') //console.log("Visa Stories Count:", visaStories.length)
     if (name === 'videoTestimonials') return videoRes?.data?.length > 0
     if (name === 'imageTestimonials') return regularImages?.length > 0
     if (name === 'visaStories') return visaStories?.length > 0

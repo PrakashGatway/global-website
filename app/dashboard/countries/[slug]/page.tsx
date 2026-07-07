@@ -483,7 +483,6 @@ export default function CountryDetailPage() {
                 setLoading(true)
                 const response = await axiosInstance.get(`/countries?code=${countryCode}&populateExtra=true`)
                 const countryData = response.data.data?.[0]
-                console.log("Country Data:", countryData) // Debug log
                 setCountry(countryData)
                 
                 // FIXED: extra_content is object, access directly
@@ -557,10 +556,6 @@ export default function CountryDetailPage() {
     const hasFAQ = getFAQ().length > 0
     const hasVisa = !!getVisaDetails()?.type
     const hasUniversities = universities.length > 0
-
-    // Debug log to check sections
-    console.log("Sections:", sections)
-    console.log("Country extra_content:", country?.extra_content)
 
     if (loading) {
         return (

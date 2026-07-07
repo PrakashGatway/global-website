@@ -53,7 +53,7 @@ export function GlobalProvider({ children }) {
             setallProfile(res.data)
         
         } catch (err) {
-            console.log("Not authorized")
+            //console.log("Not authorized")
         } finally {
             setLoading(false)
         }
@@ -67,7 +67,7 @@ export function GlobalProvider({ children }) {
             setallProfile(res.data)
 
         } catch (err) {
-            console.log("Not authorized")
+            //console.log("Not authorized")
         }
     }
 
@@ -99,7 +99,7 @@ const showPopup = () => {
   }
 
   if (!isPopupOpen && !hasSubmittedForm) {
-    console.log("✅ Opening popup");
+    //console.log("✅ Opening popup");
     setIsPopupOpen(true);
     savePopupCount(popupCount + 1);
   }
@@ -117,7 +117,7 @@ const showPopup = () => {
         } else {
             // ✨ User cancelled - allow second popup, but mark general interaction
             setHasInteracted(true)
-            console.log('❌ Popup cancelled - second popup still possible at 30s')
+            //console.log('❌ Popup cancelled - second popup still possible at 30s')
         }
     }
 
@@ -188,7 +188,7 @@ const showPopup = () => {
         const currentDate = new Date().toDateString()
 
         if (lastPopupDate !== currentDate) {
-            console.log('🔄 New day! Resetting all popup states')
+            //console.log('🔄 New day! Resetting all popup states')
             sessionStorage.removeItem('popupShownCount')
             sessionStorage.removeItem('formSubmitted') // ✨ Reset submission flag too
             sessionStorage.setItem('lastPopupDate', currentDate)
@@ -221,7 +221,7 @@ const showPopup = () => {
     }
 
     if (!hasInteracted) {
-      console.log("👆 User interacted with page content");
+      //console.log("👆 User interacted with page content");
       setHasInteracted(true);
     }
   };

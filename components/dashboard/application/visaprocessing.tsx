@@ -196,7 +196,7 @@ export default function VisaApplicationManager({
 
   const [saveMessage, setSaveMessage] = useState("");
 
-  console.log(applicaion?.student?._id, "applicaion");
+  //console.log(applicaion?.student?._id, "applicaion");
 
   // Update state when props change (for external data updates after mount)
   useEffect(() => {

@@ -1743,7 +1743,7 @@ export default function VisaJourneyPage() {
         setApiData(null);
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       setApiData(null);
     } finally {
       setLoading(false);
@@ -1757,7 +1757,7 @@ export default function VisaJourneyPage() {
   const [showCelebration, setShowCelebration] = useState(false);
 
   const handleStartApplication = () => {
-    console.log("Start new application");
+    //console.log("Start new application");
   };
 
   const handleStepClick = (stepId) => {
@@ -4111,7 +4111,7 @@ export default function VisaJourneyPage() {
 //         setApiData(null);
 //       }
 //     } catch (error) {
-//       console.log(error);
+//       //console.log(error);
 //       setApiData(null);
 //     } finally {
 //       setLoading(false);
@@ -4126,7 +4126,7 @@ export default function VisaJourneyPage() {
  
 
 //   const handleStartApplication = () => {
-//     console.log("Start new application");
+//     //console.log("Start new application");
 //   };
 
 //   const handleStepClick = (stepId) => {
@@ -4177,7 +4177,7 @@ export default function VisaJourneyPage() {
 //     return <StepComponent {...stepProps} />;
 //   };
 
-//   console.log(currentStep)
+//   //console.log(currentStep)
 
 //     useEffect(() => {
 //       if(currentStep === 6){
@@ -4315,7 +4315,7 @@ export default function VisaJourneyPage() {
 
 //               {bannerData?.action && (
 //                 <div className="flex-shrink-0 flex flex-col  gap-2">
-//                   {console.log(fileBaseurl(bannerData.fileUrl))}
+//                   {//console.log(fileBaseurl(bannerData.fileUrl))}
 //                   {bannerData?.fileUrl && (
 //                     <a
 //                       href={fileBaseurl(bannerData.fileUrl)}

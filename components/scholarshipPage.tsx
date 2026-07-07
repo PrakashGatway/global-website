@@ -264,12 +264,9 @@ export default function ScholarshipPage() {
 
   }, []);
 
-  console.log(Simillar)
-
  const allSimillar = Simillar.filter(
   (item) => item.slug !== slug
 ).slice(0, 3);
-  console.log(allSimillar)
   return (
     <main className="bg-[#FAFAF9] text-neutral-900 antialiased">
       {/* ───── HERO ───── */}

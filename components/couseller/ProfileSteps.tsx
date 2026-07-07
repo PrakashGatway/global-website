@@ -687,7 +687,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
   const [formData, setFormData] = useState<any>({});
   const [editingSections, setEditingSections] = useState<Set<string>>(new Set());
 
-  console.log("currentAddress", user);
+  //console.log("currentAddress", user);
 
   useEffect(() => {
     setFormData({

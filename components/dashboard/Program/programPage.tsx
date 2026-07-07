@@ -1158,7 +1158,7 @@ const selectedHighlights = highlights.filter((item) =>
 
                         <div className="flex flex-wrap gap-2">
   {selectedHighlights.map((item) => {
-    console.log(item,"kk")
+    //console.log(item,"kk")
     return(
     <div
       key={item.id}

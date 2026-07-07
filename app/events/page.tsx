@@ -40,12 +40,6 @@ if (type === "webnair") {
     }
   })
 }
-
-
-
-     
-
-  // console.log(res)
   return (
     <>
       <Events

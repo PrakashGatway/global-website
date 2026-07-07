@@ -103,7 +103,7 @@ export default function OnboardingStepper() {
   // Log current form values whenever they change (for debugging)
   useEffect(() => {
     const subscription = methods.watch((value) => {
-      console.log("Current form values:", value)
+      //console.log("Current form values:", value)
     })
     return () => subscription.unsubscribe()
   }, [methods.watch])

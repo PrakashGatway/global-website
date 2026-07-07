@@ -120,7 +120,7 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
       !selectedUniversity ||
       !selectedProgram
     ) {
-      console.log("Please fill all fields before adding a program");
+      //console.log("Please fill all fields before adding a program");
       return;
     }
 
@@ -142,10 +142,7 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
       };
 
       setSelectedProgramsList([...selectedProgramsList, newProgram]);
-
-      // Log to console
-      console.log("Program Added:", newProgram);
-      console.log("All Selected Programs:", [
+      //console.log("All Selected Programs:", [
         ...selectedProgramsList,
         newProgram,
       ]);
@@ -153,7 +150,7 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
       // Reset program selection
       setSelectedProgram("");
     } else if (selectedProgramsList.length >= 3) {
-      console.log("Maximum 3 programs can be selected");
+      //console.log("Maximum 3 programs can be selected");
     }
   };
 
@@ -163,7 +160,7 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
       (program) => program.id !== id,
     );
     setSelectedProgramsList(updatedList);
-    console.log("Program Removed. Remaining programs:", updatedList);
+    //console.log("Program Removed. Remaining programs:", updatedList);
   };
 
   // Handle add recommended program
@@ -183,27 +180,27 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
       };
 
       setSelectedProgramsList([...selectedProgramsList, newProgram]);
-      console.log("Recommended Program Added:", newProgram);
-      console.log("All Selected Programs:", [
+      //console.log("Recommended Program Added:", newProgram);
+      //console.log("All Selected Programs:", [
         ...selectedProgramsList,
         newProgram,
       ]);
     } else {
-      console.log("Maximum 10 programs can be selected");
+      //console.log("Maximum 10 programs can be selected");
     }
   };
 
   // Handle submit all programs - FIXED VERSION
   const handleSubmitApplications = async () => {
-    console.log("=== Final Application Submission ===");
-    console.log("Selected Year:", selectedYear);
-    console.log("Selected Intake:", selectedIntake);
-    console.log("Total Programs Selected:", selectedProgramsList.length);
-    console.log(
+    //console.log("=== Final Application Submission ===");
+    //console.log("Selected Year:", selectedYear);
+    //console.log("Selected Intake:", selectedIntake);
+    //console.log("Total Programs Selected:", selectedProgramsList.length);
+    //console.log(
       "Selected Programs Details:",
       JSON.stringify(selectedProgramsList, null, 2),
     );
-    console.log("=== End of Submission ===");
+    //console.log("=== End of Submission ===");
 
     if (selectedProgramsList.length === 0) {
       toast.error("No programs to submit");
@@ -224,7 +221,7 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
       
       const results = await Promise.all(submissionPromises);
       
-      console.log("All applications created:", results);
+      //console.log("All applications created:", results);
       toast.success(`Successfully created ${results.length} application(s)`);
       
       // Optional: Clear the selected programs list after successful submission

@@ -90,10 +90,10 @@ const CompareDrawer = ({
                     index === self.findIndex((c) => c._id === country._id)
             )
 
-            console.log("Saving to cookies:", uniqueCountries)
+            //console.log("Saving to cookies:", uniqueCountries)
             Cookies.set("test", "hello");
 
-console.log("Test cookie:", Cookies.get("test"));
+//console.log("Test cookie:", Cookies.get("test"));
 
 const cookieData = JSON.stringify(uniqueCountries);
 
@@ -107,7 +107,7 @@ const cookieData = JSON.stringify(uniqueCountries);
 
             // Verify cookie was set
             const savedCookie = Cookies.get("compareCountries")
-            console.log("Saved cookie:", savedCookie)
+            //console.log("Saved cookie:", savedCookie)
 
             if (!savedCookie) {
                 throw new Error("Failed to save comparison data")
@@ -133,7 +133,7 @@ const cookieData = JSON.stringify(uniqueCountries);
 
     // Debug: Log selected countries
     useEffect(() => {
-        console.log("Selected countries in drawer:", selectedCountries)
+        //console.log("Selected countries in drawer:", selectedCountries)
     }, [selectedCountries])
 
     return (

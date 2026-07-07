@@ -35,7 +35,6 @@ export function DashboardHeader({ profile, Logout }) {
 
       if (response.data.success) {
         const newNotifications = response.data.data.notifications;
-        console.log("Fetched notifications:", newNotifications);
         setNewNotification(newNotifications);
 
       }
@@ -46,7 +45,7 @@ export function DashboardHeader({ profile, Logout }) {
     }
   }, [axiosInstance]);
 
-  // console.log("profile", profile);
+  // //console.log("profile", profile);
 
 
   useEffect(() => {

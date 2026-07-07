@@ -225,7 +225,6 @@ export default function Page() {
         params.endDate = dateTo.toISOString().split("T")[0];
       }
 
-      console.log("Fetching applications with params:", params);
 
       const response = await axiosInstance.get<ApiResponse>(
         "/applications/getApplicationsByCounsellor",

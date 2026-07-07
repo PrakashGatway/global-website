@@ -148,10 +148,6 @@ export default function ProfilePage() {
     fetchCategories()
   }, [allProfile, reset]);
 
-  console.log(categories)
-
-
-
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center min-h-[300px]">
