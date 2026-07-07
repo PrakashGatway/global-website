@@ -311,13 +311,25 @@ export default function Homepage({
   // //console.log("home page",homePage)
 
   // const Tag = `h${homePage?.hero?.tag || 1}`; // fallback to h1 if undefined
-
+  const statImages = [
+    "/student-hero.png",
+    "/school-hero.png",
+    "/acceptance-hero.png",
+    "/experience-hero.png",
+    "/offer-hero.png",
+  ];
 
   return (
     <main className="bg-white">
       <section
         className="overflow-hidden
-          pt-12 lg:pt-20"
+          pt-12 lg:pt-20 "
+        style={{
+          backgroundImage: `url(${"/bg-hero.jpeg"})`,
+          backgroundSize: "100% 100%",
+
+
+        }}
       >
 
         <div className="absolute inset-0 bg-white/50 md:bg-transparent pointer-events-none" />
@@ -326,20 +338,20 @@ export default function Homepage({
           <div className="grid grid-cols-1 lg:grid-cols-7 items-center gap-2">
 
             <div
-              className="flex flex-col gap-1 lg:col-span-4"
+              className="flex flex-col gap-1 lg:col-span-4 -mt-10"
             >
               <span
-                className="text-3xl sm:text-[2.7rem] leading-[1.4]"
+                className="text-3xl sm:text-4xl leading-[48px]"
               >
 
                 {homePage?.hero?.title ?
                   <>
                     <NewTag
                       data={homePage?.hero?.tag}
-                      css="block text-[#ea6c46]"
+                      css="block text-primary font-bold"
                     >
                       {homePage?.hero?.title.split("||")[0]?.trim()}{" "}
-                      <span className="relative inline- font-bold text-primary">
+                      <span className="relative  font-bold text-[#ea6c46]">
                         {homePage?.hero?.title.split("||")[1]?.trim()}
                       </span>
                     </NewTag>
@@ -348,7 +360,7 @@ export default function Homepage({
               </span>
 
               <span
-                className="mt-2 text-base font-medium lg:text-lg text-primary mx-auto text-justify"
+                className="mt-2 text-base font-medium lg:text-base leading-[26px]  text-black mx-auto "
                 dangerouslySetInnerHTML={{
                   __html: homePage?.hero?.subtitle
                 }}
@@ -361,11 +373,12 @@ export default function Homepage({
                 <button
                   onClick={openPopup}
                   className="
-              text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#f46c44] rounded-full shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
+              text-white px-6 sm:px-8 py-2.5 sm:py-3 bg-[#f46c44] rounded-full 
               text-sm lg:text-base font-semibold
-              hover:bg-primary hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
+              hover:bg-white hover:text-black 
+              hover:border hover:border-orange-500
               flex items-center justify-center gap-2
-              transition-all hover:opacity-90 cursor-pointer
+               
             "
                 // rel="noopener noreferrer"
                 >
@@ -376,9 +389,9 @@ export default function Homepage({
                   onClick={openPopup}
                   // href={homePage?.hero?.ctaLink2}
                   className="
-              text-primary px-6 sm:px-8 py-2.5 sm:py-3 border border-primary rounded-full 
+              text-white bg-primary px-6 sm:px-6 py-2.5 sm:py-2 border border-primary rounded-full 
               lg:text-base text-sm font-semibold
-              transition-all hover:bg-[#f46c44] hover:border-none hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
+               hover:bg-white hover:border hover:border-primary hover:text-primary
               inline-flex items-center justify-center
             "
                 // rel="noopener noreferrer"
@@ -392,14 +405,14 @@ export default function Homepage({
             <div
               className="flex justify-center lg:col-span-3 lg:justify-end"
             >
-              <div className="relative flex items-center justify-center">
+              <div className=" flex items-center justify-center">
 
-                <div className="absolute -right top-51 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
+                <div className="absolute  top-41 right-18 -translate-y-1/2  animate-spin [animation-duration:180s] hidden lg:block">
                   <Image
                     src="/images/hero-bg-round.webp"
                     alt="circle"
-                    width={640}
-                    height={640}
+                    width={400}
+                    height={540}
                     priority
                     className="scale-120"
 
@@ -409,7 +422,7 @@ export default function Homepage({
 
                 {homePage?.hero?.heroImage && (
                   <div
-                    className="relative z-1  -bottom-10"
+                    className="relative z-1 right-22  bottom-0"
                   >
                     <Image
                       src={homePage?.hero?.heroImage.trim()}
@@ -417,7 +430,7 @@ export default function Homepage({
                       height={900}
                       alt="cap"
                       loading="lazy"
-                      className="lg:w-[420px] w-[400px]"
+                      className="lg:w-[320px] w-[400px]"
                     />
                   </div>
                 )}
@@ -427,22 +440,25 @@ export default function Homepage({
         </div>
       </section>
 
-      <section className="py-6 px-4 bg-white mt-3">
+      <section className=" bg-white shadow-xl -mt-2 relative z-10 ">
         <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {/* Card */}
           {homePage?.stats?.items?.map((stat, index) => (
-            <div key={index} className="group bg-[#e9e9e9] rounded-2xl px-4 py-6 flex items-center gap-3 hover:bg-[#F46C44] 
-            transition duration-300">
-              <DynamicLucideIcon
-                name={stat?.icon}
-                className="w-12 h-12 text-[#8B4513] stroke-[1.2px] group-hover:text-white transition"
+            <div key={index} className="  rounded-2xl px-4 py-6 flex items-center gap-3 
+            ">
+              <Image
+                src={statImages[index % statImages.length]}
+                alt={stat.title}
+                width={48}
+                height={48} 
+                className={` ${index===3 ? "w-16 h-16" : "w-12 h-12"}`}
               />
               <div>
-                <p className="text-gray-600 text-sm sm:text-lg group-hover:text-white transition">
-                  {stat?.title}
-                </p>
-                <h3 className="text-[#123b73] font-bold text-sm sm:text-lg group-hover:text-white transition">
+                <p className="text-black text-sm sm:text-lg font-bold group-hover:text-white transition">
                   {stat?.stats}
+                </p>
+                <h3 className="text-gray-600 font-medium text-sm sm:text-sm group-hover:text-white transition">
+                  {stat?.title}
                 </h3>
               </div>
             </div>

@@ -254,31 +254,15 @@ export default function Navbar({
       <nav
         className={`
           sticky top-0 z-[999]
-          bg-[#f46c44] shadow-sm 
+          bg-white shadow-sm 
           transition-transform duration-300 ease-in-out
           ${isScrolled ? "lg:-translate-y-1" : "lg:translate-y-0"}
         `}
       >
-        <div className={`mx-auto max-w-[1540px] flex justify-between relative transition-all duration-500 ease-in-out ${isScrolled ? "h-full" : ""}`}>
-          {/* Logo */}
-          <div className="items-center text-end px-8 gap-2 bg-white">
-            <Link href="/">
-              <Image
-                src="/images/newlogo3.png"
-                alt="Logo"
-                width={800}
-                loading="lazy"
-                height={100}
-                className={`object-contain w-20 m-auto py-2.5 lg:w-28 lg:ml-10 ${isScrolled ? "" : ""}`}
-              />
-            </Link>
-          </div>
-
-          <div className={`flex flex-col ${isScrolled ? "justify-center" : "item-center gap-3 sm:px-15"}`}>
-            {/* Top Bar - Only show when not scrolled */}
+         {/* Top Bar - Only show when not scrolled */}
             {!isScrolled && (
-              <div className="w-full justify-end items-center gap-6 lg:flex hidden z-10 px-4 text-white">
-                <div className="bg-[#6d1901] shadow-xl flex justify-center items-center gap-2 px-4 py-1.5 rounded-b-2xl text-sm font-medium gap-8">
+              <div className="w-full bg-[#f46c44] justify-end items-center gap-6 lg:flex hidden z-10 px-4 text-white">
+                <div className="flex justify-center items-center gap-2 px-4 py-1.5 rounded-b-2xl text-sm font-medium gap-8">
                   <a href="tel:+919875863347" className="flex items-center gap-2 hover:opacity-80 transition font-medium">
                     <span>Consult With Expert:</span>
                     <span className="font-semibold text-yellow-300">+91 9875863347</span>
@@ -297,14 +281,31 @@ export default function Navbar({
                 </div>
               </div>
             )}
+        <div className={`mx-auto max-w-[1540px] flex items-center justify-between relative transition-all duration-500 ease-in-out text-black ${isScrolled ? "h-full" : ""}`}>
+          {/* Logo */}
+          <div className="items-center text-end px-8 gap-2 bg-white">
+            <Link href="/">
+              <Image
+                src="/images/newlogo3.png"
+                alt="Logo"
+                width={800}
+                loading="lazy"
+                height={100}
+                className={`object-contain w-20 m-auto py-2.5 lg:w-28 lg:ml-10 ${isScrolled ? "" : ""}`}
+              />
+            </Link>
+          </div>
+
+          <div className={`flex flex-col  ${isScrolled ? "item-center" : "items-center gap-3 sm:px-15"}`}>
+           
 
             {/* ================= DESKTOP MENU ================= */}
-            <div className={`hidden lg:flex items-center gap-2 ${isScrolled ? "justify-center" : "justify-center pb-4"}`}>
+            <div className={`hidden lg:flex items-center text-black gap-2 ${isScrolled ? "justify-center" : "justify-center pb-4"}`}>
               {navbar?.map((item) => (
                 <div key={item.id} className="relative group">
                   <Link
                     href={item.route}
-                    className="flex items-center gap-1 px-3 text-[15px] font-[500] text-white hover:text-[var(--primary)] transition"
+                    className="flex items-center gap-1 px-3 text-[15px] font-[500] text-black hover:text-[var(--primary)] transition"
                   >
                     <span>{item.title}</span>
                     {item.hasDropdown && <ChevronDown size={14} className="mt-[2px]" />}

@@ -5,7 +5,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 
 
 export default function BlogGrid({ filteredBlogs }) {
@@ -97,3 +97,5 @@ export default function BlogGrid({ filteredBlogs }) {
         </>
     )
 }
+
+
