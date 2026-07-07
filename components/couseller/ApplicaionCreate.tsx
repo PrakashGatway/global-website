@@ -142,10 +142,10 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
       };
 
       setSelectedProgramsList([...selectedProgramsList, newProgram]);
-      //console.log("All Selected Programs:", [
-        ...selectedProgramsList,
-        newProgram,
-      ]);
+      // //console.log("All Selected Programs:", [
+      //   ...selectedProgramsList,
+      //   newProgram,
+      // ]);
 
       // Reset program selection
       setSelectedProgram("");
