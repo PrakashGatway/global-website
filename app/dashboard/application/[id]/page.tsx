@@ -1038,42 +1038,60 @@ export default function StudentDetailsPage() {
                       className="col-span-12 lg:col-span-9 gap-3 sm:gap-4 order-1 lg:order-2"
                     >
                       {activeMenu === "Overview" && (
-                        <>
-                          <div className="grid grid-cols-1 gap-3 sm:gap-4">
-                            <div className="bg-[#fefaf8] border border-orange-400 p-3 sm:p-4 md:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-                              <div className="w-full sm:w-auto md:mt-6">
-                                <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 md:gap-3">
-                                  <h2 className="text-sm sm:text-base md:text-lg font-bold">
+                       
+                          <div className="space-y-6">
+                           <div className="bg-[#fefaf8] border border-orange-400 pl-6 ">
+                            <div className="grid grid-cols-1 lg:grid-cols-12  items-center">
+
+                              {/* Content */}
+                              <div className="lg:col-span-9 order-2 lg:order-1">
+                                <div className="flex flex-wrap items-center gap-3">
+                                  <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
                                     Application Started
                                   </h2>
-                                  <span className="px-2 sm:px-2.5 md:px-3 py-0.5 sm:py-1 bg-orange-100 text-orange-700 text-[10px] sm:text-xs md:text-sm rounded">
+
+                                  <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs sm:text-sm font-medium rounded-full">
                                     {application?.primaryStatus}
                                   </span>
                                 </div>
-                                <p className="mt-1.5 sm:mt-2 md:mt-4 text-gray-600 text-xs sm:text-sm md:text-[16px] w-full md:w-3xl">
-                                  You have started your application for {application?.course?.name} at {application?.course?.university?.name}
+
+                                <p className="mt-2 text-sm sm:text-base text-gray-600 leading-7 max-w-3xl">
+                                  You have started your application for{" "}
+                                  <span className="font-semibold">
+                                    {application?.course?.name}
+                                  </span>{" "}
+                                  at{" "}
+                                  <span className="font-semibold">
+                                    {application?.course?.university?.name}
+                                  </span>
                                 </p>
-                                <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 mt-1 sm:mt-1.5 md:mt-2">
-                                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-orange-600 flex-shrink-0" />
+
+                                <div className="flex items-start gap-3 mt-5">
+                                  <Calendar className="w-5 h-5 text-orange-600 mt-1 shrink-0" />
+
                                   <div>
-                                    <p className="text-[10px] sm:text-xs md:text-sm text-gray-500">
+                                    <p className="text-xs text-gray-500">
                                       Started On
                                     </p>
-                                    <p className="text-xs sm:text-sm md:text-base font-semibold">
+
+                                    <p className="text-sm sm:text-base font-semibold text-gray-900">
                                       {new Date(application?.createdAt).toLocaleString()}
                                     </p>
                                   </div>
                                 </div>
                               </div>
-                              <div className="shrink-0 mt-2 sm:mt-0">
+
+                              {/* Image */}
+                              <div className="lg:col-span-3 order-1 lg:order-2 flex justify-center lg:justify-end">
                                 <img
                                   src="/started-application.gif"
-                                  alt=""
-                                  className="w-24 sm:w-32 md:w-40 lg:w-48 h-18 sm:h-24 md:h-32 lg:h-40"
+                                  alt="Application Started"
+                                  className="w-40 sm:w-52 md:w-64 lg:w-72 xl:w-80 h-auto object-contain"
                                 />
                               </div>
-                            </div>
 
+                            </div>
+                          </div>
                             <div className="bg-white border p-2 sm:p-3 md:p-4 overflow-x-auto">
                               {activeTab === 'information' && (
                                 <div className="space-y-4 sm:space-y-5 md:space-y-8">
@@ -1161,9 +1179,17 @@ export default function StudentDetailsPage() {
                                           <tr>
                                             <td className="border p-1.5 sm:p-2 md:p-3 font-medium bg-gray-50 text-[10px] sm:text-xs md:text-sm">QS Ranking</td>
                                             <td className="border p-1.5 sm:p-2 md:p-3 text-[10px] sm:text-xs md:text-sm">
-                                              {application?.course?.university?.uni_rank?.find(
-                                                (item) => item.type === "QS World"
-                                              )?.rank || "N/A"}
+                                              {/* {application?.course?.university?.uni_rank?.find(
+                                                (item) => item?.type === "QS World"
+                                              )?.rank || "N/A"} */}
+                                              {Array.isArray(application?.course?.university?.uni_rank) ? (
+                                                application?.course?.university?.uni_rank.find(
+                                                  (item) => item?.type === "QS World"
+                                                )?.rank || "N/A"
+                                              ) : (
+                                                "N/A"
+                                              )}
+
                                             </td>
                                           </tr>
                                         </tbody>
@@ -1175,7 +1201,7 @@ export default function StudentDetailsPage() {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-                              <div className="bg-white border p-3 sm:p-4 md:p-6">
+                              <div className="bg-white border rounded-xl p-4 md:p-6 shadow-sm">
                                 <h3 className="text-sm sm:text-base md:text-lg font-semibold mb-2 sm:mb-3 md:mb-4">
                                   Application Tasks
                                 </h3>
@@ -1207,7 +1233,7 @@ export default function StudentDetailsPage() {
                               </div>
 
                               <div className="">
-                                <div className="bg-white border p-3 sm:p-4 md:p-6">
+                                <div className="bg-white border rounded-xl p-4 md:p-6 shadow-sm">
                                   <h3 className="text-sm sm:text-base md:text-lg font-semibold mb-3 sm:mb-4 md:mb-6">
                                     Helpful Information
                                   </h3>
@@ -1251,7 +1277,8 @@ export default function StudentDetailsPage() {
                               </div>
                             </div>
                           </div>
-                        </>
+                          
+                        
                       )}
 
                       {(activeMenu === "Communication" || activeMenu === "Document") && (

@@ -782,7 +782,7 @@ export default function ProgramFilters({
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden lg:block w-full lg:w-[320px] flex-shrink-0 sticky top-4 z-30">
+      <div className="hidden lg:block w-full lg:w-[320px] flex-shrink-0 sticky top-4 z-0">
         <div className="border border-gray-200 bg-white shadow-md overflow-hidden h-full flex flex-col">
           {/* 3. CALL the function instead of rendering as a component */}
           {renderFilterContent()}

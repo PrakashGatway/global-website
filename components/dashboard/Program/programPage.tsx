@@ -822,7 +822,7 @@ useEffect(() => {
         )}
         <div className="flex flex-col lg:flex-row gap-4 items-start">
           {/* LEFT SIDEBAR: FILTERS */}
-          <div className="relative z-99 sticky top-4 self-start">
+          <div className="relative z-9 sticky top-4 self-start">
             <ProgramFilters
             total={total}
               filters={filters}
