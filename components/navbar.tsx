@@ -300,7 +300,7 @@ export default function Navbar({
            
 
             {/* ================= DESKTOP MENU ================= */}
-            <div className={`hidden lg:flex items-center text-black gap-2 ${isScrolled ? "justify-center" : "justify-center pb-4"}`}>
+            <div className={`hidden lg:flex items-center text-black gap-2 ${isScrolled ? "justify-center" : "justify-center "}`}>
               {navbar?.map((item) => (
                 <div key={item.id} className="relative group">
                   <Link
@@ -323,9 +323,9 @@ export default function Navbar({
                         }
                       }}
                     >
-                      <div className="bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.12)] w-[700px] p-5 border border-gray-100">
+                      <div className="bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.12)] w-[600px] p-5 border border-gray-100">
                         {item.type === "destination" ? (
-                          <div className="flex gap-6">
+                          <div className="flex gap-2">
                             {/* Countries Column */}
                             <div className="w-1/3 border-r border-gray-100">
                               <p className="text-sm font-semibold text-gray-800 mb-3 px-1">Countries</p>
@@ -386,7 +386,7 @@ export default function Navbar({
                             </div>
                           </div>
                         ) : (
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-2 gap-0">
                             {(item.type === "service" ? Serviceitem : item.type === "country" ? countryres : uniqueCountries)?.map((items: any) => {
                               const href = item.type == "service" ? `/service/${items.slug}` : `/${items.slug}`;
                               const title = items.navbarTitle || items.name;

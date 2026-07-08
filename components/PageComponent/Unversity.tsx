@@ -81,14 +81,14 @@ export default function UniversitySliderClient({ universities }) {
   ];
 
   return (
-    <section className="max-w-[1440px] mx-auto lg:pt-1 overflow-hidden bg-white">
+    <section className=" mx-auto lg:py-5 overflow-hidden bg-white">
       {universities?.title && (
-        <div className="relative max-w-7xl px-4 mx-auto">
-          <h2 className="text-xl   mb-2 ">
+        <div className="relative max-w-7xl  mx-auto text-left">
+          <h2 className="text-xl  ">
             <span className="text-[#F46C44] lg:text-4xl font-light" >
               {universities?.title?.split('||')[0] || null}
-            </span>{" "} <br />
-            <span className="text-primary font-bold relative lg:text-5xl">
+            </span>{" "}
+            <br /> <span className="text-primary font-bold relative lg:text-4xl">
               {universities?.title?.split('||')[1] || null}
 
 
@@ -111,7 +111,7 @@ export default function UniversitySliderClient({ universities }) {
 
 
               {/* Logo */}
-              <div className="flex items-center justify-center h-[220px] sm:h-[260px] lg:h-[300px] w-full px-2">
+              <div className="flex items-center justify-center h-[220px] sm:h-[260px] lg:h-[200px] w-full ">
                 <Image
                   src={university.src}
                   alt={university.alt}
@@ -210,7 +210,7 @@ export const CountryCardGrid = ({ countries }: { countries: any[] }) => {
   if (!mappedCountries.length) return null;
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-8">
+    <div className="w-full max-w-7xl mx-auto px-4 lg:px-0 py-5">
       {/* Mobile View */}
       <div className="lg:hidden">
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
@@ -272,7 +272,7 @@ function DesktopCard({
   return (
     <motion.a
       href={country.link}
-      className={`relative h-64 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 ease-in-out ${widthClass} bg-gradient-to-br ${country.bgClass} hover:shadow-2xl group`}
+      className={`relative h-60  overflow-hidden cursor-pointer transition-all duration-300 ease-in-out ${widthClass} bg-gradient-to-br ${country.bgClass} hover:shadow-2xl group`}
       onHoverStart={() => setHoveredId(country.id)}
       onHoverEnd={() => setHoveredId(null)}
       initial={{ opacity: 0, y: 30 }}
@@ -296,20 +296,20 @@ function DesktopCard({
       absolute top-4 left-4 z-20
       bg-black/50 backdrop-blur-sm
       text-white text-xs font-semibold
-      px-3 py-1 rounded-full
+      px-1 py-1 rounded-full
       shadow-lg
     "
         >
           <span className="flex items-center gap-2">
             <Image
-              className="w-8 h-8 rounded-[8px] object-cover"
+              className="w-6 h-6 rounded-full object-cover"
               src={country.navbarImage}
               alt={country.country.name}
               width={32}
               height={32}
             />
 
-            <span className="whitespace-nowrap">
+            <span className="whitespace-nowrap pe-2 ">
               {country.country.name}
             </span>
           </span>
@@ -317,10 +317,9 @@ function DesktopCard({
       )}
 
       <div className="absolute bottom-0 left-0 right-0 z-20 p-5 text-white transition-all ">
-        <h3 className="text-2xl font-bold leading-tight">{country?.name}</h3>
+        <h3 className={` font-bold leading-tight transition-all duration-300 ease-in-out ${hoveredId === country.id ? "text-3xl" : "text-xl"}`}>{country.country.name || country.name}</h3>
         <p className="text-sm text-white/90 mt-1 line-clamp-2">{country?.description}</p>
-
-        <span className="inline-flex items-center gap-1 hover:text-orange-500 mt-5  text-white text-xs font-bold px-4  ">
+        <span className="inline-flex items-center gap-1 hover:text-orange-500 mt-1 text-gray-300 text-sm">
           Explore {country.name.split(' ')[0]} →
         </span>
       </div>

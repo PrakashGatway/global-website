@@ -254,7 +254,7 @@ export default function Homepage({
           slides: { perView: 2, spacing: 20 },
         },
         "(min-width: 1024px)": {
-          slides: { perView: 3, spacing: 0 },
+          slides: { perView: 3, spacing: 10 },
         },
       },
     },
@@ -422,15 +422,15 @@ export default function Homepage({
 
                 {homePage?.hero?.heroImage && (
                   <div
-                    className="relative z-1 right-22  bottom-0"
+                    className="relative z-1 lg:right-22  lg:bottom-0"
                   >
                     <Image
                       src={homePage?.hero?.heroImage.trim()}
-                      width={450}
+                      width={400}
                       height={900}
                       alt="cap"
                       loading="lazy"
-                      className="lg:w-[320px] w-[400px]"
+                      className="lg:w-[320px] w-[300px]"
                     />
                   </div>
                 )}
@@ -440,11 +440,11 @@ export default function Homepage({
         </div>
       </section>
 
-      <section className=" bg-white shadow-xl -mt-2 relative z-10 ">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <section className=" bg-white shadow-xl -mt-2 relative z-10 overflow-hidden ">
+        <div className="max-w-7xl mx-auto grid grid-cols-2  sm:grid-cols-3 lg:grid-cols-5 gap-4">
           {/* Card */}
           {homePage?.stats?.items?.map((stat, index) => (
-            <div key={index} className="  rounded-2xl px-4 py-6 flex items-center gap-3 
+            <div key={index} className="  rounded-2xl px-4 py-6  flex items-center gap-3 
             ">
               <Image
                 src={statImages[index % statImages.length]}
@@ -751,7 +751,7 @@ export default function Homepage({
         <div className="absolute -right-20 top-[0%] opacity-30 pointer-events-none hidden lg:block"></div>
 
         <div className="max-w-7xl mx-auto">
-          <div className="w-full px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="w-full px-4 sm:px-6 lg:px-0 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-2 items-center w-full min-h-[500px]">
               <div
 
@@ -827,14 +827,14 @@ export default function Homepage({
       </section>
 
       <section className="lg:py-5 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 overflow-hidden ">
-          <div className="mb-12">
+        <div className="max-w-7xl mx-auto overflow-hidden ">
+          <div className="mb-12 text-left">
             <h2 className="text-xl mb-2">
               <span className="text-[#F46C44] lg:text-4xl font-light">
                 {homePage?.topUniversities?.title?.split("||")[0]?.trim()}
               </span>{" "}
-              <br />
-              <span className="text-primary font-bold relative lg:text-5xl">
+            
+            <br />  <span className="text-primary font-bold relative lg:text-4xl">
                 {homePage?.topUniversities?.title?.split("||")[1]?.trim()}
               </span>
             </h2>
@@ -846,11 +846,11 @@ export default function Homepage({
             ></div>
           </div>
 
-          <div ref={sliderRefD} className="keen-slider items-start">
+          <div ref={sliderRefD} className="keen-slider items-start ">
             {destinationData.map((item) => (
-              <div key={item._id} className="keen-slider__slide p-4">
+              <div key={item._id} className="keen-slider__slide ">
                 <Link href={`/universities/group/${item.slug}`}>
-                  <div className="border border-gray-300 bg-white overflow-hidden hover:shadow-lg transition duration-300">
+                  <div className="border border-gray-300 bg-white overflow-hidden hover:shadow-lg transition duration-300 ">
                     {/* Image */}
                     <Image
                       src={
@@ -885,14 +885,14 @@ export default function Homepage({
 
       <UniversitySliderClient universities={homePage.universities} />
 
-      <section className="max-w-7xl mx-auto  py-5 px-4 lg:px-4">
+      <section className="max-w-7xl mx-auto  py-5 px-4 lg:px-0">
         {/* Heading */}
-        <div className="mb-10">
+        <div className="text-left">
           <h2 className="text-primary">
-            <span className="text-[#F46C44] font-light block text-xl lg:text-4xl">
+            <span className="text-[#F46C44] font-light  text-xl lg:text-4xl">
               {homePage.studyDestinations.title.split("||")[0]}
             </span>
-            <span className="font-bold text-xl lg:text-5xl relative">
+          <br />  <span className="font-bold text-xl lg:text-4xl relative">
               {" "}
               {homePage.studyDestinations.title.split("||")[1]}
             </span>
@@ -1037,72 +1037,68 @@ export default function Homepage({
         </div> */}
       </section>
 
-      <section className="w-full py-6 lg:py-16 px-1 md:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="rounded-3xl p-4 md:p-8 lg:p-12">
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-0 relative">
-              {/* Left Panel */}
-              <div
-                className="bg-[#F46C44] overflow-hidden rounded-2xl p-4 md:p-8 flex flex-col justify-center 
-        lg:min-w-[280px] lg:max-w-[320px] 
-        h-full lg:h-[380px] 
-        z-10 lg:mt-24"
-              >
-                <h2 className="  text-white text-primary">
-                  <span className=" font-light block text-xl lg:text-4xl">
-                    {homePage?.serviceSection?.title.split("||")[0]}
-                  </span>
-                  <span className="font-bold text-xl lg:text-2xl relative">
-                    {" "}
-                    {homePage?.serviceSection?.title.split("||")[1]}
-                  </span>
-                </h2>
-              </div>
+      <section className="w-full py-12 lg:py-5 px-4 md:px-0 bg-white">
+  <div className="max-w-7xl mx-auto">
+    {/* Header */}
+    <div className="text-left mb-12 lg:mb-16">
+      <h2 className="text-primary">
+        <span className="font-light block text-3xl lg:text-4xl mb-2 text-[#F46C44]">
+          {homePage?.serviceSection?.title.split("||")[0]}
+        </span>
+        <span className="font-bold text-2xl lg:text-4xl">
+          {homePage?.serviceSection?.title.split("||")[1]}
+        </span>
+      </h2>
+    </div>
 
-              {/* Border Box (Desktop only) */}
-              <div className="hidden lg:block absolute h-[83%] w-[90%] border-2 shadow border-[#F46C44] left-40 -bottom-10 rounded-4xl z-0"></div>
+    {/* Steps Cards */}
+   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-4">
+{homePage?.serviceSection?.services?.map((service) => (
+  <div
+    key={service.title}
+    className="group relative overflow-hidden bg-white border border-gray-200 p-7 transition-all duration-500 hover:-translate-y-2 hover:border-[#F46C44] hover:shadow-[0_20px_45px_rgba(244,108,68,0.12)]"
+  >
+    {/* Background Decoration */}
+    <div className="absolute top-0 right-0 h-24 w-24 rounded-full bg-orange-50 blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
 
-              {/* Services Grid */}
-              <div className="flex-1 lg:pl-6 bg-white relative z-10">
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 bg-white">
-                  {homePage?.serviceSection?.services?.map((service) => (
-                    <div
-                      key={service.title}
-                      className="group rounded-2xl bg-gray-100 p-4 md:p-6 hover:shadow-lg transition-all duration-300 text-center"
-                    >
-                      {/* Icon */}
-                      <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center mb-3 md:mb-4 mx-auto">
-                        <img
-                          src={service.icon || "https://cdn-icons-png.flaticon.com/512/5474/5474438.png"}
-                          alt="img"
-                          width="1000"
-                          height="1000"
-                        />
-                      </div>
+    {/* Icon */}
+   
 
-                      {/* Title */}
-                      <h3 className="text-base md:text-lg font-bold text-primary mb-1 md:mb-2">
-                        {service.title}
-                      </h3>
+    {/* Heading */}
+    <div className="flex gap-2 items-center">
+       <div className="relative mb-6 flex h-full w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#FFF4EF] to-[#FFE8DF] shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 p-2">
+      <img
+        src={
+          service.icon ||
+          "https://cdn-icons-png.flaticon.com/512/5474/5474438.png"
+        }
+        alt={service.title}
+        className="h-9 w-9 object-contain"
+      />
+    </div>
+    <div className="relative mb-4">
+      <h3 className="text-xl font-bold leading-snug text-[#1F2937] transition-colors duration-300 group-hover:text-[#F46C44]">
+        {service.title}
+      </h3>
+    </div>
+    </div>
+    
 
-                      {/* Description */}
-                      <span
-                        className="text-sm md:text-sm text-muted-foreground leading-relaxed line-clamp-4 md:line-clamp-5"
-                        dangerouslySetInnerHTML={{
-                          __html: service.subTitle || "",
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+    {/* Description */}
+    <div
+      className="relative text-[15px] leading-7 text-gray-600"
+      dangerouslySetInnerHTML={{
+        __html: service.subTitle || "",
+      }}
+    />
+  </div>
+))}
+</div>
+  </div>
+</section>
 
       <div className="bg-[#F46C44] py-10 ">
-        <h2 className=" max-w-7xl mx-auto  text-primary text-white mb-10 px-4 lg:px-0">
+        <h2 className=" max-w-7xl mx-auto  text-primary text-white mb-1 px-4 lg:px-0">
           <span className=" font-light block text-xl lg:text-4xl">
             {homePage?.topUniversity?.title.split("||")[0]}
           </span>
