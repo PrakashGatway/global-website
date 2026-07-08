@@ -19,6 +19,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useKeenSlider } from 'keen-slider/react'
 import AuthorCard from './author/author'
+import VisaDetails from './dashboard/VisaDetails/visaDetails'
 
 
 
@@ -958,14 +959,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
         if (originalName === 'visastories' || name === 'visaStories') {
           return visaStories?.length > 0 && (
-            <StudentVisaStories
-              key={`${name}-${order}`}
-              title={data?.title}
-              subtitle={data?.subtitle}
-              stories={visaStories}
-              autoSlideInterval={5000}
-              tag={data?.tag}
-            />
+             <VisaDetails/>
           )
         }
 

@@ -14,6 +14,7 @@ import { DynamicLucideIcon } from "../DynamicLucideIcon";
 import VideoTestimonialsSlider from "../PageComponent/VideoTestimonial";
 import StudentVisaStories from "../Studentvisa";
 import ScholarshipList from "./Scholarship";
+import VisaDetails from "../dashboard/VisaDetails/visaDetails";
 
 // --- Helper: Autoplay Plugin for Keen Slider ---
 const autoplay = (slider) => {
@@ -889,12 +890,7 @@ const VisaStoriesWrapper = ({ data, testimonialimg }) => {
   const filtervisa = testimonialimg?.filter((item) => item.target === "visa") || [];
   //console.log(data.title)
   return (
-    <StudentVisaStories
-      stories={filtervisa}
-      title={data?.title}
-      subtitle={data?.subtitle}
-      tag={data?.tag}
-    />
+     <VisaDetails/>
   );
 };
 
