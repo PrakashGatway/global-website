@@ -248,7 +248,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
           <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold leading-tight mb-4 text-top">
             {blog.title}
           </h1>
-          <div className="relative w-full h-[220px] sm:h-[300px] md:h-[400px] lg:h-[500px] xl:h-[600px]">
+          <div className="relative w-full ">
             <Image
               src={
                 blog?.coverImage?.trim()
@@ -256,11 +256,9 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
                   : "https://static-cse.canva.com/blob/1134734/Thepowerofheroimagedesignfeaturedimage.jpg"
               }
               alt={blog.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 640px) 100vw,
-           (max-width: 1024px) 100vw,
-           1200px"
+              className="w-full h-full object-cover rounded-2xl"
+              height={500}
+              width={500}
               priority
             />
           </div>
@@ -289,6 +287,9 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
       font-size: 15px;
       overflow-x: auto !important;
     }
+    .blog-html td p {
+    white-space: nowrap;
+}
 
     .blog-html th,
     .blog-html td {
