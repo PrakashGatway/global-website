@@ -16,7 +16,7 @@ const useFirebaseNotification = (userId) => {
         const permission = await Notification.requestPermission();
 
         if (permission !== "granted") {
-          console.log("Permission denied");
+          //console.log("Permission denied");
           return;
         }
 

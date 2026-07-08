@@ -43,9 +43,7 @@ export default function VisaProcessingListPage() {
   const fetchVisaApplications = async () => {
     try {
       setLoading(true);
-      console.log("data visa ")
       const response = await axiosInstance.get('/visa/counsellor');
-      console.log("API Response:", response.data);
       
       if (response.data.success && Array.isArray(response.data.data)) {
         setVisaApplications(response.data.data);

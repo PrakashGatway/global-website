@@ -82,8 +82,6 @@ export default function LoanApplicationForm({ onSubmit }: LoanFormProps) {
     if (onSubmit) {
       onSubmit(data);
     }
-    console.log('Form Data:', data);
-    // Handle form submission here
   };
 
   // Animation variants

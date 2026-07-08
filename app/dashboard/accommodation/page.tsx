@@ -215,7 +215,6 @@ export default function AccommodationPage() {
             setcountries(data);
             setcities(data1);
             sethotels(hotel.data.data)
-            console.log(data,data1);
         } catch (error) {
             console.error("server side error : ", error);
         }

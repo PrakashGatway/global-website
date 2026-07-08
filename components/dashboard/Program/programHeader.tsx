@@ -143,7 +143,7 @@ export default function ProgramHeader({
         label: item.label,
     }));
 
-    console.log("Program Levels:", categories);
+    //console.log("Program Levels:", categories);
 
     const programLevelOptions = levels.map((item: any) => ({
         value: item.value,

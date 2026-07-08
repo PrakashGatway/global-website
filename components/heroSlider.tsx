@@ -111,7 +111,7 @@ useEffect(() => {
   }
 
   const currentItem = galleryItems[currentIndex];
-// console.log("currentItem" , currentItem.url)  
+// //console.log("currentItem" , currentItem.url)  
   return (
     <div className="relative h-[300px] w-full overflow-hidden rounded-xl">
       {/* Main Slider */}

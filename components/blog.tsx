@@ -25,8 +25,10 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [isPending, startTransition] = useTransition();
+  
 
   const totalPages = Math.ceil(total / limit);
+  
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -86,96 +88,87 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
 
   return (
     <>
-      <section className="relative py-8 sm:py-12 lg:py-20 bg-[#fffaf7] overflow-hidden">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6">
-          <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
-            {/* Heading */}
-            <h1 className="text-3xl sm:text-5xl lg:text-[7.6rem] font-bold text-[#636363] flex items-center justify-center gap-1 sm:gap-2">
-              BLO
-              <Image
-                src="/images/g logo.png"
-                alt="G Logo"
-                loading="lazy"
-                width={120}
-                height={120}
-                className="w-8 h-8 sm:w-12 sm:h-12 lg:w-35 lg:h-[6.6rem] object-contain"
-              />
-              S
-            </h1>
+      <section className="relative bg-white   py-8 relative sm:py-12 lg:py-4 overflow-hidden">
+        <div className="max-w-4xl bg-orange-200/20 rounded-2xl lg:p-10 mx-auto px-3 sm:px-6">
+          <div className=" w-full  py-16 lg:py-1 px-6 md:px-12 overflow-hidden rounded-3xl">
 
-            {/* Subtitle */}
-            <p className="text-sm sm:text-base lg:text-lg font-medium text-gray-600 leading-relaxed max-w-3xl mx-auto px-1">
-              Studying abroad is not only academic experience but it&apos;s a
-              lifetime experience. Global Study Abroad Blog will help you with
-              best resources, advice and tips.
-            </p>
+  <div className="relative max-w-6xl mx-auto">
 
-            {/* Search Bar */}
-            <div className="max-w-4xl mx-auto mt-4 sm:mt-8">
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 p-2 sm:p-2.5 px-3 sm:px-4 rounded lg:rounded-full shadow-lg border border-gray-400">
-                {/* Input */}
-                <div className="flex-1 flex items-center gap-2 sm:gap-3">
-                  <svg
-                    className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
 
-                  <input
-                    type="text"
-                    placeholder="What are you looking for?"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1 outline-none text-gray-700 text-sm sm:text-base"
-                  />
-                </div>
+    {/* Heading */}
+    <h1 className="text-4xl text-center md:text-5xl lg:text-7xl font-bold text-[#FF6B35] leading-tight">
+      BLOGS
+    </h1>
 
-                {/* Button */}
-                <button className="w-full sm:w-auto bg-[#4A4A4A] rounded-full hover:bg-gray-700 text-white px-5 sm:px-8 py-2.5 sm:py-3 text-sm sm:text-base font-bold transition-all">
-                  Search
-                </button>
-              </div>
-            </div>
-          </div>
+    {/* Description */}
+    <p className="mt-1 text-black text-center text-base md:text-lg lg:text-base leading-relaxed max-w-3xl mx-auto">
+      Studying abroad is not only an academic experience—it&apos;s a lifetime
+      journey. Explore expert guidance, visa tips, university updates, and
+      everything you need to make your global education dream a reality.
+    </p>
+
+    {/* Search */}
+    <div className="max-w-3xl mt-4 mx-auto">
+      <div className="flex flex-col sm:flex-row items-center bg-white rounded-[20px] p-1">
+        <div className="flex items-center flex-1 px-5 w-full">
+          <svg
+            className="w-5 h-5 text-gray-400 mr-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+
+          <input
+            type="text"
+            placeholder="What are you looking for?"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full py-1 outline-none text-gray-700 bg-transparent"
+          />
+        </div>
+
+        <button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-400 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300">
+          Search
+        </button>
+      </div>
+    </div>
+
+  
+  </div>
+</div>
         </div>
       </section>
 
-      <section className="py-10">
+      <section className="py-0 bg-white">
         <div className="mx-auto px-0">
           <div
             className="
     relative
-    bg-[#FF6B35]
-    px-2 sm:p-8 md:p-12
+    
+    max-w-7xl mx-auto
+    px-2 sm:p-8 md:p-2
     overflow-hidden
     min-h-[250px]
     sm:min-h-[360px]
-    lg:min-h-[390px]
-    md:bg-[url('/images/map.png')]
-    bg-no-repeat
-    bg-center
-    lg:bg-left
-    bg-contain
-    lg:bg-[length:50%_auto]
+    lg:min-h-[0px]
+   
     
   "
           >
             {/* FILTER TAGS */}
             <div
               className="
-          absolute
-          lg:-right-10
+         
           z-15
           flex
-          flex-col
+         
           gap-3
           mt-6
           items-center
@@ -183,7 +176,7 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
           lg:items-left
           lg:mr-40
           lg:mt-8
-          max-w-160
+          w-full
 
         "
             >
@@ -195,11 +188,11 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
                     router.push(pathname);
                   }}
                   className={`
-    px-6 py-3 font-semibold
+    px-6 py-3 font-semibold border border-gray-400 
     ${
       activeCategory === "all"
-        ? "bg-gray-600 text-white rounded-tl-[20px] text-sm lg:text-base"
-        : "bg-white text-gray-800"
+        ? "bg-[#FF6B35] text-white rounded-xl text-sm lg:text-base"
+        : " text-gray-800 rounded-xl"
     }
   `}
                 >
@@ -212,11 +205,11 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
                     onClick={() => handleCategoryClick(cat.slug)}
                     className={`
       px-6 py-3 font-semibold
-      transition-all
+      transition-all border border-gray-400
       ${
         activeCategory === cat.slug
-          ? "bg-gray-600 text-white rounded-tl-[20px] text-sm lg:text-base "
-          : "bg-white text-gray-800 hover:bg-gray-600 hover:text-white lg:text-base text-sm"
+          ? "bg-[#FF6B35] text-white rounded-xl text-sm lg:text-base "
+          : "bg-white text-gray-800 rounded-xl hover:bg-[#FF6B35] hover:text-white lg:text-base text-sm"
       }
     `}
                   >
@@ -233,7 +226,7 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
       <BlogGrid filteredBlogs={filteredBlogs} />
 
       {/* Pagination */}
-      <section className="py-12 bg-white">
+      <section className="py-4 bg-white">
         <div className="container mx-auto px-6">
           <div className="flex justify-center items-center gap-2 flex-wrap">
             {page > 1 ? (
@@ -289,7 +282,7 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
       </section>
 
       {/* Join Our Exclusive Study Abroad Network */}
-      <section className="py-6 sm:py-8 lg:py-10 bg-[#FF6B35] relative overflow-visible">
+      <section className="py-6 sm:py-8 lg:py-4 bg-[#FF6B35] relative overflow-visible">
         <div className="container mx-auto px-3 sm:px-6">
           <div className="max-w-4xl mx-auto text-left lg:text-center">
             {/* Heading */}
@@ -353,12 +346,12 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
           </div>
         </div>
       </section>
-      <section className="py-12 bg-white">
+      <section className="py-2 bg-white">
         <UniversitySliderClient />
       </section>
 
       {/* Book Your Online Counselling Session */}
-      <section id="contact-form" className="py-20 bg-white">
+      <section id="contact-form" className="py-2 bg-white">
         <div className="max-w-7xl mx-auto px-2">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>

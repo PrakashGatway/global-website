@@ -19,6 +19,7 @@ import {
 } from "@/lib/firebase";
 import axiosInstance from "../axiosInstance"
 import { toast } from "sonner" // Make sure to import toast
+import DriverTour from "@/components/Tour/DriverTour"
 
 export default function DashboardLayout({
   children,
@@ -51,7 +52,7 @@ export default function DashboardLayout({
     try {
       // Check if Notification API is available
       if (typeof Notification === 'undefined') {
-        console.log('Notification API not supported');
+        //console.log('Notification API not supported');
         return;
       }
 
@@ -74,7 +75,7 @@ export default function DashboardLayout({
         }
       }
     } catch (error) {
-      console.log('Error requesting notification permission:', error);
+      //console.log('Error requesting notification permission:', error);
       tokenRequestedRef.current = false;
     }
   };
@@ -104,6 +105,18 @@ export default function DashboardLayout({
     window.location.replace("/login")
     return null
   }
+
+  const [startTour, setStartTour] = useState(false);
+
+  useEffect(() => {
+    const hasSeen = localStorage.getItem("dashboardTour");
+
+    if (!hasSeen) {
+      setTimeout(() => {
+        setStartTour(true);
+      }, 500);
+    }
+  }, []);
 
   if (loading) {
     return null
@@ -139,10 +152,16 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-white">
+      <DriverTour
+        start={startTour}
+        onFinish={() => setStartTour(false)}
+      />
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
+          <div id="overview">
           <DashboardHeader profile={profile} Logout={Logout} />
+          </div>
           <main
             ref={containerRef}
             className="flex-1 overflow-y-auto pb-20 lg:pb-0"

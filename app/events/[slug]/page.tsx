@@ -69,7 +69,6 @@ export default async function EventDetailPage({
 
     try {
         const res = await serverInstance.get(`/blogs/${slug}`)
-        console.log("Event Data:", res.data)
         event = res.data.data
     } catch (error) {
         console.error("Error fetching event:", error)

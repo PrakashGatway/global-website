@@ -156,7 +156,7 @@ export default function ScholarshipPage() {
 
         }
         catch (error) {
-            console.log(error);
+            //console.log(error);
             alert("Error...");
         }
     }

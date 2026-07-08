@@ -54,7 +54,6 @@ export default async function CaseDetailsPage({
     try {
         const res = await serverInstance.get(`/testimonials/${slug}`)
         blog = res.data.data
-        console.log("Blog Data:", blog)
     } catch (error) {
         console.error("Error fetching blog:", error)
         return notFound()

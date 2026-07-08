@@ -71,7 +71,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
         payload
       );
 
-      console.log(documentId)
+      //console.log(documentId)
 
       toast.success("Document status updated successfully");
       setShowActionModal(false);
@@ -149,7 +149,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
         });
         await fetchApplication()
         toast.success("Visa application submitted successfully!");
-        console.log(res.data);
+        //console.log(res.data);
       } else {
         const res = await axiosInstance.put(
           `/applications/${application?._id}`,
@@ -863,7 +863,7 @@ export default function SubmittedtoSchool({ currentstep, application, profile, a
                         ))
 
                       ) : currentstep.step === "AwaitingSchoolResponse" ? activity?.map((item, index) => {
-                        console.log(item)
+                        //console.log(item)
                         return (
                           <>
                             {item.newValue === "AwaitingSchoolResponse" && (

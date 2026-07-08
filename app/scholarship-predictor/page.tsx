@@ -448,7 +448,6 @@ const ScholarshipPredictor = () => {
   }
 
   const onSubmit = (data: any) => {
-    console.log("Form Data:", data)
     alert("Thank you! Your scholarship predictions will be sent to your email.")
     // Here you can send data to your API
   }

@@ -41,7 +41,7 @@ interface Message {
             const data = res.data?.data || res.data || [];
             if (Array.isArray(data)) {
                 setMessages(data);
-                console.log(data);
+                //console.log(data);
             }
         } catch (err) {
             console.error("Fetch error:", err);

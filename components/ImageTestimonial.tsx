@@ -54,7 +54,6 @@ export default function ImageTestimonial({
           cancelAnimationFrame(raf);
         });
       };
-      console.log(items)
 
       slider = new KeenSlider(
         sliderRef.current!,

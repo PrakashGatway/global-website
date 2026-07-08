@@ -5,7 +5,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 
 
 export default function BlogGrid({ filteredBlogs }) {
@@ -24,11 +24,11 @@ export default function BlogGrid({ filteredBlogs }) {
 
     return (
         <>
-            <section className=" py-12 sm:py-14 lg:py-16 px-2 relative overflow-hidden bg-white">
+            <section className=" py-12 sm:py-14 lg:py-4 px-2 relative overflow-hidden bg-white">
 
                 <div className="max-w-7xl mx-auto">
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-12 relative z-[10]">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-4 relative z-[10]">
                         {filteredBlogs.length > 0 ? (
                             filteredBlogs.map((post) => (
                                 <div
@@ -97,3 +97,5 @@ export default function BlogGrid({ filteredBlogs }) {
         </>
     )
 }
+
+

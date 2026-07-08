@@ -303,7 +303,7 @@ function DocumentPreviewModal({
   url: string;
   onClose: () => void;
 }) {
-    console.log(url)
+    //console.log(url)
   return (
     <motion.div
       initial={{ opacity: 0 }}

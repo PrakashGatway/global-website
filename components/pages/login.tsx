@@ -100,7 +100,7 @@ export default function LoginPage() {
         localStorage.setItem("token", res.data.token)
         setMode("success")
         setTimeout(() => {
-          console.log(res.data)
+          //console.log(res.data)
         if(res.data.role === "user"){
           window.location.href = !res.data.hasPreference ? "/onboarding" : "/dashboard"
         } else {

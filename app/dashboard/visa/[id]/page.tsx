@@ -2288,9 +2288,8 @@ const visaJourneyData = {
   const visaDetilas = async () => {
     try {
       const url = await axiosInstance.get('/visa/my');
-      console.log(url.data);
     } catch (error) {
-        console.log(error);
+        //console.log(error);
     }
   }
 

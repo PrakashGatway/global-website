@@ -365,19 +365,13 @@ export default function CountriesPage() {
                 toast.success(
                     "Removed from shortlist"
                 );
-
             } else {
-
                 toast.success(
                     "Shortlisted Successfully"
                 );
-
             }
-
         } catch (error) {
-
-            console.log(error);
-
+            //console.log(error);
         }
 
     };
@@ -459,7 +453,7 @@ export default function CountriesPage() {
                 const entry = entries[0]
 
                 if (entry.isIntersecting && hasMore && !loading) {
-                    console.log('Loading next page...')
+                    //console.log('Loading next page...')
                     setPage((prev) => prev + 1)
                 }
             },

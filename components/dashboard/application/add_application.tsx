@@ -49,7 +49,7 @@ const ModalFieldRenderer = ({ field, value, onChange, options = [], selectedCour
 
     if (field.type === 'select') {
         const selectOptions = options.length > 0 ? options : (field.options || []).map(o => typeof o === 'string' ? { label: o, value: o } : o);
-        console.log(options)
+        //console.log(options)
         return (
             <select value={value || ""} onChange={(e) => onChange(e.target.value)} className={baseClass}>
                 <option value="">Select {field.label}</option>
@@ -186,7 +186,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
     const [intakes, setIntakes] = useState([]);
 
 
-    console.log(selectedCourse)
+    //console.log(selectedCourse)
 
 
     // Debounced search effect
@@ -264,7 +264,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
             axiosInstance.get(`/courses?university=${formData.university}& isExtra= false`)
                 .then(res => {
                     const data = res.data.data || res.data || [];
-                    console.log(data)
+                    //console.log(data)
                     setCourses(
                         data.map((c) => ({
                             label: c.name,
@@ -513,7 +513,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
                                             <h3 className="text-lg font-semibold text-gray-800 mb-4">{currentStepData.name}</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 {currentStepData.fields.map(field => {
-                                                    console.log(field)
+                                                    //console.log(field)
                                                     return (
 
                                                         <div key={field.name} className="space-y-2">
