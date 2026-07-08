@@ -12,6 +12,7 @@ import StudentVisaStories from "./Studentvisa"
 import VideoTestimonialsSlider from "./PageComponent/VideoTestimonial"
 import { useCallback, useEffect, useState } from "react"
 import { useGlobal } from "@/src/statecontext"
+import VisaDetails from "./dashboard/VisaDetails/visaDetails"
 
 
 
@@ -287,8 +288,20 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
       font-size: 15px;
       overflow-x: auto !important;
     }
-    .blog-html td p {
-    white-space: nowrap;
+
+    .blog-html table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.blog-html table td,
+.blog-html table th {
+  width: 50%;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  word-break: break-word;
+  vertical-align: top;
 }
 
     .blog-html th,
@@ -729,10 +742,12 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
       <UniversityCard university={uniblog.result} perView={3} />
 
       {/* <VideoTestimonialsSlider items={videoData}/> */}
-      <div className="py-10">
+      {/* <div className="py-10">
         <StudentVisaStories stories={visacontent} isSameLine={"no"} />
 
-      </div>
+      </div> */}
+
+      <VisaDetails/>
 
       <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-0">
