@@ -12,6 +12,7 @@ interface DriverTourProps {
 
 export default function DriverTour({
     start,
+    profile,
     onFinish,
 }: DriverTourProps) {
     useEffect(() => {
@@ -499,7 +500,7 @@ export default function DriverTour({
             ],
 
             onDestroyed: () => {
-                localStorage.setItem("dashboardTour", "true");
+                localStorage.setItem(`dashboardTour_${profile.email}`, "true");
                 onFinish?.();
             },
         });

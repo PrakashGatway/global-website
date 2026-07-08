@@ -32,7 +32,6 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile)
   const { profile, loading, Logout } = useGlobal();
 
-  // Add a ref to track if token has been requested/saved
   const tokenRequestedRef = useRef(false);
 
   useEffect(() => {
@@ -46,27 +45,21 @@ export default function DashboardLayout({
       tokenRequestedRef.current = true; // Mark as requested immediately to prevent multiple calls
       requestPermission();
     }
-  }, [profile, loading]); // Remove requestPermission from dependencies
+  }, [profile, loading]);
 
   const requestPermission = async () => {
     try {
-      // Check if Notification API is available
       if (typeof Notification === 'undefined') {
-        //console.log('Notification API not supported');
         return;
       }
-
       const permission = await Notification.requestPermission();
-
       if (permission === "granted") {
         if (!messaging) {
           return;
         }
-
         const token = await getToken(messaging, {
           vapidKey: "BDyrqnEnHplqPQDrfienXIeY4eo49-eCp3Sq7kp78t1RXwPWnUpILuTdBJXY2Isu5fZNX6fDV1FhF6m7yP0Hr2s",
         });
-
         if (token && profile?._id) {
           await axiosInstance.post('/users/save-token', {
             token,
@@ -75,7 +68,6 @@ export default function DashboardLayout({
         }
       }
     } catch (error) {
-      //console.log('Error requesting notification permission:', error);
       tokenRequestedRef.current = false;
     }
   };
@@ -109,14 +101,16 @@ export default function DashboardLayout({
   const [startTour, setStartTour] = useState(false);
 
   useEffect(() => {
-    const hasSeen = localStorage.getItem("dashboardTour");
-
+    if (!profile) return
+    const hasSeen = localStorage.getItem(
+      `dashboardTour_${profile?.email}`
+    );
     if (!hasSeen) {
       setTimeout(() => {
         setStartTour(true);
       }, 500);
     }
-  }, []);
+  }, [profile]);
 
   if (loading) {
     return null
@@ -154,13 +148,14 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-white">
       <DriverTour
         start={startTour}
+        profile={profile}
         onFinish={() => setStartTour(false)}
       />
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex flex-col overflow-hidden">
           <div id="overview">
-          <DashboardHeader profile={profile} Logout={Logout} />
+            <DashboardHeader profile={profile} Logout={Logout} />
           </div>
           <main
             ref={containerRef}
