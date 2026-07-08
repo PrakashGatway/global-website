@@ -68,7 +68,7 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`
-                px-5 sm:px-6 py-2 rounded-full shadow-2xl
+                px-5 sm:px-6 py-2 mt-2 rounded-full shadow-2xl
                 text-sm lg:text-base font-semibold transition-all hover:bg-primary hover:text-white
                 ${
                   activeTab === tab.key
@@ -86,30 +86,28 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
       {/* CONTENT */}
       <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-center sm:items-start">
         {/* LEFT VIDEO PLAYER */}
-        <div className="relative flex-shrink-0">
-          <div className="rounded-2xl overflow-hidden shadow-xl w-[300px] sm:w-[230px]">
-            {activeData?.videoId ? (
-              <iframe
-                src={`https://www.youtube.com/embed/${activeData.videoId}?autoplay=0&modestbranding=1&rel=0`}
-                title={`${activeData.label} Video`}
-                className="w-full h-40"
-                style={{ aspectRatio: "230/250" }}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <Image
-                src="https://gratisography.com/wp-content/uploads/2024/11/gratisography-augmented-reality-800x525.jpg"
-                alt="Team Discussion"
-                width={230}
-                height={250}
-                className="object-cover w-full h-full"
-                loading="lazy"
-              />
-            )}
-          </div>
-        </div>
+       <div className="relative flex-shrink-0">
+  <div className="rounded-2xl overflow-hidden shadow-xl w-[300px] sm:w-[230px]">
+    {activeData?.videoId ? (
+      <iframe
+        src={`https://www.youtube.com/embed/${activeData.videoId}?autoplay=0&modestbranding=1&rel=0`}
+        title={`${activeData.label} Video`}
+        className="w-full h-40"
+        style={{ aspectRatio: "230/250" }}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    ) : (
+      <div
+        className="w-full h-40 flex items-center justify-center bg-gray-100 text-gray-500 font-medium"
+        style={{ aspectRatio: "230/250" }}
+      >
+        No Video Available
+      </div>
+    )}
+  </div>
+</div>
 
         {/* RIGHT CONTENT */}
         <div className="text-center sm:text-left">

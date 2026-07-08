@@ -23,7 +23,7 @@ export function Destinationhome({ homePage }) {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-white py-12 lg:py-20 max-w-[1440px] mx-auto px-4"
+      className="relative bg-white py-12 lg:py-20 max-w-[1280px] mx-auto"
     >
       {/* Title */}
       <div className="text-center mb-10 lg:mb-16">
@@ -54,7 +54,7 @@ export function Destinationhome({ homePage }) {
               key={i}
               ref={(el) => (cardsRef.current[i] = el)}
               style={{top:80+(i+1)*40 + "px"}}
-              className={`sticky rounded-2xl p-6 xl:p-8 bg-white shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300`}
+              className={`sticky rounded-2xl p-6 xl:p-4 bg-white shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300`}
             >
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold mb-4"
@@ -68,7 +68,7 @@ export function Destinationhome({ homePage }) {
               </h3>
 
               <span
-                className="text-base leading-relaxed mb-5 text-gray-600"
+                className="text-base leading-relaxed text-gray-600"
                 dangerouslySetInnerHTML={{
                   __html: step?.description,
                 }}
@@ -76,7 +76,7 @@ export function Destinationhome({ homePage }) {
 
               <Link href={step?.route || "/contact"}>
                 <button
-                  className="text-sm font-semibold px-6 py-2.5 rounded-full border-2 hover:text-white transition-all duration-300 hover:bg-[#1a3a6b] hover:text-white"
+                  className="text-sm font-semibold px-6 py-2 my-2 rounded-full border-2 hover:text-white transition-all duration-300 hover:bg-[#1a3a6b] hover:text-white"
                   style={{
                     borderColor: "#1a3a6b"
                   }}
