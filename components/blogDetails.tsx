@@ -17,24 +17,24 @@ import VisaDetails from "./dashboard/VisaDetails/visaDetails"
 
 
 
-export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBlogs, uniblog, imageData, videoData }) {
+export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBlogs, uniblog, imageData, videoData, isPreview }: any) {
 
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm()
 
-  const [visacontent, setVisaContent] = useState([]);
+  // const [visacontent, setVisaContent] = useState([]);
   const { openPopup } = useGlobal();
 
-  const fetchVisa = useCallback(() => {
-    const filtervisa = imageData.filter(
-      (item) => item.target === "visa"
-    );
-    setVisaContent(filtervisa);
-  }, [imageData]);
+  // const fetchVisa = useCallback(() => {
+  //   const filtervisa = imageData?.filter(
+  //     (item) => item.target === "visa"
+  //   );
+  //   setVisaContent(filtervisa);
+  // }, [imageData]);
 
-  useEffect(() => {
-    fetchVisa();
-  }, [fetchVisa]);
+  // useEffect(() => {
+  //   fetchVisa();
+  // }, [fetchVisa]);
 
 
   const onSubmit = async (data) => {
@@ -60,7 +60,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
     }
   };
 
-  const currentIndex = allBlogs.findIndex(
+  const currentIndex = allBlogs && allBlogs?.findIndex(
     (b: any) => b._id === blog._id
   );
 
@@ -68,7 +68,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
     currentIndex > 0 ? allBlogs[currentIndex - 1] : null;
 
   const nextBlog =
-    currentIndex < allBlogs.length - 1
+    currentIndex < allBlogs?.length - 1
       ? allBlogs[currentIndex + 1]
       : null;
 
@@ -158,7 +158,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
   }, []);
 
   const injectCounsellingButton = (html: string) => {
-    return html.replace(
+    return html?.replace(
       /<div[^>]*id=["']ooshasformshowing["'][^>]*>([\s\S]*?)<\/div>/i,
       (_, content) => `
 <div class="my-4 overflow-hidden rounded-2xl border border-orange-200 bg-[#F46C44] shadow-xl">
@@ -209,10 +209,193 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
   const finalHtml = injectCounsellingButton(htmlWithIds);
   // const htmlWithIds2 = addHeadingIds(blog.description2)
 
-  const cleanedHtml = finalHtml
-    .replace(/table-layout:\s*fixed;?/gi, "table-layout:auto;")
-    .replace(/width:\s*[\d.]+pt;?/gi, "width:100%;");
+  const cleanedHtml = finalHtml?.replace(/table-layout:\s*fixed;?/gi, "table-layout:auto;")?.replace(/width:\s*[\d.]+pt;?/gi, "width:100%;");
   const headings = extractHeadings(blog.description)
+
+  if (isPreview) {
+    return (
+      <div className="">
+        <div>
+          <style>{`
+    .blog-html table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 15px;
+      overflow-x: auto !important;
+    }
+
+    .blog-html table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.blog-html table td,
+.blog-html table th {
+  width: 50%;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  word-break: break-word;
+  vertical-align: top;
+}
+
+    .blog-html th,
+    .blog-html td {
+      border: 1px solid #e5e7eb;
+    }
+
+    .blog-html th {
+      background: #F46C44;
+      text-align: center;
+      color: white;
+      font-weight: 600;
+    }
+          .blog-html tr {
+      text-align: center;
+    }
+            .blog-html table * p {
+      padding: 10px;
+    }
+    
+
+    .blog-html tr:nth-child(even) {
+      background-color: #f3ebeb;
+      
+    }
+    .blog-html h2 {
+      font-size: 26px;
+      margin: 28px 0 12px;
+      font-weight: 700;
+      color: #00306a
+    }
+
+    .blog-html h2 * {
+      font-size: 26px;
+      margin: 28px 0 12px;
+      font-weight: 700;
+      color: #00306a
+    }
+
+    .blog-html h3 {
+      font-size: 20px;
+      margin: 22px 0 10px;
+      font-weight: 600;
+    }
+
+    .blog-html h4 {
+      font-size: 18px;
+      margin: 18px 0 8px;
+      font-weight: 600;
+    }
+
+    .blog-html * a {
+      color: #240dbd;
+    }
+
+    .blog-html p {
+      // padding: 12px;
+      line-height: 1.8;
+    }
+
+    .blog-html ul {
+      margin-left: 22px;
+      list-style: disc;
+    }
+
+    .blog-html ol {
+      margin-left: 22px;
+      list-style: decimal;
+    }
+
+    .blog-html li {
+      margin: 6px 0;
+    }
+
+    .blog-html figure.table {
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    .blog-html strong {
+      font-weight: 600;
+    }
+      html {
+      scroll-behavior: smooth;
+    }
+  `}</style>
+
+          <div className="">
+            <div
+              className="blog-html overflow-x-auto"
+              dangerouslySetInnerHTML={{ __html: cleanedHtml }}
+
+            ></div>
+          </div>
+        </div>
+
+        {/* Blog Meta Info at bottom */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+
+          {/* TAGS */}
+          <div className="flex flex-wrap gap-2">
+            {blog?.tags && blog?.tags?.map((tag, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex justify-between">
+            <Link
+              href={`/author/sakshi-taneja`}
+              className="flex items-center gap-2 group"
+            >
+              <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm">
+                {blog?.author?.charAt(0) || "S"}
+              </div>
+
+              <div>
+                <p className="text-xs text-gray-500">Author</p>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">
+                  {"Sakshi Taneja"}
+                </p>
+              </div>
+            </Link>
+
+            {/* PREV / NEXT NAVIGATION */}
+            <div className="flex justify-between gap-4">
+
+              {/* Previous */}
+              {previousBlog ? (
+                <Link
+                  href={`/blog/${previousBlog.slug}`}
+                  className="flex-1 bg-primary border border-gray-200 rounded-lg p-4 hover:bg-[#F46C44] transition"
+                >
+                  <p className="text-xs text-white ">← Previous</p>
+
+                </Link>
+              ) : <div />}
+
+              {/* Next */}
+              {nextBlog && (
+                <Link
+                  href={`/blog/${nextBlog.slug}`}
+                  className="flex bg-primary border border-gray-200 rounded-lg p-4 text-right hover:bg-[#F46C44] transition"
+                >
+                  <p className="text-xs text-white ">Next →</p>
+
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>)
+  }
+
 
   return (
     <section className="bg-white min-h-screen ">
@@ -640,7 +823,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
             </h3>
 
             <div className="space-y-4">
-              {latestBlogs.map((item: any) => (
+              {latestBlogs && latestBlogs?.map((item: any) => (
                 <Link
                   key={item._id}
                   href={`/blog/${item.slug}`}
@@ -686,7 +869,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
             </h3>
 
             <div className="flex flex-wrap gap-3">
-              {blogCategory.map((cat: any) => (
+              {blogCategory && blogCategory?.map((cat: any) => (
                 <Link
                   key={cat._id}
                   href={`/blog?category=${cat.slug || cat.name}`}
@@ -739,7 +922,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
         </h2>
 
       </div>
-      <UniversityCard university={uniblog.result} perView={3} />
+      {uniblog && <UniversityCard university={uniblog?.result} perView={3} />}
 
       {/* <VideoTestimonialsSlider items={videoData}/> */}
       {/* <div className="py-10">
@@ -747,7 +930,7 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
 
       </div> */}
 
-      <VisaDetails/>
+      <VisaDetails />
 
       <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-0">

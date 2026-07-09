@@ -59,6 +59,12 @@ const counsellor = [
 
 ]
 
+const editor = [
+  { icon: LayoutDashboard, id: "blog", label: "Dashboard", href: "/dashboard" },
+  { icon: Settings, id: "settings", label: "Settings", href: "/dashboard/settings" },
+
+]
+
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const location = usePathname();
@@ -110,7 +116,7 @@ export function Sidebar() {
       {/* Menu Items */}
       <nav className={`flex-1 ${show ? "px-2 py-4 pb-12 space-y-[1.5px]" : "px-3 py-4 space-y-[2px]"}  overflow-y-auto mt-1 no-scrollbar scrollbar-hide scollbar-none`}>
 
-        {(profile.role == "counsellor" ? counsellor : menuItems).map((item) => {
+        {(profile.role == "counsellor" ? counsellor : profile.role == "manager" ? editor : menuItems).map((item) => {
           const isActive =
             location === item.href ||
             (item.href !== "/dashboard" && location.startsWith(item.href));

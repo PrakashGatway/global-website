@@ -26,6 +26,8 @@ import axiosInstance from "@/app/axiosInstance";
 import BlogFormModal from "./blogForm";
 
 const blogService = {
+
+  getBlog: (id) => axiosInstance.get(`/blogs/${id}`).then((res) => res.data.data),
   getBlogs: (params) =>
     axiosInstance.get("/blogs", { params }).then((res) => res.data),
   deleteBlog: (id) => axiosInstance.delete(`/blogs/${id}`).then((res) => res.data),
@@ -37,6 +39,8 @@ const Blogs = () => {
   const router = useRouter();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
+
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState("");
@@ -52,15 +56,23 @@ const Blogs = () => {
   const [showFilters, setShowFilters] = useState(false);
 
 
-   const [showBlogForm, setShowBlogForm] = useState(false);
+  const [showBlogForm, setShowBlogForm] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
 
-    const handleEdit = (blog) => {
-    setEditingBlog(blog);
-    setShowBlogForm(true);
+  const handleEdit = async (blog) => {
+    setLoading1(true);
+    try {
+      const cats = await blogService.getBlog(blog._id);
+      setEditingBlog(cats);
+      setShowBlogForm(true);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setLoading1(false);
+    }
   };
 
-    const handleFormSuccess = () => {
+  const handleFormSuccess = () => {
     setShowBlogForm(false);
     setEditingBlog(null);
     fetchBlogs();
@@ -167,7 +179,17 @@ const Blogs = () => {
     <div className="mx-auto px-4 sm:px-6 lg:px-4 py-4">
       <Toaster />
 
-          <BlogFormModal
+      {loading1 && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
+          <div className="relative h-16 w-16">
+            <div className="absolute inset-0 rounded-full border-[6px] border-orange-200"></div>
+            <div className="absolute inset-0 rounded-full border-[6px] border-transparent border-t-orange-600 border-r-orange-300 animate-spin"></div>
+            {/* <div className="absolute inset-2 rounded-full bg-"></div> */}
+          </div>
+        </div>
+      )}
+
+      <BlogFormModal
         isOpen={showBlogForm}
         onClose={() => {
           setShowBlogForm(false);
@@ -192,12 +214,10 @@ const Blogs = () => {
       </AnimatePresence> */}
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Blog Management</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Manage your blog posts, events, and webinars
-          </p>
+
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -213,7 +233,7 @@ const Blogs = () => {
           >
             <RefreshCw size={18} />
           </button>
-           <button
+          <button
             onClick={() => {
               setEditingBlog(null);
               setShowBlogForm(true);
@@ -361,10 +381,35 @@ const Blogs = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white  shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white shadow-sm border border-gray-200 overflow-hidden">
         {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin -full h-12 w-12 border-b-2 border-orange-600"></div>
+          <div className="">
+            <div className="max-w-full mx-auto">
+              <div className="animate-pulse">
+                <table className="w-full" style={{ border: '1px solid #e5e7eb' }}>
+                  <thead style={{ backgroundColor: '#f9fafb' }}>
+                    <tr>
+                      {[...Array(10)].map((_, i) => (
+                        <th key={i} className="px-4 py-3" style={{ borderRight: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
+                          <div className="h-4 bg-gray-200 rounded w-20"></div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...Array(5)].map((_, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                        {[...Array(10)].map((_, j) => (
+                          <td key={j} className="px-4 py-3" style={{ borderRight: j < 9 ? '1px solid #e5e7eb' : 'none' }}>
+                            <div className="h-4 bg-gray-200 rounded w-full"></div>
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -460,7 +505,7 @@ const Blogs = () => {
                       <td className="px-6 py-4 text-center">
                         <div className="flex justify-center gap-2">
                           <button
-                            onClick={() => router.push(`/admin/blogs/${blog._id}`)}
+                            onClick={() => handleEdit(blog)}
                             className="p-1.5 text-blue-600 hover:bg-blue-50  transition-colors"
                             title="Edit"
                           >
@@ -517,11 +562,10 @@ const Blogs = () => {
                 <button
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
-                  className={`px-3 py-1.5 border  text-sm font-medium transition-colors ${
-                    page === pageNum
-                      ? "border-orange-600 bg-orange-50 text-orange-600"
-                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
-                  }`}
+                  className={`px-3 py-1.5 border  text-sm font-medium transition-colors ${page === pageNum
+                    ? "border-orange-600 bg-orange-50 text-orange-600"
+                    : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                    }`}
                 >
                   {pageNum}
                 </button>
