@@ -88,63 +88,38 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
 
   return (
     <>
-      <section className="relative bg-white   py-8 relative sm:py-12 lg:py-4 overflow-hidden">
-        <div className="max-w-4xl bg-orange-200/20 rounded-2xl lg:p-10 mx-auto px-3 sm:px-6">
-          <div className=" w-full  py-16 lg:py-1 px-6 md:px-12 overflow-hidden rounded-3xl">
+      <section className="relative overflow-hidden  min-h-[420px] z-11"   style={{
+    backgroundImage: `url("/blog-hero.jpeg")`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+  }}>
+  {/* Background Image */}
 
-  <div className="relative max-w-6xl mx-auto">
 
+ 
 
-    {/* Heading */}
-    <h1 className="text-4xl text-center md:text-5xl lg:text-7xl font-bold text-[#FF6B35] leading-tight">
-      BLOGS
-    </h1>
+  {/* Orange Gradient Overlay */}
 
-    {/* Description */}
-    <p className="mt-1 text-black text-center text-base md:text-lg lg:text-base leading-relaxed max-w-3xl mx-auto">
-      Studying abroad is not only an academic experience—it&apos;s a lifetime
-      journey. Explore expert guidance, visa tips, university updates, and
-      everything you need to make your global education dream a reality.
-    </p>
+  {/* Optional Soft Shadow Blend */}
 
-    {/* Search */}
-    <div className="max-w-3xl mt-4 mx-auto">
-      <div className="flex flex-col sm:flex-row items-center bg-white rounded-[20px] p-1">
-        <div className="flex items-center flex-1 px-5 w-full">
-          <svg
-            className="w-5 h-5 text-gray-400 mr-3"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+  {/* Content */}
+  <div className="relative z-10 max-w-7xl mx-auto h-full flex items-center px-6 lg:px-14 py-16">
+    <div className="max-w-xl">
 
-          <input
-            type="text"
-            placeholder="What are you looking for?"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full py-1 outline-none text-gray-700 bg-transparent"
-          />
-        </div>
+      <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-none">
+        Blogs
+      </h1>
 
-        <button className="w-full sm:w-auto bg-orange-500 hover:bg-orange-400 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300">
-          Search
-        </button>
-      </div>
+      <p className="mt-8 text-xl leading-10 text-white/95">
+        Studying abroad is not only an academic experience but it's a
+        lifetime experience. Global Study Abroad Blogs will help you with
+        the best resources, advice and tips.
+      </p>
+
     </div>
-
-  
   </div>
-</div>
-        </div>
-      </section>
+</section>
 
       <section className="py-0 bg-white">
         <div className="mx-auto px-0">
@@ -162,6 +137,39 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
     
   "
           >
+
+               {/* Search */}
+    <div className="max-w-3xl mt-4 mx-auto border border-black rounded-lg">
+      <div className="flex flex-col sm:flex-row items-center bg-white rounded-[20px] p-1">
+        <div className="flex items-center flex-1 px-5 w-full">
+          <svg
+            className="w-5 h-5 text-gray-700 mr-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+
+          <input
+            type="text"
+            placeholder="What are you looking for?"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full py-1 outline-none text-black bg-transparent"
+          />
+        </div>
+
+        <button className="w-full sm:w-auto text-orange-500 font-semibold px-8 py-3 rounded-full transition-all duration-300">
+          Search
+        </button>
+      </div>
+    </div>
             {/* FILTER TAGS */}
             <div
               className="

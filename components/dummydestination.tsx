@@ -23,10 +23,10 @@ export function Destinationhome({ homePage }) {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-white py-12 lg:py-20 max-w-[1280px] mx-auto"
+      className="relative bg-white py-12 lg:py-5 max-w-[1280px] mx-auto"
     >
       {/* Title */}
-      <div className="text-center mb-10 lg:mb-16">
+      <div className="text-center mb-10 lg:py-5">
         <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-primary">
             {homePage?.dreamDestination?.title ? (
               <>

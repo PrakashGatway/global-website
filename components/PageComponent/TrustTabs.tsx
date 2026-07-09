@@ -60,7 +60,7 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
     <section className="mb-6">
       {/* TABS HEADER */}
       <div className="relative mb-8">
-        <div className="absolute -bottom-3 z-11 left-0 right-0 h-[2px] bg-primary" />
+        <div className="absolute -bottom-3 z-11 left-0 right-0 h-[2px] bg-primary " />
 
         <div className="flex flex-wrap justify-start gap-3 sm:gap-2 ">
           {mappedTabs.map((tab) => (
@@ -68,7 +68,7 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`
-                px-5 sm:px-6 py-2 mt-2 rounded-full shadow-2xl
+                px-5 sm:px-6 py-2 mt-8 rounded-full shadow-2xl
                 text-sm lg:text-base font-semibold transition-all hover:bg-primary hover:text-white
                 ${
                   activeTab === tab.key

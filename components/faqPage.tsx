@@ -9,11 +9,11 @@ const FAQSection = ({ Faqres }) => {
   };
 
   return (
-    <section className="py-12 lg:py-10 px-6 max-w-7xl mx-auto    ">
+    <section className="py-5 max-w-7xl mx-auto    ">
       <div className="container   ">
         {/* Header */}
-        <div className="text-justify mb-12 lg:mb-16    ">
-          <h2 className="text-3xl text-gray-900 mb-4 ">
+        <div className="text-justify py-5    ">
+          <h2 className="text-3xl text-gray-900">
             <span className='text-xl lg:text-4xl font-light text-[#F46C44] '>Frequently</span>{" "}
             <br /><span className=' text-xl lg:text-4xl text-primary font-bold relative'>Asked Questions
             </span>
@@ -26,11 +26,11 @@ const FAQSection = ({ Faqres }) => {
             {Faqres && Faqres.length > 0 && (Faqres || []).map((faq, index) => (
               <div
                 key={faq._id || index}
-                className="bg-white rounded-xl py-2 border border-orange-200 overflow-hidden transition-all duration-300"
+                className="bg-white rounded-xl py-4 border border-orange-200 overflow-hidden transition-all duration-300"
               >
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full px-4 lg:px-6 py-3 lg:py-2 text-left flex justify-between items-center focus:outline-none  focus:ring-opacity-50 rounded-xl"
+                  className="w-full px-4 lg:px-6 text-left flex justify-between items-center focus:outline-none  focus:ring-opacity-50 rounded-xl"
                 >
                   <div className=" text-sm lg:text-lg font-medium text-gray-900 pr-4" dangerouslySetInnerHTML={{__html :faq.question}}/>
                  
@@ -54,8 +54,8 @@ const FAQSection = ({ Faqres }) => {
                   className={`overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                     }`}
                 >
-                  <div className="px-6 pb-5 pt-3">
-                    <div className="text-black text-xs lg:text-base leading-relaxed" dangerouslySetInnerHTML={{__html :faq.answer}}/>
+                  <div className="px-6  ">
+                    <div className="text-black text-xs lg:text-base " dangerouslySetInnerHTML={{__html :faq.answer}}/>
                   </div>
                 </div>
               </div>

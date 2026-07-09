@@ -26,10 +26,10 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
   return (
     <>
       {/* Footer */}
-      <footer className="bg-secondary pt-3 overflow-visible relative">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 overflow-visible">
+      <footer className="bg-secondary pt-3 overflow-visible relative mt-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-0 overflow-visible">
           
-          <div className="rounded-[50px] px-6 md:px-12 pt-8 pb-12 relative">
+          <div className="rounded-[50px] px-6 md:px-0 pt-8 pb-12 relative">
             <div className="flex flex-col lg:flex-row">
               {/* CONTENT AREA WITH DIVIDERS */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">

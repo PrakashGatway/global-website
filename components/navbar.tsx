@@ -261,8 +261,8 @@ export default function Navbar({
       >
          {/* Top Bar - Only show when not scrolled */}
             {!isScrolled && (
-              <div className="w-full bg-[#f46c44] justify-end items-center gap-6 lg:flex hidden z-10 px-4 text-white">
-                <div className="flex justify-center items-center gap-2 px-4 py-1.5 rounded-b-2xl text-sm font-medium gap-8">
+              <div className=" bg-[#f46c44] items-center gap-6 lg:flex hidden z-10 px-4 lg:px-0 text-white">
+                <div className="flex w-7xl justify-end   items-center gap-2  py-1.5 rounded-b-2xl text-sm font-medium gap-8">
                   <a href="tel:+919875863347" className="flex items-center gap-2 hover:opacity-80 transition font-medium">
                     <span>Consult With Expert:</span>
                     <span className="font-semibold text-yellow-300">+91 9875863347</span>
@@ -281,9 +281,9 @@ export default function Navbar({
                 </div>
               </div>
             )}
-        <div className={`mx-auto max-w-[1540px] flex items-center justify-between relative transition-all duration-500 ease-in-out text-black ${isScrolled ? "h-full" : ""}`}>
+        <div className={`mx-auto max-w-7xl flex items-center justify-between relative transition-all duration-500 ease-in-out text-black ${isScrolled ? "h-full" : ""}`}>
           {/* Logo */}
-          <div className="items-center text-end px-8 gap-2 bg-white">
+          <div className="items-center text-end px-8 lg:px-0 gap-2 bg-white">
             <Link href="/">
               <Image
                 src="/images/newlogo3.png"
@@ -291,12 +291,12 @@ export default function Navbar({
                 width={800}
                 loading="lazy"
                 height={100}
-                className={`object-contain w-20 m-auto py-2.5 lg:w-28 lg:ml-10 ${isScrolled ? "" : ""}`}
+                className={`object-contain w-20 m-auto py-2.5 lg:w-28  ${isScrolled ? "" : ""}`}
               />
             </Link>
           </div>
 
-          <div className={`flex flex-col  ${isScrolled ? "item-center" : "items-center gap-3 sm:px-15"}`}>
+          <div className={`flex flex-col  ${isScrolled ? "item-center" : "items-center gap-3 sm:px-15 lg:px-0"}`}>
            
 
             {/* ================= DESKTOP MENU ================= */}
@@ -413,7 +413,7 @@ export default function Navbar({
           </div>
 
           {isScrolled && (
-            <div className="lg:flex items-center mr-4 hidden">
+            <div className="lg:flex items-center hidden">
               {Login && profile ? (
                 <>
                   <div className="relative group">

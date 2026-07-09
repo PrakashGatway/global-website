@@ -21,6 +21,7 @@ import { DynamicLucideIcon } from "./DynamicLucideIcon";
 
 import dynamic from "next/dynamic";
 import { CountryCardGrid } from "@/components/PageComponent/Unversity";
+import VisaDetails from "./dashboard/VisaDetails/visaDetails";
 
 const UniversitySliderClient = dynamic(
   () => import("@/components/PageComponent/Unversity").then(
@@ -746,7 +747,7 @@ export default function Homepage({
 </section> */}
 
       <section
-        className="bg-white relative overflow-hidden w-full py-12 sm:py-10 "
+        className="bg-white relative overflow-hidden w-full py-12 sm:py-5 "
       >
         <div className="absolute -right-20 top-[0%] opacity-30 pointer-events-none hidden lg:block"></div>
 
@@ -828,8 +829,8 @@ export default function Homepage({
 
       <section className="lg:py-5 overflow-hidden">
         <div className="max-w-7xl mx-auto overflow-hidden ">
-          <div className="mb-12 text-left">
-            <h2 className="text-xl mb-2">
+          <div className=" lg:py-5 text-left">
+            <h2 className="text-xl ">
               <span className="text-[#F46C44] lg:text-4xl font-light">
                 {homePage?.topUniversities?.title?.split("||")[0]?.trim()}
               </span>{" "}
@@ -838,12 +839,12 @@ export default function Homepage({
                 {homePage?.topUniversities?.title?.split("||")[1]?.trim()}
               </span>
             </h2>
-            <div
+            { homePage?.topUniversities?.subtitle && <div
               className="text-gray-800 text-sm lg:text-base font-medium max-w-3xl leading-relaxed"
               dangerouslySetInnerHTML={{
                 __html: homePage?.topUniversities?.subtitle || "",
               }}
-            ></div>
+            ></div>}
           </div>
 
           <div ref={sliderRefD} className="keen-slider items-start ">
@@ -887,7 +888,7 @@ export default function Homepage({
 
       <section className="max-w-7xl mx-auto  py-5 px-4 lg:px-0">
         {/* Heading */}
-        <div className="text-left">
+        <div className="text-left lg:py-5">
           <h2 className="text-primary">
             <span className="text-[#F46C44] font-light  text-xl lg:text-4xl">
               {homePage.studyDestinations.title.split("||")[0]}
@@ -1040,12 +1041,12 @@ export default function Homepage({
       <section className="w-full py-12 lg:py-5 px-4 md:px-0 bg-white">
   <div className="max-w-7xl mx-auto">
     {/* Header */}
-    <div className="text-left mb-12 lg:mb-16">
+    <div className="text-left lg:py-5">
       <h2 className="text-primary">
-        <span className="font-light block text-3xl lg:text-4xl mb-2 text-[#F46C44]">
+        <span className="font-light  text-3xl lg:text-4xl mb-2 text-[#F46C44]">
           {homePage?.serviceSection?.title.split("||")[0]}
         </span>
-        <span className="font-bold text-2xl lg:text-4xl">
+       <br /> <span className="font-bold text-2xl lg:text-4xl">
           {homePage?.serviceSection?.title.split("||")[1]}
         </span>
       </h2>
@@ -1097,8 +1098,9 @@ export default function Homepage({
   </div>
 </section>
 
-      <div className="bg-[#F46C44] py-10 ">
-        <h2 className=" max-w-7xl mx-auto  text-primary text-white mb-1 px-4 lg:px-0">
+      <div className="py-5 ">
+       <div className="bg-[#F46C44]">
+         <h2 className=" max-w-7xl mx-auto  text-primary text-white lg:py-5 px-4 lg:px-0">
           <span className=" font-light block text-xl lg:text-4xl">
             {homePage?.topUniversity?.title.split("||")[0]}
           </span>
@@ -1108,11 +1110,12 @@ export default function Homepage({
           </span>
         </h2>
         <UniversityCard university={unires} />
+       </div>
       </div>
 
-      <section className="py-12 sm:py-2 lg:py-10 px-2 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className=" text-xl   mb-6 ">
+      <section className="py-5 px-2 lg:px-0 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 lg:px-0">
+          <h2 className=" text-xl   py-5 ">
             <span className="text-[#F46C44] lg:text-4xl font-light">
               {homePage?.blogs?.title.split("||")[0]}
             </span>{" "}
@@ -1127,7 +1130,7 @@ export default function Homepage({
           <div ref={sliderRefblog} className="keen-slider relative z-[10]">
             {blogres.length > 0 ? (
               blogres.map((post) => (
-                <div key={post._id} className="keen-slider__slide p-2">
+                <div key={post._id} className="keen-slider__slide px-2">
                   {/* 🔴 SAME CARD UI */}
                   <div
                     className="
@@ -1303,66 +1306,8 @@ export default function Homepage({
         tag={homePage?.visa?.tag}
       />  */}
 
-      <section className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
-
-          <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-5xl font-bold text-primary">
-              Our Student
-              {" "}
-              <span className="text-[#F26B3A]">
-                Visa Approvals
-              </span>
-            </h2>
-
-            <p className="mt-4 text-lg md:text-2xl text-gray-700">
-              Real Students. Real Visas. Real Success Stories.
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-[#faf5f2] w-full p-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 ">
-              {visaCards.map((item) => (
-                <div
-                  key={item.id}
-                  className="group bg-white shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden "
-                >
-                  <div className="p-2 bg-gray-100">
-                    <div className="overflow-hidden w-full  bg-gray-100 ">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-[220px] object-cover group-hover:scale-105 transition duration-500"
-                        width="1000"
-                        height="1000"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="p-5">
-                    <div className="flex gap-2">
-                      <span className="text-2xl">
-                        <img src={item.flag} alt={item.country} width="1000" height="1000" className="w-10 h-6 mt-2" />
-                      </span>
-
-                      <div>
-                        <h3 className="font-semibold text-xl text-gray-800">
-                          {item.name}
-                        </h3>
-
-                        <p className="text-[#F26B3A] text-base font-medium">
-                          {item.visa}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+      <section className="">
+      <VisaDetails/>
 
       </section>
 

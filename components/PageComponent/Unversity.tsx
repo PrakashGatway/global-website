@@ -83,7 +83,7 @@ export default function UniversitySliderClient({ universities }) {
   return (
     <section className=" mx-auto lg:py-5 overflow-hidden bg-white">
       {universities?.title && (
-        <div className="relative max-w-7xl  mx-auto text-left">
+        <div className="relative max-w-7xl  mx-auto text-left py-5">
           <h2 className="text-xl  ">
             <span className="text-[#F46C44] lg:text-4xl font-light" >
               {universities?.title?.split('||')[0] || null}
@@ -210,7 +210,7 @@ export const CountryCardGrid = ({ countries }: { countries: any[] }) => {
   if (!mappedCountries.length) return null;
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 lg:px-0 py-5">
+    <div className="w-full max-w-7xl mx-auto px-4 lg:px-0 ">
       {/* Mobile View */}
       <div className="lg:hidden">
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
