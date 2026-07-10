@@ -189,7 +189,7 @@ const Blogs = () => {
         </div>
       )}
 
-      <BlogFormModal
+      {showBlogForm && <BlogFormModal
         isOpen={showBlogForm}
         onClose={() => {
           setShowBlogForm(false);
@@ -197,7 +197,7 @@ const Blogs = () => {
         }}
         onSuccess={handleFormSuccess}
         blogData={editingBlog}
-      />
+      />}
 
       {/* <AnimatePresence>
         {showBlogForm && (

@@ -370,16 +370,10 @@ const BlogFormModal = ({ isOpen, onClose, onSuccess, blogData }) => {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
         className="fixed inset-0 z-50 flex items-center justify-center p-1 bg-black/60 overflow-y-auto"
         onClick={onClose}
       >
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
           className="bg-white w-full max-h-[99vh] overflow-hidden flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
@@ -657,9 +651,9 @@ const BlogFormModal = ({ isOpen, onClose, onSuccess, blogData }) => {
                     </div>
                   </div>
                 </div>
-                <div className="lg:col-span-1 space-y-6">
-                  {preview ?
-                    <div className="bg-white relative outline-4 outline-orange-100 max-h-[calc(100vh-160px)] overflow-y-scroll border border-gray-200 p-6 pt-4 sticky top-0">
+                <div className="relative lg:col-span-1 space-y-6">
+                  {preview &&
+                    <div className="bg-white absolute inset-0 z-1 outline-4 outline-orange-100 max-h-[calc(100vh-160px)] overflow-y-scroll border border-gray-200 p-6 pt-4 sticky top-0">
                       <button
                         onClick={() => setpreview(!preview)}
                         type="button"
@@ -677,263 +671,263 @@ const BlogFormModal = ({ isOpen, onClose, onSuccess, blogData }) => {
                         imageData={null}
                         videoData={null}
                       />
-                    </div>
-                    : <div className="bg-gray-100 border border-gray-200 p-6 pt-4 sticky top-0">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                        Settings
-                      </h3>
+                    </div>}
+                  <div className=" bg-gray-100 absolute inset-0 outline-4 outline-orange-100 max-h-[calc(100vh-160px)] overflow-y-scroll border border-gray-200 p-6 pt-4 sticky top-0">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                      Settings
+                    </h3>
 
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Cover Image *
-                          </label>
-                          <div className="mt-1">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={handleImageChange}
-                              disabled={uploadingImage}
-                              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-200"
-                            />
-                            {uploadingImage && (
-                              <div className="mt-2 flex items-center gap-2">
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-600"></div>
-                                <span className="text-sm text-gray-500">
-                                  Uploading image...
-                                </span>
-                              </div>
-                            )}
-                            {imagePreview && (
-                              <div className="mt-3">
-                                <img
-                                  src={imagePreview}
-                                  alt="Preview"
-                                  className="max-w-[200px] max-h-[200px] object-cover rounded-lg border border-gray-200"
-                                />
-                              </div>
-                            )}
-                            {watch("coverImage") && !imagePreview && (
-                              <div className="mt-3">
-                                <img
-                                  src={watch("coverImage")}
-                                  alt="Current"
-                                  className="max-w-[200px] max-h-[200px] object-cover rounded-lg border border-gray-200"
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Category */}
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Category *
-                          </label>
-                          <Controller
-                            control={control}
-                            name="category"
-                            rules={{ required: "Category is required" }}
-                            render={({ field }) => (
-                              <CustomMultiSelect
-                                options={categories}
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="Search and select categories..."
-                              />
-                            )}
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Cover Image *
+                        </label>
+                        <div className="mt-1">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            disabled={uploadingImage}
+                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-200"
                           />
-                          {errors.category && (
-                            <p className="mt-1 text-sm text-red-600">
-                              {errors.category.message}
-                            </p>
+                          {uploadingImage && (
+                            <div className="mt-2 flex items-center gap-2">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-600"></div>
+                              <span className="text-sm text-gray-500">
+                                Uploading image...
+                              </span>
+                            </div>
+                          )}
+                          {imagePreview && (
+                            <div className="mt-3">
+                              <img
+                                src={imagePreview}
+                                alt="Preview"
+                                className="max-w-[200px] max-h-[200px] object-cover rounded-lg border border-gray-200"
+                              />
+                            </div>
+                          )}
+                          {watch("coverImage") && !imagePreview && (
+                            <div className="mt-3">
+                              <img
+                                src={watch("coverImage")}
+                                alt="Current"
+                                className="max-w-[200px] max-h-[200px] object-cover rounded-lg border border-gray-200"
+                              />
+                            </div>
                           )}
                         </div>
+                      </div>
 
-                        {/* Country */}
+                      {/* Category */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Category *
+                        </label>
+                        <Controller
+                          control={control}
+                          name="category"
+                          rules={{ required: "Category is required" }}
+                          render={({ field }) => (
+                            <CustomMultiSelect
+                              options={categories}
+                              value={field.value}
+                              onChange={field.onChange}
+                              placeholder="Search and select categories..."
+                            />
+                          )}
+                        />
+                        {errors.category && (
+                          <p className="mt-1 text-sm text-red-600">
+                            {errors.category.message}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Country */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Country *
+                        </label>
+                        <select
+                          {...register("country", { required: "Country is required" })}
+                          className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        >
+                          <option value="">Select Country</option>
+                          {countries.map((country) => (
+                            <option key={country.name} value={country.name}>
+                              {country.name}
+                            </option>
+                          ))}
+                        </select>
+                        {errors.country && (
+                          <p className="mt-1 text-sm text-red-600">
+                            {errors.country.message}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Author */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Author Name
+                        </label>
+                        <input
+                          type="text"
+                          {...register("author")}
+                          className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          placeholder="Enter author name"
+                        />
+                      </div>
+
+                      {/* Status */}
+                      <div className="grid grid-cols-2 gap-3">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Country *
+                            Status
                           </label>
                           <select
-                            {...register("country", { required: "Country is required" })}
+                            {...register("status")}
                             className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                           >
-                            <option value="">Select Country</option>
-                            {countries.map((country) => (
-                              <option key={country.name} value={country.name}>
-                                {country.name}
-                              </option>
-                            ))}
+                            <option value="Draft">Draft</option>
+                            <option value="Published">Published</option>
                           </select>
-                          {errors.country && (
-                            <p className="mt-1 text-sm text-red-600">
-                              {errors.country.message}
-                            </p>
-                          )}
                         </div>
 
-                        {/* Author */}
+                        {/* Blog Type */}
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Author Name
+                            Type
                           </label>
-                          <input
-                            type="text"
-                            {...register("author")}
+                          <select
+                            {...register("blogType")}
                             className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                            placeholder="Enter author name"
-                          />
+                          >
+                            <option value="blog">Blog</option>
+                            <option value="event">Event</option>
+                            <option value="webnair">Webnair</option>
+                          </select>
                         </div>
-
-                        {/* Status */}
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Status
-                            </label>
-                            <select
-                              {...register("status")}
-                              className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                            >
-                              <option value="Draft">Draft</option>
-                              <option value="Published">Published</option>
-                            </select>
-                          </div>
-
-                          {/* Blog Type */}
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Type
-                            </label>
-                            <select
-                              {...register("blogType")}
-                              className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                            >
-                              <option value="blog">Blog</option>
-                              <option value="event">Event</option>
-                              <option value="webnair">Webnair</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        {/* Event/Webnair Fields */}
-                        {(blogType === "event" || blogType === "webnair") && (
-                          <div className="space-y-4 pt-4 border-t border-gray-200">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Event Date *
-                              </label>
-                              <input
-                                type="date"
-                                {...register("extraMetadata.eventDate", {
-                                  required: "Event date is required",
-                                })}
-                                className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                              />
-                              {errors.extraMetadata?.eventDate && (
-                                <p className="mt-1 text-sm text-red-600">
-                                  {errors.extraMetadata.eventDate.message}
-                                </p>
-                              )}
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  Start Time *
-                                </label>
-                                <input
-                                  type="time"
-                                  {...register("extraMetadata.startTime", {
-                                    required: "Start time is required",
-                                  })}
-                                  className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                                />
-                                {errors.extraMetadata?.startTime && (
-                                  <p className="mt-1 text-sm text-red-600">
-                                    {errors.extraMetadata.startTime.message}
-                                  </p>
-                                )}
-                              </div>
-
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                  End Time *
-                                </label>
-                                <input
-                                  type="time"
-                                  {...register("extraMetadata.endTime", {
-                                    required: "End time is required",
-                                  })}
-                                  className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                                />
-                                {errors.extraMetadata?.endTime && (
-                                  <p className="mt-1 text-sm text-red-600">
-                                    {errors.extraMetadata.endTime.message}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Location *
-                              </label>
-                              <input
-                                type="text"
-                                {...register("extraMetadata.location", {
-                                  required: "Location is required",
-                                })}
-                                className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                                placeholder="Enter location"
-                              />
-                              {errors.extraMetadata?.location && (
-                                <p className="mt-1 text-sm text-red-600">
-                                  {errors.extraMetadata.location.message}
-                                </p>
-                              )}
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Event Type *
-                              </label>
-                              <select
-                                {...register("extraMetadata.eventType", {
-                                  required: "Event type is required",
-                                })}
-                                className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                              >
-                                <option value="physical">Physical</option>
-                                <option value="virtual">Virtual</option>
-                                <option value="live">Live</option>
-                              </select>
-                              {errors.extraMetadata?.eventType && (
-                                <p className="mt-1 text-sm text-red-600">
-                                  {errors.extraMetadata.eventType.message}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Featured */}
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            {...register("isFeatured")}
-                            className="w-4 h-4 text-orange-600 rounded border-gray-300 focus:ring-orange-500"
-                          />
-                          <label className="text-sm font-medium text-gray-700">
-                            Featured Post
-                          </label>
-                        </div>
-                        <p className="text-xs text-gray-500">
-                          Featured posts appear prominently on your site
-                        </p>
                       </div>
-                    </div>}
+
+                      {/* Event/Webnair Fields */}
+                      {(blogType === "event" || blogType === "webnair") && (
+                        <div className="space-y-4 pt-4 border-t border-gray-200">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Event Date *
+                            </label>
+                            <input
+                              type="date"
+                              {...register("extraMetadata.eventDate", {
+                                required: "Event date is required",
+                              })}
+                              className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            />
+                            {errors.extraMetadata?.eventDate && (
+                              <p className="mt-1 text-sm text-red-600">
+                                {errors.extraMetadata.eventDate.message}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Start Time *
+                              </label>
+                              <input
+                                type="time"
+                                {...register("extraMetadata.startTime", {
+                                  required: "Start time is required",
+                                })}
+                                className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              />
+                              {errors.extraMetadata?.startTime && (
+                                <p className="mt-1 text-sm text-red-600">
+                                  {errors.extraMetadata.startTime.message}
+                                </p>
+                              )}
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                                End Time *
+                              </label>
+                              <input
+                                type="time"
+                                {...register("extraMetadata.endTime", {
+                                  required: "End time is required",
+                                })}
+                                className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              />
+                              {errors.extraMetadata?.endTime && (
+                                <p className="mt-1 text-sm text-red-600">
+                                  {errors.extraMetadata.endTime.message}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Location *
+                            </label>
+                            <input
+                              type="text"
+                              {...register("extraMetadata.location", {
+                                required: "Location is required",
+                              })}
+                              className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              placeholder="Enter location"
+                            />
+                            {errors.extraMetadata?.location && (
+                              <p className="mt-1 text-sm text-red-600">
+                                {errors.extraMetadata.location.message}
+                              </p>
+                            )}
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Event Type *
+                            </label>
+                            <select
+                              {...register("extraMetadata.eventType", {
+                                required: "Event type is required",
+                              })}
+                              className="w-full px-3 py-2 border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                            >
+                              <option value="physical">Physical</option>
+                              <option value="virtual">Virtual</option>
+                              <option value="live">Live</option>
+                            </select>
+                            {errors.extraMetadata?.eventType && (
+                              <p className="mt-1 text-sm text-red-600">
+                                {errors.extraMetadata.eventType.message}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Featured */}
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          {...register("isFeatured")}
+                          className="w-4 h-4 text-orange-600 rounded border-gray-300 focus:ring-orange-500"
+                        />
+                        <label className="text-sm font-medium text-gray-700">
+                          Featured Post
+                        </label>
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        Featured posts appear prominently on your site
+                      </p>
+                    </div>
+                  </div>
 
                 </div>
               </div>

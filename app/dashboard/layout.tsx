@@ -8,8 +8,6 @@ import { Sidebar } from "@/components/sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { GlobalProvider, useGlobal } from "../../src/statecontext"
-
-import { usePathname } from "next/navigation"
 import { NotificationProvider } from "@/components/dashboard/Notification"
 
 import {
@@ -46,6 +44,7 @@ export default function DashboardLayout({
       requestPermission();
     }
   }, [profile, loading]);
+
 
   const requestPermission = async () => {
     try {
@@ -115,7 +114,7 @@ export default function DashboardLayout({
   if (loading) {
     return null
   }
-  
+
 
   // if (usePathname()?.includes("/checkout")) {
   //   return (

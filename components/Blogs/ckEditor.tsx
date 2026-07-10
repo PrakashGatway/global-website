@@ -69,7 +69,6 @@ import 'ckeditor5/ckeditor5.css';
  */
 const LICENSE_KEY = 'GPL'; // or <YOUR_LICENSE_KEY>.
 
-// Create the base configuration outside the component to avoid recreation
 const getBaseEditorConfig = () => ({
 	plugins: [
 		Alignment,
@@ -387,6 +386,9 @@ const CKEditorComponent = forwardRef(({
 		<>
 		<style>{`
 			/* Fix CKEditor floating UI (Link, Image, Table, Dropdowns, etc.) */
+            .ck-content {
+    @apply prose prose-lg max-w-none;
+}
 			.ck.ck-body-wrapper {
 				z-index: 999999 !important;
 			}

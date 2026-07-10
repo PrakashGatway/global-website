@@ -3,7 +3,7 @@
 
 import { useGlobal } from "@/src/statecontext";
 import DashboardCounsellor from "@/components/dashboard/counsellerDashboard/dashboard";
-import { Rigthsidebar } from "@/components/dashboard/application/rightsidebar";
+// import { Rigthsidebar } from "@/components/dashboard/application/rightsidebar";
 import UserDashboard from "@/components/dashboard/userDashboard/userDashboard";
 import Blogs from "@/components/Blogs/blogs";
 
@@ -21,7 +21,6 @@ export default function DashboardPage() {
     );
   }
 
-  // If counsellor, show counsellor dashboard
   if (allProfile?.data?.role === "counsellor") {
     return <DashboardCounsellor />;
   }
@@ -30,7 +29,6 @@ export default function DashboardPage() {
     return < Blogs/>;
   }
 
-  // If user/student, show the new dynamic dashboard
   return (
     <div className="min-h-screen">
       <div className="max-w-[1600px] mx-auto">
