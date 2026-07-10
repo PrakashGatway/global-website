@@ -20,8 +20,8 @@ export async function generateMetadata({ params }) {
     },
 
     robots: {
-      index: false,
-      follow: false,
+      index: true,
+      follow: true,
     },
 
     openGraph: {
