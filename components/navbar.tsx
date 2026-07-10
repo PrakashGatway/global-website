@@ -262,20 +262,19 @@ export default function Navbar({
          {/* Top Bar - Only show when not scrolled */}
             {!isScrolled && (
               <div className=" bg-[#f46c44] items-center gap-6 lg:flex hidden z-10 px-4 lg:px-0 text-white">
-                <div className="flex w-7xl justify-end   items-center gap-2  py-1.5 rounded-b-2xl text-sm font-medium gap-8">
+                <div className="flex gap-2 max-w-7xl w-full justify-between items-center mx-auto py-1.5 rounded-b-2xl text-sm font-medium gap-8">
                   <a href="tel:+919875863347" className="flex items-center gap-2 hover:opacity-80 transition font-medium">
                     <span>Consult With Expert:</span>
                     <span className="font-semibold text-yellow-300">+91 9875863347</span>
                   </a>
                   {Login ? (
                     <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition">
-                      <span className="w-3 h-3 bg-yellow-300 rounded-full"></span>
                       Dashboard
                     </Link>
                   ) : (
                     <a href="/login" className="flex items-center gap-2 hover:opacity-80 transition">
                       <span className="w-3 h-3 bg-yellow-300 rounded-full"></span>
-                      Student Login
+                      Login
                     </a>
                   )}
                 </div>

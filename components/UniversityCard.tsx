@@ -28,11 +28,11 @@ export default function UniversityCard({ university, bgcolor = "bg-white", perVi
       renderMode: "performance",
       slides: {
         perView: perView,
-        spacing: 4,
+        spacing: 24,
       },
       breakpoints: {
         "(max-width: 1024px)": {
-          slides: { perView: 2, spacing: 4 },
+          slides: { perView: 2, spacing: 24 },
         },
         "(max-width: 768px)": {
           slides: { perView: 1, spacing: 8 },
@@ -123,7 +123,7 @@ export default function UniversityCard({ university, bgcolor = "bg-white", perVi
     <img
       src={uni.cover_photo}
       alt={uni.name}
-      className="w-full h-34 object-cover"
+      className="w-full h-42 object-cover"
     />
 
     {/* Logo */}
@@ -131,7 +131,7 @@ export default function UniversityCard({ university, bgcolor = "bg-white", perVi
       <img
         src={uni.uni_logo}
         alt={uni.name}
-        className="w-28 h-14 object-contain"
+        className="w-20 h-12 object-contain"
       />
     </div>
   </div>
@@ -158,13 +158,13 @@ export default function UniversityCard({ university, bgcolor = "bg-white", perVi
 
     {/* Ranking */}
     {uni?.uni_rank?.length > 0 && (
-      <div className=" flex gap-3">
-        {uni.uni_rank.slice(0, 2).map((rank, idx) => (
+      <div className=" flex gap-3 items-center justify-between">
+        {uni.uni_rank.slice(0, 3).map((rank, idx) => (
           <div
             key={idx}
             className="bg-orange-50 my-2 flex gap-2 items-center border border-orange-100 px-4 py-2"
           >
-            <p className="text-xs text-gray-500">
+            <p className="text-xs font-medium text-gray-800">
               {rank.type}
             </p>
 
@@ -177,10 +177,7 @@ export default function UniversityCard({ university, bgcolor = "bg-white", perVi
     )}
 
     {/* Fees */}
-    <div className="my-2  text-sm">
-    
-
-
+    {/* <div className="my-2  text-sm">
       <div className="flex justify-between">
         <span className="text-gray-500">
           Living Cost
@@ -190,14 +187,14 @@ export default function UniversityCard({ university, bgcolor = "bg-white", perVi
           {formatFee(uni.financials?.cost_of_living)}
         </span>
       </div>
-    </div>
+    </div> */}
 
     {/* Bottom CTA */}
     <Link
       href={`/universities/${uni.slug}`}
-      className="my-2 flex flex-col  mt-auto "
+      className="flex flex-col mt-auto "
     >
-      <div className="flex items-center justify-between pt-6">
+      <div className="flex items-center justify-between text-gray-800 hover:text-orange-700 py-3 pb-4">
     <span className="text-lg font-semibold">
       Enquiry Now
     </span>

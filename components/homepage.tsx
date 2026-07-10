@@ -451,8 +451,8 @@ export default function Homepage({
                 src={statImages[index % statImages.length]}
                 alt={stat.title}
                 width={48}
-                height={48} 
-                className={` ${index===3 ? "w-16 h-16" : "w-12 h-12"}`}
+                height={48}
+                className={` ${index === 3 ? "w-16 h-16" : "w-12 h-12"}`}
               />
               <div>
                 <p className="text-black text-sm sm:text-lg font-bold group-hover:text-white transition">
@@ -834,12 +834,12 @@ export default function Homepage({
               <span className="text-[#F46C44] lg:text-4xl font-light">
                 {homePage?.topUniversities?.title?.split("||")[0]?.trim()}
               </span>{" "}
-            
-            <br />  <span className="text-primary font-bold relative lg:text-4xl">
+
+              <br />  <span className="text-primary font-bold relative lg:text-4xl">
                 {homePage?.topUniversities?.title?.split("||")[1]?.trim()}
               </span>
             </h2>
-            { homePage?.topUniversities?.subtitle && <div
+            {homePage?.topUniversities?.subtitle && <div
               className="text-gray-800 text-sm lg:text-base font-medium max-w-3xl leading-relaxed"
               dangerouslySetInnerHTML={{
                 __html: homePage?.topUniversities?.subtitle || "",
@@ -893,7 +893,7 @@ export default function Homepage({
             <span className="text-[#F46C44] font-light  text-xl lg:text-4xl">
               {homePage.studyDestinations.title.split("||")[0]}
             </span>
-          <br />  <span className="font-bold text-xl lg:text-4xl relative">
+            <br />  <span className="font-bold text-xl lg:text-4xl relative">
               {" "}
               {homePage.studyDestinations.title.split("||")[1]}
             </span>
@@ -1039,78 +1039,78 @@ export default function Homepage({
       </section>
 
       <section className="w-full py-12 lg:py-5 px-4 md:px-0 bg-white">
-  <div className="max-w-7xl mx-auto">
-    {/* Header */}
-    <div className="text-left lg:py-5">
-      <h2 className="text-primary">
-        <span className="font-light  text-3xl lg:text-4xl mb-2 text-[#F46C44]">
-          {homePage?.serviceSection?.title.split("||")[0]}
-        </span>
-       <br /> <span className="font-bold text-2xl lg:text-4xl">
-          {homePage?.serviceSection?.title.split("||")[1]}
-        </span>
-      </h2>
-    </div>
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="text-left lg:py-5">
+            <h2 className="text-primary">
+              <span className="font-light  text-3xl lg:text-4xl mb-2 text-[#F46C44]">
+                {homePage?.serviceSection?.title.split("||")[0]}
+              </span>
+              <br /> <span className="font-bold text-2xl lg:text-4xl">
+                {homePage?.serviceSection?.title.split("||")[1]}
+              </span>
+            </h2>
+          </div>
 
-    {/* Steps Cards */}
-   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-4">
-{homePage?.serviceSection?.services?.map((service) => (
-  <div
-    key={service.title}
-    className="group relative overflow-hidden bg-white border border-gray-200 p-7 transition-all duration-500 hover:-translate-y-2 hover:border-[#F46C44] hover:shadow-[0_20px_45px_rgba(244,108,68,0.12)]"
-  >
-    {/* Background Decoration */}
-    <div className="absolute top-0 right-0 h-24 w-24 rounded-full bg-orange-50 blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+          {/* Steps Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-4">
+            {homePage?.serviceSection?.services?.map((service) => (
+              <div
+                key={service.title}
+                className="group relative overflow-hidden bg-white border border-gray-200 p-7 transition-all duration-500 hover:-translate-y-2 hover:border-[#F46C44] hover:shadow-[0_20px_45px_rgba(244,108,68,0.12)]"
+              >
+                {/* Background Decoration */}
+                <div className="absolute top-0 right-0 h-24 w-24 rounded-full bg-orange-50 blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
 
-    {/* Icon */}
-   
+                {/* Icon */}
 
-    {/* Heading */}
-    <div className="flex gap-2 items-center">
-       <div className="relative mb-6 flex h-full w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#FFF4EF] to-[#FFE8DF] shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 p-2">
-      <img
-        src={
-          service.icon ||
-          "https://cdn-icons-png.flaticon.com/512/5474/5474438.png"
-        }
-        alt={service.title}
-        className="h-9 w-9 object-contain"
-      />
-    </div>
-    <div className="relative mb-4">
-      <h3 className="text-xl font-bold leading-snug text-[#1F2937] transition-colors duration-300 group-hover:text-[#F46C44]">
-        {service.title}
-      </h3>
-    </div>
-    </div>
-    
 
-    {/* Description */}
-    <div
-      className="relative text-[15px] leading-7 text-gray-600"
-      dangerouslySetInnerHTML={{
-        __html: service.subTitle || "",
-      }}
-    />
-  </div>
-))}
-</div>
-  </div>
-</section>
+                {/* Heading */}
+                <div className="flex gap-2 items-center">
+                  <div className="relative mb-6 flex h-full w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#FFF4EF] to-[#FFE8DF] shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 p-2">
+                    <img
+                      src={
+                        service.icon ||
+                        "https://cdn-icons-png.flaticon.com/512/5474/5474438.png"
+                      }
+                      alt={service.title}
+                      className="h-9 w-9 object-contain"
+                    />
+                  </div>
+                  <div className="relative mb-4">
+                    <h3 className="text-xl font-bold leading-snug text-[#1F2937] transition-colors duration-300 group-hover:text-[#F46C44]">
+                      {service.title}
+                    </h3>
+                  </div>
+                </div>
+
+
+                {/* Description */}
+                <div
+                  className="relative text-[15px] leading-7 text-gray-600"
+                  dangerouslySetInnerHTML={{
+                    __html: service.subTitle || "",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <div className="py-5 ">
-       <div className="bg-[#F46C44]">
-         <h2 className=" max-w-7xl mx-auto  text-primary text-white lg:py-5 px-4 lg:px-0">
-          <span className=" font-light block text-xl lg:text-4xl">
-            {homePage?.topUniversity?.title.split("||")[0]}
-          </span>
-          <span className="font-bold text-xl lg:text-5xl relative">
-            {" "}
-            {homePage?.topUniversity?.title.split("||")[1]}
-          </span>
-        </h2>
-        <UniversityCard university={unires} />
-       </div>
+        <div className="bg-[#F46C44]">
+          <h2 className=" max-w-7xl mx-auto  text-primary text-white lg:py-5 px-4 lg:px-0">
+            <span className=" font-light block text-xl lg:text-4xl">
+              {homePage?.topUniversity?.title.split("||")[0]}
+            </span>
+            <span className="font-bold text-xl lg:text-5xl relative">
+              {" "}
+              {homePage?.topUniversity?.title.split("||")[1]}
+            </span>
+          </h2>
+          <UniversityCard university={unires} />
+        </div>
       </div>
 
       <section className="py-5 px-2 lg:px-0 relative overflow-hidden">
@@ -1307,7 +1307,7 @@ export default function Homepage({
       />  */}
 
       <section className="">
-      <VisaDetails/>
+        <VisaDetails />
 
       </section>
 
