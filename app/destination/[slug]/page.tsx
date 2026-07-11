@@ -79,6 +79,7 @@ export default async function Page({
       const Pageres = await serverInstance.get(
         `/page-information/slug/${slug}`
       );
+      
 
       const pageData = Pageres?.data?.data;
 

@@ -121,22 +121,39 @@ const stats = [
     description:
       "Diverse community from around the world",
   },
-  {
-    icon: BriefcaseBusiness,
-    highlight: "Excellent",
-    title: "Career Opportunities",
-    description:
-      "Strong economy and global career prospects",
-  },
+  // {
+  //   icon: BriefcaseBusiness,
+  //   highlight: "Excellent",
+  //   title: "Career Opportunities",
+  //   description:
+  //     "Strong economy and global career prospects",
+  // },
 ];
 
-export function StudyStats() {
+export function StudyStats({statsData} : any) {
+
+  
+  
+  const items = statsData?.items && statsData.items.length > 0 
+    ? statsData.items.map(item => ({
+        title: item.title,
+        stats: item.stats,
+        icon: item.icon,
+        description: item.description || item.title
+      }))
+    : stats;
+  
+  // Ensure we have 4 items, pad with defaults if needed
+  while (items.length < 4) {
+    const defaultItem = stats[items.length % stats.length];
+    items.push({ ...defaultItem });
+  }
   return (
     <section className="py-8 bg-white">
       <div className="max-w-[1380px] mx-auto px-4">
         <div className=" bg-gradient-to-r from-white via-slate-50 to-white overflow-hidden">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-gray-200">
-            {stats.map((item, index) => {
+            {items.map((item, index) => {
               const Icon = item.icon;
 
               return (

@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState, useEffect, useRef, ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import FAQSection from "./faqPage";
 
 /* ─── Scroll Animation Hook ─── */
 function useScrollReveal() {
@@ -80,33 +81,177 @@ function AnimatedNumber({ value, suffix = "" }: { value: number; suffix?: string
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
 }
 
-export default function ScholarshipPage() {
+// interface ScholarshipPageProps {
+//   initialScholarship: any;
+//   initialContentTabs: any[];
+//   initialSimilar: any[];
+//   error?: string | null;
+//   slug: string;
+// }
+
+
+// export default function ScholarshipPage({
+//   initialScholarship,
+//   initialContentTabs,
+//   initialSimilar,
+//   error: initialError,
+//   slug,
+// }: ScholarshipPageProps) {
+
+//   console.log(initialScholarship, initialContentTabs, initialSimilar,'data comming form the server side')
+
+//   const [activeTab, setActiveTab] = useState("overview");
+//   const [openFaq, setOpenFaq] = useState<number | null>(null);
+//   const [heroScale, setHeroScale] = useState(1.05);
+
+//   const [scholarship, setScholarship] = useState<any>(null);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState('');
+//   const [similar, setSimilar] = useState([]);
+//   const [contentTabs, setContentTabs] = useState<{ id: string; label: string; content?: string }[]>([
+//     { id: "overview", label: "Overview" }
+//   ]);
+
+//   // Refs for scrolling
+//   const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+//   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
+
+//   const onSubmit = async (data: any) => {
+//     try {
+//       const res = await axiosInstance.post("/contactus", {
+//         subject: "Contact Form",
+//         type: "Website",
+//         fullName: `${data.name}`,
+//         email: data.email,
+//         phone: data.mobile,
+//         destination: data.destination,
+//         description: "Scholarship inquiry",
+//       });
+
+//       if (res.status === 200 || res.status === 201) {
+//         toast.success("Message sent successfully ✅");
+//         reset();
+//       } else {
+//         toast.error("Failed to send message ❌");
+//       }
+//     } catch (error) {
+//       toast.error("Failed to send message ❌");
+//     }
+//   };
+
+//   // Fetch scholarship details
+//   useEffect(() => {
+//     const fetchScholarshipDetails = async () => {
+//       try {
+//         setLoading(true);
+//         const response = await axiosInstance.get(`/scholarships/slug/${slug}`);
+//         const data = response.data;
+
+//         if (data.success) {
+//           setScholarship(data.data);
+          
+//           // Build tabs from extra_content sections
+//           const sections = data.data?.extra_content?.sections || [];
+//           const tabs = sections.map((section: any) => ({
+//             id: section.section_key,
+//             label: section.heading,
+//             content: section.content || null
+//           }));
+          
+        
+          
+//           setContentTabs(tabs);
+//         } else {
+//           setError(data.message);
+//         }
+//       } catch (err) {
+//         setError("Failed to load scholarship details");
+//         console.error(err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     if (slug) {
+//       fetchScholarshipDetails();
+//     }
+//   }, [slug]);
+
+//   // Fetch similar scholarships
+//   useEffect(() => {
+//     const fetchAllScholarships = async () => {
+//       try {
+//         const res = await axiosInstance.get("/scholarships/public/list");
+//         setSimilar(res.data?.data || []);
+//       } catch (err) {
+//         console.error(err);
+//       }
+//     };
+
+//     fetchAllScholarships();
+//   }, []);
+
+
+interface ScholarshipPageProps {
+  initialScholarship: any;
+  initialContentTabs: any[];
+  initialSimilar: any[];
+  faqres: any[];
+  error?: string | null;
+  slug: string;
+}
+
+export default function ScholarshipPage({
+  initialScholarship,
+  initialContentTabs,
+  initialSimilar,
+  faqres,
+  error: initialError,
+  slug,
+}: ScholarshipPageProps) {
+
+  console.log(
+    initialScholarship,
+    initialContentTabs,
+    initialSimilar,
+    "Data coming from the server"
+  );
+
   const [activeTab, setActiveTab] = useState("overview");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [heroScale, setHeroScale] = useState(1.05);
 
-  const [scholarship, setScholarship] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [similar, setSimilar] = useState([]);
-  const [contentTabs, setContentTabs] = useState<{ id: string; label: string; content?: string }[]>([
-    { id: "overview", label: "Overview" }
-  ]);
+  // Initialize state from server props
+  const [scholarship] = useState(initialScholarship);
+  const [similar] = useState(initialSimilar);
+  const [loading] = useState(false);
+  const [error] = useState(initialError || "");
+
+  const [contentTabs] = useState<
+    { id: string; label: string; content?: string }[]
+  >(
+    initialContentTabs?.length
+      ? initialContentTabs
+      : [{ id: "overview", label: "Overview" }]
+  );
 
   // Refs for scrolling
   const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
-  const params = useParams();
-  const slug = params?.slug as string;
-
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm();
 
   const onSubmit = async (data: any) => {
     try {
       const res = await axiosInstance.post("/contactus", {
         subject: "Contact Form",
         type: "Website",
-        fullName: `${data.name}`,
+        fullName: data.name,
         email: data.email,
         phone: data.mobile,
         destination: data.destination,
@@ -123,58 +268,6 @@ export default function ScholarshipPage() {
       toast.error("Failed to send message ❌");
     }
   };
-
-  // Fetch scholarship details
-  useEffect(() => {
-    const fetchScholarshipDetails = async () => {
-      try {
-        setLoading(true);
-        const response = await axiosInstance.get(`/scholarships/slug/${slug}`);
-        const data = response.data;
-
-        if (data.success) {
-          setScholarship(data.data);
-          
-          // Build tabs from extra_content sections
-          const sections = data.data?.extra_content?.sections || [];
-          const tabs = sections.map((section: any) => ({
-            id: section.section_key,
-            label: section.heading,
-            content: section.content || null
-          }));
-          
-        
-          
-          setContentTabs(tabs);
-        } else {
-          setError(data.message);
-        }
-      } catch (err) {
-        setError("Failed to load scholarship details");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (slug) {
-      fetchScholarshipDetails();
-    }
-  }, [slug]);
-
-  // Fetch similar scholarships
-  useEffect(() => {
-    const fetchAllScholarships = async () => {
-      try {
-        const res = await axiosInstance.get("/scholarships/public/list");
-        setSimilar(res.data?.data || []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchAllScholarships();
-  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -579,6 +672,8 @@ export default function ScholarshipPage() {
           </div>
         </div>
       </section>
+      
+      <FAQSection Faqres={faqres} />
     </main>
   );
 }
