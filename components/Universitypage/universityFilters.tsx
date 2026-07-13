@@ -2,13 +2,20 @@
 
 import { useRouter } from 'next/navigation';
 import { RefreshCcw } from 'lucide-react';
+import { useEffect } from 'react';
 
 interface UniversityFiltersProps {
   searchParams: Record<string, string | undefined>;
+  defaultCountry: Record<string, string | undefined>;
+  countrydata: any;
+  slug: any;
+  city: Array<any>;
 }
 
-export default function UniversityFilters({ searchParams }: UniversityFiltersProps) {
+export default function UniversityFilters({ searchParams , countrydata, slug, defaultCountry, city }: UniversityFiltersProps) {
   const router = useRouter();
+
+  console.log('city',city)
 
   // Helper to build the new URL based on current props instead of useSearchParams
   const buildNewUrl = (keyToUpdate: string, value: string | null, isMultiSelect = false) => {
@@ -36,8 +43,9 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
       params.set(keyToUpdate, value);
     }
     params.set('page', '1');
+    console.log(params.toString())
     
-    return `/find-universities?${params.toString()}`;
+    return `/university/${slug}?${params.toString()}`;
   };
 
   const handleFilterChange = (key: string, value: string) => {
@@ -51,6 +59,10 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
   const handleMultiSelect = (key: string, value: string) => {
     router.push(buildNewUrl(key, value, true), { scroll: false });
   };
+
+  useEffect(()=> {
+    handleFilterChange('country', defaultCountry)
+  },[defaultCountry])
 
   return (
     <div className="bg-white border border-gray-100 p-6 sticky top-22">
@@ -66,7 +78,7 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
 
       <div className="space-y-3">
         {/* Country */}
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">Country</label>
           <select 
             value={searchParams.country || ''} 
@@ -74,16 +86,12 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#F46C44] bg-white text-gray-700 text-sm"
           >
             <option value="">All Countries</option>
-            <option value="Germany">Germany</option>
-            <option value="UK">United Kingdom</option>
-            <option value="USA">United States</option>
-            <option value="Canada">Canada</option>
-            <option value="Australia">Australia</option>
-            <option value="France">France</option>
-            <option value="Ireland">Ireland</option>
-            <option value="Dubai">Dubai</option>
+            {countrydata?.map(ele => (
+              <option value={ele.code}>{ele.name}</option>
+            ))}
+            
           </select>
-        </div>
+        </div> */}
 
         {/* City */}
         <div>
@@ -94,11 +102,14 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#F46C44] bg-white text-gray-700 text-sm"
           >
             <option value="">All Cities</option>
-            <option value="Berlin">Berlin</option>
+            {city.map(ele => (
+              <option value={ele.title}>{ele.title}</option>
+            ))}
+            {/* <option value="Berlin">Berlin</option>
             <option value="Munich">Munich</option>
             <option value="Hamburg">Hamburg</option>
             <option value="Frankfurt">Frankfurt</option>
-            <option value="Stuttgart">Stuttgart</option>
+            <option value="Stuttgart">Stuttgart</option> */}
           </select>
         </div>
 
@@ -154,7 +165,22 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">Intake</label>
           <div className="space-y-2">
-            <label className="flex items-center gap-2 text-sm text-gray-600">
+            { ["January", "February", "March", "April", 
+                "May", "June", "July", "August", 
+                "September", "October", "November", "December"
+              ].map((val) => (
+              <label key={val} className="flex items-center gap-2 text-sm text-gray-600">
+                <input 
+                  type="checkbox" 
+                  value={val} 
+                  checked={(searchParams.intake?.split(',').filter(Boolean) || []).includes(val)}
+                  onChange={() => handleMultiSelect('intake', val)}
+                  className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
+                />
+                {val}
+              </label>
+            ))}
+            {/* <label className="flex items-center gap-2 text-sm text-gray-600">
               <input type="checkbox" value="Winter" 
                 checked={(searchParams.intake?.split(',').filter(Boolean) || []).includes('Winter')}
                 onChange={() => handleMultiSelect('intake', 'Winter')}
@@ -167,12 +193,12 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
                 onChange={() => handleMultiSelect('intake', 'Summer')}
                 className="rounded border-gray-300 text-[#F46C44] focus:ring-[#F46C44]" 
               /> Summer (Apr)
-            </label>
+            </label> */}
           </div>
         </div>
 
         {/* Language */}
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-1.5">Language of Instruction</label>
           <div className="space-y-2">
             <label className="flex items-center gap-2 text-sm text-gray-600">
@@ -197,7 +223,8 @@ export default function UniversityFilters({ searchParams }: UniversityFiltersPro
               /> Both
             </label>
           </div>
-        </div>
+        </div> */}
+
       </div>
     </div>
   );

@@ -93,7 +93,6 @@ export default function UniversityList({ initialData, searchParams }: University
 }
 
 import {
-  GraduationCap,
   IndianRupee,
   Users,
   BriefcaseBusiness,
@@ -196,87 +195,115 @@ export function StudyStats({statsData} : any) {
 
 import {
   Landmark,
+  GraduationCap, // Added missing import
   Flame,
   Languages,
+  HelpCircle,
 } from "lucide-react";
 
-const features = [
+// Dictionary to dynamically resolve dynamic icon strings coming from your API data
+const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  Landmark,
+  GraduationCap,
+  Flame,
+  Languages,
+};
+
+// Hardcoded static fallback content
+const defaultFeatures = [
   {
-    icon: Landmark,
+    icon: "Landmark",
     title: "Types of Universities",
-    description:
-      "Explore Public Universities, Private Universities and Universities of Applied Sciences.",
+    description: "Explore Public Universities, Private Universities and Universities of Applied Sciences.",
   },
   {
-    icon: GraduationCap,
+    icon: "GraduationCap",
     title: "Tuition Fees Overview",
-    description:
-      "Most public universities have low or no tuition fees. Semester contribution is usually €150 - €350.",
+    description: "Most public universities have low or no tuition fees. Semester contribution is usually €150 - €350.",
   },
   {
-    icon: Flame,
+    icon: "Flame",
     title: "Why Study in Germany?",
-    description:
-      "High quality education, affordable cost, diverse culture and excellent career opportunities.",
+    description: "High quality education, affordable cost, diverse culture and excellent career opportunities.",
   },
   {
-    icon: Languages,
+    icon: "Languages",
     title: "Language Requirements",
-    description:
-      "Many programs are available in English. Some programs may require German language skills.",
+    description: "Many programs are available in English. Some programs may require German language skills.",
   },
 ];
 
-export function UniversityOverview() {
+interface FeatureItem {
+  title: string;
+  description: string;
+  icon: string;
+}
+
+interface UniversityOverviewProps {
+  pageData?: {
+    title?: string;
+    description?: string;
+    features?: FeatureItem[];
+  };
+}
+
+export function UniversityOverview({ pageData }: UniversityOverviewProps) {
+  // Use dynamic content if available; fall back to your default static text if not
+  const rawTitle = pageData?.title || "Study at World Class || Universities";
+  const rawDescription = pageData?.description || "<p>Germany is one of the most popular study destinations for international students. With over <strong>300 universities</strong> offering world-class education, innovative research opportunities and globally recognized degrees, Germany provides the perfect environment for academic and personal growth.</p>";
+  
+  // Use backend features array if populated, otherwise use hardcoded array
+  const displayFeatures = pageData?.features && pageData.features.length > 0 
+    ? pageData.features 
+    : defaultFeatures;
+
+  // Split title string by "||" to dynamically highlight the text
+  const titleParts = rawTitle.split("||");
+  const mainTitle = titleParts[0]?.trim();
+  const highlightedTitle = titleParts[1]?.trim();
+
   return (
     <section className="bg-white">
       <div className="max-w-[1380px] mx-auto px-4">
         <div className="bg-gradient-to-r from-white via-slate-50 to-white overflow-hidden">
-
           <div className="grid lg:grid-cols-2 gap-12 py-12 items-center">
-
-            {/* Left Side */}
+            
+            {/* Left Side - Title and Description */}
             <div>
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight text-[#163567]">
-                Study at World 
-                Class{" "}
-                <span className="text-[#FF5A1F]">Universities</span>
+                {mainTitle}{" "}
+                {highlightedTitle && (
+                  <span className="text-[#FF5A1F]">{highlightedTitle}</span>
+                )}
               </h2>
 
-              <p className="mt-6 text-gray-600 font-medium leading-8">
-                Germany is one of the most popular study destinations for
-                international students. With over <strong>300 universities</strong>
-                {" "}offering world-class education, innovative research
-                opportunities and globally recognized degrees, Germany
-                provides the perfect environment for academic and personal
-                growth.
-              </p>
+              {/* safely parse raw HTML tags like <strong> from data string */}
+              <div
+                className="mt-6 text-gray-600 font-medium leading-8 prose max-w-none"
+                dangerouslySetInnerHTML={{ __html: rawDescription }}
+              />
             </div>
 
-            {/* Right Side */}
+            {/* Right Side - Features Grid */}
             <div className="grid sm:grid-cols-2 gap-8">
-              {features.map((item, index) => {
-                const Icon = item.icon;
+              {displayFeatures.map((item: any, index: number) => {
+                // Determine if item.icon is a React Component or a lookup string string
+                const IconComponent = typeof item.icon === "string" 
+                  ? (iconMap[item.icon] || HelpCircle) 
+                  : item.icon;
 
                 return (
-                  <div
-                    key={index}
-                    className="flex items-start gap-4"
-                  >
-                    {/* Icon */}
+                  <div key={index} className="flex items-start gap-4">
+                    {/* Icon Container */}
                     <div className="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
-                      <Icon
-                        size={28}
-                        className="text-[#FF5A1F]"
-                      />
+                      <IconComponent size={28} className="text-[#FF5A1F]" />
                     </div>
 
-                    {/* Text */}
+                    {/* Text Details */}
                     <div>
                       <h3 className="text-lg font-bold text-[#163567]">
                         {item.title}
                       </h3>
-
                       <p className="mt-2 text-base font-medium leading-7 text-gray-600">
                         {item.description}
                       </p>

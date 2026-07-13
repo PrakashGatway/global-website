@@ -17,7 +17,7 @@ import {
 import UniversityFilters from '@/components/Universitypage/universityFilters';
 import UniversityList, { StudyStats, UniversityOverview } from '@/components/Universitypage/universityList';
 import { UniversityListSkeleton } from '@/components/Universitypage/universityCard';
-import { serverInstance } from '@/app/axiosInstance';
+import axiosInstance, { serverInstance } from '@/app/axiosInstance';
 import FAQSection from '@/components/faqPage';
 
 // Types
@@ -476,30 +476,49 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
   // Fetch page data
   let pageData: PageData | null = null;
   let Faqres: any = [];
+  let countrydata: any = [];
   try {
     const res = await serverInstance.get(`/page-information/slug/${slug}`);
     const api = await serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`);
+    const data = await axiosInstance.get(`/countries/public?limit=300`)
 
     pageData = res.data;
     Faqres = api.data || [];
+    countrydata = data.data || [];
+
   } catch (error) {
     console.error('Error fetching page data:', error);
   }
 
-  console.log(pageData,"page Data.")
   
-  // Fetch universities
+  
+    // Get default country from page data
+  const defaultCountry = pageData?.data?.country?.code || '';
+  
+  // Fetch universities with default country
   const initialData = await getUniversities({
     page: searchParam?.page || '1',
     keyword: searchParam?.keyword,
-    country: searchParam?.country,
+    country: searchParam?.country || defaultCountry, // Use default if not provided
+    city : searchParam?.city,
     type: searchParam?.type,
     intake: searchParam?.intake,
-    limit: '12'
+    limit: '12',
+    // defaultCountry: defaultCountry // Pass for fallback
   });
   
+  // Fetch universities
+  // const initialData = await getUniversities({
+  //   page: searchParam?.page || '1',
+  //   keyword: searchParam?.keyword,
+  //   country: searchParam?.country  || '',
+  //   type: searchParam?.type,
+  //   intake: searchParam?.intake,
+  //   limit: '12'
+  // });
+  
   // Get page title for SEO
-  console.log(pageData,"page data")
+  console.log(pageData?.data?.country?.code,"page data")
   const pageTitle = pageData?.data?.title || 'Find Top Universities Worldwide';
   
   return (
@@ -541,7 +560,7 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
           
           {/* Filters Sidebar */}
           <div className="w-full lg:w-78 shrink-0">
-            <UniversityFilters searchParams={searchParam} />
+            <UniversityFilters searchParams={searchParam} city={pageData?.data?.sections?.city?.items} countrydata={countrydata?.data || []} slug={slug} defaultCountry={defaultCountry}/>
           </div>
 
           {/* Results Area */}
@@ -570,7 +589,7 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
       <StatsSection1 statsData={pageData?.data?.sections?.city} />
       
       {/* University Overview Component */}
-      <UniversityOverview pageData={pageData?.data} />
+      <UniversityOverview pageData={pageData?.data?.sections?.universityOverview} />
       <FAQSection Faqres={Faqres}/>
     </div>
   );

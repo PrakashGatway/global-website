@@ -469,7 +469,17 @@ export default function ScholarshipPage({
                     >
                       <h2 className="text-2xl font-semibold mb-4">{tab.label}</h2>
                       <div 
-                        className="prose prose-sm max-w-none text-neutral-600" 
+                        // className="prose prose-sm max-w-none text-neutral-600" 
+                        
+                className="prose max-w-none text-slate-700 
+             prose-headings:text-slate-900
+             [&_ul]:list-disc 
+             [&_ol]:list-decimal 
+             [&_ul]:pl-5 
+             [&_ol]:pl-5 
+             [&_li]:my-2
+             [&_p]:my-4
+             "
                         dangerouslySetInnerHTML={{ __html: content }}
                       />
                     </div>
