@@ -368,7 +368,7 @@ export default function ScholarshipPage({
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 h-full flex flex-col justify-end pb-10">
+        <div className="relative z-10 max-w-7xl mx-auto h-full flex flex-col justify-end pb-10">
           <Reveal delay={100}>
             <div className="flex flex-wrap gap-2 mb-3">
               {getTags().map((tag, i) => (
@@ -405,7 +405,7 @@ export default function ScholarshipPage({
 
       {/* ───── KEY FACTS STRIP ───── */}
       <section className="bg-white border-b border-neutral-100">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto ">
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6">
             {getKeyFacts().map((fact, index) => (
               <div 
@@ -424,7 +424,7 @@ export default function ScholarshipPage({
 
       {/* ───── MAIN TWO-COLUMN ───── */}
       <section className="py-10">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto ">
           <div className="flex flex-col lg:flex-row gap-10">
             {/* ─── LEFT COLUMN ─── */}
             <div className="flex-1 min-w-0">

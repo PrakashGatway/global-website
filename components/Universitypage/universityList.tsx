@@ -264,7 +264,7 @@ export function UniversityOverview({ pageData }: UniversityOverviewProps) {
 
   return (
     <section className="bg-white">
-      <div className="max-w-[1380px] mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="bg-gradient-to-r from-white via-slate-50 to-white overflow-hidden">
           <div className="grid lg:grid-cols-2 gap-12 py-12 items-center">
             

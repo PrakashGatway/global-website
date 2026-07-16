@@ -161,7 +161,7 @@ async function getUniversities(searchParams: {
     
     if (searchParams.page) params.append('page', searchParams.page);
     if (searchParams.keyword) params.append('name', searchParams.keyword);
-    if (searchParams.country) params.append('country', searchParams.country);
+    // if (searchParams.country) params.append('country', searchParams.country);
     if (searchParams.city) params.append('city', searchParams.city);
     if (searchParams.type) params.append('type', searchParams.type);
     if (searchParams.intake) params.append('intake', searchParams.intake);
@@ -267,7 +267,7 @@ async function HeroSection({ searchParams, pageData }: { searchParams: any; page
         <div className="absolute inset-0 bg-gradient-to-r from-[#F7F5F3] via-[#F7F5F3]/70 to-transparent"></div>
       </div>
       
-      <div className="max-w-[1380px] mx-auto px-4 sm:px-4 pt-12 lg:pt-20 pb-32 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-4 pt-12 lg:pt-20 pb-32 relative">
         <div className="relative z-10 grid lg:grid-cols-2 items-center gap-10">
           {/* Left Content */}
           <div className="max-w-2xl">
@@ -353,7 +353,7 @@ function StatsSection({ statsData }: { statsData: PageData['data']['sections']['
   }
 
   return (
-    <div className="w-full mx-auto relative -mt-16 max-w-[1380px] px-4">
+    <div className="w-full mx-auto relative -mt-16 max-w-7xl px-4">
       <div className="bg-white rounded-3xl shadow-xl border border-gray-100">
         <div className="grid grid-cols-2 lg:grid-cols-4">
           {items.map((item, index) => {
@@ -398,7 +398,7 @@ function StatsSection1({ statsData }: { statsData: any }) {
 
 
   return (
-    <section className="w-full mx-auto px-4 lg:px-8 py-8 bg-white relative z-10">
+    <section className="bg-white relative z-10">
   <h1 className="text-3xl lg:text-5xl font-bold text-[#13294B] text-center leading-tight mb-10">
     {text}{" "}
     {highlighted && (
@@ -406,7 +406,7 @@ function StatsSection1({ statsData }: { statsData: any }) {
     )}
   </h1>
 
-  <div className="bg-white">
+  <div className="bg-white max-w-7xl mx-auto  ">
     <div className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory">
       {items.map((item, index) => (
         <div
@@ -522,7 +522,7 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
   const pageTitle = pageData?.data?.title || 'Find Top Universities Worldwide';
   
   return (
-    <div className="min-h-screen bg-[#F8F6F4]">
+    <div className="min-h-screen bg-[#F8F6F4] ">
       {/* SEO Structured Data */}
       <script
         type="application/ld+json"
@@ -555,12 +555,13 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
       <StatsSection statsData={pageData?.data?.sections?.stats} />
 
       {/* Main Content */}
-      <section className="max-w-[1380px] mx-auto px-4 sm:px-2 py-12">
+      <section className="max-w-7xl mx-auto px-4 sm:px-2 py-12">
         <div className="flex flex-col lg:flex-row gap-4">
           
           {/* Filters Sidebar */}
           <div className="w-full lg:w-78 shrink-0">
-            <UniversityFilters searchParams={searchParam} city={pageData?.data?.sections?.city?.items} countrydata={countrydata?.data || []} slug={slug} defaultCountry={defaultCountry}/>
+            <UniversityFilters searchParams={searchParam} city={pageData?.data?.sections?.city?.items} 
+            countrydata={countrydata?.data || []} slug={slug} defaultCountry={defaultCountry}/>
           </div>
 
           {/* Results Area */}

@@ -15,8 +15,6 @@ interface UniversityFiltersProps {
 export default function UniversityFilters({ searchParams , countrydata, slug, defaultCountry, city }: UniversityFiltersProps) {
   const router = useRouter();
 
-  console.log('city',city)
-
   // Helper to build the new URL based on current props instead of useSearchParams
   const buildNewUrl = (keyToUpdate: string, value: string | null, isMultiSelect = false) => {
     const params = new URLSearchParams();
@@ -60,9 +58,9 @@ export default function UniversityFilters({ searchParams , countrydata, slug, de
     router.push(buildNewUrl(key, value, true), { scroll: false });
   };
 
-  useEffect(()=> {
-    handleFilterChange('country', defaultCountry)
-  },[defaultCountry])
+  // useEffect(()=> {
+  //   handleFilterChange('country', defaultCountry)
+  // },[defaultCountry])
 
   return (
     <div className="bg-white border border-gray-100 p-6 sticky top-22">
