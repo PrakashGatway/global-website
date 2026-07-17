@@ -22,7 +22,7 @@ export default function DriverTour({
             showProgress: true,
             animate: true,
             allowClose: true,
-            overlayOpacity: 0.65,
+            overlayOpacity: 0.75,
             smoothScroll: true,
             steps: [
                 {
@@ -31,11 +31,11 @@ export default function DriverTour({
                         description: `
                             <div class="relative rounded-2xl bg-white p-4 max-w-md">
                                 <!-- Left Image -->
-                                <div class="absolute -left-[180px] top-0 flex justify-center items-center">
+                                <div class="absolute -left-[300px] top-0 flex justify-center items-center">
                                     <img
-                                        src="https://www.ooshasprep.com/services/ai.webp"
+                                        src="/ai.gif"
                                         alt="Assistant"
-                                        class="w-40 h-40 object-contain drop-shadow-xl"
+                                        class="animate-fly w-80 h-80 object-contain drop-shadow-xl"
                                     />
                                 </div>
                                 
@@ -59,22 +59,22 @@ export default function DriverTour({
                                     </p>
                                     <!-- Bottom Navigation Options - Secondary -->
                                     <div class="mt-2 flex flex-wrap gap-2 pt-3 border-gray-100">
-                                        <span class="px-3 py-1.5 bg-gray-50 text-gray-600 text-xs font-medium rounded-full">
+                                        <span class="px-3 py-1.5 bg-orange-50 text-gray-600 text-xs font-medium rounded-full">
                                             About University
                                         </span>
-                                        <span class="px-3 py-1.5 bg-gray-50 text-gray-600 text-xs font-medium rounded-full">
+                                        <span class="px-3 py-1.5 bg-orange-50 text-gray-600 text-xs font-medium rounded-full">
                                             Cost and Duration
                                         </span>
-                                        <span class="px-3 py-1.5 bg-gray-50 text-gray-600 text-xs font-medium rounded-full">
+                                        <span class="px-3 py-1.5 bg-orange-50 text-gray-600 text-xs font-medium rounded-full">
                                             Features
                                         </span>
-                                        <span class="px-3 py-1.5 bg-gray-50 text-gray-600 text-xs font-medium rounded-full">
+                                        <span class="px-3 py-1.5 bg-orange-50 text-gray-600 text-xs font-medium rounded-full">
                                             Scholarships
                                         </span>
                                     </div>
                                     
                                     <!-- Tour CTA -->
-                                    <div class="mt-4 flex items-center gap-2 text-sm text-indigo-600 font-medium">
+                                    <div class="mt-4 flex items-center gap-2 text-sm text-orange-600 font-medium">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                         </svg>
@@ -94,7 +94,7 @@ export default function DriverTour({
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -left-[150px] top-0 flex justify-center items-center">
       <img
-        src="https://www.ooshasprep.com/services/ai.webp"
+        src="/ai.gif"
         alt="Dashboard"
         class="w-32 h-32 object-contain drop-shadow-xl"
       />
@@ -138,7 +138,7 @@ export default function DriverTour({
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -left-[150px] top-0 flex justify-center items-center">
       <img
-        src="https://www.ooshasprep.com/services/ai.webp"
+        src="/ai.gif"
         alt="Dashboard"
         class="w-32 h-32 object-contain drop-shadow-xl"
       />
@@ -169,7 +169,7 @@ export default function DriverTour({
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
       <img
-        src="https://www.ooshasprep.com/services/ai.webp"
+        src="/ai.gif"
         alt="Dashboard"
         class="w-32 h-32 object-contain drop-shadow-xl"
       />
@@ -198,7 +198,7 @@ export default function DriverTour({
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
       <img
-        src="https://www.ooshasprep.com/services/ai.webp"
+        src="/ai.gif"
         alt="Dashboard"
         class="w-32 h-32 object-contain drop-shadow-xl"
       />
@@ -226,7 +226,7 @@ export default function DriverTour({
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
       <img
-        src="https://www.ooshasprep.com/services/ai.webp"
+        src="/ai.gif"
         alt="Dashboard"
         class="w-32 h-32 object-contain drop-shadow-xl"
       />
@@ -254,7 +254,7 @@ export default function DriverTour({
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
       <img
-        src="https://www.ooshasprep.com/services/ai.webp"
+        src="/ai.gif"
         alt="Dashboard"
         class="w-32 h-32 object-contain drop-shadow-xl"
       />
@@ -282,7 +282,7 @@ export default function DriverTour({
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
       <img
-        src="https://www.ooshasprep.com/services/ai.webp"
+        src="/ai.gif"
         alt="Dashboard"
         class="w-32 h-32 object-contain drop-shadow-xl"
       />
@@ -310,7 +310,7 @@ export default function DriverTour({
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
-                                        src="https://www.ooshasprep.com/services/ai.webp"
+                                        src="/ai.gif"
                                         alt="Visa Process"
                                         class="w-32 h-32 object-contain drop-shadow-xl"
                                     />
@@ -338,7 +338,7 @@ export default function DriverTour({
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
-                                        src="https://www.ooshasprep.com/services/ai.webp"
+                                        src="/ai.gif"
                                         alt="Scholarships"
                                         class="w-32 h-32 object-contain drop-shadow-xl"
                                     />
@@ -366,7 +366,7 @@ export default function DriverTour({
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
-                                        src="https://www.ooshasprep.com/services/ai.webp"
+                                        src="/ai.gif"
                                         alt="Accommodation"
                                         class="w-32 h-32 object-contain drop-shadow-xl"
                                     />
@@ -394,7 +394,7 @@ export default function DriverTour({
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
-                                        src="https://www.ooshasprep.com/services/ai.webp"
+                                        src="/ai.gif"
                                         alt="Payments"
                                         class="w-32 h-32 object-contain drop-shadow-xl"
                                     />
@@ -422,7 +422,7 @@ export default function DriverTour({
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
-                                        src="https://www.ooshasprep.com/services/ai.webp"
+                                        src="/ai.gif"
                                         alt="Offers"
                                         class="w-32 h-32 object-contain drop-shadow-xl"
                                     />
@@ -450,7 +450,7 @@ export default function DriverTour({
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
-                                        src="https://www.ooshasprep.com/services/ai.webp"
+                                        src="/ai.gif"
                                         alt="Support"
                                         class="w-32 h-32 object-contain drop-shadow-xl"
                                     />
@@ -478,7 +478,7 @@ export default function DriverTour({
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
-                                        src="https://www.ooshasprep.com/services/ai.webp"
+                                        src="/ai.gif"
                                         alt="Settings"
                                         class="w-32 h-32 object-contain drop-shadow-xl"
                                     />

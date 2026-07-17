@@ -338,7 +338,7 @@ export default function ProgramHeader({
                     {/* Buttons */}
                     <div className="flex items-center gap-2 mb-px">
                         <button
-                            className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-orange-500 border-none cursor-pointer whitespace-nowrap shadow-sm hover:bg-orange-600 hover:-translate-y-0.5 hover:shadow-orange-500/20 active:translate-y-0 transition-all duration-200"
+                            className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-[#f26d44] border-none cursor-pointer whitespace-nowrap shadow-sm hover:bg-orange-600 hover:-translate-y-0.5 hover:shadow-orange-500/20 active:translate-y-0 transition-all duration-200"
                             onClick={handleSearch}
                         >
                             <span>Search Programs</span>
@@ -350,10 +350,10 @@ export default function ProgramHeader({
                 </div>
 
                 {/* Advanced Filter Toggle */}
-                <div className="mt-4 flex justify-end">
+                <div className="mt-4 flex justify-center">
                     <button
                         onClick={toggleAdvancedFilters}
-                        className="flex items-center gap-2 text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors duration-200"
+                        className="flex items-center gap-2 text-sm font-medium text-white p-3 rounded-full bg-[#f26d44] cursor-pointer transition-colors duration-200"
                     >
                         <svg
                             className={`w-4 h-4 transition-transform duration-300 ${showAdvancedFilters ? 'rotate-180' : ''}`}
@@ -364,7 +364,7 @@ export default function ProgramHeader({
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                         Advanced Search
-                        <span className="text-xs text-gray-400">+</span>
+                      
                     </button>
                 </div>
 
@@ -538,7 +538,7 @@ export default function ProgramHeader({
                         {/* Advanced Search Buttons */}
                         <div className="mt-8 flex gap-3">
                             <button
-                                className="px-6 py-2 text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200"
+                                className="px-6 py-2 text-sm font-semibold text-white bg-[#f26d44] hover:bg-orange-600 transition-colors duration-200"
                                 onClick={handleSearch}
                             >
                                 Apply Filters

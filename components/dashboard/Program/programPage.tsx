@@ -327,6 +327,7 @@ const removePreference = () => {
       const params = new URLSearchParams({
         page: currentPage.toString(),
         isExtra: 'false',
+        iswithCountry: 'true',
         limit: '12',
         ...(debouncedSearchQuery && { search: debouncedSearchQuery }),
         ...(filters.country && { country: filters.country }),
@@ -352,6 +353,7 @@ const removePreference = () => {
         ...(filters.maxFee && { maxFee: filters.maxFee }),
         ...(filters.sort_by && { sort_by: filters.sort_by }),
         ...(filters.sort_order && { sort_order: filters.sort_order })
+
       })
 
       const response = await axiosInstance.get(`/courses?${params}`)
@@ -500,7 +502,7 @@ useEffect(() => {
 
 
   return (
-    <main className="flex-1 relative">
+    <main className="flex-1 relative bg-orange-100/20">
       <div className="space-y-4">
         {/* Hero Section */}
         <ProgramHeader 
@@ -954,7 +956,7 @@ useEffect(() => {
 </AnimatePresence>
 
 
-        <div className="flex flex-col lg:flex-row gap-4 items-start">
+        <div className="flex flex-col lg:flex-row gap-4 items-start ">
           {/* LEFT SIDEBAR: FILTERS */}
           <div className="relative z-9 sticky top-4 self-start">
             <ProgramFilters
@@ -977,8 +979,8 @@ useEffect(() => {
           </div>
           
           {/* RIGHT CONTENT: COURSE GRID */}
-          <div className="flex-1 w-full">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+          <div className="flex-1 w-full ">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-5">
               {loading ? (
                 Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="bg-white border border-gray-200 rounded-lg overflow-hidden animate-pulse">
@@ -1064,11 +1066,6 @@ const selectedHighlights = highlights.filter((item) =>
 
                   const currentMonth = new Date().getMonth();
 
-                  const upcomingIntakes =
-                    course?.metaInfo?.Intakes?.split(",")
-                      .map((item) => item.trim())
-                      .filter((month) => monthOrder[month] >= currentMonth) || [];
-
                   const fallbackIntakes =
                     metaInfo?.Intakes?.split(",").map((item) => item.trim()) || [];
 
@@ -1100,286 +1097,282 @@ const selectedHighlights = highlights.filter((item) =>
                   const isAsap = metaInfo?.deadline;
 
                   return (
-                    <div
-                      key={course._id}
-                    >
-                      <div className={`p-4 transition-all duration-200 hover:shadow-md hover:scale-101 h-full flex flex-col ${selectedProgram.some((item) => item._id === course._id) ? "border border-orange-500 bg-[#fefaf8]" : "border border-gray-200 bg-white"}`}>
-                        <div className="flex gap-3 mb-3 relative">
-                          <div className="flex-shrink-0">
-                            {course.university?.uni_logo ? (
-                              <img
-                                src={course.university?.uni_logo || "/images/newlogo3.png"}
-                                alt={course.university?.name}
-                                onError={(e) => {
-                                  e.currentTarget.src = "/images/newlogo3.png";
-                                }}
-                                className="w-18 h-18 object-contain border border-gray-200 rounded-lg p-1.5 bg-gray-50"
-                              />
-                            ) : (
-                              <div className="w-14 h-14 border border-gray-200 rounded-lg flex items-center justify-center bg-gray-50">
-                                <svg className="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                </svg>
-                              </div>
-                            )}
-                          </div>
+                <div key={course._id} className="fade-in-up h-full flex flex-col  rounded-lg hover:scale-103 transition-transform duration-200 px-4">
+  <div
+    className={`relative w-full p-5 transition-all duration-200 hover:shadow-md hover:shadow-orange-500/20 h-full flex flex-col border border-orange-500 rounded-xl ${
+      selectedProgram.some((item) => item._id === course._id)
+        ? "border-orange-500 bg-[#fefaf8]"
+        : "border-gray-200 bg-white"
+    }`}
+  >
+    {/* Checkbox for Counsellor */}
+    {profile.role === "counsellor" && (
+      <div className="absolute top-4 right-4 z-10">
+        <input
+          type="checkbox"
+          checked={selectedProgram.some((item) => item._id === course._id)}
+          onChange={() => handleCompareSelect(course)}
+          className="w-5 h-5 accent-orange-500 cursor-pointer"
+        />
+      </div>
+    )}
 
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-orange-500 line-clamp-1 text-base leading-tight mb-0.5">
-                              {course.name}
-                            </h3>
-                            <p className="text-base font-medium text-gray-600 truncate mb-1">
-                              {course.university?.name}
-                            </p>
-                            <div className="flex items-center gap-1">
-                              <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                              </svg>
-                              <span className="text-base text-gray-500 truncate">
-                                {course.university?.city}, {course.university?.country}
-                              </span>
-                            </div>
-                          </div>
+    {/* Top Section: Logo & Content (Desktop: Row, Mobile: Column) */}
+    <div className="flex flex-col md:flex-row gap-5 items-start mb-4">
+    
 
-                          
+      {/* Middle Section: Content & Stats */}
+      <div className="flex gap-14 min-w-0 w-full">
+        {/* Header Info */}
+          {/* Left Section: Logo & Country */}
+      <div className="flex-shrink-0 flex flex-col items-center w-full md:w-auto min-w-[80px]">
+        <div className="w-16 h-16  relative">
+          {course.university?.uni_logo ? (
+            <img
+              src={course.country?.flg || "/images/newlogo3.png"}
+              alt={course.university?.name}
+              onError={(e) => {
+                e.currentTarget.src = "/images/newlogo3.png";
+              }}
+              className="w-full h-full object-contain rounded-lg"
+            />
+          ) : (
+            <div className="w-full h-full border border-gray-200 rounded-lg flex items-center justify-center bg-gray-50">
+              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+          )}
+        </div>
+        <span className="text-sm text-gray-500 font-medium text-center hidden md:block">
+          {course?.country?.name}
+        </span>
+      </div>
 
-                          {profile.role === "counsellor" ? (
-                            <div className="absolute top-1 -right-1">
-                              <input
-                                type="checkbox"
-                                checked={selectedProgram.some((item) => item._id === course._id)}
-                                onChange={() => handleCompareSelect(course)}
-                                className="w-5 h-5 accent-primary cursor-pointer"
-                              />
-                            </div>
-                          ) : null}
-                        </div>
 
-                        <div className="flex flex-wrap gap-2">
-  {selectedHighlights.map((item) => {
-    //console.log(item,"kk")
-    return(
-    <div
-      key={item.id}
-      className="px-3 py-1.5 border border-orange-500 bg-orange-100/20 rounded-full  text-black text-xs font-medium"
-    >
-      {item.label}
+  <div>
+          <div className="">
+          <h3 className="font-bold text-gray-900 text-xl mb-1 line-clamp-2">
+            {course.name}
+          </h3>
+          <p className="text-sm font-medium text-gray-600 mb-1 flex items-center gap-1">
+            <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            {course.university?.name}
+          </p>
+          <div className="flex items-center gap-1 text-gray-500 text-sm mb-3">
+            <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span className="truncate">{course.university?.city}, {course.university?.country}</span>
+          </div>
+
+          {/* Tags / Highlights */}
+          <div className="flex flex-wrap gap-2 ">
+            {selectedHighlights.map((item) => (
+              <div
+                key={item.id}
+                className="px-3 py-1 border border-orange-200 bg-orange-50 rounded-full text-orange-700 text-sm font-medium"
+              >
+                {item.label}
+              </div>
+            ))}
+          </div>
+        </div>
+
+      
+  </div>
+
+
+
+      </div>
+
+     
     </div>
-  )})}
+     <div>
+          {/* Stats Row */}
+        <div className="bg-orange-50/50 rounded-lg border border-orange-100 p-3 mb-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-orange-200/50 gap-4">
+            {/* Tuition Fee */}
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-2xl">💰</span>
+            <div className="flex flex-col px-2 first:pl-0">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-base text-gray-500 font-medium">Tuition Fee</span>
+              </div>
+              <p className="font-bold text-orange-600 text-base">
+                {course.tuitionFee || 0} {course?.currency}
+              </p>
+            </div>
+                
+
 </div>
+            {/* Duration */}
+            <div className = "flex items-center justify-center gap-3">
+                <span className="text-2xl">⏳</span>
 
-                        <div className="grid grid-cols-3 gap-2 mb-3">
-                          <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
-                            <div className="flex items-center gap-1 mb-0.5">
-                              <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                              <span className="text-[11px] font-medium text-gray-500">Yearly Tuition</span>
-                            </div>
-                            <p className="font-bold text-gray-900 text-base">
-                              {course.tuitionFee || 0} {course?.currency}
-                            </p>
-                          </div>
+            <div className="flex flex-col px-2">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-base text-gray-500 font-medium">Duration</span>
+              </div>
+              <p className="font-bold text-orange-600 text-base">
+                {course.duration || 'N/A'}
+              </p>
+            </div>
+            </div>
 
-                          <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
-                            <div className="flex items-center gap-1 mb-0.5">
-                              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                              <span className="text-[11px] font-medium text-gray-500">Duration</span>
-                            </div>
-                            <p className="font-semibold text-gray-800 text-base">
-                              {course.duration || 'N/A'}
-                            </p>
-                          </div>
+            {/* Average Scholarship */}
+            <div className="flex items-center justify-center gap-3">
+                <span className="text-2xl">🎓</span>
 
-                          <div className="bg-gray-50 p-2 rounded-md border border-gray-100">
-                            <div className="flex items-center gap-1 mb-0.5">
-                              <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                              </svg>
-                              <span className="text-[11px] font-medium text-gray-500">App. Fee</span>
-                            </div>
-                            <p className="font-semibold text-gray-800 text-base">
-                              {course.applicationFee || 0}
-                            </p>
-                          </div>
-                        </div>
+            <div className="flex flex-col px-2">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-base text-gray-500 font-medium">Avg. Scholarship</span>
+              </div>
+              <p className="font-bold text-emerald-600 text-base">
+                {metaInfo?.AverageScholarship ? `${metaInfo.AverageScholarship} ${course?.currency}` : "N/A"}
+              </p>
+            </div>
+            </div>
 
-                        {metaInfo?.AverageScholarship && (
-                          <div className="flex gap-4 items-center">
-                            <div>
-                              <h4 className="text-sm font-bold text-gray-700 mb-2">
-                                Average Scholarship
-                              </h4>
-                            </div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-sm font-semibold text-black">
-                                {metaInfo?.AverageScholarship || "N/A"} {course?.currency}
-                              </span>
-                              {metaInfo?.AverageScholarshipRemarks && (
-                                <div className="relative group">
-                                  <Info className="w-4 h-4 text-gray-400 cursor-pointer" />
-                                  <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden w-64 -translate-x-1/2 rounded-md bg-black px-3 py-2 text-sm leading-5 text-white shadow-lg group-hover:block">
-                                    {metaInfo.AverageScholarshipRemarks}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
+            {/* Initial Deposit */}
+            <div className="flex items-center justify-center gap-3">
+                <span className="text-2xl">📄</span>
 
-                        {metaInfo?.initialDeposit && (
-                          <div className="flex gap-4 items-center">
-                            <div>
-                              <h4 className="text-sm font-bold text-gray-700 mb-2">
-                                Initial Deposit
-                              </h4>
-                            </div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="text-sm font-semibold text-black">
-                                {metaInfo?.initialDeposit || "N/A"} {course?.currency}
-                              </span>
-                            </div>
-                          </div>
-                        )}
+            <div className="flex flex-col px-2 last:pr-0">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-base text-gray-500 font-medium">Initial Deposit</span>
+              </div>
+              <p className="font-bold text-gray-700 text-base">
+                {metaInfo?.initialDeposit ? `${metaInfo.initialDeposit} ${course?.currency}` : "0 MYR"}
+              </p>
+            </div>
+            </div>
+          </div>
+        </div>
 
-                        <div className="mb-3 space-y-2">
-                          {openIntakes.length > 0 && (
-                            <div className="flex items-start gap-3">
-                              <span className="min-w-[60px] rounded-full bg-green-100 px-2 py-1 text-center text-sm font-semibold text-green-700">
-                                Open
-                              </span>
-                              <div className="flex flex-wrap gap-2">
-                                {openIntakes.map((item) => (
-                                  <div key={item.month} className="group relative">
-                                    <span className="flex items-center gap-1 rounded-md bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
-                                      <Calendar1 className="h-4 w-4" />
-                                      {item.month}
-                                      <Info className="h-3 w-3 text-gray-500" />
-                                    </span>
-                                    <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-                                      Deadline: {item.deadlineText}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
+    
+      </div>
 
-                          {closedIntakes.length > 0 && (
-                            <div className="flex items-start gap-3">
-                              <span className="min-w-[60px] rounded-full bg-red-100 px-2 py-1 text-center text-sm font-semibold text-red-700">
-                                Closed
-                              </span>
-                              <div className="flex flex-wrap gap-2">
-                                {closedIntakes.map((item) => (
-                                  <div key={item.month} className="group relative">
-                                    <span className="flex items-center gap-1 rounded-md bg-red-50 px-3 py-1 text-sm font-medium text-red-600">
-                                      <Calendar1 className="h-4 w-4" />
-                                      {item.month}
-                                      <Info className="h-3 w-3 text-gray-500" />
-                                    </span>
-                                    <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-                                      Deadline passed. It will come again soon.
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
+      <div className= "flex items-center gap-4 justify-between">
 
-                          {openIntakes.length === 0 &&
-                            closedIntakes.length === 0 &&
-                            fallbackIntakes.length > 0 && (
-                              <div className="space-y-2">
-                                {fallbackOpenMonths.length > 0 && (
-                                  <div className="flex items-start gap-3">
-                                    <span className="min-w-[60px] rounded-full bg-green-100 px-2 py-1 text-center text-sm font-semibold text-green-700">
-                                      Open
-                                    </span>
-                                    <div className="flex flex-wrap gap-2">
-                                      {fallbackOpenMonths.map((month) => (
-                                        <div key={month} className="group relative">
-                                          <span className="flex items-center gap-1 rounded-md bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
-                                            <Calendar1 className="h-4 w-4" />
-                                            {month}
-                                            <Info className="h-3 w-3 text-gray-500 cursor-pointer" />
-                                          </span>
-                                          <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-                                            {isAsap ? "Deadline: ASAP" : `Deadline: ${deadlineMap[month] || "ASAP"}`}
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
 
-                                {fallbackClosed.length > 0 && (
-                                  <div className="flex items-start gap-3">
-                                    <span className="min-w-[60px] rounded-full bg-red-100 px-2 py-1 text-center text-sm font-semibold text-red-700">
-                                      Closed
-                                    </span>
-                                    <div className="flex flex-wrap gap-2">
-                                      {fallbackClosed.map((item) => (
-                                        <div key={item.month} className="group relative">
-                                          <span className="flex items-center gap-1 rounded-md bg-red-50 px-3 py-1 text-sm font-medium text-red-600">
-                                            <Calendar1 className="h-4 w-4" />
-                                            {item.month}
-                                            <Info className="h-3 w-3 text-gray-500" />
-                                          </span>
-                                          <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-                                            {item.remark}
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                        </div>
+            {/* Intakes Section */}
+        <div className="space-y-2">
+          {openIntakes.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                Open
+              </span>
+              {openIntakes.map((item) => (
+                <div key={item.month} className="group relative">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-green-50 border border-green-100 text-sm font-medium text-green-700">
+                    {item.month}
+                    <Info className="h-3 w-3 text-gray-400" />
+                  </span>
+                  <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+                    Deadline: {item.deadlineText}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-                        <div className="flex items-center gap-2 mt-auto pt-4">
-                          <Link
-                            href={`/dashboard/programs/${course.slug}`}
-                            className="flex-1 text-center px-3 py-1.5 bg-white border border-orange-500 text-orange-500 rounded-md text-base font-medium transition-all duration-200"
-                          >
-                            View Details
-                          </Link>
-                          <button
-                            onClick={() => {
-                              setSelectedCourse(course);
-                              profile.role === "user" ? setIsModalOpen(true) :setshowApplicationDetail(true)
-                            }}
-                            className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-[#f26d44] border border-primary/40 text-white rounded-md text-base font-medium transition-all duration-200"
-                          >
-                            Apply
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </button>
-                        </div>
+          {closedIntakes.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                Closed
+              </span>
+              {closedIntakes.map((item) => (
+                <div key={item.month} className="group relative">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-red-50 border border-red-100 text-sm font-medium text-red-700">
+                    {item.month}
+                    <Info className="h-3 w-3 text-gray-400" />
+                  </span>
+                  <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+                    Deadline passed.
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {openIntakes.length === 0 && closedIntakes.length === 0 && fallbackIntakes.length > 0 && (
+            <div className="space-y-2">
+              {fallbackOpenMonths.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">Open</span>
+                  {fallbackOpenMonths.map((month) => (
+                    <div key={month} className="group relative">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-green-50 border border-green-100 text-sm font-medium text-green-700">
+                        {month} <Info className="h-3 w-3 text-gray-400 cursor-pointer" />
+                      </span>
+                      <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+                        {isAsap ? "Deadline: ASAP" : `Deadline: ${deadlineMap[month] || "ASAP"}`}
                       </div>
-
-                      <style jsx>{`
-                        @keyframes fadeInUp {
-                          from {
-                            opacity: 0;
-                            transform: translateY(15px);
-                          }
-                          to {
-                            opacity: 1;
-                            transform: translateY(0);
-                          }
-                        }
-                        .fade-in-up {
-                          opacity: 0;
-                          animation: fadeInUp 0.4s ease forwards;
-                        }
-                      `}</style>
                     </div>
+                  ))}
+                </div>
+              )}
+              {fallbackClosed.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">Closed</span>
+                  {fallbackClosed.map((item) => (
+                    <div key={item.month} className="group relative">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-red-50 border border-red-100 text-sm font-medium text-red-700">
+                        {item.month} <Info className="h-3 w-3 text-gray-400" />
+                      </span>
+                      <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
+                        {item.remark}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+          {/* Bottom Section: Action Buttons (Pushed to bottom with mt-auto) */}
+    <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col md:flex-row gap-2 w-80">
+      <Link
+        href={`/dashboard/programs/${course.slug}`}
+        className="flex-1 text-center px-4 py-3 bg-white border border-orange-500 text-orange-500 rounded-lg text-sm font-semibold hover:bg-orange-50 transition-colors"
+      >
+        View Details
+      </Link>
+      <button
+        onClick={() => {
+          setSelectedCourse(course);
+          profile.role === "user" ? setIsModalOpen(true) : setshowApplicationDetail(true);
+        }}
+        className="flex-1 flex items-center justify-center gap-1 px-4 py-2 bg-[#f26d44] hover:bg-[#e05a33] text-white rounded-lg text-sm font-semibold transition-colors shadow-sm"
+      >
+        Apply Now
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </button>
+    </div>
+
+      </div>
+
+  
+  </div>
+
+  <style jsx>{`
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in-up {
+      opacity: 0;
+      animation: fadeInUp 0.4s ease forwards;
+    }
+  `}</style>
+</div>
                   );
                 })
               )}

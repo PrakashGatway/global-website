@@ -32,69 +32,140 @@ const HeroSection = ({ data, alldata }) => {
   return (
     <section className="block overflow-hidden">
       <div
-        className="w-full h-auto py-18  relative flex items-center justify-center"
-        style={{
-          backgroundImage: `url(${data?.heroImagee || "/images/country-bg.jpeg"})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
+        className="w-full h-130 py-13  relative flex items-center justify-center"
+
       >
+
+        <div
+          className="absolute inset-0 -z-10"
+          style={{
+            backgroundImage: `url(${data?.heroImagee || "/images/country-bg.jpeg"})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(3px)", // Increase/decrease blur
+            transform: "scale(1.1)", // Prevent white edges after blur
+          }}
+        />
         {/* Overlay tint for readability on all screens */}
         <div className="absolute inset-0 bg-black/30 lg:bg-transparent z-0" />
 
         <div className="relative  z-10 w-full h-full flex flex-col justify-center  max-w-[1440px] ">
-          <div className="w-full px-4 sm:px-8 lg:px-10 py-8 sm:py-10 ">
+          <div className="w-full px-4 sm:px-8 lg:px-10 py-8 sm:py-1 ">
 
-            {/* Balloon — positioned absolutely only on lg+ */}
-            <div className="absolute right-2 top-4 sm:right-6 sm:top-8 lg:left-auto lg:right-auto lg:top-auto z-20"
-              style={{
-                "right": "2rem"
-              }}
-            >
-              <Balloon Pageres={alldata} />
-            </div>
+        
 
             {/* Content card — full width on mobile, 60% on sm, 48% on lg */}
-            <div className=" max-w-7xl  bg-black/50 w-full sm:w-4/5 md:w-3/5 lg:w-[48%] flex items-center
-             py-5 px-4 sm:px-6  rounded-2xl">
+            <div className=" max-w-7xl w-full sm:w-4/5 md:w-3/5 lg:w-[48%] flex items-center
+              px-4 sm:px-6  rounded-2xl">
               <div className="w-full">
                 <Tag data={data?.tag}
-                  css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight"}
+                  css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold  mb-4 leading-tight"}
                   text={data?.title} />
                 {/* <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight">
                   {data?.title || "Study in Germany"}
                 </h1> */}
                 <span
-                  className="text-white text-sm sm:text-base leading-relaxed"
+                  className="
+    text-white
+    text-sm sm:text-base
+   
+    tracking-normal
+
+    [&_*]:text-white
+   
+    [&_*]:font-normal
+    [&_*]:m-0
+    [&_*]:py-2
+
+   
+
+
+    
+
+    [&_h1]:text-3xl
+    [&_h1]:font-bold
+    [&_h1]:mb-4
+
+    [&_h2]:text-2xl
+    [&_h2]:font-semibold
+    [&_h2]:mb-3
+
+    [&_h3]:text-xl
+    [&_h3]:font-semibold
+    [&_h3]:mb-2
+
+    [&_strong]:font-semibold
+    [&_em]:italic
+  "
                   dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
                 />
                 <div className="flex xs:flex-col flex-row flex-wrap gap-3 mt-5">
                   <a href={data?.ctaLink1 || "/contact"}>
-                    <button className="bg-yellow-400 hover:bg-[#f46c44] hover:text-white hover:scale-105 transition duration-300 rounded-full px-5 py-3 flex items-center gap-2 font-bold text-gray-900 text-xs sm:text-sm shadow-lg cursor-pointer w-full xs:w-auto">
+                    <button className="bg-[#f46c44] hover:bg-primary hover:text-white hover:scale-105 transition duration-300  px-5 py-3 flex items-center gap-2 font-bold text-gray-900 text-xs sm:text-sm shadow-lg cursor-pointer w-full xs:w-auto">
                       <PhoneIcon size={18} />
                       <span>{data?.ctaText1 || "Talk to an Expert Counsellor for FREE"}</span>
                     </button>
                   </a>
-                  <a href={data?.ctaLink2 || "/contact"}>
-                    <button className="bg-[#f46c44] hover:bg-yellow-400 hover:text-black hover:scale-105 transition duration-300 rounded-full px-5 py-3 flex items-center gap-2 font-bold text-white text-xs sm:text-sm shadow-lg cursor-pointer w-full xs:w-auto">
-                      <PhoneIcon size={18} />
-                      <span>{data?.ctaText2 || "Talk to an Expert Counsellor for FREE"}</span>
-                    </button>
-                  </a>
+
                 </div>
               </div>
+              <div className="absolute right-10 top-15 w-[370px]  overflow-hidden">
+  {/* Glass Background */}
+  <div className="absolute inset-0 bg-black/40 backdrop-blur-sm border border-white/10"></div>
+
+  <div className="relative p-6">
+    {/* Header */}
+    <div className="relative flex items-center justify-center mb-4">
+      <h3 className="text-white text-lg font-semibold">
+        Contact us
+      </h3>
+
+      <img
+        src={alldata?.country?.flg}
+        alt={alldata?.country?.name}
+        className="absolute right-0 -top-3 w-16 h-11 object-cover rounded-md shadow-lg border border-white"
+      />
+    </div>
+
+    {/* Form */}
+    <div className="space-y-2">
+      <input
+        type="text"
+        placeholder="Your Name"
+        className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
+      />
+
+      <input
+        type="tel"
+        placeholder="Your Mobile"
+        className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
+      />
+
+      <input
+        type="email"
+        placeholder="Your Email"
+        className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
+      />
+
+      <button className="w-full h-10 mt-3 rounded-md bg-[#FF6B3D] hover:bg-[#f75d2d] text-white font-semibold text-lg transition">
+        Submit &gt;
+      </button>
+    </div>
+  </div>
+</div>
             </div>
           </div>
         </div>
 
         {/* Hero character image — visible from md upward */}
-        <div className="hidden md:block absolute bottom-0 right-0 w-[340px] lg:w-[600px] xl:w-[800px] z-10 pointer-events-none">
+        <div className="hidden md:block absolute -bottom-4 right-100 w-[340px] lg:w-[600px] xl:w-[500px] z-10 pointer-events-none">
           <img
             src={data?.heroImage || "/images/country-hero.png"}
             className="w-full h-full object-contain"
             alt=""
           />
         </div>
+
       </div>
     </section>
   )
@@ -959,7 +1030,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
         if (originalName === 'visastories' || name === 'visaStories') {
           return visaStories?.length > 0 && (
-             <VisaDetails/>
+            <VisaDetails />
           )
         }
 

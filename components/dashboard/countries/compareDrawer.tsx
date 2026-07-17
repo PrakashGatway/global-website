@@ -69,68 +69,55 @@ const CompareDrawer = ({
         }
     }
 
-    const handleCompareNow = async () => {
-        if (!currentCountry) {
-            toast.error("No country selected to compare")
-            return
-        }
-
-        setIsComparing(true)
-
-        try {
-            // Prepare all countries for comparison
-            const allCountries = [
-                currentCountry,
-                ...selectedCountries
-            ]
-
-            // Remove duplicates (just in case)
-            const uniqueCountries = allCountries.filter(
-                (country, index, self) =>
-                    index === self.findIndex((c) => c._id === country._id)
-            )
-
-            //console.log("Saving to cookies:", uniqueCountries)
-            Cookies.set("test", "hello");
-
-//console.log("Test cookie:", Cookies.get("test"));
-
-const cookieData = JSON.stringify(uniqueCountries);
-
-            // Set cookie with proper options
-          Cookies.set("compareCountries", cookieData, {
-        expires: 7,
-        path: "/",
-    });
-
-
-
-            // Verify cookie was set
-            const savedCookie = Cookies.get("compareCountries")
-            //console.log("Saved cookie:", savedCookie)
-
-            if (!savedCookie) {
-                throw new Error("Failed to save comparison data")
-            }
-
-            toast.success("Redirecting to comparison page...")
-            
-            // Close drawer and navigate
-            setOpen(false)
-            
-            // Small delay to ensure drawer closes properly
-            setTimeout(() => {
-                router.push("/dashboard/compare-page")
-            }, 100)
-
-        } catch (error) {
-            console.error("Error saving comparison:", error)
-            toast.error("Failed to save comparison. Please try again.")
-        } finally {
-            setIsComparing(false)
-        }
+   const handleCompareNow = async () => {
+    if (!currentCountry) {
+        toast.error("No country selected to compare");
+        return;
     }
 
+    setIsComparing(true);
+
+    try {
+        // Prepare all countries for comparison
+        const allCountries = [
+            currentCountry,
+            ...selectedCountries,
+        ];
+
+        // Remove duplicates
+        const uniqueCountries = allCountries.filter(
+            (country, index, self) =>
+                index === self.findIndex((c) => c._id === country._id)
+        );
+
+        // Save to localStorage
+        localStorage.setItem(
+            "compareCountries",
+            JSON.stringify(uniqueCountries)
+        );
+
+        // Verify
+        const savedData = localStorage.getItem("compareCountries");
+
+        if (!savedData) {
+            throw new Error("Failed to save comparison data");
+        }
+
+        toast.success("Redirecting to comparison page...");
+
+        setOpen(false);
+
+        setTimeout(() => {
+            router.push("/dashboard/compare-page");
+        }, 100);
+
+    } catch (error) {
+        console.error("Error saving comparison:", error);
+        toast.error("Failed to save comparison. Please try again.");
+    } finally {
+        setIsComparing(false);
+    }
+};
     // Debug: Log selected countries
     useEffect(() => {
         //console.log("Selected countries in drawer:", selectedCountries)

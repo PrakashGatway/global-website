@@ -42,11 +42,14 @@ const ComparePage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
     useEffect(() => {
-        const cookieData = Cookies.get("compareCountries")
-        if (cookieData) {
-            setCountries(JSON.parse(cookieData))
-        }
-    }, [])
+    const data = localStorage.getItem("compareCountries");
+
+    if (data) {
+        const countries = JSON.parse(data);
+        console.log(countries);
+        setCountries(countries);
+    }
+}, []);
 
     const removeCountry = (countryId: string) => {
         const updatedCountries = countries.filter(c => c._id !== countryId)
@@ -86,15 +89,15 @@ const ComparePage = () => {
                         <motion.div 
                             animate={{ scale: [1, 1.05, 1] }}
                             transition={{ duration: 2, repeat: Infinity }}
-                            className="w-24 h-24 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6"
+                            className="w-24 h-24 bg-gradient-to-br from-orange-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6"
                         >
-                            <Globe className="w-12 h-12 text-blue-500" />
+                            <Globe className="w-12 h-12 text-orange-500" />
                         </motion.div>
                         <h2 className="text-2xl font-semibold text-gray-800 mb-2">No countries to compare</h2>
                         <p className="text-gray-500 mb-6">Add countries to see them side by side</p>
                         <Link
                             href="/dashboard/countries"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all hover:shadow-md"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-all hover:shadow-md"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             Browse Countries
@@ -260,8 +263,8 @@ const ComparePage = () => {
                             >
                                 <td className="p-5 text-sm font-medium text-gray-700 bg-white sticky left-0">
                                     <div className="flex items-center gap-2">
-                                        <div className="p-1.5 bg-blue-100 rounded-lg">
-                                            <Clock className="w-4 h-4 text-blue-600" />
+                                        <div className="p-1.5 bg-orange-100 rounded-lg">
+                                            <Clock className="w-4 h-4 text-orange-600" />
                                         </div>
                                         <span>PSW Duration</span>
                                     </div>
@@ -269,7 +272,7 @@ const ComparePage = () => {
                                  </td>
                                 {countries.map((country) => (
                                     <td key={country._id} className="p-5 text-center">
-                                        <span className="font-semibold text-blue-600">
+                                        <span className="font-semibold text-orange-600">
                                             {country.extra_content?.psw || "3 Years (OPT)"}
                                         </span>
                                      </td>

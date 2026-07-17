@@ -30,6 +30,33 @@
     padding-top: max(1rem, env(safe-area-inset-top));
   }
 }
+
+@keyframes rocketFly {
+  0% {
+    transform: translateX(-700px) rotate(-8deg) scale(.7);
+    opacity: 0;
+  }
+
+  70% {
+    transform: translateX(260px) rotate(3deg) scale(1.05);
+    opacity: 1;
+  }
+  
+
+  85% {
+    transform: translateX(-8px) rotate(-2deg) ;
+  }
+
+  100% {
+    transform: translateX(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-fly{
+    animation: rocketFly 1.6s cubic-bezier(.18,.89,.32,1.28) forwards;
+}
+
 .linkedClass * a {
   color: blue;
   text-decoration: none;

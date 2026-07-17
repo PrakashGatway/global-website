@@ -34,11 +34,31 @@ import {
   Loader2,
   User,
   Check,
+  FolderOpen,
+  Clock3,
+  Globe,
+  University,
+  House,
+  Briefcase,
+  LandPlot,
+  Phone,
+  Notebook,
+  DollarSign,
+  Calendar,
+  Building,
+  ClipboardList,
+  ChevronDown,
+  ChevronsRight,
+  ChevronRightCircle,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
 import { useGlobal } from "@/src/statecontext";
-import axiosInstance from "@/app/axiosInstance";
+import axiosInstance, { fileBaseurl } from "@/app/axiosInstance";
 import { Rigthsidebar } from "@/components/dashboard/application/rightsidebar";
 import Image from "next/image";
+import Link from "next/link";
+import toast from "react-hot-toast";
 
 // Types
 interface DashboardData {
@@ -226,6 +246,7 @@ interface UICard {
   link: string;
   trend?: string;
   subtext?: string;
+  Textcolor?: string;
 }
 
 interface StepTrackerStep {
@@ -243,12 +264,30 @@ export default function UserDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [animatedProgress, setAnimatedProgress] = useState(0);
+  const [university, setUniversities] = useState([])
 
   const [steps, setSteps] = useState<UIStep[]>([]);
   const [cards, setCards] = useState<UICard[]>([]);
   const [stepTrackerSteps, setStepTrackerSteps] = useState<StepTrackerStep[]>(
     [],
   );
+
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      try {
+        const response = await axiosInstance.get(`/universities?limit=3&withCountry=true`);
+        const data = response.data.result;
+        setUniversities(data)
+      }
+      catch (err) {
+        toast.error(err)
+      }
+    }
+    fetchUniversities()
+
+  }, [])
+
+
 
   useEffect(() => {
     fetchDashboardData();
@@ -260,7 +299,7 @@ export default function UserDashboard() {
       const target = Math.round(
         (stepTrackerSteps.filter((s) => s.status === "completed").length /
           stepTrackerSteps.length) *
-          100,
+        100,
       );
       let current = 0;
       const timer = setInterval(() => {
@@ -312,8 +351,9 @@ export default function UserDashboard() {
       {
         title: "Documents",
         value: statistics.documents.total.toString(),
-        color: "from-emerald-500 to-teal-600",
-        icon: "./shapes/1.webp",
+        color: "orange-500",
+        Textcolor: "orange-500",
+        icon: FileText,
         link: "/dashboard/settings#doc",
         trend: `${statistics.documents.verified} verified`,
         subtext: `${statistics.documents.pending} pending review`,
@@ -321,8 +361,9 @@ export default function UserDashboard() {
       {
         title: "Universities",
         value: statistics.universitiesApplied.total.toString(),
-        color: "from-orange-500 to-indigo-600",
-        icon: "./shapes/2.webp",
+        color: "orange-500",
+        Textcolor: "orange-500",
+        icon: GraduationCap,
         link: "/dashboard/universities",
         trend: `${statistics.universitiesApplied.offers} offers`,
         subtext: `${statistics.universitiesApplied.active} active applications`,
@@ -330,8 +371,9 @@ export default function UserDashboard() {
       {
         title: "Visa Status",
         value: statistics.visaStatus.currentVisa ? "Active" : "Pending",
-        color: "from-orange-500 to-amber-600",
-        icon: "./shapes/3.webp",
+        color: "orange-500",
+        icon: Clock3,
+        Textcolor: "orange-500",
         link: "/dashboard/visa",
         trend: statistics.visaStatus.currentVisa ? "Approved" : "Not started",
         subtext: statistics.visaStatus.currentVisa
@@ -341,8 +383,9 @@ export default function UserDashboard() {
       {
         title: "Applications",
         value: applications.length.toString(),
-        color: "from-violet-500 to-purple-600",
-        icon: "./shapes/4.webp",
+        color: "orange-500",
+        Textcolor: "orange-500",
+        icon: FolderOpen,
         link: "/dashboard/application",
         trend: "View all",
         subtext: `${applications.filter((a) => !a.hasIssues).length} on track`,
@@ -442,6 +485,8 @@ export default function UserDashboard() {
     });
     setSteps(uiSteps);
 
+
+
     // Transform step tracker steps
     const trackerSteps: StepTrackerStep[] = studyAbroadJourney.steps.map(
       (step) => {
@@ -457,6 +502,18 @@ export default function UserDashboard() {
     );
     setStepTrackerSteps(trackerSteps);
   };
+
+  const journeyIcons = [
+    User,
+    Globe,
+    BookOpen,
+    University,
+    FileText,
+    LandPlot,
+    Landmark,
+    House,
+    Briefcase,
+  ];
 
   if (loading) {
     return (
@@ -503,137 +560,408 @@ export default function UserDashboard() {
   const progressPercent =
     totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
 
+  const profileSteps = [
+    {
+      id: 1,
+      step: "Step 1 of 9",
+      title: "Let's start with your",
+      highlight: "Profile",
+      description:
+        "Let's complete your study abroad journey step by step. You're doing great — keep the momentum going!",
+      estimate: "4–6 weeks remaining",
+      deadline: "Aug 15, 2025",
+      button: "Start Your Profile",
+      image: "/profile-dashboard.png",
+    },
+    {
+      id: 2,
+      step: "Step 2 of 9",
+      title: "Upload your",
+      highlight: "Documents",
+      description:
+        "Upload all required documents to speed up your application process.",
+      estimate: "3–5 weeks remaining",
+      deadline: "Aug 20, 2025",
+      button: "Upload Documents",
+      image: "/countries-dashboard.png",
+    },
+    {
+      id: 3,
+      step: "Step 3 of 9",
+      title: "Shortlist your",
+      highlight: "Universities",
+      description:
+        "Choose universities that match your academic profile and career goals.",
+      estimate: "2–4 weeks remaining",
+      deadline: "Aug 25, 2025",
+      button: "View Universities",
+      image: "/courses-dashboard.png",
+    },
+    {
+      id: 4,
+      step: "Step 4 of 9",
+      title: "Track your",
+      highlight: "Applications",
+      description:
+        "Monitor application status and respond quickly to university updates.",
+      estimate: "1–3 weeks remaining",
+      deadline: "Sep 01, 2025",
+      button: "Track Applications",
+      image: "/universities-dashboard.png",
+    },
+    {
+      id: 5,
+      step: "Step 5 of 9",
+      title: "Receive your",
+      highlight: "Offer Letter",
+      description:
+        "Review your university offer, accept the admission, and proceed with the enrollment process.",
+      estimate: "2–3 weeks remaining",
+      deadline: "Sep 10, 2025",
+      button: "View Offer Letter",
+      image: "/offer-dashboard.png",
+    },
+    {
+      id: 6,
+      step: "Step 6 of 9",
+      title: "Complete your",
+      highlight: "Visa Process",
+      description:
+        "Prepare your visa documents, submit your application, and track your visa approval status.",
+      estimate: "2–4 weeks remaining",
+      deadline: "Sep 20, 2025",
+      button: "Start Visa Process",
+      image: "/visa-dashboard.png",
+    },
+    {
+      id: 7,
+      step: "Step 7 of 9",
+      title: "Manage your",
+      highlight: "Forex & Finance",
+      description:
+        "Arrange education funds, forex services, and complete your financial planning before departure.",
+      estimate: "1–2 weeks remaining",
+      deadline: "Sep 28, 2025",
+      button: "Manage Finance",
+      image: "/forex-dashboard.png",
+    },
+    {
+      id: 8,
+      step: "Step 8 of 9",
+      title: "Book your",
+      highlight: "Accommodation",
+      description:
+        "Find and secure comfortable accommodation near your university before you arrive.",
+      estimate: "1 week remaining",
+      deadline: "Oct 05, 2025",
+      button: "Find Accommodation",
+      image: "/accommodation-dashboard.png",
+    },
+    {
+      id: 9,
+      step: "Step 9 of 9",
+      title: "Prepare for",
+      highlight: "Pre-Departure",
+      description:
+        "Complete your final checklist, attend orientation, and get ready for your study abroad journey.",
+      estimate: "Final preparations",
+      deadline: "Oct 10, 2025",
+      button: "View Checklist",
+      image: "/departure-dashboard.png",
+    },
+  ];
+
+  const universities = [
+    {
+      id: 1,
+      name: "University of Toronto",
+      country: "Canada",
+      countryCode: "CA",
+      image: "/images/university1.jpg",
+      qs: "#29 QS",
+      tuition: "CA$45,000/yr",
+      scholarship: true,
+    },
+    {
+      id: 2,
+      name: "University of Edinburgh",
+      country: "UK",
+      countryCode: "GB",
+      image: "/images/university2.jpg",
+      qs: "#22 QS",
+      tuition: "£28,500/yr",
+      scholarship: true,
+    },
+    {
+      id: 3,
+      name: "University of Melbourne",
+      country: "Australia",
+      countryCode: "AU",
+      image: "/images/university3.jpg",
+      qs: "#33 QS",
+      tuition: "AUD$52,000/yr",
+      scholarship: false,
+    },
+    {
+      id: 4,
+      name: "University of Melbourne",
+      country: "Australia",
+      countryCode: "AU",
+      image: "/images/university3.jpg",
+      qs: "#33 QS",
+      tuition: "AUD$52,000/yr",
+      scholarship: false,
+    },
+  ];
+
+
+  const currentStep =
+    profileSteps.find((item) => {
+      if (dashboardData?.studyAbroadJourney?.currentActiveStep == null) {
+        return item.id === dashboardData?.studyAbroadJourney?.nextStep?.id
+      }
+      else {
+        return item.id === dashboardData?.studyAbroadJourney?.currentActiveStep?.id
+
+      }
+    });
+
+
+    const categories = [
+  {
+    title: "Find Your Course",
+    description: "Explore programs that match your goals.",
+    icon: BookOpen,
+    image:
+      "/dashboard1.png",
+    color: "bg-orange-500",
+    lightColor: "bg-orange-50",
+    textColor: "text-orange-600",
+    link: "dashboard/programs",
+  },
+  {
+    title: "Top Universities",
+    description: "Discover top-ranked universities worldwide.",
+    icon: Building2,
+    image:"/dashboard2.png",
+    color: "bg-orange-600",
+    lightColor: "bg-orange-50",
+    textColor: "text-orange-600",
+    link: "dashboard/universities",
+  },
+  {
+    title: "Scholarships",
+    description: "Find scholarships and funding opportunities.",
+    icon: GraduationCap,
+    image:
+      "/dashboard3.png",
+    color: "bg-orange-500",
+    lightColor: "bg-orange-50",
+    textColor: "text-orange-600",
+    link: "dashboard/scholarships",
+  },
+  {
+    title: "Accommodation",
+    description: "Find safe & affordable stay options.",
+    icon: Home,
+    image:
+      "/dashboard4.png",
+    color: "bg-orange-600",
+    lightColor: "bg-orange-50",
+    textColor: "text-orange-600",
+    link: "dashboard/accommodation",
+  },
+];
+
+  
+
+
   return (
-    <div className="min-h-screen p-2 md:p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 max-w-[1600px] mx-auto">
+    <div className="min-h-screen p-2 md:p-1">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-2 max-w-[1600px] mx-auto">
         {/* Left Section */}
         <div className="space-y-6">
           {/* Stats Cards - Modern Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            {cards.map((card, idx) => {
-              const Icon = card.icon;
-              return (
-                <div
-                  key={idx}
-                  onClick={() => router.push(card.link)}
-                  className="group relative bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-xl hover:border-gray-200 transition-all duration-300 cursor-pointer overflow-hidden"
-                >
-                  {/* Background gradient accent */}
-                  <div
-                    className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${card.color} opacity-5 rounded-bl-full group-hover:opacity-10 transition-opacity`}
-                  />
-                  <Image
-                    src={card.icon}
-                    alt={card.title}
-                    width={40}
-                    height={40}
-                    className="absolute -right-6 bottom-0 w-32 z-0"
-                  />
+          <div className="grid grid-cols-[1.5fr_0.6fr] gap-2">
+            <div>
+              <section className="relative overflow-hidden rounded-[20px] border border-[#FFDCCB] bg-white shadow-[0_10px_40px_rgba(255,119,51,0.12)]">
+                {/* Background Glow */}
+                <div className="absolute inset-0">
+                  {/* Left Orange Glow */}
+                  <div className="absolute -left-20 top-10 h-80 w-80 rounded-full bg-[#FF7A30]/20 blur-[120px]" />
 
-                  <div className="flex items-start justify-end">
-                    <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-gray-500 group-hover:translate-x-1 transition-all" />
+                  {/* Top Glow */}
+                  <div className="absolute left-1/2 -translate-x-1/2 -top-20 h-60 w-96 rounded-full bg-white blur-[100px]" />
+
+                  {/* Right Cream Glow */}
+                  <div className="absolute right-0 top-0 h-full w-[45%] bg-gradient-to-l from-white via-white to-transparent" />
+
+                  {/* Bottom Glow */}
+                  <div className="absolute bottom-0 left-0 h-48 w-72 rounded-full bg-[#FFE3D6]/50 blur-[100px]" />
+                </div>
+
+                <div className="relative grid lg:grid-cols-[1.1fr_0.9fr] items-center px-6 py-6 gap-4">
+
+                  {/* Left */}
+                  <div>
+                    <span className="text-[#F97316] font-semibold text-sm">
+                      {currentStep?.step}
+                    </span>
+
+                    <h1 className="mt-2 text-3xl font-bold leading-tight">
+                      {currentStep?.title}{" "}
+                      <span className="text-[#FF6B2C]">
+                        {currentStep?.highlight}
+                      </span>
+                    </h1>
+
+                    <p className="mt-4 text-sm text-gray-800 max-w-xl">
+                      {currentStep?.description}
+                    </p>
+
+                    <div className="flex gap-6 mt-4 text-gray-800 items-center">
+                      <div className="flex gap-2 items-center">
+                        <p className="text-sm font-semibold">Est.</p>
+                        <p className="text-sm">{currentStep?.estimate}</p>
+                      </div>
+
+                      <div className="flex gap-2 items-center">
+                        <p className="text-sm font-semibold">Next deadline</p>
+                        <p className="text-sm">{currentStep?.deadline}</p>
+                      </div>
+                    </div>
+
+                    <Link href={dashboardData?.studyAbroadJourney?.currentActiveStep?.route || "/"}><button
+                      className="mt-10 hover:scale-103 transition-transform duration-300 px-18 py-3 rounded-2xl text-sm font-semibold text-white bg-gradient-to-r from-[#FF6B2C] to-[#FF5123] hover:shadow-[0_12px_35px_rgba(255,98,41,0.45)]"
+                    >
+                      {currentStep?.button} &gt;
+                    </button></Link>
+
                   </div>
 
-                  <div className="relative z-1">
-                    <h3 className="text-base font-medium text-gray-700 mb-1">
-                      {card.title}
-                    </h3>
-                    <p className="text-2xl font-bold text-gray-900 mb-1">
-                      {card.value}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
-                        {card.trend}
-                      </span>
+                  {/* Right */}
+                  <div className="relative flex justify-end items-end h-[280px]">
+
+                    {/* Background Blob */}
+                    <div
+                      className="
+      absolute
+      right-2
+      bottom-0
+      h-[220px]
+      w-[220px]
+      rounded-t-full
+      rounded-b-[80px]
+      bg-gradient-to-b
+      from-[#FFF3E0]
+      to-[#FFFDF9]
+    "
+                    />
+
+
+
+                    {/* Illustration */}
+                    <img
+                      src={currentStep?.image}
+                      alt={currentStep?.highlight}
+                      className="relative z-10 w-[380px] h-full object-contain translate-y-3"
+                    />
+
+                  </div>
+
+                </div>
+              </section>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {cards.map((card, idx) => {
+                const Icon = card.icon
+                return (
+                  <div
+                    key={idx}
+
+                    className="group relative rounded-2xl border border-[#ECECEC] bg-white p-2 cursor-pointer hover:shadow-md hover:shadow-orange-100 hover:scale-105 transition-all duration-300"
+                  >
+                    {/* Icon */}
+                    <div className="absolute right-2 top-2">
+                      <div
+                        className={`h-8 w-8 rounded-lg   flex items-center justify-center`}
+                      >
+                        <Icon className={`w-5 h-5 text-${card.Textcolor}`} />
+                      </div>
                     </div>
-                    {card.subtext && (
-                      <p className="text-xs font-medium text-gray-600 mt-2">
+
+                    <div className="mt-8">
+                      {/* Value */}
+                      <h2 className="text-[23px] font-bold leading-none text-[#151515] mt-4">
+                        {card.value}
+                      </h2>
+
+                      {/* Title */}
+                      <h3 className="mt-2 text-[13px] font-semibold text-[#333] leading-5">
+                        {card.title}
+                      </h3>
+
+                      {/* Sub text */}
+                      <p className="mt-1 text-[12px] text-[#8A8A8A]">
                         {card.subtext}
                       </p>
-                    )}
+                    </div>
+
+                    {/* Progress */}
+                    <button onClick={() => router.push(card.link)} className="text-orange-500 mt-3 text-sm font-semibold hover:text-orange-600 transition">
+                      View All
+                    </button>
                   </div>
-                </div>
-              );
-            })}
+                )
+              })}
+            </div>
           </div>
 
           {/* Study Abroad Journey - Main Component */}
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="overflow-hidden">
             {/* Header */}
-            <div className="px-6 py-5 border-b border-gray-100">
+            <div className=" py-2 border-b border-gray-100">
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    My Study Abroad Journey
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Your Study Abroad Journey
                   </h2>
-                  <p className="text-sm text-gray-500">
-                    Track your progress from application to departure
-                  </p>
                 </div>
 
-                <div className="w-12 h-12 relative">
-                  <svg className="w-12 h-12 transform -rotate-90">
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="20"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                      className="text-gray-200"
-                    />
-                    <circle
-                      cx="24"
-                      cy="24"
-                      r="20"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                      strokeDasharray={`${2 * Math.PI * 20}`}
-                      strokeDashoffset={`${
-                        2 * Math.PI * 20 * (1 - animatedProgress / 100)
-                      }`}
-                      className="text-orange-600 transition-all duration-1000 ease-out"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-orange-600">
-                    {completedCount}/{totalSteps}
-                  </span>
-                </div>
+               
               </div>
             </div>
 
             {/* Horizontal Step Tracker - Desktop */}
-            <div className="hidden lg:block py-8 px-2">
+            <div className="hidden lg:block py-8 ">
               <div className="relative">
                 {/* Background Line */}
-                <div className="absolute top-[20px] left-10 right-10 h-1 bg-gray-100 rounded-full" />
+                <div className="absolute top-[22px] left-[40px] right-[40px] h-[2px] bg-gray-200 rounded-full" />
                 <div
-                  className="absolute top-[20px] left-10 h-1 bg-gradient-to-r from-emerald-400 to-orange-500 rounded-full transition-all duration-1000 ease-out"
+                  className="absolute top-[22px] left-[40px] h-[2px] bg-orange-500 rounded-full transition-all duration-1000 ease-out"
                   style={{
-                    width: `${
-                      ((stepTrackerSteps.findIndex(
-                        (s) => s.status === "current",
-                      ) +
-                        1) /
-                        stepTrackerSteps.length) *
+                    width: `${((stepTrackerSteps.findIndex(
+                      (s) => s.status === "current",
+                    ) +
+                      1) /
+                      stepTrackerSteps.length) *
                       100
-                    }%`,
+                      }%`,
                   }}
                 />
 
-                <div className="relative flex justify-between">
+                <div className="relative flex gap-1 justify-between">
                   {stepTrackerSteps.map((step, idx) => {
                     const isCompleted = step.status === "completed";
                     const isCurrent = step.status === "current";
                     const isUpcoming = step.status === "upcoming";
+                    const Icon = journeyIcons[idx];
 
                     return (
                       <div
                         key={idx}
                         className="flex flex-col items-center text-center group cursor-pointer"
-                        style={{ maxWidth: "140px" }}
+                        w-full
                         onClick={() => {
                           if (!isUpcoming) {
                             const route = steps[idx]?.link;
@@ -644,23 +972,21 @@ export default function UserDashboard() {
                         {/* Step Circle */}
                         <div
                           className={`
-                            relative z-10 w-11 h-11 rounded-full flex items-center justify-center
-                            transition-all duration-500 border-2
-                            ${
-                              isCompleted
-                                ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-200"
-                                : isCurrent
-                                  ? "bg-white border-orange-500 text-orange-600 shadow-lg shadow-orange-200 scale-110"
-                                  : "bg-white border-gray-200 text-gray-300"
+                relative z-10 w-12 h-12 rounded-full flex items-center justify-center
+                transition-all duration-500
+                ${isCompleted
+                              ? "bg-orange-500 text-white shadow-md"
+                              : isCurrent
+                                ? "bg-white border-2 border-orange-400 text-orange-500 shadow-[0_0_0_6px_rgba(251,146,60,0.15)]"
+                                : "bg-white border-2 border-gray-200 text-gray-600"
                             }
-                            ${isCurrent ? "ring-4 ring-orange-50" : ""}
-                            group-hover:scale-105
-                          `}
+                group-hover:scale-105
+              `}
                         >
                           {isCompleted ? (
-                            <Check className="w-5 h-5" />
+                            <Check className="w-5 h-5" strokeWidth={3} />
                           ) : (
-                            <span className="font-bold text-sm">{idx + 1}</span>
+                            <Icon className="w-5 h-5" />
                           )}
 
                           {/* Pulse animation for current step */}
@@ -672,31 +998,28 @@ export default function UserDashboard() {
                         {/* Step Info */}
                         <div className="mt-3 space-y-1">
                           <h4
-                            className={`text-xs font-bold px-2 max-w-[100px] leading-tight ${
-                              isCurrent
-                                ? "text-orange-700"
-                                : isCompleted
-                                  ? "text-gray-900"
-                                  : "text-gray-400"
-                            }`}
+                            className={`text-sm font-bold leading-tight ${isCurrent
+                              ? "text-gray-900"
+                              : isCompleted
+                                ? "text-gray-900"
+                                : "text-gray-900"
+                              }`}
                           >
                             {step.name}
                           </h4>
-                          <p
-                            className={`text-[10px] font-medium ${
-                              isCurrent
-                                ? "text-orange-500"
-                                : isCompleted
-                                  ? "text-emerald-600"
-                                  : "text-gray-300"
-                            }`}
-                          >
-                            {isCompleted
-                              ? "Done"
-                              : isCurrent
-                                ? "In Progress"
-                                : "Locked"}
-                          </p>
+                       
+
+                          {/* Status Badge */}
+                          {isCompleted && (
+                            <span className="inline-block mt-1 px-3 py-1 rounded-full text-sm font-semibold bg-orange-50 text-orange-600 border border-orange-100">
+                              Completed
+                            </span>
+                          )}
+                          {isCurrent && (
+                            <span className="inline-block mt-1 px-3 py-1 rounded-full text-sm font-semibold bg-orange-500 text-white">
+                              Current
+                            </span>
+                          )}
                         </div>
                       </div>
                     );
@@ -722,44 +1045,46 @@ export default function UserDashboard() {
                           if (route && route !== "#") router.push(route);
                         }
                       }}
-                      className={`flex items-center gap-2 p-3 rounded-xl border transition-all ${
-                        isCurrent
-                          ? "bg-orange-50 border-orange-200"
-                          : "bg-gray-50 border-gray-100"
-                      }`}
+                      className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${isCurrent
+                        ? "bg-orange-50 border-orange-200"
+                        : "bg-gray-50 border-gray-100"
+                        }`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          isCompleted
-                            ? "bg-emerald-500 text-white"
-                            : isCurrent
-                              ? "bg-orange-600 text-white"
-                              : "bg-gray-200 text-gray-400"
-                        }`}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isCompleted
+                          ? "bg-orange-500 text-white"
+                          : isCurrent
+                            ? "bg-white border-2 border-orange-400 text-orange-500"
+                            : "bg-white border-2 border-gray-200 text-gray-400"
+                          }`}
                       >
                         {isCompleted ? (
-                          <Check className="w-5 h-5" />
+                          <Check className="w-5 h-5" strokeWidth={3} />
                         ) : (
                           <span className="font-bold text-sm">{idx + 1}</span>
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p
-                          className={`font-semibold text-sm ${
-                            isCurrent ? "text-orange-900" : "text-gray-700"
-                          }`}
+                          className={`font-bold text-sm ${isCurrent ? "text-gray-900" : "text-gray-700"
+                            }`}
                         >
                           {step.name}
                         </p>
-                        <p className="text-xs text-gray-500 truncate">
+                        <p className="text-sm text-gray-500 truncate">
                           {step.description}
                         </p>
                       </div>
-                      <ChevronRight
-                        className={`w-4 h-4 flex-shrink-0 ${
-                          isCurrent ? "text-orange-400" : "text-gray-300"
-                        }`}
-                      />
+                      {isCompleted && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-orange-50 text-orange-600 border border-orange-100">
+                          Completed
+                        </span>
+                      )}
+                      {isCurrent && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-orange-500 text-white">
+                          Current
+                        </span>
+                      )}
                     </div>
                   );
                 })}
@@ -767,210 +1092,303 @@ export default function UserDashboard() {
             </div>
 
             {/* Journey Steps Detail Cards */}
-            <div className="border-t border-gray-100">
-              <div className="px-6 py-4 bg-gray-50/50 border-b border-gray-100">
-                <h3 className="text-base font-semibold text-gray-700 flex items-center gap-2">
-                  <ClipboardCheck className="w-5 h-5" />
-                  Journey Details
+          <div className="border-t border-gray-100">
+  {/* Header */}
+  <div className="px-6 py-5 border-b border-gray-100">
+    <div className="flex items-center gap-3 mb-1">
+   
+      <h2 className="text-2xl font-bold text-gray-900">Track your progress from start to finish</h2>
+    </div>
+  </div>
+
+  {/* Main Content - Two Column Layout */}
+  <div className="flex gap-4">
+    {/* Left Column - Journey Steps */}
+    <div className="flex-1 ">
+      {/* Column Headers */}
+      <div className="flex items-center px-6 py-3 border-b border-gray-100 bg-gray-50/30">
+        <div className="w-10"></div> {/* Spacer for timeline */}
+        <div className="flex-1">
+          <span className="text-base font-semibold text-gray-700">Step</span>
+        </div>
+        <div className="w-44 text-right">
+          <span className="text-base font-semibold text-gray-700">Progress / Details</span>
+        </div>
+      </div>
+
+      {/* Steps List */}
+      <div className="relative px-6 ">
+        {/* Continuous Vertical Timeline Line */}
+        <div 
+          className="absolute left-[25px] top-10 bottom-0 w-[2px] bg-gray-200 z-0"
+          style={{ transform: 'translateX(0)', willChange: 'transform' }}
+        />
+
+        <div className="divide-y divide-gray-100">
+          {steps.map((item, idx) => {
+            const isCompleted = item.status === "completed";
+            const isCurrent = item.status === "current";
+            const isUpcoming = item.status === "upcoming";
+
+           
+
+            return (
+              <div
+                key={idx}
+                className={`
+                  group relative flex items-center gap-4 py-5 px-2 transition-all duration-300 cursor-pointer hover:bg-orange-50
+                  ${isCurrent ? "bg-orange-50 -mx-2 px-4 rounded-lg" : ""}
+                `}
+                onClick={() => {
+                  if (!isUpcoming && item.link && item.link !== "#") {
+                    router.push(item.link);
+                  }
+                }}
+              >
+                {/* Numbered Circle */}
+                <div className="relative flex-shrink-0 z-10 ml-[-24px]">
+                  <div
+                    className={`
+                      w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 border-white
+                      ${isCompleted || isCurrent
+                        ? "bg-[#f26d44] text-white"
+                        : "bg-gray-300 text-white"
+                      }
+                    `}
+                  >
+                    {idx + 1}
+                  </div>
+                </div>
+
+                {/* Status Icon */}
+               <div className="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ">
+  <span className="text-[22px] leading-none">
+    {idx === 0 ? (
+      "👤"
+    ) : idx === 1 ? (
+      "🌍"
+    ) : idx === 2 ? (
+      "📚"
+    ) : idx === 3 ? (
+      "🏫"
+    ) : idx === 4 ? (
+      "📞"
+    ) : idx === 5 ? (
+      "📄"
+    ) : idx === 6 ? (
+      "💰"
+    ) : idx === 7 ? (
+      "🏠"
+    ) : (
+      "📋"
+    )}
+  </span>
+</div>
+
+                {/* Title & Description */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                    <h3 className={`font-semibold text-base ${
+                      isCompleted ? "text-gray-800" : isCurrent ? "text-gray-900" : "text-gray-800"
+                    }`}>
+                      {item.title}
+                    </h3>
+
+                    {/* Critical Badge */}
+                    {item.critical && !isCompleted && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-orange-50 text-[#f26d44] border border-rose-200 whitespace-nowrap">
+                        <AlertCircle className="w-2.5 h-2.5" />
+                        Action Required
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Description */}
+                  {item.desc && (
+                    <p className="text-base text-gray-500 mt-0.5">{item.desc}</p>
+                  )}
+
+                  {/* Progress Bar */}
+                  {isCurrent && item.progress !== "Not Booked" && item.progress.includes("%") && (
+                    <div className="mt-2 w-full max-w-[200px] h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-orange-400 to-orange-500"
+                        style={{ width: item.progress }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Progress / Details Text */}
+                <div className="flex-shrink-0 w-32 text-right">
+                  {isCompleted ? (
+                    <span className="text-base font-semibold text-[#f26d44]">Completed</span>
+                  ) : isCurrent ? (
+                    <span className="text-base font-semibold text-[#f26d44]">In Progress</span>
+                  ) : (
+                    <span className="text-base text-gray-400">Upcoming</span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+
+    {/* Right Column - Progress Summary */}
+    <div className="w-80 p-6 bg-orange-100/30 h-full">
+      <h3 className="text-lg font-bold text-[#f26d44] mb-6">Progress Summary</h3>
+
+      {/* Semi-Circular Progress Gauge */}
+      <div className="flex flex-col items-center mb-6">
+        <div className="relative w-48 h-24 overflow-hidden mb-2">
+          <svg className="w-48 h-48" viewBox="0 0 100 100">
+            {/* Background arc */}
+            <path
+              d="M 10 50 A 40 40 0 0 1 90 50"
+              fill="none"
+              stroke="#e5e7eb"
+              strokeWidth="8"
+              values=""
+              strokeLinecap="round"
+            />
+            {/* Progress arc */}
+            <path
+              d="M 10 50 A 40 40 0 0 1 90 50"
+              fill="none"
+              stroke="#f14e1d"
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeDasharray="125.6"
+              strokeDashoffset={125.6 - (125.6 * dashboardData?.studyAbroadJourney?.overallProgress) / 100}
+              style={{ transition: 'stroke-dashoffset 1s ease-out' }}
+            />
+          </svg>
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-center">
+            <span className="text-4xl font-bold text-[#f26d44]">{dashboardData?.studyAbroadJourney?.overallProgress}%</span>
+          </div>
+        </div>
+        <p className="text-sm font-semibold text-gray-900 mb-1">Overall Progress</p>
+        <p className="text-xs text-gray-500">{dashboardData?.studyAbroadJourney?.completedSteps} of {dashboardData?.studyAbroadJourney?.totalSteps} Steps Completed</p>
+      </div>
+
+      {/* Stats Breakdown */}
+      <div className="space-y-3 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full bg-[#f26d44] flex items-center justify-center">
+              <Check className="w-3 h-3 text-white" strokeWidth={3} />
+            </div>
+            <span className="text-sm text-gray-700">Completed</span>
+          </div>
+          <div className="text-sm">
+            <span className="font-bold text-gray-900">{dashboardData?.studyAbroadJourney?.completedSteps}</span>
+            <span className="text-gray-500 ml-1">({Math.round((dashboardData?.studyAbroadJourney?.completedSteps / dashboardData?.studyAbroadJourney?.totalSteps) * 100)}%)</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full border-2 border-[#f26d44] flex items-center justify-center">
+              <div className="w-2 h-2 rounded-full bg-[#f26d44]"></div>
+            </div>
+            <span className="text-sm text-gray-700">In Progress</span>
+          </div>
+          <div className="text-sm">
+            <span className="font-bold text-gray-900">{dashboardData?.studyAbroadJourney?.currentActiveStep ? 1 : 0}</span>
+            <span className="text-gray-500 ml-1">({dashboardData?.studyAbroadJourney?.currentActiveStep?.progress}%)</span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
+              <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+            </div>
+            <span className="text-sm text-gray-700">Upcoming</span>
+          </div>
+          <div className="text-sm">
+            <span className="font-bold text-gray-900">{dashboardData?.studyAbroadJourney?.totalSteps - dashboardData?.studyAbroadJourney?.completedSteps}</span>
+            <span className="text-gray-500 ml-1">({Math.round(((dashboardData?.studyAbroadJourney?.totalSteps - dashboardData?.studyAbroadJourney?.completedSteps) / dashboardData?.studyAbroadJourney?.totalSteps) * 100)}%)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Next Step */}
+      <div>
+        <h4 className="text-sm font-bold text-gray-900 mb-3">Next Step</h4>
+        <div className="bg-orange-200/20 border border-orange-100 rounded-lg p-4 flex items-center gap-3">
+          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-orange-200/40 flex items-center justify-center">
+            <Phone className="w-6 h-6 text-[#f26d44]" strokeWidth={1.5} />
+          </div>
+          <div>
+            <h5 className="text-sm font-bold text-gray-900 mb-0.5">Offer Letter</h5>
+            <p className="text-xs text-gray-600">Receive offer letter from universities</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+          </div>
+
+         
+
+           <section className=" bg-gray-50">
+      <div className="">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+          {categories.map((category, index) => (
+            <div
+              key={index}
+              className="group bg-white rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(255,119,51,0.12)] hover:shadow-xl transition-all duration-300 border-t-6 border-t-[#FF6B2C] border border-[#FFDCCB]"
+            >
+              {/* Icon Section */}
+              <div className="px-4 py-2">
+                <div
+                  className={`w-14 h-14 ${category.color} rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
+                >
+                  <category.icon className="w-7 h-7 text-white" />
+                </div>
+
+                <h3 className="text-lg font-bold text-gray-900 ">
+                  {category.title}
                 </h3>
+
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  {category.description}
+                </p>
+
+                <a
+                  href={category.link}
+                  className={`inline-flex items-center gap-2 ${category.textColor} font-semibold text-sm group-hover:gap-3 transition-all duration-300`}
+                >
+                  Explore
+                  <ArrowRight className="w-4 h-4" />
+                </a>
               </div>
 
-            <div className="divide-y divide-gray-50">
-            {steps.map((item, idx) => {
-                const isCompleted = item.status === "completed";
-                const isCurrent = item.status === "current";
-                const isUpcoming = item.status === "upcoming";
-
-                return (
-                <div
-                    key={idx}
-                    className={`
-                    group relative flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-5 px-3 sm:px-4 md:px-6 py-4 sm:py-5 
-                    hover:bg-gray-50/80 transition-all duration-300
-                    ${isCurrent ? "bg-orange-50/30" : ""}
-                    `}
-                >
-                    {/* Left accent border for current step */}
-                    {isCurrent && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500 to-orange-800 rounded-r-full" />
-                    )}
-
-                    {/* Progress background - hidden on mobile for better readability */}
-                    {isCurrent && item.progress !== "Not Booked" && (
-                    <div className="absolute inset-0 hidden sm:block overflow-hidden">
-                        <div
-                        className={`h-full transition-all duration-1000 ${
-                            item.critical
-                            ? "bg-gradient-to-r from-rose-100/50 to-rose-100/50"
-                            : "bg-gradient-to-r from-orange-100/50 to-orange-100/50"
-                        }`}
-                        style={{
-                            width: item.progress.includes("%")
-                            ? item.progress
-                            : "60%",
-                        }}
-                        />
-                    </div>
-                    )}
-
-                    {/* Content */}
-                    <div className="flex-1 relative z-10 min-w-0 w-full">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                        <h3
-                            className={`font-semibold text-sm sm:text-[15px] ${
-                            isCurrent
-                                ? "text-orange-900"
-                                : isCompleted
-                                ? "text-gray-900"
-                                : "text-gray-500"
-                            }`}
-                        >
-                            {item.title}
-                        </h3>
-                        <span
-                            className={`
-                            inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider whitespace-nowrap
-                            ${
-                                isCompleted
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                : isCurrent
-                                    ? item.critical
-                                    ? "bg-rose-50 text-rose-700 border border-rose-200"
-                                    : "bg-orange-50 text-orange-700 border border-orange-200"
-                                    : "bg-gray-100 text-gray-500 border border-gray-200"
-                            }
-                            `}
-                        >
-                            {isCompleted ? (
-                            <>
-                                <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                                <span className="hidden xs:inline">Completed</span>
-                                <span className="xs:hidden">Done</span>
-                            </>
-                            ) : isCurrent ? (
-                            <>
-                                <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                                {item.critical ? "Critical" : "In Progress"}
-                            </>
-                            ) : (
-                            <>
-                                <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                                Pending
-                            </>
-                            )}
-                        </span>
-                        </div>
-
-                        {/* Critical Badge */}
-                        {item.critical && !isCompleted && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold bg-rose-100 text-rose-600 border border-rose-200 whitespace-nowrap">
-                            <AlertCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                            <span className="hidden xs:inline">Action Required</span>
-                            <span className="xs:hidden">Urgent</span>
-                        </span>
-                        )}
-                    </div>
-
-                    <p
-                        className={`text-xs sm:text-sm ${
-                        isUpcoming ? "text-gray-400" : "text-gray-500"
-                        }`}
-                    >
-                        {item.desc}
-                    </p>
-
-                    {/* Mobile Progress Info */}
-                    <div className="md:hidden flex items-center gap-3 mt-2">
-                        {!item.progressLabel.includes("Countr") &&
-                        !item.progressLabel.includes("Course") && (
-                            <span
-                            className={`text-base font-bold ${
-                                item.progress === "Not Booked"
-                                ? "text-rose-500"
-                                : isCompleted
-                                    ? "text-emerald-600"
-                                    : "text-gray-900"
-                            }`}
-                            >
-                            {item?.progress}
-                            </span>
-                        )}
-                        {item.progressLabel && (
-                        <span className="text-xs text-gray-400 font-medium">
-                            {item.progressLabel}
-                        </span>
-                        )}
-                    </div>
-                    </div>
-
-                    {/* Desktop Progress Info */}
-                    <div className="hidden md:flex flex-col items-end gap-1 min-w-[120px]">
-                    {!item.progressLabel.includes("Countr") &&
-                        !item.progressLabel.includes("Course") && (
-                        <span
-                            className={`text-lg font-bold ${
-                            item.progress === "Not Booked"
-                                ? "text-rose-500"
-                                : isCompleted
-                                ? "text-emerald-600"
-                                : "text-gray-900"
-                            }`}
-                        >
-                            {item?.progress}
-                        </span>
-                        )}
-                    {item.progressLabel && (
-                        <span className="text-xs text-gray-400 font-medium">
-                        {item.progressLabel}
-                        </span>
-                    )}
-                    </div>
-
-                    {/* Action Button */}
-                    <div className="flex-shrink-0 z-10 w-full md:w-auto mt-2 md:mt-0">
-                    <button
-                        onClick={() => {
-                        if (item.link && item.link !== "#") {
-                            router.push(item.link);
-                        }
-                        }}
-                        disabled={
-                        isUpcoming || !item.link || item.link === "#"
-                        }
-                        className={`
-                        inline-flex items-center justify-center md:justify-start gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold
-                        transition-all duration-300 w-full md:w-auto
-                        ${
-                            isCompleted
-                            ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
-                            : isCurrent
-                                ? item.critical
-                                ? "bg-rose-600 text-white hover:bg-rose-700 shadow-lg shadow-rose-200"
-                                : "bg-orange-600 text-white hover:bg-orange-700 shadow-lg shadow-orange-200"
-                                : "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
-                        }
-                        group-hover:scale-105 active:scale-95
-                        `}
-                    >
-                        <span className="truncate">{item.action}</span>
-                        {!isUpcoming && item.link && item.link !== "#" && (
-                        <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform flex-shrink-0" />
-                        )}
-                    </button>
-                    </div>
-                </div>
-                );
-            })}
+              {/* Image Section */}
+              <div className="relative h-27 overflow-hidden">
+                <Image
+                  src={category.image}
+                  alt={category.title}
+                  fill
+                  className="object-cover rounded-2xl  transition-transform duration-500"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
             </div>
-
-            </div>
-          </div>
+          ))}
+        </div>
+      </div>
+    </section>
         </div>
 
         {/* Right Sidebar */}
         <div className="lg:sticky lg:top-6 h-fit">
-          <Rigthsidebar />
+          <Rigthsidebar userData={dashboardData} />
         </div>
       </div>
     </div>

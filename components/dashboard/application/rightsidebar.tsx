@@ -27,6 +27,7 @@ import {
   Rocket,
   Shield,
   Sparkles,
+  Star,
   Upload,
   User,
   Wallet,
@@ -35,6 +36,8 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/app/axiosInstance";
+import { CircularProgressbarWithChildren, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -266,7 +269,7 @@ const getQuickActionIcon = (label: string) => {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export const Rigthsidebar = () => {
+export const Rigthsidebar = ({userData}) => {
   const router = useRouter();
   const { profile } = useGlobal();
 
@@ -318,119 +321,108 @@ export const Rigthsidebar = () => {
   }
 
   const counselor = profile?.assignto || data?.user?.assignto;
+  const progress = userData?.studyAbroadJourney?.overallProgress
+
 
   return (
     <div className="space-y-6">
+
       {/* ═══════════════════════════════════════════════════════════════
           COUNSELOR CARD
          ═══════════════════════════════════════════════════════════════ */}
       {counselor?.name && (
-        <div className=" bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300">
-          {/* Header */}
-          <div className="bg-orange-600 px-5 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-orange-100 mb-0.5">
-                  Your Dedicated
-                </p>
-                <h3 className="text-base font-bold text-white">
-                  Study Counselor
-                </h3>
-              </div>
-            </div>
-          </div>
+       <div className="rounded-[28px] border border-[#FFE7DE] bg-white p-6 shadow-[0_10px_40px_rgba(255,119,51,0.12)]">
 
-          {/* Body */}
-          <div className="p-5">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Image
-                  src={
-                    counselor.profileImage ||
-                    "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_1280.png"
-                  }
-                  alt={counselor.name}
-                  width={56}
-                  height={56}
-                  loading="lazy"
-                  className="rounded-full border-2 border-orange-100 object-cover shadow-md"
-                />
-                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full" />
-              </div>
+  {/* Top */}
+  <div className="flex items-start gap-4">
 
-              <div className="flex-1 min-w-0">
-                <h4 className="font-bold capitalize text-gray-900 truncate">
-                  {counselor.name}
-                </h4>
-                <p className="text-xs text-gray-500 font-medium">
-                  Senior Study Abroad Expert
-                </p>
-                <span className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-600 text-[10px] font-bold border border-orange-100">
-                  Free Consultation
-                </span>
-              </div>
-            </div>
+    <Image
+      src={
+        counselor.profileImage ||
+        "https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_1280.png"
+      }
+      alt={counselor.name}
+      width={64}
+      height={64}
+      className="rounded-full border border-white shadow-md object-cover"
+    />
 
-            {/* Contact Actions */}
-            <div className="mt-5 grid grid-cols-3 gap-2">
-              {[
-                {
-                  icon: MessageCircle,
-                  label: "WhatsApp",
-                  link: `https://wa.me/${counselor.phone?.replace(/\D/g, "")}`,
-                  color: "hover:bg-emerald-500 hover:border-emerald-500 hover:text-white",
-                  iconHover: "group-hover:text-white",
-                },
-                {
-                  icon: Mail,
-                  label: "Email",
-                  link: `mailto:${counselor.email}`,
-                  color: "hover:bg-blue-500 hover:border-blue-500 hover:text-white",
-                  iconHover: "group-hover:text-white",
-                },
-                {
-                  icon: Phone,
-                  label: "Call",
-                  link: `tel:${counselor.phone}`,
-                  color: "hover:bg-orange-500 hover:border-orange-500 hover:text-white",
-                  iconHover: "group-hover:text-white",
-                },
-              ].map((item, i) => (
-                <a
-                  key={i}
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`group flex flex-col items-center gap-1.5 rounded-xl border border-gray-100 bg-gray-50 py-3 transition-all duration-300 ${item.color}`}
-                >
-                  <item.icon
-                    className={`w-4 h-4 text-gray-500 transition-colors ${item.iconHover}`}
-                  />
-                  <span className="text-[11px] font-semibold text-gray-600 group-hover:text-white transition-colors">
-                    {item.label}
-                  </span>
-                </a>
-              ))}
-            </div>
-          </div>
+    <div className="flex-1">
+
+      <p className="text-gray-500 text-sm font-medium">
+        Your Counsellor
+      </p>
+
+      <h3 className="text-base leading-none font-bold text-[#222] mt-1 capitalize">
+        {counselor.name}
+      </h3>
+
+      <div className="flex items-center gap-2 mt-3">
+
+        <div className="flex text-[#FF6B35]">
+          {[1,2,3,4,5].map((i)=>(
+            <Star
+              key={i}
+              size={14}
+              fill="currentColor"
+              className="text-[#FF6B35]"
+            />
+          ))}
         </div>
+
+        <span className="text-sm font-semibold text-gray-400">
+          4.9 · 200+ students
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  {/* Description */}
+
+  <p className="mt-6 text-[14px] text-[#6B7280]">
+    Specializes in Canada & UK admissions.
+    Available Mon–Fri, 10am–7pm IST.
+  </p>
+
+  {/* Button */}
+
+  <button
+    className="
+      mt-4
+      w-full
+      rounded-2xl
+       bg-gradient-to-r from-[#FF6B2C] to-[#FF5123] hover:shadow-[0_12px_35px_rgba(255,98,41,0.45)]
+      py-2
+      text-base
+      font-semibold
+      text-white
+      transition-all
+      hover:scale-[1.02]
+     
+    "
+  >
+    Book a Session →
+  </button>
+
+</div>
       )}
 
             {data?.applications && data.applications.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#FFDCCB] shadow-[0_10px_40px_rgba(255,119,51,0.12)] overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Building2 className="w-5 h-5 text-gray-700" />
               <h3 className="text-base font-bold text-gray-900">
                 My Applications
               </h3>
-              <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-[10px] font-bold">
-                {data.applications.length}
-              </span>
+            
             </div>
             <button
               onClick={() => router.push("/dashboard/application")}
-              className="text-xs font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors"
+              className="text-xs font-medium text-orange-600 hover:text-orange-700 flex items-center gap-1 transition-colors"
             >
               View All
               <ChevronRight className="w-3.5 h-3.5" />
@@ -496,7 +488,7 @@ export const Rigthsidebar = () => {
           ALERTS SECTION
          ═══════════════════════════════════════════════════════════════ */}
       {data?.alerts && data.alerts.total > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#FFDCCB] shadow-[0_10px_40px_rgba(255,119,51,0.12)] overflow-hidden">
           {/* Header */}
           <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -514,7 +506,7 @@ export const Rigthsidebar = () => {
               </span>
             </div>
             {data.alerts.critical > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 text-[10px] font-bold border border-rose-100">
+              <span className="px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 text-[12px] font-bold border border-rose-100">
                 {data.alerts.critical} Critical
               </span>
             )}
@@ -539,18 +531,18 @@ export const Rigthsidebar = () => {
                           {alert.title}
                         </h4>
                         <span
-                          className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${config.badge}`}
+                          className={`px-1.5 py-0.5 rounded text-[12px] font-bold border ${config.badge}`}
                         >
                           {config.badgeText}
                         </span>
                       </div>
 
-                      <p className="text-xs text-gray-500 leading-relaxed mb-1">
+                      <p className="text-sm text-gray-500 leading-relaxed mb-1">
                         {alert.message}
                       </p>
 
                       {alert.impact && (
-                        <p className="text-[11px] text-gray-400 italic mb-2">
+                        <p className="text-[12px] text-gray-400 italic mb-2">
                           Impact: {alert.impact}
                         </p>
                       )}
@@ -583,8 +575,8 @@ export const Rigthsidebar = () => {
           RECENT ACTIVITIES SECTION
          ═══════════════════════════════════════════════════════════════ */}
       {data?.recentActivities && data.recentActivities.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
+        <div className="bg-white rounded-2xl border border-[#FFDCCB] shadow-[0_10px_40px_rgba(255,119,51,0.12)] overflow-hidden">
+          <div className="px-3 py-4 border-b border-[#FFDCCB] flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Clock className="w-5 h-5 text-gray-700" />
               <h3 className="text-base font-bold text-gray-900">
@@ -593,7 +585,7 @@ export const Rigthsidebar = () => {
             </div>
           </div>
 
-          <div className="p-3 space-y-1">
+          <div className=" space-y-1">
             {data.recentActivities.slice(0, 5).map((activity) => {
               const config = getActivityConfig(activity);
 
@@ -612,12 +604,12 @@ export const Rigthsidebar = () => {
                         activity.action}
                     </p>
                     {activity.application && (
-                      <p className="text-[11px] text-gray-400 mt-0.5">
+                      <p className="text-[12px] text-gray-400 mt-0.5">
                         App: {activity.application.applicationNumber}
                       </p>
                     )}
                     <div className="flex items-center gap-2 mt-1.5">
-                      <span className="text-[11px] text-gray-400 font-medium">
+                      <span className="text-[12px] text-gray-400 font-medium">
                         {formatTimeAgo(activity.createdAt)}
                       </span>
                     </div>

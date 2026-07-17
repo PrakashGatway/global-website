@@ -22,6 +22,7 @@ import { DynamicLucideIcon } from "./DynamicLucideIcon";
 import dynamic from "next/dynamic";
 import { CountryCardGrid } from "@/components/PageComponent/Unversity";
 import VisaDetails from "./dashboard/VisaDetails/visaDetails";
+import { SingleSlider } from "./SingleSlider";
 
 const UniversitySliderClient = dynamic(
   () => import("@/components/PageComponent/Unversity").then(
@@ -827,7 +828,7 @@ export default function Homepage({
         </div>
       </section>
 
-      <section className="lg:py-5 overflow-hidden">
+      <section className="lg:py-5 overflow-hidden bg-[#faf5f2]">
         <div className="max-w-7xl mx-auto overflow-hidden ">
           <div className=" lg:py-5 text-left">
             <h2 className="text-xl ">
@@ -884,11 +885,11 @@ export default function Homepage({
         </div>
       </section>
 
-      <UniversitySliderClient universities={homePage.universities} />
+     <SingleSlider/>
 
-      <section className="max-w-7xl mx-auto  py-5 px-4 lg:px-0">
+      <section className="bg-[#faf5f2] py-5 lg:py-5 px-4 lg:px-0 ">
         {/* Heading */}
-        <div className="text-left lg:py-5">
+        <div className="text-left  max-w-7xl mx-auto py-5">
           <h2 className="text-primary">
             <span className="text-[#F46C44] font-light  text-xl lg:text-4xl">
               {homePage.studyDestinations.title.split("||")[0]}
@@ -900,6 +901,7 @@ export default function Homepage({
           </h2>
         </div>
 
+    
         <CountryCardGrid countries={countryData} />
         {/* Grid */}
         {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-4  justify-center">

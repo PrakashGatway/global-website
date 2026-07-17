@@ -32,6 +32,10 @@ import {
   PenTool,
   ChevronRight,
   ChevronLeft,
+  Trophy,
+  Award,
+  FileText,
+  DollarSign,
 } from "lucide-react";
 import axiosInstance from "@/app/axiosInstance";
 import AmazingSelect, { ModernSelect } from "@/components/ui/select";
@@ -370,6 +374,7 @@ function UniversitiesPageClient() {
 
         // Build query parameters based on backend controller
         const params = new URLSearchParams({
+          withCountry: true,
           page: currentPage.toString(),
           isWeb: "true",
           limit: "9",
@@ -503,46 +508,9 @@ function UniversitiesPageClient() {
     setPage(1);
   };
 
-  const getCardGradient = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "public":
-        return "from-blue-500/10 via-blue-400/5 to-transparent";
-      case "private":
-        return "from-purple-500/10 via-purple-400/5 to-transparent";
-      case "government":
-        return "from-emerald-500/10 via-emerald-400/5 to-transparent";
-      default:
-        return "from-gray-500/10 via-gray-400/5 to-transparent";
-    }
-  };
 
-  const getTypeIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "public":
-        return <Building className="w-4 h-4" />;
-      case "private":
-        return <Shield className="w-4 h-4" />;
-      default:
-        return <GraduationCap className="w-4 h-4" />;
-    }
-  };
 
-  const formatRank = (rank: string | number) => {
-    if (!rank || rank === "N/A") return "Unranked";
-    return `#${rank}`;
-  };
 
-  const getAcceptanceRateColor = (rate: number) => {
-    if (rate >= 70) return "text-emerald-600 bg-emerald-50 border-emerald-200";
-    if (rate >= 40) return "text-amber-600 bg-amber-50 border-amber-200";
-    return "text-rose-600 bg-rose-50 border-rose-200";
-  };
-
-  const getAcceptanceRateLabel = (rate: number) => {
-    if (rate >= 70) return "Open Admission";
-    if (rate >= 40) return "Moderate";
-    return "Selective";
-  };
 
   const intakeOptions = [
     // Monthly Intakes
@@ -570,549 +538,429 @@ function UniversitiesPageClient() {
     setShowFilters(!showFilters);
   };
 
+  useEffect(() => {
+    if (
+      allProfile?.profile?.preferences?.preferredCountries?.length &&
+      filters.country.length === 0
+    ) {
+      const countryCodes = countries
+        .filter((c) =>
+          allProfile.profile.preferences.preferredCountries.includes(c.label)
+        )
+        .map((c) => c.value);
+
+      setFilters((prev) => ({
+        ...prev,
+        country: countryCodes,
+      }));
+    }
+  }, [allProfile, countries]);
+
+
   return (
-    <main className="mx-auto sm:px-4 sm:py-6">
+    <main className="mx-auto sm:px-4 sm:py-6 ">
       {/* Hero Section */}
-      <div className="flex flex-col md:flex-row items-center justify-between bg-gradient-to-r from-orange-50 to-white border border-orange-100 p-6 mb-8 rounded-xl">
+      <div className="flex max-w-[1600px] flex-col md:flex-row items-center justify-between bg-gradient-to-r from-orange-50 to-white border border-orange-100 p-6 mb-8 px-4 rounded-xl">
         <div className="mb-6 md:mb-0">
           <span className="inline-block px-3 py-1 text-sm font-medium bg-orange-100 text-orange-600 rounded-full mb-3">
             Global University Search
           </span>
-
           <h1 className="text-2xl font-bold text-gray-900 mb-1">
             Find Universities That Match Your Ambitions
           </h1>
-
           <p className="text-gray-600 text-sm max-w-xl">
             Browse thousands of universities, filter by country, intake, and study level to find the perfect destination for your future.
           </p>
         </div>
-
         <div className="hidden md:flex items-center justify-center sm:px-8">
           <img src="/shapes/2.webp" alt="uni" className="w-40 scale-160" />
         </div>
       </div>
 
-      {/* Mobile Filter Button */}
-      <div className="md:hidden mb-6">
-        <button
-          onClick={toggleMobileFilters}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-primary/10 text-primary rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors"
-        >
-          <Filter className="w-5 h-5" />
-          <span>Filters {activeFilterCount > 0 && `(${activeFilterCount})`}</span>
-        </button>
+      {/* --- NEW TOP FILTER BAR SECTION --- */}
+      <div className="bg-white max-w-[1600px] border border-gray-200 rounded-xl p-4 px-4 mb-8 shadow-sm">
+        <div className="flex flex-wrap gap-4 items-center">
+
+          {/* 1. Search Input */}
+          <div className="flex-grow min-w-[200px] relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search scholarships by title..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-8 py-2.5 border border-orange-500 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 rounded-lg text-sm transition-all outline-none"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {/* 2. Country Select */}
+          <div className="min-w-[160px] flex-grow md:flex-grow-0">
+            <Select
+              isMulti
+              options={countries.map((c) => ({
+                value: c.value,
+                label: c.label,
+              }))}
+              value={countries
+                .filter((c) => filters.country?.includes(c.value))
+                .map((c) => ({
+                  value: c.value,
+                  label: c.label,
+                }))}
+              onChange={(selected) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  country: selected?.map((item) => item.value) || [],
+                }))
+              }
+              placeholder="All Countries"
+              classNamePrefix="custom-select"
+              styles={{
+                control: (base, state) => ({
+                  ...base, minHeight: '42px', borderColor: state.isFocused ? "#f97316" : "#f97316", borderRadius: '8px', boxShadow: state.isFocused
+                    ? "0 0 0 3px rgba(249, 115, 22, 0.25)" // orange ring
+                    : "none",
+                  "&:hover": {
+                    borderColor: "#f97316",
+                  },
+                }),
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+              }}
+              menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
+            />
+          </div>
+
+          {/* 3. Intake Select */}
+          <div className="min-w-[160px] flex-grow md:flex-grow-0">
+            <Select
+              isMulti
+              options={intakeOptions}
+              value={intakeOptions.filter((item) => filters.intake?.includes(item.value))}
+              onChange={(selected) => setFilters({ ...filters, intake: selected?.map((item) => item.value) || [] })}
+              placeholder="All Levels" // Using "All Levels" as per screenshot, or change to "All Intakes"
+              classNamePrefix="custom-select"
+              styles={{
+                control: (base, state) => ({
+                  ...base, minHeight: '42px', borderColor: state.isFocused ? "#f97316" : "#f97316", borderRadius: '8px', boxShadow: state.isFocused
+                    ? "0 0 0 3px rgba(249, 115, 22, 0.25)" // orange ring
+                    : "none",
+                  "&:hover": {
+                    borderColor: "#f97316",
+                  }, borderRadius: '8px'
+                }),
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+              }}
+              menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
+            />
+          </div>
+
+          {/* 4. Funding/Type Select (Mapped to your uni_type logic) */}
+          <div className="min-w-[160px] flex-grow md:flex-grow-0">
+            <Select
+              options={[
+                { value: 'public', label: 'Public' },
+                { value: 'private', label: 'Private' }
+              ]}
+              value={filters.uni_type ? [{ value: filters.uni_type, label: filters.uni_type === 'public' ? 'Public' : 'Private' }] : null}
+              onChange={(selected) => handleFilterChange("uni_type", selected?.value || "")}
+              placeholder="All Funding Types"
+              isClearable
+              classNamePrefix="custom-select"
+              styles={{
+                control: (base, state) => ({
+                  ...base, minHeight: '42px', borderColor: state.isFocused ? "#f97316" : "#f97316", borderRadius: '8px', boxShadow: state.isFocused
+                    ? "0 0 0 3px rgba(249, 115, 22, 0.25)" // orange ring
+                    : "none",
+                  "&:hover": {
+                    borderColor: "#f97316",
+                  }, borderRadius: '8px'
+                }),
+                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+              }}
+              menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
+            />
+          </div>
+
+
+
+          {/* 6. Action Buttons */}
+          <div className="flex items-center gap-2 ml-auto">
+            {/* Grid/List Toggle Icons (Visual only based on screenshot) */}
+            <div className="hidden sm:flex border border-gray-200 rounded-lg overflow-hidden">
+              <button className="p-2 bg-orange-50 text-orange-600"><Filter className="w-4 h-4" /></button>
+              <button className="p-2 text-gray-400 hover:bg-gray-50"><div className="w-4 h-4 border-l-2 border-r-2 border-current mx-0.5"></div></button>
+            </div>
+
+            {/* Apply Button */}
+            <button
+              onClick={() => {/* Trigger manual search if needed, otherwise filters are live */ }}
+              className="flex items-center gap-2 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-medium rounded-lg transition-colors shadow-md shadow-orange-200"
+            >
+              <Filter className="w-4 h-4" />
+              <span>Apply</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Active Filters Chips Row (Optional: Shows below inputs if active) */}
+        {activeFilterCount > 0 && (
+          <div className="mt-4 pt-3 border-t border-dashed border-gray-200 flex flex-wrap gap-2 items-center">
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mr-2">Active:</span>
+
+            {filters.country.length > 0 && (
+              <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-50 text-orange-700 text-xs font-medium rounded-full border border-orange-100">
+                {filters.country.length} Countries
+                <button onClick={() => handleFilterChange("country", [])}><X className="w-3 h-3 hover:text-orange-900" /></button>
+              </span>
+            )}
+
+            {filters.intake.length > 0 && (
+              <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-50 text-orange-700 text-xs font-medium rounded-full border border-orange-100">
+                {filters.intake.length} Intakes
+                <button onClick={() => handleFilterChange("intake", [])}><X className="w-3 h-3 hover:text-orange-900" /></button>
+              </span>
+            )}
+
+            {filters.uni_type && (
+              <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-50 text-orange-700 text-xs font-medium rounded-full border border-orange-100">
+                {filters.uni_type.charAt(0).toUpperCase() + filters.uni_type.slice(1)}
+                <button onClick={() => handleFilterChange("uni_type", "")}><X className="w-3 h-3 hover:text-orange-900" /></button>
+              </span>
+            )}
+
+            <button onClick={clearFilters} className="ml-auto text-xs text-gray-500 hover:text-red-500 underline decoration-dotted">
+              Clear all
+            </button>
+          </div>
+        )}
       </div>
+      {/* --- END TOP FILTER BAR --- */}
 
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Left Side - Permanent Filter Panel (Hidden on mobile when not active) */}
-        <aside
-          className={`${showFilters ? 'block' : 'hidden'
-            } md:block w-full md:w-80 flex-shrink-0`}
+
+      {/* Results Count Header */}
+      {!loading && universities.length > 0 && (
+        <div className="mb-4 px-2">
+          <p className="text-sm text-gray-500">
+            Found <span className="font-bold text-gray-900">{total}</span> universities
+          </p>
+        </div>
+      )}
+
+      {/* University Cards Grid */}
+      <div className="bg-[#fffbf6]">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 max-w-[1600px] "
         >
-          <div className="sticky top-6 bg-white border border-border overflow-hidden">
-            <div className="flex items-center justify-between p-3 border-b border-border bg-gradient-to-r from-primary/5 to-transparent">
-              <h2 className="font-semibold flex items-center gap-2">
-                <Filter className="w-4 h-4 text-primary" />
-                Filters
-              </h2>
-
-              {/* Results Count */}
-              {!loading && universities.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex items-center justify-between"
-                >
-                  <p className="text-sm text-muted-foreground">
-                    Found{" "}
-                    <span className="font-semibold text-foreground">
-                      {total}
-                    </span>{" "}
-                    universities
-                  </p>
-                </motion.div>
-              )}
-            </div>
-
-            <div className="p-3 space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto">
-              {/* Search Bar */}
-              <div className="flex flex-col gap-1">
-                <label className="block text-sm font-medium mb-px" htmlFor="country">Search</label>
-
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="relative"
-                >
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 z-1" />
-                  <input
-                    type="text"
-                    placeholder="Search universities..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 border-1 border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all backdrop-blur-sm rounded"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery("")}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-muted transition-colors rounded-full"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                </motion.div>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="block text-sm font-medium mb-px" htmlFor="country">Country</label>
-                <Select
-                  isMulti
-                  className="relative z-10"
-                  menuPortalTarget={document.body}
-                  menuPosition="fixed"
-                  menuPlacement="auto"
-                  placeholder="Select Countries"
-                  styles={{
-                    menuPortal: (base) => ({
-                      ...base,
-                      zIndex: 9999,
-                    }),
-                    control: (provided, state) => ({
-                      ...provided,
-                      borderColor: state.isFocused ? "#f97316" : "#d1d5db",
-                      boxShadow: state.isFocused ? "0 0 0 1px #f97316" : "none",
-                      "&:hover": {
-                        borderColor: "#f97316",
-                      },
-                      padding: "4px",
-                    }),
-                    option: (provided, state) => ({
-                      ...provided,
-                      backgroundColor: state.isSelected
-                        ? "#f97316"
-                        : state.isFocused
-                          ? "#fed7aa"
-                          : "#fff",
-                      color: state.isSelected ? "#fff" : "#000",
-                      cursor: "pointer",
-                    }),
-                  }}
-                  options={countries.map((country) => ({
-                    value: country.value,
-                    label: country.label,
-                  }))}
-                  value={countries
-                    .filter((c) => filters.country?.includes(c.value))
-                    .map((c) => ({
-                      value: c.value,
-                      label: c.label,
-                    }))}
-                  onChange={(selected) =>
-                    setFilters({
-                      ...filters,
-                      country: selected?.map((item) => item.value) || [],
-                    })
-                  }
-                />
-              </div>
-              {/* Country Filter */}
-
-
-              {/* Intake Filter */}
-              <div className="flex flex-col gap-1">
-                <label className="block text-sm font-medium mb-px" htmlFor="country">Intake</label>
-
-                <Select
-                  isMulti
-                  options={intakeOptions}
-                  placeholder="Select Intake"
-                  menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-                  menuPosition="fixed"
-                  menuPlacement="auto"
-                  value={intakeOptions.filter((item) =>
-                    filters.intake?.includes(item.value)
-                  )}
-                  onChange={(selected) =>
-                    setFilters({
-                      ...filters,
-                      intake: selected?.map((item) => item.value) || [],
-                    })
-                  }
-                  styles={{
-                    menuPortal: (base) => ({
-                      ...base,
-                      zIndex: 9999,
-                    }),
-
-                    control: (provided, state) => ({
-                      ...provided,
-                      borderColor: state.isFocused ? "#f97316" : "#d1d5db",
-                      boxShadow: state.isFocused ? "0 0 0 1px #f97316" : "none",
-                      "&:hover": {
-                        borderColor: "#f97316",
-                      },
-                      padding: "4px",
-                    }),
-
-                    option: (provided, state) => ({
-                      ...provided,
-                      backgroundColor: state.isSelected
-                        ? "#f97316"
-                        : state.isFocused
-                          ? "#ffedd5"
-                          : "#fff",
-                      color: state.isSelected ? "#fff" : "#111",
-                      cursor: "pointer",
-                    }),
-                  }}
-                />
-              </div>
-
-              {/* University Type Filter */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium flex items-center gap-2">
-                  University Type
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    {
-                      value: "public",
-                      label: "Public",
-                      icon: <Building className="w-4 h-4" />,
-                    },
-                    {
-                      value: "private",
-                      label: "Private",
-                      icon: <Shield className="w-4 h-4" />,
-                    },
-                  ].map((type) => (
-                    <button
-                      key={type.value}
-                      onClick={() =>
-                        handleFilterChange(
-                          "uni_type",
-                          filters.uni_type === type.value ? "" : type.value,
-                        )
-                      }
-                      className={`flex items-center justify-center gap-2 px-3 py-2 border transition-all duration-200 rounded ${filters.uni_type === type.value
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border hover:border-primary/50 hover:bg-muted"
-                        }`}
-                    >
-                      {type.icon}
-                      <span className="text-sm">{type.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Active Filters */}
-              {activeFilterCount > 0 && (
-                <div className="pt-2">
-                  <p className="text-xs font-medium mb-2">
-                    Active Filters
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {filters.country.length > 0 && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary text-sm rounded-full">
-                        {filters.country.length} countries
-                        <button
-                          onClick={() => handleFilterChange("country", [])}
-                          className="hover:bg-primary/20 p-0.5 rounded-full"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    )}
-                    {filters.uni_type && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary text-sm rounded-full">
-                        {filters.uni_type}
-                        <button
-                          onClick={() => handleFilterChange("uni_type", "")}
-                          className="hover:bg-primary/20 p-0.5 rounded-full"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    )}
-                    {filters.intake.length > 0 && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary text-sm rounded-full">
-                        {filters.intake.length} intakes
-                        <button
-                          onClick={() => handleFilterChange("intake", [])}
-                          className="hover:bg-primary/20 p-0.5 rounded-full"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
-                    )}
+          {loading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-card border border-border overflow-hidden animate-pulse"
+              >
+                <div className="h-40 bg-gradient-to-br from-muted to-muted/50"></div>
+                <div className="p-4 space-y-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-muted rounded-lg"></div>
+                      <div className="space-y-2">
+                        <div className="h-4 w-32 bg-muted rounded"></div>
+                        <div className="h-3 w-24 bg-muted rounded"></div>
+                      </div>
+                    </div>
+                    <div className="h-8 w-16 bg-muted rounded"></div>
                   </div>
+                  <div className="space-y-2">
+                    <div className="h-3 w-full bg-muted rounded"></div>
+                    <div className="h-3 w-3/4 bg-muted rounded"></div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="h-12 bg-muted rounded"></div>
+                    <div className="h-12 bg-muted rounded"></div>
+                    <div className="h-12 bg-muted rounded"></div>
+                  </div>
+                  <div className="h-10 bg-muted rounded"></div>
                 </div>
-              )}
-            </div>
-
-            <div className="flex items-center justify-between gap-2 p-2 border-t border-border bg-muted/30">
+              </div>
+            ))
+          ) : universities.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="col-span-full text-center py-16"
+            >
+              <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center rounded-full">
+                <Search className="w-12 h-12 text-muted-foreground" />
+              </div>
+              <h3 className="text-2xl font-bold mb-2">No universities found</h3>
+              <p className="text-muted-foreground">
+                Try adjusting your search or filters to find what you're looking
+                for
+              </p>
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 font-medium text-sm hover:text-foreground transition-colors"
+                className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 rounded-lg"
               >
-                Clear all
+                Clear all filters
               </button>
-            </div>
-          </div>
-        </aside>
-
-        {/* Right Side - Search and University Cards */}
-        <div className="flex-1 space-y-4">
-          {/* Close mobile filters button */}
-          {showFilters && (
-            <div className="md:hidden mb-4">
-              <button
-                onClick={toggleMobileFilters}
-                className="flex items-center gap-2 text-primary font-medium"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                Back to results
-              </button>
-            </div>
-          )}
-
-          {/* University Cards Grid */}
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
-          >
-            {loading ? (
-              Array.from({ length: 6 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="bg-card border border-border overflow-hidden animate-pulse"
-                >
-                  <div className="h-40 bg-gradient-to-br from-muted to-muted/50"></div>
-                  <div className="p-4 space-y-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-muted rounded-lg"></div>
-                        <div className="space-y-2">
-                          <div className="h-4 w-32 bg-muted rounded"></div>
-                          <div className="h-3 w-24 bg-muted rounded"></div>
-                        </div>
-                      </div>
-                      <div className="h-8 w-16 bg-muted rounded"></div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="h-3 w-full bg-muted rounded"></div>
-                      <div className="h-3 w-3/4 bg-muted rounded"></div>
-                    </div>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="h-12 bg-muted rounded"></div>
-                      <div className="h-12 bg-muted rounded"></div>
-                      <div className="h-12 bg-muted rounded"></div>
-                    </div>
-                    <div className="h-10 bg-muted rounded"></div>
-                  </div>
-                </div>
-              ))
-            ) : universities.length === 0 ? (
+            </motion.div>
+          ) : (
+            universities.map((uni, index) => (
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="col-span-full text-center py-16"
+                key={index}
+                className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.35)]  hover:scale-103 transition-all duration-300 flex flex-col h-full border-t-4 border-t-orange-500 border border-orange-500"
               >
-                <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center rounded-full">
-                  <Search className="w-12 h-12 text-muted-foreground" />
-                </div>
-                <h3 className="text-2xl font-bold mb-2">No universities found</h3>
-                <p className="text-muted-foreground">
-                  Try adjusting your search or filters to find what you're looking
-                  for
-                </p>
-                <button
-                  onClick={clearFilters}
-                  className="mt-6 px-6 py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300 rounded-lg"
-                >
-                  Clear all filters
-                </button>
-              </motion.div>
-            ) : (
-              universities.map((uni, index) => (
-                <motion.div
-                  key={index}
-                  className={`relative hover:shadow-xl flex flex-col h-full border overflow-hidden`}
-                >
-                  {/* Cover Image */}
-                  <div className="relative h-40 overflow-hidden">
-                    <Image
-                      src={
-                        uni?.cover_photo
-                          ? uni?.cover_photo
-                          : "https://etimg.etb2bimg.com/photo/121373442.cms"
-                      }
-                      alt={uni.name}
-                      className="w-full h-full object-cover transition-transform duration-700"
-                      onError={(e) => {
-                        e.currentTarget.src =
-                          "https://etimg.etb2bimg.com/photo/121373442.cms";
-                      }}
-                      width={400}
-                      height={160}
-                      priority={index < 3}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
-                  </div>
-
-                  <div className="p-4 relative flex flex-col flex-1">
-                    {/* Logo and Header */}
-                    <div className="flex items-start justify-between -mt-12 mb-4 relative">
-                      <div className="flex items-center gap-2">
-                        {uni.uni_logo ? (
-                          <Image
-                            src={uni.uni_logo || "/images/newlogo3.png"}
-                            alt={uni.name}
-                            className="w-16 h-auto max-h-10 object-cover bg-white shadow-lg border-2 rounded-md"
-                            onError={(e) => {
-                              e.currentTarget.src = "/images/newlogo3.png";
-                            }}
-                            width={64}
-                            height={40}
-                          />
-                        ) : (
-                          <Building className="w-16 h-16 text-muted-foreground" />
-                        )}
-                        <div>
-                          <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary transition-colors">
-                            {uni.name}
-                          </h3>
-                          <p className="text-sm text-muted-foreground flex items-center gap-1">
-                            <MapPin className="w-3 h-3" />
-                            {uni.city}, {uni.country}
-                            {uni.uni_web && (
-                              <a
-                                href={uni.uni_web}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="ml-1 p-1.5 border border-border hover:bg-muted hover:border-primary/50 transition-all duration-300 group-hover:scale-[1.02] rounded"
-                              >
-                                <ExternalLink className="w-3 h-3" />
-                              </a>
-                            )}
-                          </p>
-                        </div>
-                      </div>
+                <div className="p-5 flex flex-col flex-1">
+                  {/* Header - Orange Icon + Title */}
+                  <div className="flex items-start gap-4 mb-3">
+                    {/* Orange Circular Icon */}
+                    <div className="flex-shrink-0 w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center shadow-md">
+                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                      </svg>
                     </div>
 
-                    <div className="relative flex flex-col flex-1">
-                      {/* Slogan */}
-                      {uni.slogan && (
-                        <p className="text-xs text-muted-foreground italic mb-3 line-clamp-2">
-                          "{uni.slogan}"
-                        </p>
-                      )}
-
-                      {/* Description */}
-                      <p
-                        className="text-foreground/80 text-[13px] mb-2 line-clamp-2"
-                        title={
-                          uni.short_description || "No description available."
-                        }
-                      >
-                        {uni.short_description || "No description available."}
+                    {/* Title & Description */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-xl text-gray-900 mb-1 line-clamp-2 leading-tight">
+                        {uni.name}
+                      </h3>
+                      <div className="flex items-center gap-1 text-sm text-gray-500 mb-1">
+                        <MapPin className="w-3.5 h-3.5" />
+                        <span>{uni.city}, {uni?.country?.name?.slice(0, 2)?.toUpperCase() || "IT"}</span>
+                      </div>
+                      <p className="text-sm text-gray-500 line-clamp-1">
+                        Study at the {uni.name}—a globally renowned institution in.........
                       </p>
 
-                      {/* Intakes */}
-                      {uni.intakes && uni.intakes.length > 0 && (
-                        <div className="mb-3">
-                          <p className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            Intakes
-                          </p>
-                          <div className="flex flex-wrap gap-1">
-                            {uni.intakes.slice(0, 3).map((intake, index) => (
-                              <span
-                                key={index}
-                                className="text-xs px-2 py-1 bg-primary/10 text-primary font-medium rounded"
-                              >
-                                {intake}
-                              </span>
-                            ))}
-                            {uni.intakes.length > 3 && (
-                              <span className="text-xs px-2 py-1 bg-muted text-muted-foreground rounded">
-                                +{uni.intakes.length - 3}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      )}
 
-                      {/* Tags */}
+                      {/* Program Tags */}
                       {uni.tags && (
-                        <div className="flex flex-wrap gap-1.5 mb-4">
+                        <div className="flex flex-wrap gap-2 my-2">
                           {uni.tags
                             .split(",")
-                            .slice(0, 3)
+                            .slice(0, 4)
                             .map((tag, i) => (
                               <span
                                 key={i}
-                                className="px-2 capitalize py-0.5 bg-muted/50 text-xs text-muted-foreground border border-border/50 rounded"
+                                className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-orange-600 bg-orange-50 border border-orange-200 rounded-lg"
                               >
                                 {tag.trim()}
                               </span>
                             ))}
                         </div>
                       )}
+
+                      {/* Intakes Section */}
+                      <div
+                        className={`flex items-center gap-3 my-2 ${uni?.intakes?.length > 0 ? "visible" : "invisible"
+                          }`}
+                      >
+                        <span className="text-sm font-bold text-gray-500 uppercase tracking-wide">
+                          INTAKES
+                        </span>
+
+                        <span className="inline-flex items-center px-3 py-1 text-sm font-semibold text-green-600 bg-green-50 border border-green-200 rounded-lg">
+                          Open
+                        </span>
+
+                        {uni?.intakes?.length > 0 && (
+                          <span className="inline-flex items-center px-3 py-1 text-sm font-semibold text-orange-600 bg-orange-50 border border-orange-200 rounded-lg">
+                            {uni.intakes[0]}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Footer Actions */}
-                    <div className="flex flex-col sm:flex-row gap-2 pt-2 mt-auto">
-                      <Link
-                        href={`/dashboard/universities/${uni?.slug}`}
-                        className="flex-1 p-2 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02] rounded-lg"
-                      >
-                        View Details
-                      </Link>
-                      <Link
-                        href={`/dashboard/programs?university=${uni._id}`}
-                        className="flex-1 p-2 text-sm bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:shadow-lg transition-all duration-300 font-medium text-center group-hover:scale-[1.02] rounded-lg"
-                      >
-                        Apply
-                      </Link>
+
+                  </div>
+
+
+
+                  {/* Stats Section - Cream Background */}
+                  <div className="bg-orange-50/50 rounded-xl border border-orange-100 mb-4 mt-auto">
+                    <div className="grid grid-cols-3 divide-x divide-orange-200">
+                      {/* QS Ranking */}
+                      <div className="px-2 py-4  flex justify-center items-center gap-3">
+                        <div className="flex-shrink-0">
+                          <span className="text-lg">🏆</span>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 font-medium mb-0.5">QS Ranking</p>
+                          <p className="text-sm font-bold text-gray-900">
+                            #{uni?.uni_rank?.[0]?.rank?.split(/[-–]/)[0] || "42"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Tuition Fee */}
+                      <div className="px-2 py-4 flex justify-center items-center gap-3">
+                        <div className="flex-shrink-0">
+                          <span className="text-lg">💰</span>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 font-medium mb-0.5">Tution Fee Yearly</p>
+                          <p className="text-sm font-bold text-gray-900">
+                            {uni.financials?.ug_fees || "$3,000+"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Programs */}
+                      <div className="px-2 py-4 flex justify-center  items-center gap-3">
+                        <div className="flex-shrink-0">
+                          <span className="text-lg">📋</span>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 font-medium mb-0.5">Acceptance Rate</p>
+                          <p className="text-sm font-bold text-gray-900">
+                            {uni.acceptanceRate || "180+"} {" "}%
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              ))
-            )}
-          </motion.div>
 
-          {/* Infinite Scroll Trigger */}
-          <div ref={observerTarget} className="py-8">
-            {loadingMore && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center"
-              >
-                <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-                <p className="mt-3 text-sm text-muted-foreground">
-                  Loading more universities...
-                </p>
+                  {/* Footer Actions */}
+                  <div className="flex justify-center items-center gap-3 mt-auto pt-2">
+                    <Link
+                      href={`/dashboard/universities/${uni?.slug}`}
+                      className="flex items-center px-5 py-3 text-sm font-bold text-white bg-orange-500 hover:bg-orange-600 shadow-lg shadow-orange-200 transition-all duration-300 text-center rounded-xl"
+                    >
+                      View Details
+                    </Link>
+                    <Link
+                      href={`/dashboard/programs?university=${uni._id}`}
+                      className="flex items-center px-5 py-3 text-sm font-bold text-orange-500 bg-white border-2 border-orange-500 hover:bg-orange-50 transition-all duration-300 text-center rounded-xl"
+                    >
+                      Apply Now
+                    </Link>
+                  </div>
+                </div>
               </motion.div>
-            )}
-            {!hasMore && universities.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-8"
-              >
-                <p className="text-muted-foreground">
-                  You've explored all universities
-                </p>
-                <p className="text-sm text-muted-foreground/70 mt-1">
-                  Showing {universities.length} universities
-                </p>
-              </motion.div>
-            )}
+            ))
+          )}
+        </motion.div>
+      </div>
+
+      {/* Infinite Scroll / Loading More */}
+      <div ref={observerTarget} className="py-12 text-center">
+        {loadingMore && (
+          <div className="flex flex-col items-center gap-2">
+            <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
+            <p className="text-sm text-gray-400">Loading more...</p>
           </div>
-        </div>
+        )}
+        {!hasMore && universities.length > 0 && (
+          <p className="text-sm text-gray-400 italic">You've reached the end of the list</p>
+        )}
       </div>
     </main>
   );

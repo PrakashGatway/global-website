@@ -42,10 +42,10 @@ export default function VisaDetails() {
             <section className="py-5">
                 <div className="max-w-7xl mx-auto px-4 md:px-0">
                     <div className="text-left py-5">
-                        <h2 className="text-primary lg:text-4xl font-light">
+                        <h2 className=" text-[#F26B3A] lg:text-4xl font-light">
                             Our Student
                             {" "}
-                          <br />  <span className="text-[#F26B3A] font-bold">
+                          <br />  <span className="text-primary font-bold">
                                 Visa Approvals
                             </span>
                         </h2>

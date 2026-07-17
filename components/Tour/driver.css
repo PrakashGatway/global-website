@@ -14,21 +14,37 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
+    
 }
 
 .driver-popover-prev-btn {
-    background: #4F46E5;
+    background: #f26d44;
     color: white;
     padding: 8px 20px;
     border-radius: 12px;
     font-size: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 8px rgba(242, 109, 68, 0.5);
+    animation: glowPulse 1.8s infinite ease-in-out;
+     transform: translateY(-2px);
+    box-shadow:
+        0 0 10px rgba(242, 109, 68, 0.6),
+        0 0 20px rgba(242, 109, 68, 0.5),
+        0 0 35px rgba(242, 109, 68, 0.4);
 }
-:hover.driver-popover-prev-btn {
-    color: rgb(43, 38, 38);
-    padding: 8px 20px;
-    border-radius: 12px;
-    font-size: 14px;
+
+.driver-popover-prev-btn:hover {
+   
+   background: #f26d44;
+    color: white;
 }
+
+
+
+
+
 .driver-popover-close-btn{
     font-size: 24px;
     padding: 5px;
@@ -38,6 +54,18 @@
     padding: 8px 20px;
     border-radius: 12px;
     font-size: 14px;
+    background: #f26d44;
+    color: white;
+     transform: translateY(-2px);
+    box-shadow:
+        0 0 10px rgba(242, 109, 68, 0.6),
+        0 0 20px rgba(242, 109, 68, 0.5),
+        0 0 35px rgba(242, 109, 68, 0.4);
+
+}
+.driver-popover-next-btn:hover{
+    color: white;
+    background: #f26d44;
 }
 
 /* Progress dots */
