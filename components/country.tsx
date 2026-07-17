@@ -113,7 +113,7 @@ const HeroSection = ({ data, alldata }) => {
   {/* Glass Background */}
   <div className="absolute inset-0 bg-black/40 backdrop-blur-sm border border-white/10"></div>
 
-  <div className="relative p-6">
+  <div className="relative p-6 hidden md:block">
     {/* Header */}
     <div className="relative flex items-center justify-center mb-4">
       <h3 className="text-white text-lg font-semibold">
@@ -128,7 +128,7 @@ const HeroSection = ({ data, alldata }) => {
     </div>
 
     {/* Form */}
-    <div className="space-y-2">
+    <div className="  space-y-2">
       <input
         type="text"
         placeholder="Your Name"
