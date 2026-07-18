@@ -17,7 +17,7 @@ import {
 import UniversityFilters from '@/components/Universitypage/universityFilters';
 import UniversityList, { StudyStats, UniversityOverview } from '@/components/Universitypage/universityList';
 import { UniversityListSkeleton } from '@/components/Universitypage/universityCard';
-import axiosInstance, { serverInstance } from '@/app/axiosInstance';
+import axiosInstance, { serverInstance ,serverInst} from '@/app/axiosInstance';
 import FAQSection from '@/components/faqPage';
 
 // Types
@@ -168,7 +168,7 @@ async function getUniversities(searchParams: {
     params.append("limit", "12");
     params.append('populateExtra', 'false');
     
-    const res = await serverInstance.get(`/universities?${params.toString()}`);
+    const res = await serverInst.get(`/universities?${params.toString()}`);
     
     if (res.data.success) {
       return res.data;

@@ -18,7 +18,7 @@ export const Tag = ({
 
   return (
     <>
-    <TagName className="text-xl sm:text-3xl md:text-4xl font-bold ">
+    <TagName className="text-[1.6rem] sm:text-3xl md:text-4xl font-bold ">
       <span className="text-white lg:text-4xl leading-snug" dangerouslySetInnerHTML={{ __html: text?.split(":")[0] || "" }} />
       <span className="text-white text-base sm:text-lg" dangerouslySetInnerHTML={{ __html: text?.split(":")[1] || "" }} />
      </TagName>

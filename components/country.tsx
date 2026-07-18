@@ -48,20 +48,20 @@ const HeroSection = ({ data, alldata }) => {
         <div className="absolute inset-0 bg-black/30 lg:bg-transparent z-0" />
         
         <div className="relative z-10 w-full h-full flex flex-col justify-center max-w-[1440px]">
-          <div className="w-full px-4 sm:px-8 lg:px-10 py-8 sm:py-1">
+          <div className="w-full px-2 sm:px-8 lg:px-10 py-8 sm:py-1">
             {/* Main content area */}
             <div className="max-w-7xl w-full lg:w-[50%] mx-auto lg:mx-0 px-4 sm:px-6">
               <div className="w-full">
                 {/* Title */}
                 <Tag 
                   data={data?.tag}
-                  css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-4 leading-relaxed"}
+                  css={"text-3xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-4 leading-relaxed"}
                   text={data?.title} 
                 />
                 
                 {/* Subtitle */}
                 <span
-                  className="p-0 text-white text-base [&_div]:py-2 [&_p]:py-1 [&_*]:rounded-none tracking-normal [&_*]:text-white [&_*]:!text-base [&_*]:!font-medium [&_*]:m-0 [&_*]:py-1 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-2 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_li]:gap-1 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_strong]:font-semibold [&_em]:italic ul:!gap-2"
+                  className="p-0 text-white text-base [&_div]:p-2 [&_p]:py-1 [&_*]:rounded-none tracking-normal [&_*]:text-white [&_*]:!text-base [&_*]:!font-medium [&_*]:m-0 [&_*]:py-1 [&_h1]:text-3xl [&_*]:grid-cols-1 sm:[&_*]:grid-cols-2 [&_h1]:font-bold [&_h1]:mb-2 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_li]:gap-1 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_strong]:font-semibold [&_em]:italic ul:!gap-2"
                   dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
                 />
                 

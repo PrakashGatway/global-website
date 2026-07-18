@@ -7,14 +7,14 @@ const BASE_URL =
     ? "http://localhost:5000/api"
     : "https://api.ooshasglobal.com/api"
 
-    
+
 const BASE_IMF_URL =
   mode === "dev"
     ? "http://localhost:5000"
     : "https://api.ooshasglobal.com"
 
- 
-export const serverInstance = axios.create({
+
+export const serverInst = axios.create({
   baseURL: BASE_URL,
   timeout: 60000,
   headers: {
@@ -22,7 +22,40 @@ export const serverInstance = axios.create({
   },
 })
 
-export const fileBaseurl =  (data) => {
+export const serverInstance = {
+  async get<T = any>(
+    url: string,
+    config?: any & {
+      revalidate?: number;
+      tags?: string[];
+    }
+  ) {
+    const res = await fetch(`${BASE_URL}${url}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        ...(config?.headers as HeadersInit),
+      },
+      next: {
+        revalidate: config?.revalidate ?? 600, // default 10 minutes
+        tags: config?.tags,
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`GET ${url} failed (${res.status})`);
+    }
+
+    return {
+      data: (await res.json()) as T,
+      status: res.status,
+      statusText: res.statusText,
+      headers: Object.fromEntries(res.headers.entries()),
+    };
+  }
+};
+
+export const fileBaseurl = (data) => {
   return `${BASE_IMF_URL}${data}`
 }
 

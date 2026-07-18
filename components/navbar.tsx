@@ -254,34 +254,33 @@ export default function Navbar({
       <nav
         className={`
           sticky top-0 z-[999]
-          bg-white shadow-sm 
-          transition-transform duration-300 ease-in-out
-          ${isScrolled ? "lg:-translate-y-1" : "lg:translate-y-0"}
+          bg-white
+          transition-all duration-300 ease-in-out
+          ${isScrolled ? "lg:-translate-y-1 shadow-xl" : "lg:translate-y-0"}
         `}
       >
-         {/* Top Bar - Only show when not scrolled */}
-            {!isScrolled && (
-              <div className=" bg-[#f46c44] items-center gap-6 lg:flex hidden z-10 px-4 lg:px-0 text-white">
-                <div className="flex gap-2 max-w-7xl w-full justify-between items-center mx-auto py-1.5 rounded-b-2xl text-sm font-medium gap-8">
-                  <a href="tel:+919875863347" className="flex items-center gap-2 hover:opacity-80 transition font-medium">
-                    <span>Consult With Expert:</span>
-                    <span className="font-semibold text-yellow-300">+91 9875863347</span>
-                  </a>
-                  {Login ? (
-                    <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition">
-                      Dashboard
-                    </Link>
-                  ) : (
-                    <a href="/login" className="flex items-center gap-2 hover:opacity-80 transition">
-                      <span className="w-3 h-3 bg-yellow-300 rounded-full"></span>
-                      Login
-                    </a>
-                  )}
-                </div>
-              </div>
-            )}
-        <div className={`mx-auto max-w-7xl flex items-center justify-between relative transition-all duration-500 ease-in-out text-black ${isScrolled ? "h-full" : ""}`}>
-          {/* Logo */}
+        {/* Top Bar - Only show when not scrolled */}
+        {!isScrolled && (
+          <div className=" bg-[#f46c44] transition-all duration-500 ease-in-out items-center gap-6 lg:flex hidden z-10  text-white">
+            <div className="flex gap-2 max-w-7xl w-full justify-between items-center px-3 mx-auto py-1.5 rounded-b-2xl text-sm font-medium gap-8">
+              <a href="tel:+919875863347" className="flex items-center gap-2 hover:opacity-80 transition font-medium">
+                <span>Consult With Expert:</span>
+                <span className="font-semibold text-yellow-300">+91 9875863347</span>
+              </a>
+              {Login ? (
+                <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition">
+                  Dashboard
+                </Link>
+              ) : (
+                <a href="/login" className="flex items-center gap-2 hover:opacity-80 transition">
+                  <span className="w-3 h-3 bg-yellow-300 rounded-full"></span>
+                  Login
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+        <div className={`mx-auto max-w-7xl px-2 flex items-center justify-between relative transition-all duration-500 ease-in-out text-black ${isScrolled ? "h-full" : ""}`}>
           <div className="items-center text-end px-8 lg:px-0 gap-2 bg-white">
             <Link href="/">
               <Image
@@ -296,7 +295,7 @@ export default function Navbar({
           </div>
 
           <div className={`flex flex-col  ${isScrolled ? "item-center" : "items-center gap-3 sm:px-15 lg:px-0"}`}>
-           
+
 
             {/* ================= DESKTOP MENU ================= */}
             <div className={`hidden lg:flex items-center text-black gap-2 ${isScrolled ? "justify-center" : "justify-center "}`}>
@@ -313,20 +312,19 @@ export default function Navbar({
                   {/* Desktop Dropdown */}
                   {item.hasDropdown && (
                     <div
-                      className="absolute -left-[10px] top-full mt-4 -translate-x-1/2 opacity-0 invisible scale-95 group-hover:opacity-100 group-hover:visible group-hover:scale-100 transition-all duration-300 ease-out z-50"
+                      className="absolute -left-[10px] top-full mt-4 pt-2 -translate-x-1/2 opacity-0 invisible scale-95 group-hover:opacity-100 group-hover:visible group-hover:scale-100 transition-all duration-300 ease-out z-50"
                       onMouseEnter={() => {
-                        // ✅ Ensure first country is selected when dropdown is hovered
                         if (item.type === "destination" && uniqueCountries.length > 0 && !selectedCountry) {
                           const firstCountry = uniqueCountries[0];
                           loadCountryUniversities(firstCountry);
                         }
                       }}
                     >
-                      <div className="bg-white rounded-2xl shadow-[0_25px_60px_rgba(0,0,0,0.12)] w-[600px] p-5 border border-gray-100">
+                      <div className="bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl w-[600px] p-4">
                         {item.type === "destination" ? (
                           <div className="flex gap-2">
                             {/* Countries Column */}
-                            <div className="w-1/3 border-r border-gray-100">
+                            <div className="w-2/5 border-r border-gray-100">
                               <p className="text-sm font-semibold text-gray-800 mb-3 px-1">Countries</p>
                               <div className="space-y-1 max-h-[60vh] overflow-y-auto pr-2">
                                 {uniqueCountries.map((country) => (
@@ -334,13 +332,13 @@ export default function Navbar({
                                     <div
                                       onMouseEnter={() => loadCountryUniversities(country)}
                                       onClick={() => loadCountryUniversities(country)}
-                                      className={`w-full text-left flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors text-sm cursor-pointer ${selectedCountry?.code === country.code ? "bg-[var(--primary)] text-white shadow-md" : "hover:bg-gray-100 text-gray-700"}`}
+                                      className={`w-full text-left flex items-center justify-between px-3 py-2 rounded-lg transition-colors text-sm cursor-pointer ${selectedCountry?.code === country.code ? "bg-[var(--primary)] text-white shadow-md" : "hover:bg-gray-100 text-gray-700"}`}
                                     >
                                       <div className="flex items-center gap-2">
-                                        {country.flag && <img src={country.flag} alt={country.name} className="w-5 h-5 rounded-full object-cover" />}
+                                        {country.flag && <img src={country.flag} alt={country.name} className="w-6 h-6 rounded-full object-cover" />}
                                         <span className="font-medium truncate">{country.name}</span>
                                       </div>
-                                      {selectedCountry?.code === country.code && <ChevronRight size={14} />}
+                                      {selectedCountry?.code === country.code && <ChevronRight size={16} />}
                                     </div>
                                   </div>
                                 ))}
@@ -348,18 +346,18 @@ export default function Navbar({
                             </div>
 
                             {/* Universities Column */}
-                            <div className="w-2/3 pl-2 flex flex-col">
+                            <div className="w-3/5 pl-2 flex flex-col">
                               <p className="text-sm font-semibold text-gray-800 mb-3 px-1">
                                 {selectedCountry ? `Universities in ${selectedCountry.name}` : "Select a Country"}
                               </p>
                               {selectedCountry ? (
                                 countryUniversities.length > 0 ? (
-                                  <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2">
+                                  <div className="grid grid-cols-1 gap-1 max-h-[50vh] pb-2 px-1 overflow-y-auto pr-2">
                                     {countryUniversities.map((uni) => (
-                                      <Link key={uni._id} href={`/universities/${uni.slug}`} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100 hover:bg-[var(--primary)] hover:text-white hover:shadow-md transition group/item">
-                                        <div className="w-12 h-12 rounded-lg bg-white border border-gray-200 shadow-sm overflow-hidden flex items-center justify-center flex-shrink-0">
+                                      <Link key={uni._id} href={`/universities/${uni.slug}`} className="flex items-center gap-1.5 p-1 shadow-lg bg-white p-0 rounded-2xl hover:bg-[var(--primary)] hover:text-white hover:shadow-md transition group/item">
+                                        <div className="w-12 h-12 rounded-2xl bg-white border border-gray-200  overflow-hidden flex items-center justify-center flex-shrink-0">
                                           {uni.uni_logo ? (
-                                            <Image loading="lazy" src={uni.uni_logo} alt={uni.name} width={48} height={48} className="object-contain w-full h-full p-1" />
+                                            <Image loading="lazy" src={uni.uni_logo} alt={uni.name} width={48} height={48} className="object-contain w-full h-full p-0" />
                                           ) : (
                                             <div className="w-full h-full bg-gray-100 flex items-center justify-center">
                                               <GraduationCap size={20} className="text-gray-400" />
@@ -385,15 +383,15 @@ export default function Navbar({
                             </div>
                           </div>
                         ) : (
-                          <div className="grid grid-cols-2 gap-0">
+                          <div className="grid grid-cols-2 gap-1.5">
                             {(item.type === "service" ? Serviceitem : item.type === "country" ? countryres : uniqueCountries)?.map((items: any) => {
                               const href = item.type == "service" ? `/service/${items.slug}` : `/${items.slug}`;
                               const title = items.navbarTitle || items.name;
                               const image = items.navbarImage || items.flag;
                               return (
-                                <Link key={items._id || items.code} href={href} className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl hover:bg-[var(--primary)] hover:text-white transition">
-                                  <div className="w-10 h-10   overflow-hidden">
-                                    <Image loading="lazy" src={image || "/placeholder.png"} alt={title} width={40} height={40} className="object-cover w-full h-full" />
+                                <Link key={items._id || items.code} href={href} className="flex items-center gap-3 bg-white p-3 py-2 shadow-md rounded-xl hover:bg-[var(--primary)] hover:text-white transition">
+                                  <div className={`${item.type === "service" ? 'w-8 p-px' : 'w-12'} h-9  overflow-hidden`}>
+                                    <Image loading="lazy" src={image || "/placeholder.png"} alt={title} width={50} height={40} className="object-cover rounded-lg w-full h-full" />
                                   </div>
                                   <div>
                                     <p className="font-semibold text-sm">{title}</p>
@@ -455,7 +453,7 @@ export default function Navbar({
               <Phone size={16} />
               <span className="text-xs font-semibold">9875863347</span>
             </a>
-            <button  aria-label="Open navigation menu" onClick={() => setIsOpen(true)} className="text-white bg-[#6d1901] p-2 rounded-md">
+            <button aria-label="Open navigation menu" onClick={() => setIsOpen(true)} className="text-white bg-[#6d1901] p-2 rounded-md">
               <Menu size={22} />
             </button>
           </div>

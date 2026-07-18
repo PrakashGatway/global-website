@@ -1,5 +1,5 @@
 import Blogs from "@/components/blog"
-import { serverInstance } from "../axiosInstance"
+import { serverInstance, serverInst } from "../axiosInstance"
 
 
 export const dynamic = "force-dynamic"
@@ -28,7 +28,7 @@ export async function generateMetadata() {
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: { page?: string; limit?: string , category?: string }
+  searchParams: { page?: string; limit?: string, category?: string }
 }) {
 
   let searchquery = await searchParams
@@ -42,36 +42,36 @@ export default async function BlogPage({
       ? 50
       : 50
 
-        const category =
+  const category =
     typeof searchquery.category === "string"
       ? searchquery.category
       : undefined
 
-  const blogres = await serverInstance.get("/blogs?type=blog", {
+  const blogres = await serverInst.get("/blogs?type=blog", {
     params: {
       page,
-      limit : 9,
-      catslug:category
+      limit: 9,
+      catslug: category
     },
   })
 
-  
-  
+
+
 
   const blogcategory = await serverInstance.get("/blogs/categories?limit=50")
 
-  
+
 
   return (
     <>
-    <Blogs
-      Blogdata={blogres.data.data}
-      categoryData={blogcategory.data.data}
-      page={blogres.data.page}
-      limit={blogres.data.limit}
-      total={blogres.data.total}
-      categoryData={blogcategory.data.data}
-    />
+      <Blogs
+        Blogdata={blogres.data.data}
+        categoryData={blogcategory.data.data}
+        page={blogres.data.page}
+        limit={blogres.data.limit}
+        total={blogres.data.total}
+        categoryData={blogcategory.data.data}
+      />
     </>
   )
 }
