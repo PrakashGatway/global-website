@@ -160,7 +160,6 @@ export function StudyStats({statsData} : any) {
                   key={index}
                   className="flex items-start gap-5 p-8  hover:bg-white transition duration-300"
                 >
-                  {/* Icon */}
                   <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-orange-100 bg-orange-50">
                     <Icon
                       size={30}
@@ -168,7 +167,6 @@ export function StudyStats({statsData} : any) {
                     />
                   </div>
 
-                  {/* Content */}
                   <div>
                     <h3 className="text-2xl font-bold text-[#FF5A1F] leading-none">
                       {item.highlight}

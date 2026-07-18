@@ -9,8 +9,6 @@ import Balloon from './balloon'
 import { useEffect, useState } from 'react'
 import EligibilitySection from './Eligibility'
 import ExpandableText from './Expandline'
-import VideoTestimonialsSlider from './PageComponent/VideoTestimonial'
-import StudentVisaStories from '@/components/Studentvisa'
 import { useForm } from 'react-hook-form'
 import axiosInstance from '@/app/axiosInstance'
 import toast from 'react-hot-toast'
@@ -346,8 +344,9 @@ const WhyChooseUsSection = ({ data }) => {
 }
 
 
-const WhyStudySection = ({ data }) => {
-  if (data?.isHidden === "yes") return null
+export const WhyStudySection = ({ data }) => {
+  console.log(data , "ddfkdsjfjdskfjs kdjfkjdkfj")
+  if (data?.isHidden == "yes") return null
   return (
     <section className="w-full py-10 sm:py-14 lg:py-20 px-4 sm:px-6 bg-white">
       <div className="max-w-7xl mx-auto">
@@ -556,13 +555,13 @@ const ChoosingUsSection = ({ data, Universityres }) => {
 }
 
 
-const EligibilityCriteriaSection = ({ data }) => {
+export const EligibilityCriteriaSection = ({ data }) => {
   if (data?.isHidden === "yes") return null
   return <EligibilitySection pageData={{ sections: { eligibilityCriteria: data } }} />
 }
 
 
-const ContentSection = ({ data }) => {
+export const ContentSection = ({ data }) => {
   if (data?.isHidden === "yes") return null
   return (
     <section className="w-full bg-white py-5 px-4 sm:px-6">

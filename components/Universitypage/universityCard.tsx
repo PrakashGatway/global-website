@@ -44,7 +44,7 @@ export default function UniversityCard({ uni }: UniversityCardProps) {
         {/* Top Content (Logo, Name, Address) */}
         {/* 'shrink-0' ensures this section never collapses */}
         <div className="relative px-4 shrink-0">
-          <div className="-mt-8 relative z-10">
+          <div className="-mt-14 relative z-10">
             <div className="w-16 h-16 rounded-full flex items-center justify-center bg-white p-1 shadow-lg border-4 border-white overflow-hidden">
               <Image
                 src={uni.uni_logo || "/images/newlogo3.png"}
@@ -105,7 +105,7 @@ export default function UniversityCard({ uni }: UniversityCardProps) {
           )}
 
           {/* Tags */}
-          {uni.tags && (
+          {/* {uni.tags && (
             <div className="flex flex-wrap gap-1.5 mb-4">
               {uni.tags
                 .split(",")
@@ -119,12 +119,12 @@ export default function UniversityCard({ uni }: UniversityCardProps) {
                   </span>
                 ))}
             </div>
-          )}
+          )} */}
         </div>
 
         {/* 2. Footer */}
         {/* 'mt-auto' pushes this element to the very bottom of the flex container */}
-        <div className="flex mt-auto px-5 py-3 pb-4 border-t border-gray-100 w-full">
+        <div className="flex mt-auto px-5 py-2 pb-4 w-full">
           {/* Added 'w-full' so 'justify-end' correctly pushes buttons to the right edge */}
           <div className="flex gap-2 justify-end items-center w-full">
             <Link href={`/universities/${uni.slug}`}>

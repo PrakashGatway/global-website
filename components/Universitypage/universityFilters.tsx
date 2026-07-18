@@ -51,7 +51,7 @@ export default function UniversityFilters({ searchParams , countrydata, slug, de
   };
 
   const handleReset = () => {
-    router.push('/find-universities', { scroll: false });
+    router.push(`/university/${slug}`, { scroll: false });
   };
 
   const handleMultiSelect = (key: string, value: string) => {
@@ -100,7 +100,7 @@ export default function UniversityFilters({ searchParams , countrydata, slug, de
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#F46C44] bg-white text-gray-700 text-sm"
           >
             <option value="">All Cities</option>
-            {city.map(ele => (
+            {city && city?.map(ele => (
               <option value={ele.title}>{ele.title}</option>
             ))}
             {/* <option value="Berlin">Berlin</option>
