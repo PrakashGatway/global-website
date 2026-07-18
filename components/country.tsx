@@ -28,149 +28,115 @@ import VisaDetails from './dashboard/VisaDetails/visaDetails'
 
 const HeroSection = ({ data, alldata }) => {
   if (data?.isHidden === "yes") return null
-  // //console.log('hero d',data)
+  
   return (
     <section className="block overflow-hidden">
-      <div
-        className="w-full h-130 py-13  relative flex items-center justify-center"
-
-      >
-
+      <div className="w-full py-10 min-h-[80vh] relative flex items-center justify-center">
+        {/* Background with blur */}
         <div
           className="absolute inset-0 -z-10"
           style={{
             backgroundImage: `url(${data?.heroImagee || "/images/country-bg.jpeg"})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            filter: "blur(3px)", // Increase/decrease blur
-            transform: "scale(1.1)", // Prevent white edges after blur
+            filter: "blur(3px)",
+            transform: "scale(1.1)",
           }}
         />
-        {/* Overlay tint for readability on all screens */}
-        <div className="absolute inset-0 bg-black/30 lg:bg-transparent z-0" />
-
-        <div className="relative  z-10 w-full h-full flex flex-col justify-center  max-w-[1440px] ">
-          <div className="w-full px-4 sm:px-8 lg:px-10 py-8 sm:py-1 ">
-
         
-
-            {/* Content card — full width on mobile, 60% on sm, 48% on lg */}
-            <div className=" max-w-7xl w-full sm:w-4/5 md:w-3/5 lg:w-[48%] flex items-center
-              px-4 sm:px-6  rounded-2xl">
+        {/* Overlay tint */}
+        <div className="absolute inset-0 bg-black/30 lg:bg-transparent z-0" />
+        
+        <div className="relative z-10 w-full h-full flex flex-col justify-center max-w-[1440px]">
+          <div className="w-full px-4 sm:px-8 lg:px-10 py-8 sm:py-1">
+            {/* Main content area */}
+            <div className="max-w-7xl w-full lg:w-[50%] mx-auto lg:mx-0 px-4 sm:px-6">
               <div className="w-full">
-                <Tag data={data?.tag}
-                  css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold  mb-4 leading-tight"}
-                  text={data?.title} />
-                {/* <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight">
-                  {data?.title || "Study in Germany"}
-                </h1> */}
+                {/* Title */}
+                <Tag 
+                  data={data?.tag}
+                  css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-4 leading-relaxed"}
+                  text={data?.title} 
+                />
+                
+                {/* Subtitle */}
                 <span
-                  className="
-    text-white
-    text-sm sm:text-base
-   
-    tracking-normal
-
-    [&_*]:text-white
-   
-    [&_*]:font-normal
-    [&_*]:m-0
-    [&_*]:py-2
-
-   
-
-
-    
-
-    [&_h1]:text-3xl
-    [&_h1]:font-bold
-    [&_h1]:mb-4
-
-    [&_h2]:text-2xl
-    [&_h2]:font-semibold
-    [&_h2]:mb-3
-
-    [&_h3]:text-xl
-    [&_h3]:font-semibold
-    [&_h3]:mb-2
-
-    [&_strong]:font-semibold
-    [&_em]:italic
-  "
+                  className="p-0 text-white text-base [&_div]:py-2 [&_p]:py-1 [&_*]:rounded-none tracking-normal [&_*]:text-white [&_*]:!text-base [&_*]:!font-medium [&_*]:m-0 [&_*]:py-1 [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-2 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_li]:gap-1 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_strong]:font-semibold [&_em]:italic ul:!gap-2"
                   dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
                 />
+                
+                {/* CTA Button */}
                 <div className="flex xs:flex-col flex-row flex-wrap gap-3 mt-5">
-                  <a href={data?.ctaLink1 || "/contact"}>
-                    <button className="bg-[#f46c44] hover:bg-primary hover:text-white hover:scale-105 transition duration-300  px-5 py-3 flex items-center gap-2 font-bold text-gray-900 text-xs sm:text-sm shadow-lg cursor-pointer w-full xs:w-auto">
+                  <a href={data?.ctaLink1 || "/contact"} className="w-full sm:w-auto">
+                    <button className="bg-[#f46c44] hover:bg-primary hover:text-white hover:scale-105 transition duration-300 px-5 py-3 flex items-center justify-center gap-2 font-bold text-gray-900 text-xs sm:text-sm shadow-lg cursor-pointer w-full">
                       <PhoneIcon size={18} />
                       <span>{data?.ctaText1 || "Talk to an Expert Counsellor for FREE"}</span>
                     </button>
                   </a>
-
                 </div>
               </div>
-              <div className="absolute right-10 top-15 w-[370px]  overflow-hidden">
-  {/* Glass Background */}
-  <div className="absolute inset-0 bg-black/40 backdrop-blur-sm border border-white/10"></div>
+            </div>
 
-  <div className="relative p-6 hidden md:block">
-    {/* Header */}
-    <div className="relative flex items-center justify-center mb-4">
-      <h3 className="text-white text-lg font-semibold">
-        Contact us
-      </h3>
+            {/* Contact Form - Now responsive */}
+            <div className="w-full max-w-[370px] mx-auto mt-8 lg:absolute lg:right-10 lg:top-15 lg:mt-0">
+              <div className="relative">
+                {/* Glass Background */}
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-sm border border-white/10 "></div>
+                
+                <div className="relative p-6">
+                  {/* Header with flag */}
+                  <div className="relative flex items-center justify-center mb-4">
+                    <h3 className="text-white text-lg font-semibold">
+                      Contact us
+                    </h3>
+                    {alldata?.country?.flg && (
+                      <img
+                        src={alldata.country.flg}
+                        alt={alldata?.country?.name || "Country flag"}
+                        className="absolute right-0 -top-3 w-16 h-11 object-cover rounded-md shadow-lg border border-white"
+                      />
+                    )}
+                  </div>
 
-      <img
-        src={alldata?.country?.flg}
-        alt={alldata?.country?.name}
-        className="absolute right-0 -top-3 w-16 h-11 object-cover rounded-md shadow-lg border border-white"
-      />
-    </div>
-
-    {/* Form */}
-    <div className="  space-y-2">
-      <input
-        type="text"
-        placeholder="Your Name"
-        className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
-      />
-
-      <input
-        type="tel"
-        placeholder="Your Mobile"
-        className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
-      />
-
-      <input
-        type="email"
-        placeholder="Your Email"
-        className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
-      />
-
-      <button className="w-full h-10 mt-3 rounded-md bg-[#FF6B3D] hover:bg-[#f75d2d] text-white font-semibold text-lg transition">
-        Submit &gt;
-      </button>
-    </div>
-  </div>
-</div>
+                  {/* Form */}
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      placeholder="Your Name"
+                      className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
+                    />
+                    <input
+                      type="tel"
+                      placeholder="Your Mobile"
+                      className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
+                    />
+                    <input
+                      type="email"
+                      placeholder="Your Email"
+                      className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
+                    />
+                    <button className="w-full h-10 mt-3 rounded-md bg-[#FF6B3D] hover:bg-[#f75d2d] text-white font-semibold text-lg transition">
+                      Submit &gt;
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Hero character image — visible from md upward */}
-        <div className="hidden md:block absolute -bottom-4 right-100 w-[340px] lg:w-[600px] xl:w-[500px] z-10 pointer-events-none">
+        {/* Hero character image - responsive */}
+        <div className="hidden lg:block absolute bottom-0 left-[40%] w-[200px] sm:w-[250px] lg:w-[400px] xl:w-[500px] pointer-events-none z-0">
           <img
             src={data?.heroImage || "/images/country-hero.png"}
-            className="w-full h-full object-contain"
-            alt=""
+            className="w-full h-full object-contain opacity-80 lg:opacity-100"
+            alt="Hero character"
           />
         </div>
-
       </div>
     </section>
   )
 }
-
 const FormSection = ({ data }) => {
   if (data?.isHidden === "yes") return null;
 
