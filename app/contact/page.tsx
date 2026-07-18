@@ -1,5 +1,5 @@
 import ContactUsPage from "@/components/contactUs";
-import { serverInstance } from "../axiosInstance";
+import { serverInstance, serverInst } from "../axiosInstance";
 
 
 export const dynamic = "force-dynamic";
@@ -46,7 +46,7 @@ const generateFaqSchema = (faqs: any[]) => ({
 
 export async function generateMetadata() {
   try {
-    const res = await serverInstance.get("page-information/slug/contact");
+    const res = await serverInst.get("page-information/slug/contact");
     const pageData = res?.data?.data || {};
 
 
@@ -104,9 +104,8 @@ export async function generateMetadata() {
 
 export default async function page() {
 
-  const res = await serverInstance.get("page-information/slug/contact")
+  const res = await serverInst.get("page-information/slug/contact")
   const Faqres = await serverInstance.get("/faqs/public/list?type=contact")
-
 
   const pageData = res.data.data;
   const faqs = Faqres.data.data || [];
