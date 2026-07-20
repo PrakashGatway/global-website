@@ -8,10 +8,8 @@ interface PageProps {
   }>;
 }
 
-// 1. Dynamic SEO Metadata Generation
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-
   try {
     const response = await axiosInstance.get(`/scholarships/slug/${slug}`);
     const scholarshipData = response.data?.data;
@@ -22,7 +20,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         description: "The requested scholarship page could not be found.",
       };
     }
-
     return {
       title: scholarshipData.seoTitle || `${scholarshipData.name || "Scholarship"} Details`,
       description: scholarshipData.seoDescription || "View details and eligibility criteria for this scholarship.",
@@ -36,7 +33,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-// 2. Main Page Component
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;
 
