@@ -30,8 +30,10 @@ const getYouTubeId = (url: string): string | null => {
 export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
   // Map API data to internal structure with video IDs
   const mappedTabs = tabs
-    .filter((t) => t.tab && t.features)
-    .map((item) => ({
+    .filter((t) => t.tab || t.features || t.videoLink)
+    .map((item) => {
+      console.log(item)
+      return({
       key: item.tab.toLowerCase().replace(/\s+/g, ""),
       label: item.tab,
       title: item.tab === "Trust"
@@ -45,7 +47,7 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
         .map((f) => f.trim())
         .filter(Boolean),
       videoId: item.videoLink ? getYouTubeId(item.videoLink.trim()) : null,
-    }));
+    })});
 
   const initialTab = mappedTabs.length > 0 ? mappedTabs[0].key : "trust";
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -55,7 +57,7 @@ export default function AboutTabsSection({ tabs }: AboutTabsSectionProps) {
  
 
   if (mappedTabs.length === 0) return null;
-
+console.log(tabs)
   return (
     <section className="mb-6">
       {/* TABS HEADER */}

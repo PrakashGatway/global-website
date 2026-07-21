@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import {
@@ -123,19 +123,65 @@ interface Course {
     }
 }
 
-const StatCard = ({ icon: Icon, label, value, trend }: any) => (
-    <div className="bg-[#f3f4f6] hover:bg-[#e5e7eb] hover:outline hover:outline-2 hover:outline-[#F26D44] p-3 md:p-4 transition-all">
-        <div className="flex items-center gap-2 mb-2">
-            <div className="p-1.5 md:p-2 bg-white/50 rounded-lg">
-                <Icon className="w-6 h-6 md:w-10 md:h-10 text-black" strokeWidth={1.1} />
-            </div>
-            <span className="flex flex-col gap-0.5 text-xs md:text-sm font-medium text-gray-800">
-                {label}
-                <span className="text-sm md:text-xl font-bold truncate">{value}</span>
-            </span>
-        </div>
+const StatCard = ({ icon: Icon, label, value }: any) => (
+  <div className="bg-[#f3f4f6] hover:bg-[#e5e7eb] hover:outline hover:outline-2 hover:outline-[#F26D44] p-3 md:py-4 transition-all w-60">
+    <div className="flex items-center gap-3">
+      <div className="flex-shrink-0 p-1.5 md:p-0 bg-white/50 rounded-lg">
+        <Icon
+          className="w-6 h-6 md:w-10 md:h-10 text-black"
+          strokeWidth={1.1}
+        />
+      </div>
+
+      <div className="flex flex-col flex-1 min-w-0">
+        <span className="text-xs md:text-sm font-medium text-gray-800 truncate">
+          {label}
+        </span>
+
+       
+          <TruncateText value={value} />
+        
+      </div>
     </div>
-)
+  </div>
+);
+
+
+
+const TruncateText = ({ value }: { value: string }) => {
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [isOverflow, setIsOverflow] = useState(false);
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (!el) return;
+
+    setIsOverflow(el.scrollWidth > el.clientWidth);
+  }, [value]);
+
+  return (
+    <div className="flex items-center min-w-0 gap-1">
+      <span
+        ref={textRef}
+        className="flex-1 min-w-0 truncate text-sm md:text-xl font-bold text-gray-900"
+      >
+        {value}
+      </span>
+
+      {isOverflow && (
+        <div className="relative group">
+          <Info className="w-4 h-4 text-gray-500 cursor-pointer" />
+
+          <div className="absolute right-0 top-7 hidden group-hover:block z-50">
+            <div className="max-w-xs rounded-md bg-gray-900 px-3 py-2 text-xs text-white whitespace-normal shadow-lg">
+              {value}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const TabButton = ({ active, onClick, children }: any) => (
     <button
@@ -1005,15 +1051,7 @@ export default function UniversityDetailPage() {
                                         </div>
                                     </div>
                                 )}
-                                {university.uni_contact && (
-                                    <div className="flex items-start gap-2 md:gap-3">
-                                        <Phone className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-xs md:text-sm text-muted-foreground mb-1">Phone</p>
-                                            <p className="text-xs md:text-sm">{university.uni_contact}</p>
-                                        </div>
-                                    </div>
-                                )}
+                             
                                 <div className="flex items-start gap-2 md:gap-3">
                                     <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                                     <div>

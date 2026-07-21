@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 // --- Types & Interfaces ---
@@ -53,9 +53,31 @@ const OVERVIEW_POINTS = [
 ];
 
 
+
+
 export default function CoursePage() {
   const [activeTab, setActiveTab] = useState("Course Info");
   const [heroSubmitted, setHeroSubmitted] = useState(false);
+  const [getCourses,setgetCourses] = useState([])
+
+
+  useEffect(()=>{
+
+    const fetchCourses = async()=>{
+      try{
+      const res = await fetch("http://localhost:4000/courses/")
+      setgetCourses(res.data)
+
+    }
+    catch{
+
+    }
+
+    }
+
+    fetchCourses()
+    
+  },[])
 
   const {
     register,

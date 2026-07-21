@@ -226,7 +226,7 @@ const removePreference = () => {
     try {
       const [countriesRes, uniRes, catRes] = await Promise.all([
         axiosInstance.get('/countries?limit=300'),
-        axiosInstance.get('/universities/flat?limit=500'),
+        axiosInstance.get('/universities/flat?limit=1000'),
         axiosInstance.get('/courses/categories?limit=100')
       ])
       const countriesData = countriesRes.data.data

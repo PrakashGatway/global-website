@@ -30,8 +30,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100/40 p-2">
-      <div className="max-w-[1600px] mx-auto">
+    <div className="min-h-screen bg-white ">
+      <div className="max-w-[1700px] ">
         <UserDashboard />
       </div>
     </div>

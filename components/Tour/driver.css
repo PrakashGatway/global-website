@@ -29,10 +29,7 @@
     box-shadow: 0 0 8px rgba(242, 109, 68, 0.5);
     animation: glowPulse 1.8s infinite ease-in-out;
      transform: translateY(-2px);
-    box-shadow:
-        0 0 10px rgba(242, 109, 68, 0.6),
-        0 0 20px rgba(242, 109, 68, 0.5),
-        0 0 35px rgba(242, 109, 68, 0.4);
+    
 }
 
 .driver-popover-prev-btn:hover {
@@ -57,10 +54,7 @@
     background: #f26d44;
     color: white;
      transform: translateY(-2px);
-    box-shadow:
-        0 0 10px rgba(242, 109, 68, 0.6),
-        0 0 20px rgba(242, 109, 68, 0.5),
-        0 0 35px rgba(242, 109, 68, 0.4);
+   
 
 }
 .driver-popover-next-btn:hover{

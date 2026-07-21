@@ -39,7 +39,7 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
   // const searchParams = ""
 
   const activetab = ""
-  
+
 
   useEffect(() => {
     if (activetab === "academic") {
@@ -66,7 +66,9 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
     if (isEditing) {
       setFormData({
         personal: {
-          name: user?.name || "",
+          Firstname: user?.Firstname || "",
+          Middlename: user?.Middlename || "",
+          Lastname: user?.Lastname || "",
           email: user?.email || "",
           phone: user?.phone || "",
           dateOfBirth: user?.dateOfBirth || "",
@@ -126,7 +128,9 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
                 countriesList={countriesList}
                 onSave={async (data) => {
                   const payload = {
-                    name: data.name,
+                    Firstname: data.Firstname,
+                    Middlename: data.Middlename,
+                    Lastname: data.Lastname,
                     phone: data.phone,
                     dateOfBirth: data.dateOfBirth,
                     gender: data.gender,
@@ -201,7 +205,7 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
               />
             )}
           </motion.div>
-          <div className="flex justify-between mt-3 pt-4 ">
+          {/* <div className="flex justify-between mt-3 pt-4 ">
             <button
               onClick={goToPreviousStep}
               disabled={activeInnerTab === TAB_ORDER[0]}
@@ -217,7 +221,7 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
             >
               Continue to Next
             </button>
-          </div>
+          </div> */}
         </AnimatePresence>
       </div>
     </div>
@@ -636,7 +640,7 @@ import {
   Home, MapPin, Hash, CreditCard, CalendarDays
 } from "lucide-react";
 
-const Field = ({ label, editingSections, formatDate, displayValue, formData, value, icon: Icon, type = "text", options, disabled = false, onChange, fieldKey, section }: any) => {
+const Field = ({ label, editingSections, formatDate, displayValue, formData, value, icon: Icon, type = "text", options, disabled = false, onChange, fieldKey, section ,error}: any) => {
   const getFieldValue = (fieldKey: string) => {
     if (fieldKey.includes(".")) {
       const [parent, child] = fieldKey.split(".");
@@ -645,11 +649,17 @@ const Field = ({ label, editingSections, formatDate, displayValue, formData, val
 
     return formData?.[fieldKey] || "";
   }
+
+   const hasError = error && editingSections.has(section);
+
+
   return (
     <div key={fieldKey} className="space-y-2">
-      <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{label}</label>
+      <label className={`text-xs font-medium uppercase tracking-wide ${hasError ? "text-red-500" : "text-gray-500"}`}>
+        {label} {error && <span className="text-red-500">*</span>}
+      </label>
       <div className="relative">
-        {Icon && <Icon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />}
+        {Icon && <Icon className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${hasError ? "text-red-400" : "text-gray-400"}`} />}
 
         {editingSections.has(section) ? (
           type === "select" ? (
@@ -657,7 +667,11 @@ const Field = ({ label, editingSections, formatDate, displayValue, formData, val
               value={getFieldValue(fieldKey) || ""}
               onChange={(e) => onChange(fieldKey, e.target.value)}
               disabled={disabled}
-              className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] transition-all text-sm `}
+              className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-white border focus:outline-none focus:ring-2 transition-all text-sm ${
+                hasError 
+                  ? "border-red-300 focus:border-red-500 focus:ring-red-200" 
+                  : "border-gray-200 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
+              }`}
             >
               <option value="">Select {label}</option>
               {options?.map((opt: string) => (
@@ -670,13 +684,22 @@ const Field = ({ label, editingSections, formatDate, displayValue, formData, val
               value={getFieldValue(fieldKey) || ""}
               onChange={(e) => onChange(fieldKey, e.target.value)}
               disabled={disabled}
-              className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-white border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] transition-all text-sm `}
+              className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-white border focus:outline-none focus:ring-2 transition-all text-sm ${
+                 hasError 
+                  ? "border-red-300 focus:border-red-500 focus:ring-red-200" 
+                  : "border-gray-200 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
+              }`}
             />
           )
         ) : (
-          <div className={`w-full overflow-hidden ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-gray-50/50 border border-gray-200/60 text-sm text-gray-800 capitalize  min-h-[42px] flex items-center`}>
+          <div className={`w-full overflow-hidden ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-gray-50/50 border border-gray-200/60 text-sm text-gray-800 capitalize min-h-[42px] flex items-center ${hasError ? "bg-red-50/10" : ""}`}>
             {type === "date" ? formatDate(value) : displayValue(value)}
           </div>
+        )}
+        
+        {/* Show Error Message below input if exists */}
+        {hasError && (
+          <p className="text-xs text-red-500 mt-1 ml-1">{error}</p>
         )}
       </div>
     </div>
@@ -687,11 +710,16 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
   const [formData, setFormData] = useState<any>({});
   const [editingSections, setEditingSections] = useState<Set<string>>(new Set());
 
-  //console.log("currentAddress", user);
+
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+ 
 
   useEffect(() => {
     setFormData({
-      name: user?.name || "",
+      Firstname: user?.Firstname || "",
+      Middlename: user?.Middlename || "",
+      Lastname: user?.Lastname || "",
       email: user?.email || "",
       phone: user?.phone || "",
       dateOfBirth: user?.dateOfBirth
@@ -707,7 +735,6 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
       passportExpiry: user?.passportDetail?.expiryDate || "",
       passportIssueDate: user?.passportDetail?.issueDate || "",
       passportIssueCountry: user?.passportDetail?.issueCountry || "",
-      // Initialize Family Details from user or profile object (adjust based on your actual API structure)
       familyDetails: {
         motherName: user?.familyDetails?.motherName || profile?.familyDetails?.motherName || "",
         motherPhone: user?.familyDetails?.motherPhone || profile?.familyDetails?.motherPhone || "",
@@ -717,16 +744,250 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
         fatherOccupation: user?.familyDetails?.fatherOccupation || profile?.familyDetails?.fatherOccupation || "",
       }
     });
+    // Clear errors when data reloads
+    setErrors({});
   }, [user, profile]);
 
-  const handleSectionSave = async (sectionName: string, sectionData: any) => {
-    await onSave(sectionData);
-    setEditingSections(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(sectionName);
-      return newSet;
-    });
+    const validatePersonalInfo = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.Firstname?.trim()) newErrors["Firstname"] = "First name is required";
+    if (!formData.Lastname?.trim()) newErrors["Lastname"] = "Last name is required";
+    if (!formData.email?.trim()) newErrors["email"] = "Email is required";
+    if (!formData.phone?.trim()) newErrors["phone"] = "Phone number is required";
+    if (!formData.dateOfBirth) newErrors["dateOfBirth"] = "Date of birth is required";
+    if (!formData.gender) newErrors["gender"] = "Gender is required";
+    if (!formData.maritalStatus) newErrors["maritalStatus"] = "Marital status is required";
+    if (!formData.nationality) newErrors["nationality"] = "Nationality is required";
+    
+    
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
+
+
+
+  const validateCurrentAddress = () => {
+  const newErrors: Record<string, string> = {};
+
+  if (!formData.currentAddress?.addressLine1?.trim())
+    newErrors["currentAddress.addressLine1"] = "Address Line 1 is required";
+
+  if (!formData.currentAddress?.city?.trim())
+    newErrors["currentAddress.city"] = "City is required";
+
+  if (!formData.currentAddress?.state?.trim())
+    newErrors["currentAddress.state"] = "State is required";
+
+  if (!formData.currentAddress?.postalCode?.trim())
+    newErrors["currentAddress.postalCode"] = "Postal Code is required";
+
+  if (!formData.currentAddress?.country?.trim())
+    newErrors["currentAddress.country"] = "Country is required";
+
+  setErrors(prev => ({ ...prev, ...newErrors }));
+
+  return Object.keys(newErrors).length === 0;
+};
+
+
+const validatePermanentAddress = () => {
+  const newErrors: Record<string, string> = {};
+
+  if (!formData.permanentAddress?.addressLine1?.trim())
+    newErrors["permanentAddress.addressLine1"] = "Address Line 1 is required";
+
+  if (!formData.permanentAddress?.city?.trim())
+    newErrors["permanentAddress.city"] = "City is required";
+
+  if (!formData.permanentAddress?.state?.trim())
+    newErrors["permanentAddress.state"] = "State is required";
+
+  if (!formData.permanentAddress?.postalCode?.trim())
+    newErrors["permanentAddress.postalCode"] = "Postal Code is required";
+
+  if (!formData.permanentAddress?.country?.trim())
+    newErrors["permanentAddress.country"] = "Country is required";
+
+  setErrors(prev => ({ ...prev, ...newErrors }));
+
+  return Object.keys(newErrors).length === 0;
+};
+
+
+const validatePassport = () => {
+  const newErrors: Record<string, string> = {};
+
+  // Passport Number
+  if (!formData.passportNumber?.trim()) {
+    newErrors["passportNumber"] = "Passport number is required";
+  } else if (!/^[A-Za-z0-9]{6,15}$/.test(formData.passportNumber.trim())) {
+    newErrors["passportNumber"] =
+      "Passport number must be 6-15 letters/numbers";
+  }
+
+  // Issue Date
+  if (!formData.passportIssueDate) {
+    newErrors["passportIssueDate"] = "Issue date is required";
+  }
+
+  // Expiry Date
+  if (!formData.passportExpiry) {
+    newErrors["passportExpiry"] = "Expiry date is required";
+  } else {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const expiry = new Date(formData.passportExpiry);
+    expiry.setHours(0, 0, 0, 0);
+
+    if (expiry < today) {
+      newErrors["passportExpiry"] =
+        "Passport has expired. Please enter a valid passport.";
+    }
+  }
+
+  // Expiry must be after Issue Date
+  if (formData.passportIssueDate && formData.passportExpiry) {
+    const issue = new Date(formData.passportIssueDate);
+    const expiry = new Date(formData.passportExpiry);
+
+    if (expiry <= issue) {
+      newErrors["passportExpiry"] =
+        "Expiry date must be after issue date";
+    }
+  }
+
+  // Issue Country
+  if (!formData.passportIssueCountry?.trim()) {
+    newErrors["passportIssueCountry"] =
+      "Issue country is required";
+  }
+
+  setErrors(prev => ({
+    ...prev,
+    ...newErrors,
+  }));
+
+  return Object.keys(newErrors).length === 0;
+};
+
+
+const validateFamilyDetails = () => {
+  const newErrors: Record<string, string> = {};
+
+  const nameRegex = /^[A-Za-z ]+$/;
+  const phoneRegex = /^[6-9]\d{9}$/;
+  const occupationRegex = /^[A-Za-z ]+$/;
+
+  // Mother Name
+  if (!formData.familyDetails?.motherName?.trim()) {
+    newErrors["familyDetails.motherName"] = "Mother name is required";
+  } else if (!nameRegex.test(formData.familyDetails.motherName.trim())) {
+    newErrors["familyDetails.motherName"] =
+      "Mother name should contain only letters";
+  } else if (
+    formData.familyDetails.motherName.trim().length < 2 ||
+    formData.familyDetails.motherName.trim().length > 50
+  ) {
+    newErrors["familyDetails.motherName"] =
+      "Mother name must be between 2 and 50 characters";
+  }
+
+  // Mother Phone
+  if (!formData.familyDetails?.motherPhone?.trim()) {
+    newErrors["familyDetails.motherPhone"] = "Mother phone is required";
+  } else if (!phoneRegex.test(formData.familyDetails.motherPhone.trim())) {
+    newErrors["familyDetails.motherPhone"] =
+      "Enter a valid 10-digit mobile number";
+  }
+
+  // Mother Occupation
+  if (!formData.familyDetails?.motherOccupation?.trim()) {
+    newErrors["familyDetails.motherOccupation"] =
+      "Mother occupation is required";
+  } else if (
+    !occupationRegex.test(formData.familyDetails.motherOccupation.trim())
+  ) {
+    newErrors["familyDetails.motherOccupation"] =
+      "Occupation should contain only letters";
+  }
+
+  // Father Name
+  if (!formData.familyDetails?.fatherName?.trim()) {
+    newErrors["familyDetails.fatherName"] = "Father name is required";
+  } else if (!nameRegex.test(formData.familyDetails.fatherName.trim())) {
+    newErrors["familyDetails.fatherName"] =
+      "Father name should contain only letters";
+  } else if (
+    formData.familyDetails.fatherName.trim().length < 2 ||
+    formData.familyDetails.fatherName.trim().length > 50
+  ) {
+    newErrors["familyDetails.fatherName"] =
+      "Father name must be between 2 and 50 characters";
+  }
+
+  // Father Phone
+  if (!formData.familyDetails?.fatherPhone?.trim()) {
+    newErrors["familyDetails.fatherPhone"] = "Father phone is required";
+  } else if (!phoneRegex.test(formData.familyDetails.fatherPhone.trim())) {
+    newErrors["familyDetails.fatherPhone"] =
+      "Enter a valid 10-digit mobile number";
+  }
+
+  // Father Occupation
+  if (!formData.familyDetails?.fatherOccupation?.trim()) {
+    newErrors["familyDetails.fatherOccupation"] =
+      "Father occupation is required";
+  } else if (
+    !occupationRegex.test(formData.familyDetails.fatherOccupation.trim())
+  ) {
+    newErrors["familyDetails.fatherOccupation"] =
+      "Occupation should contain only letters";
+  }
+
+  setErrors((prev) => ({
+    ...prev,
+    ...newErrors,
+  }));
+
+  return Object.keys(newErrors).length === 0;
+};
+
+
+  const handleSectionSave = async (sectionName: string, sectionData: any) => {
+
+  if (sectionName === "personal") {
+    if (!validatePersonalInfo()) return;
+  }
+
+  if (sectionName === "currentAddress") {
+    if (!validateCurrentAddress()) return;
+  }
+
+  if (sectionName === "permanentAddress") {
+    if (!validatePermanentAddress()) return;
+  }
+
+  if (sectionName === "passport") {
+    if (!validatePassport()) return;
+  }
+
+  if (sectionName === "familyDetails") {
+    if (!validateFamilyDetails()) return;
+  }
+
+  await onSave(sectionData);
+
+  setEditingSections(prev => {
+    const newSet = new Set(prev);
+    newSet.delete(sectionName);
+    return newSet;
+  });
+
+  setErrors({});
+};
 
   const toggleEditSection = (sectionName: string) => {
     setEditingSections(prev => {
@@ -738,6 +999,8 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
       }
       return newSet;
     });
+    // Clear errors when entering edit mode to give fresh start
+    if (sectionName === 'personal') setErrors({});
   };
 
   const formatDate = (dateString?: string) => {
@@ -765,7 +1028,9 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             let sectionData: any = {};
             if (sectionName === 'personal') {
               sectionData = {
-                name: formData.name,
+                Firstname: formData.Firstname,
+                Middlename: formData.Middlename,
+                Lastname: formData.Lastname,
                 email: formData.email,
                 phone: formData.phone,
                 dateOfBirth: formData.dateOfBirth,
@@ -808,22 +1073,52 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
   );
 
   return (
-    <div className="space-y-4">
+     <div className="space-y-4">
       <div className="p-4 bg-white border border-gray-200">
         <SectionHeader title="Personal Information" sectionName="personal" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
           <Field
-            label="Full Name"
+            label="First Name"
             editingSections={editingSections}
             formatDate={formatDate}
             displayValue={displayValue}
             formData={formData}
-            value={user?.name}
+            value={user?.Firstname}
             icon={User}
-            fieldKey="name"
+            fieldKey="Firstname"
+            section="personal"
+            error={errors["Firstname"]} // Pass error prop
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+
+          <Field
+            label="Middle Name"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.Middlename}
+            icon={User}
+            fieldKey="Middlename"
             section="personal"
             onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
           />
+
+          <Field
+            label="Last Name"
+            editingSections={editingSections}
+            formatDate={formatDate}
+            displayValue={displayValue}
+            formData={formData}
+            value={user?.Lastname}
+            icon={User}
+            fieldKey="Lastname"
+            section="personal"
+            error={errors["Lastname"]} // Pass error prop
+            onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
+          />
+
           <Field
             label="Email"
             editingSections={editingSections}
@@ -836,6 +1131,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             section="personal"
             disabled
             type="email"
+            error={errors["email"]} // Pass error prop
             onChange={() => { }}
           />
           <Field
@@ -849,6 +1145,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             fieldKey="phone"
             section="personal"
             type="tel"
+            error={errors["phone"]} // Pass error prop
             onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
           />
           <Field
@@ -862,6 +1159,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             fieldKey="dateOfBirth"
             section="personal"
             type="date"
+            error={errors["dateOfBirth"]} // Pass error prop
             onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
           />
           <Field
@@ -876,6 +1174,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             section="personal"
             type="select"
             options={["male", "female", "other"]}
+            error={errors["gender"]} // Pass error prop
             onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
           />
           <Field
@@ -890,6 +1189,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             section="personal"
             type="select"
             options={["single", "married", "divorced", "widowed"]}
+            error={errors["maritalStatus"]} // Pass error prop
             onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
           />
           <Field
@@ -916,6 +1216,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             section="personal"
             type="select"
             options={countriesList.map((c: any) => c.name)}
+            error={errors["nationality"]} // Pass error prop
             onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
           />
         </div>
@@ -935,6 +1236,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={Home}
             fieldKey="currentAddress.addressLine1"
             section="currentAddress"
+            error={errors["currentAddress.addressLine1"]}
             onChange={(k: string, v: any) => updateNested("currentAddress", "addressLine1", v)}
           />
           <Field
@@ -959,6 +1261,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={MapPin}
             fieldKey="currentAddress.city"
             section="currentAddress"
+            error={errors["currentAddress.city"]}
             onChange={(k: string, v: any) => updateNested("currentAddress", "city", v)}
           />
           <Field
@@ -971,6 +1274,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={MapPin}
             fieldKey="currentAddress.state"
             section="currentAddress"
+            error={errors["currentAddress.state"]}
             onChange={(k: string, v: any) => updateNested("currentAddress", "state", v)}
           />
           <Field
@@ -983,6 +1287,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={Hash}
             fieldKey="currentAddress.postalCode"
             section="currentAddress"
+            error={errors["currentAddress.postalCode"]}
             onChange={(k: string, v: any) => updateNested("currentAddress", "postalCode", v)}
           />
           <Field
@@ -996,6 +1301,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             fieldKey="currentAddress.country"
             section="currentAddress"
             type="select"
+            error={errors["currentAddress.country"]}
             options={countriesList.map((c: any) => c.name)}
             onChange={(k: string, v: any) => updateNested("currentAddress", "country", v)}
           />
@@ -1016,6 +1322,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={Home}
             fieldKey="permanentAddress.addressLine1"
             section="permanentAddress"
+            error={errors["permanentAddress.addressLine1"]}
             onChange={(k: string, v: any) => updateNested("permanentAddress", "addressLine1", v)}
           />
           <Field
@@ -1028,6 +1335,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={Home}
             fieldKey="permanentAddress.addressLine2"
             section="permanentAddress"
+            
             onChange={(k: string, v: any) => updateNested("permanentAddress", "addressLine2", v)}
           />
           <Field
@@ -1040,6 +1348,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={MapPin}
             fieldKey="permanentAddress.city"
             section="permanentAddress"
+            error={errors["permanentAddress.city"]}
             onChange={(k: string, v: any) => updateNested("permanentAddress", "city", v)}
           />
           <Field
@@ -1052,6 +1361,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={MapPin}
             fieldKey="permanentAddress.state"
             section="permanentAddress"
+            error={errors["permanentAddress.state"]}
             onChange={(k: string, v: any) => updateNested("permanentAddress", "state", v)}
           />
           <Field
@@ -1064,6 +1374,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={Hash}
             fieldKey="permanentAddress.postalCode"
             section="permanentAddress"
+            error={errors["permanentAddress.postalCode"]}
             onChange={(k: string, v: any) => updateNested("permanentAddress", "postalCode", v)}
           />
           <Field
@@ -1076,6 +1387,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={Globe}
             fieldKey="permanentAddress.country"
             section="permanentAddress"
+            error={errors["permanentAddress.country"]}
             type="select"
             options={countriesList.map((c: any) => c.name)}
             onChange={(k: string, v: any) => updateNested("permanentAddress", "country", v)}
@@ -1097,6 +1409,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={CreditCard}
             fieldKey="passportNumber"
             section="passport"
+            error={errors["passportNumber"]}
             onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
           />
           <Field
@@ -1109,6 +1422,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={Calendar}
             fieldKey="passportIssueDate"
             section="passport"
+            error={errors["passportIssueDate"]}
             type="date"
             onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
           />
@@ -1122,6 +1436,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={CalendarDays}
             fieldKey="passportExpiry"
             section="passport"
+            error={errors["passportExpiry"]}
             type="date"
             onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
           />
@@ -1135,6 +1450,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={Globe}
             fieldKey="passportIssueCountry"
             section="passport"
+            error={errors["passportIssueCountry"]}
             type="select"
             options={countriesList.map((c: any) => c.name)}
             onChange={(k: string, v: any) => setFormData((p: any) => ({ ...p, [k]: v }))}
@@ -1162,6 +1478,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={User}
             fieldKey="familyDetails.motherName"
             section="familyDetails"
+            error={errors["familyDetails.motherName"]}
             onChange={(k: string, v: any) => updateNested("familyDetails", "motherName", v)}
           />
           <Field
@@ -1174,6 +1491,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={Phone}
             fieldKey="familyDetails.motherPhone"
             section="familyDetails"
+            error={errors["familyDetails.motherPhone"]}
             type="tel"
             onChange={(k: string, v: any) => updateNested("familyDetails", "motherPhone", v)}
           />
@@ -1205,6 +1523,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={User}
             fieldKey="familyDetails.fatherName"
             section="familyDetails"
+            error={errors["familyDetails.fatherName"]}
             onChange={(k: string, v: any) => updateNested("familyDetails", "fatherName", v)}
           />
           <Field
@@ -1217,6 +1536,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={Phone}
             fieldKey="familyDetails.fatherPhone"
             section="familyDetails"
+            error={errors["familyDetails.fatherPhone"]}
             type="tel"
             onChange={(k: string, v: any) => updateNested("familyDetails", "fatherPhone", v)}
           />
@@ -1230,6 +1550,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             icon={Briefcase}
             fieldKey="familyDetails.fatherOccupation"
             section="familyDetails"
+            error={errors["familyDetails.fatherOccupation"]}
             onChange={(k: string, v: any) => updateNested("familyDetails", "fatherOccupation", v)}
           />
         </div>
@@ -1647,13 +1968,12 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
   const [formData, setFormData] = useState<any>({});
   const [editingSections, setEditingSections] = useState<Set<string>>(new Set());
   const [expandedAccordions, setExpandedAccordions] = useState<Set<string>>(new Set());
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Helper to get nested values safely
   const getNestedValue = (obj: any, path: string) => {
     return path.split('.').reduce((acc, part) => acc?.[part], obj);
   };
 
-  // Helper to set nested values immutably
   const setNestedValue = (path: string, value: any) => {
     setFormData((prev: any) => {
       const newObj = JSON.parse(JSON.stringify(prev || {}));
@@ -1668,11 +1988,10 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
     });
   };
 
-  // Initialize data and auto-expand sections with existing data
   useEffect(() => {
     setFormData(data || {});
+    setErrors({});
 
-    // In view mode, auto-expand only sections that have actual data
     if (editingSections.size === 0 && data) {
       const expanded = new Set<string>();
       TEST_CONFIGS.forEach(config => {
@@ -1686,6 +2005,25 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
     }
   }, [data, editingSections]);
 
+  const validateResultDate = (testId: string) => {
+    const newErrors: Record<string, string> = {};
+    const resultDateKey = `${testId}.resultDate`;
+    const resultDate = getNestedValue(formData, resultDateKey);
+    
+    if (resultDate) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const selectedDate = new Date(resultDate);
+      
+      if (selectedDate < today) {
+        newErrors[resultDateKey] = "Result date cannot be in the past. Please select today or a future date.";
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const toggleEditSection = (testId: string) => {
     setEditingSections(prev => {
       const newSet = new Set(prev);
@@ -1693,20 +2031,27 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
         newSet.delete(testId);
       } else {
         newSet.add(testId);
-        // Auto-expand when entering edit mode
         setExpandedAccordions(e => new Set(e).add(testId));
       }
       return newSet;
     });
+    setErrors({});
   };
 
   const handleSaveSection = async (testId: string) => {
+    const isValid = validateResultDate(testId);
+    if (!isValid) {
+      toast.error("Please fix the validation errors");
+      return;
+    }
+    
     await onSave(formData);
     setEditingSections(prev => {
       const newSet = new Set(prev);
       newSet.delete(testId);
       return newSet;
     });
+    setErrors({});
   };
 
   const toggleAccordion = (testId: string) => {
@@ -1717,18 +2062,23 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
       return newSet;
     });
   };
+
+  const handleDatePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    toast.warning("Pasting dates is not allowed. Please select from the calendar.");
+  };
+
   const visibleTests = TEST_CONFIGS;
 
   return (
     <div className="space-y-3">
-      {/* Global Save Button (appears when multiple sections are being edited) */}
       {editingSections.size > 1 && (
-        <div className="flex justify-end mb-2 sticky top-0 z-10 bg-white/95 backdrop-blur p-2  border border-gray-200 shadow-sm">
+        <div className="flex justify-end mb-2 sticky top-0 z-10 bg-white/95 backdrop-blur p-2 border border-gray-200 shadow-sm">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => onSave(formData)}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-lg shadow-[#F26D44]/25  transition-all"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-lg shadow-[#F26D44]/25 transition-all"
           >
             <Save size={14} /> Save All Changes
           </motion.button>
@@ -1739,9 +2089,18 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
         const Icon = config.icon;
         const isEditing = editingSections.has(config.id);
         const isExpanded = expandedAccordions.has(config.id);
+        
+        const yetToReceiveKey = `${config.id}.yetToReceive`;
+        const isYetToReceive = getNestedValue(formData, yetToReceiveKey) === true;
+        const resultDateKey = `${config.id}.resultDate`;
+        const resultDateError = errors[resultDateKey];
+        
+        // ✅ Check if waiver is enabled
+        const waiverKey = `${config.id}.waiver`;
+        const isWaiverEnabled = getNestedValue(formData, waiverKey) === true;
 
         return (
-          <div key={config.id} className="border border-gray-200  overflow-hidden bg-white">
+          <div key={config.id} className="border border-gray-200 overflow-hidden bg-white">
             <button
               onClick={() => toggleAccordion(config.id)}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
@@ -1752,7 +2111,6 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                 </div>
                 <span className="font-semibold text-orange-600">{config.label}</span>
 
-                {/* Optional: Show a small badge if data exists */}
                 {config.fields.some((f: any) => getNestedValue(formData, f.key)) && (
                   <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold uppercase rounded-full">
                     Completed
@@ -1765,28 +2123,30 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent accordion toggle
+                    e.stopPropagation();
                     if (isEditing) {
                       handleSaveSection(config.id);
                     } else {
                       toggleEditSection(config.id);
                     }
                   }}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium  transition-all ${isEditing
-                    ? "bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-md"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }`}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-all ${
+                    isEditing
+                      ? "bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-md"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
                 >
                   {isEditing ? <><Save size={12} /> Save</> : <><Edit2 size={12} /> Edit</>}
                 </motion.button>
 
                 <ChevronDown
-                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+                    isExpanded ? "rotate-180" : ""
+                  }`}
                 />
               </div>
             </button>
 
-            {/* Accordion Body */}
             <AnimatePresence>
               {isExpanded && (
                 <motion.div
@@ -1794,41 +2154,66 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="overflow-hidden "
+                  className="overflow-hidden"
                 >
                   <div className="p-4 pt-0 space-y-4 border-t pt-6 border-gray-100">
-                    {/* Main Fields Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      {config.fields.map((field: any) => {
-                        const value = getNestedValue(formData, field.key);
-                        return (
-                          <div key={field.key} className={`${field.span || ""}`}>
-                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
-                              {field.label}
-                            </label>
-                            {isEditing ? (
-                              <input
-                                type={field.type === "date" ? "date" : "text"}
-                                value={value || ""}
-                                onChange={(e) => setNestedValue(field.key, e.target.value)}
-                                placeholder={field.placeholder}
-                                className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm  transition-all"
-                              />
-                            ) : (
-                              <div className="w-full px-3 py-2.5 bg-gray-50/70 border border-gray-200/60 text-sm text-gray-700  min-h-[42px] flex items-center">
-                                {value || <span className="text-gray-400 italic">{field.placeholder}</span>}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
+                    {/* ✅ Main Fields - HIDDEN when waiver is enabled OR yet to receive is yes */}
+                    {(!isYetToReceive && !isWaiverEnabled) && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {config.fields.map((field: any) => {
+                          const value = getNestedValue(formData, field.key);
+                          return (
+                            <div key={field.key} className={`${field.span || ""}`}>
+                              <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">
+                                {field.label}
+                              </label>
+                              {isEditing ? (
+                                <input
+                                  type={field.type === "date" ? "date" : "text"}
+                                  value={value || ""}
+                                  onChange={(e) => setNestedValue(field.key, e.target.value)}
+                                  placeholder={field.placeholder}
+                                  className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm transition-all"
+                                />
+                              ) : (
+                                <div className="w-full px-3 py-2.5 bg-gray-50/70 border border-gray-200/60 text-sm text-gray-700 min-h-[42px] flex items-center">
+                                  {value || <span className="text-gray-400 italic">{field.placeholder}</span>}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
 
-                    {/* Extra Fields (Waivers, Toggles, etc.) */}
+                    {/* ✅ Show message when Yet to Receive is Yes */}
+                    {isYetToReceive && !isWaiverEnabled && isEditing && (
+                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center">
+                        <p className="text-orange-800 text-sm">
+                          Test results are pending. Please enter the result date once received.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* ✅ Show message when Waiver is Yes */}
+                    {isWaiverEnabled && isEditing && (
+                      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                        <div className="flex items-start gap-3">
+                          <Info className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-orange-800 text-sm font-medium">Waiver Applied</p>
+                            <p className="text-orange-700 text-xs mt-1">
+                              Test scores are not required. Please provide your 12th English marks and/or Medium of Instruction details below.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ✅ Extra Fields - ALWAYS SHOWN */}
                     {config.extraFields.length > 0 && (
                       <div className="space-y-4 pt-2 border-t border-dashed border-gray-200">
                         {config.extraFields.map((extra: any) => {
-                          // Boolean Toggle Renderer
                           if (extra.type === "boolean-toggle") {
                             const value = getNestedValue(formData, extra.key);
                             return (
@@ -1836,16 +2221,26 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                                 <label className="text-sm font-medium text-gray-700">{extra.label}</label>
                                 <div className="flex items-center gap-3">
                                   {extra.options.map((opt: string) => {
-                                    const isSelected = (opt === "Yes" && value === true) || (opt === "No" && value === false) || (opt === "No" && value === undefined);
+                                    const isSelected =
+                                      (opt === "Yes" && value === true) ||
+                                      (opt === "No" && value === false) ||
+                                      (opt === "No" && value === undefined);
                                     return (
                                       <button
                                         key={opt}
                                         disabled={!isEditing}
                                         onClick={() => setNestedValue(extra.key, opt === "Yes")}
-                                        className={`flex items-center gap-1.5 text-sm transition-all ${isSelected ? "text-[#F26D44] font-medium" : "text-gray-400"
-                                          } ${!isEditing ? "cursor-default" : "cursor-pointer"}`}
+                                        className={`flex items-center gap-1.5 text-sm transition-all ${
+                                          isSelected
+                                            ? "text-[#F26D44] font-medium"
+                                            : "text-gray-400"
+                                        } ${!isEditing ? "cursor-default" : "cursor-pointer"}`}
                                       >
-                                        {isSelected ? <CheckCircle2 className="w-4 h-4 fill-current" /> : <Circle className="w-4 h-4" />}
+                                        {isSelected ? (
+                                          <CheckCircle2 className="w-4 h-4 fill-current" />
+                                        ) : (
+                                          <Circle className="w-4 h-4" />
+                                        )}
                                         {opt}
                                       </button>
                                     );
@@ -1855,29 +2250,48 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                             );
                           }
 
-                          // Date Renderer
                           if (extra.type === "date") {
                             const value = getNestedValue(formData, extra.key);
+                            const hasError = extra.key === resultDateKey && resultDateError;
+                            
                             return (
                               <div key={extra.key}>
-                                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5">{extra.label}</label>
+                                <label className={`block text-xs font-medium uppercase tracking-wide mb-1.5 ${
+                                  hasError ? "text-red-500" : "text-gray-500"
+                                }`}>
+                                  {extra.label} {hasError && <span className="text-red-500">*</span>}
+                                </label>
                                 {isEditing ? (
                                   <input
                                     type="date"
                                     value={value || ""}
-                                    onChange={(e) => setNestedValue(extra.key, e.target.value)}
-                                    className="w-full md:w-64 px-3 py-2.5 bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm  transition-all"
+                                    onChange={(e) => {
+                                      setNestedValue(extra.key, e.target.value);
+                                      if (hasError) setErrors({});
+                                    }}
+                                    onPaste={handleDatePaste}
+                                    min={new Date().toISOString().split('T')[0]}
+                                    disabled={isWaiverEnabled} // ✅ Disable date when waiver is enabled
+                                    className={`w-full md:w-64 px-3 py-2.5 bg-gray-50 border focus:outline-none focus:ring-2 text-sm transition-all ${
+                                      hasError
+                                        ? "border-red-300 focus:border-red-500 focus:ring-red-200"
+                                        : isWaiverEnabled
+                                        ? "border-gray-200 bg-gray-100 opacity-50 cursor-not-allowed"
+                                        : "border-gray-200 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
+                                    }`}
                                   />
                                 ) : (
-                                  <div className="w-full md:w-64 px-3 py-2.5 bg-gray-50/70 border border-gray-200/60 text-sm text-gray-700  min-h-[42px] flex items-center">
+                                  <div className="w-full md:w-64 px-3 py-2.5 bg-gray-50/70 border border-gray-200/60 text-sm text-gray-700 min-h-[42px] flex items-center">
                                     {value || <span className="text-gray-400 italic">{extra.placeholder}</span>}
                                   </div>
+                                )}
+                                {hasError && isEditing && (
+                                  <p className="text-xs text-red-500 mt-1">{resultDateError}</p>
                                 )}
                               </div>
                             );
                           }
 
-                          // Waiver Group Renderer
                           if (extra.type === "waiver-group") {
                             const waiverValue = getNestedValue(formData, extra.key);
                             const isWaived = waiverValue === true;
@@ -1886,21 +2300,29 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                               <div key={extra.key} className="space-y-3">
                                 <div className="flex items-center gap-4 flex-wrap">
                                   <div className="flex items-center gap-1.5">
-                                    <Info className="w-3.5 h-3.5 text-blue-500" />
+                                    <Info className="w-3.5 h-3.5 text-orange-500" />
                                     <label className="text-sm font-medium text-gray-700">{extra.label}</label>
                                   </div>
                                   <div className="flex items-center gap-3">
                                     {extra.waiverOptions.map((opt: string) => {
-                                      const isSelected = (opt === "Yes" && isWaived) || (opt === "No" && !isWaived);
+                                      const isSelected =
+                                        (opt === "Yes" && isWaived) || (opt === "No" && !isWaived);
                                       return (
                                         <button
                                           key={opt}
                                           disabled={!isEditing}
                                           onClick={() => setNestedValue(extra.key, opt === "Yes")}
-                                          className={`flex items-center gap-1.5 text-sm transition-all ${isSelected ? "text-[#F26D44] font-medium" : "text-gray-400"
-                                            } ${!isEditing ? "cursor-default" : "cursor-pointer"}`}
+                                          className={`flex items-center gap-1.5 text-sm transition-all ${
+                                            isSelected
+                                              ? "text-[#F26D44] font-medium"
+                                              : "text-gray-400"
+                                          } ${!isEditing ? "cursor-default" : "cursor-pointer"}`}
                                         >
-                                          {isSelected ? <CheckCircle2 className="w-4 h-4 fill-current" /> : <Circle className="w-4 h-4" />}
+                                          {isSelected ? (
+                                            <CheckCircle2 className="w-4 h-4 fill-current" />
+                                          ) : (
+                                            <Circle className="w-4 h-4" />
+                                          )}
                                           {opt}
                                         </button>
                                       );
@@ -1908,20 +2330,25 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                                   </div>
                                 </div>
 
-                                {/* Conditional Waiver Extras */}
-                                {(isWaived || isEditing) && (
+                                {/* ✅ Only show waiver extras if Waiver is YES */}
+                                {isWaived && (
                                   <div className="pl-8 flex flex-wrap items-center gap-4">
                                     {extra.waiverExtras.map((we: any) => {
                                       if (we.type === "checkbox") {
                                         const checked = !!getNestedValue(formData, we.key);
                                         return (
-                                          <label key={we.key} className={`flex items-center gap-2 text-sm text-gray-600 ${!isEditing ? "opacity-60" : ""}`}>
+                                          <label
+                                            key={we.key}
+                                            className={`flex items-center gap-2 text-sm text-gray-600 ${
+                                              !isEditing ? "opacity-60" : ""
+                                            }`}
+                                          >
                                             <input
                                               type="checkbox"
                                               checked={checked}
                                               disabled={!isEditing}
                                               onChange={(e) => setNestedValue(we.key, e.target.checked)}
-                                              className="w-4 h-4 accent-[#F26D44] "
+                                              className="w-4 h-4 accent-[#F26D44]"
                                             />
                                             {we.label}
                                           </label>
@@ -1937,10 +2364,10 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                                               value={val || ""}
                                               onChange={(e) => setNestedValue(we.key, e.target.value)}
                                               placeholder={we.placeholder}
-                                              className="px-3 py-1.5 bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm  w-28"
+                                              className="px-3 py-1.5 bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] text-sm w-28"
                                             />
                                           ) : (
-                                            <div className="px-3 py-1.5 bg-gray-50/70 border border-gray-200/60 text-sm text-gray-700  min-h-[34px] flex items-center">
+                                            <div className="px-3 py-1.5 bg-gray-50/70 border border-gray-200/60 text-sm text-gray-700 min-h-[34px] flex items-center">
                                               {val || <span className="text-gray-400 italic">{we.placeholder}</span>}
                                             </div>
                                           )}
@@ -1948,6 +2375,12 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                                       );
                                     })}
                                   </div>
+                                )}
+                                
+                                {!isWaived && isEditing && (
+                                  <p className="text-xs text-gray-400 pl-8 italic">
+                                    Select "Yes" above to enter waiver details.
+                                  </p>
                                 )}
                               </div>
                             );
@@ -1964,9 +2397,8 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
         );
       })}
 
-      {/* Empty State - Only shown if literally NO test configs exist (unlikely) */}
       {visibleTests.length === 0 && (
-        <div className="text-center py-16 border-2 border-dashed border-gray-200  bg-white">
+        <div className="text-center py-16 border-2 border-dashed border-gray-200 bg-white">
           <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-gray-500 font-medium">No test types configured</p>
         </div>

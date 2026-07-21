@@ -104,7 +104,7 @@ export default function DashboardLayout({
     const hasSeen = localStorage.getItem(
       `dashboardTour_${profile?.email}`
     );
-    if (hasSeen) {
+    if (!hasSeen) {
       setTimeout(() => {
         setStartTour(true);
       }, 500);

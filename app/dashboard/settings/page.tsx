@@ -350,7 +350,7 @@ export default function ProfilePage() {
                             <option key={item?.name} value={item?.name}>
                               {item.name}
                             </option>
-                          ))}
+                          ))} 
                         </select>
                       </div>
 
