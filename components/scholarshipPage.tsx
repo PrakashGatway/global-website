@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import FAQSection from "./faqPage";
 import WhyChooseItaly from "./scholarship/cardSection";
+import { DynamicLucideIcon } from "./DynamicLucideIcon";
 
 /* ─── Scroll Animation Hook ─── */
 function useScrollReveal() {
@@ -75,14 +76,6 @@ export default function ScholarshipPage({
   error: initialError,
   slug,
 }: ScholarshipPageProps) {
-
-  console.log(
-    initialScholarship,
-    initialContentTabs,
-    initialSimilar,
-    "Data coming from the server"
-  );
-
   const [activeTab, setActiveTab] = useState("overview");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [heroScale, setHeroScale] = useState(1.05);
@@ -144,7 +137,7 @@ export default function ScholarshipPage({
     setActiveTab(tabId);
     const ref = sectionRefs.current[tabId];
     if (ref) {
-      const offset = 120; // Offset for sticky header
+      const offset = 120;
       const elementPosition = ref.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
 
@@ -158,9 +151,8 @@ export default function ScholarshipPage({
   const getSectionContent = (key: string) => {
     if (!scholarship?.extra_content?.sections) return null;
     const section = scholarship.extra_content.sections.find((s: any) => s.section_key === key);
-    return section?.content || null;
+    return section?.data?.content || section?.content || null;
   };
-
   const allSimilar = similar
     .filter((item: any) => item.slug !== slug)
     .slice(0, 3);
@@ -213,6 +205,7 @@ export default function ScholarshipPage({
       { label: "Deadline", value: scholarship.deadline || "N/A" },
     ];
   };
+
 
   return (
     <main className="bg-[#FAFAF9] text-neutral-900 antialiased">
@@ -284,47 +277,300 @@ export default function ScholarshipPage({
 
       {/* ───── MAIN TWO-COLUMN ───── */}
       <section className="py-10">
-        <div className="max-w-7xl mx-auto ">
+        <div className="max-w-7xl px-4 mx-auto ">
           <div className="flex flex-col lg:flex-row gap-6">
 
             <div className="flex-1 min-w-0">
-
-              {/* <WhyChooseItaly /> */}
-
               {/* ─── ALL SECTIONS ─── */}
-              <div className="space-y-0">
+              <div className="space-y-12">
+                {scholarship?.extra_content?.sections?.map((section: any, index: number) => {
+                  console.log(section)
 
-                {/* Dynamic Section Tabs */}
-                {contentTabs.map((tab) => {
+                  switch (section.section_type) {
+                    case "overview":
+                      return (
+                        <div
+                          key={section._id}
+                          className=""
+                        >
+                          <Reveal delay={index * 10}>
+                            <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
+                              {section?.data?.title || section?.heading || section?.section_key}
+                            </h2>
+                            <div
+                              className="prose max-w-none text-slate-700 
+                          prose-headings:text-slate-900 prose-headings:font-semibold
+                          prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                          prose-p:text-base prose-p:leading-relaxed prose-p:my-4
+                          prose-ul:list-disc prose-ul:pl-5
+                          prose-ol:list-decimal prose-ol:pl-5
+                          prose-li:my-2 prose-li:text-lg
+                          prose-strong:text-slate-900 prose-strong:font-semibold
+                          prose-table:border prose-table:border-gray-200
+                          prose-th:bg-orange-50 prose-th:border prose-th:border-gray-200 prose-th:p-3 prose-th:text-left
+                          prose-td:border prose-td:border-gray-200 prose-td:p-3
+                          prose-img:rounded-lg prose-img:shadow-md"
+                              dangerouslySetInnerHTML={{ __html: section?.data?.content || section?.content }}
+                            />
+                          </Reveal>
+                        </div>
+                      );
 
+                      break;
 
-                  const content = getSectionContent(tab.id);
-                  if (!content) return null;
+                    case "whyChoose":
+                      return (
+                        <div
+                          key={section._id}
+                          className=""
+                        >
+                          <Reveal delay={index * 10}>
+                            <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
+                              {section?.data?.title || section?.heading || section?.section_key}
+                            </h2>
+                            <div
+                              className="prose max-w-none !text-slate-700 
+                          prose-headings:text-slate-900 prose-headings:font-semibold
+                          prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                          prose-p:text-base prose-p:leading-relaxed prose-p:my-4
+                          prose-ul:list-disc prose-ul:pl-5
+                          prose-ol:list-decimal prose-ol:pl-5
+                          prose-li:my-2 prose-li:text-lg
+                          prose-strong:text-slate-900 prose-strong:font-semibold
+                          prose-table:border prose-table:border-gray-200
+                          prose-th:bg-orange-50 prose-th:border prose-th:border-gray-200 prose-th:p-3 prose-th:text-left
+                          prose-td:border prose-td:border-gray-200 prose-td:p-3
+                          prose-img:rounded-lg prose-img:shadow-md"
+                              dangerouslySetInnerHTML={{ __html: section?.data?.subtitle || section?.content }}
+                            />
+                            <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 gap-3">
+                              {section?.data?.cards?.map((card: any) => <div>
+                                <div className="group relative h-full overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_20px_50px_rgba(249,115,22,0.18)]">
+                                  <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-orange-100 blur-3xl opacity-0 transition-all duration-500 group-hover:opacity-70" />
+
+                                  {/* <div className="relative mb-6">
+                                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 via-orange-400 to-orange-300 text-white shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
+                                      <DynamicLucideIcon
+                                        name={card.icon}
+                                        className="h-8 w-8"
+                                      />
+                                    </div>
+                                  </div> */}
+                                  <h3 className="mb-2 text-lg font-semibold leading-snug text-slate-900 transition-colors duration-300 group-hover:text-orange-600">
+                                    {card.title}
+                                  </h3>
+                                  <div
+                                    className="relative z-1 prose prose-sm max-w-none
+    [&_*]:!leading-7
+    [&_*]:!text-slate-800
+    [&_strong]:!text-slate-900
+    [&_*]:text-base"
+                                    dangerouslySetInnerHTML={{
+                                      __html: card?.subtitle || "",
+                                    }}
+                                  />
+
+                                  {/* Bottom Decoration */}
+                                  <div className="absolute bottom-0 -z-0 right-0 h-60 w-60 translate-x-38 translate-y-38 rounded-full bg-gradient-to-br from-orange-100 to-transparent transition-all duration-500 group-hover:translate-x-26 group-hover:translate-y-26" />
+                                </div>
+                              </div>)}
+                            </div>
+
+                          </Reveal>
+                        </div>
+                      );
+
+                    case "documents":
+                      return (
+                        <div
+                          key={section._id}
+                          className=""
+                        >
+                          <div className="mt-6 overflow-hidden rounded-lg bg-white">
+                            {/* Header */}
+                            <div className="bg-gradient-to-r from-[#F36D45] to-[#F36D45] px-6 py-4">
+                              <h3 className="text-xl font-semibold text-white">
+                                {section?.data?.title || "Documents Required"}
+                              </h3>
+                            </div>
+
+                            {/* Documents */}
+                            <div className="relative p-6">
+                              {/* Background Decoration */}
+                              <div className="absolute bottom-0 right-0 h-40 w-40 rounded-full bg-orange-100 blur-3xl opacity-40" />
+
+                              <div className="relative grid grid-cols-1 gap-y-5 gap-x-10 md:grid-cols-2">
+                                {section?.data?.documents?.map((card: any, idx: number) => (
+                                  <div
+                                    key={idx}
+                                    className="group flex items-start gap-4 rounded-xl px-3 py-2 transition-all duration-300 hover:bg-orange-50"
+                                  >
+                                    {/* Icon */}
+                                    <div className="text-[#1C2E5A] transition-all duration-300">
+                                      <DynamicLucideIcon
+                                        name="FileText"
+                                        className="h-6 w-6"
+                                      />
+                                    </div>
+                                    <div
+                                      className="
+              text-[15px]
+              font-medium
+              leading-6
+              text-slate-700
+              [&_*]:!m-0
+              [&_*]:!text-[15px]
+              [&_*]:!leading-6
+              [&_*]:!font-medium
+              [&_*]:!text-slate-700
+            "
+                                      dangerouslySetInnerHTML={{
+                                        __html: card.title,
+                                      }}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+
+                    case "StepsSection":
+                      return (
+                        <div
+                          key={section._id}
+                          className=""
+                        >
+                          <Reveal delay={index * 10}>
+                            <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
+                              {section?.data?.title || section?.heading || section?.section_key}
+                            </h2>
+                            <div
+                              className="prose max-w-none !text-slate-700 
+                          prose-headings:text-slate-900 prose-headings:font-semibold
+                          prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                          prose-p:text-base prose-p:leading-relaxed prose-p:my-4
+                          prose-ul:list-disc prose-ul:pl-5
+                          prose-ol:list-decimal prose-ol:pl-5
+                          prose-li:my-2 prose-li:text-lg
+                          prose-strong:text-slate-900 prose-strong:font-semibold
+                          prose-table:border prose-table:border-gray-200
+                          prose-th:bg-orange-50 prose-th:border prose-th:border-gray-200 prose-th:p-3 prose-th:text-left
+                          prose-td:border prose-td:border-gray-200 prose-td:p-3
+                          prose-img:rounded-lg prose-img:shadow-md"
+                              dangerouslySetInnerHTML={{ __html: section?.data?.subtitle || section?.content }}
+                            />
+                            <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 gap-3">
+                              {section?.data?.cards?.map((card: any) => <div>
+                                <div className="group relative h-full overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_20px_50px_rgba(249,115,22,0.18)]">
+                                  <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-orange-100 blur-3xl opacity-0 transition-all duration-500 group-hover:opacity-70" />
+
+                                  {/* <div className="relative mb-6">
+                                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 via-orange-400 to-orange-300 text-white shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
+                                      <DynamicLucideIcon
+                                        name={card.icon}
+                                        className="h-8 w-8"
+                                      />
+                                    </div>
+                                  </div> */}
+                                  <h3 className="mb-2 text-lg font-semibold leading-snug text-slate-900 transition-colors duration-300 group-hover:text-orange-600">
+                                    {card.title}
+                                  </h3>
+                                  <div
+                                    className="relative z-1 prose prose-sm max-w-none
+    [&_*]:!leading-7
+    [&_*]:!text-slate-800
+    [&_strong]:!text-slate-900
+    [&_*]:text-base"
+                                    dangerouslySetInnerHTML={{
+                                      __html: card?.subtitle || "",
+                                    }}
+                                  />
+
+                                  {/* Bottom Decoration */}
+                                  <div className="absolute bottom-0 -z-0 right-0 h-60 w-60 translate-x-38 translate-y-38 rounded-full bg-gradient-to-br from-orange-100 to-transparent transition-all duration-500 group-hover:translate-x-26 group-hover:translate-y-26" />
+                                </div>
+                              </div>)}
+                            </div>
+
+                          </Reveal>
+                        </div>
+                      );
+
+                    case "content":
+                      return (
+                        <div
+                          key={section._id}
+                          className=""
+                        >
+                          <Reveal delay={index * 10}>
+                            <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
+                              {section?.data?.title || section?.heading || section?.section_key}
+                            </h2>
+                            <div
+                              className="prose max-w-none text-slate-700 
+                          prose-headings:text-slate-900 prose-headings:font-semibold
+                          prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                          prose-p:text-base prose-p:leading-relaxed prose-p:my-4
+                          prose-ul:list-disc prose-ul:pl-5
+                          prose-ol:list-decimal prose-ol:pl-5
+                          prose-li:my-2 prose-li:text-lg
+                          prose-strong:text-slate-900 prose-strong:font-semibold
+                          prose-table:border prose-table:border-gray-200
+                          prose-th:bg-orange-50 prose-th:border prose-th:border-gray-200 prose-th:p-3 prose-th:text-left
+                          prose-td:border prose-td:border-gray-200 prose-td:p-3
+                          prose-img:rounded-lg prose-img:shadow-md"
+                              dangerouslySetInnerHTML={{ __html: section?.data?.content || section?.content }}
+                            />
+                          </Reveal>
+                        </div>
+                      );
+
+                    // default:
+                    //   return (
+                    //     <ContentSection
+                    //       key={section._id}
+                    //       section={section}
+                    //       index={index}
+                    //     />
+                    //   );
+                  }
+
 
                   return (
                     <div
-                      key={tab.id}
-                      ref={(el) => { sectionRefs.current[tab.id] = el; }}
-                      className=""
+                      key={section.id}
+                      ref={(el) => { sectionRefs.current[section.id] = el; }}
+                      className="scroll-mt-28"
                     >
-                      <h2 className="text-2xl font-semibold mb-3 text-[#1C2E5A]">{tab.label}</h2>
-                      <div
-                        // className="prose prose-sm max-w-none text-neutral-600" 
-
-                        className="prose max-w-none !text-lg text-slate-700 
-             prose-headings:text-slate-900
-             [&_ul]:list-disc 
-             [&_ol]:list-decimal 
-             [&_ul]:pl-5 
-             [&_ol]:pl-5 
-             [&_li]:my-2
-             [&_p]:my-4
-             [&_*]:text-lg
-             "
-                        dangerouslySetInnerHTML={{ __html: content }}
-                      />
+                      <Reveal delay={index * 50}>
+                        <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-[#1C2E5A]">
+                          {section.label}
+                        </h2>
+                        <div
+                          className="prose max-w-none text-slate-700 
+                          prose-headings:text-slate-900 prose-headings:font-semibold
+                          prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                          prose-p:text-lg prose-p:leading-relaxed prose-p:my-4
+                          prose-ul:list-disc prose-ul:pl-5
+                          prose-ol:list-decimal prose-ol:pl-5
+                          prose-li:my-2 prose-li:text-lg
+                          prose-strong:text-slate-900 prose-strong:font-semibold
+                          prose-table:border prose-table:border-gray-200
+                          prose-th:bg-orange-50 prose-th:border prose-th:border-gray-200 prose-th:p-3 prose-th:text-left
+                          prose-td:border prose-td:border-gray-200 prose-td:p-3
+                          prose-img:rounded-lg prose-img:shadow-md"
+                          dangerouslySetInnerHTML={{ __html: section.content }}
+                        />
+                      </Reveal>
                     </div>
-                  );
+                  )
                 })}
               </div>
             </div>
@@ -355,7 +601,6 @@ export default function ScholarshipPage({
                       </div>
                     </div>
 
-                    {/* Conditional Rendering for Success State (from your first snippet) */}
                     {false ? (
                       <div className="py-10 px-6 text-center">
                         <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-3xl mx-auto">
@@ -369,12 +614,8 @@ export default function ScholarshipPage({
                         </p>
                       </div>
                     ) : (
-                      /* Form with React Hook Form logic and SVG inputs (from your second snippet) */
                       <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
-
-                        {/* Name + Mobile Row */}
                         <div className="grid grid-cols-1 gap-3">
-                          {/* Name */}
                           <div className="space-y-1.5">
                             <label htmlFor="name" className="block text-xs font-semibold text-[#0b2545] uppercase tracking-wider">
                               Full Name <span className="text-red-500">*</span>
@@ -393,7 +634,6 @@ export default function ScholarshipPage({
                             {errors.name && <p className="text-[11px] text-red-500 font-medium">{errors.name.message as string}</p>}
                           </div>
 
-                          {/* Mobile */}
                           <div className="space-y-1.5">
                             <label htmlFor="mobile" className="block text-xs font-semibold text-[#0b2545] uppercase tracking-wider">
                               Mobile Number <span className="text-red-500">*</span>
@@ -418,9 +658,7 @@ export default function ScholarshipPage({
                           </div>
                         </div>
 
-                        {/* Email + Destination Row */}
                         <div className="grid grid-cols-1 gap-3">
-                          {/* Email */}
                           <div className="space-y-1.5">
                             <label htmlFor="email" className="block text-xs font-semibold text-[#0b2545] uppercase tracking-wider">
                               Email Address <span className="text-red-500">*</span>
@@ -443,7 +681,6 @@ export default function ScholarshipPage({
                             {errors.email && <p className="text-[11px] text-red-500 font-medium">{errors.email.message as string}</p>}
                           </div>
 
-                          {/* Destination */}
                           <div className="space-y-1.5">
                             <label htmlFor="destination" className="block text-xs font-semibold text-[#0b2545] uppercase tracking-wider">
                               Destination <span className="text-red-500">*</span>
@@ -465,7 +702,6 @@ export default function ScholarshipPage({
                                   </option>
                                 ))}
                               </select>
-                              {/* Custom Dropdown Arrow */}
                               <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                               </svg>
@@ -474,7 +710,6 @@ export default function ScholarshipPage({
                           </div>
                         </div>
 
-                        {/* Checkbox */}
                         <div className="flex items-center gap-2.5 pt-1">
                           <input
                             type="checkbox"
@@ -488,7 +723,6 @@ export default function ScholarshipPage({
                         </div>
                         {errors.agree && <p className="text-[11px] text-red-500 font-medium -mt-2">{errors.agree.message as string}</p>}
 
-                        {/* Submit Button */}
                         <button
                           type="submit"
                           disabled={isSubmitting}
@@ -513,33 +747,31 @@ export default function ScholarshipPage({
 
                 {/* Similar Scholarships */}
                 {allSimilar.length > 0 && (
-                  <div className="bg-white rounded-2xl border border-neutral-200 p-5">
+                  <div className="bg-white border border-neutral-200 p-4">
                     <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-neutral-500">
+                      <h4 className="text-[12px] font-bold uppercase tracking-[0.15em] text-neutral-500">
                         Similar Scholarships
                       </h4>
-                      <span className="px-2.5 py-1 rounded-full bg-orange-100 text-orange-600 text-[10px] font-bold uppercase">
+                      <span className="px-2.5 py-1 rounded-full bg-orange-100 text-orange-600 text-[12px] font-bold uppercase">
                         {allSimilar.length} Available
                       </span>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {allSimilar.map((item: any) => (
                         <Link
                           key={item._id}
-                          href={`/scholarship/${item.slug}`}
-                          className="group flex gap-3 rounded-xl border border-gray-200 bg-white p-3 hover:border-orange-300 hover:shadow-md transition-all"
+                          href={`/scholarships/${item.slug}`}
+                          className="group flex border border-gray-200 bg-white hover:border-orange-300 hover:shadow-md transition-all"
                         >
                           <img
                             src={item.image || "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=300&auto=format&fit=crop&q=80"}
                             alt={item.title}
-                            className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+                            className="w-26 h-26 object-cover flex-shrink-0"
                           />
-                          <div className="flex-1">
-                            <span className="inline-block text-[10px] font-semibold text-orange-600 uppercase tracking-wider">
-                              Scholarship
-                            </span>
-                            <h5 className="text-sm font-semibold text-gray-900 mt-1 line-clamp-2">
+                          <div className="flex-1 flex flex-col justify-between px-2 py-2 bg-gray-50">
+
+                            <h5 className="text-[15px] font-semibold text-gray-900 mt-1 line-clamp-2">
                               {item.title}
                             </h5>
                             <div className="flex items-center justify-between mt-2">
@@ -561,9 +793,51 @@ export default function ScholarshipPage({
           </div>
         </div>
       </section>
+      <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-0">
+
+          {/* Text */}
+          <div className="text-white relative z-10">
+            <span className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"> Turn Your Dream of Studying Abroad into Reality </span>
+
+            <br /> <span
+              className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
+
+            >From choosing the right country and university to securing scholarships, preparing your application, and obtaining your student visa, Ooshas Global provides personalized, end-to-end guidance at every stage of your study abroad journey.</span>
+            <div className="mt-4">
+              <a href="/contact">
+                <button className="bg-secondary hover:bg-primary px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md hover:scale-105 transition text-xs sm:text-base">
+                  Contact US
+                </button>
+              </a>
+            </div>
+          </div>
+
+          {/* Decorative circle — only on lg */}
+          <div className="hidden lg:flex relative h-[325px] items-center justify-center">
+            <img
+              src="/images/circle stand.png"
+              alt=""
+              className="absolute z-10 w-[90px] bottom-0"
+              style={{ right: "calc(50% - 45px)" }}
+            />
+            <img
+              src="/images/circle.png"
+              alt=""
+              className="w-80 xl:w-96 animate-spin [animation-duration:60s]"
+            />
+          </div>
+        </div>
+
+        <img
+          src="/images/country-building-img.png"
+          alt=""
+          className="absolute bottom-0 right-0 w-2/3 sm:w-1/2 object-contain pointer-events-none"
+        />
+        <div className="absolute bottom-0 left-0 w-full sm:w-1/2 h-2 sm:h-3 bg-yellow-400" />
+      </section>
 
       <FAQSection Faqres={faqres} />
     </main>
   );
 }
-
