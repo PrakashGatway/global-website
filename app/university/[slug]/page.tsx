@@ -20,6 +20,7 @@ import { UniversityListSkeleton } from '@/components/Universitypage/universityCa
 import axiosInstance, { serverInstance, serverInst } from '@/app/axiosInstance';
 import FAQSection from '@/components/faqPage';
 import { ContentSection, EligibilityCriteriaSection, WhyStudySection } from '@/components/country';
+import NotFound from '@/app/not-found';
 
 // Types
 interface University {
@@ -479,10 +480,12 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
   let countrydata: any = [];
   try {
     const [res, api, data] = await Promise.all([
-      serverInstance.get(`/page-information/slug/${slug}`),
+      serverInstance.get(`/page-information/slug/${slug}?type=university`),
       serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`),
       serverInstance.get(`/countries/public?limit=300`)
     ])
+
+    console.log(res?.data,"kdlfkdlfkdlf")
 
     pageData = res.data;
     Faqres = api.data || [];
@@ -490,6 +493,7 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
 
   } catch (error) {
     console.error('Error fetching page data:', error);
+    return <NotFound />
   }
 
   // Get default country from page data

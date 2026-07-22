@@ -10,6 +10,129 @@ import FAQSection from "./faqPage";
 import WhyChooseItaly from "./scholarship/cardSection";
 import { DynamicLucideIcon } from "./DynamicLucideIcon";
 
+const InnerContent = ({cleanedHtml}: string) => {
+  return (
+    <div>
+      <style>{`
+    .blog-html table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 15px;
+      overflow-x: auto !important;
+    }
+
+    .blog-html table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.blog-html table td,
+.blog-html table th {
+  width: 50%;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  word-break: break-word;
+  vertical-align: top;
+}
+
+    .blog-html th,
+    .blog-html td {
+      border: 1px solid #e5e7eb;
+    }
+
+    .blog-html th {
+      background: #F46C44;
+      text-align: center;
+      color: white;
+      font-weight: 600;
+    }
+          .blog-html tr {
+      text-align: center;
+    }
+            .blog-html table * p {
+      padding: 10px;
+    }
+    
+
+    .blog-html tr:nth-child(even) {
+      background-color: #f3ebeb;
+      
+    }
+    .blog-html h2 {
+      font-size: 26px;
+      margin: 28px 0 12px;
+      font-weight: 700;
+      color: #00306a
+    }
+
+    .blog-html h2 * {
+      font-size: 26px;
+      margin: 28px 0 12px;
+      font-weight: 700;
+      color: #00306a
+    }
+
+    .blog-html h3 {
+      font-size: 20px;
+      margin: 22px 0 10px;
+      font-weight: 600;
+    }
+
+    .blog-html h4 {
+      font-size: 18px;
+      margin: 18px 0 8px;
+      font-weight: 600;
+    }
+
+    .blog-html * a {
+      color: #240dbd;
+    }
+
+    .blog-html p {
+      // padding: 12px;
+      line-height: 1.8;
+    }
+
+    .blog-html ul {
+      margin-left: 22px;
+      list-style: disc;
+    }
+
+    .blog-html ol {
+      margin-left: 22px;
+      list-style: decimal;
+    }
+
+    .blog-html li {
+      margin: 6px 0;
+    }
+
+    .blog-html figure.table {
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+
+    .blog-html strong {
+      font-weight: 600;
+    }
+      html {
+      scroll-behavior: smooth;
+    }
+  `}</style>
+
+      <div className="">
+        <div
+          className="blog-html overflow-x-auto"
+          dangerouslySetInnerHTML={{ __html: cleanedHtml }}
+
+        ></div>
+      </div>
+    </div>
+  )
+}
+
 /* ─── Scroll Animation Hook ─── */
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -157,6 +280,7 @@ export default function ScholarshipPage({
     .filter((item: any) => item.slug !== slug)
     .slice(0, 3);
 
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -210,16 +334,16 @@ export default function ScholarshipPage({
   return (
     <main className="bg-[#FAFAF9] text-neutral-900 antialiased">
       {/* ───── HERO ───── */}
-      <section className="relative h-80 md:h-96 overflow-hidden">
+      <section className="relative h-80 md:h-90 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center will-change-transform"
           style={{
-            backgroundImage: `url(${scholarship.heroImage || 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2000&auto=format&fit=crop'})`,
+            backgroundImage: `url(${scholarship?.cover_photo || 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2000&auto=format&fit=crop'})`,
             transform: `scale(${heroScale})`,
             transition: "transform 0.1s linear",
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
 
         <div className="relative z-10 max-w-7xl px-4 mx-auto h-full flex flex-col justify-end pb-10">
           <Reveal delay={100}>
@@ -284,35 +408,19 @@ export default function ScholarshipPage({
               {/* ─── ALL SECTIONS ─── */}
               <div className="space-y-12">
                 {scholarship?.extra_content?.sections?.map((section: any, index: number) => {
-                  console.log(section)
 
                   switch (section.section_type) {
                     case "overview":
                       return (
                         <div
                           key={section._id}
-                          className=""
+                          className="border p-4 md:p-6 rounded-2xl"
                         >
                           <Reveal delay={index * 10}>
                             <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
                               {section?.data?.title || section?.heading || section?.section_key}
                             </h2>
-                            <div
-                              className="prose max-w-none text-slate-700 
-                          prose-headings:text-slate-900 prose-headings:font-semibold
-                          prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-                          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-                          prose-p:text-base prose-p:leading-relaxed prose-p:my-4
-                          prose-ul:list-disc prose-ul:pl-5
-                          prose-ol:list-decimal prose-ol:pl-5
-                          prose-li:my-2 prose-li:text-lg
-                          prose-strong:text-slate-900 prose-strong:font-semibold
-                          prose-table:border prose-table:border-gray-200
-                          prose-th:bg-orange-50 prose-th:border prose-th:border-gray-200 prose-th:p-3 prose-th:text-left
-                          prose-td:border prose-td:border-gray-200 prose-td:p-3
-                          prose-img:rounded-lg prose-img:shadow-md"
-                              dangerouslySetInnerHTML={{ __html: section?.data?.content || section?.content }}
-                            />
+                            <InnerContent cleanedHtml={section?.data?.content || section?.content } />
                           </Reveal>
                         </div>
                       );
@@ -323,28 +431,14 @@ export default function ScholarshipPage({
                       return (
                         <div
                           key={section._id}
-                          className=""
+                          className="border p-4 md:p-6 rounded-2xl"
                         >
                           <Reveal delay={index * 10}>
                             <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
                               {section?.data?.title || section?.heading || section?.section_key}
                             </h2>
-                            <div
-                              className="prose max-w-none !text-slate-700 
-                          prose-headings:text-slate-900 prose-headings:font-semibold
-                          prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-                          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-                          prose-p:text-base prose-p:leading-relaxed prose-p:my-4
-                          prose-ul:list-disc prose-ul:pl-5
-                          prose-ol:list-decimal prose-ol:pl-5
-                          prose-li:my-2 prose-li:text-lg
-                          prose-strong:text-slate-900 prose-strong:font-semibold
-                          prose-table:border prose-table:border-gray-200
-                          prose-th:bg-orange-50 prose-th:border prose-th:border-gray-200 prose-th:p-3 prose-th:text-left
-                          prose-td:border prose-td:border-gray-200 prose-td:p-3
-                          prose-img:rounded-lg prose-img:shadow-md"
-                              dangerouslySetInnerHTML={{ __html: section?.data?.subtitle || section?.content }}
-                            />
+                            <InnerContent cleanedHtml={section?.data?.subtitle || section?.content } />
+                            
                             <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 gap-3">
                               {section?.data?.cards?.map((card: any) => <div>
                                 <div className="group relative h-full overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_20px_50px_rgba(249,115,22,0.18)]">
@@ -361,16 +455,10 @@ export default function ScholarshipPage({
                                   <h3 className="mb-2 text-lg font-semibold leading-snug text-slate-900 transition-colors duration-300 group-hover:text-orange-600">
                                     {card.title}
                                   </h3>
-                                  <div
-                                    className="relative z-1 prose prose-sm max-w-none
-    [&_*]:!leading-7
-    [&_*]:!text-slate-800
-    [&_strong]:!text-slate-900
-    [&_*]:text-base"
-                                    dangerouslySetInnerHTML={{
-                                      __html: card?.subtitle || "",
-                                    }}
-                                  />
+                                  <div className="relative z-1">
+                                  <InnerContent cleanedHtml={card?.subtitle || "" } />
+
+                                  </div>
 
                                   {/* Bottom Decoration */}
                                   <div className="absolute bottom-0 -z-0 right-0 h-60 w-60 translate-x-38 translate-y-38 rounded-full bg-gradient-to-br from-orange-100 to-transparent transition-all duration-500 group-hover:translate-x-26 group-hover:translate-y-26" />
@@ -414,22 +502,8 @@ export default function ScholarshipPage({
                                         className="h-6 w-6"
                                       />
                                     </div>
-                                    <div
-                                      className="
-              text-[15px]
-              font-medium
-              leading-6
-              text-slate-700
-              [&_*]:!m-0
-              [&_*]:!text-[15px]
-              [&_*]:!leading-6
-              [&_*]:!font-medium
-              [&_*]:!text-slate-700
-            "
-                                      dangerouslySetInnerHTML={{
-                                        __html: card.title,
-                                      }}
-                                    />
+                                    <InnerContent cleanedHtml={card.title } />
+                                    
                                   </div>
                                 ))}
                               </div>
@@ -442,28 +516,14 @@ export default function ScholarshipPage({
                       return (
                         <div
                           key={section._id}
-                          className=""
+                          className="border p-4 md:p-6 rounded-2xl"
                         >
                           <Reveal delay={index * 10}>
                             <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
                               {section?.data?.title || section?.heading || section?.section_key}
                             </h2>
-                            <div
-                              className="prose max-w-none !text-slate-700 
-                          prose-headings:text-slate-900 prose-headings:font-semibold
-                          prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-                          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-                          prose-p:text-base prose-p:leading-relaxed prose-p:my-4
-                          prose-ul:list-disc prose-ul:pl-5
-                          prose-ol:list-decimal prose-ol:pl-5
-                          prose-li:my-2 prose-li:text-lg
-                          prose-strong:text-slate-900 prose-strong:font-semibold
-                          prose-table:border prose-table:border-gray-200
-                          prose-th:bg-orange-50 prose-th:border prose-th:border-gray-200 prose-th:p-3 prose-th:text-left
-                          prose-td:border prose-td:border-gray-200 prose-td:p-3
-                          prose-img:rounded-lg prose-img:shadow-md"
-                              dangerouslySetInnerHTML={{ __html: section?.data?.subtitle || section?.content }}
-                            />
+                            <InnerContent cleanedHtml={section?.data?.subtitle || section?.content } />
+                            
                             <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 gap-3">
                               {section?.data?.cards?.map((card: any) => <div>
                                 <div className="group relative h-full overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_20px_50px_rgba(249,115,22,0.18)]">
@@ -480,16 +540,11 @@ export default function ScholarshipPage({
                                   <h3 className="mb-2 text-lg font-semibold leading-snug text-slate-900 transition-colors duration-300 group-hover:text-orange-600">
                                     {card.title}
                                   </h3>
-                                  <div
-                                    className="relative z-1 prose prose-sm max-w-none
-    [&_*]:!leading-7
-    [&_*]:!text-slate-800
-    [&_strong]:!text-slate-900
-    [&_*]:text-base"
-                                    dangerouslySetInnerHTML={{
-                                      __html: card?.subtitle || "",
-                                    }}
-                                  />
+                                  <div className="relative z-1">
+
+                                  <InnerContent cleanedHtml={card?.subtitle || "" } />
+                                  </div>
+                                 
 
                                   {/* Bottom Decoration */}
                                   <div className="absolute bottom-0 -z-0 right-0 h-60 w-60 translate-x-38 translate-y-38 rounded-full bg-gradient-to-br from-orange-100 to-transparent transition-all duration-500 group-hover:translate-x-26 group-hover:translate-y-26" />
@@ -505,28 +560,14 @@ export default function ScholarshipPage({
                       return (
                         <div
                           key={section._id}
-                          className=""
+                          className="border p-4 md:p-6 rounded-2xl"
                         >
                           <Reveal delay={index * 10}>
                             <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
                               {section?.data?.title || section?.heading || section?.section_key}
                             </h2>
-                            <div
-                              className="prose max-w-none text-slate-700 
-                          prose-headings:text-slate-900 prose-headings:font-semibold
-                          prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-                          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-                          prose-p:text-base prose-p:leading-relaxed prose-p:my-4
-                          prose-ul:list-disc prose-ul:pl-5
-                          prose-ol:list-decimal prose-ol:pl-5
-                          prose-li:my-2 prose-li:text-lg
-                          prose-strong:text-slate-900 prose-strong:font-semibold
-                          prose-table:border prose-table:border-gray-200
-                          prose-th:bg-orange-50 prose-th:border prose-th:border-gray-200 prose-th:p-3 prose-th:text-left
-                          prose-td:border prose-td:border-gray-200 prose-td:p-3
-                          prose-img:rounded-lg prose-img:shadow-md"
-                              dangerouslySetInnerHTML={{ __html: section?.data?.content || section?.content }}
-                            />
+                            <InnerContent cleanedHtml={section?.data?.content || section?.content } />
+                           
                           </Reveal>
                         </div>
                       );
@@ -798,12 +839,12 @@ export default function ScholarshipPage({
 
           {/* Text */}
           <div className="text-white relative z-10">
-            <span className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"> Turn Your Dream of Studying Abroad into Reality </span>
+            <span className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"> {scholarship?.extra_content?.cta?.title || " Turn Your Dream of Studying Abroad into Reality"} </span>
 
             <br /> <span
               className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
 
-            >From choosing the right country and university to securing scholarships, preparing your application, and obtaining your student visa, Ooshas Global provides personalized, end-to-end guidance at every stage of your study abroad journey.</span>
+            > {scholarship?.extra_content?.cta?.title || "From choosing the right country and university to securing scholarships, preparing your application, and obtaining your student visa, Ooshas Global provides personalized, end-to-end guidance at every stage of your study abroad journey."}</span>
             <div className="mt-4">
               <a href="/contact">
                 <button className="bg-secondary hover:bg-primary px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md hover:scale-105 transition text-xs sm:text-base">
