@@ -135,32 +135,12 @@ export default function ScholarshipPage({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollToSection = (tabId: string) => {
-    setActiveTab(tabId);
-    const ref = sectionRefs.current[tabId];
-    if (ref) {
-      const offset = 120;
-      const elementPosition = ref.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
-  };
-
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const toggleAccordion = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const getSectionContent = (key: string) => {
-    if (!scholarship?.extra_content?.sections) return null;
-    const section = scholarship.extra_content.sections.find((s: any) => s.section_key === key);
-    return section?.data?.content || section?.content || null;
-  };
   const allSimilar = similar
     .filter((item: any) => item.slug !== slug)
     .slice(0, 3);
@@ -523,37 +503,6 @@ export default function ScholarshipPage({
                     //     />
                     //   );
                   }
-
-
-                  return (
-                    <div
-                      key={section.id}
-                      ref={(el) => { sectionRefs.current[section.id] = el; }}
-                      className="scroll-mt-28"
-                    >
-                      <Reveal delay={index * 50}>
-                        <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-[#1C2E5A]">
-                          {section.label}
-                        </h2>
-                        <div
-                          className="prose max-w-none text-slate-700 
-                          prose-headings:text-slate-900 prose-headings:font-semibold
-                          prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-                          prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-                          prose-p:text-lg prose-p:leading-relaxed prose-p:my-4
-                          prose-ul:list-disc prose-ul:pl-5
-                          prose-ol:list-decimal prose-ol:pl-5
-                          prose-li:my-2 prose-li:text-lg
-                          prose-strong:text-slate-900 prose-strong:font-semibold
-                          prose-table:border prose-table:border-gray-200
-                          prose-th:bg-orange-50 prose-th:border prose-th:border-gray-200 prose-th:p-3 prose-th:text-left
-                          prose-td:border prose-td:border-gray-200 prose-td:p-3
-                          prose-img:rounded-lg prose-img:shadow-md"
-                          dangerouslySetInnerHTML={{ __html: section.content }}
-                        />
-                      </Reveal>
-                    </div>
-                  )
                 })}
               </div>
             </div>
@@ -781,12 +730,17 @@ export default function ScholarshipPage({
 
           {/* Text */}
           <div className="text-white relative z-10">
-            <span className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"> {scholarship?.extra_content?.cta?.title || " Turn Your Dream of Studying Abroad into Reality"} </span>
+            <span className="text-xl !leading-snug mb-4 sm:text-3xl md:text-4xl font-semibold leading-tight"> {scholarship?.extra_content?.cta?.title || " Turn Your Dream of Studying Abroad into Reality"} </span>
 
-            <br /> <span
+            <br />
+            <br />
+
+
+            
+            <span
               className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
 
-            > {scholarship?.extra_content?.cta?.title || "From choosing the right country and university to securing scholarships, preparing your application, and obtaining your student visa, Ooshas Global provides personalized, end-to-end guidance at every stage of your study abroad journey."}</span>
+            > {scholarship?.extra_content?.cta?.description || "From choosing the right country and university to securing scholarships, preparing your application, and obtaining your student visa, Ooshas Global provides personalized, end-to-end guidance at every stage of your study abroad journey."}</span>
             <div className="mt-4">
               <a href="/contact">
                 <button className="bg-secondary hover:bg-primary px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md hover:scale-105 transition text-xs sm:text-base">

@@ -65,7 +65,6 @@ const HeroSection = ({ data, alldata }) => {
                   dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
                 />
                 
-                {/* CTA Button */}
                 <div className="flex xs:flex-col flex-row flex-wrap gap-3 mt-5">
                   <a href={data?.ctaLink1 || "/contact"} className="w-full sm:w-auto">
                     <button className="bg-[#f46c44] hover:bg-primary hover:text-white hover:scale-105 transition duration-300 px-5 py-3 flex items-center justify-center gap-2 font-bold text-gray-900 text-xs sm:text-sm shadow-lg cursor-pointer w-full">

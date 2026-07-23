@@ -7,11 +7,11 @@ export default function TableOfContents({ toc }: any) {
 
     return (
         <div className="">
-            <p className="font-bold text-xl mb-2">
+            <p className="font-bold text-gray-800 text-xl mb-4">
                 Table Of Contents
             </p>
 
-            <ul className="space-y-2">
+            <ul className="space-y-1">
                 {toc.map((item: any, index: number) => (
                     <li key={index}>
                         <div
@@ -38,7 +38,7 @@ export default function TableOfContents({ toc }: any) {
                         </div>
 
                         {openIndex === index && item.children.length > 0 && (
-                            <ul className="ml-6 mt-3 space-y-2">
+                            <ul className="ml-6 mt-1 space-y-1">
                                 {item.children.map((child: any, i: number) => (
                                     <li key={i}>
                                         <a
