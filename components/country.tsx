@@ -345,7 +345,6 @@ const WhyChooseUsSection = ({ data }) => {
 
 
 export const WhyStudySection = ({ data }) => {
-  console.log(data , "ddfkdsjfjdskfjs kdjfkjdkfj")
   if (data?.isHidden == "yes") return null
   return (
     <section className="w-full py-10 sm:py-14 lg:py-20 px-4 sm:px-6 bg-white">
@@ -732,7 +731,7 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
 }
 
 
-const CTASection = ({ data }) => {
+export const CTASection = ({ data }) => {
   if (data?.isHidden === "yes") return null
   return (
     <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
@@ -740,7 +739,7 @@ const CTASection = ({ data }) => {
 
         {/* Text */}
         <div className="text-white relative z-10">
-          <Tag data={data?.tag} text={data?.title} css={"text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"} />
+          <Tag data={data?.tag} text={data?.title || "Scholarships for International Students"} css={"text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"} />
 
           <span
             className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
@@ -819,7 +818,7 @@ const SimilarDestination = ({ countryres, sliderRef }) =>
               </div>
 
               <h3 className="text-xl font-bold text-gray-900 truncate my-4">
-                {item?.title}
+                {item?.title }
               </h3>
 
 

@@ -19,7 +19,7 @@ import UniversityList, { StudyStats, UniversityOverview } from '@/components/Uni
 import { UniversityListSkeleton } from '@/components/Universitypage/universityCard';
 import axiosInstance, { serverInstance, serverInst } from '@/app/axiosInstance';
 import FAQSection from '@/components/faqPage';
-import { ContentSection, EligibilityCriteriaSection, WhyStudySection } from '@/components/country';
+import { ContentSection, CTASection, EligibilityCriteriaSection, WhyStudySection } from '@/components/country';
 import NotFound from '@/app/not-found';
 
 // Types
@@ -485,8 +485,6 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
       serverInstance.get(`/countries/public?limit=300`)
     ])
 
-    console.log(res?.data,"kdlfkdlfkdlf")
-
     pageData = res.data;
     Faqres = api.data || [];
     countrydata = data.data || [];
@@ -593,49 +591,8 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
       {pageData?.data?.sections?.eligibilityCriteria && <EligibilityCriteriaSection data={pageData?.data?.sections?.eligibilityCriteria} />}
       <StatsSection1 statsData={pageData?.data?.sections?.city} slug={slug} />
       <UniversityOverview pageData={pageData?.data?.sections?.universityOverview} />
-      <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-0">
-
-          {/* Text */}
-          <div className="text-white relative z-10">
-            <span className="text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"> Turn Your Dream of Studying Abroad into Reality </span>
-
-            <br /> <span
-              className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
-
-            >From choosing the right country and university to securing scholarships, preparing your application, and obtaining your student visa, Ooshas Global provides personalized, end-to-end guidance at every stage of your study abroad journey.</span>
-            <div className="mt-4">
-              <a href="/contact">
-                <button className="bg-secondary hover:bg-primary px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md hover:scale-105 transition text-xs sm:text-base">
-                  Contact US
-                </button>
-              </a>
-            </div>
-          </div>
-
-          {/* Decorative circle — only on lg */}
-          <div className="hidden lg:flex relative h-[325px] items-center justify-center">
-            <img
-              src="/images/circle stand.png"
-              alt=""
-              className="absolute z-10 w-[90px] bottom-0"
-              style={{ right: "calc(50% - 45px)" }}
-            />
-            <img
-              src="/images/circle.png"
-              alt=""
-              className="w-80 xl:w-96 animate-spin [animation-duration:60s]"
-            />
-          </div>
-        </div>
-
-        <img
-          src="/images/country-building-img.png"
-          alt=""
-          className="absolute bottom-0 right-0 w-2/3 sm:w-1/2 object-contain pointer-events-none"
-        />
-        <div className="absolute bottom-0 left-0 w-full sm:w-1/2 h-2 sm:h-3 bg-yellow-400" />
-      </section>
+      {<CTASection data={pageData?.data?.sections?.cta} />}
+    
       <div className='px-4'>
         <FAQSection Faqres={Faqres} />
       </div>

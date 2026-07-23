@@ -137,7 +137,7 @@ const PopupForm = ({ isOpen, onClose, onSubmit }) => {
                 <div className="absolute w-[220vh] rounded-full h-[220vh] bg-white -top-[66vh] left-[80%] z-0">
 
                 </div> 
-                <img src="./shapes/popbg.webp" alt="Image" className="absolute h-42 -scale-x-100 bottom-0 object-cover" />
+                <img src="shapes/popbg.webp" alt="Image" className="absolute h-42 -scale-x-100 bottom-0 object-cover" />
                 <div className="relative z-1">
                   <h2 className="text-3xl font-semibold text-gray-800 leading-tight">
                     Guidance for Your <br/>

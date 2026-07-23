@@ -27,7 +27,7 @@ const Footer = dynamic(() => import("@/components/Footer").then(mod => mod.Foote
 
 const ptSans = Noto_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"], // PT Sans supports mainly 400 & 700
+  weight: ["300", "400", "500", "600", "700"], // PT Sans supports mainly 400 & 700
   display: "swap",
 });
 

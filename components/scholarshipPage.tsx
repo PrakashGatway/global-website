@@ -9,129 +9,8 @@ import toast from "react-hot-toast";
 import FAQSection from "./faqPage";
 import WhyChooseItaly from "./scholarship/cardSection";
 import { DynamicLucideIcon } from "./DynamicLucideIcon";
-
-const InnerContent = ({cleanedHtml}: string) => {
-  return (
-    <div>
-      <style>{`
-    .blog-html table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-      font-size: 15px;
-      overflow-x: auto !important;
-    }
-
-    .blog-html table {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
-}
-
-.blog-html table td,
-.blog-html table th {
-  width: 50%;
-  padding: 12px;
-  border: 1px solid #e5e7eb;
-  word-break: break-word;
-  vertical-align: top;
-}
-
-    .blog-html th,
-    .blog-html td {
-      border: 1px solid #e5e7eb;
-    }
-
-    .blog-html th {
-      background: #F46C44;
-      text-align: center;
-      color: white;
-      font-weight: 600;
-    }
-          .blog-html tr {
-      text-align: center;
-    }
-            .blog-html table * p {
-      padding: 10px;
-    }
-    
-
-    .blog-html tr:nth-child(even) {
-      background-color: #f3ebeb;
-      
-    }
-    .blog-html h2 {
-      font-size: 26px;
-      margin: 28px 0 12px;
-      font-weight: 700;
-      color: #00306a
-    }
-
-    .blog-html h2 * {
-      font-size: 26px;
-      margin: 28px 0 12px;
-      font-weight: 700;
-      color: #00306a
-    }
-
-    .blog-html h3 {
-      font-size: 20px;
-      margin: 22px 0 10px;
-      font-weight: 600;
-    }
-
-    .blog-html h4 {
-      font-size: 18px;
-      margin: 18px 0 8px;
-      font-weight: 600;
-    }
-
-    .blog-html * a {
-      color: #240dbd;
-    }
-
-    .blog-html p {
-      // padding: 12px;
-      line-height: 1.8;
-    }
-
-    .blog-html ul {
-      margin-left: 22px;
-      list-style: disc;
-    }
-
-    .blog-html ol {
-      margin-left: 22px;
-      list-style: decimal;
-    }
-
-    .blog-html li {
-      margin: 6px 0;
-    }
-
-    .blog-html figure.table {
-      overflow-x: auto;
-      margin: 20px 0;
-    }
-
-    .blog-html strong {
-      font-weight: 600;
-    }
-      html {
-      scroll-behavior: smooth;
-    }
-  `}</style>
-
-      <div className="">
-        <div
-          className="blog-html overflow-x-auto"
-          dangerouslySetInnerHTML={{ __html: cleanedHtml }}
-
-        ></div>
-      </div>
-    </div>
-  )
-}
+import { ChevronDown } from "lucide-react";
+import InnerContent from "./dom/DomParser";
 
 /* ─── Scroll Animation Hook ─── */
 function useScrollReveal() {
@@ -271,6 +150,12 @@ export default function ScholarshipPage({
     }
   };
 
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const toggleAccordion = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
   const getSectionContent = (key: string) => {
     if (!scholarship?.extra_content?.sections) return null;
     const section = scholarship.extra_content.sections.find((s: any) => s.section_key === key);
@@ -406,7 +291,7 @@ export default function ScholarshipPage({
 
             <div className="flex-1 min-w-0">
               {/* ─── ALL SECTIONS ─── */}
-              <div className="space-y-12">
+              <div className="space-y-6">
                 {scholarship?.extra_content?.sections?.map((section: any, index: number) => {
 
                   switch (section.section_type) {
@@ -420,12 +305,10 @@ export default function ScholarshipPage({
                             <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
                               {section?.data?.title || section?.heading || section?.section_key}
                             </h2>
-                            <InnerContent cleanedHtml={section?.data?.content || section?.content } />
+                            <InnerContent cleanedHtml={section?.data?.content || section?.content} />
                           </Reveal>
                         </div>
                       );
-
-                      break;
 
                     case "whyChoose":
                       return (
@@ -437,8 +320,8 @@ export default function ScholarshipPage({
                             <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
                               {section?.data?.title || section?.heading || section?.section_key}
                             </h2>
-                            <InnerContent cleanedHtml={section?.data?.subtitle || section?.content } />
-                            
+                            <InnerContent cleanedHtml={section?.data?.subtitle || section?.content} />
+
                             <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 gap-3">
                               {section?.data?.cards?.map((card: any) => <div>
                                 <div className="group relative h-full overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_20px_50px_rgba(249,115,22,0.18)]">
@@ -456,7 +339,7 @@ export default function ScholarshipPage({
                                     {card.title}
                                   </h3>
                                   <div className="relative z-1">
-                                  <InnerContent cleanedHtml={card?.subtitle || "" } />
+                                    <InnerContent cleanedHtml={card?.subtitle || ""} />
 
                                   </div>
 
@@ -479,34 +362,93 @@ export default function ScholarshipPage({
                           <div className="mt-6 overflow-hidden rounded-lg bg-white">
                             {/* Header */}
                             <div className="bg-gradient-to-r from-[#F36D45] to-[#F36D45] px-6 py-4">
-                              <h3 className="text-xl font-semibold text-white">
+                              <h2 className="text-xl font-semibold text-white">
                                 {section?.data?.title || "Documents Required"}
-                              </h3>
+                              </h2>
                             </div>
 
                             {/* Documents */}
                             <div className="relative p-6">
-                              {/* Background Decoration */}
-                              <div className="absolute bottom-0 right-0 h-40 w-40 rounded-full bg-orange-100 blur-3xl opacity-40" />
-
-                              <div className="relative grid grid-cols-1 gap-y-5 gap-x-10 md:grid-cols-2">
-                                {section?.data?.documents?.map((card: any, idx: number) => (
-                                  <div
-                                    key={idx}
-                                    className="group flex items-start gap-4 rounded-xl px-3 py-2 transition-all duration-300 hover:bg-orange-50"
-                                  >
-                                    {/* Icon */}
-                                    <div className="text-[#1C2E5A] transition-all duration-300">
-                                      <DynamicLucideIcon
-                                        name="FileText"
-                                        className="h-6 w-6"
-                                      />
-                                    </div>
-                                    <InnerContent cleanedHtml={card.title } />
-                                    
-                                  </div>
-                                ))}
+                              <div className="mb-4">
+                                <InnerContent cleanedHtml={section?.data?.description} />
                               </div>
+
+                              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                {section?.data?.documents?.map((card: any, idx: number) => {
+                                  const isOpen = openIndex === idx;
+                                  if (!card.description) return (
+                                    <div key={idx} className="overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-300">
+                                      <div
+                                        className="flex w-full items-center justify-between p-3 transition-all duration-300"
+                                      >
+                                        <div className="flex items-start gap-3">
+                                          <DynamicLucideIcon
+                                            name={card.icon || "File"}
+                                            className="h-5 w-5 mt-1 text-[#F36D45]"
+                                          />
+
+                                          <div className="font-medium text-[#1C2E5A]">
+                                            <InnerContent cleanedHtml={card.title} />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )
+
+
+                                  return (
+                                    <div
+                                      key={idx}
+                                      className="overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-300"
+                                    >
+                                      {/* Header */}
+                                      <button
+                                        onClick={() => toggleAccordion(idx)}
+                                        className="flex w-full items-center justify-between p-3 text-left transition-all duration-300 hover:bg-orange-50"
+                                      >
+                                        <div className="flex items-center gap-3">
+                                          <DynamicLucideIcon
+                                            name={card.icon || "File"}
+                                            className="h-5 w-5 text-[#F36D45]"
+                                          />
+
+                                          <div className="font-medium text-[#1C2E5A]">
+                                            <InnerContent cleanedHtml={card.title} />
+                                          </div>
+                                        </div>
+
+                                        <ChevronDown
+                                          className={`h-5 w-5 text-[#F36D45] transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                                            }`}
+                                        />
+                                      </button>
+
+                                      {/* Content */}
+                                      <div
+                                        className={`grid transition-all duration-500 ease-in-out ${isOpen
+                                          ? "grid-rows-[1fr] opacity-100"
+                                          : "grid-rows-[0fr] opacity-0"
+                                          }`}
+                                      >
+                                        <div className="overflow-hidden">
+                                          <div className="border-t border-gray-100 bg-gray-50 px-4 py-4">
+                                            <InnerContent
+                                              cleanedHtml={
+                                                card.description ||
+                                                "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>"
+                                              }
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+
+
+                                })}
+                              </div>
+
+
                             </div>
                           </div>
                         </div>
@@ -522,8 +464,8 @@ export default function ScholarshipPage({
                             <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
                               {section?.data?.title || section?.heading || section?.section_key}
                             </h2>
-                            <InnerContent cleanedHtml={section?.data?.subtitle || section?.content } />
-                            
+                            <InnerContent cleanedHtml={section?.data?.subtitle || section?.content} />
+
                             <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 gap-3">
                               {section?.data?.cards?.map((card: any) => <div>
                                 <div className="group relative h-full overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_20px_50px_rgba(249,115,22,0.18)]">
@@ -542,9 +484,9 @@ export default function ScholarshipPage({
                                   </h3>
                                   <div className="relative z-1">
 
-                                  <InnerContent cleanedHtml={card?.subtitle || "" } />
+                                    <InnerContent cleanedHtml={card?.subtitle || ""} />
                                   </div>
-                                 
+
 
                                   {/* Bottom Decoration */}
                                   <div className="absolute bottom-0 -z-0 right-0 h-60 w-60 translate-x-38 translate-y-38 rounded-full bg-gradient-to-br from-orange-100 to-transparent transition-all duration-500 group-hover:translate-x-26 group-hover:translate-y-26" />
@@ -566,8 +508,8 @@ export default function ScholarshipPage({
                             <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
                               {section?.data?.title || section?.heading || section?.section_key}
                             </h2>
-                            <InnerContent cleanedHtml={section?.data?.content || section?.content } />
-                           
+                            <InnerContent cleanedHtml={section?.data?.content || section?.content} />
+
                           </Reveal>
                         </div>
                       );
