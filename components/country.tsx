@@ -898,6 +898,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
     imageTestimonials: 'ImageTestimonial',
   }
 
+
   const getOriginalSectionName = (name) =>
     name.includes('_copy_') ? name.split('_copy_')[0] : name
 
