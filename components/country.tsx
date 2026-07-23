@@ -1,7 +1,7 @@
 "use client"
 
 import UniversityCard from '@/components/UniversityCard'
-import { ArrowRight, PhoneIcon } from 'lucide-react'
+import { ArrowRight, PhoneCall, PhoneIcon } from 'lucide-react'
 import FAQSection from '@/components/faqPage'
 import { DynamicLucideIcon } from '@/components/DynamicLucideIcon'
 import ImageTestimonial from './ImageTestimonial'
@@ -27,8 +27,10 @@ import VisaDetails from './dashboard/VisaDetails/visaDetails'
 const HeroSection = ({ data, alldata }) => {
   if (data?.isHidden === "yes") return null
   
-  return (
-    <section className="block overflow-hidden">
+  
+
+  return alldata?.isCity === "No" ? (
+  <section className="block overflow-hidden">
       <div className="w-full py-10 min-h-[80vh] relative flex items-center justify-center">
         {/* Background with blur */}
         <div
@@ -133,7 +135,75 @@ const HeroSection = ({ data, alldata }) => {
         </div>
       </div>
     </section>
-  )
+    ) : (
+       <section className="relative overflow-hidden ">
+      {/* Background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('/bg-city.webp')",
+        }}
+      />
+
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/20 to-black/0 backdrop-blur-[2px]" />
+
+      <div className="relative px-5 lg:px-16 py-14 lg:py-10">
+        <div className="grid lg:grid-cols-[1fr_1fr] gap-12 items-center">
+          {/* Left Content */}
+          <div className="bg-black/45 backdrop-blur-[5px] border border-white/10 shadow-2xl p-7 sm:p-10 lg:p-6 w-full">
+            <h1 className="text-4xl sm:text-5xl lg:text-4xl font-black  text-white w-full">
+             <Tag 
+                  data={data?.tag}
+                  css={"text-3xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-4 leading-relaxed"}
+                  text={data?.title} 
+                />
+            </h1>
+
+              <span
+                  className="p-0 text-white text-base [&_div]:p-2 [&_p]:py-1 [&_*]:rounded-none tracking-normal [&_*]:text-white [&_*]:!text-base [&_*]:!font-medium [&_*]:m-0 [&_*]:py-1 [&_h1]:text-3xl [&_*]:grid-cols-1 sm:[&_*]:grid-cols-2 [&_h1]:font-bold [&_h1]:mb-2 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_li]:gap-1 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_strong]:font-semibold [&_em]:italic ul:!gap-2"
+                  dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
+                />
+
+
+
+            <div className="flex xs:flex-col flex-row flex-wrap gap-3 mt-5">
+                  <a href={data?.ctaLink1 || "/contact"} className="w-full sm:w-auto">
+                    <button className="bg-[#f46c44] hover:bg-primary hover:text-white hover:scale-105 transition duration-300 px-5 py-3 flex items-center justify-center gap-2 font-bold text-gray-900 text-xs sm:text-sm shadow-lg cursor-pointer w-full">
+                      <PhoneIcon size={18} />
+                      <span>{data?.ctaText1 || "Talk to an Expert Counsellor for FREE"}</span>
+                    </button>
+                  </a>
+                </div>
+          </div>
+
+          {/* Right Image */}
+          <div className="flex justify-center">
+            <img
+              src={data?.heroImage}
+              alt="Bangalore Landmark"
+              className="w-full max-w-[540px] lg:h-130 object-cover drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)] animate-[float_5s_ease-in-out_infinite]"
+            />
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes float {
+          0%,
+          100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-14px);
+          }
+        }
+      `}</style>
+    </section>
+    )
+  
+  
 }
 const FormSection = ({ data }) => {
   if (data?.isHidden === "yes") return null;

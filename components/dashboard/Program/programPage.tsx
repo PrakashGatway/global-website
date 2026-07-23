@@ -142,25 +142,69 @@ export default function CoursesPage() {
   const { profile, allProfile } = useGlobal()
   const [preferenceApplied, setPreferenceApplied] = useState(false);
   
-  // Filters state
-  const [filters, setFilters] = useState({
-    search: debouncedSearchQuery,
-    intake:[],
-    year:"",
-    nationlity:"",
-    country: "",
-    state:"",
-    duration:"",
-    requirement:[],
-    university: university || "",
-    category: "",
-    studyMode: "",
-    level: [],
-    minFee: "",
-    maxFee: "",
-    sort_by: "name",
-    sort_order: "asc"
-  }) as any
+ // Filters state
+const [filters, setFilters] = useState({
+  search: debouncedSearchQuery,
+  intake: [],
+  year: "",
+  nationlity: "",
+  country: "",
+  state: "",
+  duration: "",
+  requirement: [],
+  university: university || "",
+  category: "",
+  studyMode: "",
+  level: [],
+  minFee: "",
+  maxFee: "",
+  sort_by: "name",
+  sort_order: "asc",
+  twelfthScore: "",
+  ugScore: "",
+  workExperience: "",
+
+  englishScore: {
+    exam: "",
+    overall: "",
+    listening: "",
+    reading: "",
+    writing: "",
+    speaking: "",
+    examDate: "",
+    yetToReceive: false,
+  },
+
+  otherExam: {
+    exam: "",
+
+    gre: {
+      overall: "",
+      quantitative: "",
+      verbal: "",
+      analyticalWriting: "",
+      examDate: "",
+    },
+
+    gmat: {
+      overall: "",
+      quantitative: "",
+      verbal: "",
+      analyticalWriting: "",
+      integratedReasoning: "",
+      examDate: "",
+    },
+
+    sat: {
+      overall: "",
+      readingWriting: "",
+      math: "",
+      essay: "",
+      examDate: "",
+    },
+  },
+}) as any;
+ 
 
   const initialized = useRef(false);
   const pathname = usePathname();
@@ -187,38 +231,199 @@ export default function CoursesPage() {
       }
     }, [university]);
 
-  const applyPreference = () => {
-  const preferredCountries =
-    allProfile?.profile?.preferences?.preferredCountries || [];
+ console.log(filters,"sd")
 
+
+const applyPreference = () => {
+  const prefs = allProfile?.profile?.preferences;
+  const educationHistory = allProfile?.profile?.educationHistory || [];
+
+  const workExperience = allProfile?.profile?.workExperience || [];
+
+console.log(filters.otherExam?.gre?.overall)
+
+
+
+  if (!prefs) return;
+
+  // Countries
+  const preferredCountries = prefs.preferredCountries || [];
   const countryCodes = countries
-    .filter((c) => preferredCountries.includes(c.label))
-    .map((c) => c.value);
+    .filter((c: any) => preferredCountries.includes(c.label))
+    .map((c: any) => c.value);
 
-  const preferredCategory = allProfile?.profile?.preferences?.preferredCourse || [];
+  // Categories
+  const preferredCategories = prefs.preferredCourse || [];
+  const categoryIds = categories
+    .filter((c: any) =>
+      preferredCategories.some(
+        (item: string) =>
+          item.trim().toLowerCase() === c.label.trim().toLowerCase()
+      )
+    )
+    .map((c: any) => c.value);
 
-  const preferCatCodes = categories
-    .filter((c) => preferredCategory.includes(c.label))
-    .map((c) => c.value);
+  // Level
+  const levelFilter = prefs.level ? [prefs.level] : [];
 
-  setFilters((prev) => ({
+  // Budget
+  const minFee = prefs.budgetRange?.min?.toString() || "";
+  const maxFee = prefs.budgetRange?.max?.toString() || "";
+
+  // Education
+  const ug = educationHistory.find(
+    (item: any) => item.educationLevel === "Undergraduate"
+  );
+
+  const grade12 = educationHistory.find(
+    (item: any) => item.educationLevel === "Grade 12"
+  );
+
+  // Calculate total experience in months
+const totalMonths = workExperience.reduce((total: number, job: any) => {
+  if (!job.from || !job.to) return total;
+
+  const from = new Date(job.from);
+  const to = new Date(job.to);
+
+  const months =
+    (to.getFullYear() - from.getFullYear()) * 12 +
+    (to.getMonth() - from.getMonth());
+
+  return total + Math.max(months, 0);
+}, 0);
+
+// Convert months to years with one decimal place
+const totalExperience = (totalMonths / 12).toFixed(1);
+
+
+
+
+ const parseExam = (value: any) => {
+  try {
+    if (!value || value === "{}") return {};
+    return JSON.parse(value);
+  } catch {
+    return {};
+  }
+};
+
+ const ieltsData = parseExam(allProfile?.profile?.ielts);
+const toeflData = parseExam(allProfile?.profile?.toefl);
+const pteData = parseExam(allProfile?.profile?.pte);
+const greData = parseExam(allProfile?.profile?.gre);
+const gmatData = parseExam(allProfile?.profile?.gmat);
+const satData = parseExam(allProfile?.profile?.sat);
+
+
+
+
+let otherExam: any = {};
+
+if (Object.keys(greData).length) {
+  otherExam = {
+    exam: "GRE",
+    overall: greData.overall || "",
+    quantitative: greData.quantitative || "",
+    verbal: greData.verbal || "",
+    analyticalWriting: greData.analyticalWriting || "",
+    examDate: greData.examDate || "",
+  };
+} else if (Object.keys(gmatData).length) {
+  otherExam = {
+    exam: "GMAT",
+    overall: gmatData.overall || "",
+    quantitative: gmatData.quantitative || "",
+    verbal: gmatData.verbal || "",
+    analyticalWriting: gmatData.analyticalWriting || "",
+    integratedReasoning: gmatData.integratedReasoning || "",
+    examDate: gmatData.examDate || "",
+  };
+} else if (Object.keys(satData).length) {
+  otherExam = {
+    exam: "SAT",
+    overall: satData.overall || "",
+    readingWriting: satData.readingWriting || "",
+    math: satData.math || "",
+    essay: satData.essay || "",
+    examDate: satData.examDate || "",
+  };
+}
+
+let englishScore: any = {};
+
+if (Object.keys(ieltsData).length) {
+  englishScore = {
+    exam: "IELTS",
+    overall: ieltsData.overall || "",
+    listening: ieltsData.listening || "",
+    reading: ieltsData.reading || "",
+    writing: ieltsData.writing || "",
+    speaking: ieltsData.speaking || "",
+    examDate: ieltsData.examDate || "",
+    yetToReceive: ieltsData.yetToReceive || false,
+  };
+} else if (Object.keys(toeflData).length) {
+  englishScore = {
+    exam: "TOEFL",
+    overall: toeflData.overall || "",
+    listening: toeflData.listening || "",
+    reading: toeflData.reading || "",
+    writing: toeflData.writing || "",
+    speaking: toeflData.speaking || "",
+    examDate: toeflData.examDate || "",
+    yetToReceive: toeflData.yetToReceive || false,
+  };
+} else if (Object.keys(pteData).length) {
+  englishScore = {
+    exam: "PTE",
+    overall: pteData.overall || "",
+    listening: pteData.listening || "",
+    reading: pteData.reading || "",
+    writing: pteData.writing || "",
+    speaking: pteData.speaking || "",
+    examDate: pteData.examDate || "",
+    yetToReceive: pteData.yetToReceive || false,
+  };
+}
+
+
+  setFilters((prev: any) => ({
     ...prev,
-    country: countryCodes[0],
-   level: allProfile?.profile?.preferences?.level
-  ? [allProfile.profile.preferences.level]
-  : [],
-    category: preferCatCodes[0]
+    country: countryCodes[0] || "",
+    category: categoryIds[0] || "",
+    level: levelFilter,
+    minFee,
+    maxFee,
+
+    // Education percentages
+    ugScore: ug?.percentage?.toString() || "",
+    twelfthScore: grade12?.percentage?.toString() || "",
+    workExperience: totalExperience.toString(),
+    englishScore,
+    otherExam
   }));
+
   setPreferenceApplied(true);
 };
 
+
 const removePreference = () => {
-  setFilters((prev) => ({
+  setFilters((prev: any) => ({
     ...prev,
-    country: [],
+    country: "",
+    category: "",
     level: [],
-    category: [],
+    minFee: "",
+    maxFee: "",
+    ugScore: "",
+    twelfthScore: "",
+    workExperience: "",
+    englishScore: "",
+    otherExam: ""
+
   }));
+
   setPreferenceApplied(false);
 };
 
@@ -339,9 +544,12 @@ const removePreference = () => {
         ...(filters.backlogs && { backlogs: filters.backlogs }),
         ...(filters.ugScore && { ugScore: filters.ugScore }),
         ...(filters.twelfthScore && { twelfthScore: filters.twelfthScore }),
-        ...(filters.englishScores && { englishScores: filters.englishScores }),
-        ...(filters.otherExam && { otherExam: filters.otherExam }),
-        ...(filters.otherExamScore && { otherExamScore: filters.otherExamScore }),
+      ...(filters.englishScore?.exam && {
+  englishScore: JSON.stringify(filters.englishScore),
+}),
+...(filters.otherExam?.exam && {
+  otherExam: JSON.stringify(filters.otherExam),
+}),
         ...(filters.englishExam && { englishExam: filters.englishExam }),
         ...(filters.workExperience && { workExperience: filters.workExperience }),
         ...(filters.requirement && { requirement: filters.requirement }),

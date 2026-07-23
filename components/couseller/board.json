@@ -1,0 +1,272 @@
+{
+  "Andhra Pradesh": [
+    "BSEAP (Board of Secondary Education, Andhra Pradesh)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Arunachal Pradesh": [
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Assam": [
+    "SEBA (Board of Secondary Education, Assam)",
+    "AHSEC (Assam Higher Secondary Education Council)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Bihar": [
+    "BSEB (Bihar School Examination Board)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Chhattisgarh": [
+    "CGBSE (Chhattisgarh Board of Secondary Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Goa": [
+    "GBSHSE (Goa Board of Secondary and Higher Secondary Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Gujarat": [
+    "GSEB (Gujarat Secondary and Higher Secondary Education Board)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Haryana": [
+    "BSEH (Board of School Education Haryana)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Himachal Pradesh": [
+    "HPBOSE (Himachal Pradesh Board of School Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Jharkhand": [
+    "JAC (Jharkhand Academic Council)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Karnataka": [
+    "KSEAB (Karnataka School Examination and Assessment Board)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Kerala": [
+    "KBPE (Kerala Board of Public Examinations)",
+    "DHSE Kerala",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Madhya Pradesh": [
+    "MPBSE (Madhya Pradesh Board of Secondary Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Maharashtra": [
+    "MSBSHSE (Maharashtra State Board of Secondary and Higher Secondary Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Manipur": [
+    "BoSEM (Board of Secondary Education, Manipur)",
+    "COHSEM",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Meghalaya": [
+    "MBOSE (Meghalaya Board of School Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Mizoram": [
+    "MBSE (Mizoram Board of School Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Nagaland": [
+    "NBSE (Nagaland Board of School Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Odisha": [
+    "BSE Odisha",
+    "CHSE Odisha",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Punjab": [
+    "PSEB (Punjab School Education Board)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Rajasthan": [
+    "RBSE (Rajasthan Board of Secondary Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Sikkim": [
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Tamil Nadu": [
+    "Tamil Nadu State Board",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Telangana": [
+    "BSE Telangana",
+    "TGBIE (Telangana Board of Intermediate Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Tripura": [
+    "TBSE (Tripura Board of Secondary Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Uttar Pradesh": [
+    "UPMSP (Uttar Pradesh Madhyamik Shiksha Parishad)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Uttarakhand": [
+    "UBSE (Uttarakhand Board of School Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "West Bengal": [
+    "WBBSE (West Bengal Board of Secondary Education)",
+    "WBCHSE",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Andaman and Nicobar Islands": [
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS"
+  ],
+  "Chandigarh": [
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS"
+  ],
+  "Dadra and Nagar Haveli and Daman and Diu": [
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS"
+  ],
+  "Delhi": [
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "IB",
+    "Cambridge (CAIE)"
+  ],
+  "Jammu and Kashmir": [
+    "JKBOSE (Jammu and Kashmir Board of School Education)",
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS"
+  ],
+  "Ladakh": [
+    "CBSE",
+    "NIOS"
+  ],
+  "Lakshadweep": [
+    "CBSE",
+    "NIOS"
+  ],
+  "Puducherry": [
+    "CBSE",
+    "ICSE (CISCE)",
+    "NIOS",
+    "State Board (Tamil Nadu)"
+  ]
+}

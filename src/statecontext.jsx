@@ -97,6 +97,10 @@ const showPopup = () => {
     setIsPopupOpen(false);
     return;
   }
+   if (pathname.startsWith("/onboarding")) {
+    setIsPopupOpen(false);
+    return;
+  }
 
   if (!isPopupOpen && !hasSubmittedForm) {
     //console.log("✅ Opening popup");

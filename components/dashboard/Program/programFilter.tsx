@@ -226,13 +226,19 @@ export default function ProgramFilters({
   const [fee, setFee] = useState(50000);
   const [aboveFee, setAboveFee] = useState(false);
 
-  const handleScoreChange = (e: any) => {
+  const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setScores((prev) => ({
+
+    setFilters((prev: any) => ({
       ...prev,
-      [name]: value,
+      englishScore: {
+        ...prev.englishScore,
+        [name]: value,
+      },
     }));
   };
+
+
 
   // Sync local state with parent filters when they change externally (e.g., on clear)
   useEffect(() => {
@@ -298,6 +304,8 @@ export default function ProgramFilters({
     setFee(50000);
     setAboveFee(false);
   };
+
+  console.log(filters.otherExam)
 
   // 2. CHANGED FilterContent to a regular function that returns JSX
   // We call it as {renderFilterContent()} instead of <FilterContent />
@@ -376,9 +384,14 @@ export default function ProgramFilters({
             <input
               type="text"
               placeholder="Enter"
-              value={ugScore}
-              onChange={(e) => setUgScore(e.target.value)}
-              className="w-full py-2  border border-gray-200 bg-gray-50 px-4 text-base placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
+              value={filters.ugScore}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  ugScore: e.target.value,
+                }))
+              }
+              className="w-full py-2 border border-gray-200 bg-gray-50 px-4 text-base placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
             />
           </div>
         </div>
@@ -402,9 +415,14 @@ export default function ProgramFilters({
             <input
               type="text"
               placeholder="Enter"
-              value={twelfthScore}
-              onChange={(e) => setTwelfthScore(e.target.value)}
-              className="w-full py-2  border border-gray-200 bg-gray-50 px-4 text-base placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
+              value={filters.twelfthScore}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  twelfthScore: e.target.value,
+                }))
+              }
+              className="w-full py-2 border border-gray-200 bg-gray-50 px-4 text-base placeholder:text-gray-400 outline-none transition-all duration-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
             />
           </div>
         </div>
@@ -429,8 +447,8 @@ export default function ProgramFilters({
           <input
             type="number"
             placeholder="Enter"
-            value={workExperience}
-            onChange={(e) => setWorkExperience(e.target.value)}
+            value={filters?.workExperience}
+            onChange={(e) => setFilters(e.target.value)}
             className="w-full py-2 px-4 text-base text-gray-900 bg-gray-50 border border-gray-200  placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
           />
         </div>
@@ -440,19 +458,28 @@ export default function ProgramFilters({
           <label className="text-sm font-medium text-gray-800">
             English Proficiency Exam
           </label>
+
           <Select
             options={examOptions}
             placeholder="Select"
-            value={examOptions.find((item) => item.value === englishExam)}
+            value={examOptions.find(
+              (item) => item.value.toUpperCase() === filters.englishScore?.exam
+            )}
             onChange={(option: any) => {
-              setEnglishExam(option?.value || "");
-              setScores({
-                listening: "",
-                reading: "",
-                writing: "",
-                speaking: "",
-                overall: "",
-              });
+              const exam = option?.value?.toUpperCase() || "";
+
+              setFilters((prev: any) => ({
+                ...prev,
+                englishScore: {
+                  exam,
+                  overall: "",
+                  listening: "",
+                  reading: "",
+                  writing: "",
+                  speaking: "",
+                  examDate: "",
+                },
+              }));
             }}
             isClearable
             styles={customSelectStyles}
@@ -460,123 +487,157 @@ export default function ProgramFilters({
         </div>
 
         {/* English Scores Section */}
-        <div
-        >
-          {["ielts", "toefl", "pte"].includes(englishExam) && (
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="w-full">
-                  <label className="block mb-2 text-sm font-medium">
-                    Listening <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="listening"
-                    value={scores.listening}
-                    onChange={handleScoreChange}
-                    placeholder="Enter"
-                    className="w-full py-2 px-4 bg-gray-50 border border-gray-200  text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-2 text-sm font-medium">
-                    Reading <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="reading"
-                    value={scores.reading}
-                    onChange={handleScoreChange}
-                    placeholder="Enter"
-                    className="w-full py-2 px-4 bg-gray-50 border border-gray-200  text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-2 text-sm font-medium">
-                    Writing <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="writing"
-                    value={scores.writing}
-                    onChange={handleScoreChange}
-                    placeholder="Enter"
-                    className="w-full py-2 px-4 bg-gray-50 border border-gray-200  text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-2 text-sm font-medium">
-                    Speaking <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="speaking"
-                    value={scores.speaking}
-                    onChange={handleScoreChange}
-                    placeholder="Enter"
-                    className="w-full py-2 px-4 bg-gray-50 border border-gray-200  text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {["ielts", "toefl", "pte", "det"].includes(englishExam) && (
-            <div className="mt-3">
-              <label className="block text-sm font-medium">
-                Overall <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                name="overall"
-                value={scores.overall}
-                onChange={handleScoreChange}
-                placeholder="Enter"
-                className="w-full py-2 px-4 bg-gray-50 border border-gray-200  text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Other Exams */}
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-gray-800">Other Exams</label>
-          <Select
-            options={otherExamOptions}
-            placeholder="Select"
-            value={otherExamOptions.find((item) => item.value === otherExam)}
-            onChange={(option: any) => {
-              setOtherExam(option?.value || "");
-              setOtherExamScore("");
-            }}
-            isClearable
-            styles={customSelectStyles}
+      <div>
+  {["IELTS", "TOEFL", "PTE"].includes(filters.englishScore?.exam) && (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className="block mb-2 text-sm font-medium">
+            Listening <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            name="listening"
+            value={filters.englishScore?.listening || ""}
+            onChange={handleScoreChange}
+            placeholder="Enter"
+            className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
           />
         </div>
 
-        {/* Other Exam Score */}
-        <div
-          className={`transition-all duration-500 ${otherExam
-              ? "max-h-[200px] opacity-100 translate-y-0"
-              : "max-h-0 opacity-0 -translate-y-2"
-            }`}
-        >
-          <div>
-            <label className="block mb-2 text-sm font-medium">
-              Overall Score <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              placeholder="Enter"
-              value={otherExamScore}
-              onChange={(e) => setOtherExamScore(e.target.value)}
-              className="w-full py-2 px-4 bg-gray-50 border border-gray-200  text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
-            />
-          </div>
+        <div>
+          <label className="block mb-2 text-sm font-medium">
+            Reading <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            name="reading"
+            value={filters.englishScore?.reading || ""}
+            onChange={handleScoreChange}
+            placeholder="Enter"
+            className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
+          />
         </div>
+
+        <div>
+          <label className="block mb-2 text-sm font-medium">
+            Writing <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            name="writing"
+            value={filters.englishScore?.writing || ""}
+            onChange={handleScoreChange}
+            placeholder="Enter"
+            className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-2 text-sm font-medium">
+            Speaking <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            name="speaking"
+            value={filters.englishScore?.speaking || ""}
+            onChange={handleScoreChange}
+            placeholder="Enter"
+            className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
+          />
+        </div>
+      </div>
+    </div>
+  )}
+
+  {["IELTS", "TOEFL", "PTE", "DET"].includes(filters.englishScore?.exam) && (
+    <div className="mt-3">
+      <label className="block text-sm font-medium">
+        Overall <span className="text-red-500">*</span>
+      </label>
+      <input
+        type="number"
+        name="overall"
+        value={filters.englishScore?.overall || ""}
+        onChange={handleScoreChange}
+        placeholder="Enter"
+        className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
+      />
+    </div>
+  )}
+</div>
+
+        {/* Other Exams */}
+        <div className="flex flex-col gap-2">
+  <label className="text-sm font-medium text-gray-800">
+    Other Exams
+  </label>
+
+  <Select
+    options={otherExamOptions}
+    placeholder="Select"
+    value={otherExamOptions.find(
+      (item) => item.value.toUpperCase() === filters.otherExam.exam
+    )}
+    onChange={(option: any) => {
+      const exam = option?.value?.toUpperCase() || "";
+
+      setFilters((prev: any) => ({
+        ...prev,
+        otherExam: {
+          ...prev.otherExam,
+          exam,
+        },
+      }));
+    }}
+    isClearable
+    styles={customSelectStyles}
+  />
+</div>
+
+        {/* Other Exam Score */}
+       <div
+  className={`transition-all duration-500 ${
+    filters.otherExam.exam
+      ? "max-h-[200px] opacity-100 translate-y-0"
+      : "max-h-0 opacity-0 -translate-y-2"
+  }`}
+>
+  <div>
+    <label className="block mb-2 text-sm font-medium">
+      Overall Score <span className="text-red-500">*</span>
+    </label>
+
+    <input
+      type="number"
+      placeholder="Enter"
+      value={
+        filters.otherExam.exam === "GRE"
+          ? filters.otherExam?.overall
+          : filters.otherExam.exam === "GMAT"
+          ? filters.otherExam?.overall
+          : filters.otherExam.exam === "SAT"
+          ? filters.otherExam?.overall
+          : ""
+      }
+      onChange={(e) => {
+        const value = e.target.value;
+
+        setFilters((prev: any) => ({
+          ...prev,
+          otherExam: {
+            ...prev.otherExam,
+            [prev.otherExam.exam.toLowerCase()]: {
+              ...prev.otherExam[prev.otherExam.exam.toLowerCase()],
+              overall: value,
+            },
+          },
+        }));
+      }}
+      className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
+    />
+  </div>
+</div>
 
         {/* Study Mode Filter */}
         <div>
@@ -591,8 +652,8 @@ export default function ProgramFilters({
               <button
                 key={mode.value}
                 className={`text-left text-sm font-medium px-3 py-1.5 border transition-all duration-200 ${filters.studyMode === mode.value
-                    ? "bg-orange-500 text-white border-orange-500"
-                    : "bg-gray-50 text-gray-700 border-gray-200 hover:border-orange-500 hover:bg-orange-50/30"
+                  ? "bg-orange-500 text-white border-orange-500"
+                  : "bg-gray-50 text-gray-700 border-gray-200 hover:border-orange-500 hover:bg-orange-50/30"
                   }`}
                 onClick={() =>
                   handleFilterChange(
@@ -615,20 +676,22 @@ export default function ProgramFilters({
               Program Level
             </span>
           </div>
+
           <div className="flex flex-wrap gap-1.5">
             {levels.map((level: any) => (
               <button
                 key={level.value}
-                className={`text-xs font-medium px-2.5 py-1 border transition-all duration-200 ${filters.level === level.value
-                    ? "bg-orange-50 text-orange-500 border-orange-500"
-                    : "bg-gray-50 text-gray-700 border-gray-200 hover:border-orange-500 hover:bg-orange-50/30"
+                className={`text-xs font-medium px-2.5 py-1 border transition-all duration-200 ${filters.level.includes(level.value)
+                  ? "bg-orange-50 text-orange-500 border-orange-500"
+                  : "bg-gray-50 text-gray-700 border-gray-200 hover:border-orange-500 hover:bg-orange-50/30"
                   }`}
-                onClick={() =>
-                  handleFilterChange(
-                    "level",
-                    filters.level === level.value ? "" : level.value
-                  )
-                }
+                onClick={() => {
+                  const updatedLevels = filters.level.includes(level.value)
+                    ? filters.level.filter((item: string) => item !== level.value)
+                    : [...filters.level, level.value];
+
+                  handleFilterChange("level", updatedLevels);
+                }}
               >
                 {level.label}
               </button>
@@ -710,7 +773,89 @@ export default function ProgramFilters({
                   </button>
                 </div>
               )}
+
+              {(filters.minFee || filters.maxFee) && (
+                <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
+                  <span>
+                    Tuition: ₹{filters.maxFee || "∞"}
+                  </span>
+                  <button
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        minFee: "",
+                        maxFee: "",
+                      }))
+                    }
+                    className="hover:text-orange-700 transition-colors"
+                  >
+                    <CloseIcon className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+
+              {(filters.twelfthScore) && (
+                <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
+                  <span>
+                    12th Score - {filters.twelfthScore || "∞"}%
+                  </span>
+                  <button
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        twelfthScore: "",
+
+                      }))
+                    }
+                    className="hover:text-orange-700 transition-colors"
+                  >
+                    <CloseIcon className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+
+              {(filters.ugScore) && (
+                <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
+                  <span>
+                    UG Score - {filters.ugScore || "∞"}%
+                  </span>
+                  <button
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        ugScore: "",
+
+                      }))
+                    }
+                    className="hover:text-orange-700 transition-colors"
+                  >
+                    <CloseIcon className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+
+
+              {(filters.workExperience) && (
+                <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
+                  <span>
+                    Work Experience - {filters.workExperience || "∞"} Year
+                  </span>
+                  <button
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        workExperience: "",
+
+                      }))
+                    }
+                    className="hover:text-orange-700 transition-colors"
+                  >
+                    <CloseIcon className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
             </div>
+
           </div>
         )}
 
@@ -720,39 +865,42 @@ export default function ProgramFilters({
             <h3 className="text-base md:text-lg font-semibold text-orange-600">
               Tuition Fees
             </h3>
+
             <span className="px-3 py-1 rounded-full bg-orange-50 text-orange-600 text-sm font-semibold">
-              ₹ {fee >= 1000 ? `${fee / 1000}k` : fee}
-              {aboveFee ? "+" : ""}
+              ₹{" "}
+              {Number(filters.maxFee || 0) >= 10000000
+                ? `${(Number(filters.maxFee) / 10000000).toFixed(1)} Cr`
+                : Number(filters.maxFee || 0) >= 100000
+                  ? `${(Number(filters.maxFee) / 100000).toFixed(1)} L`
+                  : Number(filters.maxFee || 0).toLocaleString("en-IN")}
             </span>
           </div>
 
           <input
             type="range"
             min={0}
-            max={100000}
-            step={1000}
-            value={fee}
-            onChange={(e) => setFee(Number(e.target.value))}
+            max={10000000} // 1 Crore
+            step={50000} // 50 Thousand
+            value={Number(filters.maxFee || 0)}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+
+              setFilters((prev) => ({
+                ...prev,
+                minFee: "0",
+                maxFee: value.toString(),
+              }));
+            }}
             className="range-slider w-full h-2 bg-orange-100 rounded-lg appearance-none cursor-pointer"
           />
 
           <div className="flex justify-between mt-3 text-xs text-gray-500">
-            <span>0</span>
-            <span>25k</span>
-            <span>50k</span>
-            <span>75k</span>
-            <span>100k</span>
+            <span>₹0</span>
+            <span>₹25L</span>
+            <span>₹50L</span>
+            <span>₹75L</span>
+            <span>₹1Cr</span>
           </div>
-
-          <label className="flex items-center justify-end gap-2 mt-5 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={aboveFee}
-              onChange={(e) => setAboveFee(e.target.checked)}
-              className="w-4 h-4 accent-orange-600"
-            />
-            <span className="text-sm font-medium text-gray-700">Above 100K</span>
-          </label>
         </div>
       </div>
 

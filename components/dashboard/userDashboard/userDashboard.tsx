@@ -498,7 +498,6 @@ useEffect(() => {
     setSteps(uiSteps);
 
 
-console.log(studyAbroadJourney)
     // Transform step tracker steps
     const trackerSteps: StepTrackerStep[] = studyAbroadJourney.steps.map(
       (step) => {
@@ -572,116 +571,125 @@ console.log(studyAbroadJourney)
   const progressPercent =
     totalSteps > 0 ? Math.round((completedCount / totalSteps) * 100) : 0;
 
-  const profileSteps = [
-    {
-      id: 1,
-      step: "Step 1 of 9",
-      title: "Let's start with your",
-      highlight: "Profile",
-      description:
-        "Let's complete your study abroad journey step by step. You're doing great — keep the momentum going!",
-      estimate: "4–6 weeks remaining",
-      deadline: "Aug 15, 2025",
-      button: "Start Your Profile",
-      image: "/profile-dashboard.png",
-    },
-    {
-      id: 2,
-      step: "Step 2 of 9",
-      title: "Upload your",
-      highlight: "Documents",
-      description:
-        "Upload all required documents to speed up your application process.",
-      estimate: "3–5 weeks remaining",
-      deadline: "Aug 20, 2025",
-      button: "Upload Documents",
-      image: "/countries-dashboard.png",
-    },
-    {
-      id: 3,
-      step: "Step 3 of 9",
-      title: "Shortlist your",
-      highlight: "Universities",
-      description:
-        "Choose universities that match your academic profile and career goals.",
-      estimate: "2–4 weeks remaining",
-      deadline: "Aug 25, 2025",
-      button: "View Universities",
-      image: "/courses-dashboard.png",
-    },
-    {
-      id: 4,
-      step: "Step 4 of 9",
-      title: "Track your",
-      highlight: "Applications",
-      description:
-        "Monitor application status and respond quickly to university updates.",
-      estimate: "1–3 weeks remaining",
-      deadline: "Sep 01, 2025",
-      button: "Track Applications",
-      image: "/universities-dashboard.png",
-    },
-    {
-      id: 5,
-      step: "Step 5 of 9",
-      title: "Receive your",
-      highlight: "Offer Letter",
-      description:
-        "Review your university offer, accept the admission, and proceed with the enrollment process.",
-      estimate: "2–3 weeks remaining",
-      deadline: "Sep 10, 2025",
-      button: "View Offer Letter",
-      image: "/offer-dashboard.png",
-    },
-    {
-      id: 6,
-      step: "Step 6 of 9",
-      title: "Complete your",
-      highlight: "Visa Process",
-      description:
-        "Prepare your visa documents, submit your application, and track your visa approval status.",
-      estimate: "2–4 weeks remaining",
-      deadline: "Sep 20, 2025",
-      button: "Start Visa Process",
-      image: "/visa-dashboard.png",
-    },
-    {
-      id: 7,
-      step: "Step 7 of 9",
-      title: "Manage your",
-      highlight: "Forex & Finance",
-      description:
-        "Arrange education funds, forex services, and complete your financial planning before departure.",
-      estimate: "1–2 weeks remaining",
-      deadline: "Sep 28, 2025",
-      button: "Manage Finance",
-      image: "/forex-dashboard.png",
-    },
-    {
-      id: 8,
-      step: "Step 8 of 9",
-      title: "Book your",
-      highlight: "Accommodation",
-      description:
-        "Find and secure comfortable accommodation near your university before you arrive.",
-      estimate: "1 week remaining",
-      deadline: "Oct 05, 2025",
-      button: "Find Accommodation",
-      image: "/accommodation-dashboard.png",
-    },
-    {
-      id: 9,
-      step: "Step 9 of 9",
-      title: "Prepare for",
-      highlight: "Pre-Departure",
-      description:
-        "Complete your final checklist, attend orientation, and get ready for your study abroad journey.",
-      estimate: "Final preparations",
-      deadline: "Oct 10, 2025",
-      button: "View Checklist",
-      image: "/departure-dashboard.png",
-    },
-  ];
+ const profileSteps = [
+  {
+    id: 1,
+    step: "Step 1 of 9",
+    title: "Let's complete your",
+    highlight: "Profile",
+    description:
+      "Delays in profile completion will affect all subsequent steps including university shortlisting and applications",
+    estimate: "4–6 weeks remaining",
+    deadline: "Aug 15, 2025",
+    button: "Start Your Profile",
+    image: "/profile-dashboard.png",
+    route: "/dashboard/settings",
+  },
+  {
+    id: 2,
+    step: "Step 2 of 9",
+    title: "Choose your preferred",
+    highlight: "Countries",
+    description:
+      "Without country selection, you cannot proceed with course selection and university applications",
+    estimate: "3–5 weeks remaining",
+    deadline: "Aug 20, 2025",
+    button: "Select Countries",
+    image: "/countries-dashboard.png",
+    route: "/dashboard/countries",
+  },
+  {
+    id: 3,
+    step: "Step 3 of 9",
+    title: "Select your desired",
+    highlight: "Courses",
+    description:
+      "Course selection is mandatory before submitting university applications",
+    estimate: "2–4 weeks remaining",
+    deadline: "Aug 25, 2025",
+    button: "Select Courses",
+    image: "/courses-dashboard.png",
+    route: "/dashboard/settings",
+  },
+  {
+    id: 4,
+    step: "Step 4 of 9",
+    title: "Apply and shortlist",
+    highlight: "Universities",
+    description:
+      "Without applications, you cannot receive offer letters or proceed with visa processing",
+    estimate: "1–3 weeks remaining",
+    deadline: "Sep 01, 2025",
+    button: "View Applications",
+    image: "/universities-dashboard.png",
+    route: "/dashboard/application",
+  },
+  {
+    id: 5,
+    step: "Step 5 of 9",
+    title: "Receive your university",
+    highlight: "Offer Letter",
+    description:
+      "Offer letter is required for visa application and enrollment deposit payment",
+    estimate: "2–3 weeks remaining",
+    deadline: "Sep 10, 2025",
+    button: "View Offer Letter",
+    image: "/offer-dashboard.png",
+    route: "/dashboard/application",
+  },
+  {
+    id: 6,
+    step: "Step 6 of 9",
+    title: "Complete your student",
+    highlight: "Visa Process",
+    description:
+      "Visa is mandatory for international travel and study. Delays can affect your intake enrollment",
+    estimate: "2–4 weeks remaining",
+    deadline: "Sep 20, 2025",
+    button: "Start Visa Process",
+    image: "/visa-dashboard.png",
+    route: "/dashboard/visa",
+  },
+  {
+    id: 7,
+    step: "Step 7 of 9",
+    title: "Arrange your",
+    highlight: "Forex & Finance",
+    description:
+      "Financial arrangements are important for tuition fee payment and living expenses abroad",
+    estimate: "1–2 weeks remaining",
+    deadline: "Sep 28, 2025",
+    button: "Manage Finance",
+    image: "/forex-dashboard.png",
+    route: "/dashboard/forex-finance",
+  },
+  {
+    id: 8,
+    step: "Step 8 of 9",
+    title: "Secure your",
+    highlight: "Accommodation",
+    description:
+      "Delaying accommodation booking may result in limited options or higher costs",
+    estimate: "1 week remaining",
+    deadline: "Oct 05, 2025",
+    button: "Find Accommodation",
+    image: "/accommodation-dashboard.png",
+    route: "/dashboard/accommodation",
+  },
+  {
+    id: 9,
+    step: "Step 9 of 9",
+    title: "Get ready for your",
+    highlight: "Pre-Departure",
+    description:
+      "Pre-departure preparation ensures smooth transition to your study destination",
+    estimate: "Final preparations",
+    deadline: "Oct 10, 2025",
+    button: "View Checklist",
+    image: "/departure-dashboard.png",
+    route: "/dashboard/pre-departure",
+  },
+];
 
   const universities = [
     {
@@ -864,7 +872,7 @@ const shineVariants = {
         animate="visible"
       >
         {/* LEFT SIDE: Hero Card */}
-        <motion.div variants={popInVariants}>
+        <motion.div >
           <section className=" relative z-44 overflow-visible rounded-[20px] border border-[#FFDCCB] bg-white shadow-[0_10px_40px_rgba(255,119,51,0.12)]">
             {/* Background Glow Elements */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[20px]">
@@ -905,7 +913,7 @@ const shineVariants = {
                   </div>
                 </div>
 
-                <Link href={dashboardData?.studyAbroadJourney?.currentActiveStep?.route || "/"}>
+                <Link href={currentStep?.route || "/"}>
                   <motion.button
                     variants={buttonVariants}
                     animate="animate"
@@ -1068,7 +1076,7 @@ const shineVariants = {
         </div>
 
         {/* Journey Steps Detail Cards */}
-        <div className="border-t border-gray-100">
+        <div className="">
           <div className="px-4 sm:px-0 py-5 border-b border-gray-100">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Track your progress from start to finish</h2>
           </div>
@@ -1077,7 +1085,7 @@ const shineVariants = {
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
             
             {/* Left Column - Journey Steps */}
-            <div className="flex-1">
+            <div className="flex-1 border border-gray-300">
               {/* Column Headers - Hidden on Mobile */}
               <div className="hidden sm:flex items-center px-6 py-3 border-b border-gray-100 bg-gray-50/30 text-black">
                 <div className="w-10"></div>
@@ -1086,7 +1094,7 @@ const shineVariants = {
               </div>
 
               <div className="relative px-2 sm:px-6">
-                <div className="absolute left-[25px] sm:left-[49px] top-10 bottom-0 w-[2px] bg-gray-200 z-0" />
+                <div className="absolute left-[25px] sm:left-[33px] top-10 bottom-0 w-[2px] bg-gray-200 z-0" />
                 <div className="divide-y divide-gray-100">
                   {steps.map((item, idx) => {
                     const isCompleted = item.status === "completed";
@@ -1095,7 +1103,7 @@ const shineVariants = {
                     return (
                       <div
                         key={idx}
-                        className={`group relative flex items-center gap-3 sm:gap-4 py-5 px-4 transition-all duration-300 cursor-pointer hover:bg-orange-50 ${isCurrent ? "bg-orange-50 shadow-lg  rounded-lg" : ""}`}
+                        className={`group relative flex items-center gap-3 sm:gap-4 py-5 px-4 transition-all duration-300 cursor-pointer  ${isCurrent ? "bg-orange-50 shadow-lg  rounded-lg" : ""}`}
                         onClick={() => { if (!isUpcoming && item.link && item.link !== "#") router.push(item.link); }}
                       >
                         <div className="relative flex-shrink-0 z-10 ml-[-24px] sm:ml-[-24px]">

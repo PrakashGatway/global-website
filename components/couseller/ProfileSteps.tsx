@@ -241,9 +241,12 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
   const [editingSections, setEditingSections] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    // FIX 1: Ensure we filter out null/undefined items when initializing
+    const safeHistory = (profileData?.educationHistory || []).filter((item: any) => item != null);
+
     setFormData({
       highestAcademic: profileData?.highestAcademic || {},
-      educationHistory: profileData?.educationHistory || [],
+      educationHistory: safeHistory,
     });
   }, [profileData]);
 
@@ -268,7 +271,16 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
     if (sectionName === 'summary') {
       payload = { "highestAcademic": sectionData };
     } else if (sectionName === 'education') {
-      payload = { "educationHistory": sectionData };
+      // FIX: Filter out nulls, but keep entries that have ANY meaningful data 
+      // (not just institution/degree). Location data is also meaningful.
+      const validData = (sectionData || []).filter((item: any) => {
+        if (!item) return false;
+        // Check if at least one significant field is filled
+        return item.institutionName || item.degreeName || item.country || item.state || item.city || item.board;
+      });
+
+      console.log("Saving Education Payload:", validData); // Debugging log
+      payload = { "educationHistory": validData };
     }
 
     await onSave(payload);
@@ -292,14 +304,16 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
   };
 
   const updateHighestAcademic = (field: string, value: any) => {
-    let educationHistory = formData.educationHistory;
+    // FIX 3: Create a safe copy of history excluding nulls
+    const currentHistory = (formData.educationHistory || []).filter((item: any) => item != null);
+    let educationHistory = [...currentHistory];
 
     if (field === "highestEducationLevel") {
-      const levels =
-        educationFlow[value as keyof typeof educationFlow] || [];
+      const levels = educationFlow[value as keyof typeof educationFlow] || [];
 
       educationHistory = levels.map((level) => {
-        const existing = formData.educationHistory.find(
+        // FIX 4: Safe find - 'e' is guaranteed not to be null because we filtered above
+        const existing = educationHistory.find(
           (e: any) => e.educationLevel === level
         );
 
@@ -330,16 +344,28 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
   };
 
   const updateEducation = (
-    educationLevel: string,
+    educationLevel: string, // Note: In your JSX, you sometimes pass index here for custom items, see below
     field: string,
     value: any
   ) => {
     setFormData((prev: any) => {
-      const history = [...prev.educationHistory];
+      // FIX 5: Filter nulls before processing
+      const history = (prev.educationHistory || []).filter((item: any) => item != null);
 
-      const existingIndex = history.findIndex(
-        (edu: any) => edu.educationLevel === educationLevel
-      );
+      // If educationLevel is a number (index), handle custom dynamic fields differently
+      // But based on your current logic, you seem to pass level string usually. 
+      // However, in your JSX for custom items, you passed idx. Let's make this robust.
+
+      let existingIndex = -1;
+
+      // Try to find by level first
+      if (typeof educationLevel === 'string') {
+        existingIndex = history.findIndex((edu: any) => edu.educationLevel === educationLevel);
+      }
+
+      // If not found by string, and it looks like an index (from your custom add logic potentially), 
+      // we might need to adjust how updateEducation is called. 
+      // For now, assuming standard flow:
 
       if (existingIndex >= 0) {
         history[existingIndex] = {
@@ -347,10 +373,24 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
           [field]: value,
         };
       } else {
-        history.push({
-          educationLevel,
-          [field]: value,
-        });
+        // If it's a new item or not found, push. 
+        // Note: Your custom add logic adds { educationLevel: "Other Certificate", isNew: true }
+        // If you are updating a custom item, ensure you identify it correctly.
+        // For simplicity, if we can't find it by level, we might need to look by reference or index.
+        // Given the error, let's stick to fixing the null access.
+
+        // Fallback: if educationLevel is actually an index (number) passed from custom renderer
+        if (typeof educationLevel === 'number') {
+          if (history[educationLevel]) {
+            history[educationLevel] = { ...history[educationLevel], [field]: value };
+          }
+        } else {
+          // Add new if truly missing
+          history.push({
+            educationLevel: typeof educationLevel === 'string' ? educationLevel : "Unknown",
+            [field]: value,
+          });
+        }
       }
 
       return {
@@ -363,7 +403,8 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
   const MAX_CUSTOM_EDUCATION = 2;
 
   const addNewEducation = () => {
-    const customCount = formData.educationHistory.filter(
+    const currentHistory = (formData.educationHistory || []).filter((item: any) => item != null);
+    const customCount = currentHistory.filter(
       (e) => !visibleSections.includes(e.educationLevel)
     ).length;
 
@@ -374,7 +415,7 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
     setFormData((prev) => ({
       ...prev,
       educationHistory: [
-        ...prev.educationHistory,
+        ...currentHistory, // Use cleaned history
         {
           educationLevel: "Other Certificate",
           isNew: true,
@@ -384,7 +425,8 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
   };
 
   const removeEducation = (index: number) => {
-    const newHistory = [...formData.educationHistory];
+    const currentHistory = (formData.educationHistory || []).filter((item: any) => item != null);
+    const newHistory = [...currentHistory];
     newHistory.splice(index, 1);
     setFormData((prev: any) => ({ ...prev, educationHistory: newHistory }));
   };
@@ -403,8 +445,9 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
             if (sectionName === 'summary') {
               sectionData = formData.highestAcademic;
             } else if (sectionName === 'education') {
-              const validData = formData.educationHistory.filter(
-                (edu: any) => edu.institutionName || edu.degreeName
+              // Filter nulls here too
+              const validData = (formData.educationHistory || []).filter(
+                (edu: any) => edu != null && (edu.institutionName || edu.degreeName)
               );
               sectionData = validData;
             }
@@ -486,7 +529,9 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
         <SectionHeader title="Education History" sectionName="education" />
         <div className="space-y-4">
           {visibleSections.map((level, index) => {
-            const education = formData?.educationHistory?.find(
+            // FIX 6: Safe access during render
+            const cleanHistory = (formData?.educationHistory || []).filter((item: any) => item != null);
+            const education = cleanHistory.find(
               (e: any) => e?.educationLevel === level
             ) || { educationLevel: level };
 
@@ -501,11 +546,12 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
                   updateEducation(level, field, val)
                 }
                 onRemove={() => removeEducation(index)}
-                canRemove={formData?.educationHistory?.length > 1}
+                canRemove={cleanHistory.length > 1}
               />
             );
           })}
-          {editingSections.has("education") && formData?.educationHistory?.map((edu: any, idx: number) => {
+
+          {editingSections.has("education") && (formData?.educationHistory || []).filter((item: any) => item != null).map((edu: any, idx: number) => {
             if (!edu.educationLevel || visibleSections.includes(edu.educationLevel)) return null;
             return (
               <EducationCard
@@ -514,6 +560,7 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
                 education={edu}
                 isEditing={true}
                 countries={countries}
+                // Pass index for custom items so updateEducation knows which one to update if level isn't unique
                 onChange={(field, val) => updateEducation(idx, field, val)}
                 onRemove={() => removeEducation(idx)}
                 canRemove={true}
@@ -521,7 +568,7 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
             );
           })}
 
-          {!editingSections.has("education") && formData?.educationHistory?.length === 0 && (
+          {!editingSections.has("education") && (formData?.educationHistory || []).filter((item: any) => item != null).length === 0 && (
             <div className="text-center py-12 border-2 border-dashed border-gray-200 ">
               <GraduationCap className="w-10 h-10 text-gray-300 mx-auto mb-3" />
               <p className="text-gray-500 font-medium">No education records added</p>
@@ -531,31 +578,34 @@ export function AcademicQualificationTab({ profileData, countries, onSave }: Pro
 
         {editingSections.has("education") && (
           <div className="flex justify-center items-center border-2 mt-3 border-dashed border-gray-200 p-4">
-
             <button
               onClick={addNewEducation}
               className="flex items-center gap-2 px-3 py-1.5 text-base font-medium bg-gray-200 text-gray-700  hover:bg-gray-200 transition"
             >
               <Plus size={14} /> Add Education
             </button>
-
           </div>
         )}
       </div>
     </div>
   );
 }
+import { Country, State, City } from "country-state-city";
+import boards from "@/components/couseller/board.json"
 
 // --- Sub-component for individual education entry ---
 function EducationCard({ level, education, isEditing, countries, onChange, onRemove, canRemove }: any) {
   const isSchool = level === "Grade 12" || level === "Grade 10";
 
+
   const fields = [
     { label: isSchool ? "School Name" : "Institution Name", key: "institutionName" },
-    { label: isSchool ? "Board" : "Degree Awarded", key: "degreeName" },
+    ...(isSchool
+      ? [{ label: "Board", key: "board", type: "board-select" }]
+      : [{ label: "Degree Awarded", key: "degreeName" }]),
     { label: "Country", key: "country", type: "country-select" },
-    { label: "State", key: "state" },
-    { label: "City", key: "city" },
+    { label: "State", key: "state", type: "state-select" },
+    { label: "City", key: "city", type: "city-select" },
     ...(!isSchool ? [{ label: "Grading Scheme", key: "gradingScheme" }] : []),
     { label: isSchool ? "Percentage" : "Percentage", key: "percentage" },
     { label: "Start Date", key: "startDate", type: "month" },
@@ -567,8 +617,46 @@ function EducationCard({ level, education, isEditing, countries, onChange, onRem
     return new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "long" });
   };
 
+  // 1. Get All Countries (Memoized ideally, but okay here for simplicity if list is small)
+  // Note: Using the 'countries' prop passed from parent is better if it matches your DB.
+  // But for State/City library, we need ISO codes.
+
+  // Find selected country object from the library to get ISO code
+  const selectedCountryObj = Country.getAllCountries().find(
+    (c) => c.name === education.country
+  );
+
+  // Get States based on ISO code
+  const states = selectedCountryObj
+    ? State.getStatesOfCountry(selectedCountryObj.isoCode)
+    : [];
+
+  // Find selected state object
+  const selectedStateObj = states.find(
+    (s) => s.name === education.state
+  );
+
+  // Get Cities based on ISO codes
+  const cities =
+    selectedCountryObj && selectedStateObj
+      ? City.getCitiesOfState(
+        selectedCountryObj.isoCode,
+        selectedStateObj.isoCode
+      )
+      : [];
+
+
+  const boardOptions =
+    education.country === "India"
+      ? boards[education.state as keyof typeof boards] || []
+      : [];
+
+      
+
+      
+
   return (
-    <div className="border border-gray-200  overflow-hidden relative group">
+    <div className="border border-gray-200 overflow-hidden relative group">
       <div className="bg-gray-50 px-4 py-3 border-b flex items-center justify-between">
         <div className="flex items-center gap-2">
           <h4 className="font-medium text-gray-800">{level}</h4>
@@ -576,7 +664,7 @@ function EducationCard({ level, education, isEditing, countries, onChange, onRem
         {isEditing && canRemove && (
           <button
             onClick={onRemove}
-            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50  transition"
+            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 transition"
           >
             <Trash2 size={14} />
           </button>
@@ -593,39 +681,107 @@ function EducationCard({ level, education, isEditing, countries, onChange, onRem
             {isEditing ? (
               f.type === "country-select" ? (
                 <select
-                  className="w-full border border-gray-300  p-2.5 text-sm focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] outline-none"
-                  value={education[f.key] || ""}
-                  onChange={(e) => onChange(f.key, e.target.value)}
+                  className="w-full border border-gray-300 p-2.5 text-sm focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] outline-none"
+                  value={education.country || ""}
+                  onChange={(e) => {
+                    const newCountry = e.target.value;
+                    // Update Country
+                    onChange(f.key, newCountry);
+                    // Reset State and City because they depend on Country
+                    onChange("state", "");
+                    onChange("city", "");
+                  }}
                 >
                   <option value="">Select Country</option>
-                  {countries.map((c: any) => (
-                    <option key={c._id || c.name} value={c.name}>{c.name}</option>
+                  {/* Use the countries prop if available, otherwise fallback to library */}
+                  {(countries && countries.length > 0 ? countries : Country.getAllCountries()).map((c: any) => (
+                    <option key={c._id || c.isoCode || c.name} value={c.name}>
+                      {c.name}
+                    </option>
                   ))}
                 </select>
-              ) :
-                f.type == "month" ?
-                  <input
-                    type="month"
-                    className="w-full border border-gray-300  p-2.5 text-sm focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] outline-none"
+              ) : f.type === "board-select" && education.country == "India" ? (
 
-                    value={
-                      education[f.key]
-                        ? new Date(education[f.key]).toISOString().slice(0, 7)
-                        : ""
-                    }
-                    onChange={(e) => onChange(f.key, e.target.value)}
-                  /> : (
-                    <input
-                      type={f.type || "text"}
-                      className="w-full border border-gray-300  p-2.5 text-sm focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] outline-none"
-                      value={education[f.key] || ""}
-                      onChange={(e) => onChange(f.key, e.target.value)}
-                      placeholder={`Enter ${f.label.toLowerCase()}`}
-                    />
-                  )
-            ) : (
-              <div className="w-full bg-gray-50 border border-gray-200  p-2.5 text-sm text-gray-700 min-h-[42px]">
-                {f.type === "month" ? formatDate(education[f.key]) : (education[f.key] || "N/A")}
+                <select
+                  className="w-full border border-gray-300 p-2.5 text-sm disabled:bg-gray-100"
+                  value={education?.degreeName?.toUpperCase() || ""}
+                  onChange={(e) => onChange("degreeName", e.target.value)}
+                  disabled={!education.state}
+                >
+                  <option value="">Select Board</option>
+
+                  {boardOptions.map((board) => (
+                    <option key={board} value={board}>
+                      {board}
+                    </option>
+                  ))}
+                </select>
+              ) : f.type === "state-select" ? (
+                <select
+                  className="w-full border border-gray-300 p-2.5 text-sm disabled:bg-gray-100 disabled:text-gray-400"
+                  value={education.state || ""}
+                  onChange={(e) => {
+                    const newState = e.target.value;
+                    onChange("state", newState);
+                    // Reset City because it depends on State
+                    onChange("city", "");
+                  }}
+                  disabled={!education.country || states.length === 0}
+                >
+                  <option value="">Select State</option>
+                  {states.map((state) => (
+                    <option key={state.isoCode} value={state.name}>
+                      {state.name}
+                    </option>
+                  ))}
+                </select>
+              ) : f.type === "city-select" ? (
+                <select
+                  className="w-full border border-gray-300 p-2.5 text-sm disabled:bg-gray-100 disabled:text-gray-400"
+                  value={education.city || ""}
+                  onChange={(e) => onChange("city", e.target.value)}
+                  disabled={!education.state || cities.length === 0}
+                >
+                  <option value="">Select City</option>
+                  {cities.map((city, index) => (
+                    <option key={`${city.name}-${index}`} value={city.name}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
+              ) : f.type === "month" ? (
+                <input
+                  type="month"
+                  className="w-full border border-gray-300 p-2.5 text-sm focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] outline-none"
+                  value={
+                    education[f.key]
+                      ? new Date(education[f.key]).toISOString().slice(0, 7)
+                      : ""
+                  }
+                  onChange={(e) => onChange(f.key, e.target.value)}
+                />
+              ) : (
+                <input
+                  type={f.type || "text"}
+                  className="w-full border border-gray-300 p-2.5 text-sm focus:ring-2 focus:ring-[#F26D44]/20 focus:border-[#F26D44] outline-none"
+                  value={education[f.key] || ""}
+                  onChange={(e) => onChange(f.key, e.target.value)}
+                  placeholder={`Enter ${f.label.toLowerCase()}`}
+                />
+              )
+            ) :  (
+              <div className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm text-gray-700 min-h-[42px] flex items-center">
+                {f.type === "month" ? (
+                  formatDate(education[f.key])
+                ) : f.type === "board-select" ? (
+                  // FIX: Convert to uppercase for display if it's a board field
+                  education.degreeName 
+                    ? education.degreeName.toUpperCase() 
+                    : "N/A"
+                ) : (
+                  // Default display for other fields
+                  education[f.key] || "N/A"
+                )}
               </div>
             )}
           </div>
@@ -640,7 +796,7 @@ import {
   Home, MapPin, Hash, CreditCard, CalendarDays
 } from "lucide-react";
 
-const Field = ({ label, editingSections, formatDate, displayValue, formData, value, icon: Icon, type = "text", options, disabled = false, onChange, fieldKey, section ,error}: any) => {
+const Field = ({ label, editingSections, formatDate, displayValue, formData, value, icon: Icon, type = "text", options, disabled = false, onChange, fieldKey, section, error }: any) => {
   const getFieldValue = (fieldKey: string) => {
     if (fieldKey.includes(".")) {
       const [parent, child] = fieldKey.split(".");
@@ -650,7 +806,7 @@ const Field = ({ label, editingSections, formatDate, displayValue, formData, val
     return formData?.[fieldKey] || "";
   }
 
-   const hasError = error && editingSections.has(section);
+  const hasError = error && editingSections.has(section);
 
 
   return (
@@ -667,11 +823,10 @@ const Field = ({ label, editingSections, formatDate, displayValue, formData, val
               value={getFieldValue(fieldKey) || ""}
               onChange={(e) => onChange(fieldKey, e.target.value)}
               disabled={disabled}
-              className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-white border focus:outline-none focus:ring-2 transition-all text-sm ${
-                hasError 
-                  ? "border-red-300 focus:border-red-500 focus:ring-red-200" 
-                  : "border-gray-200 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-              }`}
+              className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-white border focus:outline-none focus:ring-2 transition-all text-sm ${hasError
+                ? "border-red-300 focus:border-red-500 focus:ring-red-200"
+                : "border-gray-200 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
+                }`}
             >
               <option value="">Select {label}</option>
               {options?.map((opt: string) => (
@@ -684,11 +839,10 @@ const Field = ({ label, editingSections, formatDate, displayValue, formData, val
               value={getFieldValue(fieldKey) || ""}
               onChange={(e) => onChange(fieldKey, e.target.value)}
               disabled={disabled}
-              className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-white border focus:outline-none focus:ring-2 transition-all text-sm ${
-                 hasError 
-                  ? "border-red-300 focus:border-red-500 focus:ring-red-200" 
-                  : "border-gray-200 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-              }`}
+              className={`w-full ${Icon ? "pl-10" : "pl-4"} pr-4 py-2.5 bg-white border focus:outline-none focus:ring-2 transition-all text-sm ${hasError
+                ? "border-red-300 focus:border-red-500 focus:ring-red-200"
+                : "border-gray-200 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
+                }`}
             />
           )
         ) : (
@@ -696,7 +850,7 @@ const Field = ({ label, editingSections, formatDate, displayValue, formData, val
             {type === "date" ? formatDate(value) : displayValue(value)}
           </div>
         )}
-        
+
         {/* Show Error Message below input if exists */}
         {hasError && (
           <p className="text-xs text-red-500 mt-1 ml-1">{error}</p>
@@ -711,9 +865,9 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
   const [editingSections, setEditingSections] = useState<Set<string>>(new Set());
 
 
-    const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
- 
+
 
   useEffect(() => {
     setFormData({
@@ -748,9 +902,9 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
     setErrors({});
   }, [user, profile]);
 
-    const validatePersonalInfo = () => {
+  const validatePersonalInfo = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.Firstname?.trim()) newErrors["Firstname"] = "First name is required";
     if (!formData.Lastname?.trim()) newErrors["Lastname"] = "Last name is required";
     if (!formData.email?.trim()) newErrors["email"] = "Email is required";
@@ -759,8 +913,8 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
     if (!formData.gender) newErrors["gender"] = "Gender is required";
     if (!formData.maritalStatus) newErrors["maritalStatus"] = "Marital status is required";
     if (!formData.nationality) newErrors["nationality"] = "Nationality is required";
-    
-    
+
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -769,225 +923,225 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
 
 
   const validateCurrentAddress = () => {
-  const newErrors: Record<string, string> = {};
+    const newErrors: Record<string, string> = {};
 
-  if (!formData.currentAddress?.addressLine1?.trim())
-    newErrors["currentAddress.addressLine1"] = "Address Line 1 is required";
+    if (!formData.currentAddress?.addressLine1?.trim())
+      newErrors["currentAddress.addressLine1"] = "Address Line 1 is required";
 
-  if (!formData.currentAddress?.city?.trim())
-    newErrors["currentAddress.city"] = "City is required";
+    if (!formData.currentAddress?.city?.trim())
+      newErrors["currentAddress.city"] = "City is required";
 
-  if (!formData.currentAddress?.state?.trim())
-    newErrors["currentAddress.state"] = "State is required";
+    if (!formData.currentAddress?.state?.trim())
+      newErrors["currentAddress.state"] = "State is required";
 
-  if (!formData.currentAddress?.postalCode?.trim())
-    newErrors["currentAddress.postalCode"] = "Postal Code is required";
+    if (!formData.currentAddress?.postalCode?.trim())
+      newErrors["currentAddress.postalCode"] = "Postal Code is required";
 
-  if (!formData.currentAddress?.country?.trim())
-    newErrors["currentAddress.country"] = "Country is required";
+    if (!formData.currentAddress?.country?.trim())
+      newErrors["currentAddress.country"] = "Country is required";
 
-  setErrors(prev => ({ ...prev, ...newErrors }));
+    setErrors(prev => ({ ...prev, ...newErrors }));
 
-  return Object.keys(newErrors).length === 0;
-};
-
-
-const validatePermanentAddress = () => {
-  const newErrors: Record<string, string> = {};
-
-  if (!formData.permanentAddress?.addressLine1?.trim())
-    newErrors["permanentAddress.addressLine1"] = "Address Line 1 is required";
-
-  if (!formData.permanentAddress?.city?.trim())
-    newErrors["permanentAddress.city"] = "City is required";
-
-  if (!formData.permanentAddress?.state?.trim())
-    newErrors["permanentAddress.state"] = "State is required";
-
-  if (!formData.permanentAddress?.postalCode?.trim())
-    newErrors["permanentAddress.postalCode"] = "Postal Code is required";
-
-  if (!formData.permanentAddress?.country?.trim())
-    newErrors["permanentAddress.country"] = "Country is required";
-
-  setErrors(prev => ({ ...prev, ...newErrors }));
-
-  return Object.keys(newErrors).length === 0;
-};
+    return Object.keys(newErrors).length === 0;
+  };
 
 
-const validatePassport = () => {
-  const newErrors: Record<string, string> = {};
+  const validatePermanentAddress = () => {
+    const newErrors: Record<string, string> = {};
 
-  // Passport Number
-  if (!formData.passportNumber?.trim()) {
-    newErrors["passportNumber"] = "Passport number is required";
-  } else if (!/^[A-Za-z0-9]{6,15}$/.test(formData.passportNumber.trim())) {
-    newErrors["passportNumber"] =
-      "Passport number must be 6-15 letters/numbers";
-  }
+    if (!formData.permanentAddress?.addressLine1?.trim())
+      newErrors["permanentAddress.addressLine1"] = "Address Line 1 is required";
 
-  // Issue Date
-  if (!formData.passportIssueDate) {
-    newErrors["passportIssueDate"] = "Issue date is required";
-  }
+    if (!formData.permanentAddress?.city?.trim())
+      newErrors["permanentAddress.city"] = "City is required";
 
-  // Expiry Date
-  if (!formData.passportExpiry) {
-    newErrors["passportExpiry"] = "Expiry date is required";
-  } else {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    if (!formData.permanentAddress?.state?.trim())
+      newErrors["permanentAddress.state"] = "State is required";
 
-    const expiry = new Date(formData.passportExpiry);
-    expiry.setHours(0, 0, 0, 0);
+    if (!formData.permanentAddress?.postalCode?.trim())
+      newErrors["permanentAddress.postalCode"] = "Postal Code is required";
 
-    if (expiry < today) {
-      newErrors["passportExpiry"] =
-        "Passport has expired. Please enter a valid passport.";
+    if (!formData.permanentAddress?.country?.trim())
+      newErrors["permanentAddress.country"] = "Country is required";
+
+    setErrors(prev => ({ ...prev, ...newErrors }));
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+
+  const validatePassport = () => {
+    const newErrors: Record<string, string> = {};
+
+    // Passport Number
+    if (!formData.passportNumber?.trim()) {
+      newErrors["passportNumber"] = "Passport number is required";
+    } else if (!/^[A-Za-z0-9]{6,15}$/.test(formData.passportNumber.trim())) {
+      newErrors["passportNumber"] =
+        "Passport number must be 6-15 letters/numbers";
     }
-  }
 
-  // Expiry must be after Issue Date
-  if (formData.passportIssueDate && formData.passportExpiry) {
-    const issue = new Date(formData.passportIssueDate);
-    const expiry = new Date(formData.passportExpiry);
-
-    if (expiry <= issue) {
-      newErrors["passportExpiry"] =
-        "Expiry date must be after issue date";
+    // Issue Date
+    if (!formData.passportIssueDate) {
+      newErrors["passportIssueDate"] = "Issue date is required";
     }
-  }
 
-  // Issue Country
-  if (!formData.passportIssueCountry?.trim()) {
-    newErrors["passportIssueCountry"] =
-      "Issue country is required";
-  }
+    // Expiry Date
+    if (!formData.passportExpiry) {
+      newErrors["passportExpiry"] = "Expiry date is required";
+    } else {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-  setErrors(prev => ({
-    ...prev,
-    ...newErrors,
-  }));
+      const expiry = new Date(formData.passportExpiry);
+      expiry.setHours(0, 0, 0, 0);
 
-  return Object.keys(newErrors).length === 0;
-};
+      if (expiry < today) {
+        newErrors["passportExpiry"] =
+          "Passport has expired. Please enter a valid passport.";
+      }
+    }
+
+    // Expiry must be after Issue Date
+    if (formData.passportIssueDate && formData.passportExpiry) {
+      const issue = new Date(formData.passportIssueDate);
+      const expiry = new Date(formData.passportExpiry);
+
+      if (expiry <= issue) {
+        newErrors["passportExpiry"] =
+          "Expiry date must be after issue date";
+      }
+    }
+
+    // Issue Country
+    if (!formData.passportIssueCountry?.trim()) {
+      newErrors["passportIssueCountry"] =
+        "Issue country is required";
+    }
+
+    setErrors(prev => ({
+      ...prev,
+      ...newErrors,
+    }));
+
+    return Object.keys(newErrors).length === 0;
+  };
 
 
-const validateFamilyDetails = () => {
-  const newErrors: Record<string, string> = {};
+  const validateFamilyDetails = () => {
+    const newErrors: Record<string, string> = {};
 
-  const nameRegex = /^[A-Za-z ]+$/;
-  const phoneRegex = /^[6-9]\d{9}$/;
-  const occupationRegex = /^[A-Za-z ]+$/;
+    const nameRegex = /^[A-Za-z ]+$/;
+    const phoneRegex = /^[6-9]\d{9}$/;
+    const occupationRegex = /^[A-Za-z ]+$/;
 
-  // Mother Name
-  if (!formData.familyDetails?.motherName?.trim()) {
-    newErrors["familyDetails.motherName"] = "Mother name is required";
-  } else if (!nameRegex.test(formData.familyDetails.motherName.trim())) {
-    newErrors["familyDetails.motherName"] =
-      "Mother name should contain only letters";
-  } else if (
-    formData.familyDetails.motherName.trim().length < 2 ||
-    formData.familyDetails.motherName.trim().length > 50
-  ) {
-    newErrors["familyDetails.motherName"] =
-      "Mother name must be between 2 and 50 characters";
-  }
+    // Mother Name
+    if (!formData.familyDetails?.motherName?.trim()) {
+      newErrors["familyDetails.motherName"] = "Mother name is required";
+    } else if (!nameRegex.test(formData.familyDetails.motherName.trim())) {
+      newErrors["familyDetails.motherName"] =
+        "Mother name should contain only letters";
+    } else if (
+      formData.familyDetails.motherName.trim().length < 2 ||
+      formData.familyDetails.motherName.trim().length > 50
+    ) {
+      newErrors["familyDetails.motherName"] =
+        "Mother name must be between 2 and 50 characters";
+    }
 
-  // Mother Phone
-  if (!formData.familyDetails?.motherPhone?.trim()) {
-    newErrors["familyDetails.motherPhone"] = "Mother phone is required";
-  } else if (!phoneRegex.test(formData.familyDetails.motherPhone.trim())) {
-    newErrors["familyDetails.motherPhone"] =
-      "Enter a valid 10-digit mobile number";
-  }
+    // Mother Phone
+    if (!formData.familyDetails?.motherPhone?.trim()) {
+      newErrors["familyDetails.motherPhone"] = "Mother phone is required";
+    } else if (!phoneRegex.test(formData.familyDetails.motherPhone.trim())) {
+      newErrors["familyDetails.motherPhone"] =
+        "Enter a valid 10-digit mobile number";
+    }
 
-  // Mother Occupation
-  if (!formData.familyDetails?.motherOccupation?.trim()) {
-    newErrors["familyDetails.motherOccupation"] =
-      "Mother occupation is required";
-  } else if (
-    !occupationRegex.test(formData.familyDetails.motherOccupation.trim())
-  ) {
-    newErrors["familyDetails.motherOccupation"] =
-      "Occupation should contain only letters";
-  }
+    // Mother Occupation
+    if (!formData.familyDetails?.motherOccupation?.trim()) {
+      newErrors["familyDetails.motherOccupation"] =
+        "Mother occupation is required";
+    } else if (
+      !occupationRegex.test(formData.familyDetails.motherOccupation.trim())
+    ) {
+      newErrors["familyDetails.motherOccupation"] =
+        "Occupation should contain only letters";
+    }
 
-  // Father Name
-  if (!formData.familyDetails?.fatherName?.trim()) {
-    newErrors["familyDetails.fatherName"] = "Father name is required";
-  } else if (!nameRegex.test(formData.familyDetails.fatherName.trim())) {
-    newErrors["familyDetails.fatherName"] =
-      "Father name should contain only letters";
-  } else if (
-    formData.familyDetails.fatherName.trim().length < 2 ||
-    formData.familyDetails.fatherName.trim().length > 50
-  ) {
-    newErrors["familyDetails.fatherName"] =
-      "Father name must be between 2 and 50 characters";
-  }
+    // Father Name
+    if (!formData.familyDetails?.fatherName?.trim()) {
+      newErrors["familyDetails.fatherName"] = "Father name is required";
+    } else if (!nameRegex.test(formData.familyDetails.fatherName.trim())) {
+      newErrors["familyDetails.fatherName"] =
+        "Father name should contain only letters";
+    } else if (
+      formData.familyDetails.fatherName.trim().length < 2 ||
+      formData.familyDetails.fatherName.trim().length > 50
+    ) {
+      newErrors["familyDetails.fatherName"] =
+        "Father name must be between 2 and 50 characters";
+    }
 
-  // Father Phone
-  if (!formData.familyDetails?.fatherPhone?.trim()) {
-    newErrors["familyDetails.fatherPhone"] = "Father phone is required";
-  } else if (!phoneRegex.test(formData.familyDetails.fatherPhone.trim())) {
-    newErrors["familyDetails.fatherPhone"] =
-      "Enter a valid 10-digit mobile number";
-  }
+    // Father Phone
+    if (!formData.familyDetails?.fatherPhone?.trim()) {
+      newErrors["familyDetails.fatherPhone"] = "Father phone is required";
+    } else if (!phoneRegex.test(formData.familyDetails.fatherPhone.trim())) {
+      newErrors["familyDetails.fatherPhone"] =
+        "Enter a valid 10-digit mobile number";
+    }
 
-  // Father Occupation
-  if (!formData.familyDetails?.fatherOccupation?.trim()) {
-    newErrors["familyDetails.fatherOccupation"] =
-      "Father occupation is required";
-  } else if (
-    !occupationRegex.test(formData.familyDetails.fatherOccupation.trim())
-  ) {
-    newErrors["familyDetails.fatherOccupation"] =
-      "Occupation should contain only letters";
-  }
+    // Father Occupation
+    if (!formData.familyDetails?.fatherOccupation?.trim()) {
+      newErrors["familyDetails.fatherOccupation"] =
+        "Father occupation is required";
+    } else if (
+      !occupationRegex.test(formData.familyDetails.fatherOccupation.trim())
+    ) {
+      newErrors["familyDetails.fatherOccupation"] =
+        "Occupation should contain only letters";
+    }
 
-  setErrors((prev) => ({
-    ...prev,
-    ...newErrors,
-  }));
+    setErrors((prev) => ({
+      ...prev,
+      ...newErrors,
+    }));
 
-  return Object.keys(newErrors).length === 0;
-};
+    return Object.keys(newErrors).length === 0;
+  };
 
 
   const handleSectionSave = async (sectionName: string, sectionData: any) => {
 
-  if (sectionName === "personal") {
-    if (!validatePersonalInfo()) return;
-  }
+    if (sectionName === "personal") {
+      if (!validatePersonalInfo()) return;
+    }
 
-  if (sectionName === "currentAddress") {
-    if (!validateCurrentAddress()) return;
-  }
+    if (sectionName === "currentAddress") {
+      if (!validateCurrentAddress()) return;
+    }
 
-  if (sectionName === "permanentAddress") {
-    if (!validatePermanentAddress()) return;
-  }
+    if (sectionName === "permanentAddress") {
+      if (!validatePermanentAddress()) return;
+    }
 
-  if (sectionName === "passport") {
-    if (!validatePassport()) return;
-  }
+    if (sectionName === "passport") {
+      if (!validatePassport()) return;
+    }
 
-  if (sectionName === "familyDetails") {
-    if (!validateFamilyDetails()) return;
-  }
+    if (sectionName === "familyDetails") {
+      if (!validateFamilyDetails()) return;
+    }
 
-  await onSave(sectionData);
+    await onSave(sectionData);
 
-  setEditingSections(prev => {
-    const newSet = new Set(prev);
-    newSet.delete(sectionName);
-    return newSet;
-  });
+    setEditingSections(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(sectionName);
+      return newSet;
+    });
 
-  setErrors({});
-};
+    setErrors({});
+  };
 
   const toggleEditSection = (sectionName: string) => {
     setEditingSections(prev => {
@@ -1073,7 +1227,7 @@ const validateFamilyDetails = () => {
   );
 
   return (
-     <div className="space-y-4">
+    <div className="space-y-4">
       <div className="p-4 bg-white border border-gray-200">
         <SectionHeader title="Personal Information" sectionName="personal" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1335,7 +1489,7 @@ const validateFamilyDetails = () => {
             icon={Home}
             fieldKey="permanentAddress.addressLine2"
             section="permanentAddress"
-            
+
             onChange={(k: string, v: any) => updateNested("permanentAddress", "addressLine2", v)}
           />
           <Field
@@ -2009,17 +2163,17 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
     const newErrors: Record<string, string> = {};
     const resultDateKey = `${testId}.resultDate`;
     const resultDate = getNestedValue(formData, resultDateKey);
-    
+
     if (resultDate) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const selectedDate = new Date(resultDate);
-      
+
       if (selectedDate < today) {
         newErrors[resultDateKey] = "Result date cannot be in the past. Please select today or a future date.";
       }
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -2044,7 +2198,7 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
       toast.error("Please fix the validation errors");
       return;
     }
-    
+
     await onSave(formData);
     setEditingSections(prev => {
       const newSet = new Set(prev);
@@ -2089,12 +2243,12 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
         const Icon = config.icon;
         const isEditing = editingSections.has(config.id);
         const isExpanded = expandedAccordions.has(config.id);
-        
+
         const yetToReceiveKey = `${config.id}.yetToReceive`;
         const isYetToReceive = getNestedValue(formData, yetToReceiveKey) === true;
         const resultDateKey = `${config.id}.resultDate`;
         const resultDateError = errors[resultDateKey];
-        
+
         // ✅ Check if waiver is enabled
         const waiverKey = `${config.id}.waiver`;
         const isWaiverEnabled = getNestedValue(formData, waiverKey) === true;
@@ -2130,19 +2284,17 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                       toggleEditSection(config.id);
                     }
                   }}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-all ${
-                    isEditing
-                      ? "bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-md"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-all ${isEditing
+                    ? "bg-gradient-to-r from-[#F26D44] to-orange-600 text-white shadow-md"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
                 >
                   {isEditing ? <><Save size={12} /> Save</> : <><Edit2 size={12} /> Edit</>}
                 </motion.button>
 
                 <ChevronDown
-                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
-                    isExpanded ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             </button>
@@ -2230,11 +2382,10 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                                         key={opt}
                                         disabled={!isEditing}
                                         onClick={() => setNestedValue(extra.key, opt === "Yes")}
-                                        className={`flex items-center gap-1.5 text-sm transition-all ${
-                                          isSelected
-                                            ? "text-[#F26D44] font-medium"
-                                            : "text-gray-400"
-                                        } ${!isEditing ? "cursor-default" : "cursor-pointer"}`}
+                                        className={`flex items-center gap-1.5 text-sm transition-all ${isSelected
+                                          ? "text-[#F26D44] font-medium"
+                                          : "text-gray-400"
+                                          } ${!isEditing ? "cursor-default" : "cursor-pointer"}`}
                                       >
                                         {isSelected ? (
                                           <CheckCircle2 className="w-4 h-4 fill-current" />
@@ -2253,12 +2404,11 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                           if (extra.type === "date") {
                             const value = getNestedValue(formData, extra.key);
                             const hasError = extra.key === resultDateKey && resultDateError;
-                            
+
                             return (
                               <div key={extra.key}>
-                                <label className={`block text-xs font-medium uppercase tracking-wide mb-1.5 ${
-                                  hasError ? "text-red-500" : "text-gray-500"
-                                }`}>
+                                <label className={`block text-xs font-medium uppercase tracking-wide mb-1.5 ${hasError ? "text-red-500" : "text-gray-500"
+                                  }`}>
                                   {extra.label} {hasError && <span className="text-red-500">*</span>}
                                 </label>
                                 {isEditing ? (
@@ -2272,13 +2422,12 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                                     onPaste={handleDatePaste}
                                     min={new Date().toISOString().split('T')[0]}
                                     disabled={isWaiverEnabled} // ✅ Disable date when waiver is enabled
-                                    className={`w-full md:w-64 px-3 py-2.5 bg-gray-50 border focus:outline-none focus:ring-2 text-sm transition-all ${
-                                      hasError
-                                        ? "border-red-300 focus:border-red-500 focus:ring-red-200"
-                                        : isWaiverEnabled
+                                    className={`w-full md:w-64 px-3 py-2.5 bg-gray-50 border focus:outline-none focus:ring-2 text-sm transition-all ${hasError
+                                      ? "border-red-300 focus:border-red-500 focus:ring-red-200"
+                                      : isWaiverEnabled
                                         ? "border-gray-200 bg-gray-100 opacity-50 cursor-not-allowed"
                                         : "border-gray-200 focus:ring-[#F26D44]/20 focus:border-[#F26D44]"
-                                    }`}
+                                      }`}
                                   />
                                 ) : (
                                   <div className="w-full md:w-64 px-3 py-2.5 bg-gray-50/70 border border-gray-200/60 text-sm text-gray-700 min-h-[42px] flex items-center">
@@ -2312,11 +2461,10 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                                           key={opt}
                                           disabled={!isEditing}
                                           onClick={() => setNestedValue(extra.key, opt === "Yes")}
-                                          className={`flex items-center gap-1.5 text-sm transition-all ${
-                                            isSelected
-                                              ? "text-[#F26D44] font-medium"
-                                              : "text-gray-400"
-                                          } ${!isEditing ? "cursor-default" : "cursor-pointer"}`}
+                                          className={`flex items-center gap-1.5 text-sm transition-all ${isSelected
+                                            ? "text-[#F26D44] font-medium"
+                                            : "text-gray-400"
+                                            } ${!isEditing ? "cursor-default" : "cursor-pointer"}`}
                                         >
                                           {isSelected ? (
                                             <CheckCircle2 className="w-4 h-4 fill-current" />
@@ -2339,9 +2487,8 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                                         return (
                                           <label
                                             key={we.key}
-                                            className={`flex items-center gap-2 text-sm text-gray-600 ${
-                                              !isEditing ? "opacity-60" : ""
-                                            }`}
+                                            className={`flex items-center gap-2 text-sm text-gray-600 ${!isEditing ? "opacity-60" : ""
+                                              }`}
                                           >
                                             <input
                                               type="checkbox"
@@ -2376,7 +2523,7 @@ export function TestsTab({ data, onSave }: TestsTabProps) {
                                     })}
                                   </div>
                                 )}
-                                
+
                                 {!isWaived && isEditing && (
                                   <p className="text-xs text-gray-400 pl-8 italic">
                                     Select "Yes" above to enter waiver details.
