@@ -59,7 +59,7 @@ const HeroSection = ({ data, alldata }) => {
                 
                 {/* Subtitle */}
                 <span
-                  className="p-0 text-white text-base [&_div]:p-2 [&_p]:py-1 [&_*]:rounded-none tracking-normal [&_*]:text-white [&_*]:!text-base [&_*]:!font-medium [&_*]:m-0 [&_*]:py-1 [&_h1]:text-3xl [&_*]:grid-cols-1 sm:[&_*]:grid-cols-2 [&_h1]:font-bold [&_h1]:mb-2 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_li]:gap-1 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_strong]:font-semibold [&_em]:italic ul:!gap-2"
+                  className="p-0 mt-2 text-white text-base [&_div]:p-2 [&_p]:py-1 [&_*]:rounded-none tracking-normal [&_*]:text-white [&_*]:!text-base [&_*]:!font-medium [&_*]:m-0 [&_*]:py-1 [&_h1]:text-3xl [&_*]:grid-cols-1 sm:[&_*]:grid-cols-2 [&_h1]:font-bold [&_h1]:mb-2 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_li]:gap-1 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_strong]:font-semibold [&_em]:italic ul:!gap-2"
                   dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
                 />
                 
