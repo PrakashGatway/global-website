@@ -13,8 +13,9 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/app/axiosInstance";
 import { toast, Toaster } from "sonner";
+import FilterDrawer from "./FilterDrawer";
 
-const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
+const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] , countriesList, user }) => {
   const router = useRouter();
   const [aps, setaps] = useState(false);
   const [program, setprogram] = useState(true);
@@ -52,6 +53,35 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
 
   // Loading states
   const [loading, setLoading] = useState(false);
+      const [Drawer, setDrawer] = useState<Boolean>(false);
+      const [filters, setFilters] = useState({
+          studyMode: [],
+          programLevel: [],
+          country: "",
+          university: "",
+          category: "",
+          gradingUG: "Out of 100",
+          scoreUG: "",
+          grading12th: "Out of 100",
+          score12th: "",
+          backlogs: "",
+          workExperience: "",
+          englishScore: {
+            exam: "",
+            overall: "",
+            listening: "",
+            reading: "",
+            writing: "",
+            speaking: "",
+            examDate: "",
+          },
+          otherExam: {
+            exam: "",
+            overall: "",
+          },
+          tuitionFees: 0,
+        });
+  
 
   // Generate years from 2020 to 2035
   useEffect(() => {
@@ -271,28 +301,46 @@ const ApplicationCreate = ({ applicationData = [], appliedPrograms = [] }) => {
             </button>
           </div> */}
 
-          <div className="flex justify-center border-b border-gray-200">
-            <button
-              onClick={() => setprogram(true)}
-              className={`px-6 py-3 text-sm font-semibold transition-all relative ${
-                program
-                  ? "text-orange-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-orange-600"
-                  : "text-gray-700 hover:text-gray-900"
-              }`}
-            >
-              Apply To Programs
-            </button>
-            <button
-              onClick={() => setprogram(false)}
-              className={`px-6 py-3 text-sm font-semibold transition-all relative ${
-                !program
-                  ? "text-orange-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-orange-600"
-                  : "text-gray-700 hover:text-gray-900"
-              }`}
-            >
-              Applied Programs ({`${applicationData.length}`})
-            </button>
-          </div>
+          <div className="relative flex justify-center items-center border-b border-gray-200">
+  {/* Center Buttons */}
+  <div className="flex items-center">
+    <button
+      onClick={() => setprogram(true)}
+      className={`px-6 py-3 text-sm font-semibold transition-all relative ${
+        program
+          ? "text-orange-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-orange-600"
+          : "text-gray-700 hover:text-gray-900"
+      }`}
+    >
+      Apply To Programs
+    </button>
+
+    <button
+      onClick={() => setprogram(false)}
+      className={`px-6 py-3 text-sm font-semibold transition-all relative ${
+        !program
+          ? "text-orange-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-orange-600"
+          : "text-gray-700 hover:text-gray-900"
+      }`}
+    >
+      Applied Programs ({applicationData.length})
+    </button>
+  </div>
+
+  {/* Filter Button - Right End */}
+  <button
+    onClick={() => setDrawer(true)}
+    type="button"
+    className="absolute right-0 px-5 py-2.5 bg-orange-500 text-white font-medium cursor-pointer transition"
+  >
+    Filter
+  </button>
+</div>
+
+
+          { Drawer=== true && <FilterDrawer filters={filters} setFilters={setFilters} user={user} countryRes={countriesList} isOpen={Drawer} universities={universities} onClose={() => setDrawer(false)} /> }
+
+           
 
           {!program ? (
             <>

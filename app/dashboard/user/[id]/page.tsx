@@ -46,6 +46,7 @@ import ProfileTabs from "@/components/couseller/ProfileSteps";
 import ProfileFormContainer from "@/components/couseller/ProfileSteps";
 import ApplicationCreate from "@/components/couseller/ApplicaionCreate";
 import Documents from "@/components/couseller/Documents";
+import FilterDrawer from "@/components/couseller/FilterDrawer";
 
 // ─── Types ─────────────────────────────────────────
 interface Document {
@@ -176,6 +177,7 @@ export default function StudentProfilePage() {
 
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<ReferralUser | null>(null);
+    const [userDetails, setUserDetails] = useState(null)
     const [profile, setProfile] = useState<Profile | null>(null);
     const [applications, setApplications] = useState<Application[]>([]);
     const [activeTab, setActiveTab] = useState<"profile" | "applications" | "documents">("profile");
@@ -193,8 +195,9 @@ export default function StudentProfilePage() {
                     axiosInstance.get(`/applications?studentid=${studentId}`),
                     axiosInstance.get("/countries?limit=250"),
                 ]);
+                setUserDetails(userRes.data)
 
-                setUser(userRes.data.data || userRes.data);
+                setUser(userRes.data.data && userRes.data);
                 setProfile(userRes.data.data?.profile || userRes.data?.profile);
                 setApplications(applicationsRes.data.data || applicationsRes.data || []);
                 setCountriesList(countriesRes.data.data || []);
@@ -220,6 +223,8 @@ export default function StudentProfilePage() {
             day: "numeric",
         });
     };
+
+    console.log(userDetails)
 
     const calculateCompletion = useCallback(() => {
         if (!user && !profile) return 0;
@@ -479,6 +484,8 @@ export default function StudentProfilePage() {
                                         <span className="text-sm font-medium">{tab.title}</span>
                                     </button>
                                 ))}
+
+                              
                             </div>
                         </div>
                         <AnimatePresence mode="wait">
@@ -515,7 +522,9 @@ export default function StudentProfilePage() {
                                     transition={{ duration: 0.2 }}
                                     className="space-y-6"
                                 >
-                                    <ApplicationCreate applicationData={applications} />
+                                    <ApplicationCreate applicationData={applications} countriesList={countriesList} user={userDetails} />
+
+                                    
                                 </motion.div>
                             )}
 
@@ -533,10 +542,14 @@ export default function StudentProfilePage() {
                                     }}
                                 />
                             )}
+
+
                         </AnimatePresence>
                     </div>
                 </div>
             </div>
         </div>
+
+       
     );
 }

@@ -189,13 +189,13 @@ export default async function RootLayout({
           />
         </GlobalProvider>
 
-          <Script id="disable-right-click" strategy="afterInteractive">
+          {/* <Script id="disable-right-click" strategy="afterInteractive">
           {`
             document.addEventListener("contextmenu", function(e) {
               e.preventDefault();
             });
           `}
-        </Script>
+        </Script> */}
       </body>
     </html>
   );
