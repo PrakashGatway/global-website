@@ -24,6 +24,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: scholarshipData.seoTitle || `${scholarshipData.name || "Scholarship"} Details`,
       description: scholarshipData.seoDescription || "View details and eligibility criteria for this scholarship.",
       keywords: scholarshipData.seoKeyword || "",
+      alternates: {
+        canonical: `https://ooshasglobal.com/scholarships/${slug}`,
+      },
+      robots: {
+        index: true,
+        follow: true,
+      }
     };
   } catch (error) {
     return {

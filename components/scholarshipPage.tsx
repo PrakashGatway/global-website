@@ -199,7 +199,7 @@ export default function ScholarshipPage({
   return (
     <main className="bg-[#FAFAF9] text-neutral-900 antialiased">
       {/* ───── HERO ───── */}
-      <section className="relative h-80 md:h-90 overflow-hidden">
+      <section className="relative h-70 md:h-90 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center will-change-transform"
           style={{
@@ -208,7 +208,7 @@ export default function ScholarshipPage({
             transition: "transform 0.1s linear",
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
 
         <div className="relative z-10 max-w-7xl px-4 mx-auto h-full flex flex-col justify-end pb-10">
           <Reveal delay={100}>
@@ -232,7 +232,7 @@ export default function ScholarshipPage({
           </Reveal>
 
           <Reveal delay={200}>
-            <h1 className="text-2xl md:text-4xl lg:text-5xl font-medium text-white tracking-tight leading-[1.15] max-w-4xl">
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-semibold text-white tracking-tight leading-[1.15] max-w-4xl">
               {scholarship?.title}
             </h1>
           </Reveal>
@@ -697,7 +697,7 @@ export default function ScholarshipPage({
                           className="group flex border border-gray-200 bg-white hover:border-orange-300 hover:shadow-md transition-all"
                         >
                           <img
-                            src={item.image || "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=300&auto=format&fit=crop&q=80"}
+                            src={item.cover_photo || "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=300&auto=format&fit=crop&q=80"}
                             alt={item.title}
                             className="w-26 h-26 object-cover flex-shrink-0"
                           />

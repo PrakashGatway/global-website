@@ -190,24 +190,34 @@ const InnerContent = ({ cleanedHtml }: InnerContentProps) => {
   overflow: hidden;
   border-radius: 10px;
   border-collapse: collapse;
-  border: 1px solid #000000;
+  // border: 1px solid #000000 !important;
 }
 
 .blog-html thead {
-  background: #edb4a2;
+  background: #F36D45;
+  color: #fff;
+}
+  .blog-html thead * {
+  color: #fff;
 }
 
 .blog-html th {
-  color: #fbfbfb !important;
+  color: #1C2E5A !important;
   padding: 14px;
   text-align: left;
   font-size: 16px;
+  border: 1px solid #d1d5db;
   font-weight: 700;
 }
 
 .blog-html td {
-  padding: 13px;
-  border-top: 1px solid #e5e7eb;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 16px;
+}
+
+.blog-html td * {
+  font-size: 16px;
 }
 
 .blog-html tbody tr:nth-child(even) {
@@ -292,14 +302,16 @@ const InnerContent = ({ cleanedHtml }: InnerContentProps) => {
 }
 
 /* Mobile */
+
+/* Mobile */
 @media (max-width:768px){
 
-.blog-html{
-  font-size:16px;
+.blog-html * {
+  font-size:15px;
 }
 
-.blog-html p{
-  font-size:16px;
+.blog-html p *{
+  font-size:15px;
 }
 
 .blog-html h1{
@@ -307,11 +319,18 @@ const InnerContent = ({ cleanedHtml }: InnerContentProps) => {
 }
 
 .blog-html h2{
-  font-size:28px;
+  font-size:20px;
+}
+
+.blog-html h2 *{
+  font-size:20px;
 }
 
 .blog-html h3{
-  font-size:23px;
+  font-size:18px;
+}
+.blog-html h3 *{
+  font-size:18px;
 }
 
 .blog-html h4{
@@ -322,6 +341,9 @@ const InnerContent = ({ cleanedHtml }: InnerContentProps) => {
   display:block;
   overflow-x:auto;
   white-space:nowrap;
+}
+.blog-html table *{
+  font-size:12px;
 }
 
 .blog-html iframe{

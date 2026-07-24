@@ -148,9 +148,10 @@ const HeroSection = ({ data, alldata }) => {
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/20 to-black/0 backdrop-blur-[2px]" />
 
-      <div className="relative px-5 lg:px-16 py-14 lg:py-10">
+      <div className="relative px-3 lg:px-16 pt-10">
         <div className="grid lg:grid-cols-[1fr_1fr] gap-12 items-center">
           {/* Left Content */}
+          <div className="relative z-10 pt-6 pb-16">
           <div className="bg-black/45 backdrop-blur-[5px] border border-white/10 shadow-2xl p-7 sm:p-10 lg:p-6 w-full">
             <h1 className="text-4xl sm:text-5xl lg:text-4xl font-black  text-white w-full">
              <Tag 
@@ -177,12 +178,14 @@ const HeroSection = ({ data, alldata }) => {
                 </div>
           </div>
 
+          </div>
+
           {/* Right Image */}
-          <div className="flex justify-center">
+          <div className="flex min-h-[300px] md:min-h-[500px] h-full w-full relative justify-center">
             <img
               src={data?.heroImage}
               alt="Bangalore Landmark"
-              className="w-full max-w-[540px] lg:h-130 object-cover drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)] animate-[float_5s_ease-in-out_infinite]"
+              className="absolute bottom-0 right-0 w-full max-w-[540px]  lg:h-130 object-fit "
             />
           </div>
         </div>
