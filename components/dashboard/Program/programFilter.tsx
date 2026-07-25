@@ -305,7 +305,7 @@ export default function ProgramFilters({
     setAboveFee(false);
   };
 
-  console.log(filters.otherExam)
+  
 
   // 2. CHANGED FilterContent to a regular function that returns JSX
   // We call it as {renderFilterContent()} instead of <FilterContent />

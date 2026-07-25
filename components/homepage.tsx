@@ -828,9 +828,9 @@ export default function Homepage({
         </div>
       </section>
 
-      <section className="lg:py-5 overflow-hidden bg-[#faf5f2]">
+      <section className="lg:py-14 overflow-hidden bg-[#faf5f2]">
         <div className="max-w-7xl mx-auto overflow-hidden ">
-          <div className=" lg:py-5 text-left">
+          <div className="  text-left">
             <h2 className="text-xl ">
               <span className="text-[#F46C44] lg:text-4xl font-light">
                 {homePage?.topUniversities?.title?.split("||")[0]?.trim()}
@@ -885,7 +885,7 @@ export default function Homepage({
         </div>
       </section>
 
-     <SingleSlider/>
+    <div className="lg:my-14"> <SingleSlider/></div>
 
       <section className="bg-[#faf5f2] py-5 lg:py-5 px-4 lg:px-0 ">
         {/* Heading */}

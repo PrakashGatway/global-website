@@ -88,6 +88,7 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
     }
   }, [isEditing, user, profile]);
 
+  console.log(formData)
 
   return (
     <div className="bg-white border-2 border-gray-200 overflow-hidden">
@@ -901,6 +902,8 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
     // Clear errors when data reloads
     setErrors({});
   }, [user, profile]);
+
+  
 
   const validatePersonalInfo = () => {
     const newErrors: Record<string, string> = {};

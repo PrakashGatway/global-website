@@ -3,16 +3,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import axiosInstance from "@/app/axiosInstance";
 import Select from "react-select";
 
-const FilterDrawer = ({ 
-  isOpen, 
+const FilterDrawer = ({isOpen, 
   onClose, 
   filters, 
   setFilters, 
   onApply, 
   countryRes, 
   universities, 
-  user 
-}) => {
+  user,handleApply}) => {
   
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -78,10 +76,7 @@ const FilterDrawer = ({
   };
 
   // Apply button handler - sends data back to parent
-  const handleApply = () => {
-    onApply(filters);
-    onClose();
-  };
+
 
   // --- OPTIONS ---
   const studyModes = ["Full Time", "Part Time", "Online", "Hybrid"];
@@ -144,6 +139,7 @@ const FilterDrawer = ({
 
   // --- SAVE PREFERENCES LOGIC ---
   const applyPreference = () => {
+   
     const profile = user?.profile;
     if (!profile) return;
 
@@ -153,19 +149,16 @@ const FilterDrawer = ({
 
     // 1. Countries Mapping
     const preferredCountries = prefs.preferredCountries || [];
-    const countryCodes = (countryRes || [])
-      .filter((c) => preferredCountries.includes(c.label))
-      .map((c) => c.value);
+    const countryCodes = (preferredCountries || [])
+     
 
     // 2. Categories Mapping
-    const preferredCategories = prefs.preferredCourse || [];
-    const categoryIds = (categoryOptions || [])
-      .filter((c) =>
-        preferredCategories.some(
-          (item) => item.trim().toLowerCase() === c.label?.trim()?.toLowerCase()
-        )
-      )
-      .map((c) => c.value);
+    const preferredCategories = (prefs.preferredCourse || []).map(
+  (item) => item.charAt(0).toUpperCase() + item.slice(1)
+);
+   const categoryIds = (preferredCategories || [])
+ 
+      
 
     // 3. Level
     const levelFilter = prefs.level ? [prefs.level] : [];
@@ -176,11 +169,13 @@ const FilterDrawer = ({
 
     // 5. Education Scores
     const ug = educationHistory.find(
-      (item) => item.educationLevel === "Undergraduate"
+      (item) => item.educationLevel === "Grade 10"
     );
     const grade12 = educationHistory.find(
       (item) => item.educationLevel === "Grade 12"
     );
+
+    console.log(ug,"hjk")
 
     // 6. Work Experience Calculation
     const totalMonths = workExperience.reduce((total, job) => {
@@ -203,6 +198,7 @@ const FilterDrawer = ({
         return {};
       }
     };
+
 
     const ieltsData = parseExam(profile.ielts);
     const toeflData = parseExam(profile.toefl);
@@ -280,6 +276,8 @@ const FilterDrawer = ({
       };
     }
 
+   
+
     // Update parent filters with all mapped preferences
     setFilters((prev) => ({
       ...prev,
@@ -288,13 +286,15 @@ const FilterDrawer = ({
       level: levelFilter,
       minFee,
       maxFee,
-      ugScore: ug?.percentage?.toString() || "",
-      twelfthScore: grade12?.percentage?.toString() || "",
+      scoreUG: ug?.percentage?.toString() || "",
+      score12th: grade12?.percentage?.toString() || "",
       workExperience: totalExperience.toString(),
       englishScore,
       otherExam,
     }));
   };
+
+  console.log(filters)
 
   return (
     <AnimatePresence>
@@ -327,7 +327,7 @@ const FilterDrawer = ({
                   disabled={isSaving}
                   className="px-4 py-2 text-sm font-medium text-orange-600 border border-orange-500 rounded-md hover:bg-orange-50 transition-colors disabled:opacity-50"
                 >
-                  {isSaving ? "Saving..." : "Save Preferences"}
+                  {isSaving ? "Saving..." : "Load Preferences"}
                 </button>
                 <button
                   onClick={onClose}
@@ -397,7 +397,7 @@ const FilterDrawer = ({
                 >
                   <option value="">Select category</option>
                   {categoryOptions?.map((opt) => (
-                    <option key={opt._id || opt.name} value={opt._id || opt.name}>
+                    <option key={opt._id || opt.name} value={ opt.name}>
                       {opt.name}
                     </option>
                   ))}
@@ -642,9 +642,9 @@ const FilterDrawer = ({
                     <button
                       key={level}
                       type="button"
-                      onClick={() => toggleArrayFilter("programLevel", level)}
+                      onClick={() => toggleArrayFilter("level", level)}
                       className={`w-full px-3 py-2 text-left text-sm rounded border transition-colors ${
-                        filters.programLevel.includes(level)
+                        filters.level.includes(level)
                           ? "bg-orange-50 border-orange-500 text-orange-700"
                           : "border-gray-200 text-gray-700 hover:border-gray-300"
                       }`}
@@ -659,14 +659,14 @@ const FilterDrawer = ({
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="text-xs font-medium text-gray-700">Tuition Fees</label>
-                  <span className="text-orange-600 font-medium">₹ {filters.tuitionFees.toLocaleString()}</span>
+                  <span className="text-orange-600 font-medium">₹ {filters.maxFee.toLocaleString()}</span>
                 </div>
                 <input
                   type="range"
                   min="0"
                   max="5000000"
                   step="100000"
-                  value={filters.tuitionFees}
+                  value={filters.maxFee}
                   onChange={(e) => handleChange("tuitionFees", Number(e.target.value))}
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500"
                 />

@@ -197,7 +197,7 @@ export default function StudentProfilePage() {
                 ]);
                 setUserDetails(userRes.data)
 
-                setUser(userRes.data.data && userRes.data);
+                setUser(userRes.data.data || userRes.data);
                 setProfile(userRes.data.data?.profile || userRes.data?.profile);
                 setApplications(applicationsRes.data.data || applicationsRes.data || []);
                 setCountriesList(countriesRes.data.data || []);
@@ -270,20 +270,25 @@ export default function StudentProfilePage() {
         );
     }
 
-    const InfoRow = ({ icon, label, value }: any) => (
-        <div className="flex items-center gap-1">
-            <div className="w-8 h-8 flex items-center justify-center shrink-0 text-gray-500">
-                {icon}
-            </div>
+   const InfoRow = ({ icon, label, value }: any) => (
+  <div className="flex items-center gap-2 py-0.5">
+    {/* Icon */}
+    <div className="w-6 h-6 flex items-center justify-center shrink-0 text-gray-500 [&>svg]:w-5 [&>svg]:h-5">
+      {icon}
+    </div>
 
-            <div className="flex items-center gap-2  min-w-0">
-                <p className="text-sm text-gray-500">{label} : </p>
-                <p className="text-sm font-medium text-gray-800 break-words">
-                    {value || "N/A"}
-                </p>
-            </div>
-        </div>
-    );
+    {/* Content */}
+    <div className="flex items-center gap-1.5 min-w-0">
+      <span className="text-sm text-gray-500 whitespace-nowrap">
+        {label} :
+      </span>
+
+      <span className="text-sm font-medium text-gray-900 truncate">
+        {value || "N/A"}
+      </span>
+    </div>
+  </div>
+);
 
     const displayValue = (value) => {
         if (

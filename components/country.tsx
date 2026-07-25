@@ -27,7 +27,7 @@ import VisaDetails from './dashboard/VisaDetails/visaDetails'
 const HeroSection = ({ data, alldata }) => {
   if (data?.isHidden === "yes") return null
   
-  
+  console.log(alldata?.isCity)
 
   return alldata?.isCity === "No" ? (
   <section className="block overflow-hidden">
@@ -148,10 +148,10 @@ const HeroSection = ({ data, alldata }) => {
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/20 to-black/0 backdrop-blur-[2px]" />
 
-      <div className="relative px-3 lg:px-16 pt-10">
-        <div className="grid lg:grid-cols-[1fr_1fr] gap-12 items-center">
+      <div className="relative px-3 lg:px-24 pt-10">
+        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-12 items-center">
           {/* Left Content */}
-          <div className="relative z-10 pt-6 pb-16">
+          <div className="relative z-10 pt-6 pb-16  ">
           <div className="bg-black/45 backdrop-blur-[5px] border border-white/10 shadow-2xl p-7 sm:p-10 lg:p-6 w-full">
             <h1 className="text-4xl sm:text-5xl lg:text-4xl font-black  text-white w-full">
              <Tag 
@@ -185,7 +185,7 @@ const HeroSection = ({ data, alldata }) => {
             <img
               src={data?.heroImage}
               alt="Bangalore Landmark"
-              className="absolute bottom-0 right-0 w-full max-w-[540px]  lg:h-130 object-fit "
+              className="absolute bottom-0 right-0 w-full max-w-[540px]  lg:h-130 object-cover "
             />
           </div>
         </div>
