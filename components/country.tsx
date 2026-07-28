@@ -26,187 +26,79 @@ import VisaDetails from './dashboard/VisaDetails/visaDetails'
 
 const HeroSection = ({ data, alldata }) => {
   if (data?.isHidden === "yes") return null
-  
-  console.log(alldata?.isCity)
-
-  return alldata?.isCity === "No" ? (
-  <section className="block overflow-hidden">
-      <div className="w-full py-10 min-h-[80vh] relative flex items-center justify-center">
-        {/* Background with blur */}
-        <div
-          className="absolute inset-0 -z-10"
-          style={{
-            backgroundImage: `url(${data?.heroImagee || "/images/country-bg.jpeg"})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            filter: "blur(3px)",
-            transform: "scale(1.1)",
-          }}
-        />
-        
-        {/* Overlay tint */}
+  // //console.log('hero d',data)
+  return (
+    <section className="block overflow-hidden">
+      <div
+        className="w-full h-auto py-18  relative flex items-center justify-center"
+        style={{
+          backgroundImage: `url(${data?.heroImagee || "/images/country-bg.jpeg"})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Overlay tint for readability on all screens */}
         <div className="absolute inset-0 bg-black/30 lg:bg-transparent z-0" />
-        
-        <div className="relative z-10 w-full h-full flex flex-col justify-center max-w-[1440px]">
-          <div className="w-full px-2 sm:px-8 lg:px-10 py-8 sm:py-1">
-            {/* Main content area */}
-            <div className="max-w-7xl w-full lg:w-[50%] mx-auto lg:mx-0 px-4 sm:px-6">
+
+        <div className="relative  z-10 w-full h-full flex flex-col justify-center  max-w-[1440px] ">
+          <div className="w-full px-4 sm:px-8 lg:px-10 py-8 sm:py-10 ">
+
+            {/* Balloon — positioned absolutely only on lg+ */}
+            <div className="absolute right-2 top-4 sm:right-6 sm:top-8 lg:left-auto lg:right-auto lg:top-auto z-20"
+              style={{
+                "right": "2rem"
+              }}
+            >
+              <Balloon Pageres={alldata} />
+            </div>
+
+            {/* Content card — full width on mobile, 60% on sm, 48% on lg */}
+            <div className=" max-w-7xl  bg-black/50 w-full sm:w-4/5 md:w-3/5 lg:w-[48%] flex items-center
+             py-5 px-4 sm:px-6  rounded-2xl">
               <div className="w-full">
-                {/* Title */}
-                <Tag 
-                  data={data?.tag}
-                  css={"text-3xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-4 leading-relaxed"}
-                  text={data?.title} 
-                />
-                
-                {/* Subtitle */}
+                <Tag data={data?.tag}
+                  css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight"}
+                  text={data?.title} />
+                {/* <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight">
+                  {data?.title || "Study in Germany"}
+                </h1> */}
                 <span
-                  className="p-0 mt-2 text-white text-base [&_div]:p-2 [&_p]:py-1 [&_*]:rounded-none tracking-normal [&_*]:text-white [&_*]:!text-base [&_*]:!font-medium [&_*]:m-0 [&_*]:py-1 [&_h1]:text-3xl [&_*]:grid-cols-1 sm:[&_*]:grid-cols-2 [&_h1]:font-bold [&_h1]:mb-2 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_li]:gap-1 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_strong]:font-semibold [&_em]:italic ul:!gap-2"
+                  className="text-white text-sm sm:text-base leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
                 />
-                
                 <div className="flex xs:flex-col flex-row flex-wrap gap-3 mt-5">
-                  <a href={data?.ctaLink1 || "/contact"} className="w-full sm:w-auto">
-                    <button className="bg-[#f46c44] hover:bg-primary hover:text-white hover:scale-105 transition duration-300 px-5 py-3 flex items-center justify-center gap-2 font-bold text-gray-900 text-xs sm:text-sm shadow-lg cursor-pointer w-full">
+                  <a href={data?.ctaLink1 || "/contact"}>
+                    <button className="bg-yellow-400 hover:bg-[#f46c44] hover:text-white hover:scale-105 transition duration-300 rounded-full px-5 py-3 flex items-center gap-2 font-bold text-gray-900 text-xs sm:text-sm shadow-lg cursor-pointer w-full xs:w-auto">
                       <PhoneIcon size={18} />
                       <span>{data?.ctaText1 || "Talk to an Expert Counsellor for FREE"}</span>
                     </button>
                   </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Form - Now responsive */}
-            <div className="w-full max-w-[370px] mx-auto mt-8 lg:absolute lg:right-10 lg:top-15 lg:mt-0">
-              <div className="relative">
-                {/* Glass Background */}
-                <div className="absolute inset-0 bg-black/40 backdrop-blur-sm border border-white/10 "></div>
-                
-                <div className="relative p-6">
-                  {/* Header with flag */}
-                  <div className="relative flex items-center justify-center mb-4">
-                    <h3 className="text-white text-lg font-semibold">
-                      Contact us
-                    </h3>
-                    {alldata?.country?.flg && (
-                      <img
-                        src={alldata.country.flg}
-                        alt={alldata?.country?.name || "Country flag"}
-                        className="absolute right-0 -top-3 w-16 h-11 object-cover rounded-md shadow-lg border border-white"
-                      />
-                    )}
-                  </div>
-
-                  {/* Form */}
-                  <div className="space-y-2">
-                    <input
-                      type="text"
-                      placeholder="Your Name"
-                      className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
-                    />
-                    <input
-                      type="tel"
-                      placeholder="Your Mobile"
-                      className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
-                    />
-                    <input
-                      type="email"
-                      placeholder="Your Email"
-                      className="w-full h-10 rounded-md bg-white px-5 text-gray-700 placeholder:text-gray-500 outline-none border-0"
-                    />
-                    <button className="w-full h-10 mt-3 rounded-md bg-[#FF6B3D] hover:bg-[#f75d2d] text-white font-semibold text-lg transition">
-                      Submit &gt;
+                  <a href={data?.ctaLink2 || "/contact"}>
+                    <button className="bg-[#f46c44] hover:bg-yellow-400 hover:text-black hover:scale-105 transition duration-300 rounded-full px-5 py-3 flex items-center gap-2 font-bold text-white text-xs sm:text-sm shadow-lg cursor-pointer w-full xs:w-auto">
+                      <PhoneIcon size={18} />
+                      <span>{data?.ctaText2 || "Talk to an Expert Counsellor for FREE"}</span>
                     </button>
-                  </div>
+                  </a>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Hero character image - responsive */}
-        <div className="hidden lg:block absolute bottom-0 left-[40%] w-[200px] sm:w-[250px] lg:w-[400px] xl:w-[500px] pointer-events-none z-0">
+        {/* Hero character image — visible from md upward */}
+        <div className="hidden md:block absolute bottom-0 right-0 w-[340px] lg:w-[600px] xl:w-[750px] z-10 pointer-events-none">
           <img
             src={data?.heroImage || "/images/country-hero.png"}
-            className="w-full h-full object-contain opacity-80 lg:opacity-100"
-            alt="Hero character"
+            className="w-full h-full object-contain"
+            alt=""
           />
         </div>
       </div>
     </section>
-    ) : (
-       <section className="relative overflow-hidden ">
-      {/* Background */}
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "url('/bg-city.webp')",
-        }}
-      />
-
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/20 to-black/0 backdrop-blur-[2px]" />
-
-      <div className="relative px-3 lg:px-24 pt-10">
-        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-12 items-center">
-          {/* Left Content */}
-          <div className="relative z-10 pt-6 pb-16  ">
-          <div className="bg-black/45 backdrop-blur-[5px] border border-white/10 shadow-2xl p-7 sm:p-10 lg:p-6 w-full">
-            <h1 className="text-4xl sm:text-5xl lg:text-4xl font-black  text-white w-full">
-             <Tag 
-                  data={data?.tag}
-                  css={"text-3xl sm:text-3xl md:text-4xl lg:text-4xl font-bold mb-4 leading-relaxed"}
-                  text={data?.title} 
-                />
-            </h1>
-
-              <span
-                  className="p-0 text-white text-base [&_div]:p-2 [&_p]:py-1 [&_*]:rounded-none tracking-normal [&_*]:text-white [&_*]:!text-base [&_*]:!font-medium [&_*]:m-0 [&_*]:py-1 [&_h1]:text-3xl [&_*]:grid-cols-1 sm:[&_*]:grid-cols-2 [&_h1]:font-bold [&_h1]:mb-2 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3 [&_li]:gap-1 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-2 [&_strong]:font-semibold [&_em]:italic ul:!gap-2"
-                  dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
-                />
-
-
-
-            <div className="flex xs:flex-col flex-row flex-wrap gap-3 mt-5">
-                  <a href={data?.ctaLink1 || "/contact"} className="w-full sm:w-auto">
-                    <button className="bg-[#f46c44] hover:bg-primary hover:text-white hover:scale-105 transition duration-300 px-5 py-3 flex items-center justify-center gap-2 font-bold text-gray-900 text-xs sm:text-sm shadow-lg cursor-pointer w-full">
-                      <PhoneIcon size={18} />
-                      <span>{data?.ctaText1 || "Talk to an Expert Counsellor for FREE"}</span>
-                    </button>
-                  </a>
-                </div>
-          </div>
-
-          </div>
-
-          {/* Right Image */}
-          <div className="flex min-h-[300px] md:min-h-[500px] h-full w-full relative justify-center">
-            <img
-              src={data?.heroImage}
-              alt="Bangalore Landmark"
-              className="absolute bottom-0 right-0 w-full max-w-[540px]  lg:h-130 object-cover "
-            />
-          </div>
-        </div>
-      </div>
-
-      <style jsx>{`
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-14px);
-          }
-        }
-      `}</style>
-    </section>
-    )
-  
-  
+  )
 }
+
+
 const FormSection = ({ data }) => {
   if (data?.isHidden === "yes") return null;
 
