@@ -748,7 +748,7 @@ export default function Homepage({
 </section> */}
 
       <section
-        className="bg-white relative overflow-hidden w-full py-12 sm:py-5 "
+        className="bg-white relative overflow-hidden w-full py-6 sm:py-5 "
       >
         <div className="absolute -right-20 top-[0%] opacity-30 pointer-events-none hidden lg:block"></div>
 
@@ -794,7 +794,7 @@ export default function Homepage({
                 className="text-left lg:text-left"
               >
                 <span
-                  className="text-lg sm:text-3xl lg:text-4xl font-bold leading-tight mb-3"
+                  className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight lg:mb-3"
                 >
 
                   <NewTag
@@ -810,7 +810,7 @@ export default function Homepage({
                 </span>
 
                 <span
-                  className="text-sm font-medium sm:text-base text-gray-600 mb-6 leading-relaxed mx-auto lg:mx-0"
+                  className="text-base  font-medium sm:text-base text-gray-600 mb-6 leading-relaxed mx-auto lg:mx-0 "
                   dangerouslySetInnerHTML={{
                     __html: homePage?.trustedPartners?.subtitle
                   }}
@@ -828,15 +828,15 @@ export default function Homepage({
         </div>
       </section>
 
-      <section className="lg:py-14 overflow-hidden bg-[#faf5f2]">
+      <section className="lg:py-14 px-4 lg:px-0 overflow-hidden bg-[#faf5f2]">
         <div className="max-w-7xl mx-auto overflow-hidden ">
-          <div className="  text-left">
+          <div className="py-4 lg:py-4  text-left">
             <h2 className="text-xl ">
               <span className="text-[#F46C44] lg:text-4xl font-light">
                 {homePage?.topUniversities?.title?.split("||")[0]?.trim()}
               </span>{" "}
 
-              <br />  <span className="text-primary font-bold relative lg:text-4xl">
+              <br />  <span className="text-primary font-bold relative text-2xl lg:text-4xl">
                 {homePage?.topUniversities?.title?.split("||")[1]?.trim()}
               </span>
             </h2>
@@ -889,9 +889,9 @@ export default function Homepage({
 
       <section className="bg-[#faf5f2] py-5 lg:py-5 px-4 lg:px-0 ">
         {/* Heading */}
-        <div className="text-left  max-w-7xl mx-auto py-5">
+        <div className="text-left  max-w-7xl mx-auto py-4">
           <h2 className="text-primary">
-            <span className="text-[#F46C44] font-light  text-xl lg:text-4xl">
+            <span className="text-[#F46C44] font-light  text-2xl lg:text-4xl">
               {homePage.studyDestinations.title.split("||")[0]}
             </span>
             <br />  <span className="font-bold text-xl lg:text-4xl relative">
@@ -1043,9 +1043,9 @@ export default function Homepage({
       <section className="w-full py-12 lg:py-5 px-4 md:px-0 bg-white">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="text-left lg:py-5">
+          <div className="text-left lg:py-4">
             <h2 className="text-primary">
-              <span className="font-light  text-3xl lg:text-4xl mb-2 text-[#F46C44]">
+              <span className="font-light  text-2xl lg:text-4xl mb-2 text-[#F46C44]">
                 {homePage?.serviceSection?.title.split("||")[0]}
               </span>
               <br /> <span className="font-bold text-2xl lg:text-4xl">
@@ -1055,7 +1055,7 @@ export default function Homepage({
           </div>
 
           {/* Steps Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-4 py-4">
             {homePage?.serviceSection?.services?.map((service) => (
               <div
                 key={service.title}
@@ -1102,11 +1102,11 @@ export default function Homepage({
 
       <div className="py-5 ">
         <div className="bg-[#F46C44]">
-          <h2 className=" max-w-7xl mx-auto  text-primary text-white lg:py-5 px-4 lg:px-0">
-            <span className=" font-light block text-xl lg:text-4xl">
+          <h2 className=" max-w-7xl mx-auto  text-primary text-white py-4 lg:py-5 px-4 lg:px-0">
+            <span className=" font-light block text-2xl lg:text-4xl">
               {homePage?.topUniversity?.title.split("||")[0]}
             </span>
-            <span className="font-bold text-xl lg:text-5xl relative">
+            <span className="font-bold text-2xl lg:text-5xl relative">
               {" "}
               {homePage?.topUniversity?.title.split("||")[1]}
             </span>
@@ -1117,7 +1117,7 @@ export default function Homepage({
 
       <section className="py-5 px-2 lg:px-0 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 lg:px-0">
-          <h2 className=" text-xl   py-5 ">
+          <h2 className=" text-2xl   py-5 ">
             <span className="text-[#F46C44] lg:text-4xl font-light">
               {homePage?.blogs?.title.split("||")[0]}
             </span>{" "}
@@ -1132,7 +1132,7 @@ export default function Homepage({
           <div ref={sliderRefblog} className="keen-slider relative z-[10]">
             {blogres.length > 0 ? (
               blogres.map((post) => (
-                <div key={post._id} className="keen-slider__slide px-2">
+                <div key={post._id} className="keen-slider__slide">
                   {/* 🔴 SAME CARD UI */}
                   <div
                     className="

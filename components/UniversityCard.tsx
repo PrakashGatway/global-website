@@ -35,7 +35,7 @@ export default function UniversityCard({ university, bgcolor = "bg-white", perVi
           slides: { perView: 2, spacing: 24 },
         },
         "(max-width: 768px)": {
-          slides: { perView: 1, spacing: 8 },
+          slides: { perView: 1, spacing: 8},
         },
       },
 
@@ -93,10 +93,10 @@ export default function UniversityCard({ university, bgcolor = "bg-white", perVi
   return (
     <div
       ref={sliderRef}
-      className="keen-slider max-w-7xl mx-auto  px-2 md:px-0 "
+      className="keen-slider max-w-7xl mx-auto  pr-8 md:px-0 "
     >
       {universities?.map((uni, index) => { 
-        console.log(uni)
+       
         return (
         
          <div

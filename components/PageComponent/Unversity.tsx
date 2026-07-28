@@ -210,7 +210,7 @@ export const CountryCardGrid = ({ countries }: { countries: any[] }) => {
   if (!mappedCountries.length) return null;
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 lg:px-0 lg:py-5 bg-[#faf5f2]">
+    <div className="w-full max-w-7xl mx-auto px-0 lg:px-0 lg:py-5 bg-[#faf5f2]">
       {/* Mobile View */}
       <div className="lg:hidden">
         <div className="grid grid-cols-2 gap-3 sm:gap-4">

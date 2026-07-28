@@ -42,20 +42,20 @@ export default function VisaDetails() {
             <section className="py-5">
                 <div className="max-w-7xl mx-auto px-4 md:px-0">
                     <div className="text-left py-5">
-                        <h2 className=" text-[#F26B3A] lg:text-4xl font-light">
+                        <h2 className=" text-[#F26B3A] text-2xl lg:text-4xl font-light">
                             Our Student
                             {" "}
                           <br />  <span className="text-primary font-bold">
                                 Visa Approvals
                             </span>
                         </h2>
-                        <p className="mt-2 text-lg text-gray-700">
+                        <p className="mt-2 text-base lg:text-lg text-gray-700">
                             Real Students. Real Visas. Real Success Stories.
                         </p>
                     </div>
                 </div>
 
-                <div className="bg-[#faf5f2] w-full p-8">
+                <div className="bg-[#faf5f2] w-full p-4">
                     <div className="max-w-7xl mx-auto">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ">
                             {visaCards.map((item) => (

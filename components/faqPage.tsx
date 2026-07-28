@@ -9,20 +9,20 @@ const FAQSection = ({ Faqres }) => {
   };
 
   return (
-    <section className="py-5 max-w-7xl mx-auto    ">
+    <section className="py-5 max-w-7xl mx-auto px-4   ">
       <div className="container   ">
         {/* Header */}
         <div className="text-justify py-5    ">
           <h2 className="text-3xl text-gray-900">
-            <span className='text-xl lg:text-4xl font-light text-[#F46C44] '>Frequently</span>{" "}
-            <br /><span className=' text-xl lg:text-4xl text-primary font-bold relative'>Asked Questions
+            <span className='text-2xl lg:text-4xl font-light text-[#F46C44] '>Frequently</span>{" "}
+            <br /><span className=' text-2xl lg:text-4xl text-primary font-bold relative'>Asked Questions
             </span>
           </h2>
         </div>
 
         {/* FAQ Grid */}
         <div className="max-w-7xl mx-auto">
-          <div className="space-y-3">
+          <div className="space-y-2">
             {Faqres && Faqres.length > 0 && (Faqres || []).map((faq, index) => (
               <div
                 key={faq._id || index}
@@ -32,7 +32,7 @@ const FAQSection = ({ Faqres }) => {
                   onClick={() => toggleFAQ(index)}
                   className="w-full px-4 lg:px-6 text-left flex justify-between items-center focus:outline-none  focus:ring-opacity-50 rounded-xl"
                 >
-                  <div className=" text-sm lg:text-lg font-medium text-gray-900 pr-4" dangerouslySetInnerHTML={{__html :faq.question}}/>
+                  <div className=" text-base lg:text-lg font-medium text-gray-900 pr-4" dangerouslySetInnerHTML={{__html :faq.question}}/>
                  
                   <svg
                     className={`w-6 h-6 text-primary-600 flex-shrink-0 transform transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''
@@ -54,8 +54,8 @@ const FAQSection = ({ Faqres }) => {
                   className={`overflow-hidden transition-all duration-300 ${openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                     }`}
                 >
-                  <div className="px-6  ">
-                    <div className="text-black text-xs lg:text-base " dangerouslySetInnerHTML={{__html :faq.answer}}/>
+                  <div className="px-4  ">
+                    <div className="text-black text-sm lg:text-base " dangerouslySetInnerHTML={{__html :faq.answer}}/>
                   </div>
                 </div>
               </div>

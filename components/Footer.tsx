@@ -27,7 +27,7 @@ export function Footer({ Featureitem = [], Serviceitem = [], countryres = [],foo
     <>
       {/* Footer */}
       <footer className="bg-secondary pt-3 overflow-visible relative mt-5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-0 overflow-visible">
+        <div className="max-w-7xl mx-auto overflow-visible">
           
           <div className="rounded-[50px] px-6 md:px-0 pt-8 pb-12 relative">
             <div className="flex flex-col lg:flex-row">

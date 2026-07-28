@@ -48,7 +48,7 @@ export function Destinationhome({ homePage }) {
       {/* Desktop Layout */}
       <div className="flex items-stretch gap-8 xl:gap-12">
         {/* LEFT - Cards */}
-        <div className="w-full lg:w-1/2 space-y-6">
+        <div className="w-full lg:w-1/2 space-y-6 p-2 lg:p-0">
           {stepsData.map((step, i) => (
             <div
               key={i}
