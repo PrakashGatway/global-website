@@ -238,9 +238,9 @@ export default function ScholarshipPage({
           </Reveal>
 
           <Reveal delay={300}>
-            <p className="text-white text-sm md:text-base mt-2 font-light line-clamp-2">
-              {scholarship?.shortDescription}
-            </p>
+            <div className="text-white text-sm md:text-base mt-2 font-light line-clamp-2"
+            dangerouslySetInnerHTML={{__html: scholarship?.shortDescription}}
+            />
           </Reveal>
         </div>
       </section>
