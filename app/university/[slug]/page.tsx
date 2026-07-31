@@ -471,7 +471,11 @@ interface PageProps {
 }
 
 export default async function FindUniversitiesPage({ params, searchParams }: PageProps) {
+  
   const { slug } = await params;
+
+  if (slug == 'find-universities-main-page') return <NotFound />
+
   const searchParam = await searchParams;
 
   // Fetch page data
@@ -592,7 +596,7 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
       <StatsSection1 statsData={pageData?.data?.sections?.city} slug={slug} />
       <UniversityOverview pageData={pageData?.data?.sections?.universityOverview} />
       {<CTASection data={pageData?.data?.sections?.cta} />}
-    
+
       <div className='px-4'>
         <FAQSection Faqres={Faqres} />
       </div>
