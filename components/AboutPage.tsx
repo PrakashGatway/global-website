@@ -108,11 +108,11 @@ export default function AboutUsPage({ aboutData }) {
       }}>
 
         <div className="w-full max-w-7xl mx-auto grid lg:grid-cols-2  items-center ">
-          <div className="text-white space-y-6 p-6 sm:pt-0 pt-12">
-            <h1 className="text-xl lg:text-6xl font-bold text-[#f46c44] tracking-tight">
+          <div className="text-white space-y-6 p-6 sm:pt-0 pt-20">
+            <h1 className="text-2xl lg:text-6xl font-bold text-[#f46c44] tracking-tight">
               {aboutData?.title || "About"}
             </h1>
-            <p className="text-sm lg:text-lg max-w-2xl font-medium text-gray-800">
+            <p className="text-base lg:text-lg max-w-2xl font-medium text-gray-800">
               Ooshas Global: Your Launchpad to Global Education. We empower students
               to achieve their dreams of studying abroad with expert coaching for:
               IELTS, TOEFL, PTE, GRE, GMAT, SAT.
@@ -181,14 +181,14 @@ export default function AboutUsPage({ aboutData }) {
         <div className="max-w-7xl mx-auto pl-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-15 items-center">
             <div className='py-10'>
-              <h2 className=" text-xl lg:text-5xl font-bold text-gray-700 mb-6">{aboutCompanyTitle}</h2>
-              <p className="text-gray-700 text-sm lg:text-base font-medium leading-relaxed mb-10">
+              <h2 className=" text-2xl lg:text-5xl font-bold text-gray-700 mb-6">{aboutCompanyTitle}</h2>
+              <p className="text-gray-700 text-base lg:text-base font-medium leading-relaxed mb-10">
                 {aboutCompanySubtitle || "We specialize in helping students achieve their dreams of studying abroad. Our comprehensive support includes university selection, application assistance, visa guidance, and pre-departure preparation. With years of experience and a proven track record, we are committed to making your study abroad journey smooth and successful."}
               </p>
-              <p className="text-gray-700 text-sm lg:text-base font-semibold leading-relaxed mb-6">
+              <p className="text-gray-700 text-base lg:text-base font-semibold leading-relaxed mb-6">
                 Our team of experienced counselors and education experts work tirelessly to provide personalized guidance to each student, ensuring they find the perfect fit for their academic and career goals.
               </p>
-              <a href="#" className="text-sm lg:text-base font-semibold hover:opacity-80 transition inline-flex items-center gap-2" style={{ color: '#FF6B35' }}>
+              <a href="#" className="text-base lg:text-base font-semibold hover:opacity-80 transition inline-flex items-center gap-2" style={{ color: '#FF6B35' }}>
                 Read More →
               </a>
             </div>
@@ -217,13 +217,13 @@ export default function AboutUsPage({ aboutData }) {
           <div className="flex flex-col md:flex-row lg:justify-center items-start md:items-center gap-6 md:gap-12 pb-4">
 
             <div className="md:w-1/4">
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-700">
+              <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-700">
                 {missionData.title || "Our Mission"}
               </h2>
             </div>
 
             <div className="md:w-3/4">
-              <p className="text-sm sm:text-base font-semibold text-gray-600 leading-relaxed">
+              <p className="text-base sm:text-base font-semibold text-gray-600 leading-relaxed">
                 {missionData.subtitle ||
                   "To empower students worldwide by providing seamless access to international education through innovative technology and expert mentorship. We are committed to making quality education accessible to all, helping students achieve their academic and career aspirations."}
               </p>
@@ -240,13 +240,13 @@ export default function AboutUsPage({ aboutData }) {
           <div className="flex flex-col md:flex-row gap-6 md:gap-12 justify-center items-start md:items-center">
 
             <div className="md:w-1/4">
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-700">
+              <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-700">
                 {visionData.title || "Our Vision"}
               </h2>
             </div>
 
             <div className="md:w-3/4">
-              <p className="text-sm sm:text-base font-semibold text-gray-600 leading-relaxed">
+              <p className="text-base sm:text-base font-semibold text-gray-600 leading-relaxed">
                 {visionData.subtitle ||
                   "To be the most trusted global platform for student recruitment, bridging the gap between talent and opportunity. We envision a world where every student has access to world-class education opportunities, regardless of their background or location."}
               </p>
@@ -261,36 +261,23 @@ export default function AboutUsPage({ aboutData }) {
       <section className="py-12">
         <div className="max-w-7xl mx-auto ">
           <div className="mb-8">
-            <span className="bg-[#FF6B35] text-white px-6 py-3 inline-block font-bold text-xl lg:text-3xl" style={{ borderTopRightRadius: '50px' }}>What we do</span>
+            <span className="bg-[#FF6B35] text-white px-6 py-3 inline-block font-bold text-2xl lg:text-3xl" style={{ borderTopRightRadius: '50px' }}>What we do</span>
             <div className="h-1 bg-[#FF6B35] mt-0"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-2">
             {whatWeDoPoints.slice(0, 4).map((point, index) => (
               <div
                 key={index}
-                className={`group p-8 shadow-sm border border-gray-200 min-h-[280px] transition-colors duration-300 cursor-pointer ${index === 1 || index === 2
-                  ? 'bg-white hover:bg-[#4A4A4A]'
-                  : 'bg-white hover:bg-[#4A4A4A]'
-                  } ${index === 0 ? 'rounded-tr-[50px]' :
-                    index === 1 ? 'rounded-bl-[50px]' :
-                      index === 2 ? 'rounded-tr-[50px]' :
-                        'rounded-tl-[50px]'
-                  }`}
+                className={`group p-2 shadow-sm border border-gray-200 min-h-[280px] transition-colors duration-300 cursor-pointer `}
               >
                 <DynamicLucideIcon
                   name={point.icon.split("")[0].toUpperCase() + point.icon.split("").slice(1).join("")}
                   className="w-10 lg:w-16 h-16"
                 />
-                <h3 className={`font-bold text-base lg:text-2xl mb-2 transition-colors duration-300 ${index === 1 || index === 2
-                  ? 'text-[#616262] group-hover:text-white '
-                  : 'text-[#616262] group-hover:text-white'
-                  }`}>
+                <h3 className={`font-bold text-2xl lg:text-2xl mb-2 transition-colors duration-300 `}>
                   {point.title}
                 </h3>
-                <p className={`text-sm lg:text-base font-semibold leading-relaxed transition-colors duration-300 ${index === 1 || index === 2
-                  ? 'text-gray-600 group-hover:text-gray-300'
-                  : 'text-gray-600 group-hover:text-gray-300'
-                  }`}>
+                <p className={`text-base lg:text-base font-semibold leading-relaxed transition-colors duration-300 `}>
                   {point.subtitle}
                 </p>
               </div>
@@ -304,13 +291,13 @@ export default function AboutUsPage({ aboutData }) {
         <div className="max-w-7xl mx-auto px-2">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h3 className="text-xl md:text-[2.6rem] font-bold text-[#616262] ">
+              <h3 className="text-2xl md:text-[2.6rem] font-bold text-[#616262] ">
                 {storyTitle.split("||")[0]}
               </h3>
-              <h3 className="text-xl md:text-[2.6rem] font-bold mb-2 underline" style={{ color: '#FF6B35' }}>
+              <h3 className="text-2xl md:text-[2.6rem] font-bold mb-2 underline" style={{ color: '#FF6B35' }}>
                 {storyTitle.split("||")[1]}
               </h3>
-              <div className="text-gray-600 text-sm lg:text-base leading-relaxed font-semibold space-y-4">
+              <div className="text-gray-600 text-base lg:text-base leading-relaxed font-semibold space-y-4">
                 {storySubtitle.split('. ').map((sentence, index) => (
                   sentence.trim() && <p key={index}>{sentence.trim()}.</p>
                 ))}
@@ -407,7 +394,7 @@ export default function AboutUsPage({ aboutData }) {
             <h4 className="text-xl sm:text-3xl md:text-7xl font-extrabold">
               10<span className="ml-1">+</span>
             </h4>
-            <p className="text-xs sm:text-sm md:text-base xl:text-lg uppercase font-bold mt-1 md:mt-2">
+            <p className="text-base sm:text-sm md:text-base xl:text-lg uppercase font-bold mt-1 md:mt-2">
               Countries
             </p>
             <div className="absolute bottom-0 left-3 right-3 h-px bg-white"></div>
@@ -417,7 +404,7 @@ export default function AboutUsPage({ aboutData }) {
             <h4 className="text-xl sm:text-3xl md:text-7xl font-extrabold">
               900<span className="ml-1">+</span>
             </h4>
-            <p className="text-xs sm:text-sm md:text-base xl:text-lg uppercase font-bold mt-1 md:mt-2">
+            <p className="text-base sm:text-sm md:text-base xl:text-lg uppercase font-bold mt-1 md:mt-2">
               Universities
             </p>
             <div className="absolute bottom-0 left-3 right-3 h-px bg-white"></div>
@@ -427,7 +414,7 @@ export default function AboutUsPage({ aboutData }) {
             <h4 className="text-xl sm:text-3xl md:text-7xl font-extrabold">
               150k<span className="ml-1">+</span>
             </h4>
-            <p className="text-xs sm:text-sm md:text-base xl:text-lg uppercase font-bold mt-1 md:mt-2">
+            <p className="text-base sm:text-sm md:text-base xl:text-lg uppercase font-bold mt-1 md:mt-2">
               Courses
             </p>
           </div>
@@ -436,7 +423,7 @@ export default function AboutUsPage({ aboutData }) {
             <h4 className="text-xl sm:text-3xl md:text-7xl font-extrabold">
               90k<span className="ml-1">+</span>
             </h4>
-            <p className="text-xs sm:text-sm md:text-base xl:text-lg uppercase font-bold mt-1 md:mt-2">
+            <p className="text-base sm:text-sm md:text-base xl:text-lg uppercase font-bold mt-1 md:mt-2">
               Students Joined
             </p>
           </div>
@@ -444,11 +431,11 @@ export default function AboutUsPage({ aboutData }) {
 
         {/* Content */}
         <div className="w-full md:w-1/2 relative z-10">
-          <h2 className="text-xl sm:text-3xl lg:text-6xl font-bold mb-3 md:mb-4 text-[#626362]">
+          <h2 className="text-2xl sm:text-3xl lg:text-6xl font-bold mb-3 md:mb-4 text-[#626362]">
             {impactTitle}
           </h2>
 
-          <div className="text-gray-700 font-semibold text-sm sm:text-base leading-relaxed space-y-3 md:space-y-4">
+          <div className="text-gray-700 font-semibold text-base sm:text-base leading-relaxed space-y-3 md:space-y-4">
             {impactSubtitle.split(". ").map((sentence, index) =>
               sentence.trim() ? <p key={index}>{sentence.trim()}.</p> : null
             )}
@@ -462,7 +449,7 @@ export default function AboutUsPage({ aboutData }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
 
           {/* Title */}
-          <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-left text-[#626362] mb-6 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-left text-[#626362] mb-6 md:mb-12">
             {servicesTitle}
           </h2>
 
@@ -499,17 +486,17 @@ export default function AboutUsPage({ aboutData }) {
                         service.icon.charAt(0).toUpperCase() +
                         service.icon.slice(1)
                       }
-                      className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16"
+                      className="w-8 h-8 sm:w-12 sm:h-12 lg:w-16 lg:h-16"
                     />
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-700 mb-2 text-left sm:text-center">
+                  <h3 className="text-lg sm:text-lg lg:text-xl font-bold text-gray-700 mb-2 text-left sm:text-center">
                     {service.title}
                   </h3>
 
                   {/* Subtitle */}
-                  <p className="text-sm sm:text-base font-medium text-gray-700 text-left sm:text-center">
+                  <p className="text-base sm:text-base font-medium text-gray-700 text-left sm:text-center">
                     {service.subtitle}
                   </p>
 
@@ -543,7 +530,7 @@ export default function AboutUsPage({ aboutData }) {
 
             {/* Left Content */}
             <div className="w-full lg:w-35/80 text-left lg:text-left">
-              <h2 className="text-xl sm:text-3xl lg:text-6xl font-bold text-white leading-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-6xl font-bold text-white leading-tight">
                 Book Your Online <br />
                 Counselling <br />
                 Session

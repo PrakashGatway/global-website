@@ -1,3 +1,4 @@
+import { Search, User } from "lucide-react";
 import React, { useState, useMemo, useEffect } from "react";
 import Select from "react-select";
 
@@ -147,34 +148,104 @@ const otherExamOptions = [
 
 // 1. MOVED FilterSelect OUTSIDE of the main component
 const FilterSelect = ({
+  type = "select",
+
   label,
   icon: Icon,
+
+  // React Select Props
   options = [],
   value,
   onChange,
   placeholder,
   isClearable = true,
   noOptionsMessage = "No options available",
+
+  // User Search Props
+  users = [],
+  search = "",
+  setSearch,
+  filteredUsers = [],
+  setFilteredUsers,
+  showDropdown = false,
+  setShowDropdown,
+  applyPreference,
 }: any) => {
-  const selectedOption = options.find((opt: any) => opt.value === value) || null;
+
+  const userOptions = users.map((user: any) => ({
+    value: user._id,
+    label: user.name,
+    user,
+  }));
+  // ============================
+  // User Search UI
+  // ============================
+  if (type === "user") {
+    return (
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-1.5">
+          {Icon && <Icon className="w-4 h-4 text-gray-500" />}
+          <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
+            {label}
+          </label>
+        </div>
+
+        <Select
+          options={userOptions}
+          placeholder={placeholder}
+          styles={customSelectStyles}
+          isSearchable
+          getOptionLabel={(option: any) => option.user.name}
+          getOptionValue={(option: any) => option.user._id}
+          formatOptionLabel={(option: any) => (
+            <div className="flex items-center gap-3 py-1">
+              <div>
+                <div className="font-medium w-56 truncate">{option?.user?.name}<span className="test-xs">({option?.user?.email})</span></div>
+
+              </div>
+            </div>
+          )}
+          onChange={(option: any) => {
+            if (!option) return;
+
+            onChange(option.user);
+
+            if (applyPreference) {
+              applyPreference(option.user);
+            }
+          }}
+        />
+      </div>
+    );
+  }
+
+  // ============================
+  // Existing React Select
+  // ============================
+  const selectedOption =
+    options.find((opt: any) => opt.value === value) || null;
 
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center gap-1.5">
         {Icon && <Icon className="w-4 h-4 text-gray-500" />}
+
         <label className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
           {label}
         </label>
       </div>
+
       <Select
         options={options}
         value={selectedOption}
-        onChange={(option: any) => onChange(option ? option.value : "")}
+        onChange={(option: any) =>
+          onChange(option ? option.value : "")
+        }
         placeholder={placeholder}
         isClearable={isClearable}
         styles={customSelectStyles}
         noOptionsMessage={() => noOptionsMessage}
-        isSearchable={true}
+        isSearchable
         className="react-select-container"
         classNamePrefix="react-select"
       />
@@ -197,6 +268,22 @@ export default function ProgramFilters({
   setShowFilters,
   isCleared,
   setIsCleared,
+  setLoading,
+  setPage,
+  fetchCourses,
+
+  // New Props
+  profile,
+  users,
+  search,
+  setSearch,
+  filteredUsers,
+  setFilteredUsers,
+  showDropdown,
+  setShowDropdown,
+  selectedUser,
+  setSelectedUser,
+  applyPreference,
 }: any) {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
@@ -269,21 +356,11 @@ export default function ProgramFilters({
 
   // Handle Apply Filters - push all values to parent
   const handleApplyFilters = () => {
-    setFilters((prev: any) => ({
-      ...prev,
-      ugGradingSystem,
-      ugScore,
-      twelfthGradingSystem,
-      twelfthScore,
-      backlogs,
-      workExperience,
-      englishExam,
-      englishScores: JSON.stringify(scores),
-      otherExam,
-      otherExamScore,
-      minFee: aboveFee ? fee : 0,
-      maxFee: aboveFee ? "" : fee,
-    }));
+    console.log("Filters at Apply:", filters);
+
+    setLoading(true);
+    setPage(1);
+    fetchCourses(true);
 
     if (mobileDrawerOpen) {
       setMobileDrawerOpen(false);
@@ -305,7 +382,7 @@ export default function ProgramFilters({
     setAboveFee(false);
   };
 
-  
+
 
   // 2. CHANGED FilterContent to a regular function that returns JSX
   // We call it as {renderFilterContent()} instead of <FilterContent />
@@ -329,6 +406,24 @@ export default function ProgramFilters({
 
       {/* Filters Body */}
       <div className="p-3 md:p-4 flex-1 flex flex-col gap-4 overflow-y-auto">
+
+        {profile.role === "counsellor" && <FilterSelect
+          type="user"
+          label="Student"
+          icon={Search}
+          users={users}
+          search={search}
+          setSearch={setSearch}
+          filteredUsers={filteredUsers}
+          setFilteredUsers={setFilteredUsers}
+          showDropdown={showDropdown}
+          setShowDropdown={setShowDropdown}
+          onChange={(user: any) => {
+            setSelectedUser(user);
+            applyPreference(user);
+          }}
+          placeholder="Search student..."
+        />}
         {/* Country Filter */}
         <FilterSelect
           label="Country"
@@ -348,7 +443,9 @@ export default function ProgramFilters({
           icon={SchoolIcon}
           options={universities}
           value={filters.university}
-          onChange={(value: any) => handleFilterChange("university", value)}
+          onChange={(value: any) => {
+            setIsCleared(false);
+            handleFilterChange("university", value)}}
           placeholder="Select university"
         />
 
@@ -433,8 +530,11 @@ export default function ProgramFilters({
           <input
             type="number"
             placeholder="Enter"
-            value={backlogs}
-            onChange={(e) => setBacklogs(e.target.value)}
+            value={filters?.backlogs}
+            onChange={(e) => setFilters((prev)=>({
+              ...prev,
+              backlogs : e.target.value
+            }))}
             className="w-full py-2 px-4 text-base text-gray-900 bg-gray-50 border border-gray-200  placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
           />
         </div>
@@ -444,12 +544,18 @@ export default function ProgramFilters({
           <label className="text-sm font-medium text-gray-800">
             Work Experience (Years)
           </label>
+
           <input
             type="number"
             placeholder="Enter"
-            value={filters?.workExperience}
-            onChange={(e) => setFilters(e.target.value)}
-            className="w-full py-2 px-4 text-base text-gray-900 bg-gray-50 border border-gray-200  placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
+            value={filters.workExperience}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                workExperience: e.target.value,
+              }))
+            }
+            className="w-full py-2 px-4 text-base text-gray-900 bg-gray-50 border border-gray-200 placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
           />
         </div>
 
@@ -487,157 +593,154 @@ export default function ProgramFilters({
         </div>
 
         {/* English Scores Section */}
-      <div>
-  {["IELTS", "TOEFL", "PTE"].includes(filters.englishScore?.exam) && (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label className="block mb-2 text-sm font-medium">
-            Listening <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            name="listening"
-            value={filters.englishScore?.listening || ""}
-            onChange={handleScoreChange}
-            placeholder="Enter"
-            className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
-          />
-        </div>
+          {["IELTS", "TOEFL", "PTE"].includes(filters.englishScore?.exam) && (
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block mb-2 text-sm font-medium">
+                    Listening <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="listening"
+                    value={filters.englishScore?.listening || ""}
+                    onChange={handleScoreChange}
+                    placeholder="Enter"
+                    className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
+                  />
+                </div>
 
-        <div>
-          <label className="block mb-2 text-sm font-medium">
-            Reading <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            name="reading"
-            value={filters.englishScore?.reading || ""}
-            onChange={handleScoreChange}
-            placeholder="Enter"
-            className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
-          />
-        </div>
+                <div>
+                  <label className="block mb-2 text-sm font-medium">
+                    Reading <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="reading"
+                    value={filters.englishScore?.reading || ""}
+                    onChange={handleScoreChange}
+                    placeholder="Enter"
+                    className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
+                  />
+                </div>
 
-        <div>
-          <label className="block mb-2 text-sm font-medium">
-            Writing <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            name="writing"
-            value={filters.englishScore?.writing || ""}
-            onChange={handleScoreChange}
-            placeholder="Enter"
-            className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
-          />
-        </div>
+                <div>
+                  <label className="block mb-2 text-sm font-medium">
+                    Writing <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="writing"
+                    value={filters.englishScore?.writing || ""}
+                    onChange={handleScoreChange}
+                    placeholder="Enter"
+                    className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
+                  />
+                </div>
 
-        <div>
-          <label className="block mb-2 text-sm font-medium">
-            Speaking <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="number"
-            name="speaking"
-            value={filters.englishScore?.speaking || ""}
-            onChange={handleScoreChange}
-            placeholder="Enter"
-            className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
-          />
-        </div>
-      </div>
-    </div>
-  )}
+                <div>
+                  <label className="block mb-2 text-sm font-medium">
+                    Speaking <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="speaking"
+                    value={filters.englishScore?.speaking || ""}
+                    onChange={handleScoreChange}
+                    placeholder="Enter"
+                    className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
-  {["IELTS", "TOEFL", "PTE", "DET"].includes(filters.englishScore?.exam) && (
-    <div className="mt-3">
-      <label className="block text-sm font-medium">
-        Overall <span className="text-red-500">*</span>
-      </label>
-      <input
-        type="number"
-        name="overall"
-        value={filters.englishScore?.overall || ""}
-        onChange={handleScoreChange}
-        placeholder="Enter"
-        className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
-      />
-    </div>
-  )}
-</div>
+          {["IELTS", "TOEFL", "PTE", "DET"].includes(filters?.englishScore?.exam) && (
+            <div className="mt-3">
+              <label className="block text-sm font-medium">
+                Overall <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                name="overall"
+                value={filters?.englishScore?.overall || ""}
+                onChange={handleScoreChange}
+                placeholder="Enter"
+                className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm"
+              />
+            </div>
+          )}
+        </div>
 
         {/* Other Exams */}
         <div className="flex flex-col gap-2">
-  <label className="text-sm font-medium text-gray-800">
-    Other Exams
-  </label>
+          <label className="text-sm font-medium text-gray-800">
+            Other Exams
+          </label>
 
-  <Select
-    options={otherExamOptions}
-    placeholder="Select"
-    value={otherExamOptions.find(
-      (item) => item.value.toUpperCase() === filters.otherExam.exam
-    )}
-    onChange={(option: any) => {
-      const exam = option?.value?.toUpperCase() || "";
+          <Select
+            options={otherExamOptions}
+            placeholder="Select"
+            value={otherExamOptions.find(
+              (item) => item?.value?.toUpperCase() === filters?.otherExam?.exam
+            )}
+            onChange={(option: any) => {
+              const exam = option?.value?.toUpperCase() || "";
 
-      setFilters((prev: any) => ({
-        ...prev,
-        otherExam: {
-          ...prev.otherExam,
-          exam,
-        },
-      }));
-    }}
-    isClearable
-    styles={customSelectStyles}
-  />
-</div>
+              setFilters((prev: any) => ({
+                ...prev,
+                otherExam: {
+                  ...prev.otherExam,
+                  exam,
+                },
+              }));
+            }}
+            isClearable
+            styles={customSelectStyles}
+          />
+        </div>
 
         {/* Other Exam Score */}
-       <div
-  className={`transition-all duration-500 ${
-    filters.otherExam.exam
-      ? "max-h-[200px] opacity-100 translate-y-0"
-      : "max-h-0 opacity-0 -translate-y-2"
-  }`}
->
-  <div>
-    <label className="block mb-2 text-sm font-medium">
-      Overall Score <span className="text-red-500">*</span>
-    </label>
+        <div
+          className={`transition-all duration-500 ${filters?.otherExam?.exam
+            ? "max-h-[200px] opacity-100 translate-y-0"
+            : "max-h-0 opacity-0 -translate-y-2"
+            }`}
+        >
+          <div>
+            <label className="block mb-2 text-sm font-medium">
+              Overall Score <span className="text-red-500">*</span>
+            </label>
 
-    <input
-      type="number"
-      placeholder="Enter"
-      value={
-        filters.otherExam.exam === "GRE"
-          ? filters.otherExam?.overall
-          : filters.otherExam.exam === "GMAT"
-          ? filters.otherExam?.overall
-          : filters.otherExam.exam === "SAT"
-          ? filters.otherExam?.overall
-          : ""
-      }
-      onChange={(e) => {
-        const value = e.target.value;
+            <input
+              type="number"
+              placeholder="Enter"
+              value={
+  filters.otherExam.exam
+    ? filters.otherExam[
+        filters.otherExam.exam.toLowerCase()
+      ]?.overall || ""
+    : ""
+}
+              onChange={(e) => {
+                const value = e.target.value;
 
-        setFilters((prev: any) => ({
-          ...prev,
-          otherExam: {
-            ...prev.otherExam,
-            [prev.otherExam.exam.toLowerCase()]: {
-              ...prev.otherExam[prev.otherExam.exam.toLowerCase()],
-              overall: value,
-            },
-          },
-        }));
-      }}
-      className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
-    />
-  </div>
-</div>
+                setFilters((prev: any) => ({
+                  ...prev,
+                  otherExam: {
+                    ...prev.otherExam,
+                    [prev.otherExam.exam.toLowerCase()]: {
+                      ...prev.otherExam[prev.otherExam.exam.toLowerCase()],
+                      overall: value,
+                    },
+                  },
+                }));
+              }}
+              className="w-full py-2 px-4 bg-gray-50 border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
+            />
+          </div>
+        </div>
 
         {/* Study Mode Filter */}
         <div>
@@ -678,24 +781,45 @@ export default function ProgramFilters({
           </div>
 
           <div className="flex flex-wrap gap-1.5">
-            {levels.map((level: any) => (
-              <button
-                key={level.value}
-                className={`text-xs font-medium px-2.5 py-1 border transition-all duration-200 ${filters.level.includes(level.value)
-                  ? "bg-orange-50 text-orange-500 border-orange-500"
-                  : "bg-gray-50 text-gray-700 border-gray-200 hover:border-orange-500 hover:bg-orange-50/30"
-                  }`}
-                onClick={() => {
-                  const updatedLevels = filters.level.includes(level.value)
-                    ? filters.level.filter((item: string) => item !== level.value)
-                    : [...filters.level, level.value];
+            {levels?.map((level: any) => {
+             const isSelected = Array.isArray(filters?.level) &&
+  filters.level.some(
+    (item: string) =>
+      item?.toLowerCase() === level?.value?.toLowerCase()
+  );
 
-                  handleFilterChange("level", updatedLevels);
-                }}
-              >
-                {level.label}
-              </button>
-            ))}
+              return (
+                <button
+  key={level?.value}
+  onClick={() => {
+    setFilters((prev: any) => {
+    
+      const exists = prev?.level && prev?.level?.some(
+        (item: string) =>
+          item.toLowerCase() === level.value.toLowerCase()
+      );
+
+      return {
+        ...prev,
+        level: exists
+          ? prev.level.filter(
+              (item: string) =>
+                item.toLowerCase() !== level.value.toLowerCase()
+            )
+          : [...prev.level, level.value],
+      };
+    });
+  }}
+  className={`text-xs font-medium px-2.5 py-1 border transition-all duration-200 ${
+    isSelected
+      ? "bg-orange-50 text-orange-500 border-orange-500"
+      : "bg-gray-50 text-gray-700 border-gray-200 hover:border-orange-500 hover:bg-orange-50/30"
+  }`}
+>
+  {level.label}
+</button>
+              );
+            })}
           </div>
         </div>
 
@@ -706,11 +830,11 @@ export default function ProgramFilters({
               Active Filters
             </span>
             <div className="flex flex-wrap gap-1.5">
-              {filters.country && (
+              {filters?.country && (
                 <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
                   <span>
                     {countries.find((c: any) => c.value === filters.country)?.label ||
-                      filters.country}
+                      filters?.country}
                   </span>
                   <button
                     onClick={() => handleFilterChange("country", "")}
@@ -720,9 +844,9 @@ export default function ProgramFilters({
                   </button>
                 </div>
               )}
-              {filters.studyMode && (
+              {filters?.studyMode && (
                 <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
-                  <span>{filters.studyMode}</span>
+                  <span>{filters?.studyMode}</span>
                   <button
                     onClick={() => handleFilterChange("studyMode", "")}
                     className="hover:text-orange-700 transition-colors"
@@ -731,11 +855,11 @@ export default function ProgramFilters({
                   </button>
                 </div>
               )}
-              {filters.level && (
+              {filters?.level && (
                 <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
                   <span>
-                    {levels.find((l: any) => l.value === filters.level)?.label ||
-                      filters.level}
+                    {levels?.find((l: any) => l.value === filters?.level)?.label ||
+                      filters?.level}
                   </span>
                   <button
                     onClick={() => handleFilterChange("level", "")}

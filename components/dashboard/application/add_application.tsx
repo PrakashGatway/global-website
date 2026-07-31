@@ -229,7 +229,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
     // Fetch universities when destination country changes
     useEffect(() => {
         if (selectedCourse) {
-            setFormData((p) => ({ ...p, destinationCountry: selectedCourse?.country }))
+            setFormData((p) => ({ ...p, destinationCountry: selectedCourse?.country.code }))
         }
         if (formData.destinationCountry || selectedCourse) {
             axiosInstance.get(`/universities`, {
@@ -257,6 +257,8 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
             setCourses([]);
         }
     }, [formData.destinationCountry, selectedCourse?.country]);
+
+   
 
     // Fetch courses when university changes
     useEffect(() => {
@@ -513,7 +515,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
                                             <h3 className="text-lg font-semibold text-gray-800 mb-4">{currentStepData.name}</h3>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 {currentStepData.fields.map(field => {
-                                                    //console.log(field)
+                                                    console.log(field)
                                                     return (
 
                                                         <div key={field.name} className="space-y-2">

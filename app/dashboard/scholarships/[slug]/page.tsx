@@ -46,12 +46,16 @@ import {
     Briefcase,
     Star,
     CircleDot,
-    Building2Icon
+    Building2Icon,
+    ChevronDown
 } from "lucide-react";
 
 import axiosInstance from "@/app/axiosInstance";
 import { CreateApplicationModal } from "@/components/dashboard/applicationModel";
 import Loading from "../../notifications/loading";
+import { Reveal } from "@/components/scholarshipPage";
+import InnerContent from "@/components/dom/DomParser";
+import { DynamicLucideIcon } from "@/components/DynamicLucideIcon";
 
 interface Scholarship {
     _id: string;
@@ -217,8 +221,6 @@ export default function ScholarshipDetailPage() {
 
             if (data.success) {
                 setScholarship(data.data);
-                // Fetch similar scholarships
-                fetchSimilarScholarships(data.data);
             } else {
                 setError(data.message);
             }
@@ -230,23 +232,7 @@ export default function ScholarshipDetailPage() {
         }
     };
 
-    const fetchSimilarScholarships = async (currentScholarship: Scholarship) => {
-        try {
-            const response = await axiosInstance.get('/scholarships', {
-                params: {
-                    country: currentScholarship.country?._id,
-                    level: currentScholarship.level?.[0],
-                    limit: 3,
-                    excludeId: currentScholarship._id
-                }
-            });
-            if (response.data.success) {
-                setSimilarScholarships(response.data.data);
-            }
-        } catch (error) {
-            console.error('Error fetching similar scholarships:', error);
-        }
-    };
+
 
     const formatCurrency = (amount: string) => {
         if (!amount) return 'Varies';
@@ -514,320 +500,245 @@ export default function ScholarshipDetailPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
                         >
-                            <div className="flex border-b border-border mb-4 overflow-x-auto no-scrollbar scrollbar-hide">
-                                {tabs.map((tab) => (
-                                    <TabButton
-                                        key={tab.id}
-                                        active={activeTab === tab.id}
-                                        onClick={() => setActiveTab(tab.id)}
-                                    >
-                                        {tab.label}
-                                    </TabButton>
-                                ))}
-                            </div>
+                          
 
-                            <div className="p-2">
-                                {activeTab === "overview" && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="space-y-6"
-                                    >
-                                        <div>
-                                            <span dangerouslySetInnerHTML={{__html :scholarship.description}} className="text-gray-700"/>
-                                        </div>
-
-                                        {scholarship.valueDetails && Object.keys(scholarship.valueDetails).length > 0 && (
-                                            <div>
-                                                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                    <Wallet className="w-5 h-5 text-[#F26D44]" />
-                                                    Value Details
-                                                </h3>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                    {Object.entries(scholarship.valueDetails).map(([key, value], index) => (
-                                                        <BenefitItem
-                                                            key={index}
-                                                            icon={DollarSign}
-                                                            label={key.replace(/([A-Z])/g, ' $1').trim()}
-                                                            value={String(value)}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {scholarship.subjects && scholarship.subjects.length > 0 && (
-                                            <div>
-                                                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                    <BookOpen className="w-5 h-5 text-[#F26D44]" />
-                                                    Eligible Subjects
-                                                </h3>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {scholarship.subjects.map((subject) => (
-                                                        <span
-                                                            key={subject._id}
-                                                            className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm border border-blue-200"
-                                                        >
-                                                            {subject.name}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </motion.div>
-                                )}
-
-                                {/* Eligibility Tab */}
-                                {activeTab === "eligibility" && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="space-y-6"
-                                    >
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                <CheckCircle className="w-5 h-5 text-green-600" />
-                                                Eligibility Criteria
-                                            </h3>
-                                            {scholarship.eligibilityCriteria && Object.keys(scholarship.eligibilityCriteria).length > 0 ? (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                    {Object.entries(scholarship.eligibilityCriteria).map(([key, value], index) => (
-                                                        <RequirementItem key={index} label={key} value={value} />
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <p className="text-gray-600 bg-gray-50 rounded-lg p-5 border border-gray-200">
-                                                    No specific eligibility criteria listed.
-                                                </p>
-                                            )}
-                                        </div>
-
-                                        {scholarship.exclusionCriteria && Object.keys(scholarship.exclusionCriteria).length > 0 && (
-                                            <div>
-                                                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                    <XCircle className="w-5 h-5 text-red-600" />
-                                                    Exclusion Criteria
-                                                </h3>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                    {Object.entries(scholarship.exclusionCriteria).map(([key, value], index) => (
-                                                        <RequirementItem key={index} label={key} value={value} isExclusion={true} />
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                <GraduationCap className="w-5 h-5 text-[#F26D44]" />
-                                                Eligible Study Levels
-                                            </h3>
-                                            <div className="flex flex-wrap gap-2">
-                                                {scholarship.level.map((lvl, index) => (
-                                                    <span key={index} className={`px-3 py-1.5 rounded-full text-sm font-medium border ${getLevelColor(lvl)}`}>
-                                                        {lvl}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                )}
-
-                                {/* Benefits Tab */}
-                                {activeTab === "benefits" && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="space-y-6"
-                                    >
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                <Trophy className="w-5 h-5 text-[#F26D44]" />
-                                                Scholarship Benefits
-                                            </h3>
-                                            {scholarship.benefits && Object.keys(scholarship.benefits).length > 0 ? (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                    {Object.entries(scholarship.benefits).map(([key, value], index) => (
-                                                        <BenefitItem
-                                                            key={index}
-                                                            icon={Award}
-                                                            label={key.replace(/([A-Z])/g, ' $1').trim()}
-                                                            value={String(value)}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <p className="text-gray-600 bg-gray-50 rounded-lg p-5 border border-gray-200">
-                                                    No specific benefits listed.
-                                                </p>
-                                            )}
-                                        </div>
-                                    </motion.div>
-                                )}
-
-                                {/* How to Apply Tab */}
-                                {activeTab === "how-to-apply" && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="space-y-6"
-                                    >
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                                <FileText className="w-5 h-5 text-[#F26D44]" />
-                                                Application Process
-                                            </h3>
-                                            {scholarship.howToApply && Object.keys(scholarship.howToApply).length > 0 ? (
-                                                <div className="space-y-3">
-                                                    {Object.entries(scholarship.howToApply).map(([key, value], index) => (
-                                                        <div key={index} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
-                                                            <div className="w-6 h-6 rounded-full bg-[#F26D44] text-white text-sm flex items-center justify-center flex-shrink-0">
-                                                                {index + 1}
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-sm font-medium text-gray-900 capitalize">
-                                                                    {key.replace(/([A-Z])/g, ' $1').trim()}
-                                                                </p>
-                                                                <p className="text-sm text-gray-600 mt-1">{String(value)}</p>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <p className="text-gray-600 bg-gray-50 rounded-lg p-5 border border-gray-200">
-                                                    No application details provided.
-                                                </p>
-                                            )}
-                                        </div>
-                                    </motion.div>
-                                )}
-
-                                {/* University Info Tab */}
-                                {activeTab === "university" && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="space-y-6"
-                                    >
-                                        <div className="flex items-center gap-4 mb-4">
-                                            {scholarship.university?.logo && (
-                                                <div className="w-20 h-20 rounded-xl bg-gray-100 p-3 border border-gray-200">
-                                                    <img
-                                                        src={scholarship.university.logo}
-                                                        alt={scholarship.university.name}
-                                                        className="w-full h-full object-contain"
-                                                    />
-                                                </div>
-                                            )}
-                                            <div>
-                                                <h3 className="text-xl font-bold text-gray-900">{scholarship.university.name}</h3>
-                                                {scholarship.university?.slogan && (
-                                                    <p className="text-sm text-gray-600 italic mt-1">"{scholarship.university.slogan}"</p>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            {scholarship.university?.address && (
-                                                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                                    <MapPin className="w-5 h-5 text-[#F26D44] mt-0.5" />
-                                                    <div>
-                                                        <p className="text-sm font-medium text-gray-900">Address</p>
-                                                        <p className="text-sm text-gray-600">{scholarship.university.address}</p>
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {scholarship.university?.established_year && (
-                                                <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                                    <Calendar className="w-5 h-5 text-[#F26D44] mt-0.5" />
-                                                    <div>
-                                                        <p className="text-sm font-medium text-gray-900">Established</p>
-                                                        <p className="text-sm text-gray-600">{scholarship.university.established_year}</p>
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {scholarship.university?.website && (
-                                                <a
-                                                    href={scholarship.university.website}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100 hover:border-[#F26D44] transition-colors"
-                                                >
-                                                    <Globe className="w-5 h-5 text-[#F26D44] mt-0.5" />
-                                                    <div>
-                                                        <p className="text-sm font-medium text-gray-900">Website</p>
-                                                        <p className="text-sm text-[#F26D44]">{scholarship.university.website.replace(/^https?:\/\//, '')}</p>
-                                                    </div>
-                                                    <ExternalLink className="w-4 h-4 text-gray-400 ml-auto" />
-                                                </a>
-                                            )}
-
-                                            {scholarship.university?.email && (
-                                                <a
-                                                    href={`mailto:${scholarship.university.email}`}
-                                                    className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100 hover:border-[#F26D44] transition-colors"
-                                                >
-                                                    <Mail className="w-5 h-5 text-[#F26D44] mt-0.5" />
-                                                    <div>
-                                                        <p className="text-sm font-medium text-gray-900">Email</p>
-                                                        <p className="text-sm text-gray-600">{scholarship.university.email}</p>
-                                                    </div>
-                                                </a>
-                                            )}
-
-                                            {scholarship.university?.phone && (
-                                                <a
-                                                    href={`tel:${scholarship.university.phone}`}
-                                                    className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100 hover:border-[#F26D44] transition-colors"
-                                                >
-                                                    <Phone className="w-5 h-5 text-[#F26D44] mt-0.5" />
-                                                    <div>
-                                                        <p className="text-sm font-medium text-gray-900">Phone</p>
-                                                        <p className="text-sm text-gray-600">{scholarship.university.phone}</p>
-                                                    </div>
-                                                </a>
-                                            )}
-                                        </div>
-
-                                        {scholarship.university?.intakes && scholarship.university.intakes.length > 0 && (
-                                            <div>
-                                                <h4 className="text-md font-semibold text-gray-900 mb-2">Available Intakes</h4>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {scholarship.university.intakes.map((intake, index) => (
-                                                        <span key={index} className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm border border-gray-200">
-                                                            {intake}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {scholarship.university?.uni_rank && scholarship.university.uni_rank.length > 0 && (
-                                            <div>
-                                                <h4 className="text-md font-semibold text-gray-900 mb-2">University Rankings</h4>
-                                                <div className="space-y-2">
-                                                    {scholarship.university.uni_rank.map((rank, index) => (
-                                                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                                            <span className="text-sm font-medium text-gray-700">{rank.type}</span>
-                                                            <span className="text-lg font-bold text-gray-900">#{rank.rank}</span>
-                                                            <span className="text-xs text-gray-500">{rank.year}</span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        <Link
-                                            href={`/universities/${scholarship.university?._id}`}
-                                            className="inline-flex items-center gap-2 text-[#F26D44] hover:text-[#F26D44]/80 font-medium"
-                                        >
-                                            View University Profile
-                                            <ChevronRight className="w-4 h-4" />
-                                        </Link>
-                                    </motion.div>
-                                )}
-                            </div>
+                           <div className="flex-1 min-w-0">
+                                         {/* ─── ALL SECTIONS ─── */}
+                                         <div className="space-y-6">
+                                           {scholarship?.extra_content?.sections?.map((section: any, index: number) => {
+                           
+                                             switch (section.section_type) {
+                                               case "overview":
+                                                 return (
+                                                   <div
+                                                     key={section._id}
+                                                     className="border p-4 md:p-6 rounded-2xl"
+                                                   >
+                                                     <Reveal delay={index * 10}>
+                                                       <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
+                                                         {section?.data?.title || section?.heading || section?.section_key}
+                                                       </h2>
+                                                       <InnerContent cleanedHtml={section?.data?.content || section?.content} />
+                                                     </Reveal>
+                                                   </div>
+                                                 );
+                           
+                                               case "whyChoose":
+                                                 return (
+                                                   <div
+                                                     key={section._id}
+                                                     className="border p-4 md:p-6 rounded-2xl"
+                                                   >
+                                                     <Reveal delay={index * 10}>
+                                                       <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
+                                                         {section?.data?.title || section?.heading || section?.section_key}
+                                                       </h2>
+                                                       <InnerContent cleanedHtml={section?.data?.subtitle || section?.content} />
+                           
+                                                       <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 gap-3">
+                                                         {section?.data?.cards?.map((card: any) => <div>
+                                                           <div className="group relative h-full overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_20px_50px_rgba(249,115,22,0.18)]">
+                                                             <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-orange-100 blur-3xl opacity-0 transition-all duration-500 group-hover:opacity-70" />
+                           
+                                                             {/* <div className="relative mb-6">
+                                                               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 via-orange-400 to-orange-300 text-white shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
+                                                                 <DynamicLucideIcon
+                                                                   name={card.icon}
+                                                                   className="h-8 w-8"
+                                                                 />
+                                                               </div>
+                                                             </div> */}
+                                                             <h3 className="mb-2 text-lg font-semibold leading-snug text-slate-900 transition-colors duration-300 group-hover:text-orange-600">
+                                                               {card.title}
+                                                             </h3>
+                                                             <div className="relative z-1">
+                                                               <InnerContent cleanedHtml={card?.subtitle || ""} />
+                           
+                                                             </div>
+                           
+                                                             {/* Bottom Decoration */}
+                                                             <div className="absolute bottom-0 -z-0 right-0 h-60 w-60 translate-x-38 translate-y-38 rounded-full bg-gradient-to-br from-orange-100 to-transparent transition-all duration-500 group-hover:translate-x-26 group-hover:translate-y-26" />
+                                                           </div>
+                                                         </div>)}
+                                                       </div>
+                           
+                                                     </Reveal>
+                                                   </div>
+                                                 );
+                           
+                                               case "documents":
+                                                 return (
+                                                   <div
+                                                     key={section._id}
+                                                     className=""
+                                                   >
+                                                     <div className="mt-6 overflow-hidden rounded-lg bg-white">
+                                                       {/* Header */}
+                                                       <div className="bg-gradient-to-r from-[#F36D45] to-[#F36D45] px-6 py-4">
+                                                         <h2 className="text-xl font-semibold text-white">
+                                                           {section?.data?.title || "Documents Required"}
+                                                         </h2>
+                                                       </div>
+                           
+                                                       {/* Documents */}
+                                                       <div className="relative p-6">
+                                                         <div className="mb-4">
+                                                           <InnerContent cleanedHtml={section?.data?.description} />
+                                                         </div>
+                           
+                                                         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                                           {section?.data?.documents?.map((card: any, idx: number) => {
+                                                             const isOpen = false
+                                                             if (!card.description) return (
+                                                               <div key={idx} className="overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-300">
+                                                                 <div
+                                                                   className="flex w-full items-center justify-between p-3 transition-all duration-300"
+                                                                 >
+                                                                   <div className="flex items-start gap-3">
+                                                                     <DynamicLucideIcon
+                                                                       name={card.icon || "File"}
+                                                                       className="h-5 w-5 mt-1 text-[#F36D45]"
+                                                                     />
+                           
+                                                                     <div className="font-medium text-[#1C2E5A]">
+                                                                       <InnerContent cleanedHtml={card.title} />
+                                                                     </div>
+                                                                   </div>
+                                                                 </div>
+                                                               </div>
+                                                             )
+                           
+                           
+                                                             return (
+                                                               <div
+                                                                 key={idx}
+                                                                 className="overflow-hidden rounded-xl border border-gray-200 bg-white transition-all duration-300"
+                                                               >
+                                                                 {/* Header */}
+                                                                 <button
+                                                                   onClick={() => toggleAccordion(idx)}
+                                                                   className="flex w-full items-center justify-between p-3 text-left transition-all duration-300 hover:bg-orange-50"
+                                                                 >
+                                                                   <div className="flex items-center gap-3">
+                                                                     <DynamicLucideIcon
+                                                                       name={card.icon || "File"}
+                                                                       className="h-5 w-5 text-[#F36D45]"
+                                                                     />
+                           
+                                                                     <div className="font-medium text-[#1C2E5A]">
+                                                                       <InnerContent cleanedHtml={card.title} />
+                                                                     </div>
+                                                                   </div>
+                           
+                                                                   <ChevronDown
+                                                                     className={`h-5 w-5 text-[#F36D45] transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                                                                       }`}
+                                                                   />
+                                                                 </button>
+                           
+                                                                 {/* Content */}
+                                                                 <div
+                                                                   className={`grid transition-all duration-500 ease-in-out ${isOpen
+                                                                     ? "grid-rows-[1fr] opacity-100"
+                                                                     : "grid-rows-[0fr] opacity-0"
+                                                                     }`}
+                                                                 >
+                                                                   <div className="overflow-hidden">
+                                                                     <div className="border-t border-gray-100 bg-gray-50 px-4 py-4">
+                                                                       <InnerContent
+                                                                         cleanedHtml={
+                                                                           card.description ||
+                                                                           "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>"
+                                                                         }
+                                                                       />
+                                                                     </div>
+                                                                   </div>
+                                                                 </div>
+                                                               </div>
+                                                             );
+                           
+                           
+                                                           })}
+                                                         </div>
+                           
+                           
+                                                       </div>
+                                                     </div>
+                                                   </div>
+                                                 );
+                           
+                                               case "StepsSection":
+                                                 return (
+                                                   <div
+                                                     key={section._id}
+                                                     className="border p-4 md:p-6 rounded-2xl"
+                                                   >
+                                                     <Reveal delay={index * 10}>
+                                                       <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
+                                                         {section?.data?.title || section?.heading || section?.section_key}
+                                                       </h2>
+                                                       <InnerContent cleanedHtml={section?.data?.subtitle || section?.content} />
+                           
+                                                       <div className="grid grid-cols-1 mt-4 sm:grid-cols-2 gap-3">
+                                                         {section?.data?.cards?.map((card: any) => <div>
+                                                           <div className="group relative h-full overflow-hidden rounded-xl border-2 border-slate-200 bg-white p-5 transition-all duration-500 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_20px_50px_rgba(249,115,22,0.18)]">
+                                                             <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-orange-100 blur-3xl opacity-0 transition-all duration-500 group-hover:opacity-70" />
+                           
+                                                             {/* <div className="relative mb-6">
+                                                               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 via-orange-400 to-orange-300 text-white shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
+                                                                 <DynamicLucideIcon
+                                                                   name={card.icon}
+                                                                   className="h-8 w-8"
+                                                                 />
+                                                               </div>
+                                                             </div> */}
+                                                             <h3 className="mb-2 text-lg font-semibold leading-snug text-slate-900 transition-colors duration-300 group-hover:text-orange-600">
+                                                               {card.title}
+                                                             </h3>
+                                                             <div className="relative z-1">
+                           
+                                                               <InnerContent cleanedHtml={card?.subtitle || ""} />
+                                                             </div>
+                           
+                           
+                                                             {/* Bottom Decoration */}
+                                                             <div className="absolute bottom-0 -z-0 right-0 h-60 w-60 translate-x-38 translate-y-38 rounded-full bg-gradient-to-br from-orange-100 to-transparent transition-all duration-500 group-hover:translate-x-26 group-hover:translate-y-26" />
+                                                           </div>
+                                                         </div>)}
+                                                       </div>
+                           
+                                                     </Reveal>
+                                                   </div>
+                                                 );
+                           
+                                               case "content":
+                                                 return (
+                                                   <div
+                                                     key={section._id}
+                                                     className="border p-4 md:p-6 rounded-2xl"
+                                                   >
+                                                     <Reveal delay={index * 10}>
+                                                       <h2 className="text-2xl font-semibold mb-4 text-[#1C2E5A]">
+                                                         {section?.data?.title || section?.heading || section?.section_key}
+                                                       </h2>
+                                                       <InnerContent cleanedHtml={section?.data?.content || section?.content} />
+                           
+                                                     </Reveal>
+                                                   </div>
+                                                 );
+                           
+                                               // default:
+                                               //   return (
+                                               //     <ContentSection
+                                               //       key={section._id}
+                                               //       section={section}
+                                               //       index={index}
+                                               //     />
+                                               //   );
+                                             }
+                                           })}
+                                         </div>
+                                       </div>
                         </motion.div>
 
                         {/* Bottom CTA Section */}
@@ -882,7 +793,7 @@ export default function ScholarshipDetailPage() {
                     </div>
 
                     {/* Right Column - Sidebar (1/3 width) */}
-                    <div className="space-y-6 p-2">
+                    <div className="space-y-6 p-2 top-0 sticky h-fit">
                         {/* Key Information Card */}
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}

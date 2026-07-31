@@ -11,7 +11,8 @@ import {
   Info,
   Trash2,
   Save,
-  UserX
+  UserX,
+  User
 } from "lucide-react"
 import axiosInstance from "@/app/axiosInstance"
 import { ModernSelect } from "@/components/ui/select"
@@ -120,6 +121,7 @@ export default function CoursesPage() {
   const [selectedCourse, setSelectedCourse] = useState(null)
   const [isCleared, setIsCleared] = useState(false);
   const [total , setTotal] = useState(10000);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // Debounced search query
   const debouncedSearchQuery = useDebounce(searchQuery, 500)
@@ -135,12 +137,19 @@ export default function CoursesPage() {
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [showCompare, setshowCompare] = useState(false)
   const [showApplicationDetail,setshowApplicationDetail] = useState(false)  
+  const [showKeys,setshowKeys] = useState(false) 
+  const [selectedFields, setSelectedFields] = useState([]);
 
   const searchParams = useSearchParams();
   const university = searchParams.get('university') || ""
 
   const { profile, allProfile } = useGlobal()
   const [preferenceApplied, setPreferenceApplied] = useState(false);
+  const [users, setUsers] = useState([]);
+const [search, setSearch] = useState("");
+const [debouncedSearch, setDebouncedSearch] = useState("");
+const [filteredUsers, setFilteredUsers] = useState([]);
+const [selectedUser, setSelectedUser] = useState(null);
   
  // Filters state
 const [filters, setFilters] = useState({
@@ -163,6 +172,7 @@ const [filters, setFilters] = useState({
   twelfthScore: "",
   ugScore: "",
   workExperience: "",
+  backlogs: "",
 
   englishScore: {
     exam: "",
@@ -231,18 +241,23 @@ const [filters, setFilters] = useState({
       }
     }, [university]);
 
- console.log(filters,"sd")
 
 
-const applyPreference = () => {
-  const prefs = allProfile?.profile?.preferences;
-  const educationHistory = allProfile?.profile?.educationHistory || [];
 
-  const workExperience = allProfile?.profile?.workExperience || [];
+const applyPreference = (user) => {
+  // 1. DYNAMIC SOURCE SELECTION using Ternary Operator
+  // If role is counsellor, use selectedUser.profile, otherwise use allProfile.profile
+  const profileData = profile?.role === "counsellor" 
+    ? user?.profile 
+    : allProfile?.profile;
 
-console.log(filters.otherExam?.gre?.overall)
+  if (!profileData) return;
 
+  const prefs = profileData.preferences;
+  const educationHistory = profileData.educationHistory || [];
+  const workExperience = profileData.workExperience || [];
 
+  console.log(user)
 
   if (!prefs) return;
 
@@ -280,113 +295,108 @@ console.log(filters.otherExam?.gre?.overall)
   );
 
   // Calculate total experience in months
-const totalMonths = workExperience.reduce((total: number, job: any) => {
-  if (!job.from || !job.to) return total;
+  const totalMonths = workExperience.reduce((total: number, job: any) => {
+    if (!job.from || !job.to) return total;
 
-  const from = new Date(job.from);
-  const to = new Date(job.to);
+    const from = new Date(job.from);
+    const to = new Date(job.to);
 
-  const months =
-    (to.getFullYear() - from.getFullYear()) * 12 +
-    (to.getMonth() - from.getMonth());
+    const months =
+      (to.getFullYear() - from.getFullYear()) * 12 +
+      (to.getMonth() - from.getMonth());
 
-  return total + Math.max(months, 0);
-}, 0);
+    return total + Math.max(months, 0);
+  }, 0);
 
-// Convert months to years with one decimal place
-const totalExperience = (totalMonths / 12).toFixed(1);
+  // Convert months to years with one decimal place
+  const totalExperience = (totalMonths / 12).toFixed(1);
 
+  const parseExam = (value: any) => {
+    try {
+      if (!value || value === "{}") return {};
+      // Handle both string and object cases safely
+      return typeof value === 'string' ? JSON.parse(value) : value;
+    } catch {
+      return {};
+    }
+  };
 
+  // 2. Use the dynamic profileData for exam scores
+  const ieltsData = parseExam(profileData.ielts);
+  const toeflData = parseExam(profileData.toefl);
+  const pteData = parseExam(profileData.pte);
+  const greData = parseExam(profileData.gre);
+  const gmatData = parseExam(profileData.gmat);
+  const satData = parseExam(profileData.sat);
 
+  let otherExam: any = {};
 
- const parseExam = (value: any) => {
-  try {
-    if (!value || value === "{}") return {};
-    return JSON.parse(value);
-  } catch {
-    return {};
+  if (Object.keys(greData).length) {
+    otherExam = {
+      exam: "GRE",
+      overall: greData.overall || "",
+      quantitative: greData.quantitative || "",
+      verbal: greData.verbal || "",
+      analyticalWriting: greData.analyticalWriting || "",
+      examDate: greData.examDate || "",
+    };
+  } else if (Object.keys(gmatData).length) {
+    otherExam = {
+      exam: "GMAT",
+      overall: gmatData.overall || "",
+      quantitative: gmatData.quantitative || "",
+      verbal: gmatData.verbal || "",
+      analyticalWriting: gmatData.analyticalWriting || "",
+      integratedReasoning: gmatData.integratedReasoning || "",
+      examDate: gmatData.examDate || "",
+    };
+  } else if (Object.keys(satData).length) {
+    otherExam = {
+      exam: "SAT",
+      overall: satData.overall || "",
+      readingWriting: satData.readingWriting || "",
+      math: satData.math || "",
+      essay: satData.essay || "",
+      examDate: satData.examDate || "",
+    };
   }
-};
 
- const ieltsData = parseExam(allProfile?.profile?.ielts);
-const toeflData = parseExam(allProfile?.profile?.toefl);
-const pteData = parseExam(allProfile?.profile?.pte);
-const greData = parseExam(allProfile?.profile?.gre);
-const gmatData = parseExam(allProfile?.profile?.gmat);
-const satData = parseExam(allProfile?.profile?.sat);
+  let englishScore: any = {};
 
-
-
-
-let otherExam: any = {};
-
-if (Object.keys(greData).length) {
-  otherExam = {
-    exam: "GRE",
-    overall: greData.overall || "",
-    quantitative: greData.quantitative || "",
-    verbal: greData.verbal || "",
-    analyticalWriting: greData.analyticalWriting || "",
-    examDate: greData.examDate || "",
-  };
-} else if (Object.keys(gmatData).length) {
-  otherExam = {
-    exam: "GMAT",
-    overall: gmatData.overall || "",
-    quantitative: gmatData.quantitative || "",
-    verbal: gmatData.verbal || "",
-    analyticalWriting: gmatData.analyticalWriting || "",
-    integratedReasoning: gmatData.integratedReasoning || "",
-    examDate: gmatData.examDate || "",
-  };
-} else if (Object.keys(satData).length) {
-  otherExam = {
-    exam: "SAT",
-    overall: satData.overall || "",
-    readingWriting: satData.readingWriting || "",
-    math: satData.math || "",
-    essay: satData.essay || "",
-    examDate: satData.examDate || "",
-  };
-}
-
-let englishScore: any = {};
-
-if (Object.keys(ieltsData).length) {
-  englishScore = {
-    exam: "IELTS",
-    overall: ieltsData.overall || "",
-    listening: ieltsData.listening || "",
-    reading: ieltsData.reading || "",
-    writing: ieltsData.writing || "",
-    speaking: ieltsData.speaking || "",
-    examDate: ieltsData.examDate || "",
-    yetToReceive: ieltsData.yetToReceive || false,
-  };
-} else if (Object.keys(toeflData).length) {
-  englishScore = {
-    exam: "TOEFL",
-    overall: toeflData.overall || "",
-    listening: toeflData.listening || "",
-    reading: toeflData.reading || "",
-    writing: toeflData.writing || "",
-    speaking: toeflData.speaking || "",
-    examDate: toeflData.examDate || "",
-    yetToReceive: toeflData.yetToReceive || false,
-  };
-} else if (Object.keys(pteData).length) {
-  englishScore = {
-    exam: "PTE",
-    overall: pteData.overall || "",
-    listening: pteData.listening || "",
-    reading: pteData.reading || "",
-    writing: pteData.writing || "",
-    speaking: pteData.speaking || "",
-    examDate: pteData.examDate || "",
-    yetToReceive: pteData.yetToReceive || false,
-  };
-}
-
+  if (Object.keys(ieltsData).length) {
+    englishScore = {
+      exam: "IELTS",
+      overall: ieltsData.overall || "",
+      listening: ieltsData.listening || "",
+      reading: ieltsData.reading || "",
+      writing: ieltsData.writing || "",
+      speaking: ieltsData.speaking || "",
+      examDate: ieltsData.examDate || "",
+      yetToReceive: ieltsData.yetToReceive || false,
+    };
+  } else if (Object.keys(toeflData).length) {
+    englishScore = {
+      exam: "TOEFL",
+      overall: toeflData.overall || "",
+      listening: toeflData.listening || "",
+      reading: toeflData.reading || "",
+      writing: toeflData.writing || "",
+      speaking: toeflData.speaking || "",
+      examDate: toeflData.examDate || "",
+      yetToReceive: toeflData.yetToReceive || false,
+    };
+  } else if (Object.keys(pteData).length) {
+    englishScore = {
+      exam: "PTE",
+      overall: pteData.overall || "",
+      listening: pteData.listening || "",
+      reading: pteData.reading || "",
+      writing: pteData.writing || "",
+      speaking: pteData.speaking || "",
+      examDate: pteData.examDate || "",
+      yetToReceive: pteData.yetToReceive || false,
+    };
+  }
 
   setFilters((prev: any) => ({
     ...prev,
@@ -429,16 +439,14 @@ const removePreference = () => {
 
   const fetchFilterOptions = useCallback(async () => {
     try {
-      const [countriesRes, uniRes, catRes] = await Promise.all([
+      const [countriesRes, catRes] = await Promise.all([
         axiosInstance.get('/countries?limit=300'),
-        axiosInstance.get('/universities/flat?limit=1000'),
         axiosInstance.get('/courses/categories?limit=100')
       ])
       const countriesData = countriesRes.data.data
       setCountries(countriesData.map((c: any) => ({ label: c.name, value: c.code })))
 
-      const uniData = uniRes.data.data
-      setUniversities(uniData.map((u: any) => ({ label: u.name, value: u._id })))
+   
 
       const catData = catRes.data.data
       setCategories(catData.map((c: any) => ({ label: c.name, value: c._id })))
@@ -524,6 +532,44 @@ const removePreference = () => {
     }
   }, [])
 
+  const fetchUniversities = useCallback(async (countryCode = "") => {
+  try {
+    
+
+    const query = new URLSearchParams();
+    query.append("limit", "1000");
+
+    if (countryCode) {
+      query.append("country", countryCode);
+    }
+
+  
+
+    const url = `/universities/flat?${query.toString()}`;
+  
+
+    const res = await axiosInstance.get(url);
+
+    
+
+    const uniData = res.data.data;
+
+    setUniversities(
+      uniData.map((u: any) => ({
+        label: u.name,
+        value: u._id,
+      }))
+    );
+  } catch (error) {
+    console.error(error);
+  }
+}, []);
+
+useEffect(() => {
+ 
+  fetchUniversities(filters.country);
+}, [filters.country]);
+
   const fetchCourses = useCallback(async (reset = false) => {
     try {
       const currentPage = reset ? 1 : page
@@ -548,7 +594,10 @@ const removePreference = () => {
   englishScore: JSON.stringify(filters.englishScore),
 }),
 ...(filters.otherExam?.exam && {
-  otherExam: JSON.stringify(filters.otherExam),
+  otherExam: JSON.stringify({
+    exam: filters.otherExam.exam,
+    ...filters.otherExam[filters.otherExam.exam.toLowerCase()],
+  }),
 }),
         ...(filters.englishExam && { englishExam: filters.englishExam }),
         ...(filters.workExperience && { workExperience: filters.workExperience }),
@@ -597,11 +646,7 @@ useEffect(() => {
 }, [loading, courses]);
 
   // Fetch on search/filter changes
-  useEffect(() => {
-    setLoading(true)
-    setPage(1)
-    fetchCourses(true)
-  }, [filters])
+ 
 
   // Infinite scroll
   useEffect(() => {
@@ -633,10 +678,22 @@ useEffect(() => {
   }, [page, fetchCourses])
 
   // Filter handlers
-  const handleFilterChange = (key: keyof typeof filters, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }))
-    setPage(1)
-  }
+ const handleFilterChange = (
+  key: keyof typeof filters,
+  value: any
+) => {
+  setFilters((prev) => ({
+    ...prev,
+    [key]: value,
+
+    // Clear university whenever country changes
+    ...(key === "country" && {
+      university: "",
+    }),
+  }));
+
+  setPage(1);
+};
 
   const getActiveFilterCount = () => {
     let count = 0
@@ -652,20 +709,116 @@ useEffect(() => {
 
   const clearFilters = () => {
     setFilters({
-      country: "",
-      university: "",
-      category: "",
-      studyMode: "",
-      level: "",
-      minFee: "",
-      maxFee: "",
-      sort_by: "name",
-      sort_order: "asc"
+     intake: [],
+  year: "",
+  nationlity: "",
+  country: "",
+  state: "",
+  duration: "",
+  requirement: [],
+  university: university || "",
+  category: "",
+  studyMode: "",
+  level: [],
+  minFee: "",
+  maxFee: "",
+  sort_by: "name",
+  sort_order: "asc",
+  twelfthScore: "",
+  ugScore: "",
+  workExperience: "",
+
+  englishScore: {
+    exam: "",
+    overall: "",
+    listening: "",
+    reading: "",
+    writing: "",
+    speaking: "",
+    examDate: "",
+    yetToReceive: false,
+  },
+
+  otherExam: {
+    exam: "",
+
+    gre: {
+      overall: "",
+      quantitative: "",
+      verbal: "",
+      analyticalWriting: "",
+      examDate: "",
+    },
+
+    gmat: {
+      overall: "",
+      quantitative: "",
+      verbal: "",
+      analyticalWriting: "",
+      integratedReasoning: "",
+      examDate: "",
+    },
+
+    sat: {
+      overall: "",
+      readingWriting: "",
+      math: "",
+      essay: "",
+      examDate: "",
+    },
+  },
     })
     setSearchQuery("")
     setPage(1)
     setIsCleared(true)
   }
+
+  useEffect(() => {
+  if (profile?.role !== "counsellor") return;
+
+  const getUsers = async () => {
+    try {
+      const res = await axiosInstance.get("/users");
+      setUsers(res.data.data);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  };
+
+  getUsers();
+}, [profile?.role]);
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(search);
+  }, 800); // 300ms delay
+
+  return () => clearTimeout(timer);
+}, [search]);
+
+useEffect(() => {
+  if (!showDropdown) {
+    setFilteredUsers([]);
+    return;
+  }
+
+  if (!debouncedSearch.trim()) {
+    setFilteredUsers([]);
+    return;
+  }
+
+  const filtered = users.filter((user) =>
+    user.name?.toLowerCase().includes(debouncedSearch.toLowerCase())
+  );
+
+  setFilteredUsers(filtered);
+}, [debouncedSearch, users, showDropdown]);
+
+useEffect(() => {
+  setLoading(true);
+  setPage(1);
+  fetchCourses(true);
+}, []);
 
   const handleCompareSelect = (course) => {
     setselectedProgram((prev) => {
@@ -683,6 +836,75 @@ useEffect(() => {
       return [...prev, course];
     });
   };
+
+
+  // ─── FIELD MAP: UI Label → API Response Path ────────────────────────────────
+// ─── FIELD MAP: UI Label → API Response Path ────────────────────────────────
+const FIELD_MAP: Record<string, string> = {
+  University: "university.name",
+  "Website URL": "university.website",
+  "Study Level": "level",
+  "Entry Requirements": "metaInfo.EntryRequirement",
+  "TOEFL Score": "requirements.ToeflScore",
+  "PTE No Band Less Than": "requirements.PteNoSectionLessThan",
+  "GRE Score": "requirements.GreScore",
+  "Application Fee": "applicationFee",
+  "Scholarship Detail": "metaInfo.ScholarshipDeatil",
+  "ESL/ELP Detail": "metaInfo.EnglishMarks12Score",
+  "Program Name": "name",
+  Campus: "metaInfo.campus",
+  Duration: "duration",
+  "IELTS Score": "requirements.Ielts",
+  "TOEFL No Band Less Than": "requirements.ToeflNoSectionLessThan",
+  "SAT Score": "requirements.SatScore",
+  "GMAT Score": "requirements.GmatScore",
+  "Yearly Tuition Fee": "tuitionFee",
+  Deposit: "metaInfo.initialDeposit",
+  "Backlog Range": "metaInfo.backlog",
+  Concentration: "subject.name",
+  Country: "country.name",
+  "Open Intakes": "metaInfo.Intakes",
+  "Intake Year": "intakeYear",
+  "IELTS No Band Less Than": "requirements.IeltsNoBandLessThan",
+  "PTE Score": "requirements.PteScore",
+  "DET Score": "requirements.DETScore",
+  "ACT Score": "requirements.ActScore",
+  "Application Deadline": "metaInfo.deadline",
+  "Scholarship Available": "metaInfo.ScholarshipAvailable",
+  "Average Scholarship": "metaInfo.AverageScholarship",
+  Remarks: "metaInfo.Remarks",
+  "Application Mode": "studyMode",
+  "English Proficiency Exam Waiver": "metaInfo.WithoutEnglishProficiency",
+  "University Ranking": "university.ranking",
+};
+
+// ✅ All available fields from UI labels (excludes slug, extra_content, status, tags)
+const AVAILABLE_FIELDS = Object.keys(FIELD_MAP);
+
+const handleFieldChange = (fieldLabel: string) => {
+  setSelectedFields((prev) =>
+    prev.includes(fieldLabel)
+      ? prev.filter((f) => f !== fieldLabel)
+      : [...prev, fieldLabel]
+  );
+};
+
+const selectAllFields = () => setSelectedFields([...AVAILABLE_FIELDS]);
+const removeAllFields = () => setSelectedFields([]);
+// Keys strictly excluded per requirement
+const EXCLUDED_KEYS = new Set(["slug", "extra_content", "status", "tags"]);
+
+/**
+ * Safely resolves a dot-notation path against a course object.
+ * Returns blank string if data is missing.
+ */
+
+
+
+
+
+
+
 
 
  const highlights = [
@@ -706,6 +928,8 @@ useEffect(() => {
   { id: 18, label: "MOI Acceptable" },
   { id: 19, label: "Uni has own English Test" },
 ];
+
+
 
 
 
@@ -735,7 +959,7 @@ useEffect(() => {
               Found <span className="font-semibold text-foreground">{total && total} + </span> programs
             </p>
             <div className="flex gap-2">
-  {!preferenceApplied ? (
+  {!preferenceApplied && profile?.role === "user" ? (
     <button
       onClick={applyPreference}
       className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white"
@@ -743,9 +967,9 @@ useEffect(() => {
       Apply Preference
     </button>
   ) : (
-    <button
+     <button
       onClick={removePreference}
-      className="flex items-center gap-2 px-4 py-2 rounded-lg border border-red-300 text-red-600"
+      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white"
     >
       Remove Preference
     </button>
@@ -755,6 +979,10 @@ useEffect(() => {
 
         )}
 
+     
+
+
+
         {selectedProgram.length > 0 && (
           <div className="fixed bottom-0 left-100 z-100 bg-primary border w-210 p-4 shadow-lg flex items-center justify-between">
             <span className="font-medium text-white">
@@ -763,14 +991,21 @@ useEffect(() => {
 
             <div className="flex gap-3 text-white">
               <button
-                onClick={() => setShowCompareModal(true)}
+              
+                onClick={() => {
+  if (selectedProgram.length >= 2) {
+    setShowCompareModal(true);
+  } else {
+    toast.error("Please select at least 2 programs to compare");
+  }
+}}
                 className="px-4 py-2 border rounded"
               >
                 Compare
               </button>
 
               <button
-                onClick={() => setShowDownloadModal(true)}
+                onClick={() => setshowKeys(true)}
                 className="px-4 py-2 border rounded"
               >
                 Download
@@ -861,19 +1096,19 @@ useEffect(() => {
           </button>
 
           <div className="flex gap-4">
-            <button
-              onClick={() => downloadPDF(selectedProgram)}
-              className="bg-orange-500 px-6 py-3 rounded-xl text-white hover:scale-105 transition"
-            >
-              Download as PDF
-            </button>
+           <button
+  onClick={() => downloadPDF(selectedProgram, selectedFields)}
+  className="bg-orange-500 px-6 py-3 rounded-xl text-white hover:scale-105 transition"
+>
+  Download as PDF
+</button>
 
-            <button
-              onClick={() => downloadExcel(selectedProgram)}
-              className="bg-orange-500 px-6 py-3 rounded-xl text-white hover:scale-105 transition"
-            >
-              Download as Excel
-            </button>
+<button
+  onClick={() => downloadExcel(selectedProgram, selectedFields)}
+  className="bg-orange-500 px-6 py-3 rounded-xl text-white hover:scale-105 transition"
+>
+  Download as Excel
+</button>
           </div>
         </div>
       </motion.div>
@@ -888,7 +1123,7 @@ useEffect(() => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 min-h-screen"
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 min-h-screen"
       onClick={() => setShowCompareModal(false)}
     >
       <motion.div
@@ -901,11 +1136,11 @@ useEffect(() => {
           damping: 22,
         }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-5xl rounded-2xl bg-white shadow-2xl overflow-hidden"
+        className="  rounded-2xl bg-white shadow-2xl overflow-hidden"
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b px-8 py-6">
-          <h2 className="text-3xl font-bold">
+          <h2 className="text-xl font-bold">
             Please select up to 5 programs to compare
           </h2>
 
@@ -957,11 +1192,16 @@ useEffect(() => {
         {/* Footer */}
         <div className="p-6">
           <button
+          
             onClick={() => {
-              setshowCompare(true);
-              setShowCompareModal(false);
-            }}
-            className="w-full rounded-xl bg-orange-500 py-4 text-lg font-semibold text-white transition hover:bg-orange-600 hover:scale-[1.02] active:scale-95"
+  if (selectedProgram.length >= 2) {
+    setshowCompare(true);
+    setShowCompareModal(false);
+  } else {
+    toast.error("Please select at least 2 programs to compare");
+  }
+}}
+            className="px-4 rounded-xl bg-orange-500 py-2 text-sm mx-auto flex justify-center font-semibold text-white transition hover:bg-orange-600 hover:scale-[1.02] active:scale-95"
           >
             Compare
           </button>
@@ -978,7 +1218,7 @@ useEffect(() => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 min-h-screen"
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 min-h-screen"
       onClick={() => setshowCompare(false)}
     >
       <motion.div
@@ -1163,453 +1403,543 @@ useEffect(() => {
   )}
 </AnimatePresence>
 
+<AnimatePresence>
+  {showKeys && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-[999] flex min-h-screen items-center justify-center bg-black/40 backdrop-blur-xs p-3"
+      onClick={() => setshowKeys(false)}
+    >
+      {/* Modal */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{
+          type: "spring",
+          stiffness: 280,
+          damping: 22,
+        }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-4xl rounded-2xl bg-white shadow-2xl"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between border-b px-6 py-5">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">
+              Select Fields To Download
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              Select the program fields you want to download
+            </p>
+          </div>
+
+          <button
+            onClick={() => setshowKeys(false)}
+            className="text-2xl text-gray-500 transition hover:text-orange-500"
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Keys */}
+       {/* Keys */}
+<div className="max-h-[450px]  p-6">
+  <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+    {AVAILABLE_FIELDS.map((fieldLabel) => (
+      <label
+        key={fieldLabel}
+        className="flex cursor-pointer items-center gap-3 group"
+      >
+        <input
+          type="checkbox"
+          checked={selectedFields.includes(fieldLabel)}
+          onChange={() => handleFieldChange(fieldLabel)}
+          className="h-4 w-4 cursor-pointer accent-orange-500 rounded border-gray-300"
+        />
+        <span className="text-sm text-gray-700 group-hover:text-orange-600 transition-colors">
+          {fieldLabel}
+        </span>
+      </label>
+    ))}
+  </div>
+</div>
+
+        {/* Footer */}
+      {/* Footer */}
+<div className="flex items-center justify-between border-t px-6 py-4">
+  <button
+    onClick={removeAllFields}
+    className="rounded-lg border border-orange-500 px-5 py-2 text-sm font-medium text-orange-500 transition hover:bg-orange-50"
+  >
+    Remove All
+  </button>
+
+  <div className="flex gap-3">
+    <button
+      onClick={selectAllFields}
+      className="rounded-lg border border-orange-500 px-5 py-2 text-sm font-medium text-orange-500 transition hover:bg-orange-50"
+    >
+      Select All
+    </button>
+
+    <button
+      disabled={selectedFields.length === 0}
+      onClick={() => {
+        if (selectedFields.length === 0) return;
+        setshowKeys(false);
+        setShowDownloadModal(true);
+      }}
+      className={`rounded-lg px-5 py-2 text-sm font-semibold text-white ${
+        selectedFields.length === 0
+          ? "bg-gray-300 cursor-not-allowed"
+          : "bg-orange-500 hover:bg-orange-600"
+      }`}
+    >
+      Continue
+    </button>
+  </div>
+</div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+
 
         <div className="flex flex-col lg:flex-row gap-4 items-start ">
           {/* LEFT SIDEBAR: FILTERS */}
           <div className="relative z-9 sticky top-4 self-start">
             <ProgramFilters
-            total={total}
-              filters={filters}
-              setFilters={setFilters}
-              handleFilterChange={handleFilterChange}
-              clearFilters={clearFilters}
-              getActiveFilterCount={getActiveFilterCount}
-              countries={countries}
-              universities={universities}
-              categories={categories}
-              studyModes={studyModes}
-              levels={levels}
-              showFilters={showFilters}
-              setShowFilters={setShowFilters}
-              isCleared={isCleared}
-              setIsCleared={setIsCleared}
-            />
+  total={total}
+  filters={filters}
+  setFilters={setFilters}
+  handleFilterChange={handleFilterChange}
+  clearFilters={clearFilters}
+  getActiveFilterCount={getActiveFilterCount}
+  countries={countries}
+  universities={universities}
+  categories={categories}
+  studyModes={studyModes}
+  levels={levels}
+  showFilters={showFilters}
+  setShowFilters={setShowFilters}
+  isCleared={isCleared}
+  setIsCleared={setIsCleared}
+  fetchCourses={fetchCourses}
+  setPage={setPage}
+  setLoading={setLoading}
+
+  // New Props
+  users={users}
+  search={search}
+  setSearch={setSearch}
+  filteredUsers={filteredUsers}
+  setFilteredUsers={setFilteredUsers}
+  selectedUser={selectedUser}
+  setSelectedUser={setSelectedUser}
+  showDropdown={showDropdown}
+  setShowDropdown={setShowDropdown}
+  applyPreference={applyPreference}
+  profile={profile}
+/>
           </div>
           
           {/* RIGHT CONTENT: COURSE GRID */}
-          <div className="flex-1 w-full ">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-5">
-              {loading ? (
-                Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="bg-white border border-gray-200 rounded-lg overflow-hidden animate-pulse">
-                    <div className="p-4 space-y-3">
-                      <div className="flex items-start gap-3">
-                        <div className="w-12 h-12 bg-gray-100 rounded-lg"></div>
-                        <div className="flex-1 space-y-2">
-                          <div className="h-4 w-28 bg-gray-100 rounded"></div>
-                          <div className="h-6 w-20 bg-gray-100 rounded"></div>
-                        </div>
+        <div className="flex-1 w-full">
+  {/* 
+    MOBILE FIX: Changed grid-cols-1 md:grid-cols-2 lg:grid-cols-1 
+    This ensures 1 column on mobile, but keeps your EXACT desktop layout (single column list) intact.
+  */}
+  <div className="grid grid-cols-1 gap-5">
+    {loading ? (
+      Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="bg-white border border-gray-200 rounded-lg overflow-hidden animate-pulse">
+          <div className="p-4 space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-12 h-12 bg-gray-100 rounded-lg"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-28 bg-gray-100 rounded"></div>
+                <div className="h-6 w-20 bg-gray-100 rounded"></div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="h-6 w-full bg-gray-100 rounded"></div>
+              <div className="h-6 w-6/4 bg-gray-100 rounded"></div>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="h-16 bg-gray-100 rounded-lg"></div>
+              <div className="h-16 bg-gray-100 rounded-lg"></div>
+              <div className="h-16 bg-gray-100 rounded-lg"></div>
+            </div>
+            <div className="h-9 bg-gray-100 rounded-lg"></div>
+          </div>
+        </div>
+      ))
+    ) : courses.length === 0 ? (
+      <div className="col-span-full text-center py-12">
+        <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+          <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">No programs found</h3>
+        <p className="text-gray-500 text-base">Try adjusting your search or filters</p>
+        <button
+          onClick={clearFilters}
+          className="mt-5 px-5 py-2 bg-primary text-white rounded-lg text-base font-medium hover:bg-primary/90 transition-colors"
+        >
+          Clear all filters
+        </button>
+      </div>
+    ) : (
+      courses.map((course, index) => {
+        const metaInfo = course?.metaInfo || {};
+        const intakeDeadline = metaInfo?.intakeDeadline || "";
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const ids =
+          course?.metaInfo?.highlight
+            ?.split(",")
+            .map((id) => Number(id.trim())) || [];
+
+        const selectedHighlights = highlights.filter((item) =>
+          ids.includes(item.id)
+        );
+
+        const intakeData = intakeDeadline
+          ? intakeDeadline.split(",").map((item) => {
+            const [month, date] = item.split(":");
+            const [day, monthNo, year] = date.split("-");
+            const deadline = new Date(
+              Number(year),
+              Number(monthNo) - 1,
+              Number(day)
+            );
+
+            return {
+              month,
+              deadline,
+              deadlineText: date,
+              isClosed: deadline < today,
+            };
+          })
+          : [];
+
+        const openIntakes = intakeData.filter((item) => !item.isClosed);
+        const closedIntakes = intakeData.filter((item) => item.isClosed);
+
+        const fallbackIntakes =
+          metaInfo?.Intakes?.split(",").map((item) => item.trim()) || [];
+
+        const fallbackClosed = metaInfo?.IntakesClosed
+          ? metaInfo.IntakesClosed.split(",").map((item) => {
+            const [month, year, open, closed, remark] = item.split(":::");
+            return {
+              month: month.trim(),
+              remark: remark || "Deadline passed.",
+            };
+          })
+          : [];
+
+        const fallbackClosedMonths = fallbackClosed?.map((item) => item.month);
+        const fallbackOpenMonths = fallbackIntakes.filter(
+          (month) => !fallbackClosedMonths?.includes(month)
+        );
+
+        const deadlineMap =
+          metaInfo?.deadline && metaInfo.deadline !== "ASAP"
+            ? Object.fromEntries(
+              metaInfo?.deadline?.split(",")?.map((item) => {
+                const [month, deadline] = item.split(":");
+                return [month?.trim(), deadline?.trim()];
+              })
+            )
+            : {};
+
+        const isAsap = metaInfo?.deadline;
+
+        return (
+          // MOBILE FIX: Removed fixed px-4 padding on container, handled inside card now
+          <div key={course._id} className="fade-in-up h-full flex flex-col rounded-lg hover:scale-103 transition-transform duration-200">
+            <div
+              className={`relative w-full p-4 md:p-5 transition-all duration-200 hover:shadow-md hover:shadow-orange-500/20 h-full flex flex-col border border-orange-500 rounded-xl ${selectedProgram.some((item) => item._id === course._id)
+                  ? "border-orange-500 bg-[#fefaf8]"
+                  : "border-gray-200 bg-white"
+                }`}
+            >
+              {/* Checkbox for Counsellor */}
+              {profile.role === "counsellor" && (
+                <div className="absolute top-4 right-4 z-10">
+                  <input
+                    type="checkbox"
+                    checked={selectedProgram.some((item) => item._id === course._id)}
+                    onChange={() => handleCompareSelect(course)}
+                    className="w-5 h-5 accent-orange-500 cursor-pointer"
+                  />
+                </div>
+              )}
+
+              {/* Top Section: Logo & Content */}
+              {/* MOBILE FIX: Reduced gap-14 to gap-4 on mobile to prevent overlap */}
+              <div className="flex flex-col md:flex-row gap-4 md:gap-14 min-w-0 w-full mb-4">
+                
+                {/* Left Section: Logo & Country */}
+                <div className="flex-shrink-0 flex flex-col items-center w-full md:w-auto min-w-[80px]">
+                  <div className="w-16 h-16 relative">
+                    {course.university?.uni_logo ? (
+                      <img
+                        src={course.country?.flg || "/images/newlogo3.png"}
+                        alt={course.university?.name}
+                        onError={(e) => {
+                          e.currentTarget.src = "/images/newlogo3.png";
+                        }}
+                        className="w-full h-full object-contain rounded-lg"
+                      />
+                    ) : (
+                      <div className="w-full h-full border border-gray-200 rounded-lg flex items-center justify-center bg-gray-50">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
                       </div>
-                      <div className="space-y-2">
-                        <div className="h-6 w-full bg-gray-100 rounded"></div>
-                        <div className="h-6 w-6/4 bg-gray-100 rounded"></div>
+                    )}
+                  </div>
+                  <span className="text-sm text-gray-500 font-medium text-center hidden md:block">
+                    {course?.country?.name}
+                  </span>
+                </div>
+
+                {/* Middle Content */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-gray-900 text-lg md:text-xl mb-1 line-clamp-2">
+                    {course.name}
+                  </h3>
+                  
+                  {/* MOBILE FIX: Added break-words to prevent university name overflowing */}
+                  <p className="text-sm font-medium text-gray-600 mb-1 flex items-center gap-1 break-words">
+                    <svg className="w-5 h-5 md:w-6 md:h-6 text-orange-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    {course.university?.name}
+                  </p>
+                  
+                  <div className="flex items-center gap-1 text-gray-500 text-sm mb-3">
+                    <svg className="w-5 h-5 md:w-6 md:h-6 text-orange-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span className="truncate">{course.university?.city}, {course.university?.country}</span>
+                  </div>
+
+                  {/* Tags / Highlights */}
+                  <div className="flex flex-wrap gap-2">
+                    {selectedHighlights.map((item) => (
+                      <div
+                        key={item.id}
+                        className="px-3 py-1 border border-orange-200 bg-orange-50 rounded-full text-orange-700 text-xs md:text-sm font-medium"
+                      >
+                        {item.label}
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="h-16 bg-gray-100 rounded-lg"></div>
-                        <div className="h-16 bg-gray-100 rounded-lg"></div>
-                        <div className="h-16 bg-gray-100 rounded-lg"></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Stats Row */}
+              <div className="bg-orange-50/50 rounded-lg border border-orange-100 p-3 mb-4">
+                {/* MOBILE FIX: Force 2 columns on mobile, 4 on desktop */}
+                <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-orange-200/50 gap-4">
+                  {/* Tuition Fee */}
+                  <div className="flex items-center justify-center gap-2 md:gap-3">
+                    <span className="text-xl md:text-2xl"></span>
+                    <div className="flex flex-col px-2 first:pl-0">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="text-xs md:text-base text-gray-500 font-medium">Tuition Fee</span>
                       </div>
-                      <div className="h-9 bg-gray-100 rounded-lg"></div>
+                      <p className="font-bold text-orange-600 text-sm md:text-base">
+                        {course.tuitionFee || 0} {course?.currency}
+                      </p>
                     </div>
                   </div>
-                ))
-              ) : courses.length === 0 ? (
-                <div className="col-span-full text-center py-12">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                    <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                  {/* Duration */}
+                  <div className="flex items-center justify-center gap-2 md:gap-3">
+                    <span className="text-xl md:text-2xl">⏳</span>
+                    <div className="flex flex-col px-2">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="text-xs md:text-base text-gray-500 font-medium">Duration</span>
+                      </div>
+                      <p className="font-bold text-orange-600 text-sm md:text-base">
+                        {course.duration || 'N/A'}
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">No programs found</h3>
-                  <p className="text-gray-500 text-base">Try adjusting your search or filters</p>
-                  <button
-                    onClick={clearFilters}
-                    className="mt-5 px-5 py-2 bg-primary text-white rounded-lg text-base font-medium hover:bg-primary/90 transition-colors"
+                  {/* Average Scholarship */}
+                  <div className="flex items-center justify-center gap-2 md:gap-3">
+                    <span className="text-xl md:text-2xl">🎓</span>
+                    <div className="flex flex-col px-2">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="text-xs md:text-base text-gray-500 font-medium">Avg. Scholarship</span>
+                      </div>
+                      <p className="font-bold text-emerald-600 text-sm md:text-base">
+                        {metaInfo?.AverageScholarship ? `${metaInfo.AverageScholarship} ${course?.currency}` : "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  {/* Initial Deposit */}
+                  <div className="flex items-center justify-center gap-2 md:gap-3">
+                    <span className="text-xl md:text-2xl"></span>
+                    <div className="flex flex-col px-2 last:pr-0">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className="text-xs md:text-base text-gray-500 font-medium">Initial Deposit</span>
+                      </div>
+                      <p className="font-bold text-gray-700 text-sm md:text-base">
+                        {metaInfo?.initialDeposit ? `${metaInfo.initialDeposit} ${course?.currency}` : "0 MYR"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Section: Intakes & Buttons */}
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-4 justify-between w-full">
+                
+                {/* Intakes Section */}
+                <div className="space-y-2 w-full md:w-auto">
+                  {openIntakes.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs md:text-sm font-medium bg-green-100 text-green-800">
+                        Open
+                      </span>
+                      {openIntakes.map((item) => (
+                        <div key={item.month} className="group relative">
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-green-50 border border-green-100 text-xs md:text-sm font-medium text-green-700">
+                            {item.month}
+                            <Info className="h-3 w-3 text-gray-400" />
+                          </span>
+                          <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs md:text-sm text-white group-hover:block">
+                            Deadline: {item.deadlineText}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {closedIntakes.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs md:text-sm font-medium bg-red-100 text-red-800">
+                        Closed
+                      </span>
+                      {closedIntakes.map((item) => (
+                        <div key={item.month} className="group relative">
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-red-50 border border-red-100 text-xs md:text-sm font-medium text-red-700">
+                            {item.month}
+                            <Info className="h-3 w-3 text-gray-400" />
+                          </span>
+                          <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs md:text-sm text-white group-hover:block">
+                            Deadline passed.
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {openIntakes.length === 0 && closedIntakes.length === 0 && fallbackIntakes.length > 0 && (
+                    <div className="space-y-2">
+                      {fallbackOpenMonths.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs md:text-sm font-medium bg-green-100 text-green-800">Open</span>
+                          {fallbackOpenMonths.map((month) => (
+                            <div key={month} className="group relative">
+                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-green-50 border border-green-100 text-xs md:text-sm font-medium text-green-700">
+                                {month} <Info className="h-3 w-3 text-gray-400 cursor-pointer" />
+                              </span>
+                              <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs md:text-sm text-white group-hover:block">
+                                {isAsap ? "Deadline: ASAP" : `Deadline: ${deadlineMap[month] || "ASAP"}`}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {fallbackClosed.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs md:text-sm font-medium bg-red-100 text-red-800">Closed</span>
+                          {fallbackClosed.map((item) => (
+                            <div key={item.month} className="group relative">
+                              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-red-50 border border-red-100 text-xs md:text-sm font-medium text-red-700">
+                                {item.month} <Info className="h-3 w-3 text-gray-400" />
+                              </span>
+                              <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-xs md:text-sm text-white group-hover:block">
+                                {item.remark}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                {/* MOBILE FIX: Full width buttons on mobile, fixed width on desktop */}
+                <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col md:flex-row gap-2 w-full md:w-80">
+                  <Link
+                    href={`/dashboard/programs/${course.slug}`}
+                    className="flex-1 text-center px-4 py-3 bg-white border border-orange-500 text-orange-500 rounded-lg text-sm font-semibold hover:bg-orange-50 transition-colors"
                   >
-                    Clear all filters
+                    View Details
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setSelectedCourse(course);
+                      profile.role === "user" ? setIsModalOpen(true) : setshowApplicationDetail(true);
+                    }}
+                    className="flex-1 flex items-center justify-center gap-1 px-4 py-2 bg-[#f26d44] hover:bg-[#e05a33] text-white rounded-lg text-sm font-semibold transition-colors shadow-sm"
+                  >
+                    Apply Now
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
                   </button>
                 </div>
-              ) : (
-                courses.map((course, index) => {
-                  const metaInfo = course?.metaInfo || {};
-                  const intakeDeadline = metaInfo?.intakeDeadline || "";
-                  const today = new Date();
-                  today.setHours(0, 0, 0, 0);
+              </div>
+            </div>
 
-                  const ids =
-  course?.metaInfo?.highlight
-    ?.split(",")
-    .map((id) => Number(id.trim())) || [];
-
-const selectedHighlights = highlights.filter((item) =>
-  ids.includes(item.id)
-);
-
-                  const intakeData = intakeDeadline
-                    ? intakeDeadline.split(",").map((item) => {
-                      const [month, date] = item.split(":");
-                      const [day, monthNo, year] = date.split("-");
-                      const deadline = new Date(
-                        Number(year),
-                        Number(monthNo) - 1,
-                        Number(day)
-                      );
-
-                      return {
-                        month,
-                        deadline,
-                        deadlineText: date,
-                        isClosed: deadline < today,
-                      };
-                    })
-                    : [];
-
-                  const openIntakes = intakeData.filter((item) => !item.isClosed);
-                  const closedIntakes = intakeData.filter((item) => item.isClosed);
-
-                  const monthOrder = {
-                    Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
-                    Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11,
-                  };
-
-                  const currentMonth = new Date().getMonth();
-
-                  const fallbackIntakes =
-                    metaInfo?.Intakes?.split(",").map((item) => item.trim()) || [];
-
-                  const fallbackClosed = metaInfo?.IntakesClosed
-                    ? metaInfo.IntakesClosed.split(",").map((item) => {
-                      const [month, year, open, closed, remark] = item.split(":::");
-                      return {
-                        month: month.trim(),
-                        remark: remark || "Deadline passed.",
-                      };
-                    })
-                    : [];
-
-                  const fallbackClosedMonths = fallbackClosed?.map((item) => item.month);
-                  const fallbackOpenMonths = fallbackIntakes.filter(
-                    (month) => !fallbackClosedMonths?.includes(month)
-                  );
-
-                  const deadlineMap =
-                    metaInfo?.deadline && metaInfo.deadline !== "ASAP"
-                      ? Object.fromEntries(
-                        metaInfo?.deadline?.split(",")?.map((item) => {
-                          const [month, deadline] = item.split(":");
-                          return [month?.trim(), deadline?.trim()];
-                        })
-                      )
-                      : {};
-
-                  const isAsap = metaInfo?.deadline;
-
-                  return (
-                <div key={course._id} className="fade-in-up h-full flex flex-col  rounded-lg hover:scale-103 transition-transform duration-200 px-4">
-  <div
-    className={`relative w-full p-5 transition-all duration-200 hover:shadow-md hover:shadow-orange-500/20 h-full flex flex-col border border-orange-500 rounded-xl ${
-      selectedProgram.some((item) => item._id === course._id)
-        ? "border-orange-500 bg-[#fefaf8]"
-        : "border-gray-200 bg-white"
-    }`}
-  >
-    {/* Checkbox for Counsellor */}
-    {profile.role === "counsellor" && (
-      <div className="absolute top-4 right-4 z-10">
-        <input
-          type="checkbox"
-          checked={selectedProgram.some((item) => item._id === course._id)}
-          onChange={() => handleCompareSelect(course)}
-          className="w-5 h-5 accent-orange-500 cursor-pointer"
-        />
-      </div>
+            <style jsx>{`
+              @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(15px); }
+                to { opacity: 1; transform: translateY(0); }
+              }
+              .fade-in-up {
+                opacity: 0;
+                animation: fadeInUp 0.4s ease forwards;
+              }
+            `}</style>
+          </div>
+        );
+      })
     )}
-
-    {/* Top Section: Logo & Content (Desktop: Row, Mobile: Column) */}
-    <div className="flex flex-col md:flex-row gap-5 items-start mb-4">
-    
-
-      {/* Middle Section: Content & Stats */}
-      <div className="flex gap-14 min-w-0 w-full">
-        {/* Header Info */}
-          {/* Left Section: Logo & Country */}
-      <div className="flex-shrink-0 flex flex-col items-center w-full md:w-auto min-w-[80px]">
-        <div className="w-16 h-16  relative">
-          {course.university?.uni_logo ? (
-            <img
-              src={course.country?.flg || "/images/newlogo3.png"}
-              alt={course.university?.name}
-              onError={(e) => {
-                e.currentTarget.src = "/images/newlogo3.png";
-              }}
-              className="w-full h-full object-contain rounded-lg"
-            />
-          ) : (
-            <div className="w-full h-full border border-gray-200 rounded-lg flex items-center justify-center bg-gray-50">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-            </div>
-          )}
-        </div>
-        <span className="text-sm text-gray-500 font-medium text-center hidden md:block">
-          {course?.country?.name}
-        </span>
-      </div>
-
-
-  <div>
-          <div className="">
-          <h3 className="font-bold text-gray-900 text-xl mb-1 line-clamp-2">
-            {course.name}
-          </h3>
-          <p className="text-sm font-medium text-gray-600 mb-1 flex items-center gap-1">
-            <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-            {course.university?.name}
-          </p>
-          <div className="flex items-center gap-1 text-gray-500 text-sm mb-3">
-            <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span className="truncate">{course.university?.city}, {course.university?.country}</span>
-          </div>
-
-          {/* Tags / Highlights */}
-          <div className="flex flex-wrap gap-2 ">
-            {selectedHighlights.map((item) => (
-              <div
-                key={item.id}
-                className="px-3 py-1 border border-orange-200 bg-orange-50 rounded-full text-orange-700 text-sm font-medium"
-              >
-                {item.label}
-              </div>
-            ))}
-          </div>
-        </div>
-
-      
   </div>
-
-
-
-      </div>
-
-     
-    </div>
-     <div>
-          {/* Stats Row */}
-        <div className="bg-orange-50/50 rounded-lg border border-orange-100 p-3 mb-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-orange-200/50 gap-4">
-            {/* Tuition Fee */}
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-2xl">💰</span>
-            <div className="flex flex-col px-2 first:pl-0">
-              <div className="flex items-center gap-1.5 mb-1">
-                <span className="text-base text-gray-500 font-medium">Tuition Fee</span>
-              </div>
-              <p className="font-bold text-orange-600 text-base">
-                {course.tuitionFee || 0} {course?.currency}
-              </p>
-            </div>
-                
-
-</div>
-            {/* Duration */}
-            <div className = "flex items-center justify-center gap-3">
-                <span className="text-2xl">⏳</span>
-
-            <div className="flex flex-col px-2">
-              <div className="flex items-center gap-1.5 mb-1">
-                <span className="text-base text-gray-500 font-medium">Duration</span>
-              </div>
-              <p className="font-bold text-orange-600 text-base">
-                {course.duration || 'N/A'}
-              </p>
-            </div>
-            </div>
-
-            {/* Average Scholarship */}
-            <div className="flex items-center justify-center gap-3">
-                <span className="text-2xl">🎓</span>
-
-            <div className="flex flex-col px-2">
-              <div className="flex items-center gap-1.5 mb-1">
-                <span className="text-base text-gray-500 font-medium">Avg. Scholarship</span>
-              </div>
-              <p className="font-bold text-emerald-600 text-base">
-                {metaInfo?.AverageScholarship ? `${metaInfo.AverageScholarship} ${course?.currency}` : "N/A"}
-              </p>
-            </div>
-            </div>
-
-            {/* Initial Deposit */}
-            <div className="flex items-center justify-center gap-3">
-                <span className="text-2xl">📄</span>
-
-            <div className="flex flex-col px-2 last:pr-0">
-              <div className="flex items-center gap-1.5 mb-1">
-                <span className="text-base text-gray-500 font-medium">Initial Deposit</span>
-              </div>
-              <p className="font-bold text-gray-700 text-base">
-                {metaInfo?.initialDeposit ? `${metaInfo.initialDeposit} ${course?.currency}` : "0 MYR"}
-              </p>
-            </div>
-            </div>
-          </div>
-        </div>
-
-    
-      </div>
-
-      <div className= "flex items-center gap-4 justify-between">
-
-
-            {/* Intakes Section */}
-        <div className="space-y-2">
-          {openIntakes.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                Open
-              </span>
-              {openIntakes.map((item) => (
-                <div key={item.month} className="group relative">
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-green-50 border border-green-100 text-sm font-medium text-green-700">
-                    {item.month}
-                    <Info className="h-3 w-3 text-gray-400" />
-                  </span>
-                  <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-                    Deadline: {item.deadlineText}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {closedIntakes.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                Closed
-              </span>
-              {closedIntakes.map((item) => (
-                <div key={item.month} className="group relative">
-                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-red-50 border border-red-100 text-sm font-medium text-red-700">
-                    {item.month}
-                    <Info className="h-3 w-3 text-gray-400" />
-                  </span>
-                  <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-                    Deadline passed.
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {openIntakes.length === 0 && closedIntakes.length === 0 && fallbackIntakes.length > 0 && (
-            <div className="space-y-2">
-              {fallbackOpenMonths.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">Open</span>
-                  {fallbackOpenMonths.map((month) => (
-                    <div key={month} className="group relative">
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-green-50 border border-green-100 text-sm font-medium text-green-700">
-                        {month} <Info className="h-3 w-3 text-gray-400 cursor-pointer" />
-                      </span>
-                      <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-                        {isAsap ? "Deadline: ASAP" : `Deadline: ${deadlineMap[month] || "ASAP"}`}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {fallbackClosed.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-red-100 text-red-800">Closed</span>
-                  {fallbackClosed.map((item) => (
-                    <div key={item.month} className="group relative">
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-md bg-red-50 border border-red-100 text-sm font-medium text-red-700">
-                        {item.month} <Info className="h-3 w-3 text-gray-400" />
-                      </span>
-                      <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-black px-2 py-1 text-sm text-white group-hover:block">
-                        {item.remark}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-          {/* Bottom Section: Action Buttons (Pushed to bottom with mt-auto) */}
-    <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col md:flex-row gap-2 w-80">
-      <Link
-        href={`/dashboard/programs/${course.slug}`}
-        className="flex-1 text-center px-4 py-3 bg-white border border-orange-500 text-orange-500 rounded-lg text-sm font-semibold hover:bg-orange-50 transition-colors"
-      >
-        View Details
-      </Link>
-      <button
-        onClick={() => {
-          setSelectedCourse(course);
-          profile.role === "user" ? setIsModalOpen(true) : setshowApplicationDetail(true);
-        }}
-        className="flex-1 flex items-center justify-center gap-1 px-4 py-2 bg-[#f26d44] hover:bg-[#e05a33] text-white rounded-lg text-sm font-semibold transition-colors shadow-sm"
-      >
-        Apply Now
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-        </svg>
-      </button>
-    </div>
-
-      </div>
-
   
+  <div ref={observerTarget} className="py-8">
+    {loadingMore && (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
+        <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+        <p className="mt-3 text-base text-gray-800">Loading more programs...</p>
+      </motion.div>
+    )}
+    {!hasMore && courses.length > 0 && (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-8">
+        <p className="text-gray-800">You've explored all programs</p>
+        <p className="text-base text-gray-800/70 mt-1">Showing {courses.length} programs</p>
+      </motion.div>
+    )}
   </div>
-
-  <style jsx>{`
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .fade-in-up {
-      opacity: 0;
-      animation: fadeInUp 0.4s ease forwards;
-    }
-  `}</style>
 </div>
-                  );
-                })
-              )}
-            </div>
-        <div ref={observerTarget} className="py-8">
-          {loadingMore && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center"
-            >
-              <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-              <p className="mt-3 text-base text-gray-800">Loading more programs...</p>
-            </motion.div>
-          )}
-          {!hasMore && courses.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-8"
-            >
-              <p className="text-gray-800">You've explored all programs</p>
-              <p className="text-base text-gray-800/70 mt-1">
-                Showing {courses.length} programs
-              </p>
-            </motion.div>
-          )}
-        </div>
-          </div>
         </div>
 
         {showApplicationDetail && (
