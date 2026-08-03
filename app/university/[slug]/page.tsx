@@ -242,7 +242,7 @@ async function HeroSection({ searchParams, pageData }: { searchParams: any; page
   const subtitle = heroData?.subtitle || 'Discover 900+ top universities worldwide. World-class education, low tuition fees, and exciting career opportunities await you.';
 
   return (
-    <section className="relative bg-[#F7F9FC] overflow-hidden">
+    <section className="relative bg-[#F7F9FC] [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] overflow-hidden">
       {/* Hero Background */}
       <div className="absolute inset-0">
         <Image
@@ -257,11 +257,11 @@ async function HeroSection({ searchParams, pageData }: { searchParams: any; page
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-4 pt-12 lg:pt-20 pb-32 relative">
-        <div className="relative z-10 grid lg:grid-cols-2 items-center gap-10">
+        <div className="relative z-10 grid lg:grid-cols-3 items-center ">
           {/* Left Content */}
-          <div className="max-w-2xl">
+          <div className="col-span-2">
             {heroData?.tag === '1' && (
-              <h1 className="text-4xl lg:text-6xl font-bold text-[#13294B]">
+              <h1 className="text-4xl leading-tight lg:text-5xl font-bold text-[#13294B]">
                 {text}{' '}
                 {highlighted && <span className="text-[#F46C44]">{highlighted}</span>}
               </h1>
@@ -383,12 +383,17 @@ function StatsSection1({ statsData, slug }: any) {
 
   return (
     <section className="bg-white px-4 relative z-10">
-      <h1 className="text-3xl lg:text-5xl font-bold text-[#13294B] text-center leading-tight mb-10">
-        {text}{" "}
-        {highlighted && (
-          <span className="text-[#F46C44]">{highlighted}</span>
-        )}
-      </h1>
+      <div className="max-w-7xl mx-auto">
+
+        <h2 className="text-3xl lg:text-4xl font-bold text-[#13294B] text-start leading-tight mb-10">
+          {text}{" "}
+          {highlighted && (
+            <span className="text-[#F46C44]">{highlighted}</span>
+          )}
+        </h2>
+
+      </div>
+
 
       <div className="bg-white max-w-7xl mx-auto  ">
         <div className="flex gap-6 overflow-x-auto py-4 scrollbar-hide pb-4 snap-x snap-mandatory">
@@ -471,7 +476,7 @@ interface PageProps {
 }
 
 export default async function FindUniversitiesPage({ params, searchParams }: PageProps) {
-  
+
   const { slug } = await params;
 
   if (slug == 'find-universities-main-page') return <NotFound />
@@ -523,6 +528,11 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
   // });
 
   const pageTitle = pageData?.data?.title || 'Find Top Universities Worldwide';
+
+  const sections = pageData?.data?.sections || {};
+
+  const orderedSections = Object.entries(sections)
+    .sort(([, a], [, b]) => (a.__order__ ?? 999) - (b.__order__ ?? 999));
 
   return (
     <div className="min-h-screen bg-[#F8F6F4] ">
@@ -589,13 +599,57 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
       </section>
 
       {/* StudyStats Component */}
-      <StudyStats statsData={pageData?.data?.sections?.stats} />
+      {/* <StudyStats statsData={pageData?.data?.sections?.stats} />
       {pageData?.data?.sections?.whyStudy && <WhyStudySection data={pageData?.data?.sections?.whyStudy} />}
       {pageData?.data?.sections?.contentSection && <ContentSection data={pageData?.data?.sections?.contentSection} />}
       {pageData?.data?.sections?.eligibilityCriteria && <EligibilityCriteriaSection data={pageData?.data?.sections?.eligibilityCriteria} />}
       <StatsSection1 statsData={pageData?.data?.sections?.city} slug={slug} />
       <UniversityOverview pageData={pageData?.data?.sections?.universityOverview} />
-      {<CTASection data={pageData?.data?.sections?.cta} />}
+      {<CTASection data={pageData?.data?.sections?.cta} />} */}
+
+      {orderedSections.map(([key, section]) => {
+        switch (section.__originalName__ || key) {
+          case "stats":
+            return <StudyStats key={key} statsData={section} />;
+
+          case "whyStudy":
+            return <WhyStudySection key={key} data={section} />;
+
+          case "contentSection":
+            return <ContentSection key={key} data={section} />;
+
+          case "eligibilityCriteria":
+            return <EligibilityCriteriaSection key={key} data={section} />;
+
+          case "city":
+            return (
+              <StatsSection1
+                key={key}
+                statsData={section}
+                slug={slug}
+              />
+            );
+
+          case "universityOverview":
+            return (
+              <UniversityOverview
+                key={key}
+                pageData={section}
+              />
+            );
+
+          case "cta":
+            return (
+              <CTASection
+                key={key}
+                data={section}
+              />
+            );
+
+          default:
+            return null;
+        }
+      })}
 
       <div className='px-4'>
         <FAQSection Faqres={Faqres} />

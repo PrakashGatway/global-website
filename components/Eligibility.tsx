@@ -48,7 +48,7 @@ export default function EligibilitySection({ pageData,tag = 2 } : any) {
                 onClick={() => setOpen(open === i ? -1 : i)}
                 className="w-full flex justify-between items-center px-4 py-3 lg:px-6 lg:py-2 text-left"
               >
-                <span className="text-sm lg:text-base font-medium text-gray-800">
+                <span className="text-base lg:text-base font-bold text-gray-800">
                   {item?.itemname}
                 </span>
 
@@ -59,7 +59,7 @@ export default function EligibilitySection({ pageData,tag = 2 } : any) {
 
               {/* Content */}
               {open === i && (
-                <div className="px-4 pb-4 lg:px-6  text-xs lg:text-base text-black">
+                <div className="px-4 pb-4 lg:px-6  text-sm lg:text-base text-black">
                   <ul className="list-disc pl-5 space-y-1">
                     {item?.subItems?.split("|").map((sub, idx) => (
                       <li key={idx}>{sub.trim()}</li>

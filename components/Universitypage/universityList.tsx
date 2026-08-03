@@ -161,7 +161,8 @@ export function StudyStats({statsData} : any) {
                   className="flex items-start gap-5 p-8  hover:bg-white transition duration-300"
                 >
                   <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-orange-100 bg-orange-50">
-                    <Icon
+                    <DynamicLucideIcon
+                      name={item.icon}
                       size={30}
                       className="text-[#173B78] stroke-[2]"
                     />
@@ -169,7 +170,7 @@ export function StudyStats({statsData} : any) {
 
                   <div>
                     <h3 className="text-2xl font-bold text-[#FF5A1F] leading-none">
-                      {item.highlight}
+                      {item.stats}
                     </h3>
 
                     <p className="mt-1 text-[15px] font-semibold text-[#173B78]">
@@ -198,6 +199,7 @@ import {
   Languages,
   HelpCircle,
 } from "lucide-react";
+import { DynamicLucideIcon } from '../DynamicLucideIcon';
 
 // Dictionary to dynamically resolve dynamic icon strings coming from your API data
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
