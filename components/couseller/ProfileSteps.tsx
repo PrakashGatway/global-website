@@ -66,7 +66,7 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
     if (isEditing) {
       setFormData({
         personal: {
-          Firstname: user?.Firstname || "",
+          Firstname: user?.name || "",
           Middlename: user?.Middlename || "",
           Lastname: user?.Lastname || "",
           email: user?.email || "",
@@ -129,9 +129,8 @@ export default function ProfileTabs({ studentId, user, profile, countriesList, o
                 countriesList={countriesList}
                 onSave={async (data) => {
                   const payload = {
-                    Firstname: data.Firstname,
-                    Middlename: data.Middlename,
-                    Lastname: data.Lastname,
+                    name: `${data.Firstname} ${data.Lastname}`,
+                    midName: data.Middlename,
                     phone: data.phone,
                     dateOfBirth: data.dateOfBirth,
                     gender: data.gender,
@@ -652,9 +651,9 @@ function EducationCard({ level, education, isEditing, countries, onChange, onRem
       ? boards[education.state as keyof typeof boards] || []
       : [];
 
-      
 
-      
+
+
 
   return (
     <div className="border border-gray-200 overflow-hidden relative group">
@@ -770,14 +769,14 @@ function EducationCard({ level, education, isEditing, countries, onChange, onRem
                   placeholder={`Enter ${f.label.toLowerCase()}`}
                 />
               )
-            ) :  (
+            ) : (
               <div className="w-full bg-gray-50 border border-gray-200 p-2.5 text-sm text-gray-700 min-h-[42px] flex items-center">
                 {f.type === "month" ? (
                   formatDate(education[f.key])
                 ) : f.type === "board-select" ? (
                   // FIX: Convert to uppercase for display if it's a board field
-                  education.degreeName 
-                    ? education.degreeName.toUpperCase() 
+                  education.degreeName
+                    ? education.degreeName.toUpperCase()
                     : "N/A"
                 ) : (
                   // Default display for other fields
@@ -872,9 +871,9 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
 
   useEffect(() => {
     setFormData({
-      Firstname: user?.Firstname || "",
-      Middlename: user?.Middlename || "",
-      Lastname: user?.Lastname || "",
+      Firstname: user?.name.split(" ")[0] || "",
+      Middlename: user?.midName || "",
+      Lastname: user?.name.split(" ")[1] || "",
       email: user?.email || "",
       phone: user?.phone || "",
       dateOfBirth: user?.dateOfBirth
@@ -903,7 +902,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
     setErrors({});
   }, [user, profile]);
 
-  
+
 
   const validatePersonalInfo = () => {
     const newErrors: Record<string, string> = {};
@@ -1185,9 +1184,9 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             let sectionData: any = {};
             if (sectionName === 'personal') {
               sectionData = {
-                Firstname: formData.Firstname,
-                Middlename: formData.Middlename,
-                Lastname: formData.Lastname,
+                Firstname: formData?.Firstname,
+                Middlename: formData.midName,
+                Lastname: formData?.Lastname,
                 email: formData.email,
                 phone: formData.phone,
                 dateOfBirth: formData.dateOfBirth,
@@ -1229,6 +1228,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
     </div>
   );
 
+
   return (
     <div className="space-y-4">
       <div className="p-4 bg-white border border-gray-200">
@@ -1241,7 +1241,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             formatDate={formatDate}
             displayValue={displayValue}
             formData={formData}
-            value={user?.Firstname}
+            value={user.name.split(" ")[0]}
             icon={User}
             fieldKey="Firstname"
             section="personal"
@@ -1255,7 +1255,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             formatDate={formatDate}
             displayValue={displayValue}
             formData={formData}
-            value={user?.Middlename}
+            value={user?.midName}
             icon={User}
             fieldKey="Middlename"
             section="personal"
@@ -1268,7 +1268,7 @@ export function PersonalInfoTab({ user, profile, countriesList, onSave }: any) {
             formatDate={formatDate}
             displayValue={displayValue}
             formData={formData}
-            value={user?.Lastname}
+            value={user.name.split(" ")[1]}
             icon={User}
             fieldKey="Lastname"
             section="personal"

@@ -36,7 +36,7 @@ function useScrollReveal() {
   return { ref, visible };
 }
 
-function Reveal({
+export function Reveal({
   children,
   delay = 0,
   className = "",
@@ -235,7 +235,7 @@ export default function ScholarshipPage({
                 <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-neutral-400">
                   {fact.label}
                 </p>
-                <p className="font-medium text-sm">{fact.value}</p>
+                <p className="font-medium text-sm">{fact?.value}</p>
               </div>
             ))}
           </div>
