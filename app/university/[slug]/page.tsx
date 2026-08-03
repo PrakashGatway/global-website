@@ -479,7 +479,7 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
 
   const { slug } = await params;
 
-  if (slug == 'find-universities-main-page') return <NotFound />
+  if (slug == 'find-universities-main-page' || slug == 'find-universities') return <NotFound />
 
   const searchParam = await searchParams;
 
