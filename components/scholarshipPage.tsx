@@ -78,25 +78,12 @@ export default function ScholarshipPage({
   error: initialError,
   slug,
 }: ScholarshipPageProps) {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [heroScale, setHeroScale] = useState(1.05);
 
   const [scholarship] = useState(initialScholarship);
   const [similar] = useState(initialSimilar);
   const [loading] = useState(false);
   const [error] = useState(initialError || "");
-
-  const [contentTabs] = useState<
-    { id: string; label: string; content?: string }[]
-  >(
-    initialContentTabs?.length
-      ? initialContentTabs
-      : [{ id: "overview", label: "Overview" }]
-  );
-
-  const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-
   const {
     register,
     handleSubmit,
@@ -125,15 +112,6 @@ export default function ScholarshipPage({
       toast.error("Failed to send message ❌");
     }
   };
-
-  useEffect(() => {
-    const onScroll = () => {
-      const s = Math.max(1, 1.05 - window.scrollY * 0.0002);
-      setHeroScale(s);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
@@ -197,7 +175,7 @@ export default function ScholarshipPage({
 
 
   return (
-    <main className="bg-[#FAFAF9] text-neutral-900 antialiased">
+    <main className="bg-[#FAFAF9] [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] text-neutral-900 antialiased">
       {/* ───── HERO ───── */}
       <section className="relative h-70 md:h-90 overflow-hidden">
         <div
@@ -208,9 +186,9 @@ export default function ScholarshipPage({
             transition: "transform 0.1s linear",
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
 
-        <div className="relative z-10 max-w-7xl px-4 mx-auto h-full flex flex-col justify-end pb-10">
+        <div className="relative z-10 max-w-7xl px-4 mx-auto h-full flex flex-col justify-end pb-8">
           <Reveal delay={100}>
             <div className="flex flex-wrap gap-2 mb-3">
               {getTags().map((tag, i) => (
@@ -231,14 +209,14 @@ export default function ScholarshipPage({
             </div>
           </Reveal>
 
-          <Reveal delay={200}>
-            <h1 className="text-2xl md:text-4xl lg:text-5xl font-semibold text-white tracking-tight leading-[1.15] max-w-4xl">
+          <Reveal delay={100}>
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-semibold text-white tracking-tight leading-[1.15] max-w-4xl [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]">
               {scholarship?.title}
             </h1>
           </Reveal>
 
-          <Reveal delay={300}>
-            <div className="text-white text-sm md:text-base mt-2 font-light line-clamp-2"
+          <Reveal delay={200}>
+            <div className="text-white text-sm font-medium md:text-base mt-2 font-light line-clamp-2 [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]"
             dangerouslySetInnerHTML={{__html: scholarship?.shortDescription}}
             />
           </Reveal>

@@ -48,7 +48,7 @@ const InnerContent = ({ cleanedHtml }: InnerContentProps) => {
 .blog-html * {
   font-size: 16px;
   line-height: 1.8;
-  font-weight: 500;
+  // font-weight: 500;
   color: #374151;
   word-break: break-word;
 }
@@ -107,14 +107,14 @@ const InnerContent = ({ cleanedHtml }: InnerContentProps) => {
 .blog-html * a {
   color:blue; 
   text-decoration: none;
-  font-weight: 600;
+  // font-weight: 600;
   transition: .25s;
 }
 
 .blog-html * a * {
   color: blue;
   text-decoration: none;
-  font-weight: 600;
+  // font-weight: 600;
   transition: .25s;
 }
 
@@ -371,7 +371,7 @@ export const BlogContent = ({ cleanedHtml }: InnerContentProps) => {
 .blog-html * {
   font-size: 17px;
   line-height: 1.8;
-  font-weight: 500;
+  // font-weight: 500;
   color: #374151;
   word-break: break-word;
   margin: 0;
@@ -437,14 +437,14 @@ export const BlogContent = ({ cleanedHtml }: InnerContentProps) => {
 .blog-html * a {
   color:blue; 
   text-decoration: none;
-  font-weight: 600;
+  // font-weight: 600;
   transition: .25s;
 }
 
 .blog-html * a * {
   color: blue;
   text-decoration: none;
-  font-weight: 600;
+  // font-weight: 600;
   transition: .25s;
 }
 
