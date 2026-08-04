@@ -276,7 +276,7 @@ async function HeroSection({ searchParams, pageData }: { searchParams: any; page
               <input
                 type="text"
                 name="keyword"
-                placeholder="Search universities, courses or cities..."
+                placeholder="Search ..."
                 className="w-full h-14 outline-none text-gray-800 placeholder:text-gray-500 bg-transparent"
                 defaultValue={searchParams?.keyword || ''}
               />
