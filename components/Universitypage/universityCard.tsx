@@ -14,7 +14,7 @@ interface UniversityCardProps {
   };
 }
 
-export default function UniversityCard({ uni }: UniversityCardProps) {
+export default function UniversityCarddddd({ uni }: UniversityCardProps) {
   return (
      <div className="group bg-white overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
       

@@ -34,7 +34,7 @@ const cleanHtmlContent = (html: string) => {
   return doc.body.innerHTML;
 };
 
-const InnerContent = ({ cleanedHtml }: InnerContentProps) => {
+const InnerContent = ({ cleanedHtml,text }: any) => {
   const html = useMemo(() => cleanHtmlContent(cleanedHtml), [cleanedHtml]);
 
   return (
@@ -46,7 +46,7 @@ const InnerContent = ({ cleanedHtml }: InnerContentProps) => {
 
       <style jsx global>{`
 .blog-html * {
-  font-size: 16px;
+  font-size: ${text || "16"}px;
   line-height: 1.8;
   // font-weight: 500;
   color: #374151;

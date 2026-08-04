@@ -1,10 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { Search } from 'lucide-react'; // FIX: Added missing import for empty state
-import UniversityCard from './universityCard';
+import { MapPin, Search } from 'lucide-react'; // FIX: Added missing import for empty state
 import { UniversityListSkeleton } from './universityCard';
+import Link from 'next/link';
 import axiosInstance from '@/app/axiosInstance';
+import dynamic from "next/dynamic";
+
+const UniversityCard = dynamic(
+  () => import("@/components/UniversityCard"),
+  {
+    loading: () => <p>Loading...</p>,
+  }
+);
 
 interface UniversityListProps {
   initialData: {
@@ -29,7 +37,7 @@ export default function UniversityList({ initialData, searchParams }: University
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      
+
       Object.entries(searchParams).forEach(([key, value]) => {
         if (value && key !== 'page') {
           params.append(key, value);
@@ -39,10 +47,10 @@ export default function UniversityList({ initialData, searchParams }: University
       params.set('limit', '12');
       // params.append('isWeb', 'true');
       // params.append('populateExtra', 'true');
-      
+
       const res = await axiosInstance.get(`/universities?${params.toString()}`);
       const data = res.data;
-      
+
       if (data.success) {
         setUniversities(prev => [...prev, ...data.result]);
         setPage(data.page);
@@ -70,9 +78,113 @@ export default function UniversityList({ initialData, searchParams }: University
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-        {universities.map((uni) => (
-          <UniversityCard key={uni._id} uni={uni} />
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
+        {universities.map((uni, index) => (
+          <div
+            key={uni._id || index}
+            className="px-1 pb-2"
+          >
+            <div className="px-0 h-full">
+              <div
+                className="
+    bg-white
+    overflow-hidden
+    hover:shadow-xl
+    transition-all
+    duration-500
+    group
+    h-full
+    flex
+    flex-col
+  "
+              >
+                {/* Cover Image */}
+                <div className="relative">
+                  <img
+                    src={uni.cover_photo}
+                    alt={uni.name}
+                    className="w-full h-38 object-cover"
+                  />
+
+                  {/* Logo */}
+                  <div className="absolute -bottom-4 left-5 bg-white shadow-lg p-2">
+                    <img
+                      src={uni.uni_logo}
+                      alt={uni.name}
+                      className="w-16 h-10 object-contain"
+                    />
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="pt-6 px-5 flex-1 flex flex-col">
+
+                  <h3 className="text-base font-semibold text-gray-900 line-clamp-2">
+                    {uni.name}
+                  </h3>
+
+                  <div className="mt-1 flex items-start text-gray-600 leading-7">
+                    <MapPin
+                      size={18}
+                      className="text-orange-500 mr-2  flex-shrink-0"
+                    />
+
+                    <span className="line-clamp-2 text-xs">
+                      {uni.address
+                        ? uni.address
+                        : `${uni.city}, ${uni.country}`}
+                    </span>
+                  </div>
+                  {uni?.uni_rank?.length > 0 && (
+                    <div className="flex gap-3 items-center justify-start">
+                      {uni.uni_rank.slice(0, 2).map((rank, idx) => (
+                        <div
+                          key={idx}
+                          className="bg-orange-50 my-2 flex gap-2 items-center border border-orange-100 px-4 py-2"
+                        >
+                          <p className="text-xs font-medium text-gray-800">
+                            {rank?.type?.split(" ")[0]}
+                          </p>
+
+                          <p className="font-semibold text-orange-600">
+                            #{rank.rank?.split("–")[0]}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Fees */}
+                  {/* <div className="my-2  text-sm">
+      <div className="flex justify-between">
+        <span className="text-gray-500">
+          Living Cost
+        </span>
+
+        <span className="font-semibold">
+          {formatFee(uni.financials?.cost_of_living)}
+        </span>
+      </div>
+    </div> */}
+
+                  {/* Bottom CTA */}
+                  <Link
+                    href={`/universities/${uni.slug}`}
+                    className="flex flex-col mt-auto "
+                  >
+                    <div className="flex items-center justify-between text-gray-800 hover:text-orange-700 py-3 pb-4">
+                      <span className="text-base font-semibold">
+                        Enquiry Now
+                      </span>
+
+                      <span className="text-xl"> →</span>
+                    </div>
+                  </Link>
+
+                </div>
+              </div>
+            </div>
+          </div>
         ))}
         {loading && <UniversityListSkeleton />}
       </div>
@@ -129,28 +241,25 @@ const stats = [
   // },
 ];
 
-export function StudyStats({statsData} : any) {
-
-  
-  
-  const items = statsData?.items && statsData.items.length > 0 
+export function StudyStats({ statsData }: any) {
+  const items = statsData?.items && statsData.items.length > 0
     ? statsData.items.map(item => ({
-        title: item.title,
-        stats: item.stats,
-        icon: item.icon,
-        description: item.description || item.title
-      }))
+      title: item.title,
+      stats: item.stats,
+      icon: item.icon,
+      description: item.description || item.title
+    }))
     : stats;
-  
+
   // Ensure we have 4 items, pad with defaults if needed
   while (items.length < 4) {
     const defaultItem = stats[items.length % stats.length];
     items.push({ ...defaultItem });
   }
   return (
-    <section className="py-8 bg-white">
-      <div className="max-w-[1380px] mx-auto px-4">
-        <div className=" bg-gradient-to-r from-white via-slate-50 to-white overflow-hidden">
+    <section className="bg-white">
+      <div className="max-w-7xl mx-auto ">
+        <div className=" bg-gradient-to-r from-white via-orange-100 to-white overflow-hidden">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-gray-200">
             {items.map((item, index) => {
               const Icon = item.icon;
@@ -158,13 +267,13 @@ export function StudyStats({statsData} : any) {
               return (
                 <div
                   key={index}
-                  className="flex items-start gap-5 p-8  hover:bg-white transition duration-300"
+                  className="flex items-start gap-5 p-6  hover:bg-white transition duration-300"
                 >
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-orange-100 bg-orange-50">
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-orange-100 bg-orange-50">
                     <DynamicLucideIcon
                       name={item.icon}
                       size={30}
-                      className="text-[#173B78] stroke-[2]"
+                      className="text-[#173B78] stroke-[1.6]"
                     />
                   </div>
 
@@ -173,13 +282,12 @@ export function StudyStats({statsData} : any) {
                       {item.stats}
                     </h3>
 
-                    <p className="mt-1 text-[15px] font-semibold text-[#173B78]">
+                    <p className="mt-1 text-base font-semibold text-[#173B78]">
                       {item.title}
                     </p>
-
-                    <p className="mt-1 font-medium text-sm leading-6 text-gray-600">
+                    {/* <p className="mt-px font-medium text-sm leading-6 text-gray-600">
                       {item.description}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               );
@@ -200,6 +308,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { DynamicLucideIcon } from '../DynamicLucideIcon';
+import InnerContent from '../dom/DomParser';
 
 // Dictionary to dynamically resolve dynamic icon strings coming from your API data
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -248,72 +357,83 @@ interface UniversityOverviewProps {
 }
 
 export function UniversityOverview({ pageData }: UniversityOverviewProps) {
-  // Use dynamic content if available; fall back to your default static text if not
   const rawTitle = pageData?.title || "Study at World Class || Universities";
-  const rawDescription = pageData?.description || "<p>Germany is one of the most popular study destinations for international students. With over <strong>300 universities</strong> offering world-class education, innovative research opportunities and globally recognized degrees, Germany provides the perfect environment for academic and personal growth.</p>";
-  
-  // Use backend features array if populated, otherwise use hardcoded array
-  const displayFeatures = pageData?.features && pageData.features.length > 0 
-    ? pageData.features 
+  const rawDescription = pageData?.description || "<p></p>";
+
+  const displayFeatures = pageData?.features && pageData.features.length > 0
+    ? pageData.features
     : defaultFeatures;
 
-  // Split title string by "||" to dynamically highlight the text
   const titleParts = rawTitle.split("||");
   const mainTitle = titleParts[0]?.trim();
   const highlightedTitle = titleParts[1]?.trim();
 
   return (
-    <section className="bg-white">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="bg-gradient-to-r from-white via-slate-50 to-white overflow-hidden">
-          <div className="grid lg:grid-cols-2 gap-12 py-12 items-center">
-            
-            {/* Left Side - Title and Description */}
+    <section className="relative [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] bg-white py-8 overflow-hidden">
+      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-50/30 to-transparent pointer-events-none hidden lg:block" />
+
+      <div className="relative max-w-7xl mx-auto px-4">
+        <div className="grid lg:grid-cols-1 gap-6">
+
+          <div className="">
+            <h2 className="text-2xl mb-4 md:text-4xl font-semibold leading-[1.15] text-[#163567] tracking-tight">
+              {mainTitle}{" "}
+              {highlightedTitle && (
+                <span className="relative inline-block">
+                  <span className="relative z-10 text-[#FF5A1F]">{highlightedTitle}</span>
+                  {/* Modern highlight marker effect */}
+                  <span className="absolute bottom-1 left-0 w-full h-3 bg-orange-100/70 -z-10 rounded-sm" />
+                </span>
+              )}
+            </h2>
             <div>
-              <h2 className="text-3xl lg:text-4xl font-bold leading-tight text-[#163567]">
-                {mainTitle}{" "}
-                {highlightedTitle && (
-                  <span className="text-[#FF5A1F]">{highlightedTitle}</span>
-                )}
-              </h2>
-
-              {/* safely parse raw HTML tags like <strong> from data string */}
-              <div
-                className="mt-6 text-gray-600 font-medium leading-8 prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: rawDescription }}
-              />
+              <InnerContent text={17} cleanedHtml={rawDescription || ""} />
             </div>
+            {/* <div
+              className="mt-8 text-base md:text-lg text-gray-600 leading-relaxed [&_strong]:text-[#163567] [&_strong]:font-semibold"
+              dangerouslySetInnerHTML={{ __html: rawDescription }}
+            /> */}
+          </div>
 
-            {/* Right Side - Features Grid */}
-            <div className="grid sm:grid-cols-2 gap-8">
-              {displayFeatures.map((item: any, index: number) => {
-                // Determine if item.icon is a React Component or a lookup string string
-                const IconComponent = typeof item.icon === "string" 
-                  ? (iconMap[item.icon] || HelpCircle) 
-                  : item.icon;
+          {/* Right Side - Interactive Features Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {displayFeatures && displayFeatures.slice(0, 4).map((item: any, index: number) => {
+              const IconComponent = typeof item.icon === "string"
+                ? (iconMap[item.icon] || HelpCircle)
+                : item.icon;
 
-                return (
-                  <div key={index} className="flex items-start gap-4">
-                    {/* Icon Container */}
-                    <div className="w-14 h-14 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
-                      <IconComponent size={28} className="text-[#FF5A1F]" />
-                    </div>
+              return (
+                <div
+                  key={index}
+                  className="group relative p-6 rounded-2xl border border-gray-100 bg-white hover:border-transparent hover:shadow-2xl hover:shadow-orange-100/40 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col h-full overflow-hidden"
+                >
 
-                    {/* Text Details */}
-                    <div>
-                      <h3 className="text-lg font-bold text-[#163567]">
-                        {item.title}
-                      </h3>
-                      <p className="mt-2 text-base font-medium leading-7 text-gray-600">
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-50/0 to-orange-50/0 group-hover:from-orange-50/80 group-hover:to-white transition-all duration-500" />
+
+                  {/* Content Wrapper (z-10 ensures text sits above the background glow) */}
+                  <div className="relative z-10 flex flex-col h-full">
+
+                    {/* 3. Icon Container with Soft Aura */}
+
+                    <div className="flex-1 flex mt-2 flex-col">
+                      <div className="flex items-start gap-2 mb-2">
+                        <div className="relative p-2.5 rounded-full bg-gradient-to-br from-orange-50 to-orange-100/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-orange-200/60 transition-all duration-300">
+                          <IconComponent size={22} className="text-[#FF5A1F]" strokeWidth={2} />
+                        </div>
+                        <h3 className="text-lg w-full font-semibold text-[#163567] mb-2 group-hover:text-[#FF5A1F] transition-colors duration-300">
+                          {item.title}
+                        </h3>
+                      </div>
+                      <p className="text-sm leading-relaxed text-gray-500 flex-1">
                         {item.description}
                       </p>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-
+                </div>
+              );
+            })}
           </div>
+
         </div>
       </div>
     </section>

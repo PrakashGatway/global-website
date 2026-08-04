@@ -18,6 +18,7 @@ import Link from 'next/link'
 import { useKeenSlider } from 'keen-slider/react'
 import AuthorCard from './author/author'
 import VisaDetails from './dashboard/VisaDetails/visaDetails'
+import InnerContent, { BlogContent } from './dom/DomParser'
 
 
 
@@ -323,10 +324,11 @@ export const WhyStudySection = ({ data }) => {
             </span>
           </Tagging>
         </div>
-        <div className="text-[#123b73] text-sm sm:text-base lg:text-lg mb-8 leading-relaxed" dangerouslySetInnerHTML={{
+        <InnerContent cleanedHtml={data?.subtitle} />
+        {/* <div className="text-[#123b73] text-sm sm:text-base lg:text-lg mb-8 leading-relaxed" dangerouslySetInnerHTML={{
           __html: data?.subTitle
         }}
-        />
+        /> */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
           {(data?.items || []).map((item, index) => (
             <div key={index} className="flex items-start gap-3 sm:gap-4 bg-gray-200 p-4 rounded-xl">
@@ -335,10 +337,15 @@ export const WhyStudySection = ({ data }) => {
               </div>
               <div>
                 <span className='text-base sm:text-2xl lg:text-xl text-gray-900 font-semibold' dangerouslySetInnerHTML={{ __html: item?.title }} />
-                <ExpandableText
+                {/* <ExpandableText
                   htmlContent={`${item.description}`}
                   lines={4}
-                />
+                /> */}
+                <div className="mt-1">
+
+                  <InnerContent cleanedHtml={item.description} />
+                </div>
+
               </div>
             </div>
           ))}
@@ -541,6 +548,8 @@ export const ContentSection = ({ data }) => {
                 </div>
               </h2>
             </div>
+            {/* <BlogContent cleanedHtml={item.description} /> */}
+
             <div className="country-table overflow-x-auto mt-4" dangerouslySetInnerHTML={{ __html: item.description }} />
           </div>
         ))}
@@ -782,7 +791,7 @@ const SimilarDestination = ({ countryres, sliderRef }) =>
               </div>
 
               <h3 className="text-xl font-bold text-gray-900 truncate my-4">
-                {item?.title }
+                {item?.title}
               </h3>
 
 
