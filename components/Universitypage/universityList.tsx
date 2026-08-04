@@ -362,7 +362,7 @@ export function UniversityOverview({ pageData }: UniversityOverviewProps) {
 
   const displayFeatures = pageData?.features && pageData.features.length > 0
     ? pageData.features
-    : defaultFeatures;
+    : [];
 
   const titleParts = rawTitle.split("||");
   const mainTitle = titleParts[0]?.trim();
