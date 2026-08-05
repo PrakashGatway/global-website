@@ -18,7 +18,7 @@ import UniversityFilters, { MainUniversityFilters } from '@/components/Universit
 import UniversityList, { StudyStats, UniversityOverview } from '@/components/Universitypage/universityList';
 import { UniversityListSkeleton } from '@/components/Universitypage/universityCard';
 import axiosInstance, { serverInstance, serverInst } from '@/app/axiosInstance';
-import FAQSection from '@/components/faqPage';
+import FAQSection, { UniversityFAQSection } from '@/components/faqPage';
 import { ContentSection, CTASection, EligibilityCriteriaSection, UniversityContentSection, WhyStudySection } from '@/components/country';
 import NotFound from '@/app/not-found';
 import { WhyStudySectionUniversity } from '@/components/Universitypage/WhyChooseSection';
@@ -538,7 +538,7 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
       })}
 
       <div className='px-4'>
-        <FAQSection Faqres={Faqres} />
+        <UniversityFAQSection Faqres={Faqres} />
       </div>
     </div>
   );
