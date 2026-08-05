@@ -14,13 +14,14 @@ import {
   Award,
   Building2
 } from 'lucide-react';
-import UniversityFilters from '@/components/Universitypage/universityFilters';
+import UniversityFilters, { MainUniversityFilters } from '@/components/Universitypage/universityFilters';
 import UniversityList, { StudyStats, UniversityOverview } from '@/components/Universitypage/universityList';
 import { UniversityListSkeleton } from '@/components/Universitypage/universityCard';
 import axiosInstance, { serverInstance, serverInst } from '@/app/axiosInstance';
 import FAQSection from '@/components/faqPage';
 import { ContentSection, CTASection, EligibilityCriteriaSection, WhyStudySection } from '@/components/country';
 import NotFound from '@/app/not-found';
+import { WhyStudySectionUniversity } from '@/components/Universitypage/WhyChooseSection';
 
 // Types
 interface University {
@@ -111,9 +112,8 @@ interface PageData {
   };
 }
 
-// Generate Metadata
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const slug = "find-universities-main-page";
+  const slug = "find-universities-main-page"
 
   try {
     const res = await serverInst.get(`/page-information/slug/${slug}`);
@@ -124,9 +124,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title: seo?.metaTitle?.trim() || pageData?.title || slug,
       description: seo?.metaDescription || pageData?.description || '',
       keywords: seo?.metaKeywords || '',
-      alternates: {
-        canonical: `/${seo?.canonicalUrl || `universities/${slug}`}`,
-      },
+      // alternates: {
+      //   canonical: `/${seo?.canonicalUrl || `universities/${slug}`}`,
+      // },
       robots: {
         index: true,
         follow: true,
@@ -134,7 +134,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       openGraph: {
         title: seo?.metaTitle || pageData?.title,
         description: seo?.metaDescription || pageData?.description,
-        url: `/${seo?.canonicalUrl || `universities/${slug}`}`,
         type: "website",
         images: pageData?.cardImage ? [pageData.cardImage] : [],
       },
@@ -148,7 +147,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-// Server-side data fetching
 async function getUniversities(searchParams: {
   page?: string;
   keyword?: string;
@@ -195,7 +193,6 @@ async function getUniversities(searchParams: {
   }
 }
 
-// Helper function to parse title with highlighted text
 function parseTitle(title: string): { text: string; highlighted: string } {
   if (!title) return { text: 'Find top', highlighted: 'universities' };
 
@@ -209,23 +206,6 @@ function parseTitle(title: string): { text: string; highlighted: string } {
   }
 
   return { text: title, highlighted: '' };
-}
-
-// Helper to get icon component
-function getIconComponent(iconName: string, className: string = "w-8 h-8") {
-  const icons: Record<string, any> = {
-    GraduationCap,
-    IndianRupee,
-    BookOpen,
-    ShieldCheck,
-    Globe,
-    Users,
-    Award,
-    Building2
-  };
-
-  const Icon = icons[iconName];
-  return Icon ? <Icon className={className} /> : <GraduationCap className={className} />;
 }
 
 async function HeroSection({ searchParams, pageData }: { searchParams: any; pageData: PageData['data'] }) {
@@ -242,7 +222,7 @@ async function HeroSection({ searchParams, pageData }: { searchParams: any; page
   const titleClasses = "text-3xl md:text-4xl lg:text-5xl font-semibold text-white tracking-tight leading-[1.15] max-w-4xl [text-shadow:0_2px_8px_rgba(0,0,0,0.9)]";
 
   return (
-    <section className="relative h-[400px] sm:h-[450px] overflow-hidden">
+    <section className="relative h-[400px] px-4 sm:h-[450px] [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] overflow-hidden">
 
       <div
         className="absolute inset-0 bg-cover bg-center will-change-transform"
@@ -251,11 +231,8 @@ async function HeroSection({ searchParams, pageData }: { searchParams: any; page
         }}
       />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/1 to-transparent" />
-
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 h-full flex flex-col justify-end pb-12">
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+      <div className="relative z-10 max-w-7xl mx-auto  h-full flex flex-col justify-end pb-12">
 
         <TitleTag className={titleClasses}>
           {text}{' '}
@@ -269,7 +246,7 @@ async function HeroSection({ searchParams, pageData }: { searchParams: any; page
         />
 
         {/* Search Form (Adapted with glassmorphism to fit the dark overlay) */}
-        <form action="/find-universities" method="GET" className="mt-8 max-w-2xl">
+        <form action={`/find-universities`} method="GET" className="mt-8 max-w-2xl">
           <div className="bg-white/95 backdrop-blur-md rounded-full shadow-2xl flex overflow-hidden border border-white/20">
             <div className="flex items-center flex-1 px-6">
               <Search className="w-5 h-5 text-gray-500 mr-3" />
@@ -277,7 +254,7 @@ async function HeroSection({ searchParams, pageData }: { searchParams: any; page
                 type="text"
                 name="keyword"
                 placeholder="Search ..."
-                className="w-full h-14 outline-none text-gray-800 placeholder:text-gray-500 bg-transparent"
+                className="w-full h-13 outline-none text-gray-800 placeholder:text-gray-500 bg-transparent"
                 defaultValue={searchParams?.keyword || ''}
               />
             </div>
@@ -295,11 +272,6 @@ async function HeroSection({ searchParams, pageData }: { searchParams: any; page
 }
 
 function StatsSection1({ statsData, slug }: any) {
-
-  if(!statsData || !statsData.items || statsData.items.length === 0) {
-    return null; // Return null if statsData or items are not available
-  }
-  
   const items =
     statsData?.items?.length > 0
       ? statsData.items.map((item: any) => ({
@@ -310,16 +282,15 @@ function StatsSection1({ statsData, slug }: any) {
   const { text, highlighted } = parseTitle(statsData?.title || '');
 
   return (
-    <section className="bg-white px-4 relative z-10">
+    <section className="bg-white px-4 [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] py-8 relative z-10">
       <div className="max-w-7xl mx-auto">
 
-        <h2 className="text-3xl lg:text-4xl font-semibold text-[#13294B] text-start leading-tight mb-6">
+        <h2 className="text-3xl lg:text-4xl font-semibold text-[#F46C44] text-start leading-tight mb-4">
           {text}{" "}
           {highlighted && (
-            <span className="text-[#F46C44]">{highlighted}</span>
+            <span className="text-[#13294B]">{highlighted}</span>
           )}
         </h2>
-
       </div>
 
 
@@ -329,7 +300,7 @@ function StatsSection1({ statsData, slug }: any) {
             <Link
               href={`/university/${slug}?city=${encodeURIComponent(item.title)}`}
               key={index}
-              className="group relative min-w-[280px] bg-orange-600 w-[300px] h-[220px] overflow-hidden rounded-3xl
+              className="group relative min-w-[210px] bg-orange-600 w-[180px] h-[180px] overflow-hidden rounded-3xl
   transition-all duration-700 hover:-translate-y-1
   cursor-pointer"
             >
@@ -351,25 +322,14 @@ function StatsSection1({ statsData, slug }: any) {
 
               {/* Content */}
               <div className="absolute inset-0 flex flex-col justify-end p-6">
-                <h3 className="text-[26px] font-extrabold leading-tight text-white drop-shadow-xl">
+                <h3 className="text-2xl font-extrabold leading-tight text-white drop-shadow-xl">
                   Universities
                 </h3>
 
-                <p className="mt-px text-xl font-medium text-white">
+                <p className="mt-px text-xl font-bold text-white">
                   in {item.title}
                 </p>
-                <button
-                  className="mt-2 flex w-fit items-center gap-2 rounded-full
-      text-sm font-semibold text-white
-      transition-all duration-500
-      group-hover:gap-4
-      group-hover:scale-105"
-                >
-                  Explore
-                  <span className="transition-transform duration-500 group-hover:translate-x-1">
-                    →
-                  </span>
-                </button>
+
               </div>
             </Link>
           ))}
@@ -397,7 +357,7 @@ interface PageProps {
 
 export default async function FindUniversitiesPage({ params, searchParams }: PageProps) {
 
- const slug = "find-universities-main-page";
+  const slug = "find-universities-main-page"
 
   const searchParam = await searchParams;
 
@@ -479,50 +439,50 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
         }}
       />
 
-      {/* Hero Section */}
       <HeroSection searchParams={searchParam} pageData={pageData?.data} />
-      {/* <StatsSection statsData={pageData?.data?.sections?.stats} /> */}
+      {/* Hero Section */}
       <StudyStats statsData={pageData?.data?.sections?.stats} />
+      {/* <StatsSection statsData={pageData?.data?.sections?.stats} /> */}
       <UniversityOverview
         pageData={pageData?.data?.sections?.universityOverview}
       />
-      {/* Main Content */}
-      <section className="max-w-7xl mx-auto px-4  py-12">
-        <h2 className="text-primary flex items-center gap-3 mb-6 text-xl sm:text-3xl md:text-4xl font-semibold">
-          <span className="text-[#F46C44]" dangerouslySetInnerHTML={{
-            __html: pageData?.data?.title?.split("||")[0] || "Explore Universities"
-          }} />
-          <div className="flex flex-wrap gap-2">
+      <div className="px-4">
+        {/* Main Content */}
+        <section className="max-w-7xl mx-auto  py-12">
+          <h2 className="text-primary flex flex-wrap gap-2 mb-6 text-2xl sm:text-3xl md:text-4xl font-bold">
+            <span className="text-[#F46C44]" dangerouslySetInnerHTML={{
+              __html: pageData?.data?.title?.split("||")[0] || "Explore Universities"
+            }} />
             <span dangerouslySetInnerHTML={{ __html: pageData?.data?.title?.split("||")[1] || "in World" }} />
-          </div>
-        </h2>
+          </h2>
 
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="w-full lg:w-78 shrink-0">
-            <UniversityFilters searchParams={searchParam} city={pageData?.data?.sections?.city?.items || []}
-              countrydata={countrydata?.data || []} slug={slug} defaultCountry={defaultCountry} />
-          </div>
-
-          {/* Results Area */}
-          <div className="flex-1">
-            {/* Results Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-800">
-                <span className="text-[#F46C44]">{initialData.total}</span> Universities Found
-              </h2>
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="w-full lg:w-78 shrink-0">
+              <MainUniversityFilters searchParams={searchParam} city={pageData?.data?.sections?.city?.items || []}
+                countrydata={countrydata?.data || []} slug={slug} defaultCountry={defaultCountry} />
             </div>
 
-            {/* University List with Server Component */}
-            <Suspense fallback={<UniversityListSkeleton />}>
-              <UniversityList
-                key={JSON.stringify(searchParam)}
-                initialData={initialData}
-                searchParams={searchParam}
-              />
-            </Suspense>
+            {/* Results Area */}
+            <div className="flex-1">
+              {/* Results Header */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">
+                  <span className="text-[#F46C44]">{initialData.total}</span> Universities Found
+                </h2>
+              </div>
+
+              {/* University List with Server Component */}
+              <Suspense fallback={<UniversityListSkeleton />}>
+                <UniversityList
+                  key={JSON.stringify(searchParam)}
+                  initialData={initialData}
+                  searchParams={searchParam}
+                />
+              </Suspense>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       {/* StudyStats Component */}
       {/* <StudyStats statsData={pageData?.data?.sections?.stats} />
@@ -537,7 +497,7 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
         switch (section.__originalName__ || key) {
 
           case "whyStudy":
-            return <WhyStudySection key={key} data={section} />;
+            return <WhyStudySectionUniversity key={key} data={section} />;
 
           case "contentSection":
             return <ContentSection key={key} data={section} />;
@@ -545,14 +505,14 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
           case "eligibilityCriteria":
             return <EligibilityCriteriaSection key={key} data={section} />;
 
-          case "city":
-            return (
-              <StatsSection1
-                key={key}
-                statsData={section}
-                slug={slug}
-              />
-            );
+          // case "city":
+          //   return (
+          //     <StatsSection1
+          //       key={key}
+          //       statsData={section}
+          //       slug={slug}
+          //     />
+          //   );
 
           case "universityOverview":
             if (section.__isDuplicate__) {

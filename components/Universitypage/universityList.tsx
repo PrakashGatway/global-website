@@ -260,16 +260,15 @@ export function StudyStats({ statsData }: any) {
     <section className="bg-white">
       <div className="max-w-7xl mx-auto ">
         <div className=" bg-gradient-to-r from-white via-orange-100 to-white overflow-hidden">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-gray-200">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-gray-200">
             {items.map((item, index) => {
-              const Icon = item.icon;
 
               return (
                 <div
                   key={index}
                   className="flex items-start gap-5 p-6  hover:bg-white transition duration-300"
                 >
-                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-orange-100 bg-orange-50">
+                  <div className="hidden sm:flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-orange-100 bg-orange-50">
                     <DynamicLucideIcon
                       name={item.icon}
                       size={30}
@@ -369,10 +368,10 @@ export function UniversityOverview({ pageData }: UniversityOverviewProps) {
   const highlightedTitle = titleParts[1]?.trim();
 
   return (
-    <section className="relative [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] bg-white py-8 overflow-hidden">
+    <section className="relative px-4 [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] bg-white py-8 overflow-hidden">
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-50/30 to-transparent pointer-events-none hidden lg:block" />
 
-      <div className="relative max-w-7xl mx-auto px-4">
+      <div className="relative max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-1 gap-6">
 
           <div className="">
@@ -396,8 +395,8 @@ export function UniversityOverview({ pageData }: UniversityOverviewProps) {
           </div>
 
           {/* Right Side - Interactive Features Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {displayFeatures && displayFeatures.slice(0, 4).map((item: any, index: number) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayFeatures && displayFeatures.slice(0, 6).map((item: any, index: number) => {
               const IconComponent = typeof item.icon === "string"
                 ? (iconMap[item.icon] || HelpCircle)
                 : item.icon;
@@ -405,7 +404,7 @@ export function UniversityOverview({ pageData }: UniversityOverviewProps) {
               return (
                 <div
                   key={index}
-                  className="group relative p-6 rounded-2xl border border-gray-100 bg-white hover:border-transparent hover:shadow-2xl hover:shadow-orange-100/40 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col h-full overflow-hidden"
+                  className="group relative p-4 rounded-2xl border border-gray-100 bg-white hover:border-transparent hover:shadow-2xl hover:shadow-orange-100/40 hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col h-full overflow-hidden"
                 >
 
                   <div className="absolute inset-0 bg-gradient-to-br from-orange-50/0 to-orange-50/0 group-hover:from-orange-50/80 group-hover:to-white transition-all duration-500" />
@@ -416,8 +415,8 @@ export function UniversityOverview({ pageData }: UniversityOverviewProps) {
                     {/* 3. Icon Container with Soft Aura */}
 
                     <div className="flex-1 flex mt-2 flex-col">
-                      <div className="flex items-start gap-2 mb-2">
-                        <div className="relative p-2.5 rounded-full bg-gradient-to-br from-orange-50 to-orange-100/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-orange-200/60 transition-all duration-300">
+                      <div className="flex items-center gap-2 mb-px">
+                        <div className="-mt-3 relative p-2.5 rounded-full bg-gradient-to-br from-orange-50 to-orange-100/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-orange-200/60 transition-all duration-300">
                           <IconComponent size={22} className="text-[#FF5A1F]" strokeWidth={2} />
                         </div>
                         <h3 className="text-lg w-full font-semibold text-[#163567] mb-2 group-hover:text-[#FF5A1F] transition-colors duration-300">

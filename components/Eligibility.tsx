@@ -1,39 +1,37 @@
 "use client";
 import { useState } from "react";
 import { Tagging } from "./tag";
+import InnerContent from "./dom/DomParser";
 
-export default function EligibilitySection({ pageData,tag = 2 } : any) {
+export default function EligibilitySection({ pageData, tag = 2 }: any) {
 
   const [open, setOpen] = useState(0);
 
 
 
   return (
-    <section className={`w-full py-10 bg-white ${pageData?.sections?.eligibilityCriteria?.isHidden === "yes" ? "hidden" : "block"}`}>
-      <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12 items-start">
+    <section className={`w-full px-4 py-8 bg-white ${pageData?.sections?.eligibilityCriteria?.isHidden === "yes" ? "hidden" : "block"}`}>
+      <div className="max-w-7xl [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] mx-auto grid lg:grid-cols-2 gap-12 items-start">
 
         {/* LEFT CONTENT */}
         <div>
-            <Tagging data={tag} css="relative inline-block mb-4 sm:mb-6 block text-lg sm:text-2xl md:text-3xl lg:text-4xl leading-snug mb-2">
-           <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">{pageData?.sections?.eligibilityCriteria?.title.split("||")[0]}</span>
-            <span className="text-[#F46C44] font-semibold"> {pageData?.sections?.eligibilityCriteria?.title.split("||")[1]}</span>
-            </Tagging>
-
-
-
-
-          <span
-            className="text-sm lg:text-base text-gray-600 mb-4"
+          <Tagging data={tag} css="relative inline-block mb-4 sm:mb-6 block text-lg sm:text-2xl md:text-3xl lg:text-4xl leading-snug mb-2">
+            <span className="text-[#F46C44] text-lg sm:text-4xl lg:text-4xl font-bold">{pageData?.sections?.eligibilityCriteria?.title.split("||")[0]}</span>
+            <span className="text-[#123b73] font-semibold"> {pageData?.sections?.eligibilityCriteria?.title.split("||")[1]}</span>
+          </Tagging>
+          <InnerContent cleanedHtml={ pageData?.sections?.eligibilityCriteria?.subtitle || ""} />
+          {/* <span
+            className="text-base text-gray-700 mb-4"
             dangerouslySetInnerHTML={{
               __html: pageData?.sections?.eligibilityCriteria?.subtitle || "",
             }}
-          ></span>
+          ></span> */}
 
 
         </div>
 
         {/* RIGHT ACCORDION */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           {pageData?.sections?.eligibilityCriteria?.eligibilityItem && pageData?.sections?.eligibilityCriteria?.eligibilityItem?.map((item, i) => (
             <div
               key={i}
@@ -43,12 +41,11 @@ export default function EligibilitySection({ pageData,tag = 2 } : any) {
                   : "border-gray-300 rounded-xl"
                 }`}
             >
-              {/* Header */}
               <button
                 onClick={() => setOpen(open === i ? -1 : i)}
                 className="w-full flex justify-between items-center px-4 py-3 lg:px-6 lg:py-2 text-left"
               >
-                <span className="text-base lg:text-base font-bold text-gray-800">
+                <span className="text-lg font-semibold text-gray-800">
                   {item?.itemname}
                 </span>
 
@@ -57,9 +54,8 @@ export default function EligibilitySection({ pageData,tag = 2 } : any) {
                 </span>
               </button>
 
-              {/* Content */}
               {open === i && (
-                <div className="px-4 pb-4 lg:px-6  text-sm lg:text-base text-black">
+                <div className="px-4 pb-4 lg:px-6  text-sm lg:text-base text-gray-700">
                   <ul className="list-disc pl-5 space-y-1">
                     {item?.subItems?.split("|").map((sub, idx) => (
                       <li key={idx}>{sub.trim()}</li>

@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 const FAQSection = ({ Faqres }) => {
   const [openIndex, setOpenIndex] = useState(null);
 
+  console.log("Faqres in FAQSection:", Faqres);
+
   const toggleFAQ = (index) => {
     setOpenIndex(openIndex === index ? null : index);
   };

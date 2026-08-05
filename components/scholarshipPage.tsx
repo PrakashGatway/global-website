@@ -174,6 +174,7 @@ export default function ScholarshipPage({
   };
 
 
+
   return (
     <main className="bg-[#FAFAF9] [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] text-neutral-900 antialiased">
       {/* ───── HERO ───── */}
@@ -712,8 +713,6 @@ export default function ScholarshipPage({
 
             <br />
             <br />
-
-
             
             <span
               className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"

@@ -164,7 +164,7 @@ const InnerContent = ({ cleanedHtml,text }: any) => {
   width: 100%;
   max-width: 100%;
   height: auto;
-  border-radius: 14px;
+  // border-radius: 14px;
   margin: 28px auto;
   display: block;
   object-fit: cover;
@@ -188,7 +188,7 @@ const InnerContent = ({ cleanedHtml,text }: any) => {
   margin: 20px 0;
   background: #fff;
   overflow: hidden;
-  border-radius: 10px;
+  // border-radius: 10px;
   border-collapse: collapse;
   // border: 1px solid #000000 !important;
 }
@@ -237,7 +237,7 @@ const InnerContent = ({ cleanedHtml,text }: any) => {
   color: #374151;
   font-size: 18px;
   font-style: italic;
-  border-radius: 10px;
+  // border-radius: 10px;
 }
 
 /* Horizontal Rule */
@@ -252,7 +252,7 @@ const InnerContent = ({ cleanedHtml,text }: any) => {
   background: #f3f4f6;
   color: #e11d48;
   padding: 3px 7px;
-  border-radius: 6px;
+  // border-radius: 6px;
   font-size: 15px;
   font-family: monospace;
 }
@@ -262,7 +262,7 @@ const InnerContent = ({ cleanedHtml,text }: any) => {
   background: #111827;
   color: #f9fafb;
   padding: 20px;
-  border-radius: 12px;
+  // border-radius: 12px;
   overflow-x: auto;
   margin: 28px 0;
 }
@@ -278,14 +278,14 @@ const InnerContent = ({ cleanedHtml,text }: any) => {
   width: 100%;
   min-height: 420px;
   border: none;
-  border-radius: 12px;
+  // border-radius: 12px;
   margin: 30px 0;
 }
 
 /* Video */
 .blog-html video {
   width: 100%;
-  border-radius: 12px;
+  // border-radius: 12px;
   margin: 30px 0;
 }
 
@@ -494,7 +494,7 @@ export const BlogContent = ({ cleanedHtml }: InnerContentProps) => {
   width: 100%;
   max-width: 100%;
   height: auto;
-  border-radius: 14px;
+  // border-radius: 14px;
   margin: 28px auto;
   display: block;
   object-fit: cover;
@@ -518,7 +518,7 @@ export const BlogContent = ({ cleanedHtml }: InnerContentProps) => {
   margin: 20px 0;
   background: #fff;
   overflow: hidden;
-  border-radius: 10px;
+  // border-radius: 10px;
   border-collapse: collapse;
   // border: 1px solid #000000 !important;
 }
@@ -567,7 +567,7 @@ export const BlogContent = ({ cleanedHtml }: InnerContentProps) => {
   color: #374151;
   font-size: 18px;
   font-style: italic;
-  border-radius: 10px;
+  // border-radius: 10px;
 }
 
 /* Horizontal Rule */
@@ -582,7 +582,7 @@ export const BlogContent = ({ cleanedHtml }: InnerContentProps) => {
   background: #f3f4f6;
   color: #e11d48;
   padding: 3px 7px;
-  border-radius: 6px;
+  // border-radius: 6px;
   font-size: 15px;
   font-family: monospace;
 }
@@ -592,7 +592,7 @@ export const BlogContent = ({ cleanedHtml }: InnerContentProps) => {
   background: #111827;
   color: #f9fafb;
   padding: 20px;
-  border-radius: 12px;
+  // border-radius: 12px;
   overflow-x: auto;
   margin: 28px 0;
 }
@@ -608,14 +608,14 @@ export const BlogContent = ({ cleanedHtml }: InnerContentProps) => {
   width: 100%;
   min-height: 420px;
   border: none;
-  border-radius: 12px;
+  // border-radius: 12px;
   margin: 30px 0;
 }
 
 /* Video */
 .blog-html video {
   width: 100%;
-  border-radius: 12px;
+  // border-radius: 12px;
   margin: 30px 0;
 }
 
