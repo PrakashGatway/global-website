@@ -375,13 +375,11 @@ export function UniversityOverview({ pageData }: UniversityOverviewProps) {
         <div className="grid lg:grid-cols-1 gap-6">
 
           <div className="">
-            <h2 className="text-2xl mb-4 md:text-4xl font-semibold leading-[1.15] text-[#163567] tracking-tight">
+            <h2 className="text-2xl mb-4 md:text-4xl font-semibold leading-[1.15] text-[#F46C44] tracking-tight">
               {mainTitle}{" "}
               {highlightedTitle && (
-                <span className="relative inline-block">
-                  <span className="relative z-10 text-[#FF5A1F]">{highlightedTitle}</span>
-                  {/* Modern highlight marker effect */}
-                  <span className="absolute bottom-1 left-0 w-full h-3 bg-orange-100/70 -z-10 rounded-sm" />
+                <span className="relative block">
+                  <span className="relative z-10 text-[#00306A] ">{highlightedTitle}</span>
                 </span>
               )}
             </h2>
@@ -416,8 +414,8 @@ export function UniversityOverview({ pageData }: UniversityOverviewProps) {
 
                     <div className="flex-1 flex mt-2 flex-col">
                       <div className="flex items-center gap-2 mb-px">
-                        <div className="-mt-3 relative p-2.5 rounded-full bg-gradient-to-br from-orange-50 to-orange-100/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-orange-200/60 transition-all duration-300">
-                          <IconComponent size={22} className="text-[#FF5A1F]" strokeWidth={2} />
+                        <div className="-mt-3 relative p-2 rounded-full bg-gradient-to-br from-orange-50 to-orange-100/50 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-orange-200/60 transition-all duration-300">
+                          <DynamicLucideIcon name={item.icon} size={20} className="text-[#FF5A1F]" strokeWidth={2} />
                         </div>
                         <h3 className="text-lg w-full font-semibold text-[#163567] mb-2 group-hover:text-[#FF5A1F] transition-colors duration-300">
                           {item.title}

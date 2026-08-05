@@ -19,7 +19,7 @@ import UniversityList, { StudyStats, UniversityOverview } from '@/components/Uni
 import { UniversityListSkeleton } from '@/components/Universitypage/universityCard';
 import axiosInstance, { serverInstance, serverInst } from '@/app/axiosInstance';
 import FAQSection from '@/components/faqPage';
-import { ContentSection, CTASection, EligibilityCriteriaSection, WhyStudySection } from '@/components/country';
+import { ContentSection, CTASection, EligibilityCriteriaSection, UniversityContentSection, WhyStudySection } from '@/components/country';
 import NotFound from '@/app/not-found';
 import { WhyStudySectionUniversity } from '@/components/Universitypage/WhyChooseSection';
 
@@ -309,7 +309,7 @@ function StatsSection1({ statsData, slug }: any) {
         <h2 className="text-3xl lg:text-4xl font-semibold text-[#F46C44] text-start leading-tight mb-4">
           {text}{" "}
           {highlighted && (
-            <span className="text-[#13294B]">{highlighted}</span>
+            <span className="text-[#00306A] block">{highlighted}</span>
           )}
         </h2>
       </div>
@@ -472,8 +472,8 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
       <div className="px-4">
         {/* Main Content */}
         <section className="max-w-7xl mx-auto  py-12">
-          <h2 className="text-primary flex flex-wrap gap-2 mb-6 text-2xl sm:text-3xl md:text-4xl font-bold">
-            <span className="text-[#F46C44]" dangerouslySetInnerHTML={{
+          <h2 className="text-primary flex flex-col gap-1 mb-6 text-2xl sm:text-3xl md:text-4xl font-bold">
+            <span className="text-[#F46C44] font-semibold" dangerouslySetInnerHTML={{
               __html: pageData?.data?.title?.split("||")[0] || "Explore Universities"
             }} />
             <span dangerouslySetInnerHTML={{ __html: pageData?.data?.title?.split("||")[1] || "in World" }} />
@@ -523,7 +523,7 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
             return <WhyStudySectionUniversity key={key} data={section} />;
 
           case "contentSection":
-            return <ContentSection key={key} data={section} />;
+            return <UniversityContentSection key={key} data={section} />;
 
           case "eligibilityCriteria":
             return <EligibilityCriteriaSection key={key} data={section} />;

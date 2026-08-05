@@ -530,7 +530,7 @@ export const EligibilityCriteriaSection = ({ data }) => {
 }
 
 
-export const ContentSection = ({ data }) => {
+export const UniversityContentSection = ({ data }) => {
   if (data?.isHidden === "yes") return null
   return (
     <section className="w-full bg-white [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] px-4 py-4">
@@ -550,6 +550,33 @@ export const ContentSection = ({ data }) => {
             <BlogContent cleanedHtml={item.description} />
 
             {/* <div className="country-table overflow-x-auto mt-4" dangerouslySetInnerHTML={{ __html: item.description }} /> */}
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+export const ContentSection = ({ data }) => {
+  if (data?.isHidden === "yes") return null
+  return (
+    <section className="w-full bg-white [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] px-4 py-4">
+      <div className="max-w-7xl mx-auto">
+        {(data?.items || []).map((item, i) => (
+          <div key={i} className="">
+            <div className="mb-5 sm:mb-2">
+              <h2 className="text-primary text-xl sm:text-3xl md:text-4xl font-bold">
+                <span className="text-[#F46C44] block" dangerouslySetInnerHTML={{
+                  __html: item.title?.split("||")[0]
+                }} />
+                <div className="flex flex-wrap gap-2 mt-1">
+                  <span dangerouslySetInnerHTML={{ __html: item.title?.split("||")[1] }} />
+                </div>
+              </h2>
+            </div>
+            {/* <BlogContent cleanedHtml={item.description} /> */}
+
+            <div className="country-table overflow-x-auto mt-4" dangerouslySetInnerHTML={{ __html: item.description }} />
           </div>
         ))}
       </div>

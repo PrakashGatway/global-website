@@ -16,8 +16,8 @@ export default function EligibilitySection({ pageData, tag = 2 }: any) {
         {/* LEFT CONTENT */}
         <div>
           <Tagging data={tag} css="relative inline-block mb-4 sm:mb-6 block text-lg sm:text-2xl md:text-3xl lg:text-4xl leading-snug mb-2">
-            <span className="text-[#F46C44] text-lg sm:text-4xl lg:text-4xl font-bold">{pageData?.sections?.eligibilityCriteria?.title.split("||")[0]}</span>
-            <span className="text-[#123b73] font-semibold"> {pageData?.sections?.eligibilityCriteria?.title.split("||")[1]}</span>
+            <span className="text-[#F46C44] text-lg sm:text-4xl block lg:text-4xl font-semibold">{pageData?.sections?.eligibilityCriteria?.title.split("||")[0]}</span>
+            <span className="text-[#123b73] font-bold"> {pageData?.sections?.eligibilityCriteria?.title.split("||")[1]}</span>
           </Tagging>
           <InnerContent cleanedHtml={ pageData?.sections?.eligibilityCriteria?.subtitle || ""} />
           {/* <span
