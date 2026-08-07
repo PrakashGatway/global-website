@@ -1,430 +1,2884 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import {
+  ArrowRight,
+  BookOpen,
+  Briefcase,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Clock3,
+  FileText,
+  GraduationCap,
+  MapPin,
+  Plane,
+  Search,
+  Send,
+  Wallet,
+  Sparkles,
+  CalendarDays,
+  Users,
+  Award,
+  CircleDollarSign,
+  CheckCircle,
+  Eye,
+  Share2,
+  Heart,
+  Download,
+  UserCheck,
+  HandHelping,
+  FileCheck,
+  Coins,
+  PlaneTakeoff
+} from "lucide-react";
 
-// --- Types & Interfaces ---
-interface ConsultationFormValues {
-  name: string;
-  phone: string;
-  email: string;
-  course: string;
-  city: string;
-  state: string;
-  agree: boolean;
+import axiosInstance from "@/app/axiosInstance";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import FAQSection from "../faqPage";
+import InnerContent, { BlogContent } from "../dom/DomParser";
+import { useKeenSlider } from "keen-slider/react";
+import { useScroll, useTransform, motion } from "framer-motion";
+
+type CoursePageProps = {
+  initialData: any | null;
+  countries: any | null;
+};
+
+const iconMap: Record<string, any> = {
+  GraduationCap,
+  Wallet,
+  Briefcase,
+  Search,
+  FileText,
+  Send,
+  CheckCircle,
+  CheckCircle2,
+  Plane,
+  BookOpen,
+  Award,
+  Users,
+};
+
+function getIcon(icon?: string) {
+  return iconMap[icon || ""] || Sparkles;
 }
 
-const TABS = [
-  "College Info",
-  "Courses",
-  "Fees",
-  "Course Info",
-  "Rankings",
-  "Gallery",
-  "Admissions",
-  "Placements",
-  "Reviews",
-  "Acceptance Rate",
-  "Scholarships",
-  "Campus",
-];
+function stripHtml(html = "") {
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-const COURSE_HIGHLIGHTS = [
-  { icon: "🎓", label: "Degree", value: "MBA" },
-  { icon: "⏳", label: "Duration", value: "1 Year (Full-time)" },
-  { icon: "💼", label: "Mode", value: "On Campus" },
-  { icon: "📍", label: "Location", value: "Birmingham, UK" },
-  { icon: "💰", label: "Tuition Fee", value: "£22,500" },
-  { icon: "📅", label: "Intake", value: "Sep 2026" },
-];
+function calculateReadingTime(data: any) {
+  let text = "";
 
-const RANKING_DATA = [
-  { label: "World Rank", value: "#444", source: "Shiksha" },
-  { label: "UK Rank", value: "#50", source: "Shiksha" },
-  { label: "Accreditation", value: "Triple Crown", source: "AACSB, AMBA, EQUIS" },
-];
+  text += `${data?.title || ""} ${data?.description || ""} `;
 
-const OVERVIEW_POINTS = [
-  "The MBA at Aston Business School is designed for professionals seeking to accelerate their career growth and develop strategic leadership skills.",
-  "Ranked among the top business schools in the UK with triple accreditation (AACSB, AMBA, EQUIS).",
-  "Strong industry connections with placements at companies like PwC, Deloitte, HSBC, and Jaguar Land Rover.",
-  "Flexible study options including full-time, part-time, and executive MBA formats.",
-  "Access to a global alumni network of over 40,000 professionals across 150+ countries.",
-];
+  data?.content?.sections?.forEach((section: any) => {
+    text += `${section?.data?.title || ""} `;
+    text += `${section?.data?.content || ""} `;
 
-
-
-
-export default function CoursePage() {
-  const [activeTab, setActiveTab] = useState("Course Info");
-  const [heroSubmitted, setHeroSubmitted] = useState(false);
-  const [getCourses,setgetCourses] = useState([])
-
-
-  useEffect(()=>{
-
-    const fetchCourses = async()=>{
-      try{
-      const res = await fetch("http://localhost:4000/courses/")
-      setgetCourses(res.data)
-
-    }
-    catch{
-
+    if (Array.isArray(section?.data?.cards)) {
+      section.data.cards.forEach((item: any) => {
+        text += `${item?.title || ""} ${item?.description || ""} `;
+      });
     }
 
+    if (Array.isArray(section?.data?.data)) {
+      section.data.data.forEach((item: any) => {
+        text += `${item?.title || ""} ${item?.subtitle || ""} ${
+          item?.content || ""
+        } `;
+      });
+    }
+  });
+
+  const words = stripHtml(text).split(/\s+/).filter(Boolean).length;
+
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+export default function CoursePage({ initialData, countries }: CoursePageProps) {
+  const data = initialData;
+
+  const [activeSection, setActiveSection] = useState("overview");
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  if (!data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#fffaf7]">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-10 w-10 rounded-full border-4 border-orange-200 border-t-[#f26e46] animate-spin" />
+          <p className="text-gray-600">Loading course...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const readingTime = calculateReadingTime(data);
+
+  const sections = useMemo(() => {
+    const result: {
+      id: string;
+      title: string;
+    }[] = [
+      {
+        id: "overview",
+        title:
+          data?.content?.sections?.find((s: any) => s.type === "intro")?.data
+            ?.title || "Overview",
+      },
+    ];
+
+    data?.content?.sections?.forEach((section: any, index: number) => {
+      if (section.type === "intro") return;
+      if (section.type === "cta") return;
+
+      result.push({
+        id: `${section.type}-${section.id || index}`,
+        title: section?.data?.title || section?.name || "Section",
+      });
+    });
+
+    if (data?.roadmap?.steps?.length) {
+      result.push({
+        id: "journey",
+        title: data.roadmap.title || "Your Journey",
+      });
     }
 
-    fetchCourses()
-    
-  },[])
+    if (data?.topcourse?.length) {
+      result.push({
+        id: "top-courses",
+        title: "Top Courses",
+      });
+    }
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ConsultationFormValues>({
-    defaultValues: {
-      name: "",
-      phone: "",
-      email: "",
-      course: "",
-      city: "",
-      state: "",
-      agree: false,
+    if (data?.faqSection?.items?.length) {
+      result.push({
+        id: "faq",
+        title: data.faqSection.title || "Frequently Asked Questions",
+      });
+    }
+
+    return result;
+  }, [data]);
+
+  useEffect(() => {
+    const elements = sections
+      .map((section) => document.getElementById(section.id))
+      .filter(Boolean) as HTMLElement[];
+
+    if (!elements.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (visible.length) {
+          setActiveSection(visible[0].target.id);
+        }
+      },
+      {
+        rootMargin: "-120px 0px -55% 0px",
+        threshold: [0.1, 0.25, 0.5],
+      },
+    );
+
+    elements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, [sections]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const documentHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+
+      const progress =
+        documentHeight > 0 ? (scrollTop / documentHeight) * 100 : 0;
+
+      const bar = document.getElementById("course-reading-progress");
+
+      if (bar) {
+        bar.style.width = `${progress}%`;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+
+    if (!element) return;
+
+    const offset = 100;
+
+    const top = element.getBoundingClientRect().top + window.scrollY - offset;
+
+    window.scrollTo({
+      top,
+      behavior: "smooth",
+    });
+
+    setActiveSection(id);
+  };
+
+  const introSection = data?.content?.sections?.find(
+    (section: any) => section.type === "intro",
+  );
+
+  const introData = introSection?.data;
+
+  const animation = { duration: 40000, easing: (t) => t };
+
+  const [sliderRef] = useKeenSlider({
+    loop: true,
+    renderMode: "performance",
+    drag: true,
+    slides: {
+      perView: 4,
+      spacing: 20,
+    },
+    breakpoints: {
+      "(max-width: 1024px)": {
+        slides: {
+          perView: 2,
+          spacing: 16,
+        },
+      },
+      "(max-width: 640px)": {
+        slides: {
+          perView: 1,
+          spacing: 12,
+        },
+      },
+    },
+    created(s) {
+      s.moveToIdx(5, true, animation);
+    },
+    updated(s) {
+      s.moveToIdx(s.track.details.abs + 5, true, animation);
+    },
+    animationEnded(s) {
+      s.moveToIdx(s.track.details.abs + 5, true, animation);
     },
   });
 
-  const onHeroSubmit = (data: ConsultationFormValues) => {
-    console.log("Hero Form Submitted:", data);
-    setHeroSubmitted(true);
-    setTimeout(() => {
-      setHeroSubmitted(false);
-      reset();
-    }, 3000);
-  };
-
   return (
-    <div className="h-full bg-gray-50  text-gray-900">
-      {/* ================= HERO BANNER ================= */}
-      <div className="relative w-full h-[380px] overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1562774053-701939374585?w=1600&q=80"
-          alt="Aston University Campus"
-          className="absolute inset-0 w-full h-full object-cover"
+    <main className="min-h-screen bg-[#fffaf7] text-[#172033] ">
+      {/* Reading progress */}
+      <div className="fixed left-0 top-0 z-[100] h-[3px] w-full bg-transparent">
+        <div
+          id="course-reading-progress"
+          className="h-full bg-[#f26e46] transition-all duration-100"
+          style={{ width: "0%" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      </div>
 
-        {/* University Logo Card */}
-        <div className="absolute top-8 left-8 bg-white rounded-xl p-4 shadow-xl flex items-center gap-3 z-10">
-          <div className="w-14 h-14 bg-[#6B21A8] rounded-lg flex items-center justify-center shrink-0">
-            <span className="text-white font-bold text-2xl">A</span>
-          </div>
-          <div>
-            <p className="font-bold text-gray-900 leading-tight">Aston University</p>
-            <p className="text-xs text-gray-500">Birmingham, UK</p>
+      {/* ================= BREADCRUMB ================= */}
+      <div className="py-4 px-4 lg:px-0 max-w-7xl mx-auto flex flex-wrap items-center gap-2 text-sm sm:text-base lg:text-sm text-[#000]">
+        <Link href="/" className="transition hover:text-[#f26e46]">
+          Home
+        </Link>
+
+        <span className="text-black/40">›</span>
+
+        <Link href="/course" className="transition hover:text-[#f26e46]">
+          Courses
+        </Link>
+
+        <span className="text-black/40">›</span>
+
+        <span className="font-medium text-black">
+          {data.shortName || data.title}
+        </span>
+      </div>
+
+      {/* ================= HERO ================= */}
+      <section className="relative overflow-visible bg-white">
+
+        {/* ================= BACKGROUND IMAGE ================= */}
+        {data.coverImage ? (
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${data.coverImage})`,
+              backgroundRepeat: "no-repeat",
+            }}
+          />
+        ) : (
+          <div className="absolute inset-0 bg-[#071d48]" />
+        )}
+
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#071d48] via-[#0b2858]/75 to-transparent" />
+
+        {/* ================= CONTENT ================= */}
+        <div className="relative z-10 mx-auto max-w-7xl py-6 lg:py-8 px-4 lg:px-0">
+          <div className="grid items-start gap-6 lg:gap-10 lg:grid-cols-[1.25fr_.75fr]">
+
+            {/* ================= LEFT CONTENT ================= */}
+            <div className="max-w-3xl">
+
+              {/* Badge */}
+              <div className="mb-4 lg:mb-6 flex flex-wrap gap-2">
+                {data.level && (
+                  <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#7c2cff] to-[#a238ff] px-3 py-1.5 lg:px-4 lg:py-2 text-[11px] sm:text-xs lg:text-xs font-bold uppercase tracking-wide text-white shadow-lg">
+                    <span className="text-yellow-300">✦</span>
+                    {data.level} DESIGNATED COURSE
+                  </span>
+                )}
+              </div>
+
+              {/* Title */}
+              <h1 className="max-w-3xl text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-[1.1] lg:leading-[1] tracking-tight text-white">
+                {data.title}
+              </h1>
+
+              {/* University */}
+              <div className="mt-4 lg:mt-6 flex items-center gap-3 lg:gap-4">
+                <div className="flex h-10 w-10 lg:h-12 lg:w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-lg">
+                  <GraduationCap
+                    size={20}
+                    className="text-[#152238] lg:w-[25px] lg:h-[25px]"
+                  />
+                </div>
+
+                <div>
+                  <p className="text-base sm:text-lg lg:text-lg font-bold text-white">
+                    {data.uniSlug || "University"}
+                  </p>
+
+                  <p className="text-xs sm:text-sm lg:text-sm text-white/60">
+                    University / Institution
+                  </p>
+                </div>
+              </div>
+
+              {/* Course Information */}
+              <div className="mt-4 lg:mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 lg:flex lg:flex-wrap lg:gap-x-8 lg:gap-y-5">
+
+                {/* Duration */}
+                {data.duration && (
+                  <div className="flex items-center gap-2 lg:gap-3">
+                    <div className="flex h-8 w-8 lg:h-9 lg:w-9 items-center justify-center rounded-lg bg-white/10">
+                      <Clock3
+                        size={15}
+                        className="text-white lg:w-[18px] lg:h-[18px]"
+                      />
+                    </div>
+
+                    <div>
+                      <p className="text-[11px] sm:text-xs lg:text-xs text-white/50">
+                        Duration
+                      </p>
+
+                      <p className="text-xs sm:text-sm lg:text-sm font-semibold text-white">
+                        {data.duration}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Intake */}
+                {data.intake && (
+                  <div className="flex items-center gap-2 lg:gap-3">
+                    <div className="flex h-8 w-8 lg:h-9 lg:w-9 items-center justify-center rounded-lg bg-white/10">
+                      <CalendarDays
+                        size={15}
+                        className="text-white lg:w-[18px] lg:h-[18px]"
+                      />
+                    </div>
+
+                    <div>
+                      <p className="text-[11px] sm:text-xs lg:text-xs text-white/50">
+                        Intake
+                      </p>
+
+                      <p className="text-xs sm:text-sm lg:text-sm font-semibold text-white">
+                        {data.intake}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Course Level */}
+                {data.level && (
+                  <div className="flex items-center gap-2 lg:gap-3">
+                    <div className="flex h-8 w-8 lg:h-9 lg:w-9 items-center justify-center rounded-lg bg-white/10">
+                      <BookOpen
+                        size={15}
+                        className="text-white lg:w-[18px] lg:h-[18px]"
+                      />
+                    </div>
+
+                    <div>
+                      <p className="text-[11px] sm:text-xs lg:text-xs text-white/50">
+                        Course Level
+                      </p>
+
+                      <p className="text-xs sm:text-sm lg:text-sm font-semibold text-white">
+                        {data.level}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Mode */}
+                {data.mode && (
+                  <div className="flex items-center gap-2 lg:gap-3">
+                    <div className="flex h-8 w-8 lg:h-9 lg:w-9 items-center justify-center rounded-lg bg-white/10">
+                      <GraduationCap
+                        size={15}
+                        className="text-white lg:w-[18px] lg:h-[18px]"
+                      />
+                    </div>
+
+                    <div>
+                      <p className="text-[11px] sm:text-xs lg:text-xs text-white/50">
+                        Mode of Study
+                      </p>
+
+                      <p className="text-xs sm:text-sm lg:text-sm font-semibold text-white">
+                        {data.mode}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+
+              {/* Description */}
+              {data.description && (
+                <p className="mt-4 lg:mt-6 max-w-2xl text-sm sm:text-base lg:text-base leading-6 sm:leading-7 lg:leading-7 text-white/75">
+                  {data.description}
+                </p>
+              )}
+
+              {/* Buttons */}
+              <div className="mt-4 lg:mt-6 flex flex-wrap gap-3 lg:gap-4">
+
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#6e1901] px-4 py-2.5 lg:px-6 lg:py-3.5 text-xs sm:text-sm lg:text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] hover:shadow-xl"
+                >
+                  <Download size={16} className="lg:w-[18px] lg:h-[18px]" />
+                  Download Brochure
+                </button>
+
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/5 px-4 py-2.5 lg:px-6 lg:py-3.5 text-xs sm:text-sm lg:text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
+                >
+                  <Heart size={16} className="lg:w-[18px] lg:h-[18px]" />
+                  Add to Shortlist
+                </button>
+
+              </div>
+            </div>
+
+            {/* ================= RIGHT SIDE (Desktop Only) ================= */}
+            <div className="relative hidden lg:block min-h-[410px]">
+
+              {/* Share / Tour */}
+              <div className="absolute right-0 top-0 flex flex-col gap-3">
+
+                <button
+                  type="button"
+                  className="flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-gray-700 shadow-xl transition hover:bg-gray-100"
+                >
+                  <Share2 size={17} />
+                  Share
+                </button>
+
+                <button
+                  type="button"
+                  className="flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-gray-700 shadow-xl transition hover:bg-gray-100"
+                >
+                  <Eye size={17} />
+                  360° Tour
+                </button>
+
+              </div>
+
+              {/* ================= UNIVERSITY RANKING ================= */}
+              <div className="absolute right-4 top-[115px] flex items-center gap-4 rounded-xl border border-white/10 bg-[#062d6b]/95 px-5 py-4 text-white shadow-2xl backdrop-blur">
+
+                <div className="flex h-16 w-16 items-center justify-center rounded-md bg-[#f5b331]">
+                  <span className="text-2xl font-black text-white">
+                    QS
+                  </span>
+                </div>
+
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-white/60">
+                    World University Rankings
+                  </p>
+
+                  <p className="mt-1 text-xl font-black">
+                    Ranked #14
+                  </p>
+
+                  <p className="text-xs text-white/60">
+                    2024 Rankings
+                  </p>
+                </div>
+
+              </div>
+
+              {/* ================= TUITION FEE CARD ================= */}
+              <div className="absolute bottom-8 right-0 z-20 translate-y-1/2">
+                <TuitionFeeCard data={data} />
+              </div>
+
+            </div>
+
           </div>
         </div>
 
-    
+      </section>
 
-        {/* Bottom Title Area */}
-        <div className="absolute bottom-8 left-8 right-8 z-10">
-          <h1 className="text-5xl font-bold text-white mb-2 tracking-tight">MBA</h1>
-          <p className="text-lg text-white/90">
-            at{" "}
-            <a href="#" className="text-blue-300 hover:text-blue-200 underline underline-offset-4 font-medium transition-colors">
-              Aston University, Birmingham
-            </a>
-          </p>
+      {/* Mobile Tuition Fee Card - Visible only on mobile/tablet */}
+      <div className="lg:hidden mt-6 -mx-4 px-4">
+        <TuitionFeeCard data={data} />
+      </div>
+
+      <div className="mx-auto max-w-7xl py-6 lg:py-8 px-4 lg:px-0">
+        <div className="grid items-start gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <article className="min-w-0">
+            {/* Mobile TOC */}
+            <div className="mb-6 lg:mb-8">
+              <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                <p className="mb-3 text-sm sm:text-base lg:text-sm font-bold text-[#152238]">
+                  On this page
+                </p>
+
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                  {sections.map((section) => (
+                    <button
+                      key={section.id}
+                      onClick={() => scrollToSection(section.id)}
+                      className={`whitespace-nowrap rounded-full px-3 py-1.5 lg:px-4 lg:py-2 text-[11px] sm:text-xs lg:text-xs font-semibold ${
+                        activeSection === section.id
+                          ? "bg-[#f26e46] text-white"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {section.title}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="my-6 rounded-2xl border border-gray-100 bg-white shadow-sm">
+
+              {/* ================= HEADER ================= */}
+              <div className="border-b border-gray-100 px-4 lg:px-6 py-4 lg:py-5">
+                <SectionHeading
+                  eyebrow="Overview"
+                  title="Study Data Point"
+                />
+              </div>
+
+              {/* ================= LIST ================= */}
+              <div className="p-3 lg:p-4">
+                <div className="space-y-1">
+
+                  {sections.map((section, index) => {
+                    const active = activeSection === section.id;
+
+                    return (
+                      <button
+                        key={section.id}
+                        onClick={() => scrollToSection(section.id)}
+                        className={`group relative flex w-full items-center gap-3 lg:gap-4 rounded-xl px-3 py-2.5 lg:px-4 lg:py-3.5 text-left transition-all duration-200 ${
+                          active
+                            ? "bg-[#fff3ef] text-[#f06b43]"
+                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        }`}
+                      >
+                        {/* Number */}
+                        <span
+                          className={`flex h-7 w-7 lg:h-8 lg:w-8 shrink-0 items-center justify-center rounded-lg text-[11px] sm:text-xs lg:text-xs font-bold transition-all ${
+                            active
+                              ? "bg-[#f06b43] text-white shadow-sm"
+                              : "bg-gray-100 text-gray-500 group-hover:bg-gray-200"
+                          }`}
+                        >
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+
+                        {/* Title */}
+                        <span
+                          className={`flex-1 text-xs sm:text-sm lg:text-sm font-semibold ${
+                            active
+                              ? "text-[#f06b43]"
+                              : "text-gray-600 group-hover:text-gray-900"
+                          }`}
+                        >
+                          {section.title}
+                        </span>
+
+                        {/* Arrow */}
+                        <span
+                          className={`text-sm sm:text-base lg:text-lg transition-transform duration-200 ${
+                            active
+                              ? "translate-x-0 text-[#f06b43]"
+                              : "-translate-x-1 text-gray-300 group-hover:translate-x-0 group-hover:text-gray-500"
+                          }`}
+                        >
+                          →
+                        </span>
+
+                        {/* Active left border */}
+                        {active && (
+                          <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#f06b43]" />
+                        )}
+                      </button>
+                    );
+                  })}
+
+                </div>
+              </div>
+            </div>
+
+            <section id="overview" className="scroll-mt-28">
+              <SectionHeading
+                eyebrow="Overview"
+                title={
+                  introData?.title || `Study ${data.shortName || data.title}`
+                }
+              />
+
+              <InnerContent cleanedHtml={introData?.content} />
+
+              {/* Intro Cards */}
+              {Array.isArray(introData?.cards) &&
+                introData.cards.length > 0 && (
+                  <div className="mt-6 lg:mt-8 grid gap-3 lg:gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {introData.cards.map((card: any, index: number) => {
+                      const Icon = getIcon(card.icon);
+
+                      return (
+                        <div
+                          key={index}
+                          className="group rounded-2xl border border-gray-200 bg-white p-4 lg:p-5 transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-xl"
+                        >
+                          <div className="flex h-10 w-10 lg:h-11 lg:w-11 items-center justify-center rounded-xl bg-[#fff0eb] text-[#f26e46] transition group-hover:bg-[#f26e46] group-hover:text-white">
+                            <Icon size={18} className="lg:w-[21px] lg:h-[21px]" />
+                          </div>
+
+                          <h3 className="mt-4 lg:mt-5 font-bold text-[#152238] text-sm sm:text-base lg:text-base">
+                            {card.title}
+                          </h3>
+
+                          <p className="mt-1.5 lg:mt-2 text-xs sm:text-sm lg:text-sm leading-5 sm:leading-6 lg:leading-6 text-gray-500">
+                            {card.description}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+            </section>
+
+
+            {data?.content?.sections?.map((section: any, index: number) => {
+              if (section.type === "intro") {
+                return null;
+              }
+
+              if (section.type === "cta") {
+                return null;
+              }
+
+              const sectionId = `${section.type}-${section.id || index}`;
+
+              const sectionData = section.data;
+
+              return (
+                <section
+                  key={sectionId}
+                  id={sectionId}
+                  className="mt-12 lg:mt-16 scroll-mt-28"
+                >
+                  <SectionHeading
+                    eyebrow={section.name}
+                    title={sectionData?.title || section.name}
+                  />
+
+                  {/* Top Programs */}
+                  {section.type === "topProgram" && (
+                    <>
+                      {sectionData?.subtitle && (
+                        <p className="mb-4 lg:mb-6 text-sm sm:text-base lg:text-base leading-6 sm:leading-7 lg:leading-7 text-gray-600">
+                          {sectionData.subtitle}
+                        </p>
+                      )}
+
+                      <div className="grid gap-3 lg:gap-4 md:grid-cols-2">
+                        {sectionData?.data?.map(
+                          (program: any, programIndex: number) => (
+                            <div
+                              key={programIndex}
+                              className="rounded-2xl border border-gray-200 bg-white p-4 lg:p-5 transition hover:border-orange-200 hover:shadow-lg"
+                            >
+                              <div className="flex items-start gap-3 lg:gap-4">
+                                <div className="flex h-10 w-10 lg:h-11 lg:w-11 shrink-0 items-center justify-center rounded-xl bg-[#fff0eb] text-[#f26e46]">
+                                  <GraduationCap size={18} className="lg:w-[21px] lg:h-[21px]" />
+                                </div>
+
+                                <div>
+                                  <h3 className="font-bold text-[#152238] text-sm sm:text-base lg:text-base">
+                                    {program.title}
+                                  </h3>
+
+                                  <p className="mt-0.5 lg:mt-1 text-xs sm:text-sm lg:text-sm text-gray-500">
+                                    {program.subtitle}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ),
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Other Data */}
+                  {section.type === "otherdata" && (
+                    <div className="space-y-3 lg:space-y-4">
+                      {sectionData?.data?.map(
+                        (item: any, itemIndex: number) => (
+                          <div
+                            key={itemIndex}
+                            className="rounded-2xl border border-gray-200 bg-white p-4 lg:p-5"
+                          >
+                            <div className="flex gap-3 lg:gap-4">
+                              <div className="flex h-8 w-8 lg:h-9 lg:w-9 shrink-0 items-center justify-center rounded-full bg-[#f26e46] text-xs sm:text-sm lg:text-sm font-bold text-white">
+                                {itemIndex + 1}
+                              </div>
+
+                              <div className="min-w-0">
+                                <h3 className="font-bold text-[#152238] text-sm sm:text-base lg:text-base">
+                                  {item.title}
+                                </h3>
+
+                                {item.content && (
+                                  <div
+                                    className="prose prose-sm mt-1.5 lg:mt-2 max-w-none text-gray-600 prose-p:leading-6 lg:prose-p:leading-7"
+                                    dangerouslySetInnerHTML={{
+                                      __html: item.content,
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  )}
+
+                  {/* Generic section */}
+                  {!["topProgram", "otherdata"].includes(section.type) && (
+                    <>
+                      {sectionData?.content && (
+                        <div
+                          className="prose prose-gray max-w-none text-sm sm:text-[15px] lg:text-[15px] leading-7 sm:leading-8 lg:leading-8"
+                          dangerouslySetInnerHTML={{
+                            __html: sectionData.content,
+                          }}
+                        />
+                      )}
+
+                      {Array.isArray(sectionData?.data) && (
+                        <div className="mt-4 lg:mt-6 space-y-3 lg:space-y-4">
+                          {sectionData.data.map(
+                            (item: any, itemIndex: number) => (
+                              <div
+                                key={itemIndex}
+                                className="rounded-xl border border-gray-200 bg-white p-4 lg:p-5"
+                              >
+                                <h3 className="font-bold text-[#152238] text-sm sm:text-base lg:text-base">
+                                  {item.title}
+                                </h3>
+
+                                {item.subtitle && (
+                                  <p className="mt-0.5 lg:mt-1 text-xs sm:text-sm lg:text-sm text-gray-500">
+                                    {item.subtitle}
+                                  </p>
+                                )}
+
+                                {item.content && (
+                                  <div
+                                    className="prose prose-sm mt-2 lg:mt-3 max-w-none text-gray-600"
+                                    dangerouslySetInnerHTML={{
+                                      __html: item.content,
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </section>
+              );
+            })}
+
+
+            {data?.roadmap?.steps?.length > 0 && (
+              <section id="journey" className="mt-16 lg:mt-20 scroll-mt-28">
+                <SectionHeading
+                  eyebrow="Step by Step"
+                  title={data.roadmap.title || "Your Journey"}
+                  description={data.roadmap.subtitle}
+                />
+
+                <div className="relative mt-16 lg:mt-10">
+                  <div className="relative p-0 sm:p-1 lg:p-2">
+                    {data.roadmap.steps?.map((feature: any, index: number) => (
+                      <FeatureCard key={index} feature={feature} index={index} />
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* ================= TOP COURSES ================= */}
+            {data?.topcourse?.length > 0 && (
+              <section id="top-courses" className="mt-16 lg:mt-20 scroll-mt-28">
+                <SectionHeading
+                  eyebrow="Popular Choices"
+                  title="Top Courses"
+                  description="Explore some popular programs related to this study destination."
+                />
+
+                <div className="mt-6 lg:mt-7 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+                  {data.topcourse.map((course: any, index: number) => (
+                    <div
+                      key={index}
+                      className="grid gap-2 border-b border-gray-100 p-4 lg:p-5 last:border-0 md:grid-cols-[1.5fr_1fr_1fr_.8fr_1fr] md:items-center md:px-5 md:py-4"
+                    >
+                      <div>
+                        <p className="font-bold text-[#152238] text-sm sm:text-base lg:text-base">
+                          {course.title}
+                        </p>
+                      </div>
+
+                      <div className="text-xs sm:text-sm lg:text-sm text-gray-600">
+                        {course.university}
+                      </div>
+
+                      <div className="flex items-center gap-1 text-xs sm:text-sm lg:text-sm text-gray-600">
+                        <MapPin size={12} className="text-[#f26e46] lg:w-[14px] lg:h-[14px]" />
+                        {course.location}
+                      </div>
+
+                      <div className="text-xs sm:text-sm lg:text-sm text-gray-600">
+                        {course.duration}
+                      </div>
+
+                      <div className="font-bold text-[#f26e46] text-sm sm:text-base lg:text-base">
+                        {course.tuitionFee}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* ================= SIMILAR COURSES ================= */}
+            {data?.simillarCourses?.length > 0 && (
+              <section className="mt-16 lg:mt-20">
+                <SectionHeading
+                  eyebrow="You May Also Like"
+                  title="Similar Courses"
+                />
+
+                <div className="mt-6 lg:mt-7 grid gap-3 lg:gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {data.simillarCourses.map((course: any, index: number) => (
+                    <div
+                      key={index}
+                      className="group rounded-2xl border border-gray-200 bg-white p-4 lg:p-5 transition hover:-translate-y-1 hover:border-orange-200 hover:shadow-xl"
+                    >
+                      <div className="flex h-9 w-9 lg:h-10 lg:w-10 items-center justify-center rounded-xl bg-orange-50 text-[#f26e46]">
+                        <BookOpen size={17} className="lg:w-[19px] lg:h-[19px]" />
+                      </div>
+
+                      <h3 className="mt-4 lg:mt-5 font-bold text-[#152238] text-sm sm:text-base lg:text-base">
+                        {course.title}
+                      </h3>
+
+                      <p className="mt-1.5 lg:mt-2 text-xs sm:text-sm lg:text-sm leading-5 sm:leading-6 lg:leading-6 text-gray-500">
+                        {course.description}
+                      </p>
+
+                      <button className="mt-4 lg:mt-5 flex items-center gap-2 text-xs sm:text-sm lg:text-sm font-bold text-[#f26e46]">
+                        Explore
+                        <ArrowRight
+                          size={13}
+                          className="transition group-hover:translate-x-1 lg:w-[15px] lg:h-[15px]"
+                        />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* ================= FAQ ================= */}
+            {data?.faqSection?.items?.length > 0 && (
+              <section id="faq" className="mt-16 lg:mt-20 scroll-mt-28">
+                <FAQSection Faqres={data.faqSection.items} />
+              </section>
+            )}
+          </article>
+
+          {/* ================= ASIDE (Desktop Only) ================= */}
+          <aside className="hidden lg:block space-y-5 sticky top-34 mt-18">
+            
+            <FormSection />
+
+            {/* Course Summary */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="mb-4 flex items-center gap-2">
+                <Sparkles size={18} className="text-[#f26e46]" />
+
+                <h3 className="font-bold text-[#152238]">Course Snapshot</h3>
+              </div>
+
+              <div className="space-y-4">
+                <SummaryRow label="Level" value={data.level} />
+
+                <SummaryRow label="Duration" value={data.duration} />
+
+                <SummaryRow label="Mode" value={data.mode} />
+
+                <SummaryRow label="Tuition" value={data.tutionFees} />
+
+                <SummaryRow
+                  label="Application"
+                  value={data.applicationFees}
+                />
+              </div>
+            </div>
+
+            {/* Counselling CTA */}
+            <div className="overflow-hidden rounded-2xl bg-[#152238] p-6 text-white">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f26e46]">
+                <Users size={21} />
+              </div>
+
+              <h3 className="mt-5 text-lg font-bold">Get Free Counselling</h3>
+
+              <p className="mt-2 text-sm leading-6 text-white/65">
+                Speak with our study abroad experts and get personalized
+                guidance.
+              </p>
+
+              <button className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#f26e46] px-4 py-3 text-sm font-bold transition hover:bg-[#e85f38]">
+                Talk to an Expert
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </aside>
         </div>
       </div>
 
-      {/* ================= MAIN CONTENT CONTAINER ================= */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20 pb-16">
-        
-        {/* Rating, Ranking & Actions Bar */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-          <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6">
-            
-            {/* Left Side: Ratings & Tags */}
-            <div className="flex flex-wrap items-center gap-6">
-              {/* Star Rating */}
-              <div className="flex items-center gap-2">
-                <svg className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                <span className="text-xl font-bold text-gray-900">3.8</span>
-                <span className="text-gray-400 text-lg">/5</span>
-                <a href="#" className="text-blue-600 hover:text-blue-700 text-sm font-semibold ml-1">(27 Reviews)</a>
-              </div>
 
-              <div className="hidden sm:block w-px h-8 bg-gray-200" />
-
-              {/* Ranking Badge */}
-              <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5">
-                <div className="flex items-center gap-1.5">
-                  <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                  <span className="text-xs font-bold text-amber-700 uppercase tracking-wide">Shiksha popularity ranking</span>
-                  <svg className="w-3.5 h-3.5 text-gray-400 cursor-help" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div className="flex items-center gap-3 border-l border-amber-200 pl-3">
-                  <span className="text-sm"><span className="font-bold text-gray-900">#444</span><span className="text-gray-500"> in World</span></span>
-                  <span className="text-gray-300">•</span>
-                  <span className="text-sm"><span className="font-bold text-gray-900">#50</span><span className="text-gray-500"> in UK</span></span>
-                </div>
-                <a href="#" className="text-blue-600 hover:text-blue-700 text-sm font-semibold ml-2 flex items-center gap-1 whitespace-nowrap">
-                  View details
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                </a>
-              </div>
-
-              <div className="hidden sm:block w-px h-8 bg-gray-200" />
-
-              {/* Tags */}
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <span className="inline-flex items-center gap-1.5">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                  Public University
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg>
-                  Aston Business School
-                </span>
-              </div>
-            </div>
-
-            {/* Right Side: Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
-              <button className="flex-1 xl:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 border-2 border-purple-200 text-purple-700 rounded-full font-semibold text-sm hover:bg-purple-50 hover:border-purple-300 transition-all duration-200">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                Talk to Expert
-              </button>
-              <button className="flex-1 xl:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 border-2 border-gray-200 text-gray-700 rounded-full font-semibold text-sm hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                Brochure
-              </button>
-              <button className="flex-1 xl:flex-none inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-green-600 text-white rounded-full font-semibold text-sm hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow-md">
-                Rate my chance
-              </button>
-            </div>
+      {countries?.length > 0 && (
+        <section className="py-8 lg:py-12 max-w-7xl mx-auto overflow-hidden px-4 lg:px-8">
+          <div className="flex items-center gap-3 mb-4 lg:mb-6">
+            <div className="w-1 h-6 lg:h-8 bg-orange-500"></div>
+            <h2 className="text-xl sm:text-2xl lg:text-2xl font-bold text-gray-800">
+              Related Destinations
+            </h2>
           </div>
-        </div>
 
-        {/* Tab Navigation */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-6">
-          <div className="flex overflow-x-auto border-b border-gray-100 scrollbar-hide">
-            {TABS.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`relative px-5 py-4 text-sm font-semibold whitespace-nowrap transition-colors duration-200 ${
-                  activeTab === tab ? "text-[#6B21A8]" : "text-gray-500 hover:text-gray-800"
-                }`}
+          <div ref={sliderRef} className="keen-slider flex">
+            {countries?.map((item: any) => (
+              <div
+                key={item._id}
+                className="keen-slider__slide bg-white border border-gray-300 rounded-lg overflow-hidden mx-2"
               >
-                {tab}
-                {activeTab === tab && (
-                  <span className="absolute bottom-0 left-2 right-2 h-[3px] bg-[#6B21A8] rounded-t-full" />
-                )}
-              </button>
+                <Link href={`/destination/${item.slug}`} className="block">
+                  <div className="h-40 lg:h-48 overflow-hidden">
+                    <img
+                      src={item.country?.image || item.navbarImage || "/placeholder.jpg"}
+                      alt={item.country?.name || item.title}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+
+                  <div className="p-4 lg:p-5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 lg:w-8 h-[1px] bg-orange-500"></div>
+                      <span className="text-[10px] sm:text-xs lg:text-xs uppercase tracking-widest text-orange-600 font-semibold">
+                        Destination
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg sm:text-xl lg:text-xl font-bold text-gray-900 truncate my-3 lg:my-4">
+                      {item?.title || item?.country?.name || "Destination"}
+                    </h3>
+
+                    <div className="flex items-center gap-2 text-xs sm:text-sm lg:text-sm text-gray-600">
+                      <MapPin size={14} className="text-orange-500 lg:w-[16px] lg:h-[16px]" />
+                      <span>{item?.country?.name || "Explore"}</span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
             ))}
           </div>
+        </section>
+      )}
+
+
+    </main>
+  );
+}
+
+// ================= COMPONENTS =================
+
+function FeatureCard({ feature, index }: { feature: any; index: number }) {
+  const ref = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "start start"],
+  });
+
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
+  const opacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 1, 1]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -80]);
+
+  return (
+    <div
+      ref={ref}
+      className="sticky top-36 md:top-42 flex items-center justify-center mb-3 sm:mb-4"
+      style={{
+        zIndex: index + 1,
+      }}
+    >
+      <motion.div
+        style={{
+          scale,
+          opacity,
+          y,
+        }}
+        className={`w-full max-w-5xl rounded-2xl md:rounded-[40px] overflow-hidden border-2 border-gray-300 flex flex-col lg:flex-row items-center
+          ${index % 2 === 0 ? "bg-[#FEFBEA]" : "bg-[#FDF4EF]"}
+          ${index % 2 !== 0 ? "lg:flex-row-reverse" : ""}`}
+      >
+        <div className="w-full p-4 sm:p-6 md:p-8 lg:p-14 flex flex-col justify-center">
+          <span className="text-orange-500 font-semibold uppercase tracking-widest text-[10px] sm:text-xs lg:text-sm">
+            Step {index + 1}
+          </span>
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mt-2 md:mt-4 mb-2 md:mb-6">
+            {feature.title}
+          </p>
+          <p className="text-gray-600 text-xs sm:text-sm lg:text-base leading-relaxed">
+            {feature.description}
+          </p>
         </div>
+      </motion.div>
+    </div>
+  );
+}
 
-        {/* Content Grid - NOTE: items-start is CRITICAL for sticky to work */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
-          {/* LEFT COLUMN (Main Content) */}
-          <div className="lg:col-span-8 space-y-6">
-            
-            {/* Overview Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">MBA at Aston University</p>
-                  <h2 className="text-xl font-bold text-gray-900">Overview</h2>
-                </div>
-              </div>
-              <p className="text-gray-600 leading-relaxed mb-5">
-                The MBA program at Aston Business School is a transformative experience designed for ambitious professionals looking to advance their careers. With a strong focus on practical learning, strategic thinking, and global business perspectives, this program equips you with the skills needed to lead in today's dynamic business environment.
-              </p>
-              <ul className="space-y-3">
-                {OVERVIEW_POINTS.map((point, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                      <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                    </span>
-                    <span className="text-gray-600 text-sm leading-relaxed">{point}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+const FormSection = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    mode: "onChange",
+    reValidateMode: "onChange",
+  });
 
-            {/* Course Highlights */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Course Highlights</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {COURSE_HIGHLIGHTS.map((item, idx) => (
-                  <div key={idx} className="bg-gray-50 rounded-xl p-4 border border-transparent hover:border-purple-200 hover:bg-purple-50 transition-all duration-200 group cursor-default">
-                    <span className="text-2xl mb-2 block">{item.icon}</span>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{item.label}</p>
-                    <p className="text-sm font-bold text-gray-900 mt-1 group-hover:text-[#6B21A8] transition-colors">{item.value}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+  const navigate = useRouter();
 
-        
+  const onSubmit = async (formData) => {
+    try {
+      const payload = {
+        fullName: formData.fullname,
+        email: formData.email,
+        phone: formData.phone,
+        destination: formData.country,
+        subject: "Study Abroad Enquiry",
+        type: "website-form",
+        source: "website",
+        city: formData.city,
+        description: `State: ${formData.state}`,
+      };
+
+      await axiosInstance.post("/contactus", payload);
+      toast.success("Form submitted successfully");
+      navigate.push("/thank-you");
+      reset();
+    } catch (error) {
+      toast.error("Submit Error");
+    }
+  };
+
+  return (
+    <div className="bg-white border p-4 sm:p-6 lg:p-8 rounded-lg w-full">
+      <h2 className="text-orange-500 text-sm sm:text-base lg:text-xl font-semibold mb-4 lg:mb-5 tracking-wide">
+        GET IN TOUCH
+      </h2>
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-3 lg:space-y-4">
+          <div>
+            <label className="text-xs sm:text-sm lg:text-sm text-gray-700">Full Name</label>
+            <input
+              {...register("fullname", { required: "Name is required" })}
+              className={`w-full border-b-2 pb-1 bg-transparent text-xs sm:text-sm lg:text-sm focus:outline-none 
+                  ${errors.fullname ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
+            />
+            {errors.fullname && (
+              <p className="text-red-500 text-[10px] sm:text-xs lg:text-xs">{errors.fullname.message}</p>
+            )}
           </div>
 
-          {/* RIGHT COLUMN (Sidebar) - STICKY CONTAINER */}
-          <div className="lg:col-span-4">
-            {/* 
-              FIX APPLIED HERE:
-              1. 'sticky top-6' instead of top-10 (better spacing with navbar)
-              2. Parent grid has 'items-start' so this column stretches naturally
-              3. No overflow properties on parents breaking the stack
-            */}
-            <div className="sticky top-6 space-y-6">
-              
-              {/* Consultation Form Widget */}
-              <div className="relative w-full p-1.5 bg-[#f46c44] rounded-2xl shadow-lg">
-                <div className="relative bg-white rounded-xl overflow-hidden">
-                  
-                  {/* Header */}
-                  <div className="bg-gradient-to-r from-[#EA6C46] to-[#EA6C46]/90 px-5 py-3 rounded-tr-xl">
-                    <h3 className="text-white text-base font-bold tracking-wide">Book Your Free Consultation</h3>
-                  </div>
+          <div>
+            <label className="text-xs sm:text-sm lg:text-sm text-gray-700">Email ID</label>
+            <input
+              type="email"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.(com|in)$/i,
+                  message: "Only .com and .in emails allowed",
+                },
+              })}
+              className={`w-full border-b-2 pb-1 bg-transparent text-xs sm:text-sm lg:text-sm focus:outline-none 
+                  ${errors.email ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-[10px] sm:text-xs lg:text-xs">{errors.email.message}</p>
+            )}
+          </div>
 
-                  {/* Stats Row */}
-                  <div className="flex items-center justify-center gap-6 py-3 border-b border-gray-100 text-[#0b2545] font-bold text-xs sm:text-sm">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-lg">📚</span>
-                      <span>100+ Courses</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-lg">👨‍🎓</span>
-                      <span>10K+ Counseled</span>
-                    </div>
-                  </div>
+          <div>
+            <label className="text-xs sm:text-sm lg:text-sm text-gray-700">Mobile Number</label>
+            <input
+              maxLength={10}
+              {...register("phone", {
+                required: "Phone is required",
+                pattern: {
+                  value: /^[0-9]{10}$/,
+                  message: "Enter valid 10 digit number",
+                },
+              })}
+              className={`w-full border-b-2 pb-1 bg-transparent text-xs sm:text-sm lg:text-sm focus:outline-none 
+                  ${errors.phone ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
+            />
+            {errors.phone && (
+              <p className="text-red-500 text-[10px] sm:text-xs lg:text-xs">{errors.phone.message}</p>
+            )}
+          </div>
 
-                  {heroSubmitted ? (
-                    <div className="py-12 px-6 text-center animate-in fade-in zoom-in duration-300">
-                      <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white text-3xl mx-auto shadow-lg shadow-green-200">✓</div>
-                      <h4 className="mt-5 text-2xl font-bold text-[#0b2545]">Thank You!</h4>
-                      <p className="text-sm text-gray-500 mt-2">Our counsellor will contact you shortly.</p>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleSubmit(onHeroSubmit)} className="p-5 space-y-3.5">
-                      
-                      {/* Name & Phone */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-xs font-bold text-[#0b2545] block mb-1.5">Full Name <span className="text-red-500">*</span></label>
-                          <input
-                            {...register("name", { required: true })}
-                            placeholder="Enter Full Name*"
-                            className={`w-full border rounded-lg px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-[#ff6b3d]/30 ${errors.name ? "border-red-300 bg-red-50 focus:border-red-400" : "border-gray-200 focus:border-[#ff6b3d]"}`}
-                          />
-                          {errors.name && <p className="text-[10px] text-red-500 mt-1 font-medium">Required</p>}
-                        </div>
-                        <div>
-                          <label className="text-xs font-bold text-[#0b2545] block mb-1.5">Mobile No. <span className="text-red-500">*</span></label>
-                          <input
-                            type="tel"
-                            {...register("phone", { required: true, minLength: 10 })}
-                            placeholder="Enter Mobile No.*"
-                            className={`w-full border rounded-lg px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-[#ff6b3d]/30 ${errors.phone ? "border-red-300 bg-red-50 focus:border-red-400" : "border-gray-200 focus:border-[#ff6b3d]"}`}
-                          />
-                          {errors.phone && <p className="text-[10px] text-red-500 mt-1 font-medium">Valid number required</p>}
-                        </div>
-                      </div>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:gap-4">
+            <div className="flex-1 w-full sm:w-auto">
+              <label className="text-xs sm:text-sm lg:text-sm text-gray-700">State</label>
+              <input
+                {...register("state")}
+                className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 text-xs sm:text-sm lg:text-sm"
+              />
+            </div>
 
-                      {/* Email & Degree */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-xs font-bold text-[#0b2545] block mb-1.5">Email Id <span className="text-red-500">*</span></label>
-                          <input
-                            type="email"
-                            {...register("email", { required: true })}
-                            placeholder="Enter Email Id*"
-                            className={`w-full border rounded-lg px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-[#ff6b3d]/30 ${errors.email ? "border-red-300 bg-red-50 focus:border-red-400" : "border-gray-200 focus:border-[#ff6b3d]"}`}
-                          />
-                          {errors.email && <p className="text-[10px] text-red-500 mt-1 font-medium">Required</p>}
-                        </div>
-                        <div>
-                          <label className="text-xs font-bold text-[#0b2545] block mb-1.5">Degree <span className="text-red-500">*</span></label>
-                          <input
-                            {...register("course", { required: true })}
-                            placeholder="Enter Degree*"
-                            className={`w-full border rounded-lg px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-[#ff6b3d]/30 ${errors.course ? "border-red-300 bg-red-50 focus:border-red-400" : "border-gray-200 focus:border-[#ff6b3d]"}`}
-                          />
-                          {errors.course && <p className="text-[10px] text-red-500 mt-1 font-medium">Required</p>}
-                        </div>
-                      </div>
-
-                      {/* City */}
-                      <div>
-                        <label className="text-xs font-bold text-[#0b2545] block mb-1.5">City <span className="text-red-500">*</span></label>
-                        <input
-                          {...register("city", { required: true })}
-                          placeholder="Enter City*"
-                          className={`w-full border rounded-lg px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-[#ff6b3d]/30 ${errors.city ? "border-red-300 bg-red-50 focus:border-red-400" : "border-gray-200 focus:border-[#ff6b3d]"}`}
-                        />
-                        {errors.city && <p className="text-[10px] text-red-500 mt-1 font-medium">Required</p>}
-                      </div>
-
-                      {/* State */}
-                      <div>
-                        <label className="text-xs font-bold text-[#0b2545] block mb-1.5">State <span className="text-red-500">*</span></label>
-                        <input
-                          {...register("state", { required: true })}
-                          placeholder="Enter State*"
-                          className={`w-full border rounded-lg px-3 py-2.5 text-sm outline-none transition-all focus:ring-2 focus:ring-[#ff6b3d]/30 ${errors.state ? "border-red-300 bg-red-50 focus:border-red-400" : "border-gray-200 focus:border-[#ff6b3d]"}`}
-                        />
-                        {errors.state && <p className="text-[10px] text-red-500 mt-1 font-medium">Required</p>}
-                      </div>
-
-                      {/* Checkbox */}
-                      <div className="flex items-start gap-2.5 pt-1">
-                        <input 
-                          type="checkbox" 
-                          id="agree"
-                          {...register("agree", { required: true })}
-                          className="mt-1 w-4 h-4 accent-[#F46C44] rounded border-gray-300 cursor-pointer" 
-                        />
-                        <label htmlFor="agree" className="text-xs text-[#0b2545] leading-snug cursor-pointer select-none">
-                          I agree to receive information from Ooshas Global.
-                        </label>
-                      </div>
-                      {errors.agree && <p className="text-[10px] text-red-500 -mt-2 font-medium">You must agree to proceed</p>}
-
-                      {/* Submit Button */}
-                      <button
-                        type="submit"
-                        className="w-full bg-[#F46C44] hover:bg-[#d65a35] active:scale-[0.98] transition-all text-white font-bold py-3 rounded-lg text-lg shadow-md shadow-orange-200 mt-2"
-                      >
-                        Submit
-                      </button>
-                    </form>
-                  )}
-                </div>
-              </div>
-
-         
-
+            <div className="flex-1 w-full sm:w-auto">
+              <label className="text-xs sm:text-sm lg:text-sm text-gray-700">City</label>
+              <input
+                {...register("city")}
+                className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 text-xs sm:text-sm lg:text-sm"
+              />
             </div>
           </div>
+
+          <div>
+            <label className="text-xs sm:text-sm lg:text-sm text-gray-700">Country</label>
+            <select
+              {...register("country")}
+              className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 text-xs sm:text-sm lg:text-sm"
+            >
+              <option value="">Country to Study</option>
+              {[
+                "USA",
+                "UK",
+                "France",
+                "Germany",
+                "Italy",
+                "Dubai",
+                "New Zealand",
+                "Australia",
+              ].map((c) => (
+                <option key={c} value={c.toLowerCase()}>
+                  Study In {c}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+
+        <div className="flex justify-end mt-4 lg:mt-6">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-secondary hover:bg-primary text-white px-4 lg:px-6 py-1.5 lg:py-2 rounded-full text-xs sm:text-sm lg:text-sm"
+          >
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+function InfoCard({
+  icon,
+  title,
+  value,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  value?: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 lg:gap-4 rounded-xl border border-orange-100 bg-white p-3 lg:p-4">
+      <div className="flex h-8 w-8 lg:h-10 lg:w-10 shrink-0 items-center justify-center rounded-lg bg-[#fff0eb] text-[#f26e46]">
+        {icon}
+      </div>
+
+      <div className="min-w-0">
+        <p className="text-[10px] sm:text-[11px] lg:text-[11px] font-bold uppercase tracking-wide text-gray-400">
+          {title}
+        </p>
+
+        <p className="mt-0.5 lg:mt-1 truncate text-xs sm:text-sm lg:text-sm font-bold text-[#152238]">
+          {value || "Not available"}
+        </p>
       </div>
     </div>
   );
 }
+
+
+
+
+
+const TuitionFeeCard = ({ data = {} }) => {
+
+  const tuitionFees =
+    data.tuitionFees || "AUD 48,000";
+
+  const approxInr =
+    data.approxInr || "₹25,75,000";
+
+  const applicationFee =
+    data.applicationFee || "AUD 100";
+
+  return (
+    <div className="w-full min-w-[16rem] lg:min-w-[20rem] rounded-2xl border border-gray-100 bg-white p-4 lg:p-6 shadow-[0_4px_25px_rgba(0,0,0,0.06)]">
+
+      {/* ================= FEES ================= */}
+      <div className="mb-4 lg:mb-5">
+
+        <span className="mb-0.5 lg:mb-1 block text-[10px] sm:text-xs lg:text-xs font-medium text-gray-400">
+          Tuition Fees (Total)
+        </span>
+
+        <h2 className="text-xl sm:text-2xl lg:text-2xl font-bold text-[#091a44]">
+          {tuitionFees}
+        </h2>
+
+        <span className="mt-0.5 block text-[10px] sm:text-xs lg:text-xs font-medium text-gray-500">
+          Approx. {approxInr}
+        </span>
+
+      </div>
+
+      {/* ================= APPLICATION FEE ================= */}
+      <div className="mb-4 lg:mb-6">
+
+        <span className="inline-flex items-center gap-1 rounded-md border border-[#d2f3e1] bg-[#edfbf4] px-2 py-0.5 lg:px-2.5 lg:py-1 text-[10px] sm:text-xs lg:text-xs font-semibold text-[#1ca360]">
+          + Application Fee: {applicationFee}
+        </span>
+
+      </div>
+
+      {/* ================= BUTTONS ================= */}
+      <div className="mb-4 lg:mb-6 flex flex-col gap-2 lg:gap-3">
+
+        <button
+          type="button"
+          className="w-full rounded-xl bg-gradient-to-r from-[#7a2beb] to-[#f42875] px-3 lg:px-4 py-2.5 lg:py-3 text-xs sm:text-sm lg:text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
+        >
+          Enquire Now
+        </button>
+
+        <button
+          type="button"
+          className="w-full rounded-xl border border-[#4834d4] bg-white px-3 lg:px-4 py-2.5 lg:py-3 text-xs sm:text-sm lg:text-sm font-semibold text-[#4834d4] transition-colors hover:bg-indigo-50/30"
+        >
+          Book Free Consultation
+        </button>
+
+      </div>
+
+    </div>
+  );
+};
+
+function SectionHeading({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <div className="mb-4 lg:mb-6">
+     
+        <h2 className="text-lg sm:text-xl lg:text-xl">
+              <span className="text-[#F46C44] lg:text-4xl font-light">
+                {title?.split("||")[0]?.trim()}
+              </span>{" "}
+
+              <br className="block sm:hidden" />  
+              <span className="text-primary font-bold relative text-xl sm:text-2xl lg:text-4xl">
+                {title?.split("||")[1]?.trim()}
+              </span>
+        </h2>
+
+      {description && (
+        <p className="mt-2 lg:mt-3 max-w-3xl text-xs sm:text-sm lg:text-sm leading-6 sm:leading-7 lg:leading-7 text-gray-600">
+          {description}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function SummaryRow({ label, value }: { label: string; value?: string }) {
+  return (
+    <div className="flex items-start justify-between gap-3 border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+      <span className="text-[10px] sm:text-xs lg:text-xs text-gray-500">{label}</span>
+
+      <span className="max-w-[120px] lg:max-w-[150px] text-right text-[10px] sm:text-xs lg:text-xs font-bold text-[#152238]">
+        {value || "-"}
+      </span>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+// "use client";
+
+// import React, { useEffect, useMemo, useRef, useState } from "react";
+// import Link from "next/link";
+// import {
+//   ArrowRight,
+//   BookOpen,
+//   Briefcase,
+//   Check,
+//   CheckCircle2,
+//   ChevronDown,
+//   Clock3,
+//   FileText,
+//   GraduationCap,
+//   MapPin,
+//   Plane,
+//   Search,
+//   Send,
+//   Wallet,
+//   Sparkles,
+//   CalendarDays,
+//   Users,
+//   Award,
+//   CircleDollarSign,
+//   CheckCircle,
+//   Eye,
+//   Share2,
+//   Heart,
+//   Download,
+//   UserCheck,
+//   HandHelping,
+//   FileCheck,
+//   Coins,
+//   PlaneTakeoff
+// } from "lucide-react";
+
+// import axiosInstance from "@/app/axiosInstance";
+// import toast from "react-hot-toast";
+// import { useRouter } from "next/navigation";
+// import { useForm } from "react-hook-form";
+// import FAQSection from "../faqPage";
+// import InnerContent, { BlogContent } from "../dom/DomParser";
+// import { useKeenSlider } from "keen-slider/react";
+// import { useScroll, useTransform, motion } from "framer-motion";
+
+// type CoursePageProps = {
+//   initialData: any | null;
+//   countries: any | null;
+// };
+
+// const iconMap: Record<string, any> = {
+//   GraduationCap,
+//   Wallet,
+//   Briefcase,
+//   Search,
+//   FileText,
+//   Send,
+//   CheckCircle,
+//   CheckCircle2,
+//   Plane,
+//   BookOpen,
+//   Award,
+//   Users,
+// };
+
+// function getIcon(icon?: string) {
+//   return iconMap[icon || ""] || Sparkles;
+// }
+
+// function stripHtml(html = "") {
+//   return html
+//     .replace(/<[^>]*>/g, " ")
+//     .replace(/\s+/g, " ")
+//     .trim();
+// }
+
+// function calculateReadingTime(data: any) {
+//   let text = "";
+
+//   text += `${data?.title || ""} ${data?.description || ""} `;
+
+//   data?.content?.sections?.forEach((section: any) => {
+//     text += `${section?.data?.title || ""} `;
+//     text += `${section?.data?.content || ""} `;
+
+//     if (Array.isArray(section?.data?.cards)) {
+//       section.data.cards.forEach((item: any) => {
+//         text += `${item?.title || ""} ${item?.description || ""} `;
+//       });
+//     }
+
+//     if (Array.isArray(section?.data?.data)) {
+//       section.data.data.forEach((item: any) => {
+//         text += `${item?.title || ""} ${item?.subtitle || ""} ${
+//           item?.content || ""
+//         } `;
+//       });
+//     }
+//   });
+
+//   const words = stripHtml(text).split(/\s+/).filter(Boolean).length;
+
+//   return Math.max(1, Math.ceil(words / 200));
+// }
+
+// export default function CoursePage({ initialData, countries }: CoursePageProps) {
+//   const data = initialData;
+
+//   const [activeSection, setActiveSection] = useState("overview");
+//   const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+//   if (!data) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center bg-[#fffaf7]">
+//         <div className="text-center">
+//           <div className="mx-auto mb-4 h-10 w-10 rounded-full border-4 border-orange-200 border-t-[#f26e46] animate-spin" />
+//           <p className="text-gray-600">Loading course...</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   const readingTime = calculateReadingTime(data);
+
+//   const sections = useMemo(() => {
+//     const result: {
+//       id: string;
+//       title: string;
+//     }[] = [
+//       {
+//         id: "overview",
+//         title:
+//           data?.content?.sections?.find((s: any) => s.type === "intro")?.data
+//             ?.title || "Overview",
+//       },
+//     ];
+
+//     data?.content?.sections?.forEach((section: any, index: number) => {
+//       if (section.type === "intro") return;
+//       if (section.type === "cta") return;
+
+//       result.push({
+//         id: `${section.type}-${section.id || index}`,
+//         title: section?.data?.title || section?.name || "Section",
+//       });
+//     });
+
+//     if (data?.roadmap?.steps?.length) {
+//       result.push({
+//         id: "journey",
+//         title: data.roadmap.title || "Your Journey",
+//       });
+//     }
+
+//     if (data?.topcourse?.length) {
+//       result.push({
+//         id: "top-courses",
+//         title: "Top Courses",
+//       });
+//     }
+
+//     if (data?.faqSection?.items?.length) {
+//       result.push({
+//         id: "faq",
+//         title: data.faqSection.title || "Frequently Asked Questions",
+//       });
+//     }
+
+//     return result;
+//   }, [data]);
+
+//   useEffect(() => {
+//     const elements = sections
+//       .map((section) => document.getElementById(section.id))
+//       .filter(Boolean) as HTMLElement[];
+
+//     if (!elements.length) return;
+
+//     const observer = new IntersectionObserver(
+//       (entries) => {
+//         const visible = entries
+//           .filter((entry) => entry.isIntersecting)
+//           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+//         if (visible.length) {
+//           setActiveSection(visible[0].target.id);
+//         }
+//       },
+//       {
+//         rootMargin: "-120px 0px -55% 0px",
+//         threshold: [0.1, 0.25, 0.5],
+//       },
+//     );
+
+//     elements.forEach((element) => observer.observe(element));
+
+//     return () => observer.disconnect();
+//   }, [sections]);
+
+//   useEffect(() => {
+//     const handleScroll = () => {
+//       const scrollTop = window.scrollY;
+//       const documentHeight =
+//         document.documentElement.scrollHeight - window.innerHeight;
+
+//       const progress =
+//         documentHeight > 0 ? (scrollTop / documentHeight) * 100 : 0;
+
+//       const bar = document.getElementById("course-reading-progress");
+
+//       if (bar) {
+//         bar.style.width = `${progress}%`;
+//       }
+//     };
+
+//     window.addEventListener("scroll", handleScroll);
+
+//     return () => window.removeEventListener("scroll", handleScroll);
+//   }, []);
+
+//   const scrollToSection = (id: string) => {
+//     const element = document.getElementById(id);
+
+//     if (!element) return;
+
+//     const offset = 100;
+
+//     const top = element.getBoundingClientRect().top + window.scrollY - offset;
+
+//     window.scrollTo({
+//       top,
+//       behavior: "smooth",
+//     });
+
+//     setActiveSection(id);
+//   };
+
+//   const introSection = data?.content?.sections?.find(
+//     (section: any) => section.type === "intro",
+//   );
+
+//   const introData = introSection?.data;
+
+//   const animation = { duration: 40000, easing: (t) => t };
+
+//   const [sliderRef] = useKeenSlider({
+//     loop: true,
+//     renderMode: "performance",
+//     drag: true,
+//     slides: {
+//       perView: 4,
+//       spacing: 20,
+//     },
+//     breakpoints: {
+//       "(max-width: 1024px)": {
+//         slides: {
+//           perView: 2,
+//           spacing: 16,
+//         },
+//       },
+//       "(max-width: 640px)": {
+//         slides: {
+//           perView: 1,
+//           spacing: 12,
+//         },
+//       },
+//     },
+//     created(s) {
+//       s.moveToIdx(5, true, animation);
+//     },
+//     updated(s) {
+//       s.moveToIdx(s.track.details.abs + 5, true, animation);
+//     },
+//     animationEnded(s) {
+//       s.moveToIdx(s.track.details.abs + 5, true, animation);
+//     },
+//   });
+
+//   return (
+//     <main className="min-h-screen bg-[#fffaf7] text-[#172033] px-4 lg:px-0">
+//       {/* Reading progress */}
+//       <div className="fixed left-0 top-0 z-[100] h-[3px] w-full bg-transparent">
+//         <div
+//           id="course-reading-progress"
+//           className="h-full bg-[#f26e46] transition-all duration-100"
+//           style={{ width: "0%" }}
+//         />
+//       </div>
+
+//       {/* ================= BREADCRUMB ================= */}
+//       <div className="py-4 max-w-7xl mx-auto flex flex-wrap items-center gap-2 text-sm  text-[#000]">
+//         <Link href="/" className="transition hover:text-[#f26e46]">
+//           Home
+//         </Link>
+
+//         <span className="text-black/40">›</span>
+
+//         <Link href="/course" className="transition hover:text-[#f26e46]">
+//           Courses
+//         </Link>
+
+//         <span className="text-black/40">›</span>
+
+//         <span className="font-medium text-black">
+//           {data.shortName || data.title}
+//         </span>
+//       </div>
+
+
+      
+// {/* ================= HERO ================= */}
+// <section className="relative overflow-visible bg-white">
+
+//   {/* ================= BACKGROUND IMAGE ================= */}
+//   {data.coverImage ? (
+//     <div
+//       className="absolute inset-0 bg-cover bg-center"
+//       style={{
+//         backgroundImage: `url(${data.coverImage})`,
+//         backgroundRepeat: "no-repeat",
+//       }}
+//     />
+//   ) : (
+//     <div className="absolute inset-0 bg-[#071d48]" />
+//   )}
+
+//   {/* Dark overlay */}
+//   <div className="absolute inset-0 bg-gradient-to-r from-[#071d48] via-[#0b2858]/75 to-transparent" />
+
+//   {/* ================= CONTENT ================= */}
+//   <div className="relative z-10 mx-auto max-w-7xl py-6  lg:py-8">
+//     <div className="grid items-center gap-10 lg:grid-cols-[1.25fr_.75fr]">
+
+//       {/* ================= LEFT CONTENT ================= */}
+//       <div className="max-w-3xl">
+
+//         {/* Badge */}
+//         <div className="mb-6 flex flex-wrap gap-2">
+//           {data.level && (
+//             <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#7c2cff] to-[#a238ff] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-lg">
+//               <span className="text-yellow-300">✦</span>
+//               {data.level} DESIGNATED COURSE
+//             </span>
+//           )}
+//         </div>
+
+//         {/* Title */}
+//         <h1 className="max-w-3xl text-4xl font-black leading-[1] tracking-tight text-white md:text-5xl">
+//           {data.title}
+//         </h1>
+
+//         {/* University */}
+//         <div className="mt-6 flex items-center gap-4">
+//           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-lg">
+//             <GraduationCap
+//               size={25}
+//               className="text-[#152238]"
+//             />
+//           </div>
+
+//           <div>
+//             <p className="text-lg font-bold text-white">
+//               {data.uniSlug || "University"}
+//             </p>
+
+//             <p className="text-sm text-white/60">
+//               University / Institution
+//             </p>
+//           </div>
+//         </div>
+
+//         {/* Course Information */}
+//         <div className="mt-6 flex flex-wrap gap-x-8 gap-y-5">
+
+//           {/* Duration */}
+//           {data.duration && (
+//             <div className="flex items-center gap-3">
+//               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10">
+//                 <Clock3
+//                   size={18}
+//                   className="text-white"
+//                 />
+//               </div>
+
+//               <div>
+//                 <p className="text-xs text-white/50">
+//                   Duration
+//                 </p>
+
+//                 <p className="text-sm font-semibold text-white">
+//                   {data.duration}
+//                 </p>
+//               </div>
+//             </div>
+//           )}
+
+//           {/* Intake */}
+//           {data.intake && (
+//             <div className="flex items-center gap-3">
+//               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10">
+//                 <CalendarDays
+//                   size={18}
+//                   className="text-white"
+//                 />
+//               </div>
+
+//               <div>
+//                 <p className="text-xs text-white/50">
+//                   Intake
+//                 </p>
+
+//                 <p className="text-sm font-semibold text-white">
+//                   {data.intake}
+//                 </p>
+//               </div>
+//             </div>
+//           )}
+
+//           {/* Course Level */}
+//           {data.level && (
+//             <div className="flex items-center gap-3">
+//               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10">
+//                 <BookOpen
+//                   size={18}
+//                   className="text-white"
+//                 />
+//               </div>
+
+//               <div>
+//                 <p className="text-xs text-white/50">
+//                   Course Level
+//                 </p>
+
+//                 <p className="text-sm font-semibold text-white">
+//                   {data.level}
+//                 </p>
+//               </div>
+//             </div>
+//           )}
+
+//           {/* Mode */}
+//           {data.mode && (
+//             <div className="flex items-center gap-3">
+//               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10">
+//                 <GraduationCap
+//                   size={18}
+//                   className="text-white"
+//                 />
+//               </div>
+
+//               <div>
+//                 <p className="text-xs text-white/50">
+//                   Mode of Study
+//                 </p>
+
+//                 <p className="text-sm font-semibold text-white">
+//                   {data.mode}
+//                 </p>
+//               </div>
+//             </div>
+//           )}
+
+//         </div>
+
+//         {/* Description */}
+//         {data.description && (
+//           <p className="mt-6 max-w-2xl text-sm leading-7 text-white/75 sm:text-base">
+//             {data.description}
+//           </p>
+//         )}
+
+//         {/* Buttons */}
+//         <div className="mt-4 flex flex-wrap gap-4">
+
+//           <button
+//             type="button"
+//             className="inline-flex items-center gap-2 rounded-xl bg-[#6e1901] px-6 py-3.5 text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] hover:shadow-xl"
+//           >
+//             <Download size={18} />
+//             Download Brochure
+//           </button>
+
+//           <button
+//             type="button"
+//             className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
+//           >
+//             <Heart size={18} />
+//             Add to Shortlist
+//           </button>
+
+//         </div>
+//       </div>
+
+//       {/* ================= RIGHT SIDE ================= */}
+//       <div className="relative hidden min-h-[410px] lg:block">
+
+//         {/* Share / Tour */}
+//         <div className="absolute right-0 top-0 flex flex-col gap-3">
+
+//           <button
+//             type="button"
+//             className="flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-gray-700 shadow-xl transition hover:bg-gray-100"
+//           >
+//             <Share2 size={17} />
+//             Share
+//           </button>
+
+//           <button
+//             type="button"
+//             className="flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-gray-700 shadow-xl transition hover:bg-gray-100"
+//           >
+//             <Eye size={17} />
+//             360° Tour
+//           </button>
+
+//         </div>
+
+//         {/* ================= UNIVERSITY RANKING ================= */}
+//         <div className="absolute right-4 top-[115px] flex items-center gap-4 rounded-xl border border-white/10 bg-[#062d6b]/95 px-5 py-4 text-white shadow-2xl backdrop-blur">
+
+//           <div className="flex h-16 w-16 items-center justify-center rounded-md bg-[#f5b331]">
+//             <span className="text-2xl font-black text-white">
+//               QS
+//             </span>
+//           </div>
+
+//           <div>
+//             <p className="text-[10px] font-semibold uppercase tracking-wide text-white/60">
+//               World University Rankings
+//             </p>
+
+//             <p className="mt-1 text-xl font-black">
+//               Ranked #14
+//             </p>
+
+//             <p className="text-xs text-white/60">
+//               2024 Rankings
+//             </p>
+//           </div>
+
+//         </div>
+
+//         {/* ================= TUITION FEE CARD ================= */}
+//         <div className="absolute bottom-8 right-0 z-20 translate-y-1/2">
+//           <TuitionFeeCard data={data} />
+//         </div>
+
+//       </div>
+
+//     </div>
+//   </div>
+
+// </section>
+
+
+
+//       <div className="mx-auto max-w-7xl  py-8  ">
+//         <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+//           <article className="min-w-0">
+//             {/* Mobile TOC */}
+//             <div className="mb-8 lg:hidden">
+//               <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+//                 <p className="mb-3 text-sm font-bold text-[#152238]">
+//                   On this page
+//                 </p>
+
+//                 <div className="flex gap-2 overflow-x-auto pb-1">
+//                   {sections.map((section) => (
+//                     <button
+//                       key={section.id}
+//                       onClick={() => scrollToSection(section.id)}
+//                       className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold ${
+//                         activeSection === section.id
+//                           ? "bg-[#f26e46] text-white"
+//                           : "bg-gray-100 text-gray-600"
+//                       }`}
+//                     >
+//                       {section.title}
+//                     </button>
+//                   ))}
+//                 </div>
+//               </div>
+//             </div>
+            
+//             <div className="my-6 rounded-2xl border border-gray-100 bg-white shadow-sm">
+
+//   {/* ================= HEADER ================= */}
+//   <div className="border-b border-gray-100 px-6 py-5">
+//     <SectionHeading
+//       eyebrow="Overview"
+//       title="Study Data Point"
+//     />
+//   </div>
+
+//   {/* ================= LIST ================= */}
+//   <div className="p-4">
+//     <div className="space-y-1">
+
+//       {sections.map((section, index) => {
+//         const active = activeSection === section.id;
+
+//         return (
+//           <button
+//             key={section.id}
+//             onClick={() => scrollToSection(section.id)}
+//             className={`group relative flex w-full items-center gap-4 rounded-xl px-4 py-3.5 text-left transition-all duration-200 ${
+//               active
+//                 ? "bg-[#fff3ef] text-[#f06b43]"
+//                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+//             }`}
+//           >
+//             {/* Number */}
+//             <span
+//               className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold transition-all ${
+//                 active
+//                   ? "bg-[#f06b43] text-white shadow-sm"
+//                   : "bg-gray-100 text-gray-500 group-hover:bg-gray-200"
+//               }`}
+//             >
+//               {String(index + 1).padStart(2, "0")}
+//             </span>
+
+//             {/* Title */}
+//             <span
+//               className={`flex-1 text-sm font-semibold ${
+//                 active
+//                   ? "text-[#f06b43]"
+//                   : "text-gray-600 group-hover:text-gray-900"
+//               }`}
+//             >
+//               {section.title}
+//             </span>
+
+//             {/* Arrow */}
+//             <span
+//               className={`text-lg transition-transform duration-200 ${
+//                 active
+//                   ? "translate-x-0 text-[#f06b43]"
+//                   : "-translate-x-1 text-gray-300 group-hover:translate-x-0 group-hover:text-gray-500"
+//               }`}
+//             >
+//               →
+//             </span>
+
+//             {/* Active left border */}
+//             {active && (
+//               <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-[#f06b43]" />
+//             )}
+//           </button>
+//         );
+//       })}
+
+//     </div>
+//   </div>
+// </div>
+
+//             <section id="overview" className="scroll-mt-28">
+//               <SectionHeading
+//                 eyebrow="Overview"
+//                 title={
+//                   introData?.title || `Study ${data.shortName || data.title}`
+//                 }
+//               />
+
+//               <InnerContent cleanedHtml={introData?.content} />
+
+//               {/* Intro Cards */}
+//               {Array.isArray(introData?.cards) &&
+//                 introData.cards.length > 0 && (
+//                   <div className="mt-8 grid gap-4 md:grid-cols-3">
+//                     {introData.cards.map((card: any, index: number) => {
+//                       const Icon = getIcon(card.icon);
+
+//                       return (
+//                         <div
+//                           key={index}
+//                           className="group rounded-2xl border border-gray-200 bg-white p-5 transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-xl"
+//                         >
+//                           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#fff0eb] text-[#f26e46] transition group-hover:bg-[#f26e46] group-hover:text-white">
+//                             <Icon size={21} />
+//                           </div>
+
+//                           <h3 className="mt-5 font-bold text-[#152238]">
+//                             {card.title}
+//                           </h3>
+
+//                           <p className="mt-2 text-sm leading-6 text-gray-500">
+//                             {card.description}
+//                           </p>
+//                         </div>
+//                       );
+//                     })}
+//                   </div>
+//                 )}
+//             </section>
+
+
+//             {data?.content?.sections?.map((section: any, index: number) => {
+//               if (section.type === "intro") {
+//                 return null;
+//               }
+
+//               if (section.type === "cta") {
+//                 return null;
+//               }
+
+//               const sectionId = `${section.type}-${section.id || index}`;
+
+//               const sectionData = section.data;
+
+//               return (
+//                 <section
+//                   key={sectionId}
+//                   id={sectionId}
+//                   className="mt-16 scroll-mt-28"
+//                 >
+//                   <SectionHeading
+//                     eyebrow={section.name}
+//                     title={sectionData?.title || section.name}
+//                   />
+
+//                   {/* Top Programs */}
+//                   {section.type === "topProgram" && (
+//                     <>
+//                       {sectionData?.subtitle && (
+//                         <p className="mb-6 text-sm leading-7 text-gray-600">
+//                           {sectionData.subtitle}
+//                         </p>
+//                       )}
+
+//                       <div className="grid gap-4 md:grid-cols-2">
+//                         {sectionData?.data?.map(
+//                           (program: any, programIndex: number) => (
+//                             <div
+//                               key={programIndex}
+//                               className="rounded-2xl border border-gray-200 bg-white p-5 transition hover:border-orange-200 hover:shadow-lg"
+//                             >
+//                               <div className="flex items-start gap-4">
+//                                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#fff0eb] text-[#f26e46]">
+//                                   <GraduationCap size={21} />
+//                                 </div>
+
+//                                 <div>
+//                                   <h3 className="font-bold text-[#152238]">
+//                                     {program.title}
+//                                   </h3>
+
+//                                   <p className="mt-1 text-sm text-gray-500">
+//                                     {program.subtitle}
+//                                   </p>
+//                                 </div>
+//                               </div>
+//                             </div>
+//                           ),
+//                         )}
+//                       </div>
+//                     </>
+//                   )}
+
+//                   {/* Other Data */}
+//                   {section.type === "otherdata" && (
+//                     <div className="space-y-4">
+//                       {sectionData?.data?.map(
+//                         (item: any, itemIndex: number) => (
+//                           <div
+//                             key={itemIndex}
+//                             className="rounded-2xl border border-gray-200 bg-white p-5"
+//                           >
+//                             <div className="flex gap-4">
+//                               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f26e46] text-sm font-bold text-white">
+//                                 {itemIndex + 1}
+//                               </div>
+
+//                               <div className="min-w-0">
+//                                 <h3 className="font-bold text-[#152238]">
+//                                   {item.title}
+//                                 </h3>
+
+//                                 {item.content && (
+//                                   <div
+//                                     className="prose prose-sm mt-2 max-w-none text-gray-600 prose-p:leading-7"
+//                                     dangerouslySetInnerHTML={{
+//                                       __html: item.content,
+//                                     }}
+//                                   />
+//                                 )}
+//                               </div>
+//                             </div>
+//                           </div>
+//                         ),
+//                       )}
+//                     </div>
+//                   )}
+
+//                   {/* Generic section */}
+//                   {!["topProgram", "otherdata"].includes(section.type) && (
+//                     <>
+//                       {sectionData?.content && (
+//                         <div
+//                           className="prose prose-gray max-w-none text-[15px] leading-8"
+//                           dangerouslySetInnerHTML={{
+//                             __html: sectionData.content,
+//                           }}
+//                         />
+//                       )}
+
+//                       {Array.isArray(sectionData?.data) && (
+//                         <div className="mt-6 space-y-4">
+//                           {sectionData.data.map(
+//                             (item: any, itemIndex: number) => (
+//                               <div
+//                                 key={itemIndex}
+//                                 className="rounded-xl border border-gray-200 bg-white p-5"
+//                               >
+//                                 <h3 className="font-bold text-[#152238]">
+//                                   {item.title}
+//                                 </h3>
+
+//                                 {item.subtitle && (
+//                                   <p className="mt-1 text-sm text-gray-500">
+//                                     {item.subtitle}
+//                                   </p>
+//                                 )}
+
+//                                 {item.content && (
+//                                   <div
+//                                     className="prose prose-sm mt-3 max-w-none text-gray-600"
+//                                     dangerouslySetInnerHTML={{
+//                                       __html: item.content,
+//                                     }}
+//                                   />
+//                                 )}
+//                               </div>
+//                             ),
+//                           )}
+//                         </div>
+//                       )}
+//                     </>
+//                   )}
+//                 </section>
+//               );
+//             })}
+
+
+//             {data?.roadmap?.steps?.length > 0 && (
+//               <section id="journey" className="mt-20 scroll-mt-28">
+//                 <SectionHeading
+//                   eyebrow="Step by Step"
+//                   title={data.roadmap.title || "Your Journey"}
+//                   description={data.roadmap.subtitle}
+//                 />
+
+//                 <div className="relative mt-10">
+//                   {/* <div className="absolute bottom-0 left-[22px] top-0 w-px bg-orange-200 md:left-[28px]" /> */}
+
+//                   <div className="relative p-1 sm:p-2">
+//                     {data.roadmap.steps?.map((feature: any, index: number) => (
+//                       <FeatureCard key={index} feature={feature} index={index} />
+//                     ))}
+//                   </div>
+//                 </div>
+//               </section>
+//             )}
+
+//             {/* ================= TOP COURSES ================= */}
+//             {data?.topcourse?.length > 0 && (
+//               <section id="top-courses" className="mt-20 scroll-mt-28">
+//                 <SectionHeading
+//                   eyebrow="Popular Choices"
+//                   title="Top Courses"
+//                   description="Explore some popular programs related to this study destination."
+//                 />
+
+//                 <div className="mt-7 overflow-hidden rounded-2xl border border-gray-200 bg-white">
+//                   {/* <div className="hidden grid-cols-[1.5fr_1fr_1fr_.8fr_1fr] bg-[#f26e46] px-5 py-4 text-xs font-bold uppercase tracking-wide text-white md:grid">
+//                     <span>Course</span>
+//                     <span>University</span>
+//                     <span>Location</span>
+//                     <span>Duration</span>
+//                     <span>Tuition Fee</span>
+//                   </div> */}
+
+//                   {data.topcourse.map((course: any, index: number) => (
+//                     <div
+//                       key={index}
+//                       className="grid gap-3 border-b border-gray-100 p-5 last:border-0 md:grid-cols-[1.5fr_1fr_1fr_.8fr_1fr] md:items-center md:px-5 md:py-4"
+//                     >
+//                       <div>
+//                         <p className="font-bold text-[#152238]">
+//                           {course.title}
+//                         </p>
+//                       </div>
+
+//                       <div className="text-sm text-gray-600">
+//                         {course.university}
+//                       </div>
+
+//                       <div className="flex items-center gap-1 text-sm text-gray-600">
+//                         <MapPin size={14} className="text-[#f26e46]" />
+//                         {course.location}
+//                       </div>
+
+//                       <div className="text-sm text-gray-600">
+//                         {course.duration}
+//                       </div>
+
+//                       <div className="font-bold text-[#f26e46]">
+//                         {course.tuitionFee}
+//                       </div>
+//                     </div>
+//                   ))}
+//                 </div>
+//               </section>
+//             )}
+
+//             {/* ================= SIMILAR COURSES ================= */}
+//             {data?.simillarCourses?.length > 0 && (
+//               <section className="mt-20">
+//                 <SectionHeading
+//                   eyebrow="You May Also Like"
+//                   title="Similar Courses"
+//                 />
+
+//                 <div className="mt-7 grid gap-4 md:grid-cols-3">
+//                   {data.simillarCourses.map((course: any, index: number) => (
+//                     <div
+//                       key={index}
+//                       className="group rounded-2xl border border-gray-200 bg-white p-5 transition hover:-translate-y-1 hover:border-orange-200 hover:shadow-xl"
+//                     >
+//                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-[#f26e46]">
+//                         <BookOpen size={19} />
+//                       </div>
+
+//                       <h3 className="mt-5 font-bold text-[#152238]">
+//                         {course.title}
+//                       </h3>
+
+//                       <p className="mt-2 text-sm leading-6 text-gray-500">
+//                         {course.description}
+//                       </p>
+
+//                       <button className="mt-5 flex items-center gap-2 text-sm font-bold text-[#f26e46]">
+//                         Explore
+//                         <ArrowRight
+//                           size={15}
+//                           className="transition group-hover:translate-x-1"
+//                         />
+//                       </button>
+//                     </div>
+//                   ))}
+//                 </div>
+//               </section>
+//             )}
+
+//             {/* ================= FAQ ================= */}
+//             {data?.faqSection?.items?.length > 0 && (
+//               <section id="faq" className="mt-20 scroll-mt-28">
+//                 <FAQSection Faqres={data.faqSection.items} />
+//               </section>
+//             )}
+//           </article>
+
+//           {/* ================= ASIDE (Desktop Only) ================= */}
+//           <aside className="hidden lg:block space-y-5 sticky top-34  mt-18">
+            
+//             <FormSection />
+
+//             {/* Course Summary */}
+//             <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+//               <div className="mb-4 flex items-center gap-2">
+//                 <Sparkles size={18} className="text-[#f26e46]" />
+
+//                 <h3 className="font-bold text-[#152238]">Course Snapshot</h3>
+//               </div>
+
+//               <div className="space-y-4">
+//                 <SummaryRow label="Level" value={data.level} />
+
+//                 <SummaryRow label="Duration" value={data.duration} />
+
+//                 <SummaryRow label="Mode" value={data.mode} />
+
+//                 <SummaryRow label="Tuition" value={data.tutionFees} />
+
+//                 <SummaryRow
+//                   label="Application"
+//                   value={data.applicationFees}
+//                 />
+//               </div>
+//             </div>
+
+//             {/* Counselling CTA */}
+//             <div className="overflow-hidden rounded-2xl bg-[#152238] p-6 text-white">
+//               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f26e46]">
+//                 <Users size={21} />
+//               </div>
+
+//               <h3 className="mt-5 text-lg font-bold">Get Free Counselling</h3>
+
+//               <p className="mt-2 text-sm leading-6 text-white/65">
+//                 Speak with our study abroad experts and get personalized
+//                 guidance.
+//               </p>
+
+//               <button className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#f26e46] px-4 py-3 text-sm font-bold transition hover:bg-[#e85f38]">
+//                 Talk to an Expert
+//                 <ArrowRight size={16} />
+//               </button>
+//             </div>
+//           </aside>
+//         </div>
+//       </div>
+
+
+//       {countries?.length > 0 && (
+//         <section className="py-12 max-w-7xl mx-auto overflow-hidden px-5 lg:px-8">
+//           <div className="flex items-center gap-3 mb-6">
+//             <div className="w-1 h-8 bg-orange-500"></div>
+//             <h2 className="text-2xl font-bold text-gray-800">
+//               Related Destinations
+//             </h2>
+//           </div>
+
+//           <div ref={sliderRef} className="keen-slider flex">
+//             {countries?.map((item: any) => (
+//               <div
+//                 key={item._id}
+//                 className="keen-slider__slide bg-white border border-gray-300 rounded-lg overflow-hidden"
+//               >
+//                 <Link href={`/destination/${item.slug}`} className="block">
+//                   <div className="h-48 overflow-hidden">
+//                     <img
+//                       src={item.country?.image || item.navbarImage || "/placeholder.jpg"}
+//                       alt={item.country?.name || item.title}
+//                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+//                     />
+//                   </div>
+
+//                   <div className="p-5">
+//                     <div className="flex items-center gap-2">
+//                       <div className="w-8 h-[1px] bg-orange-500"></div>
+//                       <span className="text-xs uppercase tracking-widest text-orange-600 font-semibold">
+//                         Destination
+//                       </span>
+//                     </div>
+
+//                     <h3 className="text-xl font-bold text-gray-900 truncate my-4">
+//                       {item?.title || item?.country?.name || "Destination"}
+//                     </h3>
+
+//                     <div className="flex items-center gap-2 text-sm text-gray-600">
+//                       <MapPin size={16} className="text-orange-500" />
+//                       <span>{item?.country?.name || "Explore"}</span>
+//                     </div>
+//                   </div>
+//                 </Link>
+//               </div>
+//             ))}
+//           </div>
+//         </section>
+//       )}
+
+
+//     </main>
+//   );
+// }
+
+// // ================= COMPONENTS =================
+
+// function FeatureCard({ feature, index }: { feature: any; index: number }) {
+//   const ref = useRef(null);
+
+//   const { scrollYProgress } = useScroll({
+//     target: ref,
+//     offset: ["start end", "start start"],
+//   });
+
+//   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
+//   const opacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 1, 1]);
+//   const y = useTransform(scrollYProgress, [0, 1], [0, -80]);
+
+//   return (
+//     <div
+//       ref={ref}
+//       className="sticky top-16 sm:top-20 md:top-42 flex items-center justify-center mb-3 sm:mb-4"
+//       style={{
+//         zIndex: index + 1,
+//       }}
+//     >
+//       <motion.div
+//         style={{
+//           scale,
+//           opacity,
+//           y,
+//         }}
+//         className={`w-full max-w-5xl rounded-2xl md:rounded-[40px] overflow-hidden border-2 border-gray-300 flex flex-col lg:flex-row items-center
+//           ${index % 2 === 0 ? "bg-[#FEFBEA]" : "bg-[#FDF4EF]"}
+//           ${index % 2 !== 0 ? "lg:flex-row-reverse" : ""}`}
+//       >
+//         <div className="w-full p-4 sm:p-6 md:p-8 lg:p-14 flex flex-col justify-center">
+//           <span className="text-orange-500 font-semibold uppercase tracking-widest text-xs sm:text-sm">
+//             Step {index + 1}
+//           </span>
+//           <p className="text-xl sm:text-2xl md:text-3xl font-bold mt-2 md:mt-4 mb-2 md:mb-6">
+//             {feature.title}
+//           </p>
+//           <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+//             {feature.description}
+//           </p>
+//         </div>
+//       </motion.div>
+//     </div>
+//   );
+// }
+
+// const FormSection = () => {
+//   const {
+//     register,
+//     handleSubmit,
+//     reset,
+//     formState: { errors, isSubmitting },
+//   } = useForm({
+//     mode: "onChange",
+//     reValidateMode: "onChange",
+//   });
+
+//   const navigate = useRouter();
+
+//   const onSubmit = async (formData) => {
+//     try {
+//       const payload = {
+//         fullName: formData.fullname,
+//         email: formData.email,
+//         phone: formData.phone,
+//         destination: formData.country,
+//         subject: "Study Abroad Enquiry",
+//         type: "website-form",
+//         source: "website",
+//         city: formData.city,
+//         description: `State: ${formData.state}`,
+//       };
+
+//       await axiosInstance.post("/contactus", payload);
+//       toast.success("Form submitted successfully");
+//       navigate.push("/thank-you");
+//       reset();
+//     } catch (error) {
+//       toast.error("Submit Error");
+//     }
+//   };
+
+//   return (
+//     <div className="bg-white border p-5 sm:p-8 rounded-lg w-full">
+//       <h2 className="text-orange-500 text-sm sm:text-xl font-semibold mb-5 tracking-wide">
+//         GET IN TOUCH
+//       </h2>
+
+//       <form onSubmit={handleSubmit(onSubmit)}>
+//         <div className="space-y-4">
+//           <div>
+//             <label className="text-sm text-gray-700">Full Name</label>
+//             <input
+//               {...register("fullname", { required: "Name is required" })}
+//               className={`w-full border-b-2 pb-1 bg-transparent text-sm focus:outline-none 
+//                   ${errors.fullname ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
+//             />
+//             {errors.fullname && (
+//               <p className="text-red-500 text-xs">{errors.fullname.message}</p>
+//             )}
+//           </div>
+
+//           <div>
+//             <label className="text-sm text-gray-700">Email ID</label>
+//             <input
+//               type="email"
+//               {...register("email", {
+//                 required: "Email is required",
+//                 pattern: {
+//                   value: /^[^\s@]+@[^\s@]+\.(com|in)$/i,
+//                   message: "Only .com and .in emails allowed",
+//                 },
+//               })}
+//               className={`w-full border-b-2 pb-1 bg-transparent text-sm focus:outline-none 
+//                   ${errors.email ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
+//             />
+//             {errors.email && (
+//               <p className="text-red-500 text-xs">{errors.email.message}</p>
+//             )}
+//           </div>
+
+//           <div>
+//             <label className="text-sm text-gray-700">Mobile Number</label>
+//             <input
+//               maxLength={10}
+//               {...register("phone", {
+//                 required: "Phone is required",
+//                 pattern: {
+//                   value: /^[0-9]{10}$/,
+//                   message: "Enter valid 10 digit number",
+//                 },
+//               })}
+//               className={`w-full border-b-2 pb-1 bg-transparent text-sm focus:outline-none 
+//                   ${errors.phone ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
+//             />
+//             {errors.phone && (
+//               <p className="text-red-500 text-xs">{errors.phone.message}</p>
+//             )}
+//           </div>
+
+//           <div className="flex gap-2">
+//             <div className="flex-1">
+//               <label className="text-sm text-gray-700">State</label>
+//               <input
+//                 {...register("state")}
+//                 className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
+//               />
+//             </div>
+
+//             <div className="flex-1">
+//               <label className="text-sm text-gray-700">City</label>
+//               <input
+//                 {...register("city")}
+//                 className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
+//               />
+//             </div>
+//           </div>
+
+//           <div>
+//             <label className="text-sm text-gray-700">Country</label>
+//             <select
+//               {...register("country")}
+//               className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
+//             >
+//               <option value="">Country to Study</option>
+//               {[
+//                 "USA",
+//                 "UK",
+//                 "France",
+//                 "Germany",
+//                 "Italy",
+//                 "Dubai",
+//                 "New Zealand",
+//                 "Australia",
+//               ].map((c) => (
+//                 <option key={c} value={c.toLowerCase()}>
+//                   Study In {c}
+//                 </option>
+//               ))}
+//             </select>
+//           </div>
+//         </div>
+
+//         <div className="flex justify-end mt-6">
+//           <button
+//             type="submit"
+//             disabled={isSubmitting}
+//             className="bg-secondary hover:bg-primary text-white px-6 py-2 rounded-full"
+//           >
+//             {isSubmitting ? "Submitting..." : "Submit"}
+//           </button>
+//         </div>
+//       </form>
+//     </div>
+//   );
+// };
+
+// function InfoCard({
+//   icon,
+//   title,
+//   value,
+// }: {
+//   icon: React.ReactNode;
+//   title: string;
+//   value?: string;
+// }) {
+//   return (
+//     <div className="flex items-center gap-4 rounded-xl border border-orange-100 bg-white p-4">
+//       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#fff0eb] text-[#f26e46]">
+//         {icon}
+//       </div>
+
+//       <div className="min-w-0">
+//         <p className="text-[11px] font-bold uppercase tracking-wide text-gray-400">
+//           {title}
+//         </p>
+
+//         <p className="mt-1 truncate text-sm font-bold text-[#152238]">
+//           {value || "Not available"}
+//         </p>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+
+
+// const TuitionFeeCard = ({ data = {} }) => {
+
+//   const tuitionFees =
+//     data.tuitionFees || "AUD 48,000";
+
+//   const approxInr =
+//     data.approxInr || "₹25,75,000";
+
+//   const applicationFee =
+//     data.applicationFee || "AUD 100";
+
+//   const benefits = [
+//     {
+//       icon: (
+//         <UserCheck
+//           size={18}
+//           className="text-indigo-500"
+//         />
+//       ),
+//       label: "Free Profile Evaluation",
+//     },
+//     {
+//       icon: (
+//         <HandHelping
+//           size={18}
+//           className="text-indigo-500"
+//         />
+//       ),
+//       label: "Step-by-step Admission Support",
+//     },
+//     {
+//       icon: (
+//         <FileCheck
+//           size={18}
+//           className="text-indigo-500"
+//         />
+//       ),
+//       label: "Visa Assistance",
+//     },
+//     {
+//       icon: (
+//         <Coins
+//           size={18}
+//           className="text-indigo-500"
+//         />
+//       ),
+//       label: "Education Loan Assistance",
+//     },
+//     {
+//       icon: (
+//         <PlaneTakeoff
+//           size={18}
+//           className="text-indigo-500"
+//         />
+//       ),
+//       label: "Pre-Departure Support",
+//     },
+//   ];
+
+//   return (
+//     <div className="w-full min-w-[20rem] rounded-2xl border border-gray-100 bg-white p-6 shadow-[0_4px_25px_rgba(0,0,0,0.06)]">
+
+//       {/* ================= FEES ================= */}
+//       <div className="mb-5">
+
+//         <span className="mb-1 block text-xs font-medium text-gray-400">
+//           Tuition Fees (Total)
+//         </span>
+
+//         <h2 className="text-2xl font-bold text-[#091a44]">
+//           {tuitionFees}
+//         </h2>
+
+//         <span className="mt-0.5 block text-xs font-medium text-gray-500">
+//           Approx. {approxInr}
+//         </span>
+
+//       </div>
+
+//       {/* ================= APPLICATION FEE ================= */}
+//       <div className="mb-6">
+
+//         <span className="inline-flex items-center gap-1 rounded-md border border-[#d2f3e1] bg-[#edfbf4] px-2.5 py-1 text-xs font-semibold text-[#1ca360]">
+//           + Application Fee: {applicationFee}
+//         </span>
+
+//       </div>
+
+//       {/* ================= BUTTONS ================= */}
+//       <div className="mb-6 flex flex-col gap-3">
+
+//         <button
+//           type="button"
+//           className="w-full rounded-xl bg-gradient-to-r from-[#7a2beb] to-[#f42875] px-4 py-3 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
+//         >
+//           Enquire Now
+//         </button>
+
+//         <button
+//           type="button"
+//           className="w-full rounded-xl border border-[#4834d4] bg-white px-4 py-3 text-sm font-semibold text-[#4834d4] transition-colors hover:bg-indigo-50/30"
+//         >
+//           Book Free Consultation
+//         </button>
+
+//       </div>
+      
+//       {/* <div className="space-y-4 border-t border-gray-50 pt-2">
+
+//         {benefits.map((benefit, index) => (
+
+//           <div
+//             key={index}
+//             className="flex items-center gap-3"
+//           >
+
+//             <div className="flex-shrink-0">
+//               {benefit.icon}
+//             </div>
+
+//             <span className="text-sm font-medium text-[#2d3748]">
+//               {benefit.label}
+//             </span>
+
+//           </div>
+
+//         ))}
+
+//       </div> */}
+
+//     </div>
+//   );
+// };
+
+// function SectionHeading({
+//   eyebrow,
+//   title,
+//   description,
+// }: {
+//   eyebrow?: string;
+//   title: string;
+//   description?: string;
+// }) {
+//   return (
+//     <div className="mb-6">
+     
+//         <h2 className="text-xl ">
+//               <span className="text-[#F46C44] lg:text-4xl font-light">
+//                 {title?.split("||")[0]?.trim()}
+//               </span>{" "}
+
+//               <br />  <span className="text-primary font-bold relative text-2xl lg:text-4xl">
+//                 {title?.split("||")[1]?.trim()}
+//               </span>
+//         </h2>
+
+//       {description && (
+//         <p className="mt-3 max-w-3xl text-sm leading-7 text-gray-600">
+//           {description}
+//         </p>
+//       )}
+//     </div>
+//   );
+// }
+
+// function SummaryRow({ label, value }: { label: string; value?: string }) {
+//   return (
+//     <div className="flex items-start justify-between gap-3 border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+//       <span className="text-xs text-gray-500">{label}</span>
+
+//       <span className="max-w-[150px] text-right text-xs font-bold text-[#152238]">
+//         {value || "-"}
+//       </span>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+

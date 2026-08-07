@@ -1,6 +1,5 @@
 "use client";
 
-// app/universities/[slug]/UniDetailsClient.tsx  — CLIENT COMPONENT
 
 import { useEffect, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
