@@ -6,7 +6,7 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
 
   const res = await serverInstance.get(
-    `/page-information/slug/${slug}`
+    `/page-information/slug/${slug}?type=destinations`
   );
 
   const seo = res.data.data.seoMeta;
@@ -38,7 +38,7 @@ export default async function Page({ params }) {
   const { slug } = await params;
 
   const [pageRes, caseRes, imageRes, Faqres, Unires, Unicategory, flatres] = await Promise.all([
-    serverInstance.get(`/page-information/slug/${slug}`),
+    serverInstance.get(`/page-information/slug/${slug}?type=destinations`),
     serverInstance.get("/testimonials?type=caseStudy"),
     serverInstance.get("/testimonials?type=image"),
     serverInstance.get(`/faqs/public/list?type=${slug}`),

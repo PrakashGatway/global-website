@@ -116,7 +116,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const slug = "find-universities-main-page"
 
   try {
-    const res = await serverInst.get(`/page-information/slug/${slug}`);
+    const res = await serverInst.get(`/page-information/slug/${slug}?type=university`);
     const pageData = res.data.data;
     const seo = pageData?.seoMeta;
 

@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: any }) {
 
 
     const res = await serverInstance.get(
-      `/page-information/slug/${slug}`
+      `/page-information/slug/${slug}?type=country`
     );
 
     const seo = res.data.data.seoMeta;
@@ -77,7 +77,7 @@ export default async function Page({
 
     try {
       const Pageres = await serverInstance.get(
-        `/page-information/slug/${slug}`
+        `/page-information/slug/${slug}?type=country`
       );
       
 

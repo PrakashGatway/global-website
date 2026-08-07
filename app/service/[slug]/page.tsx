@@ -79,7 +79,7 @@ const generateFaqSchema = (faqs: any[]) => ({
 /* ---------------- SEO ---------------- */
 export async function generateMetadata({ params }) {
   const { slug } = await params
-  const res = await serverInstance.get(`/page-information/slug/${slug}`);
+  const res = await serverInstance.get(`/page-information/slug/${slug}?type=service`);
   const seo = res.data.data.seoMeta;
 
   return {
@@ -109,7 +109,7 @@ export default async function Page({ params }) {
 
 
   const [serviceRes, testimonialImgRes, Faqres, videores, scholarshipres] = await Promise.all([
-    serverInstance.get(`/page-information/slug/${slug}`),
+    serverInstance.get(`/page-information/slug/${slug}?type=service`),
     serverInstance.get("/testimonials?type=image"),
     serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`),
     serverInstance.get("/testimonials?type=video&limit=6"),
