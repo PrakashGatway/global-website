@@ -1,24 +1,13 @@
 // app/courses/page.tsx
 
 import CourseListingPage from "@/components/Course/listingPage";
+import { serverInstance } from "../axiosInstance";
 
 async function getCourses(page: number = 1) {
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-
   try {
-    const res = await fetch(
-      `${API_BASE_URL}/courses?page=${page}&limit=9`,
-      {
-        cache: "no-store",
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch courses");
-    }
-
-    const data = await res.json();
+    const res = await serverInstance.get(`/accommodation/courses?page=${page}&limit=9`);
+    
+    const data = await res.data;
 
     return {
       courses: data.courses || [],

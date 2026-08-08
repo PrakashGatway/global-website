@@ -12,21 +12,8 @@ type PageProps = {
 };
 
 async function getCourseData(slug: string) {
-  const API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-
-  const res = await fetch(
-    `${API_BASE_URL}/courses/${encodeURIComponent(slug)}`,
-    {
-      cache: "no-store",
-    }
-  );
-
-  if (!res.ok) {
-    return null;
-  }
-
-  const response = await res.json();
+    const res = await serverInstance.get(`/accommodation/courses/${encodeURIComponent(slug)}`);
+  const response = res.data;
 
   return response?.data || null;
 }
