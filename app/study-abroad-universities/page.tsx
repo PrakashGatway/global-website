@@ -246,7 +246,7 @@ async function HeroSection({ searchParams, pageData }: { searchParams: any; page
         />
 
         {/* Search Form (Adapted with glassmorphism to fit the dark overlay) */}
-        <form action={`/find-universities`} method="GET" className="mt-8 max-w-2xl">
+        <form action={`/study-abroad-universities`} method="GET" className="mt-8 max-w-2xl">
           <div className="bg-white/95 backdrop-blur-md rounded-full shadow-2xl flex overflow-hidden border border-white/20">
             <div className="flex items-center flex-1 px-6">
               <Search className="w-5 h-5 text-gray-500 mr-3" />

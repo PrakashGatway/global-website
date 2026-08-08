@@ -260,7 +260,7 @@ export function MainUniversityFilters({ searchParams, countrydata, slug, default
     params.set('page', '1');
     console.log(params.toString())
 
-    return `/find-universities?${params.toString()}`;
+    return `/study-abroad-universities?${params.toString()}`;
   };
 
   const handleFilterChange = (key: string, value: string) => {
@@ -268,7 +268,7 @@ export function MainUniversityFilters({ searchParams, countrydata, slug, default
   };
 
   const handleReset = () => {
-    router.push(`/find-universities`, { scroll: false });
+    router.push(`/study-abroad-universities`, { scroll: false });
   };
 
   const handleMultiSelect = (key: string, value: string) => {
