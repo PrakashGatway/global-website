@@ -829,6 +829,7 @@ export const ConsultationForm = () => {
 
 
 export const UniversityFeeCard = ({
+    openPopup,
     tuitionFee = "AUD 48,000",
     convertedFee = "₹25,75,000",
     applicationFee = "AUD 100",
@@ -859,7 +860,7 @@ export const UniversityFeeCard = ({
     ];
 
     return (
-        <div className="w-full max-w-sm rounded-xl bg-white border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.08)] p-5">
+        <div className="w-full max-w-sm rounded-xl bg-white border border-gray-100 shadow-xl p-5">
 
             {/* Tuition Fee */}
             <div>
@@ -867,22 +868,15 @@ export const UniversityFeeCard = ({
                     Tuition Fees (Total)
                 </p>
 
-                <h2 className="mt-2 text-[26px] leading-tight font-bold text-[#10295C]">
-                    {tuitionFee}
+                <h2 className="mt-1 text-[26px] leading-tight font-bold text-[#10295C]">
+                   ₹ {tuitionFee}
                 </h2>
-
-                <p className="mt-1 text-sm text-gray-400">
-                    Approx.{" "}
-                    <span className="text-gray-500">
-                        {convertedFee}
-                    </span>
-                </p>
             </div>
 
             {/* Application Fee */}
-            <div className="mt-4 inline-flex items-center rounded-md bg-[#EAF8F0] px-3 py-1.5">
+            <div className="mt-2 inline-flex items-center rounded-md bg-[#EAF8F0] px-3 py-1.5">
                 <span className="text-xs font-semibold text-[#43A66A]">
-                    + Application Fees: {applicationFee}
+                    + Application Fees: ₹ {applicationFee}
                 </span>
             </div>
 
@@ -891,44 +885,24 @@ export const UniversityFeeCard = ({
 
                 <button
                     type="button"
-                    onClick={onEnquire}
+                    onClick={openPopup}
                     className="
                         w-full
                         rounded-lg
-                        bg-gradient-to-r
-                        from-[#7025C9]
-                        to-[#F51D61]
+                        bg-white border-2 border-orange-500
                         py-2.5
                         text-sm
-                        font-bold
-                        text-white
+                        font-bold hover:text-white hover:bg-orange-600
+                        text-gray-700
                     "
                 >
                     Enquire Now
                 </button>
 
-                <button
-                    type="button"
-                    onClick={onConsultation}
-                    className="
-                        w-full
-                        rounded-lg
-                        border-2
-                        border-[#A9A5FF]
-                        bg-white
-                        py-2.5
-                        text-sm
-                        font-bold
-                        text-[#5E63D7]
-                    "
-                >
-                    Book Free Consultation
-                </button>
-
             </div>
 
             {/* Support List */}
-            <div className="mt-6 space-y-4">
+            <div className="mt-3 space-y-2">
 
                 {supportItems.map((item, index) => (
                     <div
@@ -945,8 +919,8 @@ export const UniversityFeeCard = ({
                                 items-center
                                 justify-center
                                 rounded-full
-                                bg-[#F0F2FF]
-                                text-[#7482EF]
+                                bg-[#EAF8F0]
+                                text-[#43A66A]
                                 text-sm
                                 font-semibold
                             "

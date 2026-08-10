@@ -743,7 +743,7 @@ export const CTASection = ({ data }) => {
           <span
             className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
             dangerouslySetInnerHTML={{
-              __html: data?.subtitle || "Explore top universities, expert guidance, and seamless admission support with Ooshas Global.",
+              __html: data?.subtitle || data?.description || "Explore top universities, expert guidance, and seamless admission support with Ooshas Global.",
             }}
           />
           <div className="mt-4">

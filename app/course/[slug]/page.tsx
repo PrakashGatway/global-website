@@ -2,6 +2,7 @@
 // app/courses/[slug]/page.tsx
 
 import { serverInstance } from "@/app/axiosInstance";
+import NotFound from "@/app/not-found";
 import CoursePageClient from "@/components/Course/coursePage";
 import { Metadata } from "next";
 
@@ -12,7 +13,7 @@ type PageProps = {
 };
 
 async function getCourseData(slug: string) {
-    const res = await serverInstance.get(`/accommodation/courses/${encodeURIComponent(slug)}`);
+  const res = await serverInstance.get(`/accommodation/courses/${encodeURIComponent(slug)}`);
   const response = res.data;
 
   return response?.data || null;
@@ -50,8 +51,8 @@ export async function generateMetadata({
 
     keywords: seo?.metaKeywords
       ? seo.metaKeywords
-          .split(",")
-          .map((keyword: string) => keyword.trim())
+        .split(",")
+        .map((keyword: string) => keyword.trim())
       : course.tags || [],
 
     openGraph: {
@@ -69,11 +70,11 @@ export async function generateMetadata({
 
       images: course.coverImage
         ? [
-            {
-              url: course.coverImage,
-              alt: course.title || "Course",
-            },
-          ]
+          {
+            url: course.coverImage,
+            alt: course.title || "Course",
+          },
+        ]
         : [],
 
       type: "website",
@@ -111,46 +112,9 @@ export default async function Page({ params }: PageProps) {
 
   if (!courseData) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center">
-        <h1 className="text-2xl font-semibold">
-          Course not found
-        </h1>
-      </div>
+      <NotFound />
     );
   }
 
-  return <CoursePageClient initialData={courseData} countries={countries.data.data}/>;
+  return <CoursePageClient initialData={courseData} countries={countries.data.data} />;
 }
-
-
-
-
-
-
-
-
-
-// // app/courses/page.tsx
-// import CoursePageClient from "@/components/Course/coursePage";
-
-// async function getCourseData() {
-//   const res = await fetch(
-//     `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/courses`,
-//     {
-//       cache: "no-store",
-//     }
-//   );
-
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch courses");
-//   }
-
-//   return res.json();
-// }
-
-// export default async function Page() {
-    
-//   const courseData = await getCourseData();
-
-//   return <CoursePageClient initialData={courseData.data[0]} />;
-// }

@@ -44,6 +44,9 @@ import { useKeenSlider } from "keen-slider/react";
 import { useScroll, useTransform, motion } from "framer-motion";
 import NotFound from "@/app/not-found";
 import { ConsultationForm, UniversityFeeCard } from "../Universitypage/WhyChooseSection";
+import { useGlobal } from "@/src/statecontext";
+import { DynamicLucideIcon } from "../DynamicLucideIcon";
+import { CTASection } from "../country";
 
 type CoursePageProps = {
   initialData: any | null;
@@ -106,18 +109,13 @@ function calculateReadingTime(data: any) {
 
 export default function CoursePage({ initialData, countries }: CoursePageProps) {
   const data = initialData;
-
-  const [activeSection, setActiveSection] = useState("overview");
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const { openPopup } = useGlobal();
 
   if (!data) {
     return (
       <NotFound />
     );
   }
-
-  const readingTime = calculateReadingTime(data);
-
   const sections = useMemo(() => {
     const result: {
       id: string;
@@ -177,10 +175,6 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-
-        if (visible.length) {
-          setActiveSection(visible[0].target.id);
-        }
       },
       {
         rootMargin: "-120px 0px -55% 0px",
@@ -214,23 +208,6 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-
-    if (!element) return;
-
-    const offset = 100;
-
-    const top = element.getBoundingClientRect().top + window.scrollY - offset;
-
-    window.scrollTo({
-      top,
-      behavior: "smooth",
-    });
-
-    setActiveSection(id);
-  };
-
   const introSection = data?.content?.sections?.find(
     (section: any) => section.type === "intro",
   );
@@ -243,10 +220,12 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
     loop: true,
     renderMode: "performance",
     drag: true,
+
     slides: {
       perView: 4,
       spacing: 20,
     },
+
     breakpoints: {
       "(max-width: 1024px)": {
         slides: {
@@ -254,24 +233,28 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
           spacing: 16,
         },
       },
+
       "(max-width: 640px)": {
         slides: {
-          perView: 1,
+          perView: 1.3,
           spacing: 12,
         },
       },
     },
+
     created(s) {
       s.moveToIdx(5, true, animation);
     },
+
     updated(s) {
       s.moveToIdx(s.track.details.abs + 5, true, animation);
     },
+
     animationEnded(s) {
       s.moveToIdx(s.track.details.abs + 5, true, animation);
     },
   });
-
+  
   return (
     <main className="min-h-screen bg-[#fffaf7] text-[#172033] ">
       {/* Reading progress */}
@@ -282,7 +265,7 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
           style={{ width: "0%" }}
         />
       </div>
-      <section className="relative overflow-visible bg-white">
+      <section className="relative [text-shadow:0_2px_2px_rgba(0,0,0,0.9)] overflow-visible bg-white">
 
         {/* ================= BACKGROUND IMAGE ================= */}
         {data.coverImage ? (
@@ -298,8 +281,6 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
         )}
 
         <div className="absolute inset-0 bg-gradient-to-r from-[#071d48] via-[#0b2858]/75 to-transparent" />
-
-        {/* ================= CONTENT ================= */}
         <div className="px-4">
           <div className="relative z-10 mx-auto max-w-7xl py-12
         ">
@@ -329,24 +310,6 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
                 <h1 className="max-w-4xl text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold leading-[1.1] tracking-tight text-white">
                   {data.title}
                 </h1>
-                {/* <div className="mt-4 lg:mt-6 flex items-center gap-3 lg:gap-4">
-                <div className="flex h-10 w-10 lg:h-12 lg:w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-lg">
-                  <GraduationCap
-                    size={20}
-                    className="text-[#152238] lg:w-[25px] lg:h-[25px]"
-                  />
-                </div>
-
-                <div>
-                  <p className="text-base sm:text-lg lg:text-lg font-bold text-white">
-                    {data.uniSlug || "University"}
-                  </p>
-
-                  <p className="text-sm sm:text-sm lg:text-sm text-white/60">
-                    University / Institution
-                  </p>
-                </div>
-              </div> */}
 
                 {/* Course Information */}
                 <div className="mt-4 lg:mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3 lg:flex lg:flex-wrap lg:gap-x-8 lg:gap-y-5">
@@ -453,19 +416,21 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
 
                   <button
                     type="button"
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#6e1901] px-4 py-2.5 lg:px-6 lg:py-3.5 text-sm sm:text-sm lg:text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] hover:shadow-xl"
+                    onClick={openPopup}
+                    className="inline-flex items-center gap-2 rounded-xl bg-[#F36D45] px-4 py-2.5 lg:px-6 lg:py-3.5 text-sm sm:text-sm lg:text-sm font-bold text-white shadow-lg transition hover:scale-[1.02] hover:shadow-xl"
                   >
                     <Send size={16} className="lg:w-[18px] lg:h-[18px]" />
                     Connect with us
                   </button>
 
-                  <button
-                    type="button"
+                  <Link
+                    href={"/login"}
+
                     className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/5 px-4 py-2.5 lg:px-6 lg:py-3.5 text-sm sm:text-sm lg:text-sm font-semibold text-white backdrop-blur transition hover:bg-white/15"
                   >
                     <Heart size={16} className="lg:w-[18px] lg:h-[18px]" />
                     Add to Shortlist
-                  </button>
+                  </Link>
 
                 </div>
               </div>
@@ -501,28 +466,9 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl py-6 lg:py-8 px-4 lg:px-0">
+      <div className="mx-auto max-w-7xl py-6 lg:py-8 px-4 lg:px-0 [text-shadow:0_0px_0px_rgba(0,0,0,0.5)] fs">
         <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
           <article className="min-w-0">
-            {/* Mobile TOC */}
-            {/* <div className="mb-6 lg:mb-8">
-              <div className="">
-                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                  {sections.map((section) => (
-                    <button
-                      key={section.id}
-                      onClick={() => scrollToSection(section.id)}
-                      className={`whitespace-nowrap rounded-full px-3 py-1.5 lg:px-4 lg:py-2 text-[11px] sm:text-sm lg:text-sm font-semibold ${activeSection === section.id
-                        ? "bg-[#f26e46] text-white"
-                        : "bg-gray-100 text-gray-600"
-                        }`}
-                    >
-                      {section.title}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div> */}
 
             <section id="overview" className="scroll-mt-28">
               <SectionHeading
@@ -531,32 +477,48 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
                   introData?.title || `Study ${data.shortName || data.title}`
                 }
               />
-
               <InnerContent cleanedHtml={introData?.content} />
-
-              {/* Intro Cards */}
               {Array.isArray(introData?.cards) &&
                 introData.cards.length > 0 && (
-                  <div className="mt-6 lg:mt-8 grid gap-3 lg:gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {introData.cards.map((card: any, index: number) => {
                       const Icon = getIcon(card.icon);
 
                       return (
                         <div
                           key={index}
-                          className="group rounded-2xl border border-gray-200 bg-white p-4 lg:p-5 transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-xl"
+                          className="group relative overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-5 lg:p-6
+              transition-all duration-500
+              hover:-translate-y-2
+              hover:border-[#f26e46]/30
+              hover:shadow-[0_20px_45px_rgba(21,34,56,0.10)]"
                         >
-                          <div className="flex h-10 w-10 lg:h-11 lg:w-11 items-center justify-center rounded-xl bg-[#fff0eb] text-[#f26e46] transition group-hover:bg-[#f26e46] group-hover:text-white">
-                            <Icon size={18} className="lg:w-[21px] lg:h-[21px]" />
+                          <div className="relative z-10">
+                            <div className="">
+                              <div className="flex items-center gap-2">
+
+                                <DynamicLucideIcon
+                                  name={card.icon}
+                                  className="transition-transform duration-500 h-8 w-8 rounded-full text-[#152238] group-hover:text-[#f26e46] group-hover:scale-110"
+                                />
+                                <h3
+                                  className="text-base font-bold leading-6 text-[#152238]
+                    transition-colors duration-300
+                    group-hover:text-[#f26e46]"
+                                >
+                                  {card.title}
+                                </h3>
+                              </div>
+
+                              <p
+                                className="mt-2 text-sm leading-6 text-gray-500
+                    transition-colors duration-300
+                    group-hover:text-gray-600"
+                              >
+                                {card.description}
+                              </p>
+                            </div>
                           </div>
-
-                          <h3 className="mt-4 lg:mt-5 font-bold text-[#152238] text-sm sm:text-base lg:text-base">
-                            {card.title}
-                          </h3>
-
-                          <p className="mt-1.5 lg:mt-2 text-sm sm:text-sm lg:text-sm leading-5 sm:leading-6 lg:leading-6 text-gray-500">
-                            {card.description}
-                          </p>
                         </div>
                       );
                     })}
@@ -582,7 +544,7 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
                 <section
                   key={sectionId}
                   id={sectionId}
-                  className="mt-12 lg:mt-16 scroll-mt-28"
+                  className="mt-6 scroll-mt-28"
                 >
                   <SectionHeading
                     eyebrow={section.name}
@@ -603,61 +565,234 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
                           (program: any, programIndex: number) => (
                             <div
                               key={programIndex}
-                              className="rounded-2xl border border-gray-200 bg-white p-4 lg:p-5 transition hover:border-orange-200 hover:shadow-lg"
+                              className="group relative overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4
+        transition-all duration-500
+        hover:-translate-y-2
+        hover:border-[#f26e46]/30
+        hover:shadow-[0_20px_50px_rgba(242,110,70,0.14)]"
                             >
-                              <div className="flex items-start gap-3 lg:gap-4">
-                                <div className="flex h-10 w-10 lg:h-11 lg:w-11 shrink-0 items-center justify-center rounded-xl bg-[#fff0eb] text-[#f26e46]">
-                                  <GraduationCap size={18} className="lg:w-[21px] lg:h-[21px]" />
+                              {/* Animated background blobs */}
+                              <div
+                                className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full
+          bg-[#f26e46]/8 blur-3xl
+          transition-all duration-700
+          group-hover:scale-125 group-hover:bg-[#f26e46]/55"
+                              />
+
+                              <div
+                                className="pointer-events-none absolute -bottom-20 -left-16 h-40 w-40 rounded-full
+          bg-orange-100/50 blur-3xl
+          transition-all duration-700
+          group-hover:translate-x-8 group-hover:-translate-y-4"
+                              />
+
+
+                              {/* Content */}
+                              <div className="relative z-10 flex items-start gap-4">
+
+                                {/* Number / Icon */}
+                                <div
+                                  className="flex p-2 py-1.5 items-center justify-center rounded-full
+            bg-[#fff0eb] text-sm font-bold text-[#f26e46]
+            ring-1 ring-[#f26e46]/10
+            transition-all duration-500
+            group-hover:scale-110
+            group-hover:bg-[#f26e46]
+            group-hover:text-white
+            group-hover:shadow-lg
+            group-hover:shadow-[#f26e46]/25"
+                                >
+                                  {String(programIndex + 1).padStart(2, "0")}
                                 </div>
 
-                                <div>
-                                  <h3 className="font-bold text-[#152238] text-sm sm:text-base lg:text-base">
+                                {/* Text */}
+                                <div className="min-w-0 flex-1">
+                                  <h3
+                                    className="font-bold text-[#152238] text-sm sm:text-base lg:text-base
+              leading-6
+              transition-colors duration-300
+              group-hover:text-[#f26e46]"
+                                  >
                                     {program.title}
                                   </h3>
 
-                                  <p className="mt-0.5 lg:mt-1 text-sm sm:text-sm lg:text-sm text-gray-500">
+                                  <p
+                                    className="mt-1 text-sm leading-6 text-gray-600
+              transition-colors duration-300
+              group-hover:text-gray-600"
+                                  >
                                     {program.subtitle}
                                   </p>
+
+                                  {/* Bottom indicator */}
+                                  <div className="mt-3 flex items-center gap-2">
+                                    <span
+                                      className="h-1.5 w-1.5 rounded-full bg-[#f26e46]
+                transition-all duration-500
+                group-hover:w-7"
+                                    />
+
+                                    <span
+                                      className="text-[10px] font-semibold uppercase tracking-[0.16em]
+                text-gray-400
+                transition-colors duration-300
+                group-hover:text-[#f26e46]"
+                                    >
+                                      Explore Program
+                                    </span>
+                                  </div>
                                 </div>
+
+
                               </div>
+
+                              {/* Moving shine effect */}
+                              <div
+                                className="pointer-events-none absolute -left-[100%] top-0 h-full w-1/3
+          skew-x-[-20deg]
+          bg-gradient-to-r from-transparent via-white/70 to-transparent
+          transition-all duration-1000
+          group-hover:left-[130%]"
+                              />
                             </div>
-                          ),
+                          )
                         )}
                       </div>
                     </>
                   )}
 
+                  {section.type === "content" && (
+                    <>
+                      {sectionData?.content && (
+                        <InnerContent cleanedHtml={sectionData?.content} />
+                      )}
+                    </>
+                  )}
+
                   {/* Other Data */}
                   {section.type === "otherdata" && (
-                    <div className="space-y-3 lg:space-y-4">
+                    <div className="relative mt-6">
                       {sectionData?.data?.map(
-                        (item: any, itemIndex: number) => (
-                          <div
-                            key={itemIndex}
-                            className="rounded-2xl border border-gray-200 bg-white p-4 lg:p-5"
-                          >
-                            <div className="flex gap-3 lg:gap-4">
-                              <div className="flex h-8 w-8 lg:h-9 lg:w-9 shrink-0 items-center justify-center rounded-full bg-[#f26e46] text-sm sm:text-sm lg:text-sm font-bold text-white">
-                                {itemIndex + 1}
-                              </div>
+                        (item: any, itemIndex: number) => {
+                          const isLast =
+                            itemIndex === sectionData.data.length - 1;
 
-                              <div className="min-w-0">
-                                <h3 className="font-bold text-[#152238] text-sm sm:text-base lg:text-base">
-                                  {item.title}
-                                </h3>
+                          return (
+                            <div
+                              key={itemIndex}
+                              className="group relative flex gap-5"
+                            >
+                              {/* Timeline */}
+                              <div className="relative flex w-10 shrink-0 flex-col items-center sm:w-12">
 
-                                {item.content && (
+                                {/* Number */}
+                                <div
+                                  className="
+                  relative z-10
+                  flex h-10 w-10 items-center justify-center
+                  rounded-full
+                  border border-[#f26e46]/20
+                  bg-white
+                  text-sm font-bold text-[#f26e46]
+                  shadow-[0_4px_15px_rgba(242,110,70,0.10)]
+                  transition-all duration-500
+                  group-hover:scale-110
+                  group-hover:border-[#f26e46]
+                  group-hover:bg-[#f26e46]
+                  group-hover:text-white
+                  group-hover:shadow-[0_8px_25px_rgba(242,110,70,0.25)]
+                "
+                                >
+                                  {String(itemIndex + 1).padStart(2, "0")}
+                                </div>
+
+                                {/* Connecting line */}
+                                {!isLast && (
                                   <div
-                                    className="prose prose-sm mt-1.5 lg:mt-2 max-w-none text-gray-600 prose-p:leading-6 lg:prose-p:leading-7"
-                                    dangerouslySetInnerHTML={{
-                                      __html: item.content,
-                                    }}
-                                  />
+                                    className="
+                    relative mt-2 w-px flex-1 overflow-hidden
+                    bg-gray-200
+                  "
+                                  >
+                                    <div
+                                      className="
+                      absolute left-0 top-0 h-0 w-full
+                      bg-gradient-to-b from-[#f26e46] to-orange-200
+                      transition-all duration-700
+                      group-hover:h-full
+                    "
+                                    />
+                                  </div>
                                 )}
                               </div>
+
+                              {/* Content */}
+                              <div
+                                className={`
+                relative min-w-0 flex-1
+                ${!isLast ? "pb-6" : "pb-2"}
+              `}
+                              >
+                                {/* Background glow */}
+                                <div
+                                  className="
+                  pointer-events-none
+                  absolute -left-4 -top-4
+                  h-24 w-24 rounded-full
+                  bg-[#f26e46]/5
+                  opacity-0 blur-3xl
+                  transition-all duration-500
+                  group-hover:scale-150
+                  group-hover:opacity-100
+                "
+                                />
+
+                                <div className="relative">
+                                  {/* Small label */}
+                                  <div className="mb-2 flex items-center gap-2">
+                                    <span
+                                      className="
+                      h-px w-5 bg-[#f26e46]
+                      transition-all duration-500
+                      group-hover:w-10
+                    "
+                                    />
+
+                                    <span
+                                      className="
+                      text-[10px] font-bold uppercase
+                      tracking-[0.18em]
+                      text-[#f26e46]
+                    "
+                                    >
+                                      {String(itemIndex + 1).padStart(2, "0")}
+                                    </span>
+                                  </div>
+
+                                  {/* Title */}
+                                  <h3
+                                    className="
+                    text-lg font-bold leading-7
+                    text-[#152238]
+                    transition-all duration-300
+                    group-hover:translate-x-1
+                    group-hover:text-[#f26e46]
+                    sm:text-xl
+                  "
+                                  >
+                                    {item.title}
+                                  </h3>
+
+                                  {/* Content */}
+                                  {item.content && (
+                                    <InnerContent cleanedHtml={item.content} />
+                                  )}
+
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        ),
+                          )
+                        }
                       )}
                     </div>
                   )}
@@ -713,7 +848,7 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
 
 
             {data?.roadmap?.steps?.length > 0 && (
-              <section id="journey" className="mt-16 lg:mt-20 scroll-mt-28">
+              <section id="journey" className="mt-8">
                 <SectionHeading
                   eyebrow="Step by Step"
                   title={data.roadmap.title || "Your Journey"}
@@ -721,7 +856,7 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
                 />
 
                 <div className="relative mt-16 lg:mt-10">
-                  <div className="relative p-0 sm:p-1 lg:p-2">
+                  <div className="relative">
                     {data.roadmap.steps?.map((feature: any, index: number) => (
                       <FeatureCard key={index} feature={feature} index={index} />
                     ))}
@@ -730,91 +865,9 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
               </section>
             )}
 
-            {/* ================= TOP COURSES ================= */}
-            {data?.topcourse?.length > 0 && (
-              <section id="top-courses" className="mt-16 lg:mt-20 scroll-mt-28">
-                <SectionHeading
-                  eyebrow="Popular Choices"
-                  title="Top Courses"
-                  description="Explore some popular programs related to this study destination."
-                />
-
-                <div className="mt-6 lg:mt-7 overflow-hidden rounded-2xl border border-gray-200 bg-white">
-                  {data.topcourse.map((course: any, index: number) => (
-                    <div
-                      key={index}
-                      className="grid gap-2 border-b border-gray-100 p-4 lg:p-5 last:border-0 md:grid-cols-[1.5fr_1fr_1fr_.8fr_1fr] md:items-center md:px-5 md:py-4"
-                    >
-                      <div>
-                        <p className="font-bold text-[#152238] text-sm sm:text-base lg:text-base">
-                          {course.title}
-                        </p>
-                      </div>
-
-                      <div className="text-sm sm:text-sm lg:text-sm text-gray-600">
-                        {course.university}
-                      </div>
-
-                      <div className="flex items-center gap-1 text-sm sm:text-sm lg:text-sm text-gray-600">
-                        <MapPin size={12} className="text-[#f26e46] lg:w-[14px] lg:h-[14px]" />
-                        {course.location}
-                      </div>
-
-                      <div className="text-sm sm:text-sm lg:text-sm text-gray-600">
-                        {course.duration}
-                      </div>
-
-                      <div className="font-bold text-[#f26e46] text-sm sm:text-base lg:text-base">
-                        {course.tuitionFee}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* ================= SIMILAR COURSES ================= */}
-            {data?.simillarCourses?.length > 0 && (
-              <section className="mt-16 lg:mt-20">
-                <SectionHeading
-                  eyebrow="You May Also Like"
-                  title="Similar Courses"
-                />
-
-                <div className="mt-6 lg:mt-7 grid gap-3 lg:gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {data.simillarCourses.map((course: any, index: number) => (
-                    <div
-                      key={index}
-                      className="group rounded-2xl border border-gray-200 bg-white p-4 lg:p-5 transition hover:-translate-y-1 hover:border-orange-200 hover:shadow-xl"
-                    >
-                      <div className="flex h-9 w-9 lg:h-10 lg:w-10 items-center justify-center rounded-xl bg-orange-50 text-[#f26e46]">
-                        <BookOpen size={17} className="lg:w-[19px] lg:h-[19px]" />
-                      </div>
-
-                      <h3 className="mt-4 lg:mt-5 font-bold text-[#152238] text-sm sm:text-base lg:text-base">
-                        {course.title}
-                      </h3>
-
-                      <p className="mt-1.5 lg:mt-2 text-sm sm:text-sm lg:text-sm leading-5 sm:leading-6 lg:leading-6 text-gray-500">
-                        {course.description}
-                      </p>
-
-                      <button className="mt-4 lg:mt-5 flex items-center gap-2 text-sm sm:text-sm lg:text-sm font-bold text-[#f26e46]">
-                        Explore
-                        <ArrowRight
-                          size={13}
-                          className="transition group-hover:translate-x-1 lg:w-[15px] lg:h-[15px]"
-                        />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
             {/* ================= FAQ ================= */}
             {data?.faqSection?.items?.length > 0 && (
-              <section id="faq" className="mt-16 lg:mt-20 scroll-mt-28">
+              <section id="faq" className="">
                 <FAQSection Faqres={data.faqSection.items} />
               </section>
             )}
@@ -824,7 +877,7 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
           {/* <div className=""> */}
           <div className="flex flex-col !h-full overflow-visible">
             <div className="relative sm:-mt-24 z-2">
-              <UniversityFeeCard />
+              <UniversityFeeCard openPopup={openPopup} tuitionFee={data.tutionFees} applicationFee={data.applicationFees} />
             </div>
             <div className="sticky top-24 space-y-4 z-20 mt-5">
 
@@ -833,43 +886,16 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
                 <ConsultationForm />
               </div>
 
-              {/* Course Summary */}
-              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-                <div className="mb-4 flex items-center gap-2">
-
-                  <h3 className="font-bold text-[#152238]">Course Snapshot</h3>
-                </div>
-
-                <div className="space-y-4">
-                  <SummaryRow label="Level" value={data.level} />
-
-                  <SummaryRow label="Duration" value={data.duration} />
-
-                  <SummaryRow label="Mode" value={data.mode} />
-
-                  <SummaryRow label="Tuition" value={data.tutionFees} />
-
-                  <SummaryRow
-                    label="Application"
-                    value={data.applicationFees}
-                  />
-                </div>
-              </div>
-
               {/* Counselling CTA */}
               <div className="overflow-hidden rounded-2xl bg-[#152238] p-6 text-white">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#f26e46]">
-                  <Users size={21} />
-                </div>
-
-                <h3 className="mt-5 text-lg font-bold">Get Free Counselling</h3>
+                <h3 className=" text-xl font-bold">Get Free Counselling</h3>
 
                 <p className="mt-2 text-sm leading-6 text-white/65">
                   Speak with our study abroad experts and get personalized
                   guidance.
                 </p>
 
-                <button className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#f26e46] px-4 py-3 text-sm font-bold transition hover:bg-[#e85f38]">
+                <button onClick={openPopup} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#f26e46] px-4 py-3 text-sm font-bold transition hover:bg-[#e85f38]">
                   Talk to an Expert
                   <ArrowRight size={16} />
                 </button>
@@ -877,16 +903,17 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
             </div>
           </div>
 
+
           {/* </div> */}
         </div>
       </div>
 
 
       {countries?.length > 0 && (
-        <section className="py-8 lg:py-12 max-w-7xl mx-auto overflow-hidden px-4 lg:px-8">
-          <div className="flex items-center gap-3 mb-4 lg:mb-6">
+        <section className="py-8 max-w-7xl mx-auto overflow-hidden px-4">
+          <div className="flex items-center gap-3 mb-4 lg:mb-8">
             <div className="w-1 h-6 lg:h-8 bg-orange-500"></div>
-            <h2 className="text-xl sm:text-2xl lg:text-2xl font-bold text-gray-800">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
               Related Destinations
             </h2>
           </div>
@@ -895,10 +922,10 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
             {countries?.map((item: any) => (
               <div
                 key={item._id}
-                className="keen-slider__slide bg-white border border-gray-300 rounded-lg overflow-hidden mx-2"
+                className="keen-slider__slide bg-white border border-gray-200  overflow-hidden"
               >
                 <Link href={`/destination/${item.slug}`} className="block">
-                  <div className="h-40 lg:h-48 overflow-hidden">
+                  <div className="h-40 overflow-hidden">
                     <img
                       src={item.country?.image || item.navbarImage || "/placeholder.jpg"}
                       alt={item.country?.name || item.title}
@@ -914,14 +941,9 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
                       </span>
                     </div>
 
-                    <h3 className="text-lg sm:text-xl lg:text-xl font-bold text-gray-900 truncate my-3 lg:my-4">
-                      {item?.title || item?.country?.name || "Destination"}
+                    <h3 className="text-lg sm:text-xl lg:text-xl font-bold text-gray-900 truncate my-2">
+                      {item?.country?.name || "Destination"}
                     </h3>
-
-                    <div className="flex items-center gap-2 text-sm sm:text-sm lg:text-sm text-gray-600">
-                      <MapPin size={14} className="text-orange-500 lg:w-[16px] lg:h-[16px]" />
-                      <span>{item?.country?.name || "Explore"}</span>
-                    </div>
                   </div>
                 </Link>
               </div>
@@ -929,6 +951,9 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
           </div>
         </section>
       )}
+
+          <CTASection data={data?.ctaSection[0]} />
+
     </main>
   );
 }
@@ -943,14 +968,14 @@ function FeatureCard({ feature, index }: { feature: any; index: number }) {
     offset: ["start end", "start start"],
   });
 
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.98]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1]);
   const opacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 1, 1]);
   const y = useTransform(scrollYProgress, [0, 1], [0, -40]);
 
   return (
     <div
       ref={ref}
-      className="sticky top-36 flex items-center justify-center mb-3 sm:mb-4"
+      className="sticky top-36 flex items-center justify-center"
       style={{
         zIndex: index + 1,
       }}
@@ -960,12 +985,12 @@ function FeatureCard({ feature, index }: { feature: any; index: number }) {
         className={`
     group relative w-full max-w-5xl overflow-hidden
     rounded-3xl
-    border border-white/70
+    border border-gray-200
     transition-all duration-200
     flex flex-col lg:flex-row items-center
     ${index % 2 === 0
             ? "bg-[#FEFBEA]"
-            : "bg-[#FDF4EF]"
+            : "bg-[#FEFBEA]"
           }
     ${index % 2 !== 0 ? "lg:flex-row-reverse" : ""}
   `}
@@ -991,46 +1016,32 @@ function FeatureCard({ feature, index }: { feature: any; index: number }) {
       pointer-events-none absolute
       -top-0 right-3 md:right-5
       select-none
-      text-[90px]
-      font-black
+      text-[80px]
+      font-bold
       leading-none
       tracking-tighter
-      text-gray-900/[0.085]
+      text-gray-200/90
       transition-all duration-700
-      group-hover:text-gray-900/[0.06]
+      group-hover:text-gray-200/70
       group-hover:translate-x-2
     "
         >
           {String(index + 1).padStart(2, "0")}
         </div>
 
-        {/* Background STEP label */}
-        <div
-          className="
-      pointer-events-none absolute
-      top-8 right-8 md:top-12 md:right-14
-      text-[10px] md:text-sm
-      font-black uppercase
-      tracking-[0.35em]
-      text-gray-900/[0.12]
-    "
-        >
-          STEP
-        </div>
-
         {/* Content */}
-        <div className="relative z-10 w-full p-6 sm:p-8 md:p-10 lg:p-12">
+        <div className="relative z-10 w-full p-6 sm:p-8">
 
           {/* Heading */}
           <p
             className="
         max-w-2xl
-        text-2xl sm:text-3xl md:text-4xl
+        text-2xl
         font-bold
         leading-[1.1]
         tracking-tight
         text-gray-900
-        mb-4 md:mb-6
+        mb-3
         transition-transform duration-500
         group-hover:translate-x-1
       "
@@ -1043,7 +1054,7 @@ function FeatureCard({ feature, index }: { feature: any; index: number }) {
             className="
         max-w-2xl
         text-sm sm:text-base
-        lg:text-[17px]
+        lg:text-base
         leading-7
         text-gray-600
       "
@@ -1052,7 +1063,7 @@ function FeatureCard({ feature, index }: { feature: any; index: number }) {
           </p>
 
           {/* Bottom accent */}
-          <div className="mt-7 md:mt-9 flex items-center gap-3">
+          <div className="mt-4 flex items-center gap-3">
             <span className="h-[2px] w-10 bg-orange-400 rounded-full transition-all duration-500 group-hover:w-16" />
 
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gray-400">
@@ -1080,252 +1091,6 @@ function FeatureCard({ feature, index }: { feature: any; index: number }) {
   );
 }
 
-const FormSection = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
-  });
-
-  const navigate = useRouter();
-
-  const onSubmit = async (formData) => {
-    try {
-      const payload = {
-        fullName: formData.fullname,
-        email: formData.email,
-        phone: formData.phone,
-        destination: formData.country,
-        subject: "Study Abroad Enquiry",
-        type: "website-form",
-        source: "website",
-        city: formData.city,
-        description: `State: ${formData.state}`,
-      };
-
-      await axiosInstance.post("/contactus", payload);
-      toast.success("Form submitted successfully");
-      navigate.push("/thank-you");
-      reset();
-    } catch (error) {
-      toast.error("Submit Error");
-    }
-  };
-
-  return (
-    <div className="bg-white border p-4 sm:p-6 lg:p-8 rounded-lg w-full">
-      <h2 className="text-orange-500 text-sm sm:text-base lg:text-xl font-semibold mb-4 lg:mb-5 tracking-wide">
-        GET IN TOUCH
-      </h2>
-
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="space-y-3 lg:space-y-4">
-          <div>
-            <label className="text-sm sm:text-sm lg:text-sm text-gray-700">Full Name</label>
-            <input
-              {...register("fullname", { required: "Name is required" })}
-              className={`w-full border-b-2 pb-1 bg-transparent text-sm sm:text-sm lg:text-sm focus:outline-none 
-                  ${errors.fullname ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
-            />
-            {errors.fullname && (
-              <p className="text-red-500 text-[10px] sm:text-sm lg:text-sm">{errors.fullname.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="text-sm sm:text-sm lg:text-sm text-gray-700">Email ID</label>
-            <input
-              type="email"
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.(com|in)$/i,
-                  message: "Only .com and .in emails allowed",
-                },
-              })}
-              className={`w-full border-b-2 pb-1 bg-transparent text-sm sm:text-sm lg:text-sm focus:outline-none 
-                  ${errors.email ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
-            />
-            {errors.email && (
-              <p className="text-red-500 text-[10px] sm:text-sm lg:text-sm">{errors.email.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="text-sm sm:text-sm lg:text-sm text-gray-700">Mobile Number</label>
-            <input
-              maxLength={10}
-              {...register("phone", {
-                required: "Phone is required",
-                pattern: {
-                  value: /^[0-9]{10}$/,
-                  message: "Enter valid 10 digit number",
-                },
-              })}
-              className={`w-full border-b-2 pb-1 bg-transparent text-sm sm:text-sm lg:text-sm focus:outline-none 
-                  ${errors.phone ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
-            />
-            {errors.phone && (
-              <p className="text-red-500 text-[10px] sm:text-sm lg:text-sm">{errors.phone.message}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:gap-4">
-            <div className="flex-1 w-full sm:w-auto">
-              <label className="text-sm sm:text-sm lg:text-sm text-gray-700">State</label>
-              <input
-                {...register("state")}
-                className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 text-sm sm:text-sm lg:text-sm"
-              />
-            </div>
-
-            <div className="flex-1 w-full sm:w-auto">
-              <label className="text-sm sm:text-sm lg:text-sm text-gray-700">City</label>
-              <input
-                {...register("city")}
-                className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 text-sm sm:text-sm lg:text-sm"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm sm:text-sm lg:text-sm text-gray-700">Country</label>
-            <select
-              {...register("country")}
-              className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1 text-sm sm:text-sm lg:text-sm"
-            >
-              <option value="">Country to Study</option>
-              {[
-                "USA",
-                "UK",
-                "France",
-                "Germany",
-                "Italy",
-                "Dubai",
-                "New Zealand",
-                "Australia",
-              ].map((c) => (
-                <option key={c} value={c.toLowerCase()}>
-                  Study In {c}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="flex justify-end mt-4 lg:mt-6">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-secondary hover:bg-primary text-white px-4 lg:px-6 py-1.5 lg:py-2 rounded-full text-sm sm:text-sm lg:text-sm"
-          >
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-};
-
-function InfoCard({
-  icon,
-  title,
-  value,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  value?: string;
-}) {
-  return (
-    <div className="flex items-center gap-3 lg:gap-4 rounded-xl border border-orange-100 bg-white p-3 lg:p-4">
-      <div className="flex h-8 w-8 lg:h-10 lg:w-10 shrink-0 items-center justify-center rounded-lg bg-[#fff0eb] text-[#f26e46]">
-        {icon}
-      </div>
-
-      <div className="min-w-0">
-        <p className="text-[10px] sm:text-[11px] lg:text-[11px] font-bold uppercase tracking-wide text-gray-400">
-          {title}
-        </p>
-
-        <p className="mt-0.5 lg:mt-1 truncate text-sm sm:text-sm lg:text-sm font-bold text-[#152238]">
-          {value || "Not available"}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-
-
-
-
-const TuitionFeeCard = ({ data = {} }) => {
-
-  const tuitionFees =
-    data.tuitionFees || "AUD 48,000";
-
-  const approxInr =
-    data.approxInr || "₹25,75,000";
-
-  const applicationFee =
-    data.applicationFee || "AUD 100";
-
-  return (
-    <div className="w-full min-w-[16rem] lg:min-w-[20rem] rounded-2xl border border-gray-100 bg-white p-4 lg:p-6 shadow-[0_4px_25px_rgba(0,0,0,0.06)]">
-
-      {/* ================= FEES ================= */}
-      <div className="mb-4 lg:mb-5">
-
-        <span className="mb-0.5 lg:mb-1 block text-[10px] sm:text-sm lg:text-sm font-medium text-gray-400">
-          Tuition Fees (Total)
-        </span>
-
-        <h2 className="text-xl sm:text-2xl lg:text-2xl font-bold text-[#091a44]">
-          {tuitionFees}
-        </h2>
-
-        <span className="mt-0.5 block text-[10px] sm:text-sm lg:text-sm font-medium text-gray-500">
-          Approx. {approxInr}
-        </span>
-
-      </div>
-
-      {/* ================= APPLICATION FEE ================= */}
-      <div className="mb-4 lg:mb-6">
-
-        <span className="inline-flex items-center gap-1 rounded-md border border-[#d2f3e1] bg-[#edfbf4] px-2 py-0.5 lg:px-2.5 lg:py-1 text-[10px] sm:text-sm lg:text-sm font-semibold text-[#1ca360]">
-          + Application Fee: {applicationFee}
-        </span>
-
-      </div>
-
-      {/* ================= BUTTONS ================= */}
-      <div className="mb-4 lg:mb-6 flex flex-col gap-2 lg:gap-3">
-
-        <button
-          type="button"
-          className="w-full rounded-xl bg-gradient-to-r from-[#7a2beb] to-[#f42875] px-3 lg:px-4 py-2.5 lg:py-3 text-sm sm:text-sm lg:text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-95"
-        >
-          Enquire Now
-        </button>
-
-        <button
-          type="button"
-          className="w-full rounded-xl border border-[#4834d4] bg-white px-3 lg:px-4 py-2.5 lg:py-3 text-sm sm:text-sm lg:text-sm font-semibold text-[#4834d4] transition-colors hover:bg-indigo-50/30"
-        >
-          Book Free Consultation
-        </button>
-
-      </div>
-
-    </div>
-  );
-};
-
 function SectionHeading({
   eyebrow,
   title,
@@ -1336,15 +1101,14 @@ function SectionHeading({
   description?: string;
 }) {
   return (
-    <div className="mb-4 lg:mb-6">
+    <div className="mb-4">
 
-      <h2 className="text-lg sm:text-xl lg:text-xl">
-        <span className="text-[#F46C44] lg:text-4xl font-light">
+      <h2 className=" flex flex-col text-2xl lg:text-xl">
+        <span className="text-[#F46C44] lg:text-4xl">
           {title?.split("||")[0]?.trim()}
         </span>{" "}
 
-        <br className="block sm:hidden" />
-        <span className="text-primary font-bold relative text-xl sm:text-2xl lg:text-4xl">
+        <span className="text-primary font-semibold relative text-xl sm:text-2xl lg:text-4xl">
           {title?.split("||")[1]?.trim()}
         </span>
       </h2>
