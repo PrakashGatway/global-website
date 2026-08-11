@@ -5,34 +5,45 @@ interface InnerContentProps {
   cleanedHtml: string;
 }
 
-const cleanHtmlContent = (html: string) => {
+export function stripHtml(html: string = "") {
+  return html
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+const cleanHtmlContent = (html: string = "") => {
   if (!html) return "";
 
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
+  return html
+    // Remove script and style tags completely
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "")
 
-  // Remove unwanted attributes from every element
-  doc.body.querySelectorAll("*").forEach((el) => {
-    el.removeAttribute("style");
-    el.removeAttribute("class");
-    el.removeAttribute("dir");
-    el.removeAttribute("lang");
-    el.removeAttribute("width");
-    el.removeAttribute("height");
-    el.removeAttribute("align");
-    el.removeAttribute("data-*");
-    [...el.attributes].forEach((attr) => {
-      if (
-        attr.name.startsWith("data-") ||
-        attr.name.startsWith("aria-") ||
-        attr.name.startsWith("on")
-      ) {
-        el.removeAttribute(attr.name);
-      }
-    });
-  });
+    // Remove inline event handlers
+    .replace(/\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
 
-  return doc.body.innerHTML;
+    // Remove unwanted attributes
+    .replace(/\s+(?:style|class|dir|lang|width|height|align)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+
+    // Remove data-* attributes
+    .replace(/\s+data-[a-z0-9_-]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+
+    // Remove dangerous javascript URLs
+    .replace(
+      /\s+(?:href|src)\s*=\s*(?:"\s*javascript:[^"]*"|'\s*javascript:[^']*'|javascript:[^\s>]+)/gi,
+      ""
+    )
+
+    .trim();
 };
 
 const InnerContent = ({ cleanedHtml,text }: any) => {
