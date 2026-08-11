@@ -3,7 +3,6 @@ import { serverInstance } from "@/app/axiosInstance"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import FAQAccordion from "@/components/faqSection"
-import InnerContent from "@/components/dom/DomParser"
 
 // Define types
 interface BlogSEO {
@@ -246,9 +245,9 @@ export default async function EventDetailPage({
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800 mb-4">About this event</h3>
 
-                                <div className="text-gray-600 leading-relaxed">
+                                {/* <div className="text-gray-600 leading-relaxed">
                                     <InnerContent cleanedHtml={event.shortDescription || ""} />
-                                </div>
+                                </div> */}
                             </div>
                         </div>
 
