@@ -1205,9 +1205,9 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
     return (
       <div className="">
         <div>
-              <BlogContent cleanedHtml={htmlWithIds} />
+          <BlogContent cleanedHtml={htmlWithIds} />
 
-            </div>
+        </div>
 
         {/* Blog Meta Info at bottom */}
         <div className="mt-8 pt-6 border-t border-gray-200">
@@ -1307,9 +1307,9 @@ export default function BlogDetailsPage({ blog, latestBlogs, blogCategory, allBl
               </h1>
 
               {blog.shortDescription && (
-                <p className="mt-3 text-base leading-7 text-gray-600">
-                  {blog.shortDescription}
-                </p>
+                <div className="mt-3 text-base leading-7 text-gray-600">
+                  <InnerContent cleanedHtml={blog.shortDescription || ""} />
+                </div>
               )}
 
               {/* Meta */}

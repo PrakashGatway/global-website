@@ -208,11 +208,6 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const introSection = data?.content?.sections?.find(
-    (section: any) => section.type === "intro",
-  );
-
-  const introData = introSection?.data;
 
   const animation = { duration: 40000, easing: (t) => t };
 
@@ -254,7 +249,7 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
       s.moveToIdx(s.track.details.abs + 5, true, animation);
     },
   });
-  
+
   return (
     <main className="min-h-screen bg-[#fffaf7] text-[#172033] ">
       {/* Reading progress */}
@@ -474,71 +469,20 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
               <SectionHeading
                 eyebrow="Overview"
                 title={
-                  introData?.title || `Study ${data.shortName || data.title}`
+                  data.intro?.title || `Study ${data.shortName || data.title}`
                 }
               />
-              <InnerContent cleanedHtml={introData?.content} />
-              {Array.isArray(introData?.cards) &&
-                introData.cards.length > 0 && (
-                  <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {introData.cards.map((card: any, index: number) => {
-                      const Icon = getIcon(card.icon);
+              <InnerContent cleanedHtml={data.intro?.description} />
 
-                      return (
-                        <div
-                          key={index}
-                          className="group relative overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-5 lg:p-6
-              transition-all duration-500
-              hover:-translate-y-2
-              hover:border-[#f26e46]/30
-              hover:shadow-[0_20px_45px_rgba(21,34,56,0.10)]"
-                        >
-                          <div className="relative z-10">
-                            <div className="">
-                              <div className="flex items-center gap-2">
-
-                                <DynamicLucideIcon
-                                  name={card.icon}
-                                  className="transition-transform duration-500 h-8 w-8 rounded-full text-[#152238] group-hover:text-[#f26e46] group-hover:scale-110"
-                                />
-                                <h3
-                                  className="text-base font-bold leading-6 text-[#152238]
-                    transition-colors duration-300
-                    group-hover:text-[#f26e46]"
-                                >
-                                  {card.title}
-                                </h3>
-                              </div>
-
-                              <p
-                                className="mt-2 text-sm leading-6 text-gray-500
-                    transition-colors duration-300
-                    group-hover:text-gray-600"
-                              >
-                                {card.description}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
             </section>
 
 
             {data?.content?.sections?.map((section: any, index: number) => {
-              if (section.type === "intro") {
-                return null;
-              }
-
-              if (section.type === "cta") {
-                return null;
-              }
-
               const sectionId = `${section.type}-${section.id || index}`;
 
               const sectionData = section.data;
+
+              if (section.type === "cta") return null;
 
               return (
                 <section
@@ -551,7 +495,66 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
                     title={sectionData?.title || section.name}
                   />
 
-                  {/* Top Programs */}
+                  {section.type === "intro" && (
+                    <>
+
+                      <InnerContent cleanedHtml={sectionData?.content} />
+                      {Array.isArray(sectionData?.cards) &&
+                        sectionData.cards.length > 0 && (
+                          <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            {sectionData.cards.map((card: any, index: number) => {
+
+                              return (
+                                <div
+                                  key={index}
+                                  className="group relative overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-5 lg:p-6
+              transition-all duration-500
+              hover:-translate-y-2
+              hover:border-[#f26e46]/30
+              hover:shadow-[0_20px_45px_rgba(21,34,56,0.10)]"
+                                >
+                                  <div className="relative z-10">
+                                    <div className="">
+                                      <div className="flex items-center gap-2">
+
+                                        <DynamicLucideIcon
+                                          name={card.icon}
+                                          className="transition-transform duration-500 h-8 w-8 rounded-full text-[#152238] group-hover:text-[#f26e46] group-hover:scale-110"
+                                        />
+                                        <h3
+                                          className="text-base font-bold leading-6 text-[#152238]
+                    transition-colors duration-300
+                    group-hover:text-[#f26e46]"
+                                        >
+                                          {card.title}
+                                        </h3>
+                                      </div>
+                                      <InnerContent cleanedHtml={card.description} />
+
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                    </>
+                  )}
+
+                  {section.type === "roadmap" && (
+                    <>
+                      {sectionData?.steps?.length > 0 && (
+                        <div className="relative mt-16 lg:mt-10">
+                          <div className="relative">
+                            {sectionData.steps?.map((feature: any, index: number) => (
+                              <FeatureCard key={index} feature={feature} index={index} />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+
                   {section.type === "topProgram" && (
                     <>
                       {sectionData?.subtitle && (
@@ -615,14 +618,10 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
                                   >
                                     {program.title}
                                   </h3>
+                                  <div className="mt-1 text-sm">
+                                    <InnerContent cleanedHtml={program.subtitle} />
+                                  </div>
 
-                                  <p
-                                    className="mt-1 text-sm leading-6 text-gray-600
-              transition-colors duration-300
-              group-hover:text-gray-600"
-                                  >
-                                    {program.subtitle}
-                                  </p>
 
                                   {/* Bottom indicator */}
                                   <div className="mt-3 flex items-center gap-2">
@@ -796,85 +795,15 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
                       )}
                     </div>
                   )}
-
-                  {/* Generic section */}
-                  {!["topProgram", "otherdata"].includes(section.type) && (
-                    <>
-                      {sectionData?.content && (
-                        <div
-                          className="prose prose-gray max-w-none text-sm sm:text-[15px] lg:text-[15px] leading-7 sm:leading-8 lg:leading-8"
-                          dangerouslySetInnerHTML={{
-                            __html: sectionData.content,
-                          }}
-                        />
-                      )}
-
-                      {Array.isArray(sectionData?.data) && (
-                        <div className="mt-4 lg:mt-6 space-y-3 lg:space-y-4">
-                          {sectionData.data.map(
-                            (item: any, itemIndex: number) => (
-                              <div
-                                key={itemIndex}
-                                className="rounded-xl border border-gray-200 bg-white p-4 lg:p-5"
-                              >
-                                <h3 className="font-bold text-[#152238] text-sm sm:text-base lg:text-base">
-                                  {item.title}
-                                </h3>
-
-                                {item.subtitle && (
-                                  <p className="mt-0.5 lg:mt-1 text-sm sm:text-sm lg:text-sm text-gray-500">
-                                    {item.subtitle}
-                                  </p>
-                                )}
-
-                                {item.content && (
-                                  <div
-                                    className="prose prose-sm mt-2 lg:mt-3 max-w-none text-gray-600"
-                                    dangerouslySetInnerHTML={{
-                                      __html: item.content,
-                                    }}
-                                  />
-                                )}
-                              </div>
-                            ),
-                          )}
-                        </div>
-                      )}
-                    </>
-                  )}
                 </section>
               );
             })}
-
-
-            {data?.roadmap?.steps?.length > 0 && (
-              <section id="journey" className="mt-8">
-                <SectionHeading
-                  eyebrow="Step by Step"
-                  title={data.roadmap.title || "Your Journey"}
-                  description={data.roadmap.subtitle}
-                />
-
-                <div className="relative mt-16 lg:mt-10">
-                  <div className="relative">
-                    {data.roadmap.steps?.map((feature: any, index: number) => (
-                      <FeatureCard key={index} feature={feature} index={index} />
-                    ))}
-                  </div>
-                </div>
-              </section>
-            )}
-
-            {/* ================= FAQ ================= */}
             {data?.faqSection?.items?.length > 0 && (
               <section id="faq" className="">
                 <FAQSection Faqres={data.faqSection.items} />
               </section>
             )}
           </article>
-
-          {/* ================= ASIDE (Desktop Only) ================= */}
-          {/* <div className=""> */}
           <div className="flex flex-col !h-full overflow-visible">
             <div className="relative sm:-mt-24 z-2">
               <UniversityFeeCard openPopup={openPopup} tuitionFee={data.tutionFees} applicationFee={data.applicationFees} />
@@ -902,9 +831,6 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
               </div>
             </div>
           </div>
-
-
-          {/* </div> */}
         </div>
       </div>
 
@@ -951,9 +877,7 @@ export default function CoursePage({ initialData, countries }: CoursePageProps) 
           </div>
         </section>
       )}
-
-          <CTASection data={data?.ctaSection[0]} />
-
+      <CTASection data={data?.ctaSection} />
     </main>
   );
 }
@@ -1050,17 +974,7 @@ function FeatureCard({ feature, index }: { feature: any; index: number }) {
           </p>
 
           {/* Description */}
-          <p
-            className="
-        max-w-2xl
-        text-sm sm:text-base
-        lg:text-base
-        leading-7
-        text-gray-600
-      "
-          >
-            {feature.description}
-          </p>
+          <InnerContent cleanedHtml={feature.description} />
 
           {/* Bottom accent */}
           <div className="mt-4 flex items-center gap-3">

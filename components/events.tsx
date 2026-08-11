@@ -244,8 +244,8 @@ export default function Events({ data, page, limit, total, type }) {
                                 <Link href="/events?type=event&page=1&limit=1">
                                     <button
                                         className={`px-8 py-3 font-semibold rounded ${activeTab === "event"
-                                                ? "bg-white text-gray-800"
-                                                : "text-gray-600"
+                                            ? "bg-white text-gray-800"
+                                            : "text-gray-600"
                                             }`}
                                     >
                                         Events
@@ -255,8 +255,8 @@ export default function Events({ data, page, limit, total, type }) {
                                 <Link href="/events?type=webnair&page=1&limit=1">
                                     <button
                                         className={`px-8 py-3 font-semibold rounded ${activeTab === "webnair"
-                                                ? "bg-white text-gray-800"
-                                                : "text-gray-600"
+                                            ? "bg-white text-gray-800"
+                                            : "text-gray-600"
                                             }`}
                                     >
                                         Webinars
@@ -290,7 +290,7 @@ export default function Events({ data, page, limit, total, type }) {
 
                                                 <div className="relative overflow-hidden bg-gray-300 h-[200px] sm:h-[220px] lg:h-[260px] rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]">
                                                     <img
-                                                        src={event?.coverImage ? event.coverImage : "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg" }
+                                                        src={event?.coverImage ? event.coverImage : "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"}
                                                         alt={event?.title}
                                                         className="w-full h-full object-cover"
                                                         onError={(e) => {
@@ -335,9 +335,8 @@ export default function Events({ data, page, limit, total, type }) {
                                                         </p>
                                                     </div>
 
-                                                    <p className="text-gray-600 text-sm sm:text-[15px] leading-relaxed mb-4 lg:mb-6 line-clamp-3">
-                                                        {event.shortDescription}
-                                                    </p>
+                                                    
+                                                    <div className="text-gray-600 text-sm sm:text-[15px] leading-relaxed mb-4 lg:mb-6 line-clamp-3" dangerouslySetInnerHTML={{ __html: event.shortDescription }} />
                                                     <Link
                                                         href={`/events/${event.slug}`}
                                                         className="text-white lg:w-55 px-6 py-2 mx-auto sm:py-3 bg-[#1f2937]
@@ -383,7 +382,7 @@ export default function Events({ data, page, limit, total, type }) {
 
                                                 <div className="relative overflow-hidden bg-gray-300 h-[200px] sm:h-[220px] lg:h-[260px] rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]">
                                                     <img
-                                                        src={event?.coverImage ? event.coverImage :"https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"}
+                                                        src={event?.coverImage ? event.coverImage : "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"}
                                                         alt={event.title}
                                                         className="w-full h-full object-cover"
                                                         onError={(e) => {
@@ -427,10 +426,8 @@ export default function Events({ data, page, limit, total, type }) {
                                                             {event.extraMetadata.location}
                                                         </p>
                                                     </div>
-
-                                                    <p className="text-gray-600 text-sm sm:text-[15px] leading-relaxed mb-4 lg:mb-6 line-clamp-3">
-                                                        {event.shortDescription}
-                                                    </p>
+                                                    <div className="text-gray-600 text-sm sm:text-[15px] leading-relaxed mb-4 lg:mb-6 line-clamp-3" dangerouslySetInnerHTML={{__html:event.shortDescription}}/>
+                                                    
                                                     <Link
                                                         href={`/events/${event.slug}`}
                                                         className="text-white lg:w-55 px-6 py-2 mx-auto sm:py-3 bg-[#1f2937]
@@ -455,63 +452,62 @@ export default function Events({ data, page, limit, total, type }) {
                 </section>
 
                 {/* Pagination */}
-              <section className="py-10 bg-white">
-  <div className="container mx-auto px-6">
-    <div className="flex justify-center items-center gap-2 flex-wrap">
+                <section className="py-10 bg-white">
+                    <div className="container mx-auto px-6">
+                        <div className="flex justify-center items-center gap-2 flex-wrap">
 
-      {/* PREVIOUS */}
-      {page > 1 ? (
-        <Link
-          href={`/events?type=${type}&page=${page - 1}&limit=${limit}`}
-          className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-700"
-        >
-          &lt;&lt;
-        </Link>
-      ) : (
-        <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400">
-          &lt;&lt;
-        </span>
-      )}
+                            {/* PREVIOUS */}
+                            {page > 1 ? (
+                                <Link
+                                    href={`/events?type=${type}&page=${page - 1}&limit=${limit}`}
+                                    className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-700"
+                                >
+                                    &lt;&lt;
+                                </Link>
+                            ) : (
+                                <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400">
+                                    &lt;&lt;
+                                </span>
+                            )}
 
-      {/* PAGE NUMBERS */}
-      {Array.from({ length: totalpage }).map((_, index) => {
-        const pageNumber = index + 1
+                            {/* PAGE NUMBERS */}
+                            {Array.from({ length: totalpage }).map((_, index) => {
+                                const pageNumber = index + 1
 
-        return (
-          <Link
-            key={pageNumber}
-            href={`/events?type=${type}&page=${pageNumber}&limit=${limit}`}
-            className={`
+                                return (
+                                    <Link
+                                        key={pageNumber}
+                                        href={`/events?type=${type}&page=${pageNumber}&limit=${limit}`}
+                                        className={`
               px-4 py-2 rounded-full w-10 h-10 font-semibold
-              ${
-                page === pageNumber
-                  ? "bg-[#FF6B35] text-white"
-                  : "border border-gray-300 text-gray-700 hover:bg-gray-100"
-              }
+              ${page === pageNumber
+                                                ? "bg-[#FF6B35] text-white"
+                                                : "border border-gray-300 text-gray-700 hover:bg-gray-100"
+                                            }
             `}
-          >
-            {pageNumber}
-          </Link>
-        )
-      })}
+                                    >
+                                        {pageNumber}
+                                    </Link>
+                                )
+                            })}
 
-      {/* NEXT */}
-      {page < totalpage ? (
-        <Link
-          href={`/events?type=${type}&page=${page + 1}&limit=${limit}`}
-          className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-700"
-        >
-          &gt;
-        </Link>
-      ) : (
-        <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400">
-          &gt;
-        </span>
-      )}
+                            {/* NEXT */}
+                            {page < totalpage ? (
+                                <Link
+                                    href={`/events?type=${type}&page=${page + 1}&limit=${limit}`}
+                                    className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-700"
+                                >
+                                    &gt;
+                                </Link>
+                            ) : (
+                                <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400">
+                                    &gt;
+                                </span>
+                            )}
 
-    </div>
-  </div>
-</section>
+                        </div>
+                    </div>
+                </section>
 
 
                 {/* Join Our Exclusive Study Abroad Network */}

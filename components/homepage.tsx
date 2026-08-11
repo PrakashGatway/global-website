@@ -884,7 +884,7 @@ export default function Homepage({
         </div>
       </section>
 
-    <div className="lg:my-14"> <SingleSlider/></div>
+      <div className="lg:my-14"> <SingleSlider /></div>
 
       <section className="bg-[#faf5f2] py-5 lg:py-5 px-4 lg:px-0 ">
         {/* Heading */}
@@ -900,7 +900,7 @@ export default function Homepage({
           </h2>
         </div>
 
-    
+
         <CountryCardGrid countries={countryData} />
         {/* Grid */}
         {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-4  justify-center">
@@ -1176,9 +1176,8 @@ export default function Homepage({
                       <h3 onClick={() => goToBlog(post.slug)} className="text-gray-900 hover:text-[#FF6B35] cursor-pointer text-lg font-medium mb-1 line-clamp-1">
                         {post.title}
                       </h3>
-                      <p className="text-gray-600 text-sm font-medium mb-2 line-clamp-2">
-                        {post.shortDescription}
-                      </p>
+                      <div className="text-gray-600 text-sm font-medium mb-2 line-clamp-2" dangerouslySetInnerHTML={{ __html: post.shortDescription }} />
+                      
                       <button
                         onClick={() => goToBlog(post.slug)}
                         className="font-medium text-sm text-blue-900 hover:translate-x-2 cursor-pointer border p-1.5 px-3 transition-all duration-300"

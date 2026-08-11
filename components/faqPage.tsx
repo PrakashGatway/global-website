@@ -1,5 +1,6 @@
 "use client"
 import React, { useState } from 'react';
+import InnerContent from './dom/DomParser';
 
 const FAQSection = ({ Faqres }) => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -55,7 +56,8 @@ const FAQSection = ({ Faqres }) => {
                     }`}
                 >
                   <div className="px-4 lg:px-6 pb-3 ">
-                    <div className="text-black text-sm lg:text-base " dangerouslySetInnerHTML={{__html :faq.answer}}/>
+                    <InnerContent cleanedHtml={faq.answer} />
+                    {/* <div className="text-black text-sm lg:text-base " dangerouslySetInnerHTML={{__html :faq.answer}}/> */}
                   </div>
                 </div>
               </div>

@@ -3,6 +3,7 @@ import { serverInstance } from "@/app/axiosInstance"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import FAQAccordion from "@/components/faqSection"
+import InnerContent from "@/components/dom/DomParser"
 
 // Define types
 interface BlogSEO {
@@ -96,7 +97,7 @@ export default async function EventDetailPage({
 
     return (
         <div className="min-h-screen bg-gray-50">
-           
+
             {/* ================= BREADCRUMB ================= */}
             <div className="bg-gray-100">
                 <div className="max-w-7xl mx-auto px-4 py-3">
@@ -117,66 +118,66 @@ export default async function EventDetailPage({
             </div>
 
             <div className="relative w-full h-[420px]">
-                            <Image
-                                src={
-                                    event?.coverImage && event.coverImage.trim() !== ""
-                                        ? event.coverImage
-                                        : "https://static-cse.canva.com/blob/1134734/Thepowerofheroimagedesignfeaturedimage.jpg"
-                                }
-                                alt={event.title}
-                                fill
-                                loading="lazy"
-                                className="object-cover"
-                                sizes="100vw"
-                            />
-            
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent flex items-end">
-                                <div className="max-w-7xl mx-auto px-4 pb-12 w-full">
-                                    <div className="text-white">
-                                        {/* Blog title and meta */}
-                                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
-                                            {event.title}
-                                        </h1>
-            
-                                        {/* Last updated date */}
-                                        <div className="flex items-center gap-4 text-sm opacity-90">
-                                            <span>Last updated: </span>
-                                            <span>
-                                                {new Date(event.updatedAt).toLocaleDateString("en-IN", {
-                                                    day: "2-digit",
-                                                    month: "short",
-                                                    year: "numeric",
-                                                })}
-                                            </span>
-                                            <span className="px-1">|</span>
-                                            <span>{event.views} views</span>
-                                            {event.isFeatured && (
-                                                <>
-            
-                                                    <span className="px-3 py-1 bg-orange-500 text-white text-xs rounded-full">Featured</span>
-                                                </>
-                                            )}
-            
-                                            <span className="px-3 py-1 bg-orange-500 text-white text-xs rounded-full">{event.blogType}</span>
-                                        </div>
-            
-                                        {/* Tags */}
-                                        {event.tags && event.tags.length > 0 && (
-                                            <div className="flex flex-wrap gap-2 mt-4">
-                                                {event.tags.map((tag, index) => (
-                                                    <span
-                                                        key={index}
-                                                        className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium"
-                                                    >
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
+                <Image
+                    src={
+                        event?.coverImage && event.coverImage.trim() !== ""
+                            ? event.coverImage
+                            : "https://static-cse.canva.com/blob/1134734/Thepowerofheroimagedesignfeaturedimage.jpg"
+                    }
+                    alt={event.title}
+                    fill
+                    loading="lazy"
+                    className="object-cover"
+                    sizes="100vw"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent flex items-end">
+                    <div className="max-w-7xl mx-auto px-4 pb-12 w-full">
+                        <div className="text-white">
+                            {/* Blog title and meta */}
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
+                                {event.title}
+                            </h1>
+
+                            {/* Last updated date */}
+                            <div className="flex items-center gap-4 text-sm opacity-90">
+                                <span>Last updated: </span>
+                                <span>
+                                    {new Date(event.updatedAt).toLocaleDateString("en-IN", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric",
+                                    })}
+                                </span>
+                                <span className="px-1">|</span>
+                                <span>{event.views} views</span>
+                                {event.isFeatured && (
+                                    <>
+
+                                        <span className="px-3 py-1 bg-orange-500 text-white text-xs rounded-full">Featured</span>
+                                    </>
+                                )}
+
+                                <span className="px-3 py-1 bg-orange-500 text-white text-xs rounded-full">{event.blogType}</span>
                             </div>
+
+                            {/* Tags */}
+                            {event.tags && event.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mt-4">
+                                    {event.tags.map((tag, index) => (
+                                        <span
+                                            key={index}
+                                            className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium"
+                                        >
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
+                    </div>
+                </div>
+            </div>
 
             {/* ================= MAIN CONTENT ================= */}
             <div className="max-w-7xl mx-auto px-4 py-8">
@@ -244,9 +245,10 @@ export default async function EventDetailPage({
                             {/* About this event */}
                             <div>
                                 <h3 className="text-lg font-semibold text-gray-800 mb-4">About this event</h3>
-                                <p className="text-gray-600 leading-relaxed">
-                                    {event.shortDescription || "Are you planning to study abroad? but confused where to go? which course will give you more advantage? how to fund your studies? what all documents are required? Don't worry, IDP has every answer for all your queries. Register today for one-to-one counselling with our expert Visa counsellors at IDP Anand branch."}
-                                </p>
+
+                                <div className="text-gray-600 leading-relaxed">
+                                    <InnerContent cleanedHtml={event.shortDescription || ""} />
+                                </div>
                             </div>
                         </div>
 
@@ -254,10 +256,10 @@ export default async function EventDetailPage({
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
                             <h2 className="text-2xl font-bold text-gray-900 mb-6">Study destinations</h2>
                             <h3 className="text-lg font-semibold text-gray-800 mb-4">Study destinations at this event</h3>
-                            
+
                             <div className="space-y-3">
                                 {studyDestinations.map((destination) => (
-                                    <div 
+                                    <div
                                         key={destination.name}
                                         className={`flex items-center justify-between p-4 rounded-lg ${destination.featured ? 'bg-red-50 border border-red-100' : 'bg-gray-50 hover:bg-gray-100'}`}
                                     >
@@ -272,7 +274,7 @@ export default async function EventDetailPage({
                                                 </span>
                                             )}
                                         </div>
-                                        <Link 
+                                        <Link
                                             href={`#${destination.name.toLowerCase().replace(' ', '-')}`}
                                             className="text-orange-600 hover:text-orange-800 font-medium"
                                         >
@@ -284,7 +286,7 @@ export default async function EventDetailPage({
                         </div>
 
                         {/* More Information Accordion */}
-                        <FAQAccordion/>
+                        <FAQAccordion />
                     </div>
 
                     {/* ================= RIGHT COLUMN (1/3) ================= */}
@@ -293,7 +295,7 @@ export default async function EventDetailPage({
                         <div className="sticky top-6">
                             <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Register for this event</h2>
-                                
+
                                 <form className="space-y-4">
                                     {/* First Name */}
                                     <div>

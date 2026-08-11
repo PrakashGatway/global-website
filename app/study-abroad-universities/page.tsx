@@ -366,14 +366,12 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
   let Faqres: any = [];
   let countrydata: any = [];
   try {
-    const [res, api, data] = await Promise.all([
+    const [res, data] = await Promise.all([
       serverInstance.get(`/page-information/slug/${slug}?type=university`),
-      serverInstance.get(`/faqs/public/list?type=${slug}&limit=15`),
       serverInstance.get(`/countries/public?limit=300`)
     ])
 
     pageData = res.data;
-    Faqres = api.data || [];
     countrydata = data.data || [];
 
   } catch (error) {
@@ -538,7 +536,7 @@ export default async function FindUniversitiesPage({ params, searchParams }: Pag
       })}
 
       <div className='px-4'>
-        <UniversityFAQSection Faqres={Faqres} />
+       <UniversityFAQSection Faqres={pageData?.data?.sections?.faq?.faq || []} />
       </div>
     </div>
   );

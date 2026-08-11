@@ -447,7 +447,7 @@ const Blogs = () => {
                     </td>
                   </tr>
                 ) : (
-                  blogs?.map((blog) => (
+                  blogs?.map((blog: any) => (
                     <motion.tr
                       key={blog._id}
                       initial={{ opacity: 0 }}
@@ -473,9 +473,7 @@ const Blogs = () => {
                             <div className="text-sm font-medium text-gray-900">
                               {blog.title}
                             </div>
-                            <div className="text-sm text-gray-500 truncate max-w-xs">
-                              {blog.shortDescription || "No description"}
-                            </div>
+                            <div className="text-sm text-gray-500 truncate max-w-xs" dangerouslySetInnerHTML={{ __html: blog.shortDescription }} />
                           </div>
                         </div>
                       </td>

@@ -74,9 +74,9 @@ export default function BlogGrid({ filteredBlogs }) {
                                         <h3 onClick={() => goToBlog(post.slug)} className="text-gray-900 hover:text-[#FF6B35] cursor-pointer text-lg font-medium mb-1 line-clamp-2">
                                             {post.title}
                                         </h3>
-                                        <p className="text-gray-600 text-sm font-medium mb-2 line-clamp-2">
-                                            {post.shortDescription}
-                                        </p>
+                                        <div className="text-gray-600 text-sm font-medium mb-2 line-clamp-2" dangerouslySetInnerHTML={{__html:post.shortDescription}}/>
+                                       
+                                    
                                         <button
                                             onClick={() => goToBlog(post.slug)}
                                             className="font-medium text-sm text-blue-900 hover:translate-x-2 cursor-pointer border p-1.5 px-3 transition-all duration-300"
