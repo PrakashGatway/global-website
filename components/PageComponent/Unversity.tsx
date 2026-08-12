@@ -334,10 +334,9 @@ function MobileCard({ country }: { country: Country }) {
       href={country.link}
       className="
         relative w-full
-        h-52 sm:h-60 md:h-64
-        rounded-2xl overflow-hidden
+        h-44 sm:h-60 md:h-64
+        rounded-3xl overflow-hidden
         cursor-pointer group
-        bg-gray-900
         shadow-lg
       "
       initial={{ opacity: 0, y: 30 }}
@@ -365,10 +364,10 @@ function MobileCard({ country }: { country: Country }) {
         <div className="absolute top-3 left-3 z-20 max-w-[80%]">
           <div
             className="
-        flex items-center gap-2
+        flex items-center gap-1
         bg-black/45 backdrop-blur-md
         text-white
-        px-3 py-2
+        px-1 pe-2 py-1
         rounded-full
         shadow-lg
       "
@@ -400,30 +399,16 @@ function MobileCard({ country }: { country: Country }) {
       <div className="absolute bottom-0 left-0 right-0 z-20 p-4 text-white">
         <h3
           className="
-            text-base sm:text-lg
+            text-xl sm:text-lg
             font-bold
             leading-snug
             line-clamp-2
           "
         >
-          {country.name}
+          {country.name.split(" ")[0] || ""}
+          <br/>
+          {country.name.split(" ").slice(1).join(" ") || ""}
         </h3>
-
-        <span
-          className="
-            inline-flex items-center gap-1.5
-            mt-3
-            bg-[#f46c44] text-white
-            text-xs sm:text-sm
-            font-semibold
-            px-4 py-2
-            rounded-full
-            shadow-md
-          "
-        >
-          Explore
-          <ArrowRight className="w-3.5 h-3.5" />
-        </span>
       </div>
     </motion.a>
   );

@@ -394,7 +394,7 @@ export function UniversityOverview({ pageData }: UniversityOverviewProps) {
 
           {/* Right Side - Interactive Features Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayFeatures && displayFeatures.slice(0, 6).map((item: any, index: number) => {
+            {displayFeatures && displayFeatures.slice(0, 12).map((item: any, index: number) => {
               const IconComponent = typeof item.icon === "string"
                 ? (iconMap[item.icon] || HelpCircle)
                 : item.icon;

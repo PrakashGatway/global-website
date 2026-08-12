@@ -1,81 +1,151 @@
-"use client"
-import Image from 'next/image';
+"use client";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { GraduationCap } from 'lucide-react';
-import UniversitySliderClient from '@/components/PageComponent/Unversity';
-import UniversitiesSlider from '@/components/PageComponent/UniversitiesSlider';
-import { useState } from 'react';
-import MultiStepForm from '@/components/PopupForm';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import axiosInstance from '@/app/axiosInstance';
-import { DynamicLucideIcon } from './DynamicLucideIcon';
-import toast from 'react-hot-toast';
+import { GraduationCap } from "lucide-react";
+import UniversitySliderClient from "@/components/PageComponent/Unversity";
+import UniversitiesSlider from "@/components/PageComponent/UniversitiesSlider";
+import { useState } from "react";
+import MultiStepForm from "@/components/PopupForm";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import axiosInstance from "@/app/axiosInstance";
+import { DynamicLucideIcon } from "./DynamicLucideIcon";
+import toast from "react-hot-toast";
 
 export default function AboutUsPage({ aboutData }) {
   const [openForm, setOpenForm] = useState(false);
 
-  // Extract data from the response
   const heroTitle = aboutData?.sections?.hero?.title || "Welcome to Ooshas";
-  const storyTitle = aboutData?.sections?.story?.title || "The Story Behind || Ooshas Global";
+  const storyTitle =
+    aboutData?.sections?.story?.title || "The Story Behind || Ooshas Global";
   const storySubtitle = aboutData?.sections?.story?.subtitle || "";
   const impactTitle = aboutData?.sections?.impact?.title || "Our Impact";
   const impactSubtitle = aboutData?.sections?.impact?.subtitle || "";
   const servicesTitle = aboutData?.sections?.service?.title || "Our Services";
   const servicesPoints = aboutData?.sections?.service?.points || [];
   const whatWeDoPoints = aboutData?.sections?.whatWeDo?.points || [];
-  const aboutCompanyTitle = aboutData?.sections?.aboutCompany?.title || "About Ooshas";
-  const aboutCompanySubtitle = aboutData?.sections?.aboutCompany?.subtitle || "";
+  const aboutCompanyTitle =
+    aboutData?.sections?.aboutCompany?.title || "About Ooshas";
+  const aboutCompanySubtitle =
+    aboutData?.sections?.aboutCompany?.subtitle || "";
   const contentPoints = aboutData?.sections?.content?.points || [];
 
   // Extract mission, vision, and values from content points
-  const missionData = contentPoints.find(item => item.title === "Our Mission") || {};
-  const visionData = contentPoints.find(item => item.title === "Our Vision") || {};
-  const valuesData = contentPoints.find(item => item.title === "Our Core Values") || {};
+  const missionData =
+    contentPoints.find((item) => item.title === "Our Mission") || {};
+  const visionData =
+    contentPoints.find((item) => item.title === "Our Vision") || {};
+  const valuesData =
+    contentPoints.find((item) => item.title === "Our Core Values") || {};
 
   // Service icons mapping
   const iconComponents = {
     phone: (
-      <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+      <svg
+        className="w-16 h-16"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+        />
       </svg>
     ),
     "user-round-pen": (
-      <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      <svg
+        className="w-16 h-16"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+        />
       </svg>
     ),
     "book-check": (
-      <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <svg
+        className="w-16 h-16"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
       </svg>
     ),
     "id-card": (
-      <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+      <svg
+        className="w-16 h-16"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"
+        />
       </svg>
     ),
     newspaper: (
-      <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+      <svg
+        className="w-16 h-16"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+        />
       </svg>
     ),
     school: (
-      <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      <svg
+        className="w-16 h-16"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+        />
       </svg>
-    )
+    ),
   };
 
   // What We Do icons mapping
   const whatWeDoIcons = {
-    "user-round-pen": <GraduationCap className='h-12 w-12 mb-2' />,
-    "school": <GraduationCap className='h-12 w-12 mb-2' />,
-    "id-card-lanyard": <GraduationCap className='h-12 w-12 mb-2' />,
-    "settings": <GraduationCap className='h-12 w-12 mb-2' />
+    "user-round-pen": <GraduationCap className="h-12 w-12 mb-2" />,
+    school: <GraduationCap className="h-12 w-12 mb-2" />,
+    "id-card-lanyard": <GraduationCap className="h-12 w-12 mb-2" />,
+    settings: <GraduationCap className="h-12 w-12 mb-2" />,
   };
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
   const onSubmit = async (data) => {
     try {
@@ -85,91 +155,268 @@ export default function AboutUsPage({ aboutData }) {
         email: data.email,
         phone: data.phone,
         description: data.message,
-        destination: data.destination
-
-
-      })
-      toast.success("Message sent successfully!")
-      reset()
+        destination: data.destination,
+      });
+      toast.success("Message sent successfully!");
+      reset();
+    } catch (err) {
+      toast.error("Failed to submit the form. Please try again later.");
     }
-    catch (err) {
-      toast.error("Failed to submit the form. Please try again later.")
-    }
-  }
+  };
 
   return (
-    <div className='bg-[#fbfbfb] relative'>
+    <div className="bg-[#fbfbfb] relative">
       {/* Hero Section */}
-      <section className="relative flex items-center h-[600px] " style={{
-        backgroundColor: '#f46c44', borderTop: 'none', boxShadow: 'none', isolation: 'isolate', zIndex: 1, backgroundImage: `url(${"/about-bg.jpeg"})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}>
+      <section
+        className="
+    relative isolate overflow-hidden
+    min-h-[700px]
+    sm:min-h-[650px]
+    lg:h-[600px]
+    lg:min-h-0
+    flex items-center
+  "
+        style={{
+          backgroundColor: "#f46c44",
+          borderTop: "none",
+          boxShadow: "none",
+          backgroundImage: `url("/about-bg.jpeg")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        {/* Optional subtle overlay */}
+        <div className="absolute inset-0 -z-10 bg-white/10" />
 
-        <div className="w-full max-w-7xl mx-auto grid lg:grid-cols-2  items-center ">
-          <div className="text-white space-y-6 p-6 sm:pt-0 pt-20">
-            <h1 className="text-2xl lg:text-6xl font-bold text-[#f46c44] tracking-tight">
+        <div
+          className="
+      relative
+      mx-auto
+      grid
+      w-full
+      max-w-7xl
+      grid-cols-1
+      items-center
+      gap-8
+      px-4
+      sm:px-6
+      md:px-8
+      lg:grid-cols-2
+      lg:gap-4
+      xl:px-0
+    "
+        >
+          {/* ================= LEFT CONTENT ================= */}
+          <div
+            className="
+        order-1
+        flex
+        flex-col
+        justify-center
+        py-8
+        sm:py-10
+        lg:order-1
+        lg:py-0
+        lg:pr-8
+        lg:text-left
+      "
+          >
+            {/* Heading */}
+            <h1
+              className="
+          text-3xl
+          font-bold
+          leading-tight
+          tracking-tight
+          text-[#f46c44]
+          sm:text-4xl
+          md:text-5xl
+          lg:text-5xl
+          xl:text-6xl
+        "
+            >
               {aboutData?.title || "About"}
             </h1>
-            <p className="text-base lg:text-lg max-w-2xl font-medium text-gray-800">
-              Ooshas Global: Your Launchpad to Global Education. We empower students
-              to achieve their dreams of studying abroad with expert coaching for:
-              IELTS, TOEFL, PTE, GRE, GMAT, SAT.
-            </p>
-            <div className="mt-6 lg:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
 
-              {/* Button 1 */}
+            {/* Description */}
+            <p
+              className="
+          mt-4
+          max-w-2xl
+          text-sm
+          font-medium
+          leading-6
+          text-gray-800
+          sm:mt-5
+          sm:text-base
+          sm:leading-7
+          lg:mt-6
+          lg:text-lg
+          lg:leading-8
+        "
+            >
+              Ooshas Global: Your Launchpad to Global Education. We empower
+              students to achieve their dreams of studying abroad with expert
+              coaching for: IELTS, TOEFL, PTE, GRE, GMAT, SAT.
+            </p>
+
+            {/* Buttons */}
+            <div
+              className="
+          mt-6
+          flex
+          w-full
+          flex-col
+          gap-3
+          sm:mt-7
+          sm:flex-row
+          sm:justify-center
+          lg:mt-8
+          lg:justify-start
+        "
+            >
+              {/* Get Free Counselling */}
               <button
                 onClick={() => setOpenForm(true)}
                 className="
-      w-full sm:w-auto
-      text-white px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 bg-[#f46c44]
-      rounded-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
-      text-sm lg:text-base font-semibold
-      hover:bg-primary hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
-      flex items-center justify-center gap-2
-      transition-all hover:opacity-90 cursor-pointer
-    "
+            group
+            w-full
+            rounded-full
+            bg-[#f46c44]
+            px-5
+            py-3
+            text-sm
+            font-semibold
+            text-white
+            shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.35)]
+            transition-all
+            duration-300
+            hover:-translate-y-1
+            hover:bg-primary
+            hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.45)]
+            active:scale-95
+            sm:w-auto
+            sm:px-6
+            lg:px-8
+            lg:py-3.5
+            lg:text-base
+          "
               >
-                Get Free Counselling
+                <span className="flex items-center justify-center gap-2">
+                  Get Free Counselling
+                  <span
+                    className="
+                transition-transform
+                duration-300
+                group-hover:translate-x-1
+              "
+                  >
+                    →
+                  </span>
+                </span>
               </button>
 
-              {/* Button 2 */}
-              <Link href={"/login"} className="w-full sm:w-auto">
+              {/* Check Eligibility */}
+              <Link href="/login" className="w-full sm:w-auto">
                 <button
                   className="
-        w-full sm:w-auto
-        text-white px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 bg-black
-        rounded-4xl shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.55)]
-        text-sm lg:text-base font-semibold
-        transition-all hover:bg-primary hover:text-white hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
-        cursor-pointer
-      "
+              w-full
+              rounded-full
+              bg-black
+              px-5
+              py-3
+              text-sm
+              font-semibold
+              text-white
+              shadow-[-4px_0px_4px_0px_rgba(0,0,0,0.35)]
+              transition-all
+              duration-300
+              hover:-translate-y-1
+              hover:bg-primary
+              hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.45)]
+              active:scale-95
+              sm:w-auto
+              sm:px-6
+              lg:px-8
+              lg:py-3.5
+              lg:text-base
+            "
                 >
                   Check Your Eligibility
                 </button>
               </Link>
-
             </div>
           </div>
-          <div className="h-full w-full">
-            <div className='relative flex items-center justify-center h-[100%] w-full  overflow-hidden mr-10'>
-              <img className='h-full w-full object-cover' src="/about-hero.png" alt="" />
 
+          {/* ================= RIGHT IMAGE ================= */}
+          <div
+            className="
+        order-2
+        flex
+        w-full
+        items-end
+        justify-center
+        self-end
+        lg:order-2
+        lg:h-[600px]
+      "
+          >
+            <div
+              className="
+          relative
+          flex
+          w-full
+          items-end
+          justify-center
+          overflow-hidden
+          sm:max-w-lg
+          lg:h-full
+          lg:max-w-none
+        "
+            >
+              <img
+                src="/about-hero.png"
+                alt="Ooshas Global"
+                className="
+            block
+            h-auto
+            w-[85%]
+            max-w-[380px]
+            object-contain
+            object-bottom
+            sm:w-[75%]
+            sm:max-w-[430px]
+            md:max-w-[480px]
+            lg:h-full
+            lg:w-full
+            lg:max-w-none
+            lg:object-cover
+            lg:object-bottom
+          "
+              />
             </div>
           </div>
         </div>
       </section>
 
       {/* Succeed with the world's most trusted */}
-      <section className="mt-10 lg:mt-4 " style={{ isolation: 'isolate', zIndex: 0, position: 'relative' }}>
+      <section
+        className="mt-10 lg:mt-4 "
+        style={{ isolation: "isolate", zIndex: 0, position: "relative" }}
+      >
         <div className="max-w-7xl mx-auto px-2">
           <div className="text-center mb-8">
-            <h2 className="text-xl lg:text-[2.6rem] font-bold mb-2" style={{ color: '#FF6B35' }}>
+            <h2
+              className="text-2xl lg:text-[2.6rem] font-semibold "
+              style={{ color: "#FF6B35" }}
+            >
               Succeed with the world&apos;s most trusted
             </h2>
-            <h2 className="text-xl lg:text-[2.6rem] font-bold" style={{ color: '#FF6B35' }}>
+            <h2
+              className="text-2xl lg:text-[2.6rem] font-semibold"
+              style={{ color: "#FF6B35" }}
+            >
               higher education specialist
             </h2>
           </div>
@@ -180,15 +427,25 @@ export default function AboutUsPage({ aboutData }) {
       <section className="my-12  bg-[#f4f3f1] max-w-7xl mx-auto">
         <div className="max-w-7xl mx-auto pl-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-15 items-center">
-            <div className='py-10'>
-              <h2 className=" text-2xl lg:text-5xl font-bold text-gray-700 mb-6">{aboutCompanyTitle}</h2>
+            <div className="py-10">
+              <h2 className=" text-2xl lg:text-5xl font-bold text-gray-700 mb-6">
+                {aboutCompanyTitle}
+              </h2>
               <p className="text-gray-700 text-base lg:text-base font-medium leading-relaxed mb-10">
-                {aboutCompanySubtitle || "We specialize in helping students achieve their dreams of studying abroad. Our comprehensive support includes university selection, application assistance, visa guidance, and pre-departure preparation. With years of experience and a proven track record, we are committed to making your study abroad journey smooth and successful."}
+                {aboutCompanySubtitle ||
+                  "We specialize in helping students achieve their dreams of studying abroad. Our comprehensive support includes university selection, application assistance, visa guidance, and pre-departure preparation. With years of experience and a proven track record, we are committed to making your study abroad journey smooth and successful."}
               </p>
               <p className="text-gray-700 text-base lg:text-base font-semibold leading-relaxed mb-6">
-                Our team of experienced counselors and education experts work tirelessly to provide personalized guidance to each student, ensuring they find the perfect fit for their academic and career goals.
+                Our team of experienced counselors and education experts work
+                tirelessly to provide personalized guidance to each student,
+                ensuring they find the perfect fit for their academic and career
+                goals.
               </p>
-              <a href="#" className="text-base lg:text-base font-semibold hover:opacity-80 transition inline-flex items-center gap-2" style={{ color: '#FF6B35' }}>
+              <a
+                href="#"
+                className="text-base lg:text-base font-semibold hover:opacity-80 transition inline-flex items-center gap-2"
+                style={{ color: "#FF6B35" }}
+              >
                 Read More →
               </a>
             </div>
@@ -196,12 +453,9 @@ export default function AboutUsPage({ aboutData }) {
               <div
                 className="w-full h-full "
                 style={{
-                  backgroundImage:
-                    "url('/about-company.png')",
+                  backgroundImage: "url('/about-company.png')",
                   backgroundSize: "cover",
                   backgroundPosition: "center right",
-             
-                 
                 }}
               />
             </div>
@@ -211,11 +465,9 @@ export default function AboutUsPage({ aboutData }) {
 
       {/* Mission & Vision Section */}
       <section className="py-8 lg:py-12 my-4 lg:my-6 bg-[#f4f3f1]">
-
         {/* Mission */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row lg:justify-center items-start md:items-center gap-6 md:gap-12 pb-4">
-
             <div className="md:w-1/4">
               <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-700">
                 {missionData.title || "Our Mission"}
@@ -228,7 +480,6 @@ export default function AboutUsPage({ aboutData }) {
                   "To empower students worldwide by providing seamless access to international education through innovative technology and expert mentorship. We are committed to making quality education accessible to all, helping students achieve their academic and career aspirations."}
               </p>
             </div>
-
           </div>
         </div>
 
@@ -238,7 +489,6 @@ export default function AboutUsPage({ aboutData }) {
         {/* Vision */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row gap-6 md:gap-12 justify-center items-start md:items-center">
-
             <div className="md:w-1/4">
               <h2 className="text-2xl sm:text-2xl lg:text-3xl font-bold uppercase text-gray-700">
                 {visionData.title || "Our Vision"}
@@ -251,17 +501,20 @@ export default function AboutUsPage({ aboutData }) {
                   "To be the most trusted global platform for student recruitment, bridging the gap between talent and opportunity. We envision a world where every student has access to world-class education opportunities, regardless of their background or location."}
               </p>
             </div>
-
           </div>
         </div>
-
       </section>
 
       {/* What We Do Section */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto ">
           <div className="mb-8">
-            <span className="bg-[#FF6B35] text-white px-6 py-3 inline-block font-bold text-2xl lg:text-3xl" style={{ borderTopRightRadius: '50px' }}>What we do</span>
+            <span
+              className="bg-[#FF6B35] text-white px-6 py-3 inline-block font-bold text-2xl lg:text-3xl"
+              style={{ borderTopRightRadius: "50px" }}
+            >
+              What we do
+            </span>
             <div className="h-1 bg-[#FF6B35] mt-0"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-2">
@@ -271,13 +524,20 @@ export default function AboutUsPage({ aboutData }) {
                 className={`group p-2 shadow-sm border border-gray-200 min-h-[280px] transition-colors duration-300 cursor-pointer `}
               >
                 <DynamicLucideIcon
-                  name={point.icon.split("")[0].toUpperCase() + point.icon.split("").slice(1).join("")}
+                  name={
+                    point.icon.split("")[0].toUpperCase() +
+                    point.icon.split("").slice(1).join("")
+                  }
                   className="w-10 lg:w-16 h-16"
                 />
-                <h3 className={`font-bold text-2xl lg:text-2xl mb-2 transition-colors duration-300 `}>
+                <h3
+                  className={`font-bold text-2xl lg:text-2xl mb-2 transition-colors duration-300 `}
+                >
                   {point.title}
                 </h3>
-                <p className={`text-base lg:text-base font-semibold leading-relaxed transition-colors duration-300 `}>
+                <p
+                  className={`text-base lg:text-base font-semibold leading-relaxed transition-colors duration-300 `}
+                >
                   {point.subtitle}
                 </p>
               </div>
@@ -294,13 +554,19 @@ export default function AboutUsPage({ aboutData }) {
               <h3 className="text-2xl md:text-[2.6rem] font-bold text-[#616262] ">
                 {storyTitle.split("||")[0]}
               </h3>
-              <h3 className="text-2xl md:text-[2.6rem] font-bold mb-2 underline" style={{ color: '#FF6B35' }}>
+              <h3
+                className="text-2xl md:text-[2.6rem] font-bold mb-2 underline"
+                style={{ color: "#FF6B35" }}
+              >
                 {storyTitle.split("||")[1]}
               </h3>
               <div className="text-gray-600 text-base lg:text-base leading-relaxed font-semibold space-y-4">
-                {storySubtitle.split('. ').map((sentence, index) => (
-                  sentence.trim() && <p key={index}>{sentence.trim()}.</p>
-                ))}
+                {storySubtitle
+                  .split(". ")
+                  .map(
+                    (sentence, index) =>
+                      sentence.trim() && <p key={index}>{sentence.trim()}.</p>,
+                  )}
               </div>
             </div>
             <div
@@ -320,8 +586,7 @@ export default function AboutUsPage({ aboutData }) {
                   w-full h-full
                 "
                 style={{
-                  backgroundImage:
-                    "url('/about-university.jpeg')",
+                  backgroundImage: "url('/about-university.jpeg')",
                   backgroundSize: "cover",
                   backgroundPosition: "center right",
                   WebkitMaskImage: "url('images/about-hero-shape-3.png')",
@@ -352,8 +617,7 @@ export default function AboutUsPage({ aboutData }) {
                 transition={{ duration: 0.8 }}
                 viewport={{ once: true, amount: 0.4 }}
                 style={{
-                  backgroundImage:
-                    "url('/about-girl.jpeg')",
+                  backgroundImage: "url('/about-girl.jpeg')",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   WebkitMaskImage: "url('images/about-hero-shape-front-3.png')",
@@ -373,7 +637,6 @@ export default function AboutUsPage({ aboutData }) {
 
       {/* Impact Section */}
       <section className="py-8 lg:py-20 max-w-7xl mx-auto px-4 sm:px-6 flex flex-col gap-6 md:flex-row items-center relative z-10">
-
         {/* Left Orange Border (desktop only) */}
         <div
           className="absolute w-8 bg-[#f46c44] hidden lg:block z-0"
@@ -383,12 +646,15 @@ export default function AboutUsPage({ aboutData }) {
         {/* Right Orange Border (desktop only) */}
         <div
           className="absolute w-8 bg-[#f46c44] hidden lg:block z-0"
-          style={{ right: "calc(50% - 50vw + 20px)", top: "408px", height: "200px" }}
+          style={{
+            right: "calc(50% - 50vw + 20px)",
+            top: "408px",
+            height: "200px",
+          }}
         ></div>
 
         {/* Stats Grid */}
         <div className="w-full md:w-1/2 grid grid-cols-2 bg-[#f46c44] text-white min-h-[260px] md:min-h-[480px] border border-gray-300 overflow-hidden relative">
-
           {/* Item */}
           <div className="p-3 sm:p-4 md:p-5 border-r border-white/40 flex flex-col justify-center items-center text-center relative">
             <h4 className="text-xl sm:text-3xl md:text-7xl font-extrabold">
@@ -436,18 +702,18 @@ export default function AboutUsPage({ aboutData }) {
           </h2>
 
           <div className="text-gray-700 font-semibold text-base sm:text-base leading-relaxed space-y-3 md:space-y-4">
-            {impactSubtitle.split(". ").map((sentence, index) =>
-              sentence.trim() ? <p key={index}>{sentence.trim()}.</p> : null
-            )}
+            {impactSubtitle
+              .split(". ")
+              .map((sentence, index) =>
+                sentence.trim() ? <p key={index}>{sentence.trim()}.</p> : null,
+              )}
           </div>
         </div>
-
       </section>
 
       {/* Our Services Section */}
       <section className="py-8 lg:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-
           {/* Title */}
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-left text-[#626362] mb-6 md:mb-12">
             {servicesTitle}
@@ -455,10 +721,8 @@ export default function AboutUsPage({ aboutData }) {
 
           {/* Grid Box */}
           <div className="bg-white border border-[#626362] overflow-hidden mx-auto">
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               {servicesPoints.map((service, index) => (
-
                 <div
                   key={index}
                   className={`
@@ -478,7 +742,6 @@ export default function AboutUsPage({ aboutData }) {
               border-b last:border-b-0
             `}
                 >
-
                   {/* Icon */}
                   <div className="text-orange-500 mb-2 flex justify-start sm:justify-center">
                     <DynamicLucideIcon
@@ -499,7 +762,6 @@ export default function AboutUsPage({ aboutData }) {
                   <p className="text-base sm:text-base font-medium text-gray-700 text-left sm:text-center">
                     {service.subtitle}
                   </p>
-
                 </div>
               ))}
             </div>
@@ -511,7 +773,6 @@ export default function AboutUsPage({ aboutData }) {
 
       {/* Book Your Online Counselling Session */}
       <section className="py-8 lg:py-12 bg-gray-600 relative overflow-hidden">
-
         {/* Background */}
         <div
           className="absolute inset-0 opacity-80"
@@ -525,9 +786,7 @@ export default function AboutUsPage({ aboutData }) {
         ></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 lg:py-12 relative z-10">
-
           <div className="flex flex-col gap-6 md:gap-10 lg:flex-row lg:justify-between lg:items-start">
-
             {/* Left Content */}
             <div className="w-full lg:w-35/80 text-left lg:text-left">
               <h2 className="text-2xl sm:text-3xl lg:text-6xl font-bold text-white leading-tight">
@@ -539,9 +798,10 @@ export default function AboutUsPage({ aboutData }) {
 
             {/* Form */}
             <div className="bg-white w-full lg:w-40/80 p-4 sm:p-6 lg:py-12 rounded-lg shadow-md">
-
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6 lg:space-y-8">
-
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-4 sm:space-y-6 lg:space-y-8"
+              >
                 {/* Name */}
                 <input
                   type="text"
@@ -557,7 +817,6 @@ export default function AboutUsPage({ aboutData }) {
                     maxLength={10}
                     placeholder="Mobile Number *"
                     {...register("phone", {
-
                       required: "Mobile number is required",
                       pattern: {
                         value: /^[0-9]{10}$/,
@@ -565,10 +824,11 @@ export default function AboutUsPage({ aboutData }) {
                       },
                     })}
                     className={`w-full text-sm sm:text-base px-2 py-2 border-b focus:outline-none focus:border-b-2
-                ${errors.phone
-                        ? "border-red-500 focus:border-red-500"
-                        : "border-gray-300 focus:border-[#FF6B35]"
-                      }`}
+                ${
+                  errors.phone
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-gray-300 focus:border-[#FF6B35]"
+                }`}
                   />
                   {errors.phone && (
                     <p className="text-red-500 text-xs sm:text-sm mt-1">
@@ -594,20 +854,30 @@ export default function AboutUsPage({ aboutData }) {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
                   >
                     <option value="">Select Destination</option>
-                 {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
-                    <option key={c} value={c.toLowerCase()}>
-                      Study In {c}
-                    </option>
-                  ))}
+                    {[
+                      "USA",
+                      "UK",
+                      "France",
+                      "Germany",
+                      "Italy",
+                      "Dubai",
+                      "New Zealand",
+                      "Australia",
+                    ].map((c) => (
+                      <option key={c} value={c.toLowerCase()}>
+                        Study In {c}
+                      </option>
+                    ))}
                   </select>
                 </div>
-
-
 
                 {/* Checkbox */}
                 <div className="flex items-start gap-2">
                   <input type="checkbox" id="terms" className="mt-1" required />
-                  <label htmlFor="terms" className="text-xs sm:text-sm text-gray-700 leading-tight">
+                  <label
+                    htmlFor="terms"
+                    className="text-xs sm:text-sm text-gray-700 leading-tight"
+                  >
                     I agree to the terms and conditions
                   </label>
                 </div>
@@ -620,15 +890,12 @@ export default function AboutUsPage({ aboutData }) {
                 >
                   Submit
                 </button>
-
               </form>
             </div>
-
           </div>
         </div>
       </section>
       {openForm && <MultiStepForm onClose={() => setOpenForm(false)} />}
-
     </div>
   );
 }

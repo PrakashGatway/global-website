@@ -324,7 +324,7 @@ export default function Homepage({
     <main className="bg-white">
       <section
         className="overflow-hidden
-          pt-12 lg:pt-20 "
+          pt-20 "
         style={{
           backgroundImage: `url(${"/bg-hero.jpeg"})`,
           backgroundSize: "100% 100%",
@@ -342,7 +342,7 @@ export default function Homepage({
               className="flex flex-col gap-1 lg:col-span-4 -mt-10"
             >
               <span
-                className="text-3xl sm:text-4xl leading-[48px]"
+                className="text-3xl sm:text-4xl leading-snug"
               >
 
                 {homePage?.hero?.title ?
@@ -360,8 +360,8 @@ export default function Homepage({
                   : null}
               </span>
 
-              <span
-                className="mt-2 text-base font-medium lg:text-base leading-[26px]  text-black mx-auto "
+              <div
+                className="mt-2 text-base font-medium lg:text-base leading-[26px]  text-gray-800 mx-auto "
                 dangerouslySetInnerHTML={{
                   __html: homePage?.hero?.subtitle
                 }}
@@ -663,8 +663,10 @@ export default function Homepage({
           </div>
         </div>
       </section>
+<div className="px-4">
 
       <Destinationhome homePage={homePage} />
+</div>
 
       {/* <section
   initial={{ opacity: 0 }}
@@ -747,12 +749,12 @@ export default function Homepage({
 </section> */}
 
       <section
-        className="bg-white relative overflow-hidden w-full py-6 sm:py-5 "
+        className="bg-white relative px-4 sm:px-6 overflow-hidden w-full py-6 sm:py-5 "
       >
         <div className="absolute -right-20 top-[0%] opacity-30 pointer-events-none hidden lg:block"></div>
 
         <div className="max-w-7xl mx-auto">
-          <div className="w-full px-4 sm:px-6 lg:px-0 relative z-10">
+          <div className="w-full  relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-2 items-center w-full min-h-[500px]">
               <div
 
@@ -790,15 +792,15 @@ export default function Homepage({
               </div>
 
               <div
-                className="text-left lg:text-left"
+                className="text-left"
               >
                 <span
-                  className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight lg:mb-3"
+                  className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight"
                 >
 
                   <NewTag
                     data={homePage?.trustedPartners?.tag}
-                    css="block text-[#ea6c46]"
+                    css="block text-[#ea6c46] mb-2"
                   >
                     {homePage?.trustedPartners?.title.split("||")[0]?.trim()}{" "}
                     <span className="relative inline-block mt-3 font-bold text-primary">
@@ -809,7 +811,7 @@ export default function Homepage({
                 </span>
 
                 <span
-                  className="text-base  font-medium sm:text-base text-gray-600 mb-6 leading-relaxed mx-auto lg:mx-0 "
+                  className="text-base font-medium sm:text-base text-gray-700 mb-6 leading-relaxed mx-auto lg:mx-0 "
                   dangerouslySetInnerHTML={{
                     __html: homePage?.trustedPartners?.subtitle
                   }}
@@ -827,10 +829,10 @@ export default function Homepage({
         </div>
       </section>
 
-      <section className="lg:py-14 px-4 lg:px-0 overflow-hidden bg-[#faf5f2]">
+      <section className="lg:py-14 px-4 overflow-hidden bg-[#faf5f2]">
         <div className="max-w-7xl mx-auto overflow-hidden ">
           <div className="py-4 lg:py-4  text-left">
-            <h2 className="text-xl ">
+            <h2 className="text-2xl ">
               <span className="text-[#F46C44] lg:text-4xl font-light">
                 {homePage?.topUniversities?.title?.split("||")[0]?.trim()}
               </span>{" "}
@@ -886,14 +888,14 @@ export default function Homepage({
 
       <div className="lg:my-14"> <SingleSlider /></div>
 
-      <section className="bg-[#faf5f2] py-5 lg:py-5 px-4 lg:px-0 ">
+      <section className="bg-[#faf5f2] py-5 lg:py-5 px-4 ">
         {/* Heading */}
         <div className="text-left  max-w-7xl mx-auto py-4">
-          <h2 className="text-primary">
+          <h2 className="text-primary text-2xl">
             <span className="text-[#F46C44] font-light  text-2xl lg:text-4xl">
               {homePage.studyDestinations.title.split("||")[0]}
             </span>
-            <br />  <span className="font-bold text-xl lg:text-4xl relative">
+            <br />  <span className="font-bold text-2xl lg:text-4xl relative">
               {" "}
               {homePage.studyDestinations.title.split("||")[1]}
             </span>
@@ -1039,7 +1041,7 @@ export default function Homepage({
         </div> */}
       </section>
 
-      <section className="w-full py-12 lg:py-5 px-4 md:px-0 bg-white">
+      <section className="w-full py-12 lg:py-5 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-left lg:py-4">
@@ -1058,27 +1060,27 @@ export default function Homepage({
             {homePage?.serviceSection?.services?.map((service) => (
               <div
                 key={service.title}
-                className="group relative overflow-hidden bg-white border border-gray-200 p-7 transition-all duration-500 hover:-translate-y-2 hover:border-[#F46C44] hover:shadow-[0_20px_45px_rgba(244,108,68,0.12)]"
+                className="group relative overflow-hidden bg-white rounded-3xl border border-gray-200 p-5 transition-all duration-500 hover:-translate-y-2 hover:border-[#F46C44] hover:shadow-[0_20px_45px_rgba(244,108,68,0.12)]"
               >
                 {/* Background Decoration */}
-                <div className="absolute top-0 right-0 h-24 w-24 rounded-full bg-orange-50 blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                <div className="absolute top-0 right-0 h-24 w-24 rounded-full bg-orange-500 blur-3xl opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
 
                 {/* Icon */}
 
 
                 {/* Heading */}
-                <div className="flex gap-2 items-center">
-                  <div className="relative mb-6 flex h-full w-16 items-center justify-center rounded-full bg-gradient-to-br from-[#FFF4EF] to-[#FFE8DF] shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 p-2">
+                <div className="flex gap-2 items-start">
+                  <div >
                     <img
                       src={
                         service.icon ||
-                        "https://cdn-icons-png.flaticon.com/512/5474/5474438.png"
+                        "https://res.cloudinary.com/dhzire2mc/image/upload/v1783334738/cway-admin/ucfpfncqmolc6yqe6lwr.png"
                       }
                       alt={service.title}
-                      className="h-9 w-9 object-contain"
+                      className="h-12 w-12 mt-1 object-contain"
                     />
                   </div>
-                  <div className="relative mb-4">
+                  <div className="relative mb-1">
                     <h3 className="text-xl font-bold leading-snug text-[#1F2937] transition-colors duration-300 group-hover:text-[#F46C44]">
                       {service.title}
                     </h3>
@@ -1088,7 +1090,7 @@ export default function Homepage({
 
                 {/* Description */}
                 <div
-                  className="relative text-[15px] leading-7 text-gray-600"
+                  className="relative text-[15px] leading-relaxed font-medium text-gray-700"
                   dangerouslySetInnerHTML={{
                     __html: service.subTitle || "",
                   }}
@@ -1100,8 +1102,8 @@ export default function Homepage({
       </section>
 
       <div className="py-5 ">
-        <div className="bg-[#F46C44]">
-          <h2 className=" max-w-7xl mx-auto  text-primary text-white py-4 lg:py-5 px-4 lg:px-0">
+        <div className="bg-[#F46C44] px-4">
+          <h2 className=" max-w-7xl mx-auto  text-primary text-white py-4 lg:py-5">
             <span className=" font-light block text-2xl lg:text-4xl">
               {homePage?.topUniversity?.title.split("||")[0]}
             </span>
@@ -1114,8 +1116,8 @@ export default function Homepage({
         </div>
       </div>
 
-      <section className="py-5 px-2 lg:px-0 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 lg:px-0">
+      <section className="py-5 px-4 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto">
           <h2 className=" text-2xl   py-5 ">
             <span className="text-[#F46C44] lg:text-4xl font-light">
               {homePage?.blogs?.title.split("||")[0]}

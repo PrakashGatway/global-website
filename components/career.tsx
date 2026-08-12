@@ -131,8 +131,8 @@ export default function CareerPage({ careerData }) {
             <section className="bg-[#f46c44] py-10 lg:py-32 lg:text-center px-4 lg:px-0 text-white relative overflow-hidden">
                 {/* Decorative Arrow on Left Side */}
          
-                <h1 className="text-xl md:text-6xl font-bold">{heroTitle}</h1>
-                <p className="mt-4 max-w-5xl mx-auto text-sm md:text-lg font-medium">
+                <h1 className="text-2xl md:text-6xl font-bold">{heroTitle}</h1>
+                <p className="mt-4 max-w-5xl mx-auto text-base md:text-lg font-medium">
                     {pageDescription}
                 </p>
             </section>
@@ -149,11 +149,11 @@ export default function CareerPage({ careerData }) {
                 />
 
                 <div>
-                    <h2 className="lg:text-[50px] text-xl font-semibold text-orange-500 px-6">
+                    <h2 className="lg:text-[50px] text-2xl font-semibold text-orange-500 px-4">
                         {cultureTitleParts.first} <span className="text-gray-700">{cultureTitleParts.second}</span>
                     </h2>
 
-                    <p className="mt-4 text-sm lg:text-lg text-gray-600 leading-relaxed px-6">
+                    <p className="mt-4 text-base lg:text-lg text-gray-700 leading-relaxed px-4">
                         {cultureSubtitle}
                     </p>
                 </div>
@@ -162,11 +162,11 @@ export default function CareerPage({ careerData }) {
             {/* ================= SECTION 2 ================= */}
             <section className="max-w-7xl mx-auto px-4 lg:py-20 grid md:grid-cols-2 gap-14 items-center">
                 <div>
-                    <h2 className="lg:text-[50px] text-xl font-semibold text-orange-500">
+                    <h2 className="lg:text-[50px] text-2xl font-semibold text-orange-500">
                         {workingTitleParts.first} <span className="text-gray-700">{workingTitleParts.second}</span>
                     </h2>
 
-                    <p className="mt-4 text-sm lg:text-lg text-gray-600 leading-relaxed">
+                    <p className="mt-4 text-base lg:text-lg text-gray-700 leading-relaxed">
                         {workingSubtitle}
                     </p>
                 </div>

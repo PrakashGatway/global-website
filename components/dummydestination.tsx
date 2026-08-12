@@ -27,7 +27,7 @@ export function Destinationhome({ homePage }) {
     >
       {/* Title */}
       <div className="text-center mb-10 lg:py-5">
-        <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-primary">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary">
             {homePage?.dreamDestination?.title ? (
               <>
                 <span className="text-primary">
@@ -68,7 +68,7 @@ export function Destinationhome({ homePage }) {
               </h3>
 
               <span
-                className="text-base leading-relaxed text-gray-600"
+                className="text-sm font-medium sm:text-base leading-relaxed text-gray-700"
                 dangerouslySetInnerHTML={{
                   __html: step?.description,
                 }}
