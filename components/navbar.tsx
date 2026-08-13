@@ -523,36 +523,6 @@ export default function Navbar({
                         <Sparkles size={13} />
                         Your journey starts here
                       </div>
-
-                      {Login ? (
-                        <Link
-                          href="/dashboard"
-                          className="
-                            flex items-center gap-2
-                            text-xs xl:text-sm
-                            font-semibold
-                            hover:text-yellow-300
-                            transition
-                          "
-                        >
-                          <LayoutDashboard size={14} />
-                          Dashboard
-                        </Link>
-                      ) : (
-                        <Link
-                          href="/login"
-                          className="
-                            flex items-center gap-2
-                            text-xs xl:text-sm
-                            font-semibold
-                            hover:text-yellow-300
-                            transition
-                          "
-                        >
-                          <LogIn size={14} />
-                          Login
-                        </Link>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -1133,29 +1103,6 @@ export default function Navbar({
             ================================================== */}
 
             <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
-              {/* BLOG */}
-
-              <Link
-                href="/blog"
-                className="
-                  hidden xl:flex
-                  items-center
-                  gap-1.5
-                  px-3
-                  py-2.5
-                  rounded-xl
-                  text-xs
-                  font-semibold
-                  text-gray-600
-                  hover:text-[#f46c44]
-                  hover:bg-[#fff8f5]
-                  transition
-                "
-              >
-                Blogs
-              </Link>
-
-              {/* PROFILE */}
 
               {Login && profile ? (
                 <div className="relative group">
@@ -1163,10 +1110,10 @@ export default function Navbar({
                     className="
                       flex
                       items-center
-                      gap-2
-                      pl-1
+                      gap-1
+                      pl-0.5
                       pr-2
-                      py-1
+                      py-0.5
                       rounded-full
                       border
                       border-gray-100
@@ -1178,8 +1125,8 @@ export default function Navbar({
                   >
                     <div
                       className="
-                        w-9
-                        h-9
+                        w-8
+                        h-8
                         rounded-full
                         bg-gradient-to-br
                         from-[#f46c44]
@@ -1195,6 +1142,10 @@ export default function Navbar({
                     >
                       {profile?.name?.charAt(0).toUpperCase()}
                     </div>
+                     
+                    <p className="text-sm capitalize font-medium text-gray-800">
+                      {profile?.name}
+                    </p>
 
                     <ChevronDown size={14} className="text-gray-400" />
                   </button>
