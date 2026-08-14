@@ -960,8 +960,8 @@ function FeatureCard({ feature, index }: { feature: any; index: number }) {
           <p
             className="
         max-w-2xl
-        text-2xl
-        font-bold
+        text-[1.2rem]
+        font-semibold
         leading-[1.1]
         tracking-tight
         text-gray-900
