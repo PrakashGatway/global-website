@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { Tagging } from "./tag";
 import InnerContent from "./dom/DomParser";
+import { CalendarDays } from "lucide-react";
 
-export default function EligibilitySection({ pageData, tag = 2 }: any) {
+export default function EligibilitySection({ pageData, tag = 2,openPopup }: any) {
 
   const [open, setOpen] = useState(0);
 
@@ -20,12 +21,43 @@ export default function EligibilitySection({ pageData, tag = 2 }: any) {
             <span className="text-[#123b73] font-bold"> {pageData?.sections?.eligibilityCriteria?.title.split("||")[1]}</span>
           </Tagging>
           <InnerContent cleanedHtml={ pageData?.sections?.eligibilityCriteria?.subtitle || ""} />
+             <button
+             onClick={openPopup}
+             
+              className="
+                        inline-flex
+                        h-10
+                        items-center
+                        justify-center
+                        gap-2
+                        whitespace-nowrap
+                        rounded-lg
+                        bg-[#f6673c]
+                        px-5
+                        text-sm
+                        font-semibold
+                        text-white
+                        shadow-[0_5px_15px_rgba(246,103,60,0.22)]
+                        transition-all
+                        duration-200
+                        hover:bg-[#e9572d]
+                        hover:shadow-[0_7px_20px_rgba(246,103,60,0.28)]
+                        active:scale-[0.98]
+                        mt-4
+                    "
+            >
+              <CalendarDays className="h-4 w-4" />
+
+            Book a Free Consultation
+            </button>
           {/* <span
             className="text-base text-gray-700 mb-4"
             dangerouslySetInnerHTML={{
               __html: pageData?.sections?.eligibilityCriteria?.subtitle || "",
             }}
           ></span> */}
+
+
 
 
         </div>

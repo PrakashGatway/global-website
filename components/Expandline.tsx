@@ -23,7 +23,7 @@ export default function ExpandableText({ htmlContent, lines = 3 }) {
 
       <div
         ref={contentRef}
-        className={`text-whitw leading-relaxed transition-all duration-300 ${
+        className={`text-white leading-relaxed transition-all duration-300 ${
           expanded ? "" : `line-clamp-${lines}`
         }`}
         dangerouslySetInnerHTML={{ __html: htmlContent || "" }}

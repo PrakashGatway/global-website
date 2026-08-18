@@ -1,7 +1,7 @@
 "use client"
 
 import UniversityCard from '@/components/UniversityCard'
-import { ArrowRight, PhoneCall, PhoneIcon } from 'lucide-react'
+import { ArrowRight, CalendarDays, Clock3, Globe2, MessageCircle, PhoneCall, PhoneIcon, Plane, ShieldCheck, UserRound } from 'lucide-react'
 import FAQSection from '@/components/faqPage'
 import { DynamicLucideIcon } from '@/components/DynamicLucideIcon'
 import ImageTestimonial from './ImageTestimonial'
@@ -19,7 +19,7 @@ import { useKeenSlider } from 'keen-slider/react'
 import AuthorCard from './author/author'
 import VisaDetails from './dashboard/VisaDetails/visaDetails'
 import InnerContent, { BlogContent } from './dom/DomParser'
-
+import { useGlobal } from '@/src/statecontext'
 
 
 
@@ -290,15 +290,15 @@ const FormSection = ({ data }) => {
 const WhyChooseUsSection = ({ data }) => {
   if (data?.isHidden === "yes") return null
   return (
-    <section className="w-full bg-[#ef6a42] py-10 px-4 sm:px-6">
-      <div className="max-w-5xl mx-auto">
+    <section className="w-full bg-[#ef6a42] py-10 px-4 sm:px-0">
+      <div className="max-w-7xl mx-auto">
         <Tag data={data?.tag} css="text-white text-xl sm:text-3xl md:text-4xl font-bold relative inline-block" text={data?.title?.split("||")[0]} />
         <div className="">
           <ExpandableText lines={4} htmlContent={data?.subtitle} />
         </div>
         <div className=" text-center">
           <a href={data?.ctaLink1 || "/contact"}>
-            <button className="bg-secondary hover:bg-primary text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-xs sm:text-base font-semibold transition">
+            <button className="bg-secondary hover:bg-primary text-white px-6 sm:px-8 py-2.5 sm:py-3 mt-4 rounded-full text-xs sm:text-base font-semibold transition">
               {data?.ctaText1 || "Read More >>"}
             </button>
           </a>
@@ -524,9 +524,209 @@ const ChoosingUsSection = ({ data, Universityres }) => {
 }
 
 
-export const EligibilityCriteriaSection = ({ data }) => {
+export const EligibilityCriteriaSection = ({ data,openPopup }) => {
   if (data?.isHidden === "yes") return null
-  return <EligibilitySection pageData={{ sections: { eligibilityCriteria: data } }} />
+  return <EligibilitySection openPopup={openPopup} pageData={{ sections: { eligibilityCriteria: data } }} />
+}
+
+export const DestinationCTA = ({ data, openPopup }) => {
+
+
+  return (
+   <section className="w-full px-4 py-6 sm:px-6 lg:px-8">
+  <div
+    className="
+      mx-auto
+      w-full
+      max-w-7xl
+      overflow-hidden
+      rounded-2xl
+      border
+      border-gray-200
+      bg-white
+     
+    "
+  >
+    <div
+      className="
+        flex
+        min-h-[105px]
+        w-full
+        flex-col
+        items-stretch
+        gap-5
+        px-5
+        py-5
+
+        sm:px-7
+
+        lg:min-h-[110px]
+        lg:flex-row
+        lg:items-center
+        lg:gap-0
+        lg:px-7
+        lg:py-4
+      "
+    >
+
+      {/* ============================================= */}
+      {/* LEFT ICON */}
+      {/* ============================================= */}
+
+      <div
+        className="
+          hidden
+          shrink-0
+          items-center
+        
+          pr-3
+
+          lg:flex
+        "
+      >
+        <div
+          className="
+            flex
+            h-14
+            w-30
+            shrink-0
+            items-center
+            justify-center
+       
+      
+            text-[#f6673c]
+          "
+        >
+          <img src="https://png.pngtree.com/png-clipart/20230913/original/pngtree-counseling-clipart-man-and-woman-having-psychological-discussions-cartoon-vector-png-image_11073518.png" alt="" className='object-contain' />
+            
+          
+        </div>
+      </div>
+
+
+      {/* ============================================= */}
+      {/* TITLE + DESCRIPTION */}
+      {/* ============================================= */}
+
+      <div
+        className="
+          min-w-0
+          flex-1
+
+          lg:px-2
+        "
+      >
+        <h2
+          className="
+            text-lg
+            font-bold
+            leading-[1.25]
+            tracking-tight
+            text-[#172033]
+
+            sm:text-2xl
+          "
+        >
+          {data?.title
+            ?.replace(/&nbsp;/g, " ")
+            .split(/(".*?")/)
+            .map((part, index) => {
+              const isQuoted =
+                part.startsWith('"') &&
+                part.endsWith('"');
+
+              if (isQuoted) {
+                return (
+                  <span
+                    key={index}
+                    className="
+                      inline
+                      text-orange-500
+                    "
+                  >
+                    {part.slice(1, -1)}
+                  </span>
+                );
+              }
+
+              return (
+                <span key={index}>
+                  {part}
+                </span>
+              );
+            })}
+        </h2>
+
+        <div
+          className="
+            mt-1
+            max-w-3xl
+            text-xs
+            leading-relaxed
+            text-gray-500
+
+            sm:text-sm
+          "
+          dangerouslySetInnerHTML={{
+            __html: data?.subtitle || "",
+          }}
+        />
+      </div>
+
+
+      {/* ============================================= */}
+      {/* RIGHT CTA */}
+      {/* ============================================= */}
+
+      <div
+        className="
+          shrink-0
+
+          lg:pl-6
+
+          xl:pl-8
+        "
+      >
+        <button
+          type="button"
+          onClick={openPopup}
+          className="
+            inline-flex
+            h-10
+            w-full
+            items-center
+            justify-center
+            gap-2
+            whitespace-nowrap
+            rounded-lg
+            bg-[#f6673c]
+            px-5
+            text-sm
+            font-semibold
+            text-white
+            shadow-[0_5px_15px_rgba(246,103,60,0.22)]
+            transition-all
+            duration-200
+
+            hover:bg-[#e9572d]
+            hover:shadow-[0_7px_20px_rgba(246,103,60,0.28)]
+            active:scale-[0.98]
+
+            sm:w-auto
+          "
+        >
+          <CalendarDays className="h-4 w-4 shrink-0" />
+
+          <span>
+            {data?.ctabutton1}
+          </span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>
+  );
 }
 
 
@@ -646,7 +846,7 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
   };
   return (
     <section className="w-full bg-[#ef6a42] py-10 sm:py-14 lg:py-10 px-4 sm:px-6">
-      <div className="max-w-6xl mx-auto text-white">
+      <div className="max-w-7xl mx-auto text-white">
         <div className="mb-6 sm:mb-10">
           <Tagging data={data?.tag} css="text-lg sm:text-3xl md:text-4xl font-light mb-2">
             <span className="text-lg sm:text-3xl md:text-4xl font-light mb-2 block" dangerouslySetInnerHTML={{
@@ -717,13 +917,7 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
           ))}
         </div>
 
-        <div className="flex justify-center mt-6 sm:mt-8">
-          <a href="/contact">
-            <button className="bg-secondary hover:bg-primary px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md hover:scale-105 transition text-xs sm:text-base">
-              Contact US
-            </button>
-          </a>
-        </div>
+
       </div>
     </section>
   )
@@ -836,6 +1030,8 @@ const SimilarDestination = ({ countryres, sliderRef }) =>
 export default function CountryDetails({ Universityres, Faqres, pageData, imageData, videoRes, countryres }) {
   const router = useRouter()
   const pathname = usePathname()
+  const { openPopup } = useGlobal();
+
 
   const animation = { duration: 40000, easing: (t) => t };
 
@@ -895,9 +1091,10 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
     similardestination: SimilarDestination,
     videoTestimonials: 'VideoTestimonials',
     imageTestimonials: 'ImageTestimonial',
+    minorcta: DestinationCTA
   }
 
-
+  console.log(pageData, "bnvmc")
   const getOriginalSectionName = (name) =>
     name.includes('_copy_') ? name.split('_copy_')[0] : name
 
@@ -913,6 +1110,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
           originalName: getOriginalSectionName(name),
           data,
           order: data.__order__,
+          openPopup
         }
       })
       .filter(Boolean)
@@ -942,10 +1140,12 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
   return (
     <>
-      {sortedSections.map(({ name, originalName, data, alldata, order }) => {
+      {sortedSections.map(({ name, originalName, data, alldata, order, openPopup }) => {
         if (!shouldRenderSection(originalName, data)) return null
 
         const SectionComponent = sectionMapping[originalName] || sectionMapping[name]
+
+
 
         if (originalName === 'hero' || name === 'hero') {
           return SectionComponent && (
@@ -955,6 +1155,11 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         if (originalName === 'choosingUs' || name === 'choosingUs') {
           return SectionComponent && (
             <SectionComponent key={`${name}-${order}`} data={data} Universityres={Universityres} />
+          )
+        }
+        if (originalName === 'minorcta' || name === 'minorcta') {
+          return SectionComponent && (
+            <SectionComponent openPopup={openPopup} key={`${name}-${order}`} data={data} alldata={alldata} />
           )
         }
         if (originalName === 'scholarships' || name === 'scholarships') {
@@ -1001,7 +1206,7 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
 
         return SectionComponent && (
-          <SectionComponent key={`${name}-${order}`} data={data} />
+          <SectionComponent key={`${name}-${order}`} data={data} openPopup={openPopup} />
         )
       })}
 
