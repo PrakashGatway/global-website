@@ -1,32 +1,41 @@
-"use client"
+"use client";
 
-import UniversityCard from '@/components/UniversityCard'
-import { ArrowRight, CalendarDays, Clock3, Globe2, MessageCircle, PhoneCall, PhoneIcon, Plane, ShieldCheck, UserRound } from 'lucide-react'
-import FAQSection from '@/components/faqPage'
-import { DynamicLucideIcon } from '@/components/DynamicLucideIcon'
-import ImageTestimonial from './ImageTestimonial'
-import Balloon from './balloon'
-import { useEffect, useState } from 'react'
-import EligibilitySection from './Eligibility'
-import ExpandableText from './Expandline'
-import { useForm } from 'react-hook-form'
-import axiosInstance from '@/app/axiosInstance'
-import toast from 'react-hot-toast'
-import { NewTag, Tag, Tagging } from './tag'
-import { usePathname, useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { useKeenSlider } from 'keen-slider/react'
-import AuthorCard from './author/author'
-import VisaDetails from './dashboard/VisaDetails/visaDetails'
-import InnerContent, { BlogContent } from './dom/DomParser'
-import { useGlobal } from '@/src/statecontext'
-
-
+import UniversityCard from "@/components/UniversityCard";
+import {
+  ArrowRight,
+  CalendarDays,
+  Clock3,
+  Globe2,
+  MessageCircle,
+  PhoneCall,
+  PhoneIcon,
+  Plane,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
+import FAQSection from "@/components/faqPage";
+import { DynamicLucideIcon } from "@/components/DynamicLucideIcon";
+import ImageTestimonial from "./ImageTestimonial";
+import Balloon from "./balloon";
+import { useEffect, useState } from "react";
+import EligibilitySection from "./Eligibility";
+import ExpandableText from "./Expandline";
+import { useForm } from "react-hook-form";
+import axiosInstance from "@/app/axiosInstance";
+import toast from "react-hot-toast";
+import { NewTag, Tag, Tagging } from "./tag";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { useKeenSlider } from "keen-slider/react";
+import AuthorCard from "./author/author";
+import VisaDetails from "./dashboard/VisaDetails/visaDetails";
+import InnerContent, { BlogContent } from "./dom/DomParser";
+import { useGlobal } from "@/src/statecontext";
 
 // ─── Section Components ────────────────────────────────────────────────────────
 
 const HeroSection = ({ data, alldata }) => {
-  if (data?.isHidden === "yes") return null
+  if (data?.isHidden === "yes") return null;
   // //console.log('hero d',data)
   return (
     <section className="block overflow-hidden">
@@ -43,23 +52,29 @@ const HeroSection = ({ data, alldata }) => {
 
         <div className="relative  z-10 w-full h-full flex flex-col justify-center  max-w-[1440px] ">
           <div className="w-full px-4 sm:px-8 lg:px-10 py-8 sm:py-10 ">
-
             {/* Balloon — positioned absolutely only on lg+ */}
-            <div className="absolute right-2 top-4 sm:right-6 sm:top-8 lg:left-auto lg:right-auto lg:top-auto z-20"
+            <div
+              className="absolute right-2 top-4 sm:right-6 sm:top-8 lg:left-auto lg:right-auto lg:top-auto z-20"
               style={{
-                "right": "2rem"
+                right: "2rem",
               }}
             >
               <Balloon Pageres={alldata} />
             </div>
 
             {/* Content card — full width on mobile, 60% on sm, 48% on lg */}
-            <div className=" max-w-7xl  bg-black/50 w-full sm:w-4/5 md:w-3/5 lg:w-[48%] flex items-center
-             py-5 px-4 sm:px-6  rounded-2xl">
+            <div
+              className=" max-w-7xl  bg-black/50 w-full sm:w-4/5 md:w-3/5 lg:w-[48%] flex items-center
+             py-5 px-4 sm:px-6  rounded-2xl"
+            >
               <div className="w-full">
-                <Tag data={data?.tag}
-                  css={"text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight"}
-                  text={data?.title} />
+                <Tag
+                  data={data?.tag}
+                  css={
+                    "text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight"
+                  }
+                  text={data?.title}
+                />
                 {/* <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-white mb-4 leading-tight">
                   {data?.title || "Study in Germany"}
                 </h1> */}
@@ -71,13 +86,19 @@ const HeroSection = ({ data, alldata }) => {
                   <a href={data?.ctaLink1 || "/contact"}>
                     <button className="bg-yellow-400 hover:bg-[#f46c44] hover:text-white hover:scale-105 transition duration-300 rounded-full px-5 py-3 flex items-center gap-2 font-bold text-gray-900 text-xs sm:text-sm shadow-lg cursor-pointer w-full xs:w-auto">
                       <PhoneIcon size={18} />
-                      <span>{data?.ctaText1 || "Talk to an Expert Counsellor for FREE"}</span>
+                      <span>
+                        {data?.ctaText1 ||
+                          "Talk to an Expert Counsellor for FREE"}
+                      </span>
                     </button>
                   </a>
                   <a href={data?.ctaLink2 || "/contact"}>
                     <button className="bg-[#f46c44] hover:bg-yellow-400 hover:text-black hover:scale-105 transition duration-300 rounded-full px-5 py-3 flex items-center gap-2 font-bold text-white text-xs sm:text-sm shadow-lg cursor-pointer w-full xs:w-auto">
                       <PhoneIcon size={18} />
-                      <span>{data?.ctaText2 || "Talk to an Expert Counsellor for FREE"}</span>
+                      <span>
+                        {data?.ctaText2 ||
+                          "Talk to an Expert Counsellor for FREE"}
+                      </span>
                     </button>
                   </a>
                 </div>
@@ -96,9 +117,8 @@ const HeroSection = ({ data, alldata }) => {
         </div>
       </div>
     </section>
-  )
-}
-
+  );
+};
 
 const FormSection = ({ data }) => {
   if (data?.isHidden === "yes") return null;
@@ -109,8 +129,8 @@ const FormSection = ({ data }) => {
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
-    mode: "onChange",          // ✅ validate on typing
-    reValidateMode: "onChange"
+    mode: "onChange", // ✅ validate on typing
+    reValidateMode: "onChange",
   });
 
   const navigate = useRouter();
@@ -141,7 +161,6 @@ const FormSection = ({ data }) => {
   return (
     <section className="px-4 sm:px-6 lg:pr-10 py-10 sm:py-14 lg:py-10 relative overflow-hidden">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-
         {/* Form  */}
         <div className="bg-white border border-gray-300 p-5 sm:p-8 shadow-sm rounded-lg w-full">
           <h2 className="text-orange-500 text-sm sm:text-xl font-semibold mb-5 tracking-wide">
@@ -158,7 +177,9 @@ const FormSection = ({ data }) => {
                   ${errors.fullname ? "border-red-500" : "border-gray-400 focus:border-orange-500"}`}
                 />
                 {errors.fullname && (
-                  <p className="text-red-500 text-xs">{errors.fullname.message}</p>
+                  <p className="text-red-500 text-xs">
+                    {errors.fullname.message}
+                  </p>
                 )}
               </div>
 
@@ -230,14 +251,22 @@ const FormSection = ({ data }) => {
                   className="w-full border-b-2 border-gray-400 focus:outline-none focus:border-orange-500 pb-1"
                 >
                   <option value="">Country to Study</option>
-                  {["USA", "UK", "France", "Germany", "Italy", "Dubai", "New Zealand", "Australia"].map((c) => (
+                  {[
+                    "USA",
+                    "UK",
+                    "France",
+                    "Germany",
+                    "Italy",
+                    "Dubai",
+                    "New Zealand",
+                    "Australia",
+                  ].map((c) => (
                     <option key={c} value={c.toLowerCase()}>
                       Study In {c}
                     </option>
                   ))}
                 </select>
               </div>
-
             </div>
 
             <div className="flex justify-center mt-6">
@@ -254,45 +283,38 @@ const FormSection = ({ data }) => {
 
         {/* Right Content */}
         <div className="relative z-10">
-          <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
+          <Tagging
+            data={data?.tag}
+            css="relative inline-block mb-4 sm:mb-6 block"
+          >
             <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
-              {data?.title?.split('||')[0]?.trim() || ""}
+              {data?.title?.split("||")[0]?.trim() || ""}
             </span>
             <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
-              {data?.title?.split('||')[1]?.trim() || ""}
+              {data?.title?.split("||")[1]?.trim() || ""}
             </span>
-            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
           </Tagging>
 
-          {/* <h2 className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold mb-4 sm:mb-6 relative inline-block">
-        {data?.title?.split('||')[1]?.trim() || "Study in Germany"}
-        <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
-      </h2> */}
-
           <span
-            className="text-gray-700 leading-relaxed text-xs sm:text-lg mb-6"
+            className="text-gray-700 leading-relaxed text-sm sm:text-lg mb-6"
             dangerouslySetInnerHTML={{ __html: data?.subtitle || "" }}
           />
-
-          {/* <a href={data?.ctaLink1 || "/contact"}>
-            <button className="bg-secondary hover:bg-primary text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold transition text-xs sm:text-base">
-              {data?.ctaText1 || "Read More >>"}
-            </button>
-          </a> */}
         </div>
-
       </div>
     </section>
   );
 };
 
-
 const WhyChooseUsSection = ({ data }) => {
-  if (data?.isHidden === "yes") return null
+  if (data?.isHidden === "yes") return null;
   return (
     <section className="w-full bg-[#ef6a42] py-10 px-4 sm:px-0">
       <div className="max-w-7xl mx-auto">
-        <Tag data={data?.tag} css="text-white text-xl sm:text-3xl md:text-4xl font-bold relative inline-block" text={data?.title?.split("||")[0]} />
+        <Tag
+          data={data?.tag}
+          css="text-white text-xl sm:text-3xl md:text-4xl font-bold relative inline-block"
+          text={data?.title?.split("||")[0]}
+        />
         <div className="">
           <ExpandableText lines={4} htmlContent={data?.subtitle} />
         </div>
@@ -305,21 +327,24 @@ const WhyChooseUsSection = ({ data }) => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
 export const WhyStudySection = ({ data }) => {
-  if (data?.isHidden == "yes") return null
+  if (data?.isHidden == "yes") return null;
   return (
-    <section className="w-full py-10 sm:py-14 lg:py-20 px-4 sm:px-6 bg-white">
+    <section className="w-full py-10 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 sm:mb-0">
-          <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
+          <Tagging
+            data={data?.tag}
+            css="relative inline-block mb-4 sm:mb-6 block"
+          >
             <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
-              {data?.title?.split('||')[0]?.trim() || ""}
+              {data?.title?.split("||")[0]?.trim() || ""}
             </span>
             <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
-              {data?.title?.split('||')[1]?.trim() || ""}
+              {data?.title?.split("||")[1]?.trim() || ""}
             </span>
           </Tagging>
         </div>
@@ -328,53 +353,53 @@ export const WhyStudySection = ({ data }) => {
           __html: data?.subTitle
         }}
         /> */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {(data?.items || []).map((item, index) => (
-            <div key={index} className="flex items-start gap-3 sm:gap-4 bg-gray-200 p-4 rounded-xl">
-              <div className="text-[#8b1d04] flex-shrink-0">
-                <DynamicLucideIcon name={item.icon} size={28} className="sm:w-8 sm:h-8" />
+            <div
+              key={index}
+              className="flex items-start gap-3 sm:gap-4 bg-gray-200 p-4 rounded-3xl"
+            >
+              <div className="text-gray-700 h-12 w-12 bg-white flex items-center justify-center rounded-full flex-shrink-0">
+                <DynamicLucideIcon
+                  name={item.icon}
+                  size={28}
+                  className="w-7 h-7"
+                />
               </div>
               <div>
-                <span className='text-base sm:text-2xl lg:text-xl text-gray-900 font-semibold' dangerouslySetInnerHTML={{ __html: item?.title }} />
-                {/* <ExpandableText
-                  htmlContent={`${item.description}`}
-                  lines={4}
-                /> */}
-                <div className="mt-1">
-
+                <span
+                  className="text-xl text-gray-900 font-semibold"
+                  dangerouslySetInnerHTML={{ __html: item?.title }}
+                />
+               
+                <div className="mt-px font-medium">
                   <InnerContent cleanedHtml={item.description} />
                 </div>
-
               </div>
             </div>
           ))}
         </div>
       </div>
     </section>
-  )
-}
-
+  );
+};
 
 const PopularCoursesSection = ({ data }) => {
-  if (data?.isHidden === "yes") return null
+  if (data?.isHidden === "yes") return null;
   return (
     <section className="w-full bg-white py-10 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-left mb-10 sm:mb-12">
-
-          {/* <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-snug">
-          <Tag data={data?.tag} text={data?.title.split("||")[0]?.trim() || "Popular"} css={"text-[#F46C44] block"}/>
-          <Tag data={data?.tag} text={data?.title?.split("||")[1]?.trim() || "Courses"} css={"text-primary font-bold relative inline-block"}/>
-          <span className="absolute right-0 -bottom-1 sm:-bottom-2 w-12 sm:w-20 h-[2px] lg:h-1 bg-[#F46C44]"></span>
-        </h2> */}
-          <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
+          <Tagging
+            data={data?.tag}
+            css="relative inline-block mb-4 sm:mb-6 block"
+          >
             <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
-              {data?.title?.split('||')[0]?.trim() || ""}
+              {data?.title?.split("||")[0]?.trim() || ""}
             </span>
             <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
-              {data?.title?.split('||')[1]?.trim() || ""}
+              {data?.title?.split("||")[1]?.trim() || ""}
             </span>
-            <span className="absolute right-0 -bottom-4 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
           </Tagging>
           <span
             className="text-gray-500 mt-3 text-sm lg:text-base"
@@ -383,29 +408,34 @@ const PopularCoursesSection = ({ data }) => {
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {(data?.coursesitem || []).map((item, i) => (
-            // <div key={i} className="bg-[#F46C44] rounded-[28px] hover:-translate-y-2 transition-all duration-300 p-[2px]">
-            //   <div className="bg-[#f6f7f9] rounded-[26px] overflow-hidden flex flex-col h-full">
-            <div key={i} className=" bg-[#F46C44] rounded-[28px] hover:-translate-y-[8px] transition-all duration-300 pb-1 pl-[1.5px] pr-[0.5px] flex justify-center items-center h-full">
-
-
+            <div
+              key={i}
+              className=" bg-[#F46C44] rounded-[28px] hover:-translate-y-[8px] transition-all duration-300 pb-1 pl-[1.5px] pr-[0.5px] flex justify-center items-center h-full"
+            >
               {/* 🟡 Main Card */}
               <div className=" bg-[#f6f7f9] rounded-[28px] overflow-hidden transition duration-300 hover:shadow-md !mx-auto !w-full  flex flex-col h-full">
-
                 <div className="overflow-hidden w-full rounded-t-[26px]">
                   <img
-                    src={item?.image || "https://res.cloudinary.com/dhzire2mc/image/upload/v1775022574/cway-admin/njlye3egxsqkcf1q6k9i.jpg"}
+                    src={
+                      item?.image ||
+                      "https://res.cloudinary.com/dhzire2mc/image/upload/v1775022574/cway-admin/njlye3egxsqkcf1q6k9i.jpg"
+                    }
                     alt={item?.coursesname}
                     className="w-full h-[150px] lg:h-[180px] object-cover"
                   />
                 </div>
                 <div className="px-4 py-4 flex flex-col flex-grow">
-                  <div className="text-base lg:text-xl font-bold text-[#F46C44]" dangerouslySetInnerHTML={{ __html: item?.coursesname }} />
-                  <div className="text-sm text-gray-800 mt-2 line-clamp-2" dangerouslySetInnerHTML={{ __html: item?.description || "" }} />
-                  {/* <div className="mt-auto pt-3 flex justify-end">
-                    <button className="bg-[#F46C44] text-white text-sm px-4 py-1.5 rounded-full flex items-center gap-2 hover:bg-primary transition">
-                      Explore →
-                    </button>
-                  </div> */}
+                  <div
+                    className="text-base lg:text-xl font-bold text-[#F46C44]"
+                    dangerouslySetInnerHTML={{ __html: item?.coursesname }}
+                  />
+                  <div
+                    className="text-sm text-gray-800 mt-2 line-clamp-2"
+                    dangerouslySetInnerHTML={{
+                      __html: item?.description || "",
+                    }}
+                  />
+                
                 </div>
               </div>
             </div>
@@ -413,32 +443,31 @@ const PopularCoursesSection = ({ data }) => {
         </div>
       </div>
     </section>
-  )
-}
-
+  );
+};
 
 const LifeInSection = ({ data }) => {
-  if (data?.isHidden === "yes") return null
+  if (data?.isHidden === "yes") return null;
   return (
-
     <section className="w-full h-full px-4 sm:px-6 lg:px-30 bg-white lg:pt-20 lg:pb-10 relative ">
       <div className="max-w-7xl mx-auto">
-
         {/* Heading */}
         <div className="mb-8 md:mb-12">
           <span className="text-lg sm:text-4xl md:text-3xl lg:text-4xl font-bold text-primary mb-1 relative">
             <Tagging data={data?.tag} css="relative inline-block mb-3 block">
               <span className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2">
-                {data?.title?.split('||')[0]?.trim() || ""}
+                {data?.title?.split("||")[0]?.trim() || ""}
               </span>
               <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold">
-                {data?.title?.split('||')[1]?.trim() || ""}
+                {data?.title?.split("||")[1]?.trim() || ""}
               </span>
             </Tagging>
           </span>
-          <div className="country-table text-[#707888] overflow-x-auto mt-1" dangerouslySetInnerHTML={{ __html: data.subTitle }} />
+          <div
+            className="country-table text-[#707888] overflow-x-auto mt-1"
+            dangerouslySetInnerHTML={{ __html: data.subTitle }}
+          />
           {/* <div className="country-table overflow-x-auto mt-1" dangerouslySetInnerHTML={{ __html: data.servicesubtitle }} /> */}
-
         </div>
 
         {/* Content Grid */}
@@ -446,16 +475,25 @@ const LifeInSection = ({ data }) => {
           {/* Left Section - Benefits List */}
           <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:gap-6">
             {(data.items || []).map((item, index) => (
-              <div key={index} className="flex items-center gap-4 w-full lg:w-120 relative z-1">
+              <div
+                key={index}
+                className="flex items-center gap-4 w-full lg:w-120 relative z-1"
+              >
                 {/* Left Border Accent - Hidden on mobile */}
                 <div className="hidden sm:block w-60 h-20 bg-secondary absolute -z-1 -top-2 -left-2"></div>
 
                 {/* Benefit Box */}
                 <div className="flex-1 bg-[#f46c44] hover:bg-orange-600 transition-colors rounded-tr-[30px] sm:rounded-tr-[50px] px-4 sm:px-6 py-3 sm:py-4 lg:py-5 text-white text-sm sm:text-base lg:w-40 ">
-                  <span className='text-base sm:text-2xl lg:text-xl font-semibold' dangerouslySetInnerHTML={{ __html: item?.title }} />
-                  <span className='text-xs sm:text-sm text-white mt-1' dangerouslySetInnerHTML={{
-                    __html: item?.description
-                  }}></span>
+                  <span
+                    className="text-base sm:text-2xl lg:text-xl font-semibold"
+                    dangerouslySetInnerHTML={{ __html: item?.title }}
+                  />
+                  <span
+                    className="text-xs sm:text-sm text-white mt-1"
+                    dangerouslySetInnerHTML={{
+                      __html: item?.description,
+                    }}
+                  ></span>
                 </div>
               </div>
             ))}
@@ -469,7 +507,10 @@ const LifeInSection = ({ data }) => {
             {/* Top Image - Woman with Laptop */}
             <div className=" w-full h-48 sm:h-56 lg:h-140 shadow-md z-1">
               <img
-                src={data?.image || "https://res.cloudinary.com/dhzire2mc/image/upload/v1775022574/cway-admin/njlye3egxsqkcf1q6k9i.jpg"}
+                src={
+                  data?.image ||
+                  "https://res.cloudinary.com/dhzire2mc/image/upload/v1775022574/cway-admin/njlye3egxsqkcf1q6k9i.jpg"
+                }
                 alt="Woman working on laptop"
                 className="w-full h-full object-cover rounded-lg "
               />
@@ -482,60 +523,59 @@ const LifeInSection = ({ data }) => {
           alt="Munich cityscape"
           className="w-full max-w-[400px] sm:max-w-[500px] lg:w-[400px] h-auto object-contain absolute left-1/2 -translate-x-1/2 lg:left-130 lg:translate-x-0 bottom-0 z-11 hidden lg:block"
         /> */}
-
       </div>
     </section>
-  )
-}
-
+  );
+};
 
 const ChoosingUsSection = ({ data, Universityres }) => {
-  if (data?.isHidden === "yes") return null
+  if (data?.isHidden === "yes") return null;
   return (
     <section className="relative w-full bg-[#ef6a42] py-8 sm:py-10 px-4 sm:px-6">
       <div className="mb-6 sm:mb-2 max-w-7xl mx-auto text-white">
-        <Tagging
-          data={data?.tag}
-          css="text-lg sm:text-3xl md:text-4xl"
-        >
-          <span className="font-light" dangerouslySetInnerHTML={{
-            __html: data?.title?.split("||")[0]?.trim() || "Choosing the Right"
-          }}>
-
-          </span>{" "}
-
-          <span className="font-bold relative inline-block" dangerouslySetInnerHTML={{
-            __html: data?.title?.split("||")[1]?.trim() || "University in Germany"
-          }}>
-
-          </span>
-
-
+        <Tagging data={data?.tag} css="text-lg sm:text-3xl md:text-4xl">
+          <span
+            className="font-light"
+            dangerouslySetInnerHTML={{
+              __html:
+                data?.title?.split("||")[0]?.trim() || "Choosing the Right",
+            }}
+          ></span>{" "}
+          <span
+            className="font-bold relative inline-block"
+            dangerouslySetInnerHTML={{
+              __html:
+                data?.title?.split("||")[1]?.trim() || "University in Germany",
+            }}
+          ></span>
         </Tagging>
-        <span className="mt-4 relative inline-block" dangerouslySetInnerHTML={{
-          __html: data?.subtitle
-        }}>
-
-        </span>
+        <span
+          className="mt-4 relative inline-block"
+          dangerouslySetInnerHTML={{
+            __html: data?.subtitle,
+          }}
+        ></span>
       </div>
       <UniversityCard university={Universityres} />
     </section>
-  )
-}
+  );
+};
 
-
-export const EligibilityCriteriaSection = ({ data,openPopup }) => {
-  if (data?.isHidden === "yes") return null
-  return <EligibilitySection openPopup={openPopup} pageData={{ sections: { eligibilityCriteria: data } }} />
-}
+export const EligibilityCriteriaSection = ({ data, openPopup }) => {
+  if (data?.isHidden === "yes") return null;
+  return (
+    <EligibilitySection
+      openPopup={openPopup}
+      pageData={{ sections: { eligibilityCriteria: data } }}
+    />
+  );
+};
 
 export const DestinationCTA = ({ data, openPopup }) => {
-
-
   return (
-   <section className="w-full px-4 py-6 sm:px-6 lg:px-8">
-  <div
-    className="
+    <section className="w-full px-4 py-6 sm:px-6 lg:px-8">
+      <div
+        className="
       mx-auto
       w-full
       max-w-7xl
@@ -546,9 +586,9 @@ export const DestinationCTA = ({ data, openPopup }) => {
       bg-white
      
     "
-  >
-    <div
-      className="
+      >
+        <div
+          className="
         flex
         min-h-[105px]
         w-full
@@ -567,14 +607,13 @@ export const DestinationCTA = ({ data, openPopup }) => {
         lg:px-7
         lg:py-4
       "
-    >
+        >
+          {/* ============================================= */}
+          {/* LEFT ICON */}
+          {/* ============================================= */}
 
-      {/* ============================================= */}
-      {/* LEFT ICON */}
-      {/* ============================================= */}
-
-      <div
-        className="
+          <div
+            className="
           hidden
           shrink-0
           items-center
@@ -583,9 +622,9 @@ export const DestinationCTA = ({ data, openPopup }) => {
 
           lg:flex
         "
-      >
-        <div
-          className="
+          >
+            <div
+              className="
             flex
             h-14
             w-30
@@ -596,28 +635,29 @@ export const DestinationCTA = ({ data, openPopup }) => {
       
             text-[#f6673c]
           "
-        >
-          <img src="https://png.pngtree.com/png-clipart/20230913/original/pngtree-counseling-clipart-man-and-woman-having-psychological-discussions-cartoon-vector-png-image_11073518.png" alt="" className='object-contain' />
-            
-          
-        </div>
-      </div>
+            >
+              <img
+                src="https://png.pngtree.com/png-clipart/20230913/original/pngtree-counseling-clipart-man-and-woman-having-psychological-discussions-cartoon-vector-png-image_11073518.png"
+                alt=""
+                className="object-contain"
+              />
+            </div>
+          </div>
 
+          {/* ============================================= */}
+          {/* TITLE + DESCRIPTION */}
+          {/* ============================================= */}
 
-      {/* ============================================= */}
-      {/* TITLE + DESCRIPTION */}
-      {/* ============================================= */}
-
-      <div
-        className="
+          <div
+            className="
           min-w-0
           flex-1
 
           lg:px-2
         "
-      >
-        <h2
-          className="
+          >
+            <h2
+              className="
             text-lg
             font-bold
             leading-[1.25]
@@ -626,39 +666,33 @@ export const DestinationCTA = ({ data, openPopup }) => {
 
             sm:text-2xl
           "
-        >
-          {data?.title
-            ?.replace(/&nbsp;/g, " ")
-            .split(/(".*?")/)
-            .map((part, index) => {
-              const isQuoted =
-                part.startsWith('"') &&
-                part.endsWith('"');
+            >
+              {data?.title
+                ?.replace(/&nbsp;/g, " ")
+                .split(/(".*?")/)
+                .map((part, index) => {
+                  const isQuoted = part.startsWith('"') && part.endsWith('"');
 
-              if (isQuoted) {
-                return (
-                  <span
-                    key={index}
-                    className="
+                  if (isQuoted) {
+                    return (
+                      <span
+                        key={index}
+                        className="
                       inline
                       text-orange-500
                     "
-                  >
-                    {part.slice(1, -1)}
-                  </span>
-                );
-              }
+                      >
+                        {part.slice(1, -1)}
+                      </span>
+                    );
+                  }
 
-              return (
-                <span key={index}>
-                  {part}
-                </span>
-              );
-            })}
-        </h2>
+                  return <span key={index}>{part}</span>;
+                })}
+            </h2>
 
-        <div
-          className="
+            <div
+              className="
             mt-1
             max-w-3xl
             text-xs
@@ -667,30 +701,29 @@ export const DestinationCTA = ({ data, openPopup }) => {
 
             sm:text-sm
           "
-          dangerouslySetInnerHTML={{
-            __html: data?.subtitle || "",
-          }}
-        />
-      </div>
+              dangerouslySetInnerHTML={{
+                __html: data?.subtitle || "",
+              }}
+            />
+          </div>
 
+          {/* ============================================= */}
+          {/* RIGHT CTA */}
+          {/* ============================================= */}
 
-      {/* ============================================= */}
-      {/* RIGHT CTA */}
-      {/* ============================================= */}
-
-      <div
-        className="
+          <div
+            className="
           shrink-0
 
           lg:pl-6
 
           xl:pl-8
         "
-      >
-        <button
-          type="button"
-          onClick={openPopup}
-          className="
+          >
+            <button
+              type="button"
+              onClick={openPopup}
+              className="
             inline-flex
             h-10
             w-full
@@ -714,24 +747,20 @@ export const DestinationCTA = ({ data, openPopup }) => {
 
             sm:w-auto
           "
-        >
-          <CalendarDays className="h-4 w-4 shrink-0" />
+            >
+              <CalendarDays className="h-4 w-4 shrink-0" />
 
-          <span>
-            {data?.ctabutton1}
-          </span>
-        </button>
+              <span>{data?.ctabutton1}</span>
+            </button>
+          </div>
+        </div>
       </div>
-
-    </div>
-  </div>
-</section>
+    </section>
   );
-}
-
+};
 
 export const UniversityContentSection = ({ data }) => {
-  if (data?.isHidden === "yes") return null
+  if (data?.isHidden === "yes") return null;
   return (
     <section className="w-full bg-white [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] px-4 py-4">
       <div className="max-w-7xl mx-auto">
@@ -739,11 +768,18 @@ export const UniversityContentSection = ({ data }) => {
           <div key={i} className="">
             <div className="mb-5 sm:mb-2">
               <h2 className="text-primary text-xl sm:text-3xl md:text-4xl font-bold">
-                <span className="text-[#F46C44] block" dangerouslySetInnerHTML={{
-                  __html: item.title?.split("||")[0]
-                }} />
+                <span
+                  className="text-[#F46C44] block"
+                  dangerouslySetInnerHTML={{
+                    __html: item.title?.split("||")[0],
+                  }}
+                />
                 <div className="flex flex-wrap gap-2 mt-1">
-                  <span dangerouslySetInnerHTML={{ __html: item.title?.split("||")[1] }} />
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: item.title?.split("||")[1],
+                    }}
+                  />
                 </div>
               </h2>
             </div>
@@ -754,91 +790,116 @@ export const UniversityContentSection = ({ data }) => {
         ))}
       </div>
     </section>
-  )
-}
+  );
+};
 
 export const ContentSection = ({ data }) => {
-  if (data?.isHidden === "yes") return null
+  if (data?.isHidden === "yes") return null;
   return (
     <section className="w-full bg-white [text-shadow:0_0px_0px_rgba(0,0,0,0.9)] px-4 py-4">
       <div className="max-w-7xl mx-auto">
         {(data?.items || []).map((item, i) => (
-          <div key={i} className="">
+          <div key={i} className="mb-6 sm:mb-12">
             <div className="mb-5 sm:mb-2">
               <h2 className="text-primary text-xl sm:text-3xl md:text-4xl font-bold">
-                <span className="text-[#F46C44] block" dangerouslySetInnerHTML={{
-                  __html: item.title?.split("||")[0]
-                }} />
+                <span
+                  className="text-[#F46C44] block"
+                  dangerouslySetInnerHTML={{
+                    __html: item.title?.split("||")[0],
+                  }}
+                />
                 <div className="flex flex-wrap gap-2 mt-1">
-                  <span dangerouslySetInnerHTML={{ __html: item.title?.split("||")[1] }} />
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: item.title?.split("||")[1],
+                    }}
+                  />
                 </div>
               </h2>
             </div>
             {/* <BlogContent cleanedHtml={item.description} /> */}
 
-            <div className="country-table overflow-x-auto mt-4" dangerouslySetInnerHTML={{ __html: item.description }} />
+            <div
+              className="country-table overflow-x-auto mt-4"
+              dangerouslySetInnerHTML={{ __html: item.description }}
+            />
           </div>
         ))}
       </div>
     </section>
-  )
-}
-
+  );
+};
 
 const ServiceSection = ({ data }) => {
-  if (data?.isHidden === "yes") return null
+  if (data?.isHidden === "yes") return null;
   return (
-    <section className="bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        <div className="mb-8 sm:mb-12">
-          <Tagging data={data?.tag} css="relative inline-block mb-4 sm:mb-6 block">
+    <section className="bg-white px-4">
+      <div className="max-w-7xl mx-auto py-8 sm:py-12">
+        <div className="">
+          <Tagging
+            data={data?.tag}
+            css="relative inline-block mb-4 sm:mb-6 block"
+          >
             <span
               className="text-[#F46C44] text-2xl sm:text-3xl block font-medium mr-2"
               dangerouslySetInnerHTML={{
                 __html: data?.servicetitle?.split("||")[0]?.trim() || "",
-              }} /> {" "}
-            <span className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold" dangerouslySetInnerHTML={{
-              __html: data?.servicetitle?.split('||')[1]?.trim() || ""
-            }} />
-
-            <span className="absolute right-0 -bottom-3 w-12 sm:w-16 h-1 bg-[#F46C44]"></span>
+              }}
+            />{" "}
+            <span
+              className="text-[#123b73] text-lg sm:text-4xl lg:text-4xl font-bold"
+              dangerouslySetInnerHTML={{
+                __html: data?.servicetitle?.split("||")[1]?.trim() || "",
+              }}
+            />
           </Tagging>
-          <div className="country-table overflow-x-auto mt-1" dangerouslySetInnerHTML={{ __html: data.servicesubtitle }} />
-
-
+          <div
+            className="country-table overflow-x-auto mt-1"
+            dangerouslySetInnerHTML={{ __html: data.servicesubtitle }}
+          />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {(data?.serviceitem || []).map((service, index) => (
-            <div key={index} className="bg-gray-200 rounded-lg sm:rounded-xl p-4 sm:p-5 lg:p-6 flex items-start gap-3 sm:gap-4 hover:shadow-md transition">
-              <div className="w-10 h-10 sm:w-14 sm:h-14 flex-shrink-0 flex items-center justify-center text-orange-500">
-                <DynamicLucideIcon name={`${service?.itemicon}`} size={40} className="sm:w-10 sm:h-10" />
+            <div
+              key={index}
+              className="bg-gray-200 rounded-lg sm:rounded-3xl p-4 flex items-start gap-3 hover:shadow-md transition"
+            >
+              <div className="w-12 h-12 bg-white rounded-full flex-shrink-0 flex items-center justify-center text-orange-600">
+                <DynamicLucideIcon
+                  name={`${service?.itemicon}`}
+                  size={40}
+                  className="w-7 h-7"
+                />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 leading-snug" dangerouslySetInnerHTML={{
-                  __html: service?.itemtitle
-                }}>
-                </div>
+                <div
+                  className="font-semibold text-lg text-gray-900 leading-snug"
+                  dangerouslySetInnerHTML={{
+                    __html: service?.itemtitle,
+                  }}
+                ></div>
                 {/* <div className="text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed" dangerouslySetInnerHTML={{
                   __html: service?.itemsubtitle
                 }} /> */}
-                <div
-                  className="list-disc pl-3 text-gray-600 text-xs sm:text-sm mt-1 leading-relaxed [&_ul]:list-disc [&_ul]:pl-4 [&_ul]:space-y-1"
-                  dangerouslySetInnerHTML={{
-                    __html: service?.itemsubtitle
-                  }}
-                />
+                
+                <div className="!text-sm font-medium">
+                  <InnerContent cleanedHtml={service?.itemsubtitle} />
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-
-const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any) => {
-  if (data?.isHidden === "yes") return null
+const ScholarshipsSection = ({
+  data,
+  leftScholarships,
+  rightScholarships,
+}: any) => {
+  if (data?.isHidden === "yes") return null;
   const [openIndex, setOpenIndex] = useState(null);
 
   const toggleAccordion = (index) => {
@@ -848,33 +909,44 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
     <section className="w-full bg-[#ef6a42] py-10 sm:py-14 lg:py-10 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto text-white">
         <div className="mb-6 sm:mb-10">
-          <Tagging data={data?.tag} css="text-lg sm:text-3xl md:text-4xl font-light mb-2">
-            <span className="text-lg sm:text-3xl md:text-4xl font-light mb-2 block" dangerouslySetInnerHTML={{
-              __html: data?.title?.split('||')[0]?.trim() || ""
-            }}>
-            </span>
-            <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold relative inline-block relative" dangerouslySetInnerHTML={{
-              __html: data?.title?.split('||')[1]?.trim() || ""
-            }}>
-            </span>
+          <Tagging
+            data={data?.tag}
+            css="text-lg sm:text-3xl md:text-4xl font-light mb-2"
+          >
+            <span
+              className="text-lg sm:text-3xl md:text-4xl font-light mb-2 block"
+              dangerouslySetInnerHTML={{
+                __html: data?.title?.split("||")[0]?.trim() || "",
+              }}
+            ></span>
+            <span
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold relative inline-block relative"
+              dangerouslySetInnerHTML={{
+                __html: data?.title?.split("||")[1]?.trim() || "",
+              }}
+            ></span>
           </Tagging>
 
-          <span className="mt-4 sm:mt-6 text-xs sm:text-base lg:text-lg leading-relaxed" dangerouslySetInnerHTML={{
-            __html: data?.subTitle || "Germany provides various scholarships for international students, including DAAD and university-funded options."
-          }} />
+          <span
+            className="mt-4 sm:mt-6 text-xs sm:text-base lg:text-lg leading-relaxed"
+            dangerouslySetInnerHTML={{
+              __html:
+                data?.subTitle ||
+                "Germany provides various scholarships for international students, including DAAD and university-funded options.",
+            }}
+          />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 sm:gap-x-16 gap-y-4 sm:gap-y-6 mt-6 sm:mt-10">
           {data.items?.map((item, i) => (
             <div key={i} className="space-y-3">
-
               {/* Scholarship Row */}
-              <div className="flex items-center gap-3" onClick={() => toggleAccordion(i)}>
+              <div
+                className="flex items-center gap-3"
+                onClick={() => toggleAccordion(i)}
+              >
                 <div className="bg-yellow-400 text-black rounded-full p-2 flex-shrink-0">
-                  <DynamicLucideIcon
-                    name={item.icon}
-                    size={18}
-                  />
+                  <DynamicLucideIcon name={item.icon} size={18} />
                 </div>
 
                 <span
@@ -884,13 +956,11 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
                   }}
                 />
 
-                <button
-
-                  className="text-white hover:scale-110 transition-all duration-300"
-                >
+                <button className="text-white hover:scale-110 transition-all duration-300">
                   <ArrowRight
-                    className={`w-5 h-5 transition-transform duration-300 ${openIndex === i ? "rotate-90" : ""
-                      }`}
+                    className={`w-5 h-5 transition-transform duration-300 ${
+                      openIndex === i ? "rotate-90" : ""
+                    }`}
                   />
                 </button>
               </div>
@@ -898,10 +968,11 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
               {/* Extra Details */}
               {item?.extraDetail && (
                 <div
-                  className={`overflow-hidden transition-all duration-500 ease-in-out ${openIndex === i
-                    ? "max-h-[1000px] opacity-100 mt-3"
-                    : "max-h-0 opacity-0"
-                    }`}
+                  className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                    openIndex === i
+                      ? "max-h-[1000px] opacity-100 mt-3"
+                      : "max-h-0 opacity-0"
+                  }`}
                 >
                   <div className="ml-12 bg-white/10 border border-white/20 rounded-lg p-2 backdrop-blur-sm">
                     <div
@@ -916,28 +987,31 @@ const ScholarshipsSection = ({ data, leftScholarships, rightScholarships }: any)
             </div>
           ))}
         </div>
-
-
       </div>
     </section>
-  )
-}
-
+  );
+};
 
 export const CTASection = ({ data }) => {
-  if (data?.isHidden === "yes") return null
+  if (data?.isHidden === "yes") return null;
   return (
     <section className="relative bg-[#ee6a43] overflow-hidden py-12 sm:py-16 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-0">
-
         {/* Text */}
         <div className="text-white relative z-10">
-          <Tag data={data?.tag} text={data?.title || "Scholarships for International Students"} css={"text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"} />
+          <Tag
+            data={data?.tag}
+            text={data?.title || "Scholarships for International Students"}
+            css={"text-xl sm:text-3xl md:text-4xl font-semibold leading-tight"}
+          />
 
           <span
             className="mt-4 text-sm sm:text-base lg:text-lg max-w-xl text-white/90"
             dangerouslySetInnerHTML={{
-              __html: data?.subtitle || data?.description || "Explore top universities, expert guidance, and seamless admission support with Ooshas Global.",
+              __html:
+                data?.subtitle ||
+                data?.description ||
+                "Explore top universities, expert guidance, and seamless admission support with Ooshas Global.",
             }}
           />
           <div className="mt-4">
@@ -972,19 +1046,14 @@ export const CTASection = ({ data }) => {
       />
       <div className="absolute bottom-0 left-0 w-full sm:w-1/2 h-2 sm:h-3 bg-yellow-400" />
     </section>
-  )
-}
+  );
+};
 
-const SimilarDestination = ({ countryres, sliderRef }) =>
-(
-
-
+const SimilarDestination = ({ countryres, sliderRef }) => (
   <section className="py-12 max-w-7xl mx-auto">
     <div className="flex items-center gap-3 mb-6">
       <div className="w-1 h-8 bg-orange-500"></div>
-      <h2 className="text-2xl font-bold text-gray-800">
-        Related Destinations
-      </h2>
+      <h2 className="text-2xl font-bold text-gray-800">Related Destinations</h2>
     </div>
 
     <div ref={sliderRef} className="keen-slider">
@@ -1013,25 +1082,27 @@ const SimilarDestination = ({ countryres, sliderRef }) =>
               <h3 className="text-xl font-bold text-gray-900 truncate my-4">
                 {item?.title}
               </h3>
-
-
             </div>
           </Link>
         </div>
       ))}
     </div>
   </section>
-
-)
-
+);
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export default function CountryDetails({ Universityres, Faqres, pageData, imageData, videoRes, countryres }) {
-  const router = useRouter()
-  const pathname = usePathname()
+export default function CountryDetails({
+  Universityres,
+  Faqres,
+  pageData,
+  imageData,
+  videoRes,
+  countryres,
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
   const { openPopup } = useGlobal();
-
 
   const animation = { duration: 40000, easing: (t) => t };
 
@@ -1070,10 +1141,10 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
 
   useEffect(() => {
     if (pathname.startsWith("/destination/")) {
-      const slug = pathname.split("/destination/")[1]
-      if (slug) router.replace(`/${slug}`)
+      const slug = pathname.split("/destination/")[1];
+      if (slug) router.replace(`/${slug}`);
     }
-  }, [pathname, router])
+  }, [pathname, router]);
 
   const sectionMapping = {
     hero: HeroSection,
@@ -1089,128 +1160,164 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
     scholarships: ScholarshipsSection,
     cta: CTASection,
     similardestination: SimilarDestination,
-    videoTestimonials: 'VideoTestimonials',
-    imageTestimonials: 'ImageTestimonial',
-    minorcta: DestinationCTA
-  }
+    videoTestimonials: "VideoTestimonials",
+    imageTestimonials: "ImageTestimonial",
+    minorcta: DestinationCTA,
+  };
 
-  console.log(pageData, "bnvmc")
+  console.log(pageData, "bnvmc");
   const getOriginalSectionName = (name) =>
-    name.includes('_copy_') ? name.split('_copy_')[0] : name
+    name.includes("_copy_") ? name.split("_copy_")[0] : name;
 
   const getSortedSections = () => {
-    if (!pageData?.sections) return []
+    if (!pageData?.sections) return [];
     return Object.keys(pageData.sections)
       .map((name) => {
-        const data = pageData.sections[name]
-        if (data.__order__ === undefined) return null
+        const data = pageData.sections[name];
+        if (data.__order__ === undefined) return null;
         return {
           name,
           alldata: pageData,
           originalName: getOriginalSectionName(name),
           data,
           order: data.__order__,
-          openPopup
-        }
+          openPopup,
+        };
       })
       .filter(Boolean)
-      .sort((a, b) => a.order - b.order)
-  }
+      .sort((a, b) => a.order - b.order);
+  };
 
-  const sortedSections = getSortedSections()
+  const sortedSections = getSortedSections();
 
+  const scholarshipSection = pageData?.sections?.scholarships;
+  const scholarshipItems = scholarshipSection?.items || [];
+  const midPoint = Math.ceil(scholarshipItems.length / 2);
+  const leftScholarships = scholarshipItems
+    .slice(0, midPoint)
+    .map((i) => i.title);
+  const rightScholarships = scholarshipItems
+    .slice(midPoint)
+    .map((i) => i.title);
 
-  const scholarshipSection = pageData?.sections?.scholarships
-  const scholarshipItems = scholarshipSection?.items || []
-  const midPoint = Math.ceil(scholarshipItems.length / 2)
-  const leftScholarships = scholarshipItems.slice(0, midPoint).map((i) => i.title)
-  const rightScholarships = scholarshipItems.slice(midPoint).map((i) => i.title)
-
-  const visaStories = imageData?.filter((i) => i.target === "visa" && i.status === 'Approved') || []
-  const regularImages = imageData?.filter((i) => i.target !== 'visa' && i.type === 'image') || []
+  const visaStories =
+    imageData?.filter((i) => i.target === "visa" && i.status === "Approved") ||
+    [];
+  const regularImages =
+    imageData?.filter((i) => i.target !== "visa" && i.type === "image") || [];
 
   const shouldRenderSection = (name, data) => {
-    if (!data) return false
+    if (!data) return false;
     // if (name === 'visaStories') //console.log("Visa Stories Count:", visaStories.length)
-    if (name === 'videoTestimonials') return videoRes?.data?.length > 0
-    if (name === 'imageTestimonials') return regularImages?.length > 0
-    if (name === 'visaStories') return visaStories?.length > 0
-    return true
-  }
+    if (name === "videoTestimonials") return videoRes?.data?.length > 0;
+    if (name === "imageTestimonials") return regularImages?.length > 0;
+    if (name === "visaStories") return visaStories?.length > 0;
+    return true;
+  };
 
   return (
     <>
-      {sortedSections.map(({ name, originalName, data, alldata, order, openPopup }) => {
-        if (!shouldRenderSection(originalName, data)) return null
+      {sortedSections.map(
+        ({ name, originalName, data, alldata, order, openPopup }) => {
+          if (!shouldRenderSection(originalName, data)) return null;
 
-        const SectionComponent = sectionMapping[originalName] || sectionMapping[name]
+          const SectionComponent =
+            sectionMapping[originalName] || sectionMapping[name];
 
+          if (originalName === "hero" || name === "hero") {
+            return (
+              SectionComponent && (
+                <SectionComponent
+                  key={`${name}-${order}`}
+                  data={data}
+                  alldata={alldata}
+                />
+              )
+            );
+          }
+          if (originalName === "choosingUs" || name === "choosingUs") {
+            return (
+              SectionComponent && (
+                <SectionComponent
+                  key={`${name}-${order}`}
+                  data={data}
+                  Universityres={Universityres}
+                />
+              )
+            );
+          }
+          if (originalName === "minorcta" || name === "minorcta") {
+            return (
+              SectionComponent && (
+                <SectionComponent
+                  openPopup={openPopup}
+                  key={`${name}-${order}`}
+                  data={data}
+                  alldata={alldata}
+                />
+              )
+            );
+          }
+          if (originalName === "scholarships" || name === "scholarships") {
+            return (
+              SectionComponent && (
+                <SectionComponent
+                  key={`${name}-${order}`}
+                  data={data}
+                  leftScholarships={leftScholarships}
+                  rightScholarships={rightScholarships}
+                />
+              )
+            );
+          }
+          // if (originalName === 'videoTestimonials' || name === 'videoTestimonials') {
+          //   return (
+          //     <VideoTestimonialsSlider
+          //       key={`${name}-${order}`}
+          //       items={videoRes?.data || []}
+          //       title={data?.title}
+          //       subtitle={data?.subtitle}
+          //       tag={data?.tag}
+          //     />
+          //   )
+          // }
 
+          if (
+            originalName === "imageTestimonials" ||
+            name === "imageTestimonials"
+          ) {
+            return null;
+            return (
+              regularImages?.length > 0 && (
+                <ImageTestimonial
+                  key={`${name}-${order}`}
+                  title={data?.title || "Our Student Success Stories"}
+                  subtitle={
+                    data?.subtitle || "Real experiences from our students"
+                  }
+                  items={regularImages}
+                />
+              )
+            );
+          }
 
-        if (originalName === 'hero' || name === 'hero') {
-          return SectionComponent && (
-            <SectionComponent key={`${name}-${order}`} data={data} alldata={alldata} />
-          )
-        }
-        if (originalName === 'choosingUs' || name === 'choosingUs') {
-          return SectionComponent && (
-            <SectionComponent key={`${name}-${order}`} data={data} Universityres={Universityres} />
-          )
-        }
-        if (originalName === 'minorcta' || name === 'minorcta') {
-          return SectionComponent && (
-            <SectionComponent openPopup={openPopup} key={`${name}-${order}`} data={data} alldata={alldata} />
-          )
-        }
-        if (originalName === 'scholarships' || name === 'scholarships') {
-          return SectionComponent && (
-            <SectionComponent
-              key={`${name}-${order}`}
-              data={data}
-              leftScholarships={leftScholarships}
-              rightScholarships={rightScholarships}
-            />
-          )
-        }
-        // if (originalName === 'videoTestimonials' || name === 'videoTestimonials') {
-        //   return (
-        //     <VideoTestimonialsSlider
-        //       key={`${name}-${order}`}
-        //       items={videoRes?.data || []}
-        //       title={data?.title}
-        //       subtitle={data?.subtitle}
-        //       tag={data?.tag}
-        //     />
-        //   )
-        // }
+          if (originalName === "visastories" || name === "visaStories") {
+            return visaStories?.length > 0 && <VisaDetails />;
+          }
 
+          return (
+            SectionComponent && (
+              <SectionComponent
+                key={`${name}-${order}`}
+                data={data}
+                openPopup={openPopup}
+              />
+            )
+          );
+        },
+      )}
 
-        if (originalName === 'imageTestimonials' || name === 'imageTestimonials') {
-          return null
-          return regularImages?.length > 0 && (
-            <ImageTestimonial
-              key={`${name}-${order}`}
-              title={data?.title || "Our Student Success Stories"}
-              subtitle={data?.subtitle || "Real experiences from our students"}
-              items={regularImages}
-            />
-          )
-        }
-
-        if (originalName === 'visastories' || name === 'visaStories') {
-          return visaStories?.length > 0 && (
-            <VisaDetails />
-          )
-        }
-
-
-
-        return SectionComponent && (
-          <SectionComponent key={`${name}-${order}`} data={data} openPopup={openPopup} />
-        )
-      })}
-
-      <div className='max-w-7xl mx-auto pt-6'>
+      <div className="max-w-7xl mx-auto pt-6">
         <AuthorCard
           name="Sakshi Taneja"
           designation="Content Writer & International Education Specialist"
@@ -1219,12 +1326,11 @@ export default function CountryDetails({ Universityres, Faqres, pageData, imageD
         />
       </div>
 
-
       {countryres?.length > 0 && (
         <SimilarDestination countryres={countryres} sliderRef={sliderRef} />
       )}
 
       <FAQSection Faqres={Faqres} />
     </>
-  )
+  );
 }
