@@ -25,17 +25,54 @@ const cleanHtmlContent = (html: string = "") => {
 
   return html
     // Remove script and style tags completely
-    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
-    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "")
+    .replace(
+      /<script\b[^>]*>[\s\S]*?<\/script>/gi,
+      ""
+    )
+    .replace(
+      /<style\b[^>]*>[\s\S]*?<\/style>/gi,
+      ""
+    )
 
     // Remove inline event handlers
-    .replace(/\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(
+      /\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
+      ""
+    )
 
     // Remove unwanted attributes
-    .replace(/\s+(?:style|class|dir|lang|width|height|align)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(
+      /\s+(?:style|dir|lang|width|height|align)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
+      ""
+    )
+
+    // Remove class attributes EXCEPT:
+    // ooshasformbtn
+    // ooshasformshowing
+    .replace(
+      /\s+class\s*=\s*(['"])(.*?)\1/gi,
+      (match, quote, classNames) => {
+        const allowedClasses = classNames
+          .split(/\s+/)
+          .filter(
+            (className: string) =>
+              className === "ooshasformbtn" ||
+              className === "ooshasformshowing"
+          );
+
+        if (allowedClasses.length === 0) {
+          return "";
+        }
+
+        return ` class=${quote}${allowedClasses.join(" ")}${quote}`;
+      }
+    )
 
     // Remove data-* attributes
-    .replace(/\s+data-[a-z0-9_-]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(
+      /\s+data-[a-z0-9_-]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi,
+      ""
+    )
 
     // Remove dangerous javascript URLs
     .replace(
@@ -52,214 +89,215 @@ const injectCounsellingButton = (html: string) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
 
-    const element = doc.getElementById("ooshasformshowing");
+    const elements = doc.querySelectorAll(".ooshasformshowing");
 
-    if (!element) {
+    if (!elements.length) {
         return html;
     }
 
-    const content = element.innerHTML;
+    elements.forEach((element) => {
+        const content = element.innerHTML;
 
-    element.outerHTML = `
-        <div
-            id="ooshasformshowing"
-            class="ooshas-custom-block"
-            style="
-                position: relative;
-                width: 100%;
-                margin: 32px 0;
-                padding: 0;
-                overflow: hidden;
-                box-sizing: border-box;
-                border: 1px solid #fed7aa;
-                border-radius: 18px;
-                background: #F46C44;
-                box-shadow: 0 12px 35px rgba(244,108,68,0.20);
-            "
-        >
-
-            <!-- Decorative Circle -->
+        element.outerHTML = `
             <div
-                style="
-                    position: absolute;
-                    top: -64px;
-                    right: -64px;
-                    width: 208px;
-                    height: 208px;
-                    border-radius: 9999px;
-                    background: rgba(255,255,255,0.10);
-                    pointer-events: none;
-                "
-            ></div>
-
-            <!-- Decorative Circle -->
-            <div
-                style="
-                    position: absolute;
-                    left: -48px;
-                    bottom: -80px;
-                    width: 176px;
-                    height: 176px;
-                    border-radius: 9999px;
-                    background: rgba(255,255,255,0.05);
-                    pointer-events: none;
-                "
-            ></div>
-
-            <!-- Main Content -->
-            <div
+                class="ooshasformshowing ooshas-custom-block"
                 style="
                     position: relative;
-                    z-index: 10;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    gap: 40px;
                     width: 100%;
+                    margin: 32px 0;
+                    padding: 0;
+                    overflow: hidden;
                     box-sizing: border-box;
-                    padding: 18px 18px;
+                    border: 1px solid #fed7aa;
+                    border-radius: 18px;
+                    background: #F46C44;
+                    box-shadow: 0 12px 35px rgba(244,108,68,0.20);
                 "
             >
 
-                <!-- Left Content -->
+                <!-- Decorative Circle -->
                 <div
                     style="
-                        flex: 1;
-                        min-width: 0;
+                        position: absolute;
+                        top: -64px;
+                        right: -64px;
+                        width: 208px;
+                        height: 208px;
+                        border-radius: 9999px;
+                        background: rgba(255,255,255,0.10);
+                        pointer-events: none;
+                    "
+                ></div>
+
+                <!-- Decorative Circle -->
+                <div
+                    style="
+                        position: absolute;
+                        left: -48px;
+                        bottom: -80px;
+                        width: 176px;
+                        height: 176px;
+                        border-radius: 9999px;
+                        background: rgba(255,255,255,0.05);
+                        pointer-events: none;
+                    "
+                ></div>
+
+                <!-- Main Content -->
+                <div
+                    style="
+                        position: relative;
+                        z-index: 10;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        gap: 40px;
+                        width: 100%;
                         box-sizing: border-box;
+                        padding: 18px;
                     "
                 >
 
-                    <!-- Badge -->
+                    <!-- Left Content -->
                     <div
                         style="
-                            display: inline-flex;
-                            align-items: center;
-                            margin: 0 0 14px 0;
-                            padding: 6px 12px;
+                            flex: 1;
+                            min-width: 0;
                             box-sizing: border-box;
-                            border: 1px solid rgba(255,255,255,0.35);
-                            border-radius: 9999px;
-                            background: rgba(255,255,255,0.10);
                         "
                     >
-                        <span
+
+                        <!-- Badge -->
+                        <div
                             style="
-                                margin: 0;
+                                display: inline-flex;
+                                align-items: center;
+                                margin: 0 0 14px 0;
+                                padding: 6px 12px;
+                                box-sizing: border-box;
+                                border: 1px solid rgba(255,255,255,0.35);
+                                border-radius: 9999px;
+                                background: rgba(255,255,255,0.10);
+                            "
+                        >
+                            <span
+                                style="
+                                    margin: 0;
+                                    padding: 0;
+                                    color: #ffffff;
+                                    font-size: 10px;
+                                    line-height: 1.3;
+                                    font-weight: 700;
+                                    letter-spacing: 1.5px;
+                                    text-transform: uppercase;
+                                    font-family: inherit;
+                                "
+                            >
+                                Free Expert Guidance
+                            </span>
+                        </div>
+
+                        <!-- Heading -->
+                        <h3
+                            style="
+                                margin: 0 0 14px 0;
                                 padding: 0;
                                 color: #ffffff;
-                                font-size: 10px;
-                                line-height: 1.3;
+                                font-size: 28px;
+                                line-height: 1.25;
                                 font-weight: 700;
-                                letter-spacing: 1.5px;
-                                text-transform: uppercase;
                                 font-family: inherit;
                             "
                         >
-                            Free Expert Guidance
-                        </span>
+                            Start Your Study Abroad Journey Today
+                        </h3>
+
+                        <!-- Description -->
+                        <div
+                            style="
+                                max-width: 680px;
+                                margin: 0;
+                                padding: 0;
+                                color: rgba(255,255,255,0.92);
+                                font-size: 15px;
+                                line-height: 1.75;
+                                font-weight: 400;
+                                font-family: inherit;
+                            "
+                        >
+                            ${
+                                content ||
+                                "Get free counselling from our expert counsellors."
+                            }
+                        </div>
+
                     </div>
 
-                    <!-- Heading -->
-                    <h3
-                        style="
-                            margin: 0 0 14px 0;
-                            padding: 0;
-                            color: #ffffff;
-                            font-size: 28px;
-                            line-height: 1.25;
-                            font-weight: 700;
-                            font-family: inherit;
-                        "
-                    >
-                        Start Your Study Abroad Journey Today
-                    </h3>
-
-                    <!-- Description -->
+                    <!-- CTA Area -->
                     <div
                         style="
-                            max-width: 680px;
-                            margin: 0;
-                            padding: 0;
-                            color: rgba(255,255,255,0.92);
-                            font-size: 15px;
-                            line-height: 1.75;
-                            font-weight: 400;
-                            font-family: inherit;
+                            flex-shrink: 0;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            min-width: 190px;
+                            box-sizing: border-box;
                         "
                     >
-                        ${
-                            content ||
-                            "Get free counselling from our expert counsellors."
-                        }
+
+                        <!-- Button -->
+                        <button
+                            type="button"
+                            onclick="window.openCounsellingPopup()"
+                            style="
+                                display: inline-flex;
+                                align-items: center;
+                                justify-content: center;
+                                white-space: nowrap;
+                                width: auto;
+                                min-width: 190px;
+                                margin: 0;
+                                padding: 13px 20px;
+                                box-sizing: border-box;
+                                border: none;
+                                border-radius: 12px;
+                                background: #ffffff;
+                                color: #1f2937;
+                                font-family: inherit;
+                                font-size: 14px;
+                                line-height: 1.4;
+                                font-weight: 700;
+                                text-align: center;
+                                cursor: pointer;
+                                box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+                            "
+                        >
+                            Book Free Counselling
+                        </button>
+
+                        <!-- Small Text -->
+                        <p
+                            style="
+                                margin: 10px 0 0 0;
+                                padding: 0;
+                                color: rgba(255,255,255,0.82);
+                                font-size: 12px;
+                                line-height: 1.5;
+                                font-weight: 400;
+                                text-align: center;
+                                font-family: inherit;
+                            "
+                        >
+                            ✓ 100% Free Consultation
+                        </p>
+
                     </div>
 
                 </div>
-
-                <!-- CTA Area -->
-                <div
-                    style="
-                        flex-shrink: 0;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
-                        min-width: 190px;
-                        box-sizing: border-box;
-                    "
-                >
-
-                    <!-- Button -->
-                    <button
-                        type="button"
-                        onclick="window.openCounsellingPopup()"
-                        style="
-                            display: inline-flex;
-                            align-items: center;
-                            justify-content: center;
-                            white-space: nowrap;
-                            width: auto;
-                            min-width: 190px;
-                            margin: 0;
-                            padding: 13px 20px;
-                            box-sizing: border-box;
-                            border: none;
-                            border-radius: 12px;
-                            background: #ffffff;
-                            color: #1f2937;
-                            font-family: inherit;
-                            font-size: 14px;
-                            line-height: 1.4;
-                            font-weight: 700;
-                            text-align: center;
-                            cursor: pointer;
-                            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-                        "
-                    >
-                        Book Free Counselling
-                    </button>
-
-                    <!-- Small Text -->
-                    <p
-                        style="
-                            margin: 10px 0 0 0;
-                            padding: 0;
-                            color: rgba(255,255,255,0.82);
-                            font-size: 12px;
-                            line-height: 1.5;
-                            font-weight: 400;
-                            text-align: center;
-                            font-family: inherit;
-                        "
-                    >
-                        ✓ 100% Free Consultation
-                    </p>
-
-                </div>
-
             </div>
-        </div>
-    `;
+        `;
+    });
 
     return doc.body.innerHTML;
 };
@@ -267,11 +305,15 @@ const injectCounsellingButton = (html: string) => {
 const injectButton = (html: string) => {
     if (!html) return "";
 
-    return html.replace(
-        /<div[^>]*id=["']ooshasformbtn["'][^>]*>[\s\S]*?<\/div>/i,
-        () => `
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const elements = doc.querySelectorAll(".ooshasformbtn");
+
+    elements.forEach((element) => {
+        element.outerHTML = `
             <div
-                id="ooshasformbtn"
+                class="ooshasformbtn"
                 style="
                     width: 100%;
                     margin: 22px 0;
@@ -281,8 +323,6 @@ const injectButton = (html: string) => {
                     text-align: center;
                 "
             >
-
-                <!-- CTA Button -->
                 <button
                     type="button"
                     onclick="window.openCounsellingPopup()"
@@ -311,7 +351,6 @@ const injectButton = (html: string) => {
                     Book Your FREE Counselling Now!
                 </button>
 
-                <!-- Gradient Divider -->
                 <div
                     style="
                         width: calc(100% - 32px);
@@ -328,10 +367,11 @@ const injectButton = (html: string) => {
                         box-sizing: border-box;
                     "
                 ></div>
-
             </div>
-        `
-    );
+        `;
+    });
+
+    return doc.body.innerHTML;
 };
 
 
