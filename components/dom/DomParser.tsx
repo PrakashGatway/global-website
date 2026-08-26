@@ -57,7 +57,7 @@ const cleanHtmlContent = (html: string = "") => {
           .filter(
             (className: string) =>
               className === "ooshasformbtn" ||
-              className === "ooshasformshowing"
+              className === "ooshasformshowing" || className === "ooshasformbtnhref"
           );
 
         if (allowedClasses.length === 0) {
@@ -84,222 +84,355 @@ const cleanHtmlContent = (html: string = "") => {
 };
 
 const injectCounsellingButton = (html: string) => {
-    if (!html) return "";
+  if (!html) return "";
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
 
-    const elements = doc.querySelectorAll(".ooshasformshowing");
+  const elements = doc.querySelectorAll(".ooshasformshowing");
 
-    if (!elements.length) {
-        return html;
-    }
+  if (!elements.length) {
+    return html;
+  }
 
-    elements.forEach((element) => {
-        const content = element.innerHTML;
+  elements.forEach((element) => {
+    const content = element.innerHTML;
 
-        element.outerHTML = `
-            <div
-                class="ooshasformshowing ooshas-custom-block"
-                style="
-                    position: relative;
-                    width: 100%;
-                    margin: 32px 0;
-                    padding: 0;
-                    overflow: hidden;
-                    box-sizing: border-box;
-                    border: 1px solid #fed7aa;
-                    border-radius: 18px;
-                    background: #F46C44;
-                    box-shadow: 0 12px 35px rgba(244,108,68,0.20);
-                "
-            >
+    element.outerHTML = `
+      <style>
+        .ooshas-custom-block {
+          position: relative;
+          width: 100%;
+          margin: 24px 0;
+          padding: 0;
+          box-sizing: border-box;
+          overflow: hidden;
+          border: 1px solid #E8E8E8;
+          border-radius: 16px;
+          background: #FFFFFF;
+          box-shadow: 0 4px 16px rgba(16, 42, 67, 0.06);
+          font-family: inherit;
+        }
 
-                <!-- Decorative Circle -->
-                <div
-                    style="
-                        position: absolute;
-                        top: -64px;
-                        right: -64px;
-                        width: 208px;
-                        height: 208px;
-                        border-radius: 9999px;
-                        background: rgba(255,255,255,0.10);
-                        pointer-events: none;
-                    "
-                ></div>
+        .ooshas-custom-inner {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          width: 100%;
+          min-height: 98px;
+          padding: 14px;
+          box-sizing: border-box;
+        }
 
-                <!-- Decorative Circle -->
-                <div
-                    style="
-                        position: absolute;
-                        left: -48px;
-                        bottom: -80px;
-                        width: 176px;
-                        height: 176px;
-                        border-radius: 9999px;
-                        background: rgba(255,255,255,0.05);
-                        pointer-events: none;
-                    "
-                ></div>
+        .ooshas-custom-image {
+          flex: 0 0 120px;
+          width: 120px;
+          height: 90px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-sizing: border-box;
+        }
 
-                <!-- Main Content -->
-                <div
-                    style="
-                        position: relative;
-                        z-index: 10;
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        gap: 40px;
-                        width: 100%;
-                        box-sizing: border-box;
-                        padding: 18px;
-                    "
-                >
+        .ooshas-custom-image img {
+          display: block;
+          width: 105px;
+          height: 100px;
+          max-width: 100%;
+          object-fit: contain;
+          border: 0;
+          margin: 0;
+          padding: 0;
+        }
 
-                    <!-- Left Content -->
-                    <div
-                        style="
-                            flex: 1;
-                            min-width: 0;
-                            box-sizing: border-box;
-                        "
-                    >
+        .ooshas-custom-content {
+          flex: 1;
+          min-width: 0;
+          padding: 0;
 
-                        <!-- Badge -->
-                        <div
-                            style="
-                                display: inline-flex;
-                                align-items: center;
-                                margin: 0 0 14px 0;
-                                padding: 6px 12px;
-                                box-sizing: border-box;
-                                border: 1px solid rgba(255,255,255,0.35);
-                                border-radius: 9999px;
-                                background: rgba(255,255,255,0.10);
-                            "
-                        >
-                            <span
-                                style="
-                                    margin: 0;
-                                    padding: 0;
-                                    color: #ffffff;
-                                    font-size: 10px;
-                                    line-height: 1.3;
-                                    font-weight: 700;
-                                    letter-spacing: 1.5px;
-                                    text-transform: uppercase;
-                                    font-family: inherit;
-                                "
-                            >
-                                Free Expert Guidance
-                            </span>
-                        </div>
+          margin: 0;
+          box-sizing: border-box;
+        }
 
-                        <!-- Heading -->
-                        <h3
-                            style="
-                                margin: 0 0 14px 0;
-                                padding: 0;
-                                color: #ffffff;
-                                font-size: 28px;
-                                line-height: 1.25;
-                                font-weight: 700;
-                                font-family: inherit;
-                            "
-                        >
-                            Start Your Study Abroad Journey Today
-                        </h3>
+        .ooshas-custom-heading {
+          margin: 0!important;
+          padding: 0;
+          color: #102A43;
+          font-size: 21px;
+          line-height: 1.3;
+          font-weight: 700;
+          letter-spacing: -0.3px;
+          font-family: inherit;
+        }
 
-                        <!-- Description -->
-                        <div
-                            style="
-                                max-width: 680px;
-                                margin: 0;
-                                padding: 0;
-                                color: rgba(255,255,255,0.92);
-                                font-size: 15px;
-                                line-height: 1.75;
-                                font-weight: 400;
-                                font-family: inherit;
-                            "
-                        >
-                            ${
-                                content ||
-                                "Get free counselling from our expert counsellors."
-                            }
-                        </div>
+        .ooshas-custom-heading-highlight {
+          color: #F46B3F;
+          font-weight: 700;
+          font-size: inherit;
+        }
 
-                    </div>
+        .ooshas-custom-description {
+          margin: 0 0 0;
+          padding: 0;
+          color: #494B4F;
+          font-size: 13px;
+          line-height: 1.5;
+          font-weight: 500;
+          font-family: inherit;
+        }
 
-                    <!-- CTA Area -->
-                    <div
-                        style="
-                            flex-shrink: 0;
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: center;
-                            min-width: 190px;
-                            box-sizing: border-box;
-                        "
-                    >
+        .ooshas-custom-description p {
+          margin: 0;
+          padding: 0;
+        }
 
-                        <!-- Button -->
-                        <button
-                            type="button"
-                            onclick="window.openCounsellingPopup()"
-                            style="
-                                display: inline-flex;
-                                align-items: center;
-                                justify-content: center;
-                                white-space: nowrap;
-                                width: auto;
-                                min-width: 190px;
-                                margin: 0;
-                                padding: 13px 20px;
-                                box-sizing: border-box;
-                                border: none;
-                                border-radius: 12px;
-                                background: #ffffff;
-                                color: #1f2937;
-                                font-family: inherit;
-                                font-size: 14px;
-                                line-height: 1.4;
-                                font-weight: 700;
-                                text-align: center;
-                                cursor: pointer;
-                                box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-                            "
-                        >
-                            Book Free Counselling
-                        </button>
+        .ooshas-custom-description * {
+          margin-top: 0;
+          margin-bottom: 0;
+        }
 
-                        <!-- Small Text -->
-                        <p
-                            style="
-                                margin: 10px 0 0 0;
-                                padding: 0;
-                                color: rgba(255,255,255,0.82);
-                                font-size: 12px;
-                                line-height: 1.5;
-                                font-weight: 400;
-                                text-align: center;
-                                font-family: inherit;
-                            "
-                        >
-                            ✓ 100% Free Consultation
-                        </p>
+        .ooshas-custom-cta {
+          flex: 0 0 auto;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
 
-                    </div>
+        .ooshas-custom-button {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          white-space: nowrap;
+          min-width: 210px;
+          height: 38px;
+          margin: 0;
+          padding: 0 18px;
+          box-sizing: border-box;
+          border: none;
+          border-radius: 10px;
+          background: #F6673A;
+          color: #FFFFFF !important;
+          font-family: inherit;
+          font-size: 13px;
+          line-height: 1;
+          font-weight: 700;
+          text-align: center;
+          text-decoration: none;
+          cursor: pointer;
+          box-shadow: 0 5px 14px rgba(246, 103, 58, 0.22);
+          transition: all 0.2s ease;
+        }
 
-                </div>
+        .ooshas-custom-button:hover {
+          background: #E95A2F;
+          box-shadow: 0 7px 18px rgba(246, 103, 58, 0.28);
+          transform: translateY(-1px);
+        }
+
+        .ooshas-custom-button:active {
+          transform: translateY(0);
+        }
+
+        .ooshas-custom-button-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          line-height: 1;
+        }
+
+        /* =========================
+           TABLET
+        ========================== */
+
+        @media (max-width: 900px) {
+          .ooshas-custom-inner {
+            gap: 14px;
+            padding: 12px 18px;
+          }
+
+          .ooshas-custom-image {
+            flex: 0 0 95px;
+            width: 95px;
+            height: 80px;
+          }
+
+          .ooshas-custom-image img {
+            width: 90px;
+            height: 82px;
+          }
+
+          .ooshas-custom-heading {
+            font-size: 18px;
+          }
+
+          .ooshas-custom-description {
+            font-size: 12px;
+          }
+
+          .ooshas-custom-button {
+            min-width: 175px;
+            padding: 0 14px;
+            font-size: 12px;
+          }
+        }
+
+        /* =========================
+           MOBILE
+        ========================== */
+
+        @media (max-width: 640px) {
+          .ooshas-custom-block {
+            margin: 20px 0;
+            border-radius: 14px;
+          }
+
+          .ooshas-custom-inner {
+            display: grid;
+            grid-template-columns: 78px minmax(0, 1fr);
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            min-height: auto;
+          }
+
+          .ooshas-custom-image {
+            width: 78px;
+            height: 70px;
+            flex: none;
+          }
+
+          .ooshas-custom-image img {
+            width: 75px;
+            height: 70px;
+          }
+
+          .ooshas-custom-heading {
+            font-size: 16px;
+            line-height: 1.3;
+            letter-spacing: -0.15px;
+          }
+
+          .ooshas-custom-description {
+            margin-top: 0px;
+            font-size: 11px;
+            line-height: 1.45;
+          }
+
+          .ooshas-custom-cta {
+            grid-column: 1 / -1;
+            width: 100%;
+            margin-top: 0px;
+          }
+
+          .ooshas-custom-button {
+            width: 100%;
+            min-width: 0;
+            height: 40px;
+            padding: 0 14px;
+            border-radius: 9px;
+            font-size: 12px;
+          }
+        }
+
+        /* =========================
+           SMALL MOBILE
+        ========================== */
+
+        @media (max-width: 380px) {
+          .ooshas-custom-inner {
+            grid-template-columns: 65px minmax(0, 1fr);
+            gap: 9px;
+            padding: 12px;
+          }
+
+          .ooshas-custom-image {
+            width: 65px;
+            height: 62px;
+          }
+
+          .ooshas-custom-image img {
+            width: 65px;
+            height: 62px;
+          }
+
+          .ooshas-custom-heading {
+            font-size: 15px;
+          }
+
+          .ooshas-custom-description {
+            font-size: 10.5px;
+          }
+
+          .ooshas-custom-button {
+            height: 38px;
+            font-size: 11.5px;
+          }
+        }
+      </style>
+
+      <div class="ooshasformshowing ooshas-custom-block">
+
+        <div class="ooshas-custom-inner">
+
+          <!-- Illustration -->
+          <div class="ooshas-custom-image">
+            <img
+              src="https://png.pngtree.com/png-clipart/20230913/original/pngtree-counseling-clipart-man-and-woman-having-psychological-discussions-cartoon-vector-png-image_11073518.png"
+              alt="Study Abroad Counselling"
+            />
+          </div>
+
+          <!-- Content -->
+          <div class="ooshas-custom-content">
+
+            <h3 class="ooshas-custom-heading">
+              Ready to Start Your
+              <span class="ooshas-custom-heading-highlight">
+                Study Abroad
+              </span>
+              Journey?
+            </h3>
+
+            <div class="ooshas-custom-description">
+              ${
+                content ||
+                "Get expert guidance and turn your dream destination into reality."
+              }
             </div>
-        `;
-    });
 
-    return doc.body.innerHTML;
+          </div>
+
+          <!-- CTA -->
+          <div class="ooshas-custom-cta">
+
+            <button
+              type="button"
+              onclick="window.openCounsellingPopup()"
+              class="ooshas-custom-button"
+            >
+              <span class="ooshas-custom-button-icon">
+                📅
+              </span>
+
+              Book a Free Consultation
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+    `;
+  });
+
+  return doc.body.innerHTML;
 };
 
 const injectButton = (html: string) => {
@@ -372,6 +505,96 @@ const injectButton = (html: string) => {
     });
 
     return doc.body.innerHTML;
+};
+
+const injectButton2 = (html: string) => {
+  if (!html) return "";
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+
+  const elements = doc.querySelectorAll(".ooshasformbtnhref");
+
+  elements.forEach((element) => {
+    // Get href from existing <a>
+    const link = element.querySelector("a");
+    const href = link?.getAttribute("href") || "#";
+
+    // Get button text from existing content
+    const buttonText =
+      link?.textContent?.trim() ||
+      element.textContent?.trim() ||
+      "Book Your FREE Counselling Now!";
+
+    // Determine whether it's an external URL
+    const isExternal =
+      href.startsWith("http://") ||
+      href.startsWith("https://");
+
+    element.outerHTML = `
+      <div
+        class="ooshasformbtnhref"
+        style="
+          width: 100%;
+          margin: 22px 0;
+          padding: 0;
+          box-sizing: border-box;
+          background: transparent;
+          text-align: center;
+        "
+      >
+
+        <a
+          href="${href}"
+          ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ""}
+          style="
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 10px 24px;
+            min-height: 40px;
+            border: none;
+            border-radius: 9999px;
+            background: #f36d45;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13px;
+            line-height: 1.3;
+            font-weight: 700;
+            white-space: nowrap;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(201, 52, 45, 0.18);
+            box-sizing: border-box;
+          "
+        >
+          ${buttonText}
+        </a>
+
+        <div
+          style="
+            width: calc(100% - 32px);
+            height: 4px;
+            margin: 20px auto 0;
+            padding: 0;
+            border-radius: 9999px;
+            background: linear-gradient(
+              90deg,
+              #f3bd38 0%,
+              #ed943b 45%,
+              #d9463f 100%
+            );
+            box-sizing: border-box;
+          "
+        ></div>
+
+      </div>
+    `;
+  });
+
+  return doc.body.innerHTML;
 };
 
 
@@ -702,7 +925,10 @@ export const BlogContent = ({ cleanedHtml }: InnerContentProps) => {
   const html = useMemo(() => cleanHtmlContent(cleanedHtml), [cleanedHtml]);
 
     const finalHtml2 = injectCounsellingButton(html);
-  const finalHtml = injectButton(finalHtml2)
+    const finalHtml3 = injectButton2(finalHtml2);
+
+    
+  const finalHtml = injectButton(finalHtml3)
 
   return (
     <>

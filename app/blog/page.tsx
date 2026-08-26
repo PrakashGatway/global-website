@@ -50,7 +50,7 @@ export default async function BlogPage({
   const blogres = await serverInst.get("/blogs?type=blog", {
     params: {
       page,
-      limit: 9,
+      limit: 18,
       catslug: category
     },
   })

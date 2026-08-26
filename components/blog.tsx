@@ -25,10 +25,8 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [isPending, startTransition] = useTransition();
-  
 
   const totalPages = Math.ceil(total / limit);
-  
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -88,38 +86,36 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
 
   return (
     <>
-      <section className="relative overflow-hidden  min-h-[420px] z-11"   style={{
-    backgroundImage: `url("/blog-hero.jpeg")`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-  }}>
-  {/* Background Image */}
+      <section
+        className="relative overflow-hidden  min-h-[420px] z-11"
+        style={{
+          backgroundImage: `url("/blog-hero.jpeg")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        {/* Background Image */}
 
+        {/* Orange Gradient Overlay */}
 
- 
+        {/* Optional Soft Shadow Blend */}
 
-  {/* Orange Gradient Overlay */}
+        {/* Content */}
+        <div className="relative z-10 max-w-7xl mx-auto h-full flex items-center px-6 lg:px-14 py-16">
+          <div className="max-w-xl">
+            <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-none">
+              Blogs
+            </h1>
 
-  {/* Optional Soft Shadow Blend */}
-
-  {/* Content */}
-  <div className="relative z-10 max-w-7xl mx-auto h-full flex items-center px-6 lg:px-14 py-16">
-    <div className="max-w-xl">
-
-      <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-none">
-        Blogs
-      </h1>
-
-      <p className="mt-8 text-xl leading-10 text-white/95">
-        Studying abroad is not only an academic experience but it's a
-        lifetime experience. Global Study Abroad Blogs will help you with
-        the best resources, advice and tips.
-      </p>
-
-    </div>
-  </div>
-</section>
+            <p className="mt-8 text-xl leading-10 text-white/95">
+              Studying abroad is not only an academic experience but it's a
+              lifetime experience. Global Study Abroad Blogs will help you with
+              the best resources, advice and tips.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <section className="py-0 bg-white">
         <div className="mx-auto px-0">
@@ -137,39 +133,38 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
     
   "
           >
+            {/* Search */}
+            <div className="max-w-3xl mt-4 mx-auto border border-black rounded-lg">
+              <div className="flex flex-col sm:flex-row items-center bg-white rounded-[20px] p-1">
+                <div className="flex items-center flex-1 px-5 w-full">
+                  <svg
+                    className="w-5 h-5 text-gray-700 mr-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
 
-               {/* Search */}
-    <div className="max-w-3xl mt-4 mx-auto border border-black rounded-lg">
-      <div className="flex flex-col sm:flex-row items-center bg-white rounded-[20px] p-1">
-        <div className="flex items-center flex-1 px-5 w-full">
-          <svg
-            className="w-5 h-5 text-gray-700 mr-3"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+                  <input
+                    type="text"
+                    placeholder="What are you looking for?"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-full py-1 outline-none text-black bg-transparent"
+                  />
+                </div>
 
-          <input
-            type="text"
-            placeholder="What are you looking for?"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full py-1 outline-none text-black bg-transparent"
-          />
-        </div>
-
-        <button className="w-full sm:w-auto text-orange-500 font-semibold px-8 py-3 rounded-full transition-all duration-300">
-          Search
-        </button>
-      </div>
-    </div>
+                <button className="w-full sm:w-auto text-orange-500 font-semibold px-8 py-3 rounded-full transition-all duration-300">
+                  Search
+                </button>
+              </div>
+            </div>
             {/* FILTER TAGS */}
             <div
               className="
@@ -189,14 +184,14 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
         "
             >
               {/* ROW 1 */}
-              <div className="flex flex-wrap justify-center lg:justify-left gap-2 ">
+              <div className="flex flex-wrap mb-4 justify-center lg:justify-left gap-2 ">
                 <button
                   onClick={() => {
                     setActiveCategory("all");
                     router.push(pathname);
                   }}
                   className={`
-    px-6 py-3 font-semibold border border-gray-400 
+    px-4 py-2 font-semibold border border-gray-400 
     ${
       activeCategory === "all"
         ? "bg-[#FF6B35] text-white rounded-xl text-sm lg:text-base"
@@ -212,7 +207,7 @@ export default function Blogs({ Blogdata, categoryData, page, limit, total }) {
                     key={cat._id}
                     onClick={() => handleCategoryClick(cat.slug)}
                     className={`
-      px-6 py-3 font-semibold
+      px-4 py-2.5 font-semibold
       transition-all border border-gray-400
       ${
         activeCategory === cat.slug
