@@ -392,21 +392,12 @@ const injectCounsellingButton = (html: string) => {
           <!-- Content -->
           <div class="ooshas-custom-content">
 
-            <h3 class="ooshas-custom-heading">
-              Ready to Start Your
-              <span class="ooshas-custom-heading-highlight">
-                Study Abroad
-              </span>
-              Journey?
-            </h3>
-
-            <div class="ooshas-custom-description">
+            <h3 class="ooshas-custom-heading !text-xl">
               ${
                 content ||
-                "Get expert guidance and turn your dream destination into reality."
-              }
-            </div>
-
+                "Ready to Start Your Study Abroad Journey? "
+              } 
+            </h3>
           </div>
 
           <!-- CTA -->
