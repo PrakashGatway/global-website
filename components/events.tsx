@@ -2,571 +2,378 @@
 
 import Image from 'next/image';
 import { motion } from "framer-motion";
-import { Facebook, Instagram, Twitter, Youtube, Send, Linkedin, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { Facebook, Instagram, Twitter, Youtube, Send, Linkedin, ChevronLeft, ChevronRight, MapPin, Calendar, Clock, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import EventsSlider from '@/components/PageComponent/EventSlider';
 import Link from 'next/link';
 
-
-
-
-
 export default function Events({ data, page, limit, total, type }) {
-
     const activeTab = type;
-
     const [currentEventIndex, setCurrentEventIndex] = useState(0);
-    // const [activeTab, setActiveTab] = useState<'events' | 'webinars'>('events');
-
-
     const totalpage = Math.ceil(total / limit)
-
-    const upcomingEvents = [
-        {
-            id: 1,
-            title: "GAway Global Education",
-            date: "Sun, 18th Jan 2026",
-            time: "10:00 am to 5:00 pm",
-            location: "Hotel Centre Point, Ramdaspeth, Nagpur",
-            description: "Interact with Representatives of 175+ Universities across 18 Countries.",
-            image: "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
-        }
-    ];
-
-
-
-    const webinarsEvents = [
-        {
-            id: 1,
-            type: "main",
-            title: "GAway Global Education",
-            date: "Sun, 18th Jan 2026",
-            time: "10:00 am to 5:00 pm",
-            location: "Hotel Centre Point, Ramdaspeth, Nagpur",
-            description: "Interact with Representatives of 175+ Universities across 18 Countries.",
-            image: "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"
-        },
-        {
-            id: 2,
-            type: "uk-masters",
-            title: "Master's in the UK",
-            banner: "Get admission in just 14 days",
-            description: "Apply to 150+ UK Universities",
-            buttonText: ""
-        },
-        {
-            id: 3,
-            type: "fair",
-            title: "Overseas Education Fair - Nagpur",
-            date: "Sunday, 18th January 2026",
-            time: "10:00 am - 5:00 pm",
-            description: "Attend KC's Biggest Overseas Education Fair in Nagpur and Interact with Representatives of 175+ Universities across 18 Countries.",
-            buttonText: "Register Now"
-        },
-        {
-            id: 4,
-            type: "uk-masters",
-            title: "Master's in the UK",
-            banner: "Get admission in just 14 days",
-            description: "Apply to 150+ UK Universities"
-        }
-    ];
 
     // Helper to clean image URLs
     const cleanImageUrl = (url: string) => url.trim();
 
+    // Animation variants
+    const fadeInUp = {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.5 }
+    };
 
     return (
         <>
-            <div className="bg-white overflow-x-hidden" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <div className="bg-white overflow-x-hidden">
                 {/* Upcoming Events Hero Section */}
-                <section className="bg-[#f46c44] h-[500px] relative overflow-hidden">
-                    {/* Decorative Arrow on Left Side */}
-                    <div className="absolute -left-30 top-[55%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-                        <div style={{
-                            transform: 'rotate(35deg)',
-                            filter: 'brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)',
-                            mixBlendMode: 'multiply'
-                        }}>
-                            <Image
-                                src="/images/g logo.png"
-                                alt="Decorative Arrow"
-                                width={400}
-                                height={40}
-                                loading="lazy"
-                                className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-                            />
-                        </div>
-                    </div>
-                    {/* Decorative Arrow on Right Side */}
-                    <div className="absolute -right-30 top-[55%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-                        <Image
-                            src="/images/g logo.png"
-                            alt="Decorative Arrow"
-                            width={400}
-                            height={40}
-                            loading="lazy"
-                            className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-                            style={{ transform: 'scaleX(-1) rotate(-35deg)' }}
-                        />
-                    </div>
+                <section className="relative h-[400px] bg-gradient-to-br from-[#f46c44] via-[#f46c44] to-[#e55a30] overflow-hidden">
+                    
 
-                    {/* Title pill */}
-                    <div className="flex justify-center mt-10">
-                        <span className="bg-white text-gray-700 px-10 py-2 rounded-full text-xl font-semibold shadow">
-                            Upcoming Events
-                        </span>
+                    {/* Title */}
+                    <div className="relative z-10 flex flex-col items-center justify-center h-full px-4">
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="bg-white/95 backdrop-blur-sm text-gray-800 px-8 md:px-12 py-3 md:py-4 rounded-full shadow-lg"
+                        >
+                            <h1 className="text-xl md:text-3xl font-bold text-center">
+                                Upcoming <span className="text-[#f46c44]">Events</span>
+                            </h1>
+                        </motion.div>
                     </div>
                 </section>
-                <EventsSlider />
 
-                <section className="bg-[#fff7f3] py-0 mt-80">
-                    <div className="max-w-7xl mx-auto px-4">
-                        <h2 className="text-3xl lg:text-4xl font-bold text-gray-600 mb-10">
-                            Webinars & Events
-                        </h2>
+                {/* Events Slider */}
+                <div className="relative z-20 -mt-20 md:-mt-28 px-4 md:px-8">
+                    <EventsSlider />
+                </div>
 
-                        <div className="grid grid-cols-1 lg:flex gap-8 items-start">
+                {/* Featured Events Section */}
+                <section className="bg-gradient-to-b from-[#fff7f3] to-white py-12 md:py-20 px-4">
+                    <div className="max-w-7xl mx-auto">
+                        <motion.h2 
+                            {...fadeInUp}
+                            className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-8 md:mb-12 text-center"
+                        >
+                            Webinars & <span className="text-[#f46c44]">Events</span>
+                        </motion.h2>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                             {/* LEFT BIG CARD */}
-                            <div className="lg:col-span-2">
-                                <div className="relative rounded-3xl overflow-hidden shadow-xl w-2xl bg-white">
-                                    <Image
-                                        src="/images/events-banner.png"
-                                        alt="GAway Global Education Event"
-                                        width={1200}
-                                        height={600}
-                                        loading="lazy"
-                                        className="w-2xl h-auto object-cover"
-                                        priority
-                                    />
-                                    <div className="flex flex-col justify-end p-6 sm:p-8 lg:p-10">
-                                        <div className="max-w-xl">
-                                            <p className="text-sm sm:text-base text-gray-700 mb-1">
-                                                Sunday, 18th January 2026 · 10:00 am – 5:00 pm
-                                            </p>
-                                            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-3">
-                                                Overseas Education Fair – Nagpur
-                                            </h3>
-                                            <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                                                Attend KC's Biggest Overseas Education Fair in Nagpur and
-                                                interact with representatives of 175+ Universities across
-                                                18 Countries.
-                                            </p>
-                                            <button className="mt-6 inline-block bg-[#f46c44] text-white px-6 py-2.5 rounded-md font-semibold hover:opacity-90 transition">
-                                                Register Now
+                            <motion.div
+                                initial={{ opacity: 0, x: -30 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.6 }}
+                                className="relative group cursor-pointer"
+                            >
+                                <div className="relative rounded-2xl md:rounded-3xl overflow-hidden h-full">
+                                    <div className="relative h-[300px] overflow-hidden">
+                                        <Image
+                                            src="/images/events-banner.png"
+                                            alt="GAway Global Education Event"
+                                            fill
+                                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                            priority
+                                        />
+                                        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 lg:p-10 text-white">
+                                           
+                                            <button className="inline-flex items-center gap-2 bg-[#f46c44] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#e55a30] transition-all transform hover:scale-105">
+                                                Register Now <ArrowRight className="w-4 h-4" />
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
 
                             {/* RIGHT SMALL CARDS */}
                             <div className="space-y-6">
                                 {/* Master's in UK Card */}
-                                <div className="bg-white rounded-2xl shadow-lg overflow-hidden flex w-[600px] h-[275px]">
-                                    <div className="w-[300px] h-full flex items-center justify-center bg-[#fff7f3]">
-                                        <Image
-                                            src="https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&h=600&fit=crop"
-                                            alt="UK Universities"
-                                            width={400}
-                                            height={400}
-                                            loading="lazy"
-                                            className="w-full h-full object-contain"
-                                        />
-                                    </div>
-                                    <div className="p-5 relative -top-9 flex flex-col justify-center mt-8">
-                                        <p className="text-[14px] font-semibold text-red-600 mb-2">
-                                            Get admission in just 14 days
-                                        </p>
-                                        <h4 className="font-bold text-[20px] text-gray-800 mb-2">
-                                            Master's in the <span className="text-red-600">UK</span>
-                                        </h4>
-                                        <p className="text-[14px] text-gray-600 mb-3">Made Easy</p>
-                                        <p className="text-[13px] text-gray-700 mb-3">Apply to 150+ UK Universities</p>
-                                        <div className="flex gap-2 mb-3">
-                                            <span className="text-[11px] font-semibold text-gray-600">OXFORD</span>
-                                            <span className="text-[11px] font-semibold text-gray-600">BRISTOL</span>
+                                <motion.div
+                                    initial={{ opacity: 0, x: 30 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.6 }}
+                                    className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow group"
+                                >
+                                    <div className="flex flex-col sm:flex-row h-full">
+                                        <div className="relative w-full sm:w-[40%] h-[200px] sm:h-auto bg-gradient-to-br from-[#f46c44]/10 to-[#f46c44]/20">
+                                            <Image
+                                                src="https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&h=600&fit=crop"
+                                                alt="UK Universities"
+                                                fill
+                                                loading="lazy"
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                        <div className="p-5 md:p-6 flex-1 flex flex-col justify-center">
+                                            <p className="text-sm font-semibold text-[#f46c44] mb-2">
+                                                Get admission in just 14 days
+                                            </p>
+                                            <h4 className="font-bold text-xl md:text-2xl text-gray-800 mb-2">
+                                                Master's in the <span className="text-[#f46c44]">UK</span>
+                                            </h4>
+                                            <p className="text-gray-600 mb-3">Made Easy</p>
+                                            <p className="text-sm text-gray-700">Apply to 150+ UK Universities</p>
+                                            <div className="flex gap-3 mt-3">
+                                                <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-1 rounded-full">OXFORD</span>
+                                                <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-1 rounded-full">BRISTOL</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
 
                                 {/* Overseas Education Fair Card */}
-                                <div className="bg-white rounded-2xl shadow-lg overflow-hidden flex w-[600px] h-[275px]">
-                                    <div className="w-[300px] h-full flex items-center justify-center bg-[#fff7f3]">
-                                        <Image
-                                            src="https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&h=600&fit=crop"
-                                            alt="Education Fair"
-                                            width={400}
-                                            height={400}
-                                            loading="lazy"
-                                            className="w-full h-full object-contain"
-                                        />
+                                <motion.div
+                                    initial={{ opacity: 0, x: 30 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.6, delay: 0.2 }}
+                                    className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow group"
+                                >
+                                    <div className="flex flex-col sm:flex-row h-full">
+                                        <div className="relative w-full sm:w-[40%] h-[200px] sm:h-auto bg-gradient-to-br from-[#f46c44]/10 to-[#f46c44]/20">
+                                            <Image
+                                                src="https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&h=600&fit=crop"
+                                                alt="Education Fair"
+                                                fill
+                                                loading="lazy"
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                        <div className="p-5 md:p-6 flex-1 flex flex-col justify-center">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <Calendar className="w-4 h-4 text-[#f46c44]" />
+                                                <p className="text-sm font-semibold text-gray-600">
+                                                    Sunday, 18th January 2026 · 10:00 am – 5:00 pm
+                                                </p>
+                                            </div>
+                                            <h4 className="font-bold text-xl md:text-2xl text-gray-800 mb-2">
+                                                Overseas Education Fair – Nagpur
+                                            </h4>
+                                            <p className="text-sm text-gray-600 leading-snug">
+                                                Attend KC's Biggest Overseas Education Fair in Nagpur and Interact with Representatives of 175+ Universities across 18 Countries.
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="p-4 relative -top-10 flex flex-col justify-center mt-8">
-                                        <p className="text-[14px] font-bold text-gray-500 mb-1">
-                                            Sunday, 18th January 2026 · 10:00 am – 5:00 pm
-                                        </p>
-                                        <h4 className="font-bold text-[20px] text-gray-500 mb-2">
-                                            Overseas Education Fair – Nagpur
-                                        </h4>
-                                        <p className="text-[14px] font-bold text-gray-600 leading-snug">
-                                            Attend KC's Biggest Overseas Education Fair in Nagpur and Interact with Representatives of 175+ Universities across 18 Countries.
-                                        </p>
-                                    </div>
-                                </div>
+                                </motion.div>
                             </div>
                         </div>
                     </div>
                 </section>
 
                 {/* All our events & webinars Section */}
-                <section className="bg-white py-8 relative">
-                    {/* G Logo on Right Side */}
-                    <div className="absolute right-[-120px] top-[200pxs] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0 rounded-lg p-4">
-                        <Image
-                            src="/images/g logo.png"
-                            alt="Decorative G Logo"
-                            width={400}
-                            height={80}
-                            loading="lazy"
-                            className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-                            style={{ transform: 'scaleX(-1) rotate(-35deg)' }}
-                        />
-                    </div>
-                    <div className="container mx-auto px-6">
-                        <h2 className="text-2xl lg:text-5xl font-bold text-gray-800 mb-8 text-center">
-                            All our events & webinars
-                        </h2>
+                <section className="bg-white py-12 md:py-20 relative px-4">
+                    <div className="container mx-auto max-w-7xl">
+                        <motion.h2 
+                            {...fadeInUp}
+                            className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-8 md:mb-12 text-center"
+                        >
+                            All our <span className="text-[#f46c44]">events</span> & <span className="text-[#f46c44]">webinars</span>
+                        </motion.h2>
 
                         {/* Tabs Container */}
-                        <div className="bg-gray-200 rounded-3xl p-3 mb-8 max-w-sm mx-auto">
-                            <div className="flex justify-center gap-1">
-                                <Link href="/events?type=event&page=1&limit=1">
+                        <div className="bg-gray-100 rounded-2xl p-2 mb-8 md:mb-12 max-w-md mx-auto">
+                            <div className="flex gap-2">
+                                <Link href="/events?type=event&page=1&limit=1" className="flex-1">
                                     <button
-                                        className={`px-8 py-3 font-semibold rounded ${activeTab === "event"
-                                            ? "bg-white text-gray-800"
-                                            : "text-gray-600"
-                                            }`}
+                                        className={`w-full px-6 py-3 rounded-xl font-semibold transition-all ${
+                                            activeTab === "event"
+                                                ? "bg-white text-gray-800 shadow-md"
+                                                : "text-gray-600 hover:bg-gray-200"
+                                        }`}
                                     >
                                         Events
                                     </button>
                                 </Link>
-
-                                <Link href="/events?type=webnair&page=1&limit=1">
+                                <Link href="/events?type=webnair&page=1&limit=1" className="flex-1">
                                     <button
-                                        className={`px-8 py-3 font-semibold rounded ${activeTab === "webnair"
-                                            ? "bg-white text-gray-800"
-                                            : "text-gray-600"
-                                            }`}
+                                        className={`w-full px-6 py-3 rounded-xl font-semibold transition-all ${
+                                            activeTab === "webnair"
+                                                ? "bg-white text-gray-800 shadow-md"
+                                                : "text-gray-600 hover:bg-gray-200"
+                                        }`}
                                     >
                                         Webinars
                                     </button>
                                 </Link>
-
                             </div>
                         </div>
 
-                        {/* Events Content */}
-                        {type === 'event' && (
-                            <div className="p-6 lg:p-8 max-w-7xl mx-auto">
-                                <div className="max-w-7xl mx-auto">
-                                    {/* <div className="absolute right-[-70px] top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0">
-                                        <Image
-                                            src="/images/g logo.png"
-                                            alt="Decorative Arrow"
-                                            width={400}
-                                            height={80}
-                                            className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-                                            style={{ transform: 'scaleX(-1) rotate(-40deg)' }}
-                                        />
-                                    </div> */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-[111]">
-                                        {data.map((event) => (
-                                            <div
-                                                key={event._id}
-                                                className="relative border border-[#FF6B35] bg-white rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px] transition-all duration-300 hover:shadow-xl"
-                                            >
-                                                <div className="absolute -top-2 -left-2 w-28 h-28 sm:w-36 sm:h-36 lg:w-45 lg:h-45 rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px] bg-[#FF6B35] -z-10"></div>
+                        {/* Events Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                            {data.map((event, index) => (
+                                <motion.div
+                                    key={event._id}
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                                    className="group"
+                                >
+                                    <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 h-full flex flex-col">
+                                        <div className="relative h-[220px] md:h-[260px] overflow-hidden">
+                                            <Image
+                                                src={event?.coverImage || "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"}
+                                                alt={event?.title}
+                                                fill
+                                                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                                onError={(e) => {
+                                                    e.currentTarget.onerror = null;
+                                                    e.currentTarget.src = cleanImageUrl('https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg');
+                                                }}
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                                            <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white">
+                                                <span className="inline-block bg-[#f46c44] text-white text-xs font-semibold px-3 py-1 rounded-full mb-2">
+                                                    {event.extraMetadata.eventType}
+                                                </span>
+                                                <h3 className="text-lg md:text-xl lg:text-2xl font-bold line-clamp-2">
+                                                    {event.title}
+                                                </h3>
+                                            </div>
+                                        </div>
 
-                                                <div className="relative overflow-hidden bg-gray-300 h-[200px] sm:h-[220px] lg:h-[260px] rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]">
-                                                    <img
-                                                        src={event?.coverImage ? event.coverImage : "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"}
-                                                        alt={event?.title}
-                                                        className="w-full h-full object-cover"
-                                                        onError={(e) => {
-                                                            e.currentTarget.onerror = null;
-                                                            e.currentTarget.src = cleanImageUrl('https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg');
-                                                        }}
-                                                    />
-                                                    <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center px-4 rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px] pointer-events-none">
-                                                        <h3 className="text-white text-lg sm:text-xl lg:text-3xl font-semibold mb-2 sm:mb-4 lg:mb-6">
-                                                            {event.title}
-                                                        </h3>
-                                                        <p className="text-white text-sm sm:text-base lg:text-lg">
-                                                            {event.extraMetadata.eventType} • {new Date(event.createdAt).toLocaleDateString("en-IN", {
-                                                                day: "2-digit",
-                                                                month: "short",
-                                                                year: "numeric",
-                                                            })}
-                                                        </p>
-                                                    </div>
+                                        <div className="p-4 md:p-6 flex-1 flex flex-col">
+                                            <div className="space-y-3 mb-4">
+                                                <div className="flex items-center text-sm text-gray-700">
+                                                    <Calendar className="w-4 h-4 text-[#f46c44] mr-2 flex-shrink-0" />
+                                                    <span className="font-medium">
+                                                        {new Date(event.extraMetadata.eventDate).toLocaleDateString("en-IN", {
+                                                            day: "numeric",
+                                                            month: "long",
+                                                            year: "numeric",
+                                                        })}
+                                                    </span>
                                                 </div>
-
-                                                <div className="p-4 sm:p-5 lg:p-6 text-center">
-                                                    <div className="mb-3 flex  text-gray-700 text-sm">
-                                                        <p className="font-semibold mr-1">
-                                                            {new Date(event.extraMetadata.eventDate).toLocaleDateString("en-IN", {
-                                                                day: "numeric",
-                                                                month: "long",
-                                                                year: "numeric",
-                                                            })},
-                                                        </p>
-
-                                                        <p>{new Date(`1970-01-01T${event.extraMetadata.startTime}`).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true })}</p>
-
-                                                        <p>-{new Date(`1970-01-01T${event.extraMetadata.endTime}`).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true })}</p>
-
-
-                                                    </div>
-                                                    <div className="flex items-center mb-2">
-                                                        <MapPin className="w-4 h-4 text-orange-500" />
-                                                        <p className="text-xs ml-2 text-gray-600">
-                                                            {event.extraMetadata.location}
-                                                        </p>
-                                                    </div>
-
-                                                    
-                                                    <div className="text-gray-600 text-sm sm:text-[15px] leading-relaxed mb-4 lg:mb-6 line-clamp-3" dangerouslySetInnerHTML={{ __html: event.shortDescription }} />
-                                                    <Link
-                                                        href={`/events/${event.slug}`}
-                                                        className="text-white lg:w-55 px-6 py-2 mx-auto sm:py-3 bg-[#1f2937]
-             rounded-tr-4xl shadow-[-4px_0px_4px_0_rgba(0,0,0,0.55)]
-             text-sm font-semibold hover:bg-[#FF6B35]
-             hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
-             flex items-center justify-center gap-2
-             transition-all hover:opacity-90"
-                                                    >
-                                                        View & Register Now »
-                                                    </Link>
-
-
+                                                <div className="flex items-center text-sm text-gray-700">
+                                                    <Clock className="w-4 h-4 text-[#f46c44] mr-2 flex-shrink-0" />
+                                                    <span>
+                                                        {new Date(`1970-01-01T${event.extraMetadata.startTime}`).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true })}
+                                                        {" - "}
+                                                        {new Date(`1970-01-01T${event.extraMetadata.endTime}`).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true })}
+                                                    </span>
+                                                </div>
+                                                <div className="flex items-center text-sm text-gray-700">
+                                                    <MapPin className="w-4 h-4 text-[#f46c44] mr-2 flex-shrink-0" />
+                                                    <span>{event.extraMetadata.location}</span>
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
 
-                        {/* Webinars Content */}
-                        {type === 'webnair' && (
-                            <div className="p-6 lg:p-8 max-w-7xl mx-auto">
-                                <div className="max-w-7xl mx-auto">
-                                    {/* <div className="absolute right-[-70px] top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block z-0">
-                                        <Image
-                                            src="/images/g logo.png"
-                                            alt="Decorative Arrow"
-                                            width={400}
-                                            height={80}
-                                            className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-                                            style={{ transform: 'scaleX(-1) rotate(-40deg)' }}
-                                        />
-                                    </div> */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 relative z-[111]">
-                                        {data.map((event) => (
-                                            <div
-                                                key={event._id}
-                                                className="relative border border-[#FF6B35] bg-white rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px] transition-all duration-300 hover:shadow-xl"
+                                            <div 
+                                                className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3"
+                                                dangerouslySetInnerHTML={{ __html: event.shortDescription }} 
+                                            />
+
+                                            <Link
+                                                href={`/events/${event.slug}`}
+                                                className="mt-auto inline-flex items-center justify-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#f46c44] transition-all transform hover:scale-105"
                                             >
-                                                <div className="absolute -top-2 -left-2 w-28 h-28 sm:w-36 sm:h-36 lg:w-45 lg:h-45 rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px] bg-[#FF6B35] -z-10"></div>
-
-                                                <div className="relative overflow-hidden bg-gray-300 h-[200px] sm:h-[220px] lg:h-[260px] rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px]">
-                                                    <img
-                                                        src={event?.coverImage ? event.coverImage : "https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg"}
-                                                        alt={event.title}
-                                                        className="w-full h-full object-cover"
-                                                        onError={(e) => {
-                                                            e.currentTarget.onerror = null;
-                                                            e.currentTarget.src = cleanImageUrl('https://www.shutterstock.com/image-photo/attractive-young-asian-female-college-600nw-2557619503.jpg');
-                                                        }}
-                                                    />
-                                                    <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center px-4 rounded-tl-[60px] sm:rounded-tl-[80px] lg:rounded-tl-[100px] pointer-events-none">
-                                                        <h3 className="text-white text-lg sm:text-xl lg:text-3xl font-semibold mb-2 sm:mb-4 lg:mb-6">
-                                                            {event.title}
-                                                        </h3>
-                                                        <p className="text-white text-sm sm:text-base lg:text-lg">
-                                                            {event.extraMetadata.eventType} • {new Date(event.createdAt).toLocaleDateString("en-IN", {
-                                                                day: "2-digit",
-                                                                month: "short",
-                                                                year: "numeric",
-                                                            })}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="p-4 sm:p-5 lg:p-6 text-center">
-                                                    <div className="mb-3 flex  text-gray-700 text-sm">
-                                                        <p className="font-semibold mr-1">
-                                                            {new Date(event.extraMetadata.eventDate).toLocaleDateString("en-IN", {
-                                                                day: "numeric",
-                                                                month: "long",
-                                                                year: "numeric",
-                                                            })},
-                                                        </p>
-
-                                                        <p>{new Date(`1970-01-01T${event.extraMetadata.startTime}`).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true })}</p>
-
-                                                        <p>-{new Date(`1970-01-01T${event.extraMetadata.endTime}`).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true })}</p>
-
-
-                                                    </div>
-                                                    <div className="flex items-center mb-2">
-                                                        <MapPin className="w-4 h-4 text-orange-500" />
-                                                        <p className="text-xs ml-2 text-gray-600">
-                                                            {event.extraMetadata.location}
-                                                        </p>
-                                                    </div>
-                                                    <div className="text-gray-600 text-sm sm:text-[15px] leading-relaxed mb-4 lg:mb-6 line-clamp-3" dangerouslySetInnerHTML={{__html:event.shortDescription}}/>
-                                                    
-                                                    <Link
-                                                        href={`/events/${event.slug}`}
-                                                        className="text-white lg:w-55 px-6 py-2 mx-auto sm:py-3 bg-[#1f2937]
-             rounded-tr-4xl shadow-[-4px_0px_4px_0_rgba(0,0,0,0.55)]
-             text-sm font-semibold hover:bg-[#FF6B35]
-             hover:shadow-[-6px_6px_5px_0_rgba(0,0,0,0.60)]
-             flex items-center justify-center gap-2
-             transition-all hover:opacity-90"
-                                                    >
-                                                        View & Register Now »
-                                                    </Link>
-
-
-                                                </div>
-                                            </div>
-                                        ))}
+                                                View & Register <ArrowRight className="w-4 h-4" />
+                                            </Link>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        )}
+                                </motion.div>
+                            ))}
+                        </div>
                     </div>
                 </section>
 
                 {/* Pagination */}
-                <section className="py-10 bg-white">
-                    <div className="container mx-auto px-6">
+                <section className="py-8 md:py-12 bg-gray-50 px-4">
+                    <div className="container mx-auto max-w-7xl">
                         <div className="flex justify-center items-center gap-2 flex-wrap">
-
-                            {/* PREVIOUS */}
                             {page > 1 ? (
                                 <Link
                                     href={`/events?type=${type}&page=${page - 1}&limit=${limit}`}
-                                    className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-700"
+                                    className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-white hover:border-[#f46c44] hover:text-[#f46c44] text-gray-700 transition-all"
                                 >
-                                    &lt;&lt;
+                                    <ChevronLeft className="w-5 h-5" />
                                 </Link>
                             ) : (
-                                <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400">
-                                    &lt;&lt;
+                                <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400 cursor-not-allowed">
+                                    <ChevronLeft className="w-5 h-5" />
                                 </span>
                             )}
 
-                            {/* PAGE NUMBERS */}
                             {Array.from({ length: totalpage }).map((_, index) => {
-                                const pageNumber = index + 1
-
+                                const pageNumber = index + 1;
                                 return (
                                     <Link
                                         key={pageNumber}
                                         href={`/events?type=${type}&page=${pageNumber}&limit=${limit}`}
-                                        className={`
-              px-4 py-2 rounded-full w-10 h-10 font-semibold
-              ${page === pageNumber
-                                                ? "bg-[#FF6B35] text-white"
-                                                : "border border-gray-300 text-gray-700 hover:bg-gray-100"
-                                            }
-            `}
+                                        className={`w-10 h-10 flex items-center justify-center rounded-lg font-semibold transition-all ${
+                                            page === pageNumber
+                                                ? "bg-[#f46c44] text-white shadow-lg"
+                                                : "border border-gray-300 text-gray-700 hover:bg-white hover:border-[#f46c44] hover:text-[#f46c44]"
+                                        }`}
                                     >
                                         {pageNumber}
                                     </Link>
-                                )
+                                );
                             })}
 
-                            {/* NEXT */}
                             {page < totalpage ? (
                                 <Link
                                     href={`/events?type=${type}&page=${page + 1}&limit=${limit}`}
-                                    className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-700"
+                                    className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-white hover:border-[#f46c44] hover:text-[#f46c44] text-gray-700 transition-all"
                                 >
-                                    &gt;
+                                    <ChevronRight className="w-5 h-5" />
                                 </Link>
                             ) : (
-                                <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400">
-                                    &gt;
+                                <span className="px-4 py-2 rounded-lg border border-gray-200 text-gray-400 cursor-not-allowed">
+                                    <ChevronRight className="w-5 h-5" />
                                 </span>
                             )}
-
                         </div>
                     </div>
                 </section>
 
-
                 {/* Join Our Exclusive Study Abroad Network */}
-                <section className="py-10 bg-[#FF6B35] relative overflow-hidden">
-                    <div className="absolute -left-30 top-[70%] -translate-y-1/2 opacity-20 pointer-events-none hidden lg:block">
-                        <div style={{
-                            transform: 'rotate(-20deg)',
-                            filter: 'brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%)',
-                            mixBlendMode: 'multiply'
-                        }}>
-                            <Image
-                                src="/images/g logo.png"
-                                alt="Decorative Arrow"
-                                width={400}
-                                height={40}
-                                loading="lazy"
-                                className="w-64 h-66 lg:w-96 lg:h-96 object-contain"
-                            />
-                        </div>
-                    </div>
-                    <div className="container mx-auto px-6">
-                        <div className="max-w-4xl mx-auto text-center">
-                            <h2 className="text-3xl lg:text-5xl font-bold text-white mb-4">
+                <section className="py-12 md:py-20 bg-gradient-to-br from-[#f46c44] to-[#e55a30] relative overflow-hidden px-4">
+                    <div className="container mx-auto max-w-4xl relative z-10">
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="text-center"
+                        >
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
                                 Join Our Exclusive Study Abroad Network
                             </h2>
-                            <p className="text-white text-lg mb-8 opacity-90">
-                                Get updates on what&apos;s happening around in the study abroad space, important notifications on events and journeys of other students
+                            <p className="text-white/90 text-base md:text-lg mb-8 max-w-2xl mx-auto">
+                                Get updates on what's happening around in the study abroad space, important notifications on events and journeys of other students
                             </p>
-                            <div className="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
+                            
+                            <div className="flex flex-col sm:flex-row gap-4 mb-8 max-w-2xl mx-auto">
                                 <input
                                     type="email"
-                                    placeholder="Email"
-                                    className="w-full sm:w-[500px] px-6 py-3 rounded-none outline-none text-gray-800 bg-white border border-gray-300"
+                                    placeholder="Enter your email"
+                                    className="flex-1 px-6 py-4 rounded-lg outline-none text-gray-800 bg-white shadow-lg focus:ring-2 focus:ring-white/50 transition-all"
                                 />
-                                <button className="bg-white text-[#FF6B35] w-full sm:w-[200px] px-6 py-3 rounded-none font-bold hover:bg-gray-100 transition-all whitespace-nowrap">
+                                <button className="bg-white text-[#f46c44] px-8 py-4 rounded-lg font-bold hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg whitespace-nowrap">
                                     I AM IN
                                 </button>
                             </div>
-                            <div className="flex justify-center gap-4 mt-6">
-                                <button className="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center text-white hover:bg-black transition-all cursor-pointer" aria-label="Facebook">
-                                    <Facebook size={24} />
-                                </button>
-                                <button className="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center text-white hover:bg-black transition-all cursor-pointer" aria-label="Instagram">
-                                    <Instagram size={24} />
-                                </button>
-                                <button className="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center text-white hover:bg-black transition-all cursor-pointer" aria-label="Twitter">
-                                    <Twitter size={24} />
-                                </button>
-                                <button className="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center text-white hover:bg-black transition-all cursor-pointer" aria-label="YouTube">
-                                    <Youtube size={24} />
-                                </button>
-                                <button className="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center text-white hover:bg-black transition-all cursor-pointer" aria-label="Telegram">
-                                    <Send size={24} />
-                                </button>
-                                <button className="w-14 h-14 rounded-full bg-gray-900 flex items-center justify-center text-white hover:bg-black transition-all cursor-pointer" aria-label="LinkedIn">
-                                    <Linkedin size={24} />
-                                </button>
+                            
+                            <div className="flex justify-center gap-3 md:gap-4 flex-wrap">
+                                {[
+                                    { icon: Facebook, label: "Facebook" },
+                                    { icon: Instagram, label: "Instagram" },
+                                    { icon: Twitter, label: "Twitter" },
+                                    { icon: Youtube, label: "YouTube" },
+                                    { icon: Send, label: "Telegram" },
+                                    { icon: Linkedin, label: "LinkedIn" }
+                                ].map((social, index) => (
+                                    <motion.button
+                                        key={index}
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.9 }}
+                                        className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gray-900/80 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black transition-all"
+                                        aria-label={social.label}
+                                    >
+                                        <social.icon size={20} className="md:w-6 md:h-6" />
+                                    </motion.button>
+                                ))}
                             </div>
-                        </div>
+                        </motion.div>
                     </div>
                 </section>
             </div>
