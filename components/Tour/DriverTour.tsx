@@ -1,34 +1,40 @@
+
+
 "use client";
 
 import { useEffect } from "react";
 import { driver } from "driver.js";
 import "./driver.css";
+
 // import "driver.js/dist/driver.css";
 
 interface DriverTourProps {
-    start: boolean;
-    onFinish?: () => void;
+  start: boolean;
+  onFinish?: () => void;
+  step : any;
+  profile: any;
 }
 
 export default function DriverTour({
-    start,
-    profile,
-    onFinish,
+  start,
+  profile,
+  onFinish,
+  step
 }: DriverTourProps) {
-    useEffect(() => {
-        if (!start) return;
+  useEffect(() => {
+    if (!start) return;
 
-        const driverObj = driver({
-            showProgress: true,
-            animate: true,
-            allowClose: true,
-            overlayOpacity: 0.75,
-            smoothScroll: true,
-            steps: [
-                {
-                    element: "#overviewer",
-                    popover: {
-                        description: `
+    const driverObj = driver({
+      showProgress: true,
+      animate: true,
+      allowClose: true,
+      overlayOpacity: 0.75,
+      smoothScroll: true,
+      steps: step || [
+        {
+          element: "#overviewer",
+          popover: {
+            description: `
                             <div class="relative rounded-2xl bg-white p-4 max-w-md">
                                 <!-- Left Image -->
                                 <div class="absolute -left-[300px] top-0 flex justify-center items-center">
@@ -83,14 +89,14 @@ export default function DriverTour({
                                 </div>
                             </div>
                         `,
-                        side: "bottom",
-                        align: "center",
-                    },
-                },
-                {
-                    element: "#profile",
-                    popover: {
-                        description: `
+            side: "bottom",
+            align: "center",
+          },
+        },
+        {
+          element: "#profile",
+          popover: {
+            description: `
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -left-[150px] top-0 flex justify-center items-center">
       <img
@@ -127,14 +133,14 @@ export default function DriverTour({
   </div>
 </div>
 `,
-                        side: "bottom",
-                        align: "center",
-                    },
-                },
-                {
-                    element: "#notification",
-                    popover: {
-                        description: `
+            side: "bottom",
+            align: "center",
+          },
+        },
+        {
+          element: "#notification",
+          popover: {
+            description: `
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -left-[150px] top-0 flex justify-center items-center">
       <img
@@ -158,14 +164,14 @@ export default function DriverTour({
 </div>
 `,
 
-                        side: "bottom",
-                        align: "start",
-                    },
-                },
-                {
-                    element: "#dashboard",
-                    popover: {
-                        description: `
+            side: "bottom",
+            align: "start",
+          },
+        },
+        {
+          element: "#dashboard",
+          popover: {
+            description: `
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
       <img
@@ -187,14 +193,14 @@ export default function DriverTour({
   </div>
 </div>
 `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
-                {
-                    element: "#universities",
-                    popover: {
-                        description: `
+            side: "right",
+            align: "center",
+          },
+        },
+        {
+          element: "#universities",
+          popover: {
+            description: `
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
       <img
@@ -215,14 +221,14 @@ export default function DriverTour({
   </div>
 </div>
 `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
-                {
-                    element: "#countries",
-                    popover: {
-                        description: `
+            side: "right",
+            align: "center",
+          },
+        },
+        {
+          element: "#countries",
+          popover: {
+            description: `
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
       <img
@@ -243,14 +249,14 @@ export default function DriverTour({
   </div>
 </div>
 `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
-                {
-                    element: "#find-programs",
-                    popover: {
-                        description: `
+            side: "right",
+            align: "center",
+          },
+        },
+        {
+          element: "#find-programs",
+          popover: {
+            description: `
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
       <img
@@ -271,14 +277,14 @@ export default function DriverTour({
   </div>
 </div>
 `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
-                {
-                    element: "#application",
-                    popover: {
-                        description: `
+            side: "right",
+            align: "center",
+          },
+        },
+        {
+          element: "#application",
+          popover: {
+            description: `
 <div class="relative rounded-2xl bg-white">
 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
       <img
@@ -299,14 +305,14 @@ export default function DriverTour({
   </div>
 </div>
 `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
-                {
-                    element: "#visa-process",
-                    popover: {
-                        description: `
+            side: "right",
+            align: "center",
+          },
+        },
+        {
+          element: "#visa-process",
+          popover: {
+            description: `
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
@@ -325,16 +331,16 @@ export default function DriverTour({
                                 </div>
                             </div>
                         `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
+            side: "right",
+            align: "center",
+          },
+        },
 
-                // Scholarships Step
-                {
-                    element: "#scholarship",
-                    popover: {
-                        description: `
+        // Scholarships Step
+        {
+          element: "#scholarship",
+          popover: {
+            description: `
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
@@ -353,16 +359,16 @@ export default function DriverTour({
                                 </div>
                             </div>
                         `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
+            side: "right",
+            align: "center",
+          },
+        },
 
-                // Accommodation Step
-                {
-                    element: "#accommodation",
-                    popover: {
-                        description: `
+        // Accommodation Step
+        {
+          element: "#accommodation",
+          popover: {
+            description: `
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
@@ -381,16 +387,16 @@ export default function DriverTour({
                                 </div>
                             </div>
                         `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
+            side: "right",
+            align: "center",
+          },
+        },
 
-                // Payments Step
-                {
-                    element: "#payments",
-                    popover: {
-                        description: `
+        // Payments Step
+        {
+          element: "#payments",
+          popover: {
+            description: `
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
@@ -409,16 +415,16 @@ export default function DriverTour({
                                 </div>
                             </div>
                         `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
+            side: "right",
+            align: "center",
+          },
+        },
 
-                // Offers Step
-                {
-                    element: "#offers",
-                    popover: {
-                        description: `
+        // Offers Step
+        {
+          element: "#offers",
+          popover: {
+            description: `
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
@@ -437,16 +443,16 @@ export default function DriverTour({
                                 </div>
                             </div>
                         `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
+            side: "right",
+            align: "center",
+          },
+        },
 
-                // Support Step
-                {
-                    element: "#support",
-                    popover: {
-                        description: `
+        // Support Step
+        {
+          element: "#support",
+          popover: {
+            description: `
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
@@ -465,16 +471,16 @@ export default function DriverTour({
                                 </div>
                             </div>
                         `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
+            side: "right",
+            align: "center",
+          },
+        },
 
-                // Settings Step
-                {
-                    element: "#settings",
-                    popover: {
-                        description: `
+        // Settings Step
+        {
+          element: "#settings",
+          popover: {
+            description: `
                             <div class="relative rounded-2xl bg-white">
                                 <div class="absolute -right-[150px] top-0 flex justify-center items-center">
                                     <img
@@ -493,20 +499,20 @@ export default function DriverTour({
                                 </div>
                             </div>
                         `,
-                        side: "right",
-                        align: "center",
-                    },
-                },
-            ],
+            side: "right",
+            align: "center",
+          },
+        },
+      ],
 
-            onDestroyed: () => {
-                localStorage.setItem(`dashboardTour_${profile.email}`, "true");
-                onFinish?.();
-            },
-        });
+      onDestroyed: () => {
+        localStorage.setItem(`dashboardTour_${profile.email}`, "true");
+        onFinish?.();
+      },
+    });
 
-        driverObj.drive();
-    }, [start]);
+    driverObj.drive();
+  }, [start]);
 
-    return null;
+  return null;
 }

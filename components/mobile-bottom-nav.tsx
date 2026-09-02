@@ -8,11 +8,11 @@ import { LayoutDashboard, BarChart3, MessageSquare, Settings, Shield, Bell, Wall
 
 // Updated to match sidebar items or create a subset for mobile
 const tabs = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: BarChart3, label: "Universities", href: "/dashboard/universities" },
-  { icon: GraduationCapIcon, label: "Programs", href: "/dashboard/programs" },
-  { icon: GiftIcon, label: "Offers", href: "/dashboard/offers" },
-  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", id:'dashboard' },
+  { icon: BarChart3, label: "Universities", href: "/dashboard/universities", id: 'universities' },
+  { icon: GraduationCapIcon, label: "Programs", href: "/dashboard/programs", id: 'find-programs' },
+  { icon: GiftIcon, label: "Offers", href: "/dashboard/offers", id: 'offers' },
+  { icon: Settings, label: "Settings", href: "/dashboard/settings", id: 'settings' }
 ]
 
 export function MobileBottomNav() {
@@ -24,7 +24,7 @@ export function MobileBottomNav() {
         {tabs.map((tab) => {
           const isActive = pathname === tab.href || pathname?.startsWith(tab.href + '/')
           return (
-            <Link key={tab.href} href={tab.href} className="flex-1 min-w-0">
+            <Link key={tab.href} href={tab.href} id={tab.id} className="flex-1 min-w-0">
               <motion.div
                 whileTap={{ scale: 0.95 }}
                 className={`relative flex flex-col items-center justify-center py-3 transition-colors ${

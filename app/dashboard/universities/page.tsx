@@ -860,8 +860,7 @@ function UniversitiesPageClient() {
 
                       {/* Intakes Section */}
                       <div
-                        className={`flex items-center gap-3 my-2 ${uni?.intakes?.length > 0 ? "visible" : "invisible"
-                          }`}
+                        className={`flex items-center gap-3 my-2 ${uni?.intakes?.length > 0 ? "visible" : "invisible"}`}
                       >
                         <span className="text-sm font-bold text-gray-500 uppercase tracking-wide">
                           INTAKES
@@ -886,9 +885,9 @@ function UniversitiesPageClient() {
 
                   {/* Stats Section - Cream Background */}
                   <div className="bg-orange-50/50 rounded-xl border border-orange-100 mb-4 mt-auto">
-                    <div className="grid grid-cols-3 divide-x divide-orange-200">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 divide-x divide-orange-200">
                       {/* QS Ranking */}
-                      <div className="px-2 py-4  flex justify-center items-center gap-3">
+                      <div className="px-2 py-4  flex md:justify-center items-center gap-3">
                         <div className="flex-shrink-0">
                           <span className="text-lg">🏆</span>
                         </div>
@@ -901,7 +900,7 @@ function UniversitiesPageClient() {
                       </div>
 
                       {/* Tuition Fee */}
-                      <div className="px-2 py-4 flex justify-center items-center gap-3">
+                      <div className="px-2 py-4 flex md:justify-center items-center gap-3">
                         <div className="flex-shrink-0">
                           <span className="text-lg">💰</span>
                         </div>
@@ -914,7 +913,7 @@ function UniversitiesPageClient() {
                       </div>
 
                       {/* Programs */}
-                      <div className="px-2 py-4 flex justify-center  items-center gap-3">
+                      <div className="px-2 py-4 flex md:justify-center  items-center gap-3">
                         <div className="flex-shrink-0">
                           <span className="text-lg">📋</span>
                         </div>

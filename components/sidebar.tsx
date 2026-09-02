@@ -80,11 +80,15 @@ export function Sidebar() {
     return null
   }
 
+  const isMobile =
+  typeof window !== "undefined" && window.innerWidth <= 767;
+
   return (
     <motion.aside
       animate={{ width: show ? 110 : 240 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="hidden relative lg:flex flex-col h-screen border-r sticky top-0 bg-[#f26d44] text-sidebar-foreground overflow-hidden z-40"
+      className="hidden relative lg:flex flex-col h-screen border-r sticky top-0 bg-[#f26d44] text-sidebar-foreground 
+      overflow-hidden z-40"
     >
 
       {/* <div className="absolute z-10 top-0 -right-0 bg-red-600">
@@ -116,7 +120,7 @@ export function Sidebar() {
       {/* Menu Items */}
       <nav className={`flex-1 ${show ? "px-2 py-4 pb-12 space-y-[1.5px]" : "px-3 py-4 space-y-[2px]"}  overflow-y-auto mt-1 no-scrollbar scrollbar-hide scollbar-none`}>
 
-        {(profile.role == "counsellor" ? counsellor : profile.role == "manager" ? editor : menuItems).map((item) => {
+        {(profile.role == "counsellor" ? counsellor : profile.role == "manager" ? editor : menuItems).map((item,idx) => {
           const isActive =
             location === item.href ||
             (item.href !== "/dashboard" && location.startsWith(item.href));
@@ -130,7 +134,7 @@ export function Sidebar() {
               <motion.div
                 whileTap={{ scale: 0.97 }}
                 whileHover={{ scale: 1.04 }}
-                 id={item.id}
+                 id={isMobile ? `id-${idx}` : item.id}
                 className={`flex items-center rounded-lg transition-colors relative ${isActive
                   ? "bg-[#6d1901]/70 font-semibold shadow"
                   : "hover:bg-[#6d1901]/30"

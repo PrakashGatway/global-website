@@ -739,7 +739,7 @@ export default function PaymentHistoryPage() {
 
                   {/* Coupon/Wallet Info Badge */}
                   {(purchase.couponCode || purchase.isWalletUsed) && (
-                    <div className="absolute bottom-0 left-0 right-0 px-5 py-2 bg-muted/30 border-t border-border/50 text-xs">
+                    <div className=" bottom-0 left-0 right-0 px-5 py-2 bg-muted/30 border-t border-border/50 text-xs">
                       <div className="flex items-center gap-3">
                         {purchase.couponCode && (
                           <span className="flex items-center gap-1 text-green-600">

@@ -82,50 +82,130 @@ const customSelectStyles = {
 
 // SVG Icons
 const FilterListIcon = ({ className }: any) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+    />
   </svg>
 );
 
 const CloseIcon = ({ className }: any) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M6 18L18 6M6 6l12 12"
+    />
   </svg>
 );
 
 const PublicIcon = ({ className }: any) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
   </svg>
 );
 
 const SchoolIcon = ({ className }: any) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"
+    />
   </svg>
 );
 
 const CategoryIcon = ({ className }: any) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+    />
   </svg>
 );
 
 const WorkIcon = ({ className }: any) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+    />
   </svg>
 );
 
 const MenuBookIcon = ({ className }: any) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+    />
   </svg>
 );
 
 const ClearIcon = ({ className }: any) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+  <svg
+    className={className}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M6 18L18 6M6 6l12 12"
+    />
   </svg>
 );
 
@@ -171,7 +251,6 @@ const FilterSelect = ({
   setShowDropdown,
   applyPreference,
 }: any) => {
-
   const userOptions = users.map((user: any) => ({
     value: user._id,
     label: user.name,
@@ -200,8 +279,10 @@ const FilterSelect = ({
           formatOptionLabel={(option: any) => (
             <div className="flex items-center gap-3 py-1">
               <div>
-                <div className="font-medium w-56 truncate">{option?.user?.name}<span className="test-xs">({option?.user?.email})</span></div>
-
+                <div className="font-medium w-56 truncate">
+                  {option?.user?.name}
+                  <span className="test-xs">({option?.user?.email})</span>
+                </div>
               </div>
             </div>
           )}
@@ -238,9 +319,7 @@ const FilterSelect = ({
       <Select
         options={options}
         value={selectedOption}
-        onChange={(option: any) =>
-          onChange(option ? option.value : "")
-        }
+        onChange={(option: any) => onChange(option ? option.value : "")}
         placeholder={placeholder}
         isClearable={isClearable}
         styles={customSelectStyles}
@@ -290,7 +369,8 @@ export default function ProgramFilters({
   // Local state for all filter inputs
   const [ugGradingSystem, setUgGradingSystem] = useState("Out of 100");
   const [ugScore, setUgScore] = useState("");
-  const [twelfthGradingSystem, setTwelfthGradingSystem] = useState("Out of 100");
+  const [twelfthGradingSystem, setTwelfthGradingSystem] =
+    useState("Out of 100");
   const [twelfthScore, setTwelfthScore] = useState("");
   const [backlogs, setBacklogs] = useState("");
   const [workExperience, setWorkExperience] = useState("");
@@ -325,8 +405,6 @@ export default function ProgramFilters({
     }));
   };
 
-
-
   // Sync local state with parent filters when they change externally (e.g., on clear)
   useEffect(() => {
     if (isCleared) {
@@ -335,7 +413,13 @@ export default function ProgramFilters({
       setBacklogs("");
       setWorkExperience("");
       setEnglishExam("");
-      setScores({ listening: "", reading: "", writing: "", speaking: "", overall: "" });
+      setScores({
+        listening: "",
+        reading: "",
+        writing: "",
+        speaking: "",
+        overall: "",
+      });
       setOtherExam("");
       setOtherExamScore("");
       setFee(50000);
@@ -375,21 +459,25 @@ export default function ProgramFilters({
     setBacklogs("");
     setWorkExperience("");
     setEnglishExam("");
-    setScores({ listening: "", reading: "", writing: "", speaking: "", overall: "" });
+    setScores({
+      listening: "",
+      reading: "",
+      writing: "",
+      speaking: "",
+      overall: "",
+    });
     setOtherExam("");
     setOtherExamScore("");
     setFee(50000);
     setAboveFee(false);
   };
 
-
-
   // 2. CHANGED FilterContent to a regular function that returns JSX
   // We call it as {renderFilterContent()} instead of <FilterContent />
   const renderFilterContent = () => (
-    <div className="flex flex-col max-h-[99vh] lg:max-h-[85vh]">
+    <div className="flex flex-col max-h-[90%] lg:max-h-[85vh] relative">
       {/* Header */}
-      <div className="p-3 md:p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50/50 to-transparent flex items-center justify-between">
+      <div className="z-[999] mt-20 p-3 md:p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50/50 to-transparent flex items-center justify-between">
         <div className="flex items-center gap-2">
           <FilterListIcon className="w-4 h-4 text-orange-500" />
           <span className="font-semibold text-sm">Filter Programs</span>
@@ -402,28 +490,30 @@ export default function ProgramFilters({
             <CloseIcon className="w-5 h-5 text-gray-500" />
           </button>
         )}
+        
       </div>
 
       {/* Filters Body */}
       <div className="p-3 md:p-4 flex-1 flex flex-col gap-4 overflow-y-auto">
-
-        {profile.role === "counsellor" && <FilterSelect
-          type="user"
-          label="Student"
-          icon={Search}
-          users={users}
-          search={search}
-          setSearch={setSearch}
-          filteredUsers={filteredUsers}
-          setFilteredUsers={setFilteredUsers}
-          showDropdown={showDropdown}
-          setShowDropdown={setShowDropdown}
-          onChange={(user: any) => {
-            setSelectedUser(user);
-            applyPreference(user);
-          }}
-          placeholder="Search student..."
-        />}
+        {profile.role === "counsellor" && (
+          <FilterSelect
+            type="user"
+            label="Student"
+            icon={Search}
+            users={users}
+            search={search}
+            setSearch={setSearch}
+            filteredUsers={filteredUsers}
+            setFilteredUsers={setFilteredUsers}
+            showDropdown={showDropdown}
+            setShowDropdown={setShowDropdown}
+            onChange={(user: any) => {
+              setSelectedUser(user);
+              applyPreference(user);
+            }}
+            placeholder="Search student..."
+          />
+        )}
         {/* Country Filter */}
         <FilterSelect
           label="Country"
@@ -445,7 +535,8 @@ export default function ProgramFilters({
           value={filters.university}
           onChange={(value: any) => {
             setIsCleared(false);
-            handleFilterChange("university", value)}}
+            handleFilterChange("university", value);
+          }}
           placeholder="Select university"
         />
 
@@ -473,7 +564,7 @@ export default function ProgramFilters({
             </span>
           </div>
 
-          <div className="text-center">
+          <div className="lg:text-center">
             <label className="block text-sm font-medium text-gray-800 mb-2">
               Score (UG)
               <span className="text-red-500 ml-1">*</span>
@@ -504,7 +595,7 @@ export default function ProgramFilters({
             </span>
           </div>
 
-          <div className="text-center">
+          <div className="lg:text-center">
             <label className="block text-sm font-medium text-gray-800 mb-2">
               Score (12th)
               <span className="text-red-500 ml-1">*</span>
@@ -531,14 +622,15 @@ export default function ProgramFilters({
             type="number"
             placeholder="Enter"
             value={filters?.backlogs}
-            onChange={(e) => setFilters((prev)=>({
-              ...prev,
-              backlogs : e.target.value
-            }))}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                backlogs: e.target.value,
+              }))
+            }
             className="w-full py-2 px-4 text-base text-gray-900 bg-gray-50 border border-gray-200  placeholder:text-gray-400 outline-none transition-all duration-200 hover:border-orange-500 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10"
           />
         </div>
-
 
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium text-gray-800">
@@ -569,7 +661,7 @@ export default function ProgramFilters({
             options={examOptions}
             placeholder="Select"
             value={examOptions.find(
-              (item) => item.value.toUpperCase() === filters.englishScore?.exam
+              (item) => item.value.toUpperCase() === filters.englishScore?.exam,
             )}
             onChange={(option: any) => {
               const exam = option?.value?.toUpperCase() || "";
@@ -656,7 +748,9 @@ export default function ProgramFilters({
             </div>
           )}
 
-          {["IELTS", "TOEFL", "PTE", "DET"].includes(filters?.englishScore?.exam) && (
+          {["IELTS", "TOEFL", "PTE", "DET"].includes(
+            filters?.englishScore?.exam,
+          ) && (
             <div className="mt-3">
               <label className="block text-sm font-medium">
                 Overall <span className="text-red-500">*</span>
@@ -683,7 +777,7 @@ export default function ProgramFilters({
             options={otherExamOptions}
             placeholder="Select"
             value={otherExamOptions.find(
-              (item) => item?.value?.toUpperCase() === filters?.otherExam?.exam
+              (item) => item?.value?.toUpperCase() === filters?.otherExam?.exam,
             )}
             onChange={(option: any) => {
               const exam = option?.value?.toUpperCase() || "";
@@ -703,10 +797,11 @@ export default function ProgramFilters({
 
         {/* Other Exam Score */}
         <div
-          className={`transition-all duration-500 ${filters?.otherExam?.exam
-            ? "max-h-[200px] opacity-100 translate-y-0"
-            : "max-h-0 opacity-0 -translate-y-2"
-            }`}
+          className={`transition-all duration-500 ${
+            filters?.otherExam?.exam
+              ? "max-h-[200px] opacity-100 translate-y-0"
+              : "max-h-0 opacity-0 -translate-y-2"
+          }`}
         >
           <div>
             <label className="block mb-2 text-sm font-medium">
@@ -717,12 +812,11 @@ export default function ProgramFilters({
               type="number"
               placeholder="Enter"
               value={
-  filters.otherExam.exam
-    ? filters.otherExam[
-        filters.otherExam.exam.toLowerCase()
-      ]?.overall || ""
-    : ""
-}
+                filters.otherExam.exam
+                  ? filters.otherExam[filters.otherExam.exam.toLowerCase()]
+                      ?.overall || ""
+                  : ""
+              }
               onChange={(e) => {
                 const value = e.target.value;
 
@@ -754,14 +848,15 @@ export default function ProgramFilters({
             {studyModes.map((mode: any) => (
               <button
                 key={mode.value}
-                className={`text-left text-sm font-medium px-3 py-1.5 border transition-all duration-200 ${filters.studyMode === mode.value
-                  ? "bg-orange-500 text-white border-orange-500"
-                  : "bg-gray-50 text-gray-700 border-gray-200 hover:border-orange-500 hover:bg-orange-50/30"
-                  }`}
+                className={`text-left text-sm font-medium px-3 py-1.5 border transition-all duration-200 ${
+                  filters.studyMode === mode.value
+                    ? "bg-orange-500 text-white border-orange-500"
+                    : "bg-gray-50 text-gray-700 border-gray-200 hover:border-orange-500 hover:bg-orange-50/30"
+                }`}
                 onClick={() =>
                   handleFilterChange(
                     "studyMode",
-                    filters.studyMode === mode.value ? "" : mode.value
+                    filters.studyMode === mode.value ? "" : mode.value,
                   )
                 }
               >
@@ -782,42 +877,45 @@ export default function ProgramFilters({
 
           <div className="flex flex-wrap gap-1.5">
             {levels?.map((level: any) => {
-             const isSelected = Array.isArray(filters?.level) &&
-  filters.level.some(
-    (item: string) =>
-      item?.toLowerCase() === level?.value?.toLowerCase()
-  );
+              const isSelected =
+                Array.isArray(filters?.level) &&
+                filters.level.some(
+                  (item: string) =>
+                    item?.toLowerCase() === level?.value?.toLowerCase(),
+                );
 
               return (
                 <button
-  key={level?.value}
-  onClick={() => {
-    setFilters((prev: any) => {
-    
-      const exists = prev?.level && prev?.level?.some(
-        (item: string) =>
-          item.toLowerCase() === level.value.toLowerCase()
-      );
+                  key={level?.value}
+                  onClick={() => {
+                    setFilters((prev: any) => {
+                      const exists =
+                        prev?.level &&
+                        prev?.level?.some(
+                          (item: string) =>
+                            item.toLowerCase() === level.value.toLowerCase(),
+                        );
 
-      return {
-        ...prev,
-        level: exists
-          ? prev.level.filter(
-              (item: string) =>
-                item.toLowerCase() !== level.value.toLowerCase()
-            )
-          : [...prev.level, level.value],
-      };
-    });
-  }}
-  className={`text-xs font-medium px-2.5 py-1 border transition-all duration-200 ${
-    isSelected
-      ? "bg-orange-50 text-orange-500 border-orange-500"
-      : "bg-gray-50 text-gray-700 border-gray-200 hover:border-orange-500 hover:bg-orange-50/30"
-  }`}
->
-  {level.label}
-</button>
+                      return {
+                        ...prev,
+                        level: exists
+                          ? prev.level.filter(
+                              (item: string) =>
+                                item.toLowerCase() !==
+                                level.value.toLowerCase(),
+                            )
+                          : [...prev.level, level.value],
+                      };
+                    });
+                  }}
+                  className={`text-xs font-medium px-2.5 py-1 border transition-all duration-200 ${
+                    isSelected
+                      ? "bg-orange-50 text-orange-500 border-orange-500"
+                      : "bg-gray-50 text-gray-700 border-gray-200 hover:border-orange-500 hover:bg-orange-50/30"
+                  }`}
+                >
+                  {level.label}
+                </button>
               );
             })}
           </div>
@@ -833,8 +931,8 @@ export default function ProgramFilters({
               {filters?.country && (
                 <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
                   <span>
-                    {countries.find((c: any) => c.value === filters.country)?.label ||
-                      filters?.country}
+                    {countries.find((c: any) => c.value === filters.country)
+                      ?.label || filters?.country}
                   </span>
                   <button
                     onClick={() => handleFilterChange("country", "")}
@@ -858,8 +956,8 @@ export default function ProgramFilters({
               {filters?.level && (
                 <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
                   <span>
-                    {levels?.find((l: any) => l.value === filters?.level)?.label ||
-                      filters?.level}
+                    {levels?.find((l: any) => l.value === filters?.level)
+                      ?.label || filters?.level}
                   </span>
                   <button
                     onClick={() => handleFilterChange("level", "")}
@@ -872,8 +970,9 @@ export default function ProgramFilters({
               {filters.university && (
                 <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
                   <span>
-                    {universities.find((u: any) => u.value === filters.university)
-                      ?.label || filters.university}
+                    {universities.find(
+                      (u: any) => u.value === filters.university,
+                    )?.label || filters.university}
                   </span>
                   <button
                     onClick={() => handleFilterChange("university", "")}
@@ -900,9 +999,7 @@ export default function ProgramFilters({
 
               {(filters.minFee || filters.maxFee) && (
                 <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
-                  <span>
-                    Tuition: ₹{filters.maxFee || "∞"}
-                  </span>
+                  <span>Tuition: ₹{filters.maxFee || "∞"}</span>
                   <button
                     onClick={() =>
                       setFilters((prev) => ({
@@ -918,17 +1015,14 @@ export default function ProgramFilters({
                 </div>
               )}
 
-              {(filters.twelfthScore) && (
+              {filters.twelfthScore && (
                 <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
-                  <span>
-                    12th Score - {filters.twelfthScore || "∞"}%
-                  </span>
+                  <span>12th Score - {filters.twelfthScore || "∞"}%</span>
                   <button
                     onClick={() =>
                       setFilters((prev) => ({
                         ...prev,
                         twelfthScore: "",
-
                       }))
                     }
                     className="hover:text-orange-700 transition-colors"
@@ -938,17 +1032,14 @@ export default function ProgramFilters({
                 </div>
               )}
 
-              {(filters.ugScore) && (
+              {filters.ugScore && (
                 <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
-                  <span>
-                    UG Score - {filters.ugScore || "∞"}%
-                  </span>
+                  <span>UG Score - {filters.ugScore || "∞"}%</span>
                   <button
                     onClick={() =>
                       setFilters((prev) => ({
                         ...prev,
                         ugScore: "",
-
                       }))
                     }
                     className="hover:text-orange-700 transition-colors"
@@ -958,8 +1049,7 @@ export default function ProgramFilters({
                 </div>
               )}
 
-
-              {(filters.workExperience) && (
+              {filters.workExperience && (
                 <div className="flex items-center gap-1 bg-orange-50 text-orange-500 text-xs font-medium px-2 py-0.5">
                   <span>
                     Work Experience - {filters.workExperience || "∞"} Year
@@ -969,7 +1059,6 @@ export default function ProgramFilters({
                       setFilters((prev) => ({
                         ...prev,
                         workExperience: "",
-
                       }))
                     }
                     className="hover:text-orange-700 transition-colors"
@@ -979,7 +1068,6 @@ export default function ProgramFilters({
                 </div>
               )}
             </div>
-
           </div>
         )}
 
